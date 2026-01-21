@@ -15,6 +15,7 @@ use RecruitingPlaybook\Taxonomies\JobLocation;
 use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
+use RecruitingPlaybook\Frontend\JobSchema;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -129,6 +130,10 @@ final class Plugin {
 	private function initFrontend(): void {
 		// Template-Loader für CPT.
 		add_filter( 'template_include', [ $this, 'loadTemplates' ] );
+
+		// Google for Jobs Schema (JSON-LD).
+		$job_schema = new JobSchema();
+		$job_schema->init();
 	}
 
 	/**
