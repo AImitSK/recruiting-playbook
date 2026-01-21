@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-/* Input/Select/Textarea box-sizing fix */
+/* Input/Select/Textarea Basis-Styling */
 .rp-form-input,
 .rp-form-select,
 .rp-form-textarea,
@@ -25,6 +25,21 @@ input[class*="rp-"],
 select[class*="rp-"],
 textarea[class*="rp-"] {
     box-sizing: border-box;
+    box-shadow: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Inner Shadow auf Input-Feldern entfernen (Safari/iOS) */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+textarea {
+    -webkit-appearance: none;
+    box-shadow: none;
 }
 
 /* Select Dropdown-Pfeil Styling */
