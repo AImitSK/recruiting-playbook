@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<ruleset name="Recruiting Playbook Coding Standards">
+    <description>PHP CodeSniffer Konfiguration für Recruiting Playbook</description>
+
+    <!-- Zu prüfende Dateien -->
+    <file>./src</file>
+    <file>./recruiting-playbook.php</file>
+
+    <!-- Ausgeschlossene Dateien/Verzeichnisse -->
+    <exclude-pattern>./vendor/*</exclude-pattern>
+    <exclude-pattern>./node_modules/*</exclude-pattern>
+    <exclude-pattern>./assets/dist/*</exclude-pattern>
+    <exclude-pattern>./tests/*</exclude-pattern>
+    <exclude-pattern>*.min.js</exclude-pattern>
+    <exclude-pattern>*.min.css</exclude-pattern>
+
+    <!-- Argumente -->
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/> <!-- Show sniff codes in all reports -->
+
+    <!-- PHP Version -->
+    <config name="testVersion" value="8.0-"/>
+
+    <!-- WordPress Coding Standards -->
+    <rule ref="WordPress">
+        <!-- Erlaube kurze Array-Syntax -->
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+
+        <!-- Datei-Kommentare nicht erforderlich -->
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+
+        <!-- PHP 8.0+ Features erlauben -->
+        <exclude name="Universal.Operators.DisallowShortTernary"/>
+    </rule>
+
+    <!-- Kurze Array-Syntax bevorzugen -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+    <!-- WordPress spezifische Regeln -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="recruiting-playbook"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Escape-Funktionen -->
+    <rule ref="WordPress.Security.EscapeOutput">
+        <properties>
+            <property name="customEscapingFunctions" type="array">
+                <element value="wp_kses_post"/>
+                <element value="wp_kses"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Nonce-Verifikation -->
+    <rule ref="WordPress.Security.NonceVerification">
+        <properties>
+            <property name="customNonceVerificationFunctions" type="array">
+                <element value="wp_verify_nonce"/>
+                <element value="check_admin_referer"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Datei-Namen -->
+    <rule ref="WordPress.Files.FileName">
+        <properties>
+            <property name="strict_class_file_names" value="false"/>
+        </properties>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+    </rule>
+
+    <!-- Namespace-bezogene Regeln lockern -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="rp_"/>
+                <element value="recruiting_playbook"/>
+                <element value="RecruitingPlaybook"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Zeilenlänge -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="150"/>
+        </properties>
+    </rule>
+</ruleset>

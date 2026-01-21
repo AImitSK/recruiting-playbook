@@ -1,0 +1,513 @@
+# Copyright (C) 2025 Recruiting Playbook
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Recruiting Playbook 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/AImitSK/recruiting-playbook/issues\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-01-21T12:00:00+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.x\n"
+"X-Domain: recruiting-playbook\n"
+
+#. Plugin Name of the plugin
+msgid "Recruiting Playbook"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/AImitSK/recruiting-playbook"
+msgstr ""
+
+#. Description of the plugin
+msgid "Professionelles Bewerbermanagement für WordPress - Stellenanzeigen erstellen, Bewerbungen verwalten, DSGVO-konform."
+msgstr ""
+
+#. Author of the plugin
+msgid "AImitSK"
+msgstr ""
+
+#: src/Admin/Menu.php
+msgid "Recruiting"
+msgstr ""
+
+#: src/Admin/Menu.php
+msgid "Dashboard"
+msgstr ""
+
+#: src/Admin/Menu.php
+msgid "Bewerbungen"
+msgstr ""
+
+#: src/Admin/Menu.php
+msgid "Einstellungen"
+msgstr ""
+
+#: src/Admin/Menu.php
+msgid "Werkzeuge"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Stellen"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Stelle"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Neue Stelle"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Stelle bearbeiten"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Stelle ansehen"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Stellen durchsuchen"
+msgstr ""
+
+#: src/PostTypes/JobListing.php
+msgid "Keine Stellen gefunden"
+msgstr ""
+
+#: src/Taxonomies/JobCategory.php
+msgid "Berufsfelder"
+msgstr ""
+
+#: src/Taxonomies/JobCategory.php
+msgid "Berufsfeld"
+msgstr ""
+
+#: src/Taxonomies/JobLocation.php
+msgid "Standorte"
+msgstr ""
+
+#: src/Taxonomies/JobLocation.php
+msgid "Standort"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Beschäftigungsarten"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Beschäftigungsart"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Vollzeit"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Teilzeit"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Minijob"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Ausbildung"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Praktikum"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Werkstudent"
+msgstr ""
+
+#: src/Taxonomies/EmploymentType.php
+msgid "Freiberuflich"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Neu"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "In Prüfung"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Interview"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Angebot"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Eingestellt"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Abgelehnt"
+msgstr ""
+
+#: src/Constants/ApplicationStatus.php
+msgid "Zurückgezogen"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Stellen-Details"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Gehalt (Minimum)"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Gehalt (Maximum)"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Währung"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Gehaltszeitraum"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Gehalt verstecken"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Bewerbungsfrist"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Ansprechpartner"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "E-Mail"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Telefon"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Remote-Option"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Vor Ort"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Hybrid"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Remote"
+msgstr ""
+
+#: src/Admin/MetaBoxes/JobMeta.php
+msgid "Startdatum"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Willkommen"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Firmendaten"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Erste Stelle"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Fertig"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Setup-Wizard"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Willkommen bei Recruiting Playbook!"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Dieser Assistent hilft Ihnen, das Plugin in wenigen Minuten einzurichten."
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Stellenanzeigen verwalten"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Bewerbungen empfangen"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Übersicht behalten"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Speichern..."
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Gespeichert!"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Ein Fehler ist aufgetreten."
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "E-Mail wird gesendet..."
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "Test-E-Mail wurde gesendet!"
+msgstr ""
+
+#: src/Admin/SetupWizard/SetupWizard.php
+msgid "E-Mail konnte nicht gesendet werden."
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Aktuell keine offenen Stellen verfügbar."
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Mehr erfahren"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Jetzt bewerben"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bewerbung für: %s"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Suche"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Stichwort, Jobtitel..."
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Alle Berufsfelder"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Alle Standorte"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Alle Arten"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Suchen"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Filter zurücksetzen"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "%d Stelle gefunden"
+msgid_plural "%d Stellen gefunden"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bewerbungsfrist: %s"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Zurück"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Weiter"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Keine passenden Stellen gefunden. Bitte versuchen Sie andere Suchkriterien."
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Persönliche Daten"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Anrede"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bitte wählen"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Herr"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Frau"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Divers"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Vorname"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Nachname"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "E-Mail-Adresse"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bewerbungsunterlagen"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Lebenslauf"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Datei hierher ziehen oder"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Datei auswählen"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "PDF, DOC, DOCX, JPG, PNG (max. 10 MB)"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Anschreiben / Nachricht"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Datenschutz & Absenden"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Datenschutzerklärung"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bewerbung erfolgreich gesendet!"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail."
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Bewerbung absenden"
+msgstr ""
+
+#: src/Frontend/Shortcodes.php
+msgid "Wird gesendet..."
+msgstr ""
+
+#: src/Services/SpamProtection.php
+msgid "Ihre Anfrage wurde als potentieller Spam erkannt."
+msgstr ""
+
+#: src/Services/SpamProtection.php
+msgid "Bitte nehmen Sie sich etwas mehr Zeit zum Ausfüllen des Formulars."
+msgstr ""
+
+#: src/Services/SpamProtection.php
+msgid "Sie haben die maximale Anzahl an Bewerbungen erreicht. Bitte versuchen Sie es später erneut."
+msgstr ""
+
+#: src/Services/EmailService.php
+msgid "Neue Bewerbung eingegangen"
+msgstr ""
+
+#: src/Services/EmailService.php
+msgid "Bewerbung erfolgreich eingereicht"
+msgstr ""
+
+#: src/Services/EmailService.php
+msgid "Ihre Bewerbung bei %s"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Stellentitel fehlt"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Stellenbeschreibung fehlt"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Stellenbeschreibung ist sehr kurz (min. 100 Zeichen empfohlen)"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Standort fehlt (empfohlen für besseres Ranking)"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Beschäftigungsart fehlt (Vollzeit, Teilzeit, etc.)"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Gehalt fehlt (wichtig für Google for Jobs Ranking)"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Bewerbungsfrist fehlt"
+msgstr ""
+
+#: src/Frontend/JobSchema.php
+msgid "Bewerbungsfrist ist abgelaufen"
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Bewerbung konnte nicht gespeichert werden."
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Ungültiger Status."
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Bewerbung nicht gefunden."
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Status konnte nicht aktualisiert werden."
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Status geändert von \"%1$s\" zu \"%2$s\""
+msgstr ""
+
+#: src/Services/ApplicationService.php
+msgid "Kandidat konnte nicht erstellt werden."
+msgstr ""
