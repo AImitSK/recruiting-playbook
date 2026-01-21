@@ -16,6 +16,7 @@ use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
 use RecruitingPlaybook\Frontend\JobSchema;
+use RecruitingPlaybook\Api\ApplicationController;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -166,7 +167,8 @@ final class Plugin {
 	 * REST API Routen registrieren
 	 */
 	public function registerRestRoutes(): void {
-		// Für Phase 1B (Bewerbungsformular).
+		$application_controller = new ApplicationController();
+		$application_controller->register_routes();
 	}
 
 	/**
@@ -202,19 +204,45 @@ final class Plugin {
 			);
 		}
 
-		// Alpine.js.
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
-		if ( file_exists( $alpine_file ) ) {
+		// Alpine.js (CDN als Fallback).
+		wp_enqueue_script(
+			'rp-alpine',
+			'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js',
+			[],
+			'3.14.3',
+			[ 'strategy' => 'defer' ]
+		);
+
+		// Application Form JS.
+		$form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
+		if ( file_exists( $form_file ) && is_singular( 'job_listing' ) ) {
 			wp_enqueue_script(
-				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
-				[],
+				'rp-application-form',
+				RP_PLUGIN_URL . 'assets/src/js/application-form.js',
+				[ 'rp-alpine' ],
 				RP_VERSION,
 				true
 			);
+
+			// Lokalisierung für das Formular.
+			wp_localize_script(
+				'rp-application-form',
+				'rpForm',
+				[
+					'apiUrl' => rest_url( 'recruiting/v1/' ),
+					'nonce'  => wp_create_nonce( 'wp_rest' ),
+					'i18n'   => [
+						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
+						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. 10 MB)', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+					],
+				]
+			);
 		}
 
-		// Frontend JS.
+		// Frontend JS (optional, für zukünftige Erweiterungen).
 		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/frontend.js';
 		if ( file_exists( $js_file ) ) {
 			wp_enqueue_script(

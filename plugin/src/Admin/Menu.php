@@ -9,15 +9,28 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Admin;
 
+use RecruitingPlaybook\Admin\Settings;
+
 /**
  * Admin-Menü Registrierung
  */
 class Menu {
 
 	/**
+	 * Settings instance
+	 *
+	 * @var Settings
+	 */
+	private Settings $settings;
+
+	/**
 	 * Menü registrieren
 	 */
 	public function register(): void {
+		// Settings initialisieren.
+		$this->settings = new Settings();
+		$this->settings->register();
+
 		// Hauptmenü.
 		add_menu_page(
 			__( 'Recruiting Playbook', 'recruiting-playbook' ),
@@ -144,12 +157,6 @@ class Menu {
 	 * Einstellungen rendern
 	 */
 	public function renderSettings(): void {
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Einstellungen', 'recruiting-playbook' ) . '</h1>';
-		echo '<div class="notice notice-info"><p>';
-		echo esc_html__( 'Die Einstellungen werden in Phase 1B implementiert.', 'recruiting-playbook' );
-		echo '</p></div>';
-		echo '<div id="rp-settings-app"></div>';
-		echo '</div>';
+		$this->settings->renderPage();
 	}
 }
