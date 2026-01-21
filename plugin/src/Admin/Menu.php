@@ -14,6 +14,8 @@ use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Services\GdprService;
+use RecruitingPlaybook\Services\DocumentService;
+use RecruitingPlaybook\Services\EmailService;
 use RecruitingPlaybook\Constants\ApplicationStatus;
 
 /**
@@ -105,6 +107,9 @@ class Menu {
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Recruiting Dashboard', 'recruiting-playbook' ) . '</h1>';
 
+		// Sicherheits- und Konfigurationswarnungen.
+		$this->renderSecurityNotices();
+
 		// Status-Übersicht.
 		$this->renderStatusCards();
 
@@ -123,6 +128,64 @@ class Menu {
 		echo '</div>';
 
 		echo '</div>';
+	}
+
+	/**
+	 * Sicherheits- und Konfigurationswarnungen rendern
+	 */
+	private function renderSecurityNotices(): void {
+		$notices = [];
+
+		// SMTP-Konfiguration prüfen.
+		$smtp_status = EmailService::checkSmtpConfig();
+		if ( ! $smtp_status['configured'] ) {
+			$notices[] = [
+				'type'    => 'warning',
+				'title'   => __( 'E-Mail-Konfiguration', 'recruiting-playbook' ),
+				'message' => $smtp_status['message'],
+				'action'  => sprintf(
+					'<a href="%s" class="button button-small">%s</a>',
+					esc_url( admin_url( 'plugin-install.php?s=smtp&tab=search&type=term' ) ),
+					esc_html__( 'SMTP-Plugin suchen', 'recruiting-playbook' )
+				),
+			];
+		}
+
+		// Dokumentenschutz prüfen.
+		$doc_protection = DocumentService::checkProtection();
+		if ( 'nginx' === $doc_protection['server_type'] ) {
+			$notices[] = [
+				'type'    => 'warning',
+				'title'   => __( 'Dokumentenschutz (Nginx)', 'recruiting-playbook' ),
+				'message' => $doc_protection['message'],
+				'action'  => sprintf(
+					'<a href="%s" target="_blank" class="button button-small">%s</a>',
+					'https://github.com/AImitSK/recruiting-playbook/wiki/Nginx-Security',
+					esc_html__( 'Anleitung ansehen', 'recruiting-playbook' )
+				),
+			];
+		}
+
+		// Keine Warnungen vorhanden.
+		if ( empty( $notices ) ) {
+			return;
+		}
+
+		// Warnungen ausgeben.
+		foreach ( $notices as $notice ) {
+			$notice_class = 'notice-' . $notice['type'];
+			?>
+			<div class="notice <?php echo esc_attr( $notice_class ); ?> inline" style="margin: 10px 0 20px 0;">
+				<p>
+					<strong><?php echo esc_html( $notice['title'] ); ?>:</strong>
+					<?php echo esc_html( $notice['message'] ); ?>
+				</p>
+				<?php if ( ! empty( $notice['action'] ) ) : ?>
+					<p><?php echo $notice['action']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+				<?php endif; ?>
+			</div>
+			<?php
+		}
 	}
 
 	/**

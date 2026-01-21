@@ -70,19 +70,128 @@ class DocumentService {
 		// Verzeichnis erstellen
 		wp_mkdir_p( $this->upload_dir );
 
-		// .htaccess für Zugriffskontrolle erstellen
+		// Robuste .htaccess für Apache (mehrere Syntaxvarianten für Kompatibilität)
 		$htaccess = $this->upload_dir . '/.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
+			$htaccess_content = <<<HTACCESS
+# Recruiting Playbook - Dokumentenschutz
+# Blockiert direkten Zugriff auf alle Dateien in diesem Verzeichnis
+
+# Apache 2.4+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+# Apache 2.2 (Fallback)
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+# Zusätzlicher Schutz: Verhindert PHP-Ausführung
+<FilesMatch "\.ph(p[3-7]?|tml|ar)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Verhindert Directory Listing
+Options -Indexes
+HTACCESS;
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-			file_put_contents( $htaccess, "Deny from all\n" );
+			file_put_contents( $htaccess, $htaccess_content );
 		}
 
-		// Index.php erstellen
+		// Index.php erstellen (zusätzlicher Schutz gegen Directory Listing)
 		$index = $this->upload_dir . '/index.php';
 		if ( ! file_exists( $index ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $index, "<?php\n// Silence is golden.\n" );
 		}
+
+		// Nginx-Hinweis erstellen
+		$nginx_readme = $this->upload_dir . '/NGINX_SECURITY.txt';
+		if ( ! file_exists( $nginx_readme ) ) {
+			$nginx_content = <<<NGINX
+# WICHTIG für Nginx-Server:
+# Die .htaccess wird von Nginx ignoriert!
+#
+# Fügen Sie folgende Regel in Ihre Nginx-Konfiguration ein:
+#
+# location ~* /wp-content/uploads/recruiting-playbook/ {
+#     deny all;
+#     return 403;
+# }
+#
+# Alternativ in der Server-Block:
+#
+# location ~ ^/wp-content/uploads/recruiting-playbook/.*$ {
+#     internal;
+# }
+NGINX;
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( $nginx_readme, $nginx_content );
+		}
+	}
+
+	/**
+	 * Prüft ob der Dokumentenschutz funktioniert
+	 *
+	 * @return array Status und Nachricht
+	 */
+	public static function checkProtection(): array {
+		$wp_upload = wp_upload_dir();
+		$upload_dir = $wp_upload['basedir'] . '/recruiting-playbook/applications';
+		$upload_url = $wp_upload['baseurl'] . '/recruiting-playbook/applications';
+
+		$result = [
+			'protected'   => true,
+			'htaccess'    => false,
+			'nginx_note'  => false,
+			'message'     => '',
+			'server_type' => '',
+		];
+
+		// Server-Typ erkennen
+		$server_software = isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
+
+		if ( stripos( $server_software, 'nginx' ) !== false ) {
+			$result['server_type'] = 'nginx';
+		} elseif ( stripos( $server_software, 'apache' ) !== false ) {
+			$result['server_type'] = 'apache';
+		} else {
+			$result['server_type'] = 'unknown';
+		}
+
+		// .htaccess prüfen
+		$htaccess_file = $upload_dir . '/.htaccess';
+		if ( file_exists( $htaccess_file ) ) {
+			$result['htaccess'] = true;
+		}
+
+		// Nginx-Hinweis prüfen
+		$nginx_file = $upload_dir . '/NGINX_SECURITY.txt';
+		if ( file_exists( $nginx_file ) ) {
+			$result['nginx_note'] = true;
+		}
+
+		// Warnung für Nginx-Server
+		if ( 'nginx' === $result['server_type'] && ! $result['nginx_note'] ) {
+			$result['protected'] = false;
+			$result['message'] = __( 'Nginx-Server erkannt: Bitte konfigurieren Sie den Dokumentenschutz manuell (siehe NGINX_SECURITY.txt).', 'recruiting-playbook' );
+		} elseif ( 'nginx' === $result['server_type'] ) {
+			$result['message'] = __( 'Nginx-Server erkannt: Bitte stellen Sie sicher, dass die Nginx-Konfiguration den Dokumentenschutz enthält.', 'recruiting-playbook' );
+		} elseif ( 'apache' === $result['server_type'] && $result['htaccess'] ) {
+			$result['message'] = __( 'Apache-Server mit .htaccess-Schutz erkannt.', 'recruiting-playbook' );
+		} else {
+			$result['message'] = __( 'Dokumentenschutz eingerichtet. Bitte testen Sie den direkten Zugriff auf Dokumente.', 'recruiting-playbook' );
+		}
+
+		return $result;
 	}
 
 	/**
