@@ -350,4 +350,225 @@ RP-BUNDLE-C5P2-N8K4-M3L7-T9R2-2E4F   (Pro + AI)
 
 ---
 
+## Risiken & Nachhaltigkeit
+
+### Risiko 1: Lifetime-Lizenz Wirtschaftlichkeit
+
+**Problem:**
+Die Pro-Lizenz für 149€ ist eine Einmalzahlung (Lifetime). Jedoch:
+- WordPress-Updates erfordern kontinuierliche Anpassungen
+- Support-Anfragen verursachen laufende Kosten
+- KI-Schnittstellen ändern sich, erfordern Wartung
+- Nutzer mit Lifetime-Lizenz + gekündigtem AI-Addon behalten Pro-Features
+
+**Langfristige Kostenrechnung:**
+```
+Jahr 1: 149€ Einnahmen, ~20€ Support-Kosten = +129€
+Jahr 2: 0€ Einnahmen, ~20€ Support-Kosten = -20€
+Jahr 3: 0€ Einnahmen, ~20€ Support-Kosten = -20€
+Jahr 4: 0€ Einnahmen, ~20€ Support-Kosten = -20€
+...
+Break-Even nach Jahr 7-8 wenn Support-Bedarf steigt
+```
+
+**Mögliche Lösungen (für spätere Evaluation):**
+
+| Option | Beschreibung | Pro | Contra |
+|--------|--------------|-----|--------|
+| **Status Quo** | Lifetime bleibt | Einfach, Marketing-Vorteil | Langfristiges Risiko |
+| **Wartungspauschale** | 49€/Jahr nach Jahr 1 für Updates | Recurring Revenue | Verkompliziert Angebot |
+| **Major Version Upgrade** | Pro 2.0 kostet erneut | Branchenüblich | Kundenunzufriedenheit |
+| **Support-Zeitlimit** | Lifetime Updates, 1 Jahr Support | Klare Abgrenzung | Support-Erwartung bleibt |
+
+**Empfehlung:**
+Zunächst mit Lifetime starten (Marketing-Vorteil, Marktdurchdringung). Nach 12-18 Monaten Daten sammeln und evaluieren:
+- Wie hoch ist der tatsächliche Support-Aufwand?
+- Wie viele Kunden kaufen AI-Addon zusätzlich?
+- Conversion-Rate Free → Pro
+
+---
+
+### Risiko 2: AI-Kosten vs. 19€ Abo-Preis
+
+**Problem:**
+Das AI-Addon kostet 19€/Monat für 100 Analysen. Die tatsächlichen API-Kosten variieren:
+
+**Kostenrechnung pro Analyse (Stand Januar 2025):**
+
+| Provider | Input (~2000 Token) | Output (~500 Token) | Gesamt/Analyse |
+|----------|---------------------|---------------------|----------------|
+| Claude 3 Sonnet | ~0.006€ | ~0.008€ | **~0.014€** |
+| Claude 3 Opus | ~0.03€ | ~0.04€ | **~0.07€** |
+| GPT-4 Turbo | ~0.02€ | ~0.03€ | **~0.05€** |
+| GPT-4o | ~0.01€ | ~0.02€ | **~0.03€** |
+
+**Bei 100 Analysen/Monat:**
+- Best Case (Sonnet): 100 × 0.014€ = **1.40€** → Marge: 17.60€ (93%)
+- Worst Case (Opus): 100 × 0.07€ = **7.00€** → Marge: 12.00€ (63%)
+
+**Risiken:**
+- Preiserhöhungen durch API-Provider
+- Nutzer mit vielen großen Dokumenten (höhere Token-Zahl)
+- Missbrauch durch Bulk-Uploads
+
+### Fair-Use-Policy für AI-Addon
+
+Um das Geschäftsmodell zu schützen, gilt folgende Fair-Use-Policy:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  FAIR-USE-POLICY                             │
+│                  AI-Addon (19€/Monat)                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  INKLUSIVE:                                                  │
+│  • 100 KI-Analysen pro Monat                                │
+│  • Dokumente bis 10 MB pro Upload                           │
+│  • Bis zu 5 Dokumente pro Analyse                           │
+│  • Standard-Antwortzeit (< 30 Sekunden)                     │
+│                                                              │
+│  LIMITS:                                                     │
+│  • Max. 10.000 Token Input pro Analyse                      │
+│  • Bei Überschreitung: Zusammenfassung statt Volltext       │
+│  • Ungenutzte Analysen verfallen am Monatsende              │
+│                                                              │
+│  BEI ÜBERMÄSSIGER NUTZUNG:                                  │
+│  • Benachrichtigung an Admin bei > 80% Verbrauch            │
+│  • Extra-Pakete können jederzeit nachgebucht werden         │
+│  • Wiederholte Limit-Überschreitung: Account-Review         │
+│                                                              │
+│  KOSTENDECKEL (optional konfigurierbar):                    │
+│  • Admin kann monatliches Budget begrenzen                  │
+│  • Bei Erreichen: Analyse pausiert bis Monatswechsel        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Technische Umsetzung Fair-Use
+
+```php
+<?php
+// src/AI/Limits/UsageLimiter.php
+
+class UsageLimiter {
+
+    private const DEFAULT_MONTHLY_ANALYSES = 100;
+    private const MAX_INPUT_TOKENS = 10000;
+    private const MAX_DOCUMENTS_PER_ANALYSIS = 5;
+    private const MAX_FILE_SIZE_MB = 10;
+
+    /**
+     * Prüft ob Analyse durchgeführt werden kann
+     */
+    public function can_analyze( int $site_id ): UsageCheckResult {
+        $usage = $this->get_current_usage( $site_id );
+        $limit = $this->get_limit( $site_id );
+
+        if ( $usage >= $limit ) {
+            return new UsageCheckResult(
+                allowed: false,
+                reason: 'monthly_limit_reached',
+                message: sprintf(
+                    __( 'Monatliches Limit erreicht (%d/%d Analysen). Kaufen Sie ein Extra-Paket oder warten Sie bis zum %s.', 'recruiting-playbook' ),
+                    $usage,
+                    $limit,
+                    date_i18n( 'd.m.Y', strtotime( 'first day of next month' ) )
+                ),
+                upgrade_url: $this->get_extra_pack_url()
+            );
+        }
+
+        // Warnung bei > 80%
+        $warning = null;
+        if ( $usage >= $limit * 0.8 ) {
+            $warning = sprintf(
+                __( 'Hinweis: %d von %d Analysen diesen Monat verbraucht.', 'recruiting-playbook' ),
+                $usage,
+                $limit
+            );
+        }
+
+        return new UsageCheckResult(
+            allowed: true,
+            remaining: $limit - $usage,
+            warning: $warning
+        );
+    }
+
+    /**
+     * Token-Limit prüfen und ggf. Text kürzen
+     */
+    public function enforce_token_limit( string $text ): string {
+        $token_count = $this->estimate_tokens( $text );
+
+        if ( $token_count <= self::MAX_INPUT_TOKENS ) {
+            return $text;
+        }
+
+        // Text intelligent kürzen (Anfang + Ende behalten)
+        return $this->smart_truncate( $text, self::MAX_INPUT_TOKENS );
+    }
+}
+```
+
+---
+
+### Risiko 3: Preisänderungen durch API-Provider
+
+**Szenario:** Anthropic erhöht Preise um 50%
+
+**Maßnahmen:**
+1. **Provider-Fallback:** OpenAI als Alternative (bereits implementiert)
+2. **Preisanpassungsklausel:** In AGB aufnehmen, dass Preise bei signifikanten API-Kostenänderungen angepasst werden können
+3. **Puffer einkalkulieren:** Aktuelle Marge (63-93%) erlaubt moderate Erhöhungen
+4. **Lokale LLM-Option:** Langfristig als Fallback für kostenoptimierte Variante
+
+**AGB-Formulierung (Entwurf):**
+> "Der Preis für das AI-Addon basiert auf den aktuellen Kosten der KI-Dienstleister. Bei signifikanten Änderungen der Drittanbieter-Kosten (> 25%) behalten wir uns vor, die Preise entsprechend anzupassen. Bestehende Abonnements werden mindestens 30 Tage vor Preisänderung informiert."
+
+---
+
+## Finanzielle Kennzahlen & Monitoring
+
+### Zu trackende Metriken
+
+| Metrik | Ziel | Alarm bei |
+|--------|------|-----------|
+| **API-Kosten pro Analyse** | < 0.05€ | > 0.10€ |
+| **Analysen pro AI-Kunde/Monat** | 30-50 | > 90 |
+| **AI-Addon Churn Rate** | < 5%/Monat | > 10%/Monat |
+| **Support-Tickets pro Pro-Kunde/Jahr** | < 3 | > 6 |
+| **Free → Pro Conversion** | 5% | < 2% |
+| **Pro → AI-Addon Upsell** | 30% | < 15% |
+
+### Dashboard-Ansicht (Admin)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  AI-ADDON GESCHÄFTSÜBERSICHT                                │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Aktive AI-Abos:        47          MRR: 893 €             │
+│  Ø Analysen/Kunde:      34          API-Kosten: 89 €       │
+│  Ø Kosten/Analyse:      0.028 €     Marge: 90%             │
+│                                                              │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │ Kosten vs. Einnahmen (letzte 6 Monate)             │    │
+│  │                                                      │    │
+│  │   1000€ ┤                           ████              │    │
+│  │    800€ ┤                     ████  ████  ████        │    │
+│  │    600€ ┤               ████  ████  ████  ████        │    │
+│  │    400€ ┤         ████  ████  ████  ████  ████        │    │
+│  │    200€ ┤    ▓▓▓  ▓▓▓▓  ▓▓▓▓  ▓▓▓▓  ▓▓▓▓  ▓▓▓▓        │    │
+│  │      0€ ┼────┴────┴────┴────┴────┴────┴────          │    │
+│  │           Aug  Sep  Okt  Nov  Dez  Jan                │    │
+│  │                                                      │    │
+│  │    ████ Einnahmen    ▓▓▓▓ API-Kosten                 │    │
+│  └────────────────────────────────────────────────────┘    │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
 *Letzte Aktualisierung: Januar 2025*

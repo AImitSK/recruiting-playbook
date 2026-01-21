@@ -801,7 +801,276 @@ CREATE TABLE {prefix}rp_email_log (
 
 ---
 
-## 12. Migration & Installation
+## 12. Backup-Hinweise & Datenintegrität
+
+### Problem: Custom Tables und Standard-Backups
+
+> **Wichtig:** Viele WordPress-Backup-Plugins sichern nur Standard-Tabellen!
+
+**Betroffene Tabellen:**
+- `rp_applications`
+- `rp_candidates`
+- `rp_documents`
+- `rp_activity_log`
+- `rp_api_keys`
+- `rp_webhooks`
+- `rp_webhook_deliveries`
+- `rp_email_log`
+
+**Potenzielle Probleme:**
+
+| Szenario | Risiko |
+|----------|--------|
+| **Partial Backup** | Plugin sichert nur `wp_posts` (Jobs) aber nicht Custom Tables (Bewerbungen) |
+| **Partial Restore** | Jobs werden wiederhergestellt, Bewerbungen fehlen → Foreign Key Fehler |
+| **Migration** | Umzug mit Standard-Tools verliert Custom Tables |
+| **Plugin-Updates** | Backup vor Update enthält nicht alle Daten |
+
+### Kompatibilität mit Backup-Plugins
+
+| Plugin | Custom Tables | Empfehlung |
+|--------|:-------------:|------------|
+| **UpdraftPlus** | ✅ (wenn konfiguriert) | "Nicht-WP-Tabellen" aktivieren |
+| **BackWPup** | ✅ | Automatisch alle Tabellen |
+| **Duplicator** | ✅ | Vollständige DB-Kopie |
+| **All-in-One WP Migration** | ✅ | Vollständige DB |
+| **WP Migrate DB** | ⚠️ | Manuell Tabellen auswählen |
+| **Jetpack Backup** | ⚠️ | Nur Standard-Tabellen |
+| **ManageWP** | ⚠️ | Prüfung erforderlich |
+
+### Eigene Export/Import-Funktion
+
+```php
+<?php
+// src/Admin/BackupExporter.php
+
+namespace RecruitingPlaybook\Admin;
+
+class BackupExporter {
+
+    private const TABLES = [
+        'rp_candidates',
+        'rp_applications',
+        'rp_documents',
+        'rp_activity_log',
+        'rp_api_keys',
+        'rp_webhooks',
+        'rp_webhook_deliveries',
+        'rp_email_log',
+    ];
+
+    /**
+     * Vollständigen Export erstellen
+     */
+    public function export(): string {
+        global $wpdb;
+
+        $export = [
+            'plugin_version' => RP_VERSION,
+            'export_date'    => current_time( 'c' ),
+            'site_url'       => site_url(),
+            'tables'         => [],
+            'jobs'           => [],
+            'settings'       => get_option( 'rp_settings', [] ),
+        ];
+
+        // Custom Tables exportieren
+        foreach ( self::TABLES as $table ) {
+            $full_table = $wpdb->prefix . $table;
+
+            if ( $wpdb->get_var( "SHOW TABLES LIKE '$full_table'" ) === $full_table ) {
+                $export['tables'][ $table ] = $wpdb->get_results(
+                    "SELECT * FROM $full_table",
+                    ARRAY_A
+                );
+            }
+        }
+
+        // Jobs (Post Type) exportieren
+        $jobs = get_posts( [
+            'post_type'   => 'job_listing',
+            'post_status' => 'any',
+            'numberposts' => -1,
+        ] );
+
+        foreach ( $jobs as $job ) {
+            $export['jobs'][] = [
+                'post'     => (array) $job,
+                'meta'     => get_post_meta( $job->ID ),
+                'terms'    => wp_get_object_terms( $job->ID, [ 'job_category', 'job_location', 'employment_type' ] ),
+            ];
+        }
+
+        // JSON erstellen
+        $json = wp_json_encode( $export, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+
+        // Datei speichern
+        $upload_dir = wp_upload_dir();
+        $backup_dir = $upload_dir['basedir'] . '/recruiting-playbook/backups/';
+
+        if ( ! is_dir( $backup_dir ) ) {
+            wp_mkdir_p( $backup_dir );
+            file_put_contents( $backup_dir . '.htaccess', "Deny from all\n" );
+        }
+
+        $filename = 'rp-backup-' . date( 'Y-m-d-His' ) . '.json';
+        $filepath = $backup_dir . $filename;
+
+        file_put_contents( $filepath, $json );
+
+        return $filepath;
+    }
+
+    /**
+     * Import aus Backup
+     */
+    public function import( string $filepath ): array {
+        global $wpdb;
+
+        $json = file_get_contents( $filepath );
+        $data = json_decode( $json, true );
+
+        if ( ! $data ) {
+            return [ 'success' => false, 'error' => 'Invalid JSON' ];
+        }
+
+        $stats = [
+            'tables_imported' => 0,
+            'jobs_imported'   => 0,
+            'errors'          => [],
+        ];
+
+        // Tabellen importieren (mit Truncate!)
+        foreach ( $data['tables'] as $table => $rows ) {
+            $full_table = $wpdb->prefix . $table;
+
+            // Tabelle leeren
+            $wpdb->query( "TRUNCATE TABLE $full_table" );
+
+            // Daten einfügen
+            foreach ( $rows as $row ) {
+                $wpdb->insert( $full_table, $row );
+            }
+
+            $stats['tables_imported']++;
+        }
+
+        // Settings importieren
+        if ( ! empty( $data['settings'] ) ) {
+            update_option( 'rp_settings', $data['settings'] );
+        }
+
+        return [
+            'success' => true,
+            'stats'   => $stats,
+        ];
+    }
+}
+```
+
+### Admin-Hinweis bei Backup-Plugins
+
+```php
+<?php
+// Warnung anzeigen wenn problematisches Backup-Plugin erkannt
+
+add_action( 'admin_notices', function() {
+    // Nur auf Plugin-Seiten
+    if ( ! isset( $_GET['page'] ) || strpos( $_GET['page'], 'recruiting' ) === false ) {
+        return;
+    }
+
+    $problematic_plugins = [
+        'jetpack/jetpack.php' => 'Jetpack Backup',
+    ];
+
+    foreach ( $problematic_plugins as $plugin => $name ) {
+        if ( is_plugin_active( $plugin ) ) {
+            ?>
+            <div class="notice notice-warning">
+                <p>
+                    <strong><?php esc_html_e( 'Backup-Hinweis:', 'recruiting-playbook' ); ?></strong>
+                    <?php printf(
+                        esc_html__( '%s sichert möglicherweise nicht alle Plugin-Daten (Custom Tables). Nutzen Sie die integrierte Export-Funktion für vollständige Backups.', 'recruiting-playbook' ),
+                        esc_html( $name )
+                    ); ?>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-tools&tab=backup' ) ); ?>">
+                        <?php esc_html_e( 'Zum Backup-Tool', 'recruiting-playbook' ); ?>
+                    </a>
+                </p>
+            </div>
+            <?php
+            break;
+        }
+    }
+} );
+```
+
+### Foreign Key Constraints bei Restore
+
+**Problem:** Bei einem Partial Restore können Foreign Key Constraints verletzt werden.
+
+**Beispiel:**
+```sql
+-- Application verweist auf Candidate ID 123
+-- Aber Candidate 123 existiert nicht mehr nach Restore
+-- → Error: Cannot add or update a child row: a foreign key constraint fails
+```
+
+**Lösung: Temporäres Deaktivieren der FK-Checks beim Import**
+
+```php
+<?php
+// Vor Import
+$wpdb->query( 'SET FOREIGN_KEY_CHECKS = 0' );
+
+// Import durchführen
+// ...
+
+// Nach Import
+$wpdb->query( 'SET FOREIGN_KEY_CHECKS = 1' );
+
+// Integritätsprüfung
+$orphaned = $wpdb->get_results(
+    "SELECT a.id FROM {$wpdb->prefix}rp_applications a
+     LEFT JOIN {$wpdb->prefix}rp_candidates c ON a.candidate_id = c.id
+     WHERE c.id IS NULL"
+);
+
+if ( ! empty( $orphaned ) ) {
+    // Verwaiste Bewerbungen melden oder löschen
+}
+```
+
+### Empfehlung für Nutzer
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      BACKUP-EMPFEHLUNG                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Für vollständige Backups aller Recruiting-Daten:           │
+│                                                              │
+│  1. Nutzen Sie die integrierte Export-Funktion unter        │
+│     Recruiting → Werkzeuge → Backup                         │
+│                                                              │
+│  2. ODER stellen Sie sicher, dass Ihr Backup-Plugin         │
+│     alle Datenbank-Tabellen sichert:                        │
+│     • rp_candidates                                          │
+│     • rp_applications                                        │
+│     • rp_documents                                           │
+│     • rp_activity_log                                        │
+│     • ... (alle rp_* Tabellen)                              │
+│                                                              │
+│  3. Vergessen Sie nicht das Dokumenten-Verzeichnis:         │
+│     /wp-content/uploads/recruiting-playbook/                 │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 13. Migration & Installation
 
 ### Installation
 

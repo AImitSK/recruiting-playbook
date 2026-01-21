@@ -428,6 +428,11 @@ Hinweis: DATEV-Integration ist komplex,
 
 ## 5. Priorisierung & Roadmap
 
+> **Wichtiger Hinweis zur Zielgruppe:**
+> Die Kernzielgruppe (Pflegedienstleister, Zeitarbeit) nutzt oft spezialisierte Software wie Zvoove.
+> **Ohne diese Integrationen ist das Plugin für diese Zielgruppe nur ein weiteres Formular-Tool.**
+> Die Integrationen wurden daher in Phase 2 vorgezogen.
+
 ### Phase 1 (MVP) – Must-Have
 
 - [x] DSGVO: Consent-Checkbox
@@ -435,7 +440,7 @@ Hinweis: DATEV-Integration ist komplex,
 - [ ] Google for Jobs Schema (automatisch)
 - [ ] CSV-Export (Basic)
 
-### Phase 2 (Pro) – Should-Have
+### Phase 2 (Pro) – Should-Have + Kritische Integrationen
 
 - [ ] DSGVO: Automatische Löschfristen
 - [ ] DSGVO: Datenexport pro Bewerber
@@ -443,14 +448,15 @@ Hinweis: DATEV-Integration ist komplex,
 - [ ] REST API
 - [ ] XML-Feed für Job-Portale
 - [ ] Indeed Integration
+- [ ] **Zvoove-Integration (Addon)** ← Vorgezogen! Kritisch für Zielgruppe
+- [ ] **DATEV-Export (Addon)** ← Vorgezogen! Kritisch für Zielgruppe
 
-### Phase 3 (AI + Addons) – Nice-to-Have
+### Phase 3 (AI + weitere Addons)
 
-- [ ] Zvoove-Integration (Addon)
 - [ ] Personio-Integration (Addon)
-- [ ] DATEV-Export (Addon)
 - [ ] Multiposting-Dashboard
 - [ ] Mehrsprachigkeit
+- [ ] Microsoft 365 / Teams Integration
 
 ### Phase 4 (Scale) – Future
 
@@ -458,6 +464,15 @@ Hinweis: DATEV-Integration ist komplex,
 - [ ] SAP SuccessFactors
 - [ ] White-Label API
 - [ ] Marketplace für Integrationen
+
+### Begründung für Priorisierung
+
+| Integration | Zielgruppe | Business Impact | Aufwand |
+|-------------|------------|-----------------|---------|
+| **Zvoove** | Zeitarbeit, Pflege | Hoch – ohne diese kein Workflow | Mittel (REST API vorhanden) |
+| **DATEV** | Alle deutschen KMUs | Hoch – Lohnbuchhaltung | Hoch (komplexes Format) |
+| **Personio** | Startups, Tech | Mittel – alternative HR-Software | Mittel |
+| **StepStone** | Alle | Niedrig – teuer, wenig ROI für KMUs | Mittel |
 
 ---
 

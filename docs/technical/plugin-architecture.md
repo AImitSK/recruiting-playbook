@@ -1306,4 +1306,382 @@ npm test
 
 ---
 
+## E-Mail-Zustellbarkeit & SMTP
+
+### Problem: wp_mail() und Spam
+
+WordPress nutzt standardmäßig `wp_mail()` mit PHP's `mail()` Funktion. Dies führt häufig zu:
+- E-Mails landen im Spam-Ordner
+- Keine Authentifizierung (SPF/DKIM fehlen)
+- Unzuverlässige Zustellung
+- Keine Zustellberichte
+
+**Für ein Recruiting-Tool kritisch:** Verpasste Bewerbungsbestätigungen oder Interview-Einladungen!
+
+### Empfehlung: SMTP-Plugin Integration
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  E-MAIL-KONFIGURATION                        │
+│                                                              │
+│  ⚠️ Warnung: wp_mail() ohne SMTP kann zu Spam führen        │
+│                                                              │
+│  Empfohlene Plugins:                                         │
+│  • WP Mail SMTP (2+ Mio. Installationen)                    │
+│  • FluentSMTP (kostenlos, gut)                              │
+│  • Post SMTP (Open Source)                                   │
+│                                                              │
+│  Empfohlene Provider:                                        │
+│  • SendGrid (kostenlos bis 100/Tag)                         │
+│  • Mailgun (5.000/Monat kostenlos)                          │
+│  • Amazon SES (günstig bei Volumen)                         │
+│  • SMTP2GO                                                   │
+│                                                              │
+│  [SMTP-Plugin installieren]  [Später erinnern]              │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### SMTP-Check bei Plugin-Aktivierung
+
+```php
+<?php
+// src/Core/Activator.php (erweitert)
+
+class Activator {
+
+    /**
+     * SMTP-Konfiguration prüfen und warnen
+     */
+    public static function check_email_configuration(): void {
+        // Prüfen ob ein SMTP-Plugin aktiv ist
+        $smtp_plugins = [
+            'wp-mail-smtp/wp_mail_smtp.php',
+            'fluent-smtp/fluent-smtp.php',
+            'post-smtp/postman-smtp.php',
+            'easy-wp-smtp/easy-wp-smtp.php',
+        ];
+
+        $smtp_active = false;
+        foreach ( $smtp_plugins as $plugin ) {
+            if ( is_plugin_active( $plugin ) ) {
+                $smtp_active = true;
+                break;
+            }
+        }
+
+        if ( ! $smtp_active ) {
+            // Admin-Notice setzen
+            set_transient( 'rp_smtp_warning', true, DAY_IN_SECONDS );
+        }
+    }
+}
+
+// Admin-Notice anzeigen
+add_action( 'admin_notices', function() {
+    if ( get_transient( 'rp_smtp_warning' ) && current_user_can( 'manage_options' ) ) {
+        ?>
+        <div class="notice notice-warning is-dismissible" data-rp-dismiss="smtp_warning">
+            <p>
+                <strong><?php esc_html_e( 'Recruiting Playbook: E-Mail-Konfiguration', 'recruiting-playbook' ); ?></strong><br>
+                <?php esc_html_e( 'Für zuverlässige E-Mail-Zustellung empfehlen wir die Installation eines SMTP-Plugins.', 'recruiting-playbook' ); ?>
+                <a href="https://wordpress.org/plugins/wp-mail-smtp/" target="_blank">
+                    <?php esc_html_e( 'WP Mail SMTP installieren', 'recruiting-playbook' ); ?>
+                </a>
+            </p>
+        </div>
+        <?php
+    }
+} );
+```
+
+### E-Mail-Test-Funktion
+
+```php
+<?php
+// src/Admin/EmailTest.php
+
+class EmailTest {
+
+    /**
+     * Test-E-Mail senden
+     */
+    public static function send_test(): array {
+        $to = get_option( 'admin_email' );
+        $subject = __( 'Recruiting Playbook: Test-E-Mail', 'recruiting-playbook' );
+        $message = __( 'Diese Test-E-Mail bestätigt, dass die E-Mail-Konfiguration funktioniert.', 'recruiting-playbook' );
+
+        $headers = [
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . get_bloginfo( 'name' ) . ' <' . get_option( 'admin_email' ) . '>',
+        ];
+
+        $sent = wp_mail( $to, $subject, $message, $headers );
+
+        return [
+            'success' => $sent,
+            'to'      => $to,
+            'message' => $sent
+                ? __( 'Test-E-Mail wurde gesendet. Prüfen Sie Ihren Posteingang (und Spam-Ordner).', 'recruiting-playbook' )
+                : __( 'Test-E-Mail konnte nicht gesendet werden. Bitte SMTP konfigurieren.', 'recruiting-playbook' ),
+        ];
+    }
+}
+```
+
+---
+
+## WP-Cron Cleanup-Tasks
+
+### Übersicht der Cron-Jobs
+
+Das Plugin verwendet WP-Cron für verschiedene Hintergrund-Tasks:
+
+| Event | Intervall | Beschreibung |
+|-------|-----------|--------------|
+| `rp_cleanup_ai_temp_files` | 15 Minuten | Verwaiste AI-Temp-Dateien löschen |
+| `rp_cleanup_expired_talent_pool` | Täglich | Abgelaufene Talent-Pool-Einträge anonymisieren |
+| `rp_cleanup_rejected_applications` | Täglich | Abgelehnte Bewerber nach Frist löschen |
+| `rp_license_daily_check` | Täglich | Lizenz-Validierung (Phase 2) |
+| `rp_send_digest_emails` | Täglich | Zusammenfassungs-E-Mails (Pro) |
+
+### Cron-Setup bei Aktivierung
+
+```php
+<?php
+// src/Core/CronManager.php
+
+namespace RecruitingPlaybook\Core;
+
+class CronManager {
+
+    /**
+     * Alle Cron-Jobs registrieren
+     */
+    public static function register_all(): void {
+        // Custom Intervalle
+        add_filter( 'cron_schedules', [ self::class, 'add_custom_intervals' ] );
+
+        // Jobs registrieren
+        self::schedule_cleanup_jobs();
+        self::schedule_notification_jobs();
+    }
+
+    /**
+     * Custom Cron-Intervalle
+     */
+    public static function add_custom_intervals( array $schedules ): array {
+        $schedules['rp_15min'] = [
+            'interval' => 15 * 60,
+            'display'  => __( 'Alle 15 Minuten', 'recruiting-playbook' ),
+        ];
+
+        $schedules['rp_weekly'] = [
+            'interval' => 7 * DAY_IN_SECONDS,
+            'display'  => __( 'Wöchentlich', 'recruiting-playbook' ),
+        ];
+
+        return $schedules;
+    }
+
+    /**
+     * Cleanup-Jobs registrieren
+     */
+    private static function schedule_cleanup_jobs(): void {
+        // AI Temp Files (alle 15 Min)
+        if ( ! wp_next_scheduled( 'rp_cleanup_ai_temp_files' ) ) {
+            wp_schedule_event( time(), 'rp_15min', 'rp_cleanup_ai_temp_files' );
+        }
+
+        // Expired Talent Pool (täglich um 3:00)
+        if ( ! wp_next_scheduled( 'rp_cleanup_expired_talent_pool' ) ) {
+            wp_schedule_event( strtotime( '03:00:00' ), 'daily', 'rp_cleanup_expired_talent_pool' );
+        }
+
+        // Rejected Applications (täglich um 4:00)
+        if ( ! wp_next_scheduled( 'rp_cleanup_rejected_applications' ) ) {
+            wp_schedule_event( strtotime( '04:00:00' ), 'daily', 'rp_cleanup_rejected_applications' );
+        }
+    }
+
+    /**
+     * Alle Cron-Jobs entfernen (bei Deaktivierung)
+     */
+    public static function unregister_all(): void {
+        $events = [
+            'rp_cleanup_ai_temp_files',
+            'rp_cleanup_expired_talent_pool',
+            'rp_cleanup_rejected_applications',
+            'rp_license_daily_check',
+            'rp_send_digest_emails',
+        ];
+
+        foreach ( $events as $event ) {
+            $timestamp = wp_next_scheduled( $event );
+            if ( $timestamp ) {
+                wp_unschedule_event( $timestamp, $event );
+            }
+        }
+    }
+}
+```
+
+### Cleanup-Handler
+
+```php
+<?php
+// src/Services/CleanupService.php
+
+namespace RecruitingPlaybook\Services;
+
+class CleanupService {
+
+    /**
+     * Abgelaufene Talent-Pool-Einträge anonymisieren
+     */
+    public static function cleanup_expired_talent_pool(): void {
+        global $wpdb;
+
+        $expired = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}rp_candidates
+             WHERE talent_pool = 1
+             AND talent_pool_expires_at IS NOT NULL
+             AND talent_pool_expires_at < %s
+             AND deleted_at IS NULL",
+            current_time( 'mysql' )
+        ) );
+
+        $count = 0;
+        foreach ( $expired as $candidate ) {
+            $candidate_service = new CandidateService();
+            $candidate_service->anonymize( $candidate->id, 'talent_pool_expired' );
+            $count++;
+        }
+
+        if ( $count > 0 ) {
+            error_log( sprintf(
+                '[Recruiting Playbook] Talent-Pool Cleanup: %d Kandidaten anonymisiert.',
+                $count
+            ) );
+        }
+    }
+
+    /**
+     * Abgelehnte Bewerbungen nach Frist löschen
+     */
+    public static function cleanup_rejected_applications(): void {
+        $settings = get_option( 'rp_settings', [] );
+        $days = $settings['applications']['auto_delete_rejected_days'] ?? 180;
+
+        if ( $days <= 0 ) {
+            return; // Deaktiviert
+        }
+
+        global $wpdb;
+
+        $threshold = date( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+
+        $expired = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}rp_applications
+             WHERE status = 'rejected'
+             AND status_changed_at < %s
+             AND deleted_at IS NULL",
+            $threshold
+        ) );
+
+        $count = 0;
+        foreach ( $expired as $application ) {
+            $application_service = new ApplicationService();
+            $application_service->delete_gdpr( $application->id, 'auto_cleanup_rejected' );
+            $count++;
+        }
+
+        if ( $count > 0 ) {
+            error_log( sprintf(
+                '[Recruiting Playbook] Rejected Applications Cleanup: %d Bewerbungen gelöscht (älter als %d Tage).',
+                $count,
+                $days
+            ) );
+        }
+    }
+
+    /**
+     * Verwaiste Dokumente finden und löschen
+     */
+    public static function cleanup_orphaned_documents(): void {
+        $upload_dir = wp_upload_dir();
+        $doc_path = $upload_dir['basedir'] . '/recruiting-playbook/documents/';
+
+        if ( ! is_dir( $doc_path ) ) {
+            return;
+        }
+
+        global $wpdb;
+
+        // Alle Dateien im Verzeichnis
+        $files = glob( $doc_path . '*/*' ); // Jahr/Monat Struktur
+
+        foreach ( $files as $file ) {
+            if ( ! is_file( $file ) ) {
+                continue;
+            }
+
+            $filename = basename( $file );
+
+            // In DB prüfen
+            $exists = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}rp_documents WHERE stored_filename = %s",
+                $filename
+            ) );
+
+            if ( ! $exists ) {
+                // Verwaiste Datei - älter als 1 Tag?
+                if ( filemtime( $file ) < strtotime( '-1 day' ) ) {
+                    @unlink( $file );
+                    error_log( sprintf(
+                        '[Recruiting Playbook] Orphaned document deleted: %s',
+                        $filename
+                    ) );
+                }
+            }
+        }
+    }
+}
+
+// Cron-Hooks registrieren
+add_action( 'rp_cleanup_expired_talent_pool', [ CleanupService::class, 'cleanup_expired_talent_pool' ] );
+add_action( 'rp_cleanup_rejected_applications', [ CleanupService::class, 'cleanup_rejected_applications' ] );
+```
+
+### Admin-Übersicht der Cron-Jobs
+
+```php
+<?php
+// In der Plugin-Status-Seite anzeigen
+
+function rp_get_cron_status(): array {
+    $events = [
+        'rp_cleanup_ai_temp_files' => __( 'AI Temp-Dateien Cleanup', 'recruiting-playbook' ),
+        'rp_cleanup_expired_talent_pool' => __( 'Talent-Pool Cleanup', 'recruiting-playbook' ),
+        'rp_cleanup_rejected_applications' => __( 'Abgelehnte Bewerbungen Cleanup', 'recruiting-playbook' ),
+    ];
+
+    $status = [];
+
+    foreach ( $events as $event => $label ) {
+        $next = wp_next_scheduled( $event );
+        $status[] = [
+            'event' => $event,
+            'label' => $label,
+            'scheduled' => $next !== false,
+            'next_run' => $next ? date_i18n( 'd.m.Y H:i', $next ) : '-',
+        ];
+    }
+
+    return $status;
+}
+```
+
+---
+
 *Letzte Aktualisierung: Januar 2025*

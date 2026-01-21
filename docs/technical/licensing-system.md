@@ -1212,4 +1212,241 @@ function UpgradePrompt({ feature, tier = 'PRO' }) {
 
 ---
 
+## Sicherheit gegen lokale Manipulation
+
+### Bekannte Angriffsvektoren
+
+| Angriff | Beschreibung | Risiko |
+|---------|--------------|--------|
+| **Option Manipulation** | `update_option('rp_license', [...])` im Theme/Plugin | Hoch |
+| **Database Edit** | Direktes Ändern von `wp_options` | Mittel |
+| **Transient Injection** | Fake-Cache für Lizenzstatus | Mittel |
+| **Code Patching** | `rp_can()` Funktion überschreiben | Niedrig |
+
+### Gegenmaßnahmen
+
+#### 1. Regelmäßige Remote-Validierung (Phase 2)
+
+```php
+<?php
+// src/Licensing/LicenseValidator.php
+
+class LicenseValidator {
+
+    /**
+     * Täglicher Cron-Check (zusätzlich zum Cache)
+     */
+    public static function schedule_daily_check(): void {
+        if ( ! wp_next_scheduled( 'rp_license_daily_check' ) ) {
+            wp_schedule_event( time(), 'daily', 'rp_license_daily_check' );
+        }
+
+        add_action( 'rp_license_daily_check', [ self::class, 'validate_remote' ] );
+    }
+
+    /**
+     * Remote-Validierung durchführen
+     */
+    public static function validate_remote(): void {
+        $license_manager = LicenseManager::get_instance();
+        $license = $license_manager->get_license();
+
+        if ( ! $license || empty( $license['key'] ) ) {
+            return;
+        }
+
+        // Server-Check erzwingen (Cache ignorieren)
+        $result = $license_manager->validate_with_server( $license['key'], force: true );
+
+        if ( ! $result['valid'] ) {
+            // Lizenz ungültig: Downgrade auf FREE
+            $license_manager->force_downgrade( $result['reason'] );
+
+            // Admin benachrichtigen
+            self::notify_admin_invalid_license( $result );
+        }
+    }
+}
+```
+
+#### 2. Integritätsprüfung der Lizenzdaten
+
+```php
+<?php
+// src/Licensing/LicenseIntegrity.php
+
+class LicenseIntegrity {
+
+    private const INTEGRITY_KEY = 'rp_license_integrity';
+
+    /**
+     * Signatur für Lizenzdaten erstellen
+     */
+    public static function sign( array $license_data ): string {
+        $payload = json_encode( [
+            'key'    => $license_data['key'],
+            'tier'   => $license_data['tier'],
+            'domain' => $license_data['domain'],
+        ] );
+
+        // HMAC mit site-spezifischem Secret
+        return hash_hmac( 'sha256', $payload, self::get_secret() );
+    }
+
+    /**
+     * Signatur verifizieren
+     */
+    public static function verify( array $license_data, string $signature ): bool {
+        $expected = self::sign( $license_data );
+        return hash_equals( $expected, $signature );
+    }
+
+    /**
+     * Site-spezifisches Secret (nicht in DB, schwer zu faken)
+     */
+    private static function get_secret(): string {
+        // Kombination aus mehreren Quellen
+        return hash( 'sha256', implode( '|', [
+            NONCE_KEY,           // wp-config.php
+            SECURE_AUTH_KEY,     // wp-config.php
+            DB_NAME,
+            site_url(),
+        ] ) );
+    }
+}
+```
+
+#### 3. Feature-Checks mit Redundanz
+
+```php
+<?php
+// src/Licensing/helpers.php (erweitert)
+
+/**
+ * Sicherer Feature-Check mit Integritätsprüfung
+ */
+function rp_can_secure( string $feature ): mixed {
+    static $verified = null;
+
+    // Einmalige Integritätsprüfung pro Request
+    if ( $verified === null ) {
+        $license_manager = LicenseManager::get_instance();
+        $license = $license_manager->get_license();
+
+        if ( $license ) {
+            $stored_signature = get_option( LicenseIntegrity::INTEGRITY_KEY );
+            $verified = LicenseIntegrity::verify( $license, $stored_signature );
+
+            if ( ! $verified ) {
+                // Manipulation erkannt!
+                do_action( 'rp_license_tampering_detected', $license );
+
+                // Fallback auf FREE
+                return ( new FeatureFlags( 'FREE' ) )->get( $feature );
+            }
+        }
+
+        $verified = true;
+    }
+
+    return rp_can( $feature );
+}
+```
+
+#### 4. Anomalie-Erkennung
+
+```php
+<?php
+// src/Licensing/AnomalyDetector.php
+
+class AnomalyDetector {
+
+    /**
+     * Prüft auf verdächtige Änderungen
+     */
+    public static function check(): array {
+        $anomalies = [];
+
+        // 1. Plötzlicher Tier-Wechsel ohne API-Call
+        $last_known_tier = get_transient( 'rp_last_known_tier' );
+        $current_tier = rp_tier();
+
+        if ( $last_known_tier && $last_known_tier !== $current_tier ) {
+            // War ein legitimer API-Call?
+            $last_api_call = get_transient( 'rp_last_license_api_call' );
+
+            if ( ! $last_api_call || ( time() - $last_api_call ) > 60 ) {
+                $anomalies[] = [
+                    'type'    => 'unexpected_tier_change',
+                    'from'    => $last_known_tier,
+                    'to'      => $current_tier,
+                    'message' => 'Tier changed without API validation',
+                ];
+            }
+        }
+
+        // 2. Lizenz aktiviert, aber nie Server-Check
+        $license = LicenseManager::get_instance()->get_license();
+        if ( $license && empty( $license['last_server_check'] ) ) {
+            $anomalies[] = [
+                'type'    => 'never_validated',
+                'message' => 'License was never validated with server',
+            ];
+        }
+
+        // 3. Zu viele Feature-Checks in kurzer Zeit (Brute-Force?)
+        // ... weitere Checks
+
+        return $anomalies;
+    }
+}
+```
+
+### Admin-Warnung bei Manipulation
+
+```php
+<?php
+// Bei erkannter Manipulation
+add_action( 'rp_license_tampering_detected', function( $license ) {
+    // Admin-Notice
+    add_action( 'admin_notices', function() {
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <strong><?php esc_html_e( 'Recruiting Playbook: Lizenzproblem erkannt', 'recruiting-playbook' ); ?></strong><br>
+                <?php esc_html_e( 'Die Lizenzdaten scheinen manipuliert worden zu sein. Bitte aktivieren Sie Ihre Lizenz erneut.', 'recruiting-playbook' ); ?>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-license' ) ); ?>">
+                    <?php esc_html_e( 'Zur Lizenzverwaltung', 'recruiting-playbook' ); ?>
+                </a>
+            </p>
+        </div>
+        <?php
+    } );
+
+    // Log für spätere Analyse
+    error_log( sprintf(
+        '[Recruiting Playbook] License tampering detected. Domain: %s, Stored tier: %s',
+        site_url(),
+        $license['tier'] ?? 'unknown'
+    ) );
+} );
+```
+
+### Empfohlene Sicherheitsstufen
+
+| Stufe | Maßnahmen | Für |
+|-------|-----------|-----|
+| **Basic (Phase 1)** | Checksum, Integritätssignatur | MVP |
+| **Standard (Phase 2)** | + Täglicher Remote-Check | Production |
+| **Strict (Optional)** | + Anomalie-Erkennung, Echtzeit-Checks | High-Value |
+
+### Hinweis zur Realität
+
+> **Wichtig:** Kein Lizenz-System ist 100% sicher gegen Manipulation.
+> Ziel ist es, den Aufwand für Umgehung höher zu machen als den Preis der Lizenz.
+> Die meisten Nutzer sind ehrlich – die Maßnahmen schützen vor Gelegenheits-Piraterie,
+> nicht vor determinierter Reverse-Engineering.
+
+---
+
 *Letzte Aktualisierung: Januar 2025*

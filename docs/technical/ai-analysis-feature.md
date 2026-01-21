@@ -374,7 +374,7 @@ Nach dem Upload (in Modus A oder B) kann der Bewerber eine **tiefere Analyse** s
 │                                │                                │
 │                                │ API Call                       │
 │                                ▼                                │
-│  ANTHROPIC CLAUDE API                                           │
+│  AI PROVIDER (Primary: Anthropic, Fallback: OpenAI)            │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │  • PDF/DOC Text-Extraktion                              │   │
 │  │  • Profil-Analyse                                        │   │
@@ -383,6 +383,635 @@ Nach dem Upload (in Modus A oder B) kann der Bewerber eine **tiefere Analyse** s
 │  └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## AI-Provider Fallback-Strategie
+
+### Risiko: Single Point of Failure
+
+Das KI-Feature hängt von externen API-Providern ab. Folgende Risiken bestehen:
+- Preiserhöhungen durch Anthropic
+- API-Änderungen oder Deprecation
+- Regionale Einschränkungen (EU-Datenschutz)
+- Service-Ausfälle
+
+### Lösung: Provider-Abstraktionsschicht
+
+```php
+<?php
+// src/AI/Client/AIClientInterface.php
+
+namespace RecruitingPlaybook\AI\Client;
+
+interface AIClientInterface {
+
+    /**
+     * Analyse durchführen
+     */
+    public function analyze( string $prompt, array $options = [] ): array;
+
+    /**
+     * Provider-Name
+     */
+    public function get_provider_name(): string;
+
+    /**
+     * Ist der Provider verfügbar?
+     */
+    public function is_available(): bool;
+
+    /**
+     * Geschätzte Kosten pro Request
+     */
+    public function estimate_cost( int $input_tokens, int $output_tokens ): float;
+}
+```
+
+### Implementierte Provider
+
+| Provider | Klasse | Status | Priorität |
+|----------|--------|--------|-----------|
+| **Anthropic Claude** | `ClaudeClient` | Primary | 1 |
+| **OpenAI GPT-4** | `OpenAIClient` | Fallback | 2 |
+| **Lokales LLM** | `LocalLLMClient` | Zukunft | 3 |
+
+### Provider-Manager mit Fallback
+
+```php
+<?php
+// src/AI/Client/AIProviderManager.php
+
+namespace RecruitingPlaybook\AI\Client;
+
+class AIProviderManager {
+
+    private array $providers = [];
+
+    public function __construct() {
+        // Provider nach Priorität registrieren
+        $this->register_provider( new ClaudeClient(), 1 );
+        $this->register_provider( new OpenAIClient(), 2 );
+    }
+
+    /**
+     * Analyse mit automatischem Fallback
+     */
+    public function analyze( string $prompt, array $options = [] ): array {
+        $last_error = null;
+
+        foreach ( $this->get_sorted_providers() as $provider ) {
+            if ( ! $provider->is_available() ) {
+                continue;
+            }
+
+            try {
+                $result = $provider->analyze( $prompt, $options );
+
+                // Erfolg loggen
+                $this->log_success( $provider->get_provider_name() );
+
+                return $result;
+
+            } catch ( AIProviderException $e ) {
+                $last_error = $e;
+
+                // Fehler loggen, nächsten Provider versuchen
+                $this->log_failure( $provider->get_provider_name(), $e );
+                continue;
+            }
+        }
+
+        // Alle Provider fehlgeschlagen
+        throw new AIServiceUnavailableException(
+            __( 'KI-Analyse derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+            0,
+            $last_error
+        );
+    }
+}
+```
+
+### Einstellungen für Provider-Wahl
+
+```php
+// Admin-Einstellungen: rp_settings[ai]
+[
+    'primary_provider' => 'anthropic',      // anthropic, openai
+    'fallback_enabled' => true,
+    'anthropic_api_key' => '...',
+    'openai_api_key' => '...',              // Optional für Fallback
+    'max_retries' => 2,
+    'retry_delay_ms' => 1000,
+]
+```
+
+---
+
+## Error-Handling & Partial Success
+
+### Fehlerszenarien
+
+| Szenario | Ursache | Handling |
+|----------|---------|----------|
+| **Ungültiges JSON** | AI-Halluzination, abgeschnittene Antwort | JSON-Repair versuchen, dann Fallback |
+| **Timeout** | Große Dokumente, API-Last | Retry mit Backoff |
+| **Rate Limit** | Zu viele Requests | Queue, später verarbeiten |
+| **Partial Success** | Profil erkannt, aber Match fehlgeschlagen | Teilergebnis zurückgeben |
+| **Dokument nicht lesbar** | Gescanntes PDF ohne OCR, korrupte Datei | Benutzer informieren |
+
+### Robuste JSON-Verarbeitung
+
+```php
+<?php
+// src/AI/Parser/ResponseParser.php
+
+namespace RecruitingPlaybook\AI\Parser;
+
+class ResponseParser {
+
+    /**
+     * AI-Response parsen mit Fehlertoleranz
+     */
+    public function parse( string $response, string $expected_type ): ParsedResponse {
+        // 1. Versuche direktes JSON-Parsing
+        $data = json_decode( $response, true );
+
+        if ( json_last_error() === JSON_ERROR_NONE ) {
+            return $this->validate_and_return( $data, $expected_type );
+        }
+
+        // 2. JSON aus Markdown-Codeblock extrahieren
+        if ( preg_match( '/```(?:json)?\s*([\s\S]*?)```/', $response, $matches ) ) {
+            $data = json_decode( trim( $matches[1] ), true );
+
+            if ( json_last_error() === JSON_ERROR_NONE ) {
+                return $this->validate_and_return( $data, $expected_type );
+            }
+        }
+
+        // 3. JSON-Repair versuchen (fehlende Klammern, Kommas)
+        $repaired = $this->attempt_json_repair( $response );
+
+        if ( $repaired ) {
+            return $this->validate_and_return( $repaired, $expected_type, true );
+        }
+
+        // 4. Fehlschlag
+        throw new InvalidResponseException(
+            __( 'Die KI-Antwort konnte nicht verarbeitet werden.', 'recruiting-playbook' ),
+            $response
+        );
+    }
+
+    /**
+     * Validierung und Partial Success Handling
+     */
+    private function validate_and_return( array $data, string $type, bool $was_repaired = false ): ParsedResponse {
+        $result = new ParsedResponse();
+        $result->was_repaired = $was_repaired;
+
+        // Pflichtfelder nach Typ prüfen
+        $required = $this->get_required_fields( $type );
+        $missing = [];
+
+        foreach ( $required as $field ) {
+            if ( ! isset( $data[ $field ] ) ) {
+                $missing[] = $field;
+            }
+        }
+
+        if ( ! empty( $missing ) ) {
+            // Partial Success: Vorhandene Daten zurückgeben
+            $result->is_partial = true;
+            $result->missing_fields = $missing;
+            $result->data = $data;
+
+            return $result;
+        }
+
+        $result->is_complete = true;
+        $result->data = $data;
+
+        return $result;
+    }
+}
+```
+
+### Partial Success Response
+
+```php
+<?php
+// Beispiel: Profil erkannt, aber Match-Score fehlgeschlagen
+
+// API Response an Frontend
+[
+    'success' => true,
+    'partial' => true,
+    'data' => [
+        'profile' => [
+            'name' => 'Max Mustermann',
+            'email' => 'max@example.com',
+            'profession' => 'Pflegefachkraft',
+        ],
+        'match_score' => null,  // Konnte nicht berechnet werden
+        'fulfilled' => [],
+        'missing' => [],
+    ],
+    'warnings' => [
+        [
+            'code' => 'match_score_unavailable',
+            'message' => 'Der Match-Score konnte nicht berechnet werden. Die erkannten Profildaten stehen zur Verfügung.',
+        ]
+    ],
+    'can_proceed' => true,  // Bewerbung trotzdem möglich
+]
+```
+
+---
+
+## Dokument-Parsing: Shared-Hosting-Kompatibilität
+
+### Problem
+
+Viele Shared-Hosting-Umgebungen:
+- Erlauben kein `shell_exec()` oder `exec()`
+- Haben kein `pdftotext` installiert
+- Haben niedrige Memory-Limits
+
+### Lösung: Reine PHP-Fallback-Kaskade
+
+```php
+<?php
+// src/AI/Parser/DocumentParser.php
+
+namespace RecruitingPlaybook\AI\Parser;
+
+class DocumentParser {
+
+    /**
+     * Text-Extraktion mit Fallback-Kette
+     */
+    public function extract_text( array $files ): ExtractedText {
+        $result = new ExtractedText();
+
+        foreach ( $files as $file ) {
+            $extension = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
+
+            try {
+                $text = match ( $extension ) {
+                    'pdf'  => $this->extract_from_pdf( $file['tmp_name'] ),
+                    'doc'  => $this->extract_from_doc( $file['tmp_name'] ),
+                    'docx' => $this->extract_from_docx( $file['tmp_name'] ),
+                    'txt'  => file_get_contents( $file['tmp_name'] ),
+                    default => throw new UnsupportedFormatException( $extension ),
+                };
+
+                $result->add_text( $text, $file['name'] );
+
+            } catch ( ExtractionFailedException $e ) {
+                $result->add_failure( $file['name'], $e->getMessage() );
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * PDF-Extraktion mit Fallback-Kette
+     */
+    private function extract_from_pdf( string $path ): string {
+        // Methode 1: pdftotext (Server-Tool) - schnellste Option
+        if ( $this->can_use_shell() && $this->command_exists( 'pdftotext' ) ) {
+            $output = shell_exec( sprintf(
+                'pdftotext -layout %s - 2>/dev/null',
+                escapeshellarg( $path )
+            ) );
+
+            if ( ! empty( trim( $output ) ) ) {
+                return $output;
+            }
+        }
+
+        // Methode 2: Smalot/PdfParser (reine PHP-Library)
+        if ( class_exists( '\Smalot\PdfParser\Parser' ) ) {
+            try {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile( $path );
+                $text = $pdf->getText();
+
+                if ( ! empty( trim( $text ) ) ) {
+                    return $text;
+                }
+            } catch ( \Exception $e ) {
+                // Weiter zum nächsten Fallback
+            }
+        }
+
+        // Methode 3: TCPDF-basierter Parser (einfacher, weniger Features)
+        if ( class_exists( '\TCPDF_PARSER' ) ) {
+            // ... Implementierung
+        }
+
+        // Methode 4: Cloud-OCR für gescannte PDFs
+        if ( $this->is_ocr_enabled() && $this->appears_to_be_scanned( $path ) ) {
+            return $this->extract_via_ocr( $path );
+        }
+
+        // Alle Methoden fehlgeschlagen
+        throw new ExtractionFailedException(
+            __( 'PDF konnte nicht gelesen werden. Möglicherweise ist es ein gescanntes Dokument ohne Textebene.', 'recruiting-playbook' )
+        );
+    }
+
+    /**
+     * Prüft ob shell_exec verfügbar ist
+     */
+    private function can_use_shell(): bool {
+        if ( ! function_exists( 'shell_exec' ) ) {
+            return false;
+        }
+
+        $disabled = explode( ',', ini_get( 'disable_functions' ) );
+        return ! in_array( 'shell_exec', array_map( 'trim', $disabled ), true );
+    }
+
+    /**
+     * Erkennt gescannte PDFs (keine Textebene)
+     */
+    private function appears_to_be_scanned( string $path ): bool {
+        // Einfache Heuristik: Dateigröße vs. extrahierter Text
+        $file_size = filesize( $path );
+
+        // PDF > 100KB aber kaum Text = wahrscheinlich gescannt
+        if ( $file_size > 100 * 1024 ) {
+            try {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile( $path );
+                $text = trim( $pdf->getText() );
+
+                // Weniger als 100 Zeichen bei > 100KB = gescannt
+                return strlen( $text ) < 100;
+            } catch ( \Exception $e ) {
+                return true; // Im Zweifel: OCR versuchen
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+---
+
+## OCR-Integration für gescannte Dokumente
+
+### Problem
+
+Viele Bewerber:
+- Fotografieren Zeugnisse mit dem Handy
+- Scannen Dokumente ohne OCR-Funktion
+- Laden PDFs hoch, die nur Bilder enthalten
+
+### Lösung: Cloud-OCR-Integration (optional)
+
+```php
+<?php
+// src/AI/OCR/OCRService.php
+
+namespace RecruitingPlaybook\AI\OCR;
+
+class OCRService {
+
+    /**
+     * Verfügbare OCR-Provider
+     */
+    private const PROVIDERS = [
+        'google_vision' => GoogleVisionOCR::class,
+        'aws_textract'  => AWSTextractOCR::class,
+        'azure_vision'  => AzureVisionOCR::class,
+    ];
+
+    /**
+     * Text via OCR extrahieren
+     */
+    public function extract( string $file_path ): string {
+        $provider = $this->get_configured_provider();
+
+        if ( ! $provider ) {
+            throw new OCRNotConfiguredException(
+                __( 'OCR ist nicht konfiguriert. Bitte laden Sie ein Dokument mit Textebene hoch.', 'recruiting-playbook' )
+            );
+        }
+
+        // Bild aus PDF extrahieren falls nötig
+        $image_path = $this->prepare_image( $file_path );
+
+        try {
+            $text = $provider->recognize( $image_path );
+
+            // OCR-Nutzung loggen (für Kostentracking)
+            $this->log_ocr_usage( $provider->get_name(), filesize( $file_path ) );
+
+            return $text;
+
+        } finally {
+            // Temporäres Bild löschen
+            if ( $image_path !== $file_path ) {
+                @unlink( $image_path );
+            }
+        }
+    }
+}
+```
+
+### OCR-Einstellungen
+
+```php
+// Admin-Einstellungen: rp_settings[ai][ocr]
+[
+    'enabled' => false,                  // Standardmäßig deaktiviert
+    'provider' => 'google_vision',
+    'google_vision_api_key' => '...',
+    'aws_access_key' => '...',
+    'aws_secret_key' => '...',
+    'max_file_size_mb' => 5,            // OCR-Limit
+    'monthly_budget_eur' => 50,          // Kostendeckel
+]
+```
+
+### Benutzer-Hinweis bei fehlgeschlagener Extraktion
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ⚠️ Dokument konnte nicht vollständig gelesen werden        │
+│                                                             │
+│  Das hochgeladene PDF scheint ein gescanntes Dokument      │
+│  ohne Textebene zu sein.                                    │
+│                                                             │
+│  Empfehlungen:                                              │
+│  • Laden Sie das Original-Dokument hoch (Word, PDF mit Text)│
+│  • Nutzen Sie eine Scanner-App mit OCR-Funktion            │
+│  • Aktivieren Sie bei Ihrem Scanner die OCR-Option         │
+│                                                             │
+│  [Trotzdem fortfahren]  [Anderes Dokument hochladen]       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Temporäre Dateien & DSGVO-Compliance
+
+### Problem
+
+Bei der KI-Analyse werden Bewerberdokumente temporär gespeichert:
+- Upload in `uploads/recruiting-playbook/documents/`
+- Verarbeitung durch Parser
+- API-Call mit Dokumentinhalt
+
+**Risiken:**
+- PHP-Script-Abbruch → Datei bleibt liegen
+- Fehler bei Analyse → Datei nicht gelöscht
+- Verwaiste Dateien bei Server-Neustart
+
+### Lösung: Cleanup-Mechanismus
+
+```php
+<?php
+// src/AI/Cleanup/TempFileCleanup.php
+
+namespace RecruitingPlaybook\AI\Cleanup;
+
+class TempFileCleanup {
+
+    private const TEMP_DIR = 'recruiting-playbook/ai-temp/';
+    private const MAX_AGE_MINUTES = 30;
+
+    /**
+     * WP-Cron Event registrieren
+     */
+    public static function register(): void {
+        // Alle 15 Minuten prüfen
+        if ( ! wp_next_scheduled( 'rp_cleanup_ai_temp_files' ) ) {
+            wp_schedule_event( time(), 'rp_15min', 'rp_cleanup_ai_temp_files' );
+        }
+
+        add_action( 'rp_cleanup_ai_temp_files', [ self::class, 'cleanup' ] );
+    }
+
+    /**
+     * Cleanup durchführen
+     */
+    public static function cleanup(): void {
+        $upload_dir = wp_upload_dir();
+        $temp_path = $upload_dir['basedir'] . '/' . self::TEMP_DIR;
+
+        if ( ! is_dir( $temp_path ) ) {
+            return;
+        }
+
+        $files = glob( $temp_path . '*' );
+        $threshold = time() - ( self::MAX_AGE_MINUTES * 60 );
+        $deleted = 0;
+
+        foreach ( $files as $file ) {
+            if ( is_file( $file ) && filemtime( $file ) < $threshold ) {
+                @unlink( $file );
+                $deleted++;
+            }
+        }
+
+        if ( $deleted > 0 ) {
+            // Log für Debugging
+            error_log( sprintf(
+                '[Recruiting Playbook] Cleanup: %d temporäre AI-Dateien gelöscht.',
+                $deleted
+            ) );
+        }
+    }
+}
+```
+
+### Sichere Datei-Verarbeitung
+
+```php
+<?php
+// src/AI/Services/AnalysisService.php (erweitert)
+
+class AnalysisService {
+
+    /**
+     * Analyse mit garantiertem Cleanup
+     */
+    public function analyze_with_cleanup( array $files, int $job_id ): JobMatchResult {
+        $temp_files = [];
+
+        try {
+            // 1. Dateien in sicheres Temp-Verzeichnis kopieren
+            foreach ( $files as $file ) {
+                $temp_path = $this->create_temp_copy( $file );
+                $temp_files[] = $temp_path;
+            }
+
+            // 2. Analyse durchführen
+            $result = $this->analyze_job_match_internal( $temp_files, $job_id );
+
+            return $result;
+
+        } finally {
+            // 3. IMMER aufräumen, auch bei Exceptions
+            foreach ( $temp_files as $temp_file ) {
+                if ( file_exists( $temp_file ) ) {
+                    @unlink( $temp_file );
+                }
+            }
+        }
+    }
+
+    /**
+     * Sichere Temp-Kopie erstellen
+     */
+    private function create_temp_copy( array $file ): string {
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/recruiting-playbook/ai-temp/';
+
+        // Verzeichnis erstellen falls nicht vorhanden
+        if ( ! is_dir( $temp_dir ) ) {
+            wp_mkdir_p( $temp_dir );
+
+            // .htaccess für Sicherheit
+            file_put_contents( $temp_dir . '.htaccess', "Deny from all\n" );
+        }
+
+        // UUID-basierter Dateiname (keine Rückschlüsse auf Bewerber)
+        $temp_name = wp_generate_uuid4() . '.' . pathinfo( $file['name'], PATHINFO_EXTENSION );
+        $temp_path = $temp_dir . $temp_name;
+
+        copy( $file['tmp_name'], $temp_path );
+
+        return $temp_path;
+    }
+}
+```
+
+### WP-Cron Schedule
+
+```php
+<?php
+// src/Core/Plugin.php (in init)
+
+// Custom Cron-Intervall: alle 15 Minuten
+add_filter( 'cron_schedules', function( $schedules ) {
+    $schedules['rp_15min'] = [
+        'interval' => 15 * 60,
+        'display'  => __( 'Alle 15 Minuten', 'recruiting-playbook' ),
+    ];
+    return $schedules;
+} );
+
+// Cleanup registrieren
+\RecruitingPlaybook\AI\Cleanup\TempFileCleanup::register();
 ```
 
 ### Komponenten
