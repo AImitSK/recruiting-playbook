@@ -123,14 +123,13 @@ while ( have_posts() ) :
 				<!-- Sidebar -->
 				<aside class="rp-space-y-6 lg:rp-sticky lg:rp-top-8">
 
-					<!-- Jetzt bewerben -->
-					<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
-						<a href="#rp-apply-form" class="rp-block rp-w-full rp-py-3 rp-px-4 rp-bg-blue-600 rp-text-white rp-text-center rp-font-semibold rp-rounded-md hover:rp-bg-blue-700 rp-no-underline rp-transition-colors">
+					<!-- Jetzt bewerben Button (ohne Box) -->
+					<div>
+						<a href="#rp-apply-form" class="rp-block rp-w-full rp-py-3 rp-px-6 rp-bg-blue-600 rp-text-white rp-text-center rp-font-semibold rp-rounded-lg hover:rp-bg-blue-700 rp-no-underline rp-transition-colors rp-shadow-md hover:rp-shadow-lg">
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
-
 						<?php if ( $deadline ) : ?>
-							<p class="rp-mt-3 rp-text-sm rp-text-gray-500 rp-text-center">
+							<p class="rp-mt-2 rp-text-sm rp-text-gray-500 rp-text-center">
 								<?php
 								printf(
 									/* translators: %s: Application deadline */
