@@ -217,9 +217,14 @@ final class Plugin {
 			return;
 		}
 
-		// CSS.
+		// CSS - Basis-Styles registrieren (auch wenn dist-Datei nicht existiert).
+		wp_register_style( 'rp-frontend', false, [], RP_VERSION );
+		wp_enqueue_style( 'rp-frontend' );
+
+		// Kompiliertes CSS laden falls vorhanden.
 		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
 		if ( file_exists( $css_file ) ) {
+			wp_deregister_style( 'rp-frontend' );
 			wp_enqueue_style(
 				'rp-frontend',
 				RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
@@ -228,42 +233,71 @@ final class Plugin {
 			);
 		}
 
-		// Alpine.js (CDN als Fallback).
+		// x-cloak CSS für Alpine.js - verhindert Flackern vor Initialisierung.
+		wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
+
+		// Alpine.js Abhängigkeiten sammeln.
+		$alpine_deps = [];
+
+		// Application Form JS - nur auf Einzelseiten, muss VOR Alpine.js geladen werden!
+		// Registriert die Alpine-Komponente via 'alpine:init' Event.
+		if ( is_singular( 'job_listing' ) ) {
+			$form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
+			if ( file_exists( $form_file ) ) {
+				wp_enqueue_script(
+					'rp-application-form',
+					RP_PLUGIN_URL . 'assets/src/js/application-form.js',
+					[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
+					RP_VERSION,
+					true
+				);
+
+				// Lokalisierung für das Formular.
+				wp_localize_script(
+					'rp-application-form',
+					'rpForm',
+					[
+						'apiUrl' => rest_url( 'recruiting/v1/' ),
+						'nonce'  => wp_create_nonce( 'wp_rest' ),
+						'i18n'   => [
+							'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
+							'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
+							'fileTooLarge'    => __( 'Die Datei ist zu groß (max. 10 MB)', 'recruiting-playbook' ),
+							'invalidFileType' => __( 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+							'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+						],
+					]
+				);
+
+				$alpine_deps[] = 'rp-application-form';
+			}
+		}
+
+		// Alpine.js (CDN) - muss NACH application-form.js geladen werden.
+		// Das defer-Attribut sorgt dafür, dass Alpine nach DOM-Ready initialisiert.
 		wp_enqueue_script(
 			'rp-alpine',
-			'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js',
-			[],
+			'https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js',
+			$alpine_deps, // Abhängigkeit: application-form.js muss zuerst laden (falls vorhanden)
 			'3.14.3',
-			[ 'strategy' => 'defer' ]
+			true
 		);
 
-		// Application Form JS.
-		$form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
-		if ( file_exists( $form_file ) && is_singular( 'job_listing' ) ) {
-			wp_enqueue_script(
-				'rp-application-form',
-				RP_PLUGIN_URL . 'assets/src/js/application-form.js',
-				[ 'rp-alpine' ],
-				RP_VERSION,
-				true
+		// Defer-Attribut hinzufügen für Alpine.js (einmalig registrieren).
+		static $filter_added = false;
+		if ( ! $filter_added ) {
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+						return str_replace( ' src', ' defer src', $tag );
+					}
+					return $tag;
+				},
+				10,
+				2
 			);
-
-			// Lokalisierung für das Formular.
-			wp_localize_script(
-				'rp-application-form',
-				'rpForm',
-				[
-					'apiUrl' => rest_url( 'recruiting/v1/' ),
-					'nonce'  => wp_create_nonce( 'wp_rest' ),
-					'i18n'   => [
-						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. 10 MB)', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
-						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
-					],
-				]
-			);
+			$filter_added = true;
 		}
 
 		// Frontend JS (optional, für zukünftige Erweiterungen).
