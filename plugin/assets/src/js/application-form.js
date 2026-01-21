@@ -51,8 +51,8 @@ document.addEventListener('alpine:init', () => {
                 this.formData.job_id = parseInt(form.dataset.jobId, 10);
             }
 
-            // Set timestamp for spam protection
-            this.formData._form_timestamp = Math.floor(Date.now() / 1000);
+            // Note: Timestamp is read from PHP-generated hidden field on submit
+            // This ensures we measure time from page load, not Alpine init
         },
 
         /**
@@ -267,6 +267,18 @@ document.addEventListener('alpine:init', () => {
 
             try {
                 const formData = new FormData();
+
+                // Read honeypot field from DOM (bot detection)
+                const honeypotField = this.$el.querySelector('input[name="_hp_field"]');
+                if (honeypotField) {
+                    this.formData._hp_field = honeypotField.value;
+                }
+
+                // Read timestamp from DOM (set by PHP on page load)
+                const timestampField = this.$el.querySelector('input[name="_form_timestamp"]');
+                if (timestampField && timestampField.value) {
+                    this.formData._form_timestamp = parseInt(timestampField.value, 10);
+                }
 
                 // Add form fields
                 for (const [key, value] of Object.entries(this.formData)) {

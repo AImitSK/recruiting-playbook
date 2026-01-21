@@ -82,5 +82,10 @@ WORKDIR /var/www/html
 # Apache als www-data User starten (für Berechtigungen)
 RUN chown -R www-data:www-data /var/www/html
 
+# VS Code Server Verzeichnis für www-data User erstellen
+# Das Home-Verzeichnis von www-data ist /var/www
+RUN mkdir -p /var/www/.vscode-server /var/www/.vscode-server-insiders \
+    && chown -R www-data:www-data /var/www/.vscode-server /var/www/.vscode-server-insiders
+
 # Port 80 für Apache
 EXPOSE 80

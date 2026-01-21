@@ -16,6 +16,7 @@ use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
 use RecruitingPlaybook\Frontend\JobSchema;
+use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
 
 /**
@@ -135,6 +136,10 @@ final class Plugin {
 		// Google for Jobs Schema (JSON-LD).
 		$job_schema = new JobSchema();
 		$job_schema->init();
+
+		// Shortcodes registrieren.
+		$shortcodes = new Shortcodes();
+		$shortcodes->register();
 	}
 
 	/**

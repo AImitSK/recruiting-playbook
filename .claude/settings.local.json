@@ -1,7 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(docker:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nSetup-Dokumentation: Entwicklungsumgebung-Anleitung hinzugefügt\n\n- Setup-Script verbessert: WordPress-Download, farbige Ausgabe, idempotent\n- Neue Dokumentation docs/development-setup.md für neuen PC-Setup\n- Schritt-für-Schritt Anleitung mit Troubleshooting\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(xargs ls:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 1A: Plugin-Grundstruktur implementiert\n\nCustom Post Type & Taxonomien:\n- job_listing CPT mit deutschen Labels\n- job_category \\(Berufsfelder, hierarchisch\\)\n- job_location \\(Standorte\\)\n- employment_type \\(Beschäftigungsarten mit Standardwerten\\)\n\nMeta-Felder für Stellenanzeigen:\n- Gehalt \\(Min/Max, Währung, Zeitraum\\)\n- Ansprechpartner \\(Name, E-Mail, Telefon\\)\n- Remote-Option, Startdatum, Bewerbungsfrist\n\nDatenbank & Admin:\n- Schema.php und Migrator.php ausgelagert\n- Admin-Menü mit Dashboard und Bewerbungen-Seite\n- Capabilities für Recruiting-Verwaltung\n\nFrontend-Templates:\n- archive-job_listing.php \\(Stellen-Übersicht\\)\n- single-job_listing.php \\(Stellen-Detail\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nGoogle for Jobs Schema: JSON-LD Markup implementiert\n\n- JobSchema.php erstellt für strukturierte Daten\n- Vollständiges Schema.org/JobPosting Format\n- Mapping deutscher Beschäftigungsarten zu Google-Werten\n- Gehalt, Standort, Remote-Option werden ausgegeben\n- Aktivierbar/deaktivierbar über Settings\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebFetch(domain:localhost)",
+      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content\")",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content | Select-String -Pattern ''rp-apply-form|applicationForm|alpine'' -AllMatches | ForEach-Object { $_Line }\")",
+      "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''rp-apply-form''\\)\")",
+      "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''alpinejs''\\)\")",
+      "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''application-form.js''\\)\")",
+      "Bash(git commit:*)"
     ]
   }
 }
