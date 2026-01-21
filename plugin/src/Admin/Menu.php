@@ -10,6 +10,11 @@ declare(strict_types=1);
 namespace RecruitingPlaybook\Admin;
 
 use RecruitingPlaybook\Admin\Settings;
+use RecruitingPlaybook\Admin\Pages\ApplicationList;
+use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
+use RecruitingPlaybook\Admin\Export\BackupExporter;
+use RecruitingPlaybook\Services\GdprService;
+use RecruitingPlaybook\Constants\ApplicationStatus;
 
 /**
  * Admin-Menü Registrierung
@@ -70,6 +75,26 @@ class Menu {
 			'manage_options',
 			'rp-settings',
 			[ $this, 'renderSettings' ]
+		);
+
+		// Export.
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Export', 'recruiting-playbook' ),
+			__( 'Export', 'recruiting-playbook' ),
+			'manage_options',
+			'rp-export',
+			[ $this, 'renderExport' ]
+		);
+
+		// Bewerbung-Detailansicht (versteckt).
+		add_submenu_page(
+			null,
+			__( 'Bewerbung', 'recruiting-playbook' ),
+			__( 'Bewerbung', 'recruiting-playbook' ),
+			'manage_options',
+			'rp-application-detail',
+			[ $this, 'renderApplicationDetail' ]
 		);
 	}
 
@@ -230,13 +255,204 @@ class Menu {
 	 * Bewerbungen rendern
 	 */
 	public function renderApplications(): void {
+		// Einzelne Aktionen verarbeiten.
+		$this->processApplicationActions();
+
 		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Bewerbungen', 'recruiting-playbook' ) . '</h1>';
-		echo '<div class="notice notice-info"><p>';
-		echo esc_html__( 'Die Bewerbungsverwaltung wird in Phase 1B implementiert.', 'recruiting-playbook' );
-		echo '</p></div>';
-		echo '<div id="rp-applications-app"></div>';
+		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Bewerbungen', 'recruiting-playbook' ) . '</h1>';
+
+		// Export-Button.
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=rp-export' ) ) . '" class="page-title-action">';
+		echo esc_html__( 'Exportieren', 'recruiting-playbook' );
+		echo '</a>';
+
+		echo '<hr class="wp-header-end">';
+
+		// Status-Übersicht.
+		$this->renderStatusCounts();
+
+		// Liste rendern.
+		$list_table = new ApplicationList();
+		$list_table->prepare_items();
+
+		echo '<form method="get">';
+		echo '<input type="hidden" name="page" value="rp-applications" />';
+		$list_table->search_box( __( 'Suchen', 'recruiting-playbook' ), 'search' );
+		$list_table->display();
+		echo '</form>';
+
 		echo '</div>';
+	}
+
+	/**
+	 * Status-Zähler anzeigen
+	 */
+	private function renderStatusCounts(): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_applications';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$counts = $wpdb->get_results(
+			"SELECT status, COUNT(*) as count FROM {$table} GROUP BY status",
+			OBJECT_K
+		);
+
+		$statuses = ApplicationStatus::getAll();
+		$colors   = ApplicationStatus::getColors();
+
+		echo '<ul class="subsubsub" style="margin-bottom: 15px;">';
+
+		$links = [];
+		$total = 0;
+
+		foreach ( $statuses as $status => $label ) {
+			$count  = isset( $counts[ $status ] ) ? (int) $counts[ $status ]->count : 0;
+			$total += $count;
+
+			$url = add_query_arg( 'status', $status, admin_url( 'admin.php?page=rp-applications' ) );
+
+			$links[] = sprintf(
+				'<li><a href="%s" style="color: %s;">%s</a> <span class="count">(%d)</span></li>',
+				esc_url( $url ),
+				esc_attr( $colors[ $status ] ),
+				esc_html( $label ),
+				$count
+			);
+		}
+
+		// "Alle" Link am Anfang.
+		array_unshift(
+			$links,
+			sprintf(
+				'<li><a href="%s"><strong>%s</strong></a> <span class="count">(%d)</span> |</li>',
+				esc_url( admin_url( 'admin.php?page=rp-applications' ) ),
+				esc_html__( 'Alle', 'recruiting-playbook' ),
+				$total
+			)
+		);
+
+		echo implode( ' | ', $links );
+		echo '</ul>';
+		echo '<div class="clear"></div>';
+	}
+
+	/**
+	 * Einzelaktionen verarbeiten
+	 */
+	private function processApplicationActions(): void {
+		if ( empty( $_GET['action'] ) || empty( $_GET['id'] ) ) {
+			return;
+		}
+
+		$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
+		$id     = absint( $_GET['id'] );
+
+		// Status setzen.
+		if ( 'set_status' === $action && ! empty( $_GET['status'] ) ) {
+			check_admin_referer( 'rp_set_status_' . $id );
+
+			$status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
+
+			global $wpdb;
+			$table = $wpdb->prefix . 'rp_applications';
+
+			$wpdb->update( $table, [ 'status' => $status ], [ 'id' => $id ] );
+
+			// Logging.
+			$log_table    = $wpdb->prefix . 'rp_activity_log';
+			$current_user = wp_get_current_user();
+
+			$wpdb->insert(
+				$log_table,
+				[
+					'object_type' => 'application',
+					'object_id'   => $id,
+					'action'      => 'status_changed',
+					'user_id'     => $current_user->ID,
+					'user_name'   => $current_user->display_name,
+					'new_value'   => $status,
+					'created_at'  => current_time( 'mysql' ),
+				]
+			);
+
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&updated=1' ) );
+			exit;
+		}
+
+		// Daten exportieren (DSGVO).
+		if ( 'export_data' === $action ) {
+			check_admin_referer( 'rp_export_data_' . $id );
+
+			$gdpr_service = new GdprService();
+			$gdpr_service->downloadApplicationData( $id );
+		}
+
+		// Löschen.
+		if ( 'delete' === $action ) {
+			check_admin_referer( 'rp_delete_' . $id );
+
+			$gdpr_service = new GdprService();
+			$gdpr_service->softDeleteApplication( $id );
+
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&deleted=1' ) );
+			exit;
+		}
+	}
+
+	/**
+	 * Bewerbung-Detailansicht rendern
+	 */
+	public function renderApplicationDetail(): void {
+		$detail_page = new ApplicationDetail();
+		$detail_page->render();
+	}
+
+	/**
+	 * Export-Seite rendern
+	 */
+	public function renderExport(): void {
+		// Download-Aktion.
+		if ( isset( $_POST['download_backup'] ) && check_admin_referer( 'rp_download_backup' ) ) {
+			$exporter = new BackupExporter();
+			$exporter->download();
+		}
+
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Daten exportieren', 'recruiting-playbook' ); ?></h1>
+
+			<div class="card" style="max-width: 600px; padding: 20px;">
+				<h2><?php esc_html_e( 'Vollständiger Backup', 'recruiting-playbook' ); ?></h2>
+				<p>
+					<?php esc_html_e( 'Exportiert alle Plugin-Daten als JSON-Datei:', 'recruiting-playbook' ); ?>
+				</p>
+				<ul style="list-style: disc; margin-left: 20px;">
+					<li><?php esc_html_e( 'Einstellungen', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Stellen (inkl. Meta-Daten)', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Taxonomien (Kategorien, Standorte, etc.)', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Kandidaten', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Bewerbungen', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Dokument-Metadaten', 'recruiting-playbook' ); ?></li>
+					<li><?php esc_html_e( 'Aktivitäts-Log (letzte 1000 Einträge)', 'recruiting-playbook' ); ?></li>
+				</ul>
+
+				<div class="notice notice-warning inline" style="margin: 15px 0;">
+					<p>
+						<strong><?php esc_html_e( 'Hinweis:', 'recruiting-playbook' ); ?></strong>
+						<?php esc_html_e( 'Hochgeladene Dokumente (PDFs etc.) werden aus Datenschutzgründen nicht exportiert.', 'recruiting-playbook' ); ?>
+					</p>
+				</div>
+
+				<form method="post">
+					<?php wp_nonce_field( 'rp_download_backup' ); ?>
+					<button type="submit" name="download_backup" class="button button-primary">
+						<?php esc_html_e( 'Backup herunterladen', 'recruiting-playbook' ); ?>
+					</button>
+				</form>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

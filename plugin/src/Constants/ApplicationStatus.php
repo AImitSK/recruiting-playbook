@@ -57,4 +57,97 @@ class ApplicationStatus {
 			default         => '#787c82',
 		};
 	}
+
+	/**
+	 * Alle Status-Farben
+	 *
+	 * @return array<string, string>
+	 */
+	public static function getColors(): array {
+		return [
+			self::NEW       => '#2271b1',
+			self::SCREENING => '#dba617',
+			self::INTERVIEW => '#9b59b6',
+			self::OFFER     => '#1e8cbe',
+			self::HIRED     => '#00a32a',
+			self::REJECTED  => '#d63638',
+			self::WITHDRAWN => '#787c82',
+		];
+	}
+
+	/**
+	 * Erlaubte Status-Übergänge
+	 *
+	 * @return array<string, array<string>>
+	 */
+	public static function getAllowedTransitions(): array {
+		return [
+			self::NEW => [
+				self::SCREENING,
+				self::REJECTED,
+				self::WITHDRAWN,
+			],
+			self::SCREENING => [
+				self::INTERVIEW,
+				self::REJECTED,
+				self::WITHDRAWN,
+			],
+			self::INTERVIEW => [
+				self::OFFER,
+				self::REJECTED,
+				self::WITHDRAWN,
+			],
+			self::OFFER => [
+				self::HIRED,
+				self::REJECTED,
+				self::WITHDRAWN,
+			],
+			self::HIRED     => [],
+			self::REJECTED  => [ self::SCREENING ],
+			self::WITHDRAWN => [],
+		];
+	}
+
+	/**
+	 * Prüfen ob Übergang erlaubt
+	 *
+	 * @param string $from Aktueller Status.
+	 * @param string $to   Neuer Status.
+	 * @return bool
+	 */
+	public static function isTransitionAllowed( string $from, string $to ): bool {
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		$allowed = self::getAllowedTransitions()[ $from ] ?? [];
+		return in_array( $to, $allowed, true );
+	}
+
+	/**
+	 * Aktive Status (nicht abgeschlossen)
+	 *
+	 * @return array<string>
+	 */
+	public static function getActiveStatuses(): array {
+		return [
+			self::NEW,
+			self::SCREENING,
+			self::INTERVIEW,
+			self::OFFER,
+		];
+	}
+
+	/**
+	 * Abgeschlossene Status
+	 *
+	 * @return array<string>
+	 */
+	public static function getClosedStatuses(): array {
+		return [
+			self::HIRED,
+			self::REJECTED,
+			self::WITHDRAWN,
+		];
+	}
 }

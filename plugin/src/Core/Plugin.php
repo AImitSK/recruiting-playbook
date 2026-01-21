@@ -18,6 +18,7 @@ use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
+use RecruitingPlaybook\Services\DocumentDownloadService;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -71,6 +72,9 @@ final class Plugin {
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
+
+		// AJAX-Handler für Dokument-Downloads.
+		DocumentDownloadService::registerAjaxHandler();
 
 		// Assets laden.
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueueFrontendAssets' ] );
