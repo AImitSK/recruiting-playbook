@@ -27,6 +27,12 @@ npm-debug.log*
 .phpunit.result.cache
 /coverage/
 
+# Playwright
+/tests/e2e/results/
+/tests/e2e/report/
+/playwright-report/
+/test-results/
+
 # Composer
 composer.lock
 
