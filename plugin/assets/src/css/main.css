@@ -7,6 +7,36 @@
  * Prefix: rp-
  */
 
+/*
+ * Box-sizing Fix (Tailwind Preflight ist deaktiviert)
+ * Ohne dies überlappen sich Formularfelder
+ */
+.rp-job-single *,
+.rp-job-single *::before,
+.rp-job-single *::after {
+    box-sizing: border-box;
+}
+
+/* Input/Select/Textarea box-sizing fix */
+.rp-form-input,
+.rp-form-select,
+.rp-form-textarea,
+input[class*="rp-"],
+select[class*="rp-"],
+textarea[class*="rp-"] {
+    box-sizing: border-box;
+}
+
+/* Select Dropdown-Pfeil Styling */
+.rp-form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem 1.25rem;
+    padding-right: 2.5rem;
+}
+
 /* Job Listing Cards */
 .rp-job-card {
     @apply rp-bg-white rp-rounded-lg rp-shadow-sm rp-border rp-border-gray-200 rp-p-6 rp-transition-shadow hover:rp-shadow-md;

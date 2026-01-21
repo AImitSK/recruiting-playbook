@@ -61,7 +61,7 @@ while ( have_posts() ) :
 	?>
 
 	<article <?php post_class( 'rp-job-single' ); ?>>
-		<div class="rp-container rp-max-w-4xl rp-mx-auto rp-px-4 rp-py-8">
+		<div class="rp-container rp-max-w-6xl rp-mx-auto rp-px-4 rp-py-8">
 
 			<!-- Zurück-Link -->
 			<nav class="rp-mb-6">
@@ -121,10 +121,10 @@ while ( have_posts() ) :
 				</div>
 
 				<!-- Sidebar -->
-				<aside class="rp-space-y-6">
+				<aside class="rp-space-y-6 lg:rp-sticky lg:rp-top-8">
 
 					<!-- Jetzt bewerben -->
-					<div class="rp-bg-white rp-border rp-border-gray-200 rp-rounded-lg rp-p-6">
+					<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
 						<a href="#rp-apply-form" class="rp-block rp-w-full rp-py-3 rp-px-4 rp-bg-blue-600 rp-text-white rp-text-center rp-font-semibold rp-rounded-md hover:rp-bg-blue-700 rp-no-underline rp-transition-colors">
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
@@ -143,7 +143,7 @@ while ( have_posts() ) :
 					</div>
 
 					<!-- Details -->
-					<div class="rp-bg-white rp-border rp-border-gray-200 rp-rounded-lg rp-p-6">
+					<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
 						<h3 class="rp-text-base rp-font-semibold rp-text-gray-900 rp-mb-4"><?php esc_html_e( 'Details', 'recruiting-playbook' ); ?></h3>
 
 						<dl class="rp-text-sm rp-space-y-3">
@@ -174,7 +174,7 @@ while ( have_posts() ) :
 
 					<!-- Kontakt -->
 					<?php if ( $contact_person || $contact_email || $contact_phone ) : ?>
-						<div class="rp-bg-white rp-border rp-border-gray-200 rp-rounded-lg rp-p-6">
+						<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
 							<h3 class="rp-text-base rp-font-semibold rp-text-gray-900 rp-mb-4"><?php esc_html_e( 'Ansprechpartner', 'recruiting-playbook' ); ?></h3>
 
 							<?php if ( $contact_person ) : ?>
@@ -247,58 +247,61 @@ while ( have_posts() ) :
 									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Persönliche Daten', 'recruiting-playbook' ); ?></h3>
 
 									<div class="rp-space-y-4">
-										<!-- Anrede -->
-										<div>
-											<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
-											<select x-model="formData.salutation" class="rp-form-select rp-w-full rp-px-3 rp-py-2 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
-												<option value=""><?php esc_html_e( 'Bitte wählen', 'recruiting-playbook' ); ?></option>
-												<option value="Herr"><?php esc_html_e( 'Herr', 'recruiting-playbook' ); ?></option>
-												<option value="Frau"><?php esc_html_e( 'Frau', 'recruiting-playbook' ); ?></option>
-												<option value="Divers"><?php esc_html_e( 'Divers', 'recruiting-playbook' ); ?></option>
-											</select>
-										</div>
-
-										<!-- Vorname & Nachname -->
-										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 rp-gap-4">
-											<div>
+										<!-- Anrede, Vorname & Nachname: 1/5 | 2/5 | 2/5 auf Desktop -->
+										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-5 rp-gap-4">
+											<!-- Anrede (1/5) -->
+											<div class="sm:rp-col-span-1">
+												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
+												<select x-model="formData.salutation" class="rp-form-select rp-w-full rp-h-10 rp-px-3 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
+													<option value=""><?php esc_html_e( 'Bitte wählen', 'recruiting-playbook' ); ?></option>
+													<option value="Herr"><?php esc_html_e( 'Herr', 'recruiting-playbook' ); ?></option>
+													<option value="Frau"><?php esc_html_e( 'Frau', 'recruiting-playbook' ); ?></option>
+													<option value="Divers"><?php esc_html_e( 'Divers', 'recruiting-playbook' ); ?></option>
+												</select>
+											</div>
+											<!-- Vorname (2/5) -->
+											<div class="sm:rp-col-span-2">
 												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
 													<?php esc_html_e( 'Vorname', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
 												</label>
 												<input type="text" x-model="formData.first_name"
-													class="rp-form-input rp-w-full rp-px-3 rp-py-2 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
+													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
 													:class="errors.first_name ? 'rp-border-red-500' : 'rp-border-gray-300'"
 													required>
 												<p x-show="errors.first_name" x-text="errors.first_name" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
 											</div>
-											<div>
+											<!-- Nachname (2/5) -->
+											<div class="sm:rp-col-span-2">
 												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
 													<?php esc_html_e( 'Nachname', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
 												</label>
 												<input type="text" x-model="formData.last_name"
-													class="rp-form-input rp-w-full rp-px-3 rp-py-2 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
+													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
 													:class="errors.last_name ? 'rp-border-red-500' : 'rp-border-gray-300'"
 													required>
 												<p x-show="errors.last_name" x-text="errors.last_name" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
 											</div>
 										</div>
 
-										<!-- E-Mail -->
-										<div>
-											<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
-												<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
-											</label>
-											<input type="email" x-model="formData.email"
-												class="rp-form-input rp-w-full rp-px-3 rp-py-2 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
-												:class="errors.email ? 'rp-border-red-500' : 'rp-border-gray-300'"
-												required>
-											<p x-show="errors.email" x-text="errors.email" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
-										</div>
-
-										<!-- Telefon -->
-										<div>
-											<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
-											<input type="tel" x-model="formData.phone"
-												class="rp-form-input rp-w-full rp-px-3 rp-py-2 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
+										<!-- E-Mail & Telefon nebeneinander -->
+										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 rp-gap-4">
+											<!-- E-Mail -->
+											<div>
+												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
+													<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
+												</label>
+												<input type="email" x-model="formData.email"
+													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
+													:class="errors.email ? 'rp-border-red-500' : 'rp-border-gray-300'"
+													required>
+												<p x-show="errors.email" x-text="errors.email" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
+											</div>
+											<!-- Telefon -->
+											<div>
+												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
+												<input type="tel" x-model="formData.phone"
+													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
+											</div>
 										</div>
 									</div>
 								</div>
