@@ -110,7 +110,7 @@ test.describe('Bewerbungsformular', () => {
         await nextButton.click();
 
         // E-Mail-Fehler sollte erscheinen
-        const emailError = page.locator('span:has-text("gültige E-Mail")');
+        const emailError = page.locator('p:has-text("gültige E-Mail-Adresse")');
         await expect(emailError).toBeVisible();
     });
 
