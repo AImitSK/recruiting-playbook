@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Frontend Styles für Recruiting Playbook
+ * Prefix: rp-
+ */
+
+/* Job Listing Cards */
+.rp-job-card {
+    @apply rp-bg-white rp-rounded-lg rp-shadow-sm rp-border rp-border-gray-200 rp-p-6 rp-transition-shadow hover:rp-shadow-md;
+}
+
+.rp-job-title {
+    @apply rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2;
+}
+
+.rp-job-meta {
+    @apply rp-flex rp-flex-wrap rp-gap-4 rp-text-sm rp-text-gray-600 rp-mb-4;
+}
+
+.rp-job-meta-item {
+    @apply rp-flex rp-items-center rp-gap-1;
+}
+
+/* Buttons */
+.rp-btn {
+    @apply rp-inline-flex rp-items-center rp-justify-center rp-px-4 rp-py-2 rp-rounded-md rp-font-medium rp-transition-colors;
+}
+
+.rp-btn-primary {
+    @apply rp-bg-rp-primary rp-text-white hover:rp-bg-rp-primary-dark;
+}
+
+.rp-btn-secondary {
+    @apply rp-bg-gray-100 rp-text-gray-700 hover:rp-bg-gray-200;
+}
+
+/* Forms */
+.rp-form-group {
+    @apply rp-mb-4;
+}
+
+.rp-label {
+    @apply rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1;
+}
+
+.rp-input {
+    @apply rp-w-full rp-px-3 rp-py-2 rp-border rp-border-gray-300 rp-rounded-md rp-shadow-sm;
+}
+
+.rp-input:focus {
+    @apply rp-outline-none rp-ring-2 rp-ring-rp-primary rp-border-transparent;
+}
+
+.rp-input-error {
+    @apply rp-border-rp-error;
+}
+
+.rp-error-message {
+    @apply rp-text-sm rp-text-rp-error rp-mt-1;
+}
+
+/* Status Badges */
+.rp-badge {
+    @apply rp-inline-flex rp-items-center rp-px-2 rp-py-1 rp-rounded-full rp-text-xs rp-font-medium;
+}
+
+.rp-badge-new {
+    @apply rp-bg-blue-100 rp-text-blue-800;
+}
+
+.rp-badge-screening {
+    @apply rp-bg-yellow-100 rp-text-yellow-800;
+}
+
+.rp-badge-interview {
+    @apply rp-bg-purple-100 rp-text-purple-800;
+}
+
+.rp-badge-hired {
+    @apply rp-bg-green-100 rp-text-green-800;
+}
+
+.rp-badge-rejected {
+    @apply rp-bg-red-100 rp-text-red-800;
+}

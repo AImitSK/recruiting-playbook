@@ -1,0 +1,44 @@
+# EditorConfig - https://editorconfig.org
+
+root = true
+
+# Alle Dateien
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# YAML
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON
+[*.json]
+indent_size = 2
+
+# JavaScript/TypeScript
+[*.{js,jsx,ts,tsx}]
+indent_size = 4
+
+# CSS
+[*.{css,scss,less}]
+indent_size = 4
+
+# PHP
+[*.php]
+indent_size = 4
+
+# WordPress spezifisch
+[*.php]
+indent_style = tab
+
+# Shell Scripts
+[*.sh]
+end_of_line = lf

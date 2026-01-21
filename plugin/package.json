@@ -1,0 +1,33 @@
+{
+    "name": "recruiting-playbook",
+    "version": "1.0.0",
+    "description": "WordPress Recruiting Plugin",
+    "scripts": {
+        "dev": "npm-run-all --parallel dev:*",
+        "dev:css": "tailwindcss -i ./assets/src/css/main.css -o ./assets/dist/css/frontend.css --watch",
+        "dev:admin-css": "tailwindcss -i ./assets/src/css/admin.css -o ./assets/dist/css/admin.css --watch",
+        "dev:js": "esbuild assets/src/js/frontend.js --bundle --sourcemap --outfile=assets/dist/js/frontend.js --watch",
+        "dev:admin-js": "wp-scripts start --webpack-src-dir=assets/src/js/admin --output-path=assets/dist/js",
+        "build": "npm-run-all build:*",
+        "build:css": "tailwindcss -i ./assets/src/css/main.css -o ./assets/dist/css/frontend.css --minify",
+        "build:admin-css": "tailwindcss -i ./assets/src/css/admin.css -o ./assets/dist/css/admin.css --minify",
+        "build:js": "esbuild assets/src/js/frontend.js --bundle --minify --outfile=assets/dist/js/frontend.js",
+        "build:admin-js": "wp-scripts build --webpack-src-dir=assets/src/js/admin --output-path=assets/dist/js",
+        "build:alpine": "cp node_modules/alpinejs/dist/cdn.min.js assets/dist/js/alpine.min.js",
+        "lint:js": "wp-scripts lint-js",
+        "lint:css": "wp-scripts lint-style",
+        "test:js": "wp-scripts test-unit-js",
+        "pot": "wp i18n make-pot . languages/recruiting-playbook.pot --exclude=node_modules,vendor,tests"
+    },
+    "dependencies": {
+        "alpinejs": "^3.14.0"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^28.0.0",
+        "autoprefixer": "^10.4.20",
+        "esbuild": "^0.24.0",
+        "npm-run-all": "^4.1.5",
+        "postcss": "^8.4.47",
+        "tailwindcss": "^3.4.14"
+    }
+}

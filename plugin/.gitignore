@@ -1,0 +1,34 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Build output (wird bei Bedarf neu generiert)
+# Hinweis: Für Releases sollten dist/ Dateien committed werden
+# /assets/dist/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# PHPUnit
+.phpunit.result.cache
+/coverage/
+
+# Composer
+composer.lock
+
+# Package lock (optional - kann committed werden für reproduzierbare Builds)
+# package-lock.json

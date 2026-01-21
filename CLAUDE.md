@@ -7,8 +7,45 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Recruiting Playbook** is a WordPress plugin specification for professional job listing and applicant management with AI-powered candidate analysis. This repository contains comprehensive documentation and specifications - the actual plugin code is ready to be developed.
 
 - **Type**: WordPress Plugin (ATS - Applicant Tracking System)
-- **Status**: Documentation complete, ready for development
+- **Status**: Documentation complete, plugin scaffold ready
 - **Language**: German documentation, German-language plugin
+
+## Development Environment (Dev Container)
+
+This repository uses VS Code Dev Containers for a consistent development environment across all machines.
+
+### Quick Start
+
+1. Install Docker Desktop
+2. Install VS Code with "Dev Containers" extension
+3. Clone the repository
+4. Open in VS Code → Click "Reopen in Container"
+5. Wait for setup to complete
+
+### URLs (after container starts)
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| WordPress | http://localhost:8080 | admin / admin |
+| WP Admin | http://localhost:8080/wp-admin | admin / admin |
+| phpMyAdmin | http://localhost:8081 | wordpress / wordpress |
+| MailHog | http://localhost:8025 | - |
+
+### Repository Structure
+
+```
+recruiting-playbook-docs/
+├── .devcontainer/        # Dev Container configuration
+├── docs/                 # Documentation & specifications
+│   ├── product/          # Vision, features, pricing
+│   ├── technical/        # Architecture, API specs
+│   └── roadmap.md        # Development phases
+└── plugin/               # WordPress plugin code
+    ├── src/              # PHP source (PSR-4)
+    ├── assets/           # CSS, JS
+    ├── templates/        # Frontend templates
+    └── languages/        # Translations
+```
 
 ## Tech Stack
 
@@ -24,33 +61,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
+All commands run from the `plugin/` directory:
+
 ### PHP
 ```bash
+cd plugin
 composer install                 # Install dependencies
 composer phpcs                   # Run WordPress coding standards check
 composer phpcbf                  # Auto-fix code style
 composer test                    # Run PHPUnit tests
-composer test:unit               # Run only unit tests
-composer test:integration        # Run only integration tests
 ```
 
-### Admin UI (React)
+### Assets (Tailwind + Alpine.js)
 ```bash
-cd admin-ui
+cd plugin
 npm install
-npm start                        # Development with watch
-npm run build                    # Production build
+npm run dev                      # Development with watch (CSS + JS)
+npm run build                    # Production build (minified)
 npm run lint:js                  # Lint JavaScript
 npm run lint:css                 # Lint styles
-npm test                         # Jest tests
-npm run test:watch               # Tests in watch mode
-npm run test:coverage            # Tests with coverage report
-```
-
-### Frontend (Alpine.js/Tailwind)
-```bash
-npm run watch                    # Tailwind + esbuild watch
-npm run build                    # Production build (minified)
 ```
 
 ## Architecture

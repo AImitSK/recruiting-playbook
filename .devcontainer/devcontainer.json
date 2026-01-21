@@ -1,0 +1,157 @@
+{
+    "name": "Recruiting Playbook",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "wordpress",
+    "workspaceFolder": "/var/www/html/wp-content/plugins/recruiting-playbook",
+
+    // Container nach Start konfigurieren
+    "postCreateCommand": "bash /workspace/.devcontainer/setup.sh || true",
+
+    // VS Code Einstellungen im Container
+    "customizations": {
+        "vscode": {
+            // Extensions die automatisch installiert werden
+            "extensions": [
+                // PHP
+                "bmewburn.vscode-intelephense-client",
+                "xdebug.php-debug",
+                "neilbrayfield.php-docblocker",
+                "mehedidracula.php-namespace-resolver",
+
+                // WordPress
+                "wordpresspodcast.wordpress-developer-resources",
+
+                // JavaScript/TypeScript
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+
+                // CSS
+                "bradlc.vscode-tailwindcss",
+                "stylelint.vscode-stylelint",
+
+                // Git
+                "eamodio.gitlens",
+                "mhutchie.git-graph",
+
+                // Utilities
+                "EditorConfig.EditorConfig",
+                "christian-kohler.path-intellisense",
+                "streetsidesoftware.code-spell-checker",
+                "streetsidesoftware.code-spell-checker-german"
+            ],
+
+            // VS Code Settings
+            "settings": {
+                // PHP
+                "php.validate.executablePath": "/usr/local/bin/php",
+                "intelephense.environment.phpVersion": "8.2.0",
+                "intelephense.stubs": [
+                    "apache",
+                    "bcmath",
+                    "bz2",
+                    "Core",
+                    "curl",
+                    "date",
+                    "dom",
+                    "exif",
+                    "fileinfo",
+                    "filter",
+                    "gd",
+                    "hash",
+                    "iconv",
+                    "intl",
+                    "json",
+                    "libxml",
+                    "mbstring",
+                    "mysqli",
+                    "openssl",
+                    "pcre",
+                    "PDO",
+                    "pdo_mysql",
+                    "Phar",
+                    "posix",
+                    "readline",
+                    "Reflection",
+                    "session",
+                    "SimpleXML",
+                    "SPL",
+                    "standard",
+                    "tokenizer",
+                    "wordpress",
+                    "xml",
+                    "xmlreader",
+                    "xmlwriter",
+                    "zip",
+                    "zlib"
+                ],
+
+                // Xdebug
+                "php.debug.executablePath": "/usr/local/bin/php",
+
+                // Editor
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "[php]": {
+                    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+                },
+
+                // Files
+                "files.associations": {
+                    "*.php": "php"
+                },
+                "files.exclude": {
+                    "**/node_modules": true,
+                    "**/vendor": true
+                },
+
+                // Tailwind CSS
+                "tailwindCSS.includeLanguages": {
+                    "php": "html"
+                },
+                "tailwindCSS.experimental.classRegex": [
+                    ["class=[\"']([^\"']*)[\"']", "([^\"'\\s]*)"]
+                ],
+
+                // Terminal
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    },
+
+    // Ports die weitergeleitet werden
+    "forwardPorts": [
+        8080,  // WordPress
+        8081,  // phpMyAdmin
+        8025,  // MailHog Web UI
+        3306,  // MySQL (für externe Tools)
+        9003   // Xdebug
+    ],
+
+    // Port Labels für Übersichtlichkeit
+    "portsAttributes": {
+        "8080": {
+            "label": "WordPress",
+            "onAutoForward": "notify"
+        },
+        "8081": {
+            "label": "phpMyAdmin",
+            "onAutoForward": "silent"
+        },
+        "8025": {
+            "label": "MailHog (E-Mails)",
+            "onAutoForward": "silent"
+        },
+        "3306": {
+            "label": "MySQL",
+            "onAutoForward": "silent"
+        }
+    },
+
+    // Features
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+
+    // Container als www-data User ausführen (WordPress-kompatibel)
+    "remoteUser": "www-data"
+}

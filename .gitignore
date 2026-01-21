@@ -1,0 +1,55 @@
+# =============================================================
+# Recruiting Playbook - Repository .gitignore
+# =============================================================
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE / Editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+
+# =============================================================
+# Plugin-specific (handled in plugin/.gitignore, but also here)
+# =============================================================
+
+# Dependencies
+plugin/node_modules/
+plugin/vendor/
+
+# =============================================================
+# Dev Container (do not ignore - needed for development)
+# =============================================================
+# .devcontainer/ is tracked!
