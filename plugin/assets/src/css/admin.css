@@ -24,3 +24,147 @@
 .rp-stat-label {
     @apply rp-text-sm rp-text-gray-500 rp-mt-1;
 }
+
+/* ==========================================================================
+   Bewerbungen Styles (Phase 1C)
+   ========================================================================== */
+
+/* Status-Badge */
+.rp-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    white-space: nowrap;
+}
+
+/* Subsubsub Status-Links */
+.subsubsub .count {
+    color: #999;
+}
+
+/* Detailseite Grid */
+.rp-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 960px) {
+    .rp-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Postbox in Detailseite */
+.rp-application-detail .postbox {
+    margin-bottom: 20px;
+}
+
+.rp-application-detail .postbox .hndle {
+    cursor: default;
+}
+
+.rp-application-detail .postbox .hndle .count {
+    font-weight: normal;
+    color: #999;
+    font-size: 13px;
+}
+
+/* Anschreiben-Box */
+.rp-cover-letter {
+    background: #f6f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+/* Aktivitäts-Log */
+.rp-activity-log {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rp-activity-log li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.rp-activity-log li:last-child {
+    border-bottom: none;
+}
+
+.rp-log-time {
+    color: #666;
+    font-size: 12px;
+}
+
+.rp-log-user {
+    font-weight: 500;
+}
+
+.rp-log-action {
+    color: #333;
+}
+
+/* Filter-Bereich */
+.tablenav .alignleft.actions select,
+.tablenav .alignleft.actions input[type="date"] {
+    margin-right: 5px;
+}
+
+/* Dokumente-Tabelle */
+.widefat .dashicons {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* DSGVO-Buttons */
+.button-link-delete {
+    color: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+.button-link-delete:hover {
+    background: #b32d2e !important;
+    color: white !important;
+}
+
+/* Quick-Action Buttons */
+.column-actions .button-small {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+
+/* Status-Farben für Links */
+.rp-status-new { color: #2271b1; }
+.rp-status-screening { color: #dba617; }
+.rp-status-interview { color: #9b59b6; }
+.rp-status-offer { color: #1e8cbe; }
+.rp-status-hired { color: #00a32a; }
+.rp-status-rejected { color: #d63638; }
+.rp-status-withdrawn { color: #787c82; }
+
+/* Export-Seite */
+.rp-export-card {
+    max-width: 600px;
+    padding: 20px;
+}
+
+.rp-export-card ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+.rp-export-card .notice {
+    margin: 15px 0;
+}

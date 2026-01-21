@@ -11,6 +11,9 @@ namespace RecruitingPlaybook\Api;
 
 use RecruitingPlaybook\Services\ApplicationService;
 use RecruitingPlaybook\Services\SpamProtection;
+use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Services\GdprService;
+use RecruitingPlaybook\Constants\ApplicationStatus;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -137,6 +140,84 @@ class ApplicationController extends WP_REST_Controller {
 							'required'    => false,
 						],
 					],
+				],
+			]
+		);
+
+		// Bewerbung löschen
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)',
+			[
+				[
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => [ $this, 'delete_item' ],
+					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
+					'args'                => [
+						'id'          => [
+							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'type'        => 'integer',
+							'required'    => true,
+						],
+						'hard_delete' => [
+							'description' => __( 'Endgültig löschen', 'recruiting-playbook' ),
+							'type'        => 'boolean',
+							'default'     => false,
+						],
+					],
+				],
+			]
+		);
+
+		// Dokument-Download-URL generieren
+		register_rest_route(
+			$this->namespace,
+			'/documents/(?P<id>[\d]+)/download-url',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_download_url' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => [
+						'id' => [
+							'description' => __( 'Dokument-ID', 'recruiting-playbook' ),
+							'type'        => 'integer',
+							'required'    => true,
+						],
+					],
+				],
+			]
+		);
+
+		// Kandidaten-Datenauskunft (DSGVO)
+		register_rest_route(
+			$this->namespace,
+			'/candidates/(?P<id>[\d]+)/export',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'export_candidate_data' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => [
+						'id' => [
+							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'type'        => 'integer',
+							'required'    => true,
+						],
+					],
+				],
+			]
+		);
+
+		// Statistiken
+		register_rest_route(
+			$this->namespace,
+			'/stats',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_stats' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 				],
 			]
 		);
@@ -534,5 +615,161 @@ class ApplicationController extends WP_REST_Controller {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Bewerbung löschen
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function delete_item( $request ) {
+		$id          = (int) $request->get_param( 'id' );
+		$hard_delete = (bool) $request->get_param( 'hard_delete' );
+
+		$gdpr_service = new GdprService();
+
+		if ( $hard_delete ) {
+			$result = $gdpr_service->hardDeleteApplication( $id );
+		} else {
+			$result = $gdpr_service->softDeleteApplication( $id );
+		}
+
+		if ( ! $result ) {
+			return new WP_Error(
+				'rest_delete_failed',
+				__( 'Bewerbung konnte nicht gelöscht werden.', 'recruiting-playbook' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'message' => $hard_delete
+					? __( 'Bewerbung wurde endgültig gelöscht.', 'recruiting-playbook' )
+					: __( 'Bewerbung wurde gelöscht.', 'recruiting-playbook' ),
+			],
+			200
+		);
+	}
+
+	/**
+	 * Berechtigung für Löschen prüfen
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function delete_item_permissions_check( $request ) {
+		if ( ! current_user_can( 'delete_applications' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, Bewerbungen zu löschen.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+		return true;
+	}
+
+	/**
+	 * Download-URL für Dokument generieren
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_download_url( $request ) {
+		$document_id = (int) $request->get_param( 'id' );
+
+		$url = DocumentDownloadService::generateDownloadUrl( $document_id );
+
+		return new WP_REST_Response(
+			[
+				'url'        => $url,
+				'expires_in' => 3600, // 1 Stunde
+			],
+			200
+		);
+	}
+
+	/**
+	 * Kandidaten-Daten exportieren (DSGVO)
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function export_candidate_data( $request ) {
+		$candidate_id = (int) $request->get_param( 'id' );
+
+		$gdpr_service = new GdprService();
+		$data         = $gdpr_service->exportCandidateData( $candidate_id );
+
+		if ( empty( $data ) ) {
+			return new WP_Error(
+				'rest_candidate_not_found',
+				__( 'Kandidat nicht gefunden.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Statistiken abrufen
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 */
+	public function get_stats( $request ) {
+		global $wpdb;
+
+		$applications_table = $wpdb->prefix . 'rp_applications';
+
+		// Status-Verteilung
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$status_counts = $wpdb->get_results(
+			"SELECT status, COUNT(*) as count FROM {$applications_table} GROUP BY status",
+			OBJECT_K
+		);
+
+		// Bewerbungen pro Tag (letzte 30 Tage)
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$daily_counts = $wpdb->get_results(
+			"SELECT DATE(created_at) as date, COUNT(*) as count
+			 FROM {$applications_table}
+			 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+			 GROUP BY DATE(created_at)
+			 ORDER BY date ASC"
+		);
+
+		// Top-Jobs nach Bewerbungen
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$top_jobs = $wpdb->get_results(
+			"SELECT job_id, COUNT(*) as count
+			 FROM {$applications_table}
+			 GROUP BY job_id
+			 ORDER BY count DESC
+			 LIMIT 5"
+		);
+
+		foreach ( $top_jobs as &$job ) {
+			$post       = get_post( $job->job_id );
+			$job->title = $post ? $post->post_title : __( 'Gelöscht', 'recruiting-playbook' );
+		}
+
+		$total = 0;
+		foreach ( $status_counts as $status ) {
+			$total += (int) $status->count;
+		}
+
+		return new WP_REST_Response(
+			[
+				'status_counts' => $status_counts,
+				'daily_counts'  => $daily_counts,
+				'top_jobs'      => $top_jobs,
+				'total'         => $total,
+			],
+			200
+		);
 	}
 }
