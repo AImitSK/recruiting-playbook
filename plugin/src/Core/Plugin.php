@@ -15,6 +15,7 @@ use RecruitingPlaybook\Taxonomies\JobLocation;
 use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
+use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
@@ -117,6 +118,10 @@ final class Plugin {
 	 * Admin-Bereich initialisieren
 	 */
 	private function initAdmin(): void {
+		// Setup-Wizard initialisieren (muss vor Menü kommen).
+		$wizard = new SetupWizard();
+		$wizard->init();
+
 		// Admin-Menü registrieren.
 		$menu = new Menu();
 		add_action( 'admin_menu', [ $menu, 'register' ] );
@@ -181,16 +186,26 @@ final class Plugin {
 	}
 
 	/**
-	 * Nach Aktivierung zur Dashboard-Seite weiterleiten
+	 * Nach Aktivierung zur Setup-Wizard Seite weiterleiten
 	 */
 	public function activationRedirect(): void {
 		if ( get_option( 'rp_activation_redirect', false ) ) {
 			delete_option( 'rp_activation_redirect' );
 
-			if ( ! isset( $_GET['activate-multi'] ) ) {
-				wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook' ) );
+			// Nicht bei Multi-Aktivierung oder wenn Wizard bereits abgeschlossen.
+			if ( isset( $_GET['activate-multi'] ) ) {
+				return;
+			}
+
+			// Zum Wizard weiterleiten, wenn noch nicht abgeschlossen.
+			if ( ! get_option( 'rp_wizard_completed', false ) ) {
+				wp_safe_redirect( admin_url( 'admin.php?page=rp-setup-wizard' ) );
 				exit;
 			}
+
+			// Sonst zum Dashboard.
+			wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook' ) );
+			exit;
 		}
 	}
 

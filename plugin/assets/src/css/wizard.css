@@ -1,0 +1,551 @@
+/**
+ * Setup-Wizard Styles
+ *
+ * @package RecruitingPlaybook
+ */
+
+/* Reset & Base */
+.rp-wizard-body {
+    background: #f0f0f1;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1d2327;
+}
+
+.rp-wizard-body * {
+    box-sizing: border-box;
+}
+
+/* Container */
+.rp-wizard-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Header */
+.rp-wizard-header {
+    background: linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+    color: #fff;
+    padding: 30px;
+    text-align: center;
+}
+
+.rp-wizard-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rp-wizard-header .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+/* Progress Bar */
+.rp-wizard-progress {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    background: #f6f7f7;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rp-wizard-progress li {
+    flex: 1;
+    text-align: center;
+    padding: 15px 10px;
+    position: relative;
+    color: #787c82;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.rp-wizard-progress li.active {
+    color: #2271b1;
+    background: #fff;
+    border-bottom: 3px solid #2271b1;
+    margin-bottom: -1px;
+}
+
+.rp-wizard-progress li.completed {
+    color: #00a32a;
+}
+
+.rp-wizard-progress .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #dcdcde;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.rp-wizard-progress li.active .step-number {
+    background: #2271b1;
+}
+
+.rp-wizard-progress li.completed .step-number {
+    background: #00a32a;
+}
+
+.rp-wizard-progress .step-name {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Content */
+.rp-wizard-content {
+    padding: 40px;
+}
+
+.rp-wizard-step h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1d2327;
+    font-size: 24px;
+}
+
+.rp-wizard-step .description {
+    color: #646970;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* Features Grid */
+.rp-wizard-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.rp-wizard-features .feature {
+    text-align: center;
+    padding: 25px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.rp-wizard-features .feature:hover {
+    border-color: #2271b1;
+    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.1);
+}
+
+.rp-wizard-features .feature .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #2271b1;
+    margin-bottom: 15px;
+}
+
+.rp-wizard-features .feature h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #1d2327;
+}
+
+.rp-wizard-features .feature p {
+    margin: 0;
+    color: #646970;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Form */
+.rp-wizard-form .form-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rp-wizard-form .form-table th {
+    width: 180px;
+    padding: 15px 10px 15px 0;
+    text-align: left;
+    vertical-align: top;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.rp-wizard-form .form-table td {
+    padding: 15px 10px;
+}
+
+.rp-wizard-form .form-table tr {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.rp-wizard-form .form-table tr:last-child {
+    border-bottom: none;
+}
+
+.rp-wizard-form input[type="text"],
+.rp-wizard-form input[type="email"],
+.rp-wizard-form input[type="url"],
+.rp-wizard-form select {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.rp-wizard-form input[type="text"]:focus,
+.rp-wizard-form input[type="email"]:focus,
+.rp-wizard-form input[type="url"]:focus,
+.rp-wizard-form select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.rp-wizard-form .small-text {
+    max-width: 100px;
+}
+
+.rp-wizard-form .regular-text {
+    max-width: 400px;
+}
+
+.rp-wizard-form .description {
+    display: block;
+    margin-top: 5px;
+    color: #646970;
+    font-size: 13px;
+}
+
+/* SMTP Status */
+.rp-smtp-status {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.rp-smtp-status.configured {
+    background: #d1fae5;
+    border: 1px solid #10b981;
+}
+
+.rp-smtp-status.not-configured {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+}
+
+.rp-smtp-status .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.rp-smtp-status.configured .dashicons {
+    color: #10b981;
+}
+
+.rp-smtp-status.not-configured .dashicons {
+    color: #f59e0b;
+}
+
+.rp-smtp-status strong {
+    flex: 1 0 100%;
+    margin-left: 34px;
+    margin-top: -28px;
+    font-size: 15px;
+}
+
+.rp-smtp-status p {
+    flex: 1 0 100%;
+    margin: 5px 0 0;
+    font-size: 13px;
+}
+
+/* Test Email */
+.rp-test-email-section {
+    background: #f6f7f7;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.rp-test-email-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.rp-test-email-section p {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.rp-test-email-section input[type="email"] {
+    flex: 1;
+    min-width: 200px;
+}
+
+#rp-test-email-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+#rp-test-email-result.success {
+    display: block;
+    background: #d1fae5;
+    color: #065f46;
+}
+
+#rp-test-email-result.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Actions */
+.rp-wizard-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.rp-wizard-body .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rp-wizard-body .button-primary {
+    background: #2271b1;
+    border: 1px solid #2271b1;
+    color: #fff;
+}
+
+.rp-wizard-body .button-primary:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.rp-wizard-body .button-secondary,
+.rp-wizard-body .button:not(.button-primary):not(.button-link) {
+    background: #f6f7f7;
+    border: 1px solid #8c8f94;
+    color: #1d2327;
+}
+
+.rp-wizard-body .button-secondary:hover,
+.rp-wizard-body .button:not(.button-primary):not(.button-link):hover {
+    background: #f0f0f1;
+    border-color: #646970;
+    color: #1d2327;
+}
+
+.rp-wizard-body .button-link {
+    background: transparent;
+    border: none;
+    color: #646970;
+    text-decoration: underline;
+    padding: 8px;
+}
+
+.rp-wizard-body .button-link:hover {
+    color: #2271b1;
+}
+
+.rp-wizard-body .button-hero {
+    padding: 12px 36px;
+    font-size: 16px;
+}
+
+.rp-wizard-body .button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Complete Step */
+.rp-wizard-complete {
+    text-align: center;
+}
+
+.rp-wizard-complete > .dashicons {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: #00a32a;
+    margin-bottom: 20px;
+}
+
+.rp-wizard-next-steps,
+.rp-wizard-shortcodes {
+    text-align: left;
+    max-width: 500px;
+    margin: 30px auto;
+    background: #f6f7f7;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.rp-wizard-next-steps h3,
+.rp-wizard-shortcodes h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.rp-wizard-next-steps ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.rp-wizard-next-steps li {
+    margin-bottom: 10px;
+}
+
+.rp-wizard-next-steps a {
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.rp-wizard-next-steps a:hover {
+    text-decoration: underline;
+}
+
+.rp-wizard-shortcodes table {
+    width: 100%;
+}
+
+.rp-wizard-shortcodes table td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rp-wizard-shortcodes table tr:last-child td {
+    border-bottom: none;
+}
+
+.rp-wizard-shortcodes code {
+    background: #fff;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #1d2327;
+}
+
+/* Loading State */
+.rp-wizard-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.rp-wizard-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .rp-wizard-container {
+        margin: 20px;
+        border-radius: 4px;
+    }
+
+    .rp-wizard-header {
+        padding: 20px;
+    }
+
+    .rp-wizard-header h1 {
+        font-size: 22px;
+    }
+
+    .rp-wizard-content {
+        padding: 25px;
+    }
+
+    .rp-wizard-features {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .rp-wizard-progress .step-name {
+        display: none;
+    }
+
+    .rp-wizard-progress li {
+        padding: 12px 5px;
+    }
+
+    .rp-wizard-form .form-table th {
+        display: block;
+        width: 100%;
+        padding: 10px 0 5px;
+    }
+
+    .rp-wizard-form .form-table td {
+        display: block;
+        padding: 0 0 15px;
+    }
+
+    .rp-wizard-form input[type="text"],
+    .rp-wizard-form input[type="email"],
+    .rp-wizard-form input[type="url"],
+    .rp-wizard-form select {
+        max-width: 100%;
+    }
+
+    .rp-wizard-actions {
+        flex-direction: column;
+    }
+
+    .rp-wizard-actions .button {
+        width: 100%;
+    }
+}
