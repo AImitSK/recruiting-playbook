@@ -387,6 +387,304 @@ Nach dem Upload (in Modus A oder B) kann der Bewerber eine **tiefere Analyse** s
 
 ---
 
+## Asynchrone Verarbeitung mit Action Scheduler
+
+### Problem: Shared-Hosting Limitierungen
+
+Viele WordPress-Installationen laufen auf Shared-Hosting mit:
+- `max_execution_time`: 30-60 Sekunden
+- Limitierter RAM (128-256 MB)
+- Keine Background-Prozesse
+
+**Risiko:** Bei großen PDFs oder langsamer AI-API bricht der Request ab.
+
+### Lösung: WordPress Action Scheduler
+
+Statt synchroner Verarbeitung wird die Analyse in eine Queue eingereiht und im Hintergrund verarbeitet.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│            ASYNCHRONER ANALYSE-FLOW                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BEWERBER                    SERVER                    AI-API   │
+│  ────────                    ──────                    ──────   │
+│                                                                  │
+│  1. Upload ──────────────────► Datei speichern                  │
+│                                Job in Queue                      │
+│  2. ◄─────────────────────── "Analyse gestartet"                │
+│     [Fortschrittsbalken]       Status: pending                   │
+│                                                                  │
+│  3. Polling (3s) ────────────► Status abfragen                  │
+│     ◄─────────────────────── Status: processing                 │
+│                                                                  │
+│                                Action Scheduler ────► AI-Call   │
+│                                ◄──────────────────── Ergebnis   │
+│                                Status: completed                 │
+│                                                                  │
+│  4. Polling (3s) ────────────► Status abfragen                  │
+│     ◄─────────────────────── Status: completed + Daten          │
+│                                                                  │
+│  5. Ergebnis anzeigen                                           │
+│     Formular vorausgefüllt                                      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Implementierung
+
+```php
+<?php
+// src/AI/Queue/AnalysisQueue.php
+
+namespace RecruitingPlaybook\AI\Queue;
+
+use ActionScheduler;
+
+class AnalysisQueue {
+
+    private const HOOK = 'rp_process_ai_analysis';
+
+    /**
+     * Analyse in Queue einreihen
+     */
+    public function enqueue( array $analysis_request ): string {
+        // Eindeutige Job-ID generieren
+        $job_id = wp_generate_uuid4();
+
+        // Request-Daten speichern
+        set_transient( "rp_analysis_{$job_id}", [
+            'status'     => 'pending',
+            'request'    => $analysis_request,
+            'created_at' => time(),
+        ], HOUR_IN_SECONDS );
+
+        // Job schedulen (sofort)
+        as_enqueue_async_action( self::HOOK, [ 'job_id' => $job_id ], 'recruiting-playbook' );
+
+        return $job_id;
+    }
+
+    /**
+     * Status abfragen
+     */
+    public function get_status( string $job_id ): array {
+        $data = get_transient( "rp_analysis_{$job_id}" );
+
+        if ( ! $data ) {
+            return [
+                'status'  => 'not_found',
+                'message' => __( 'Analyse nicht gefunden.', 'recruiting-playbook' ),
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
+     * Job verarbeiten (wird vom Action Scheduler aufgerufen)
+     */
+    public static function process( string $job_id ): void {
+        $data = get_transient( "rp_analysis_{$job_id}" );
+
+        if ( ! $data || $data['status'] !== 'pending' ) {
+            return;
+        }
+
+        // Status auf "processing" setzen
+        $data['status'] = 'processing';
+        $data['started_at'] = time();
+        set_transient( "rp_analysis_{$job_id}", $data, HOUR_IN_SECONDS );
+
+        try {
+            // Analyse durchführen
+            $analysis_service = new \RecruitingPlaybook\AI\Services\AnalysisService();
+            $result = $analysis_service->analyze( $data['request'] );
+
+            // Erfolg speichern
+            $data['status'] = 'completed';
+            $data['result'] = $result;
+            $data['completed_at'] = time();
+
+        } catch ( \Exception $e ) {
+            // Fehler speichern
+            $data['status'] = 'failed';
+            $data['error'] = $e->getMessage();
+            $data['failed_at'] = time();
+        }
+
+        set_transient( "rp_analysis_{$job_id}", $data, HOUR_IN_SECONDS );
+    }
+}
+
+// Hook registrieren
+add_action( AnalysisQueue::HOOK, [ AnalysisQueue::class, 'process' ] );
+```
+
+### REST API Endpoints
+
+```php
+<?php
+// src/Api/AnalysisController.php
+
+// POST /wp-json/recruiting/v1/analysis
+// → Startet Analyse, gibt Job-ID zurück
+register_rest_route( 'recruiting/v1', '/analysis', [
+    'methods'  => 'POST',
+    'callback' => function( WP_REST_Request $request ) {
+        $queue = new AnalysisQueue();
+
+        $job_id = $queue->enqueue( [
+            'job_id'    => $request->get_param( 'job_id' ),
+            'mode'      => $request->get_param( 'mode' ),
+            'files'     => $request->get_file_params(),
+        ] );
+
+        return new WP_REST_Response( [
+            'job_id'  => $job_id,
+            'status'  => 'pending',
+            'message' => __( 'Analyse gestartet.', 'recruiting-playbook' ),
+        ], 202 ); // 202 Accepted
+    },
+] );
+
+// GET /wp-json/recruiting/v1/analysis/{job_id}
+// → Status und Ergebnis abfragen
+register_rest_route( 'recruiting/v1', '/analysis/(?P<job_id>[a-f0-9-]+)', [
+    'methods'  => 'GET',
+    'callback' => function( WP_REST_Request $request ) {
+        $queue = new AnalysisQueue();
+        $status = $queue->get_status( $request->get_param( 'job_id' ) );
+
+        return new WP_REST_Response( $status );
+    },
+] );
+```
+
+### Frontend: Alpine.js Polling
+
+```javascript
+// assets/js/ai-analysis.js
+
+function aiAnalysis() {
+    return {
+        jobId: null,
+        status: 'idle', // idle, uploading, pending, processing, completed, failed
+        result: null,
+        error: null,
+        pollInterval: null,
+
+        async uploadAndAnalyze(files, jobId, mode) {
+            this.status = 'uploading';
+
+            const formData = new FormData();
+            files.forEach(file => formData.append('files[]', file));
+            formData.append('job_id', jobId);
+            formData.append('mode', mode);
+
+            try {
+                const response = await fetch('/wp-json/recruiting/v1/analysis', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-WP-Nonce': rpConfig.nonce }
+                });
+
+                const data = await response.json();
+                this.jobId = data.job_id;
+                this.status = 'pending';
+
+                // Polling starten
+                this.startPolling();
+
+            } catch (e) {
+                this.status = 'failed';
+                this.error = 'Upload fehlgeschlagen';
+            }
+        },
+
+        startPolling() {
+            this.pollInterval = setInterval(async () => {
+                const response = await fetch(
+                    `/wp-json/recruiting/v1/analysis/${this.jobId}`,
+                    { headers: { 'X-WP-Nonce': rpConfig.nonce } }
+                );
+
+                const data = await response.json();
+                this.status = data.status;
+
+                if (data.status === 'completed') {
+                    this.result = data.result;
+                    this.stopPolling();
+                } else if (data.status === 'failed') {
+                    this.error = data.error;
+                    this.stopPolling();
+                }
+            }, 3000); // Alle 3 Sekunden
+
+            // Timeout nach 2 Minuten
+            setTimeout(() => {
+                if (this.status === 'pending' || this.status === 'processing') {
+                    this.showFallbackOption();
+                }
+            }, 120000);
+        },
+
+        stopPolling() {
+            if (this.pollInterval) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        },
+
+        showFallbackOption() {
+            // Option anbieten, ohne Analyse fortzufahren
+            this.status = 'timeout';
+        }
+    };
+}
+```
+
+### UI-Zustände
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  STATUS: pending                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  ⏳ Dokument wird analysiert...                      │   │
+│  │  ████████░░░░░░░░░░░░ 40%                           │   │
+│  │                                                      │   │
+│  │  Dies kann einige Sekunden dauern.                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  STATUS: timeout (nach 2 Min)                                │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  ⏰ Die Analyse dauert länger als erwartet.          │   │
+│  │                                                      │   │
+│  │  Sie können:                                         │   │
+│  │  [Weiter warten]  [Ohne Analyse fortfahren]         │   │
+│  │                                                      │   │
+│  │  Die Analyse läuft im Hintergrund weiter.           │   │
+│  │  Sie können das Ergebnis später per E-Mail erhalten.│   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Composer: Action Scheduler
+
+```json
+{
+    "require": {
+        "woocommerce/action-scheduler": "^3.6"
+    }
+}
+```
+
+**Hinweis:** Action Scheduler ist bereits in WooCommerce enthalten. Falls WooCommerce aktiv ist, wird die vorhandene Version genutzt.
+
+---
+
 ## AI-Provider Fallback-Strategie
 
 ### Risiko: Single Point of Failure
@@ -839,6 +1137,179 @@ class OCRService {
     'max_file_size_mb' => 5,            // OCR-Limit
     'monthly_budget_eur' => 50,          // Kostendeckel
 ]
+```
+
+### OCR-Limits zum Schutz der Marge
+
+Um die Wirtschaftlichkeit des AI-Addons (19€/Monat) zu schützen, gelten strikte Limits für OCR-Verarbeitung:
+
+| Parameter | Limit | Begründung |
+|-----------|-------|------------|
+| **Seiten pro Dokument** | 10 | CV + Anschreiben + Zeugnis realistisch |
+| **Seiten pro Analyse** | 20 | Bei mehreren Dokumenten |
+| **Max. Auflösung** | 300 DPI | Reicht für OCR, spart Kosten |
+| **Dateigröße (OCR)** | 5 MB | Zusätzlich zum 10 MB Upload-Limit |
+
+```php
+<?php
+// src/AI/OCR/OCRLimiter.php
+
+namespace RecruitingPlaybook\AI\OCR;
+
+class OCRLimiter {
+
+    private const MAX_PAGES_PER_DOCUMENT = 10;
+    private const MAX_PAGES_PER_ANALYSIS = 20;
+    private const MAX_DPI = 300;
+    private const MAX_FILE_SIZE_MB = 5;
+
+    /**
+     * Dokument vor OCR prüfen und ggf. beschränken
+     */
+    public function enforce_limits( string $file_path ): LimitResult {
+        $result = new LimitResult();
+        $result->original_path = $file_path;
+
+        // 1. Dateigröße prüfen
+        $size_mb = filesize( $file_path ) / ( 1024 * 1024 );
+        if ( $size_mb > self::MAX_FILE_SIZE_MB ) {
+            $result->rejected = true;
+            $result->reason = 'file_too_large';
+            $result->message = sprintf(
+                __( 'Datei zu groß für OCR (%s MB). Maximum: %s MB.', 'recruiting-playbook' ),
+                number_format( $size_mb, 1 ),
+                self::MAX_FILE_SIZE_MB
+            );
+            return $result;
+        }
+
+        // 2. Seitenzahl prüfen (nur bei PDF)
+        if ( $this->is_pdf( $file_path ) ) {
+            $page_count = $this->get_pdf_page_count( $file_path );
+
+            if ( $page_count > self::MAX_PAGES_PER_DOCUMENT ) {
+                $result->truncated = true;
+                $result->original_pages = $page_count;
+                $result->processed_pages = self::MAX_PAGES_PER_DOCUMENT;
+                $result->warnings[] = sprintf(
+                    __( 'Dokument hat %d Seiten. Nur die ersten %d werden analysiert.', 'recruiting-playbook' ),
+                    $page_count,
+                    self::MAX_PAGES_PER_DOCUMENT
+                );
+
+                // Nur erste X Seiten extrahieren
+                $result->processed_path = $this->extract_pages(
+                    $file_path,
+                    1,
+                    self::MAX_PAGES_PER_DOCUMENT
+                );
+            }
+        }
+
+        // 3. Auflösung reduzieren wenn nötig (bei Bildern)
+        if ( $this->is_image( $file_path ) ) {
+            $dpi = $this->get_image_dpi( $file_path );
+
+            if ( $dpi > self::MAX_DPI ) {
+                $result->downscaled = true;
+                $result->processed_path = $this->reduce_dpi( $file_path, self::MAX_DPI );
+                $result->warnings[] = sprintf(
+                    __( 'Bildauflösung von %d DPI auf %d DPI reduziert.', 'recruiting-playbook' ),
+                    $dpi,
+                    self::MAX_DPI
+                );
+            }
+        }
+
+        $result->processed_path = $result->processed_path ?? $file_path;
+        return $result;
+    }
+
+    /**
+     * Gesamtlimit für eine Analyse prüfen
+     */
+    public function check_analysis_limit( array $documents ): bool {
+        $total_pages = 0;
+
+        foreach ( $documents as $doc ) {
+            if ( $this->is_pdf( $doc ) ) {
+                $total_pages += min(
+                    $this->get_pdf_page_count( $doc ),
+                    self::MAX_PAGES_PER_DOCUMENT
+                );
+            } else {
+                $total_pages += 1; // Bild = 1 Seite
+            }
+        }
+
+        return $total_pages <= self::MAX_PAGES_PER_ANALYSIS;
+    }
+
+    /**
+     * PDF-Seitenzahl ermitteln
+     */
+    private function get_pdf_page_count( string $path ): int {
+        if ( class_exists( '\Smalot\PdfParser\Parser' ) ) {
+            try {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile( $path );
+                return count( $pdf->getPages() );
+            } catch ( \Exception $e ) {
+                return 1; // Fallback
+            }
+        }
+
+        // Fallback: Aus PDF-Metadaten lesen
+        $content = file_get_contents( $path, false, null, 0, 1024 * 100 );
+        if ( preg_match( '/\/Count\s+(\d+)/', $content, $matches ) ) {
+            return (int) $matches[1];
+        }
+
+        return 1;
+    }
+
+    /**
+     * Erste X Seiten aus PDF extrahieren
+     */
+    private function extract_pages( string $path, int $start, int $end ): string {
+        // Temporäre Datei erstellen
+        $temp_path = sys_get_temp_dir() . '/' . wp_generate_uuid4() . '.pdf';
+
+        // Mit FPDI/TCPDF extrahieren
+        if ( class_exists( '\setasign\Fpdi\Fpdi' ) ) {
+            $pdf = new \setasign\Fpdi\Fpdi();
+
+            for ( $i = $start; $i <= $end; $i++ ) {
+                $pdf->AddPage();
+                $pdf->setSourceFile( $path );
+                $tpl = $pdf->importPage( $i );
+                $pdf->useTemplate( $tpl );
+            }
+
+            $pdf->Output( $temp_path, 'F' );
+            return $temp_path;
+        }
+
+        // Fallback: Original zurückgeben
+        return $path;
+    }
+}
+```
+
+### Benutzer-Feedback bei Limits
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ℹ️ Dokument wurde für die Analyse optimiert                │
+│                                                             │
+│  • Ihr PDF hat 47 Seiten. Die ersten 10 werden analysiert. │
+│  • Die Bildauflösung wurde von 600 auf 300 DPI reduziert.  │
+│                                                             │
+│  Dies hat keinen Einfluss auf die Qualität der Analyse.    │
+│  Für Lebensläufe und Zeugnisse sind 10 Seiten ausreichend. │
+│                                                             │
+│  [Verstanden, weiter zur Analyse]                          │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Benutzer-Hinweis bei fehlgeschlagener Extraktion

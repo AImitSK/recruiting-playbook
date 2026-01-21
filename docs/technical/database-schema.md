@@ -1070,7 +1070,340 @@ if ( ! empty( $orphaned ) ) {
 
 ---
 
-## 13. Migration & Installation
+## 13. Datenbank-Integritätsprüfung
+
+### Problem: Dateninkonsistenz nach Migrationen
+
+Nach Domain-Umzügen oder fehlerhaften Backups können Inkonsistenzen auftreten:
+- Jobs vorhanden, aber Bewerbungen fehlen
+- Bewerbungen verweisen auf gelöschte Jobs
+- Dokumente in DB, aber Dateien fehlen
+- Kandidaten ohne zugehörige Bewerbungen
+
+### Lösung: Automatischer Integritäts-Check
+
+```php
+<?php
+// src/Admin/IntegrityChecker.php
+
+namespace RecruitingPlaybook\Admin;
+
+class IntegrityChecker {
+
+    /**
+     * Vollständige Integritätsprüfung durchführen
+     */
+    public function check(): IntegrityReport {
+        $report = new IntegrityReport();
+
+        // 1. Tabellen-Existenz prüfen
+        $report->add_check( $this->check_tables_exist() );
+
+        // 2. Foreign Key Konsistenz prüfen
+        $report->add_check( $this->check_orphaned_applications() );
+        $report->add_check( $this->check_orphaned_documents() );
+        $report->add_check( $this->check_orphaned_candidates() );
+
+        // 3. Dateisystem-Konsistenz prüfen
+        $report->add_check( $this->check_document_files() );
+        $report->add_check( $this->check_upload_directory() );
+
+        // 4. Daten-Plausibilität
+        $report->add_check( $this->check_data_plausibility() );
+
+        return $report;
+    }
+
+    /**
+     * Prüft ob alle benötigten Tabellen existieren
+     */
+    private function check_tables_exist(): CheckResult {
+        global $wpdb;
+
+        $required_tables = [
+            'rp_candidates',
+            'rp_applications',
+            'rp_documents',
+            'rp_activity_log',
+            'rp_api_keys',
+            'rp_webhooks',
+            'rp_webhook_deliveries',
+            'rp_email_log',
+        ];
+
+        $missing = [];
+        foreach ( $required_tables as $table ) {
+            $full_table = $wpdb->prefix . $table;
+            if ( $wpdb->get_var( "SHOW TABLES LIKE '$full_table'" ) !== $full_table ) {
+                $missing[] = $table;
+            }
+        }
+
+        if ( empty( $missing ) ) {
+            return new CheckResult(
+                'tables_exist',
+                'success',
+                sprintf( __( 'Alle %d Tabellen vorhanden', 'recruiting-playbook' ), count( $required_tables ) )
+            );
+        }
+
+        return new CheckResult(
+            'tables_exist',
+            'error',
+            sprintf( __( '%d Tabellen fehlen: %s', 'recruiting-playbook' ), count( $missing ), implode( ', ', $missing ) ),
+            [ 'action' => 'recreate_tables', 'tables' => $missing ]
+        );
+    }
+
+    /**
+     * Prüft auf verwaiste Bewerbungen (Job gelöscht)
+     */
+    private function check_orphaned_applications(): CheckResult {
+        global $wpdb;
+
+        $orphaned = $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}rp_applications a
+             LEFT JOIN {$wpdb->posts} p ON a.job_id = p.ID AND p.post_type = 'job_listing'
+             WHERE p.ID IS NULL AND a.deleted_at IS NULL"
+        );
+
+        if ( $orphaned == 0 ) {
+            return new CheckResult(
+                'orphaned_applications',
+                'success',
+                __( 'Keine verwaisten Bewerbungen', 'recruiting-playbook' )
+            );
+        }
+
+        return new CheckResult(
+            'orphaned_applications',
+            'warning',
+            sprintf( __( '%d Bewerbungen verweisen auf gelöschte Jobs', 'recruiting-playbook' ), $orphaned ),
+            [ 'action' => 'cleanup_orphaned', 'count' => $orphaned ]
+        );
+    }
+
+    /**
+     * Prüft ob Dokument-Dateien existieren
+     */
+    private function check_document_files(): CheckResult {
+        global $wpdb;
+
+        $documents = $wpdb->get_results(
+            "SELECT id, stored_filename, stored_path FROM {$wpdb->prefix}rp_documents WHERE deleted_at IS NULL"
+        );
+
+        $missing = [];
+        $upload_dir = wp_upload_dir();
+
+        foreach ( $documents as $doc ) {
+            $file_path = $upload_dir['basedir'] . '/' . $doc->stored_path;
+
+            if ( ! file_exists( $file_path ) ) {
+                $missing[] = $doc->id;
+            }
+        }
+
+        if ( empty( $missing ) ) {
+            return new CheckResult(
+                'document_files',
+                'success',
+                sprintf( __( 'Alle %d Dokumentdateien vorhanden', 'recruiting-playbook' ), count( $documents ) )
+            );
+        }
+
+        return new CheckResult(
+            'document_files',
+            'warning',
+            sprintf( __( '%d Dokumente in DB, aber Dateien fehlen', 'recruiting-playbook' ), count( $missing ) ),
+            [ 'action' => 'mark_missing_documents', 'ids' => $missing ]
+        );
+    }
+
+    /**
+     * Daten-Plausibilität prüfen
+     */
+    private function check_data_plausibility(): CheckResult {
+        global $wpdb;
+
+        $issues = [];
+
+        // Jobs ohne Bewerbungen nach > 90 Tagen (ungewöhnlich)
+        // Bewerbungen in der Zukunft erstellt
+        // Kandidaten mit ungültigen E-Mails
+
+        $future_apps = $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}rp_applications
+             WHERE created_at > NOW()"
+        );
+
+        if ( $future_apps > 0 ) {
+            $issues[] = sprintf( __( '%d Bewerbungen mit Datum in der Zukunft', 'recruiting-playbook' ), $future_apps );
+        }
+
+        if ( empty( $issues ) ) {
+            return new CheckResult(
+                'data_plausibility',
+                'success',
+                __( 'Daten-Plausibilität OK', 'recruiting-playbook' )
+            );
+        }
+
+        return new CheckResult(
+            'data_plausibility',
+            'warning',
+            implode( ', ', $issues ),
+            [ 'action' => 'review_data' ]
+        );
+    }
+}
+```
+
+### Admin-Dashboard Widget
+
+```php
+<?php
+// Automatischer Check beim Laden der Plugin-Übersichtsseite
+
+add_action( 'admin_init', function() {
+    // Nur auf Recruiting-Seiten
+    if ( ! isset( $_GET['page'] ) || strpos( $_GET['page'], 'recruiting' ) === false ) {
+        return;
+    }
+
+    // Maximal 1x pro Tag prüfen
+    $last_check = get_transient( 'rp_integrity_last_check' );
+    if ( $last_check && ( time() - $last_check ) < DAY_IN_SECONDS ) {
+        return;
+    }
+
+    $checker = new IntegrityChecker();
+    $report = $checker->check();
+
+    // Ergebnis cachen
+    set_transient( 'rp_integrity_report', $report, DAY_IN_SECONDS );
+    set_transient( 'rp_integrity_last_check', time(), DAY_IN_SECONDS );
+} );
+```
+
+### Status-Widget im Dashboard
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  SYSTEMSTATUS                              Letzte Prüfung:  │
+│                                            vor 2 Stunden    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ✅ Datenbank-Tabellen: 8/8 vorhanden                      │
+│  ✅ Dokumenten-Verzeichnis: beschreibbar                   │
+│  ✅ Konsistenz: 47 Jobs ↔ 234 Bewerbungen                  │
+│  ⚠️ Letztes Backup: vor 14 Tagen                          │
+│                                                             │
+│  [Backup erstellen]  [Erneut prüfen]                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+BEI PROBLEMEN:
+┌─────────────────────────────────────────────────────────────┐
+│  SYSTEMSTATUS                              ⚠️ PROBLEME      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ✅ Datenbank-Tabellen: 8/8 vorhanden                      │
+│  ❌ 3 Bewerbungen verweisen auf gelöschte Jobs             │
+│  ❌ 7 Dokumente fehlen im Dateisystem                      │
+│  ⚠️ Letztes Backup: KEIN BACKUP GEFUNDEN                  │
+│                                                             │
+│  EMPFEHLUNG:                                                │
+│  Es wurden Dateninkonsistenzen gefunden. Dies kann nach    │
+│  einem Domain-Umzug oder unvollständigen Backup auftreten. │
+│                                                             │
+│  [Probleme bereinigen]  [Backup erstellen]  [Ignorieren]   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Automatische Bereinigung (optional)
+
+```php
+<?php
+// src/Admin/IntegrityFixer.php
+
+namespace RecruitingPlaybook\Admin;
+
+class IntegrityFixer {
+
+    /**
+     * Verwaiste Bewerbungen soft-deleten
+     */
+    public function fix_orphaned_applications(): int {
+        global $wpdb;
+
+        $result = $wpdb->query(
+            "UPDATE {$wpdb->prefix}rp_applications a
+             LEFT JOIN {$wpdb->posts} p ON a.job_id = p.ID
+             SET a.deleted_at = NOW()
+             WHERE p.ID IS NULL AND a.deleted_at IS NULL"
+        );
+
+        // Activity Log
+        if ( $result > 0 ) {
+            do_action( 'rp_integrity_fixed', 'orphaned_applications', $result );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Fehlende Dokumente markieren
+     */
+    public function mark_missing_documents(): int {
+        // ... Implementation
+    }
+}
+```
+
+### Migration-Hinweis
+
+```php
+<?php
+// Bei Major-Updates oder erkanntem Domain-Wechsel
+
+add_action( 'admin_notices', function() {
+    // Domain-Wechsel erkennen
+    $stored_domain = get_option( 'rp_installed_domain' );
+    $current_domain = parse_url( site_url(), PHP_URL_HOST );
+
+    if ( $stored_domain && $stored_domain !== $current_domain ) {
+        ?>
+        <div class="notice notice-warning">
+            <p>
+                <strong><?php esc_html_e( 'Recruiting Playbook: Domain-Wechsel erkannt', 'recruiting-playbook' ); ?></strong><br>
+                <?php printf(
+                    esc_html__( 'Diese Website wurde von %s nach %s umgezogen.', 'recruiting-playbook' ),
+                    '<code>' . esc_html( $stored_domain ) . '</code>',
+                    '<code>' . esc_html( $current_domain ) . '</code>'
+                ); ?>
+            </p>
+            <p>
+                <?php esc_html_e( 'Bitte führen Sie eine Integritätsprüfung durch, um sicherzustellen, dass alle Daten korrekt übertragen wurden.', 'recruiting-playbook' ); ?>
+            </p>
+            <p>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-tools&tab=integrity' ) ); ?>" class="button button-primary">
+                    <?php esc_html_e( 'Integritätsprüfung starten', 'recruiting-playbook' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-tools&action=dismiss_domain_notice' ) ); ?>" class="button">
+                    <?php esc_html_e( 'Verstanden, nicht mehr anzeigen', 'recruiting-playbook' ); ?>
+                </a>
+            </p>
+        </div>
+        <?php
+    }
+} );
+```
+
+---
+
+## 14. Migration & Installation
 
 ### Installation
 

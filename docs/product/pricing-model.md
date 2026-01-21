@@ -371,20 +371,88 @@ Jahr 4: 0€ Einnahmen, ~20€ Support-Kosten = -20€
 Break-Even nach Jahr 7-8 wenn Support-Bedarf steigt
 ```
 
-**Mögliche Lösungen (für spätere Evaluation):**
+**Empfohlene Lösung: "Software-Modell" (JetBrains-Ansatz)**
 
-| Option | Beschreibung | Pro | Contra |
-|--------|--------------|-----|--------|
-| **Status Quo** | Lifetime bleibt | Einfach, Marketing-Vorteil | Langfristiges Risiko |
-| **Wartungspauschale** | 49€/Jahr nach Jahr 1 für Updates | Recurring Revenue | Verkompliziert Angebot |
-| **Major Version Upgrade** | Pro 2.0 kostet erneut | Branchenüblich | Kundenunzufriedenheit |
-| **Support-Zeitlimit** | Lifetime Updates, 1 Jahr Support | Klare Abgrenzung | Support-Erwartung bleibt |
+Klare Definition von "Lifetime" nach branchenüblichem Standard:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PRO-LIZENZ: 149€ einmalig                                  │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  ✓ LEBENSLANGE NUTZUNG der Version 1.x                     │
+│    → Plugin funktioniert dauerhaft, keine Deaktivierung    │
+│                                                             │
+│  ✓ 12 MONATE INKLUSIVE:                                    │
+│    → Alle Updates (1.1, 1.2, 1.3, ...)                     │
+│    → E-Mail-Support                                         │
+│    → Neue Features der 1.x-Reihe                           │
+│                                                             │
+│  NACH 12 MONATEN:                                           │
+│  → Plugin funktioniert weiter (letzte installierte Version)│
+│  → Keine neuen Updates                                      │
+│  → Community-Support (Forum, Docs)                         │
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  OPTIONAL: WARTUNGSVERLÄNGERUNG 49€/Jahr                   │
+│  ✓ Weitere 12 Monate Updates                               │
+│  ✓ Zugang zu Version 2.x wenn verfügbar                    │
+│  ✓ Priority E-Mail-Support                                 │
+│  ✓ Früher Zugang zu Beta-Features                          │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Kommunikation auf der Website
+
+**Wichtig:** Diese Definition muss von Anfang an klar kommuniziert werden!
+
+```
+FAQ: Was bedeutet "Lifetime-Lizenz"?
+
+Mit der PRO-Lizenz erhalten Sie:
+• Lebenslange Nutzungsrechte für die aktuelle Hauptversion (1.x)
+• 12 Monate Updates und Support inklusive
+• Danach funktioniert Ihr Plugin weiter - Sie erhalten nur keine neuen Updates mehr
+
+Möchten Sie weiterhin Updates erhalten?
+• Wartungsverlängerung: 49€/Jahr
+• Damit erhalten Sie auch Zugang zu zukünftigen Hauptversionen (2.x, 3.x, ...)
+```
+
+### Vorbilder für dieses Modell
+
+| Software | Lifetime-Definition | Wartung |
+|----------|---------------------|---------|
+| **JetBrains** | Perpetual Fallback License | Abo für Updates |
+| **Sketch** | Lifetime für aktuelle Version | 1 Jahr Updates inkl. |
+| **Sublime Text** | Lifetime für Version X | Neukauf für X+1 |
+| **WP Plugins (Gravity Forms, ACF Pro)** | 1 Jahr Updates inkl. | Verlängerung optional |
+
+### Wirtschaftliche Auswirkungen
+
+```
+Szenario: 100 Pro-Kunden im Jahr 1
+
+OHNE Wartungsverlängerung:
+Jahr 1: 100 × 149€ = 14.900€
+Jahr 2: 0€ (keine Neukäufe angenommen)
+Jahr 3: 0€
+→ Einmaliger Umsatz, kein Recurring
+
+MIT Wartungsverlängerung (50% Verlängerungsrate):
+Jahr 1: 100 × 149€ = 14.900€
+Jahr 2: 50 × 49€ = 2.450€ (+ Neukäufe)
+Jahr 3: 40 × 49€ = 1.960€ (Churn 20%)
+Jahr 4: 32 × 49€ = 1.568€
+→ Recurring Revenue + Neukäufe
+```
 
 **Empfehlung:**
-Zunächst mit Lifetime starten (Marketing-Vorteil, Marktdurchdringung). Nach 12-18 Monaten Daten sammeln und evaluieren:
-- Wie hoch ist der tatsächliche Support-Aufwand?
-- Wie viele Kunden kaufen AI-Addon zusätzlich?
-- Conversion-Rate Free → Pro
+1. **Phase 1 (Launch):** Klar kommunizieren: "12 Monate Updates inklusive"
+2. **Phase 2 (nach 10 Monaten):** E-Mail an Kunden: "Verlängerung verfügbar"
+3. **Phase 3 (bei v2.0):** Upgrade-Pfad anbieten (reduzierter Preis für Bestandskunden)
 
 ---
 
