@@ -81,7 +81,24 @@ while ( have_posts() ) :
 		'hybrid' => __( 'Hybrid (teilweise Remote)', 'recruiting-playbook' ),
 		'full'   => __( '100% Remote möglich', 'recruiting-playbook' ),
 	];
+
+	// Tracking-Daten vorbereiten.
+	$tracking_category = ( $categories && ! is_wp_error( $categories ) ) ? $categories[0]->name : '';
+	$tracking_location = ( $locations && ! is_wp_error( $locations ) ) ? $locations[0]->name : '';
+	$tracking_type     = ( $types && ! is_wp_error( $types ) ) ? $types[0]->name : '';
 	?>
+
+	<!-- Conversion Tracking Data (GTM DataLayer) -->
+	<div
+		data-rp-tracking
+		data-rp-job-id="<?php echo esc_attr( get_the_ID() ); ?>"
+		data-rp-job-title="<?php echo esc_attr( get_the_title() ); ?>"
+		data-rp-job-category="<?php echo esc_attr( $tracking_category ); ?>"
+		data-rp-job-location="<?php echo esc_attr( $tracking_location ); ?>"
+		data-rp-employment-type="<?php echo esc_attr( $tracking_type ); ?>"
+		style="display: none;"
+		aria-hidden="true"
+	></div>
 
 	<article <?php post_class( 'rp-plugin' ); ?>>
 		<div class="rp-mx-auto rp-px-4 rp-py-8" style="max-width: var(--wp--style--global--wide-size, 1200px);">
@@ -235,7 +252,7 @@ while ( have_posts() ) :
 			</div>
 
 			<!-- Bewerbungsformular -->
-			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>">
+			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
 				<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?></h2>
 
 				<div x-data="applicationForm" x-cloak>

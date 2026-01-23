@@ -271,8 +271,25 @@ final class Plugin {
 		// x-cloak CSS für Alpine.js - verhindert Flackern vor Initialisierung.
 		wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
 
+		// Conversion Tracking (DataLayer Events für GTM).
+		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		if ( file_exists( $tracking_file ) ) {
+			wp_enqueue_script(
+				'rp-tracking',
+				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				[],
+				RP_VERSION,
+				true
+			);
+
+			// Debug-Modus für Tracking.
+			if ( defined( 'RP_DEBUG_TRACKING' ) && RP_DEBUG_TRACKING ) {
+				wp_add_inline_script( 'rp-tracking', 'window.RP_DEBUG_TRACKING = true;', 'before' );
+			}
+		}
+
 		// Alpine.js Abhängigkeiten sammeln.
-		$alpine_deps = [];
+		$alpine_deps = [ 'rp-tracking' ];
 
 		// Application Form JS - nur auf Einzelseiten, muss VOR Alpine.js geladen werden!
 		// Registriert die Alpine-Komponente via 'alpine:init' Event.

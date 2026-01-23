@@ -332,13 +332,16 @@ class ApplicationController extends WP_REST_Controller {
 			return $result;
 		}
 
+		// Job-Titel für Conversion Tracking.
+		$job       = get_post( $request->get_param( 'job_id' ) );
+		$job_title = $job ? $job->post_title : '';
+
 		return new WP_REST_Response(
 			[
-				'success' => true,
-				'message' => __( 'Ihre Bewerbung wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ),
-				'data'    => [
-					'application_id' => $result,
-				],
+				'success'        => true,
+				'message'        => __( 'Ihre Bewerbung wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ),
+				'application_id' => $result,
+				'job_title'      => $job_title,
 			],
 			201
 		);

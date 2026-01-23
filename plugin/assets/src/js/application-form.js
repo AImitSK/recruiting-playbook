@@ -316,6 +316,15 @@ document.addEventListener('alpine:init', () => {
 
                 this.submitted = true;
 
+                // Conversion Tracking: Bewerbung erfolgreich abgeschickt
+                if (typeof window.rpTrackApplicationSubmitted === 'function') {
+                    window.rpTrackApplicationSubmitted({
+                        job_id: this.formData.job_id,
+                        job_title: data.job_title || '',
+                        application_id: data.application_id || data.id || 0
+                    });
+                }
+
                 // Scroll to success message
                 this.$nextTick(() => {
                     this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
