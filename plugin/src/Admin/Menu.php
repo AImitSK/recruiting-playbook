@@ -289,17 +289,21 @@ class Menu {
 
 		// Bewerbungen zählen.
 		$applications_table = $wpdb->prefix . 'rp_applications';
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$applications_table}'" ) === $applications_table;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$table_exists = $wpdb->get_var(
+			$wpdb->prepare( 'SHOW TABLES LIKE %s', $applications_table )
+		) === $applications_table;
 
 		$total_applications = 0;
 		$new_applications   = 0;
 
 		if ( $table_exists ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
 			$total_applications = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$applications_table}" );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$new_applications = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$applications_table} WHERE status = 'new'" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$new_applications = (int) $wpdb->get_var(
+				$wpdb->prepare( "SELECT COUNT(*) FROM {$applications_table} WHERE status = %s", 'new' )
+			);
 		}
 
 		?>
@@ -441,7 +445,8 @@ class Menu {
 
 		$table = $wpdb->prefix . 'rp_applications';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// Query ohne User-Input - Tabelle ist hardcoded, nur prefix ist dynamisch (WordPress-kontrolliert).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- No user input, table name hardcoded
 		$counts = $wpdb->get_results(
 			"SELECT status, COUNT(*) as count FROM {$table} GROUP BY status",
 			OBJECT_K

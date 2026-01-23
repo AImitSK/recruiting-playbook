@@ -150,6 +150,9 @@ class BackupExporter {
 	/**
 	 * Kandidaten exportieren
 	 *
+	 * Hinweis: Tabellennamen sind hardcoded (rp_candidates), nur $wpdb->prefix ist dynamisch.
+	 * Da prefix von WordPress kontrolliert wird, ist dies sicher.
+	 *
 	 * @return array
 	 */
 	private function getCandidates(): array {
@@ -157,7 +160,7 @@ class BackupExporter {
 
 		$table = $wpdb->prefix . 'rp_candidates';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded, only prefix is dynamic
 		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
 	}
 
@@ -171,7 +174,7 @@ class BackupExporter {
 
 		$table = $wpdb->prefix . 'rp_applications';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
 		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
 	}
 
@@ -185,7 +188,7 @@ class BackupExporter {
 
 		$table = $wpdb->prefix . 'rp_documents';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
 		$documents = $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
 
 		// Pfade entfernen aus Sicherheitsgründen.
@@ -207,9 +210,9 @@ class BackupExporter {
 		$table = $wpdb->prefix . 'rp_activity_log';
 
 		// Nur die letzten 1000 Einträge.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded, LIMIT is constant
 		return $wpdb->get_results(
-			"SELECT * FROM {$table} ORDER BY created_at DESC LIMIT 1000",
+			$wpdb->prepare( "SELECT * FROM {$table} ORDER BY created_at DESC LIMIT %d", 1000 ),
 			ARRAY_A
 		) ?: [];
 	}

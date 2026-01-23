@@ -20,6 +20,11 @@ class DocumentDownloadService {
 	private const TOKEN_EXPIRY = 3600;
 
 	/**
+	 * Max Downloads pro Stunde pro User
+	 */
+	private const RATE_LIMIT = 100;
+
+	/**
 	 * Download-URL generieren
 	 *
 	 * @param int $document_id Document ID.
@@ -108,8 +113,25 @@ class DocumentDownloadService {
 			ARRAY_A
 		);
 
-		if ( ! $document || ! file_exists( $document['file_path'] ) ) {
+		if ( ! $document ) {
 			wp_die( esc_html__( 'Dokument nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
+		}
+
+		// Path Traversal Protection: Prüfen dass Datei im erlaubten Verzeichnis liegt.
+		$file_path   = $document['file_path'];
+		$wp_upload   = wp_upload_dir();
+		$allowed_dir = $wp_upload['basedir'] . '/recruiting-playbook/applications';
+
+		$real_file       = realpath( $file_path );
+		$real_allowed    = realpath( $allowed_dir );
+
+		if ( ! $real_file || ! $real_allowed || strpos( $real_file, $real_allowed ) !== 0 ) {
+			self::logFailedAccess( $document_id, 'path_traversal_attempt' );
+			wp_die( esc_html__( 'Ungültiger Dateipfad.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+		}
+
+		if ( ! file_exists( $real_file ) ) {
+			wp_die( esc_html__( 'Datei nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
 		}
 
 		// Download-Zähler erhöhen.
@@ -124,9 +146,13 @@ class DocumentDownloadService {
 		// Logging.
 		self::logDownload( $document_id, (int) $document['application_id'] );
 
+		// Filename für Header sanitizen (Header Injection Protection).
+		$safe_filename = str_replace( array( "\r", "\n", '"', '/' , '\\' ), '', $document['original_name'] );
+		$safe_filename = sanitize_file_name( $safe_filename );
+
 		// Headers setzen.
 		header( 'Content-Type: ' . $document['file_type'] );
-		header( 'Content-Disposition: attachment; filename="' . $document['original_name'] . '"' );
+		header( 'Content-Disposition: attachment; filename="' . $safe_filename . '"' );
 		header( 'Content-Length: ' . $document['file_size'] );
 		header( 'Cache-Control: no-cache, must-revalidate' );
 		header( 'Pragma: no-cache' );
@@ -134,7 +160,7 @@ class DocumentDownloadService {
 
 		// Datei ausgeben.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
-		readfile( $document['file_path'] );
+		readfile( $real_file );
 		exit;
 	}
 
@@ -226,6 +252,22 @@ class DocumentDownloadService {
 			self::logFailedAccess( $document_id, 'no_permission' );
 			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
+
+		// Rate Limiting: Max Downloads pro Stunde pro User.
+		$user_id        = get_current_user_id();
+		$transient_key  = 'rp_dl_limit_' . $user_id;
+		$download_count = (int) get_transient( $transient_key );
+
+		if ( $download_count >= self::RATE_LIMIT ) {
+			self::logFailedAccess( $document_id, 'rate_limit_exceeded' );
+			wp_die(
+				esc_html__( 'Download-Limit erreicht. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+				'',
+				[ 'response' => 429 ]
+			);
+		}
+
+		set_transient( $transient_key, $download_count + 1, HOUR_IN_SECONDS );
 
 		// Download ausführen.
 		self::serveDownload( $document_id );

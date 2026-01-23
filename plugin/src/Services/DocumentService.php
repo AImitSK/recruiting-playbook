@@ -307,23 +307,40 @@ NGINX;
 		$extension = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
 		$safe_filename = $this->generateSafeFilename( $file['name'], $extension );
 
-		// Zielverzeichnis für diese Bewerbung (absint als zusätzliche Sicherheit).
-		$app_dir = trailingslashit( $this->upload_dir ) . absint( $application_id );
+		// Application ID validieren.
+		$app_id_safe = absint( $application_id );
+		if ( $app_id_safe <= 0 ) {
+			return new WP_Error(
+				'invalid_app_id',
+				__( 'Ungültige Bewerbungs-ID.', 'recruiting-playbook' )
+			);
+		}
+
+		// Upload-Verzeichnis prüfen BEVOR Unterverzeichnis erstellt wird.
+		$real_upload_dir = realpath( $this->upload_dir );
+		if ( ! $real_upload_dir ) {
+			return new WP_Error(
+				'invalid_upload_dir',
+				__( 'Upload-Verzeichnis nicht gefunden.', 'recruiting-playbook' )
+			);
+		}
+
+		// Zielverzeichnis für diese Bewerbung.
+		$app_dir = trailingslashit( $this->upload_dir ) . $app_id_safe;
 		if ( ! file_exists( $app_dir ) ) {
 			wp_mkdir_p( $app_dir );
 		}
 
-		// Datei verschieben mit Path Traversal Schutz.
-		$destination     = trailingslashit( $app_dir ) . $safe_filename;
-		$real_upload_dir = realpath( $this->upload_dir );
-
-		// Sicherstellen, dass Ziel innerhalb des Upload-Verzeichnisses liegt.
-		if ( ! $real_upload_dir || strpos( realpath( $app_dir ), $real_upload_dir ) !== 0 ) {
+		// Path Traversal Schutz: Sicherstellen, dass Ziel innerhalb des Upload-Verzeichnisses liegt.
+		$real_app_dir = realpath( $app_dir );
+		if ( ! $real_app_dir || strpos( $real_app_dir, $real_upload_dir ) !== 0 ) {
 			return new WP_Error(
 				'invalid_path',
 				__( 'Ungültiger Zielpfad.', 'recruiting-playbook' )
 			);
 		}
+
+		$destination = trailingslashit( $real_app_dir ) . $safe_filename;
 
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( ! @move_uploaded_file( $file['tmp_name'], $destination ) ) {
@@ -409,6 +426,9 @@ NGINX;
 		// Basis-Namen extrahieren und bereinigen
 		$basename = pathinfo( $original_name, PATHINFO_FILENAME );
 		$basename = sanitize_file_name( $basename );
+
+		// Path Traversal Zeichen explizit entfernen (zusätzliche Sicherheit).
+		$basename = str_replace( array( '..', '/', '\\' ), '', $basename );
 		$basename = substr( $basename, 0, 50 ); // Max 50 Zeichen
 
 		return sprintf( '%s_%s.%s', $basename, $hash, $extension );
