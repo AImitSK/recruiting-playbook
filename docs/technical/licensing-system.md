@@ -106,11 +106,14 @@ RP-BUNDLE-C5P2-N8K4-M3L7-T9R2-2E4F
 | `api_access` | ❌ | ✅ | ❌ | ✅ |
 | `webhooks` | ❌ | ✅ | ❌ | ✅ |
 | `reporting` | Basic | Full | Basic | Full |
+| `design_settings` | ❌ | ✅ | ❌ | ✅ |
 | `ai_job_generation` | ❌ | ❌ | ✅ | ✅ |
 | `ai_text_improvement` | ❌ | ❌ | ✅ | ✅ |
 | `ai_templates` | ❌ | ❌ | ✅ | ✅ |
 | `custom_branding` | ❌ | ✅ | ❌ | ✅ |
 | `priority_support` | ❌ | ✅ | ✅ | ✅ |
+
+> **Hinweis:** `design_settings` umfasst: Typografie (H1-H6), Card-Design (Radius, Schatten), Custom Button-Design (Farben, Rahmen, Schatten), Job-Liste Spalten. Siehe [admin-design-settings.md](./admin-design-settings.md) für Details.
 
 ### PHP Implementation
 
@@ -138,6 +141,7 @@ class FeatureFlags {
             'api_access'         => false,
             'webhooks'           => false,
             'reporting'          => 'basic',
+            'design_settings'    => false,
             'ai_job_generation'  => false,
             'ai_text_improvement'=> false,
             'ai_templates'       => false,
@@ -156,6 +160,7 @@ class FeatureFlags {
             'api_access'         => true,
             'webhooks'           => true,
             'reporting'          => 'full',
+            'design_settings'    => true,
             'ai_job_generation'  => false,
             'ai_text_improvement'=> false,
             'ai_templates'       => false,
@@ -175,6 +180,7 @@ class FeatureFlags {
             'api_access'         => false,
             'webhooks'           => false,
             'reporting'          => 'basic',
+            'design_settings'    => false,
             'ai_job_generation'  => true,
             'ai_text_improvement'=> true,
             'ai_templates'       => true,
@@ -194,6 +200,7 @@ class FeatureFlags {
             'api_access'         => true,
             'webhooks'           => true,
             'reporting'          => 'full',
+            'design_settings'    => true,
             'ai_job_generation'  => true,
             'ai_text_improvement'=> true,
             'ai_templates'       => true,

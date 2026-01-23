@@ -163,6 +163,27 @@ final class Plugin {
 		// Shortcodes registrieren.
 		$shortcodes = new Shortcodes();
 		$shortcodes->register();
+
+		// Security Headers für Plugin-Seiten.
+		add_action( 'send_headers', [ $this, 'addSecurityHeaders' ] );
+	}
+
+	/**
+	 * Security Headers hinzufügen
+	 */
+	public function addSecurityHeaders(): void {
+		if ( ! is_post_type_archive( 'job_listing' ) && ! is_singular( 'job_listing' ) ) {
+			return;
+		}
+
+		// Nur wenn Headers noch nicht gesendet wurden.
+		if ( headers_sent() ) {
+			return;
+		}
+
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 	}
 
 	/**
@@ -336,6 +357,7 @@ final class Plugin {
 		// Nur auf Plugin-Seiten laden.
 		$is_plugin_page = str_starts_with( $hook, 'toplevel_page_recruiting' )
 			|| str_starts_with( $hook, 'recruiting_page_' )
+			|| str_starts_with( $hook, 'admin_page_rp-' ) // Versteckte Plugin-Seiten.
 			|| 'job_listing' === get_post_type();
 
 		if ( ! $is_plugin_page ) {

@@ -187,14 +187,17 @@ class ApplicationService {
 
 		$where_clause = implode( ' AND ', $where );
 
-		// Sortierung
-		$orderby_map = [
+		// Sortierung - Whitelist-basiert für SQL-Injection-Schutz.
+		$allowed_orderby = [
 			'date'   => 'a.created_at',
 			'name'   => 'c.last_name',
 			'status' => 'a.status',
 		];
-		$orderby = $orderby_map[ $args['orderby'] ?? 'date' ] ?? 'a.created_at';
-		$order = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
+		$orderby_key = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
+		$orderby     = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
+
+		// Order direction - nur ASC oder DESC erlaubt.
+		$order = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 
 		// Pagination
 		$per_page = min( max( (int) ( $args['per_page'] ?? 20 ), 1 ), 100 );

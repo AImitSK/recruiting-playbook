@@ -312,6 +312,7 @@ APRIL             │ MAI               │ JUNI
 Kanban-Board      │ API & Webhooks    │ Launch
 E-Mail-Templates  │ Action Scheduler  │ Lizenz-System
 Benutzerrollen    │ Zvoove/DATEV      │ wordpress.org
+Design & Branding │                   │
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -427,6 +428,43 @@ Benutzerrollen    │ Zvoove/DATEV      │ wordpress.org
   - [ ] Landing Page
   - [ ] Support-Kanal einrichten
 
+### M2.11: Design & Branding (Admin-Seite)
+
+> Einstellungen → Design: Umfangreiche Anpassungsmöglichkeiten für das Frontend
+
+- [ ] **Branding**
+  - [ ] Firmenlogo (Upload oder Theme-Logo)
+  - [ ] Primärfarbe (Custom oder Theme-Farbe)
+  - [ ] "Powered by Recruiting Playbook" verstecken
+- [ ] **Typografie**
+  - [ ] Schriftart (Theme erben oder Custom)
+  - [ ] Überschriften H1–H6 (Größe in rem)
+  - [ ] Fließtext-Größe
+  - [ ] Kleine Texte (Labels, Hinweise)
+- [ ] **Cards & Container**
+  - [ ] Eckenradius (Slider 0–24px)
+  - [ ] Schattenstärke (Keine / Leicht / Mittel / Stark / Extra)
+  - [ ] Rahmen anzeigen (ja/nein)
+  - [ ] Rahmenfarbe
+- [ ] **Buttons**
+  - [ ] Theme-Button verwenden (WordPress .wp-element-button)
+  - [ ] Custom Button-Design:
+    - [ ] Hintergrundfarbe (Normal + Hover)
+    - [ ] Textfarbe (Normal + Hover)
+    - [ ] Rahmen anzeigen (ja/nein)
+    - [ ] Rahmenfarbe (Normal + Hover)
+    - [ ] Schatten (Normal + Hover)
+    - [ ] Eckenradius
+  - [ ] Live-Vorschau im Admin
+- [ ] **Job-Liste**
+  - [ ] Spaltenanzahl (2/3/4)
+  - [ ] Badges anzeigen
+  - [ ] Gehalt anzeigen
+  - [ ] Standort anzeigen
+- [ ] **CSS-Variable-Output**
+  - [ ] Dynamisches Inline-CSS oder separates Stylesheet
+  - [ ] Caching der generierten Styles
+
 ### Deliverables Phase 2
 
 | Deliverable | Status |
@@ -434,6 +472,7 @@ Benutzerrollen    │ Zvoove/DATEV      │ wordpress.org
 | Pro-Version verkaufsfertig | ⬜ |
 | Kanban-Board funktioniert | ⬜ |
 | E-Mail-Templates | ⬜ |
+| Design & Branding Admin-Seite | ⬜ |
 | Action Scheduler integriert | ⬜ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |

@@ -280,6 +280,7 @@ class ApplicationController extends WP_REST_Controller {
 				'description'       => __( 'Datenschutz-Einwilligung', 'recruiting-playbook' ),
 				'type'              => 'boolean',
 				'required'          => true,
+				'sanitize_callback' => 'rest_sanitize_boolean',
 				'validate_callback' => [ $this, 'validate_privacy_consent' ],
 			],
 			// Spam-Schutz Felder

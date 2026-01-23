@@ -182,13 +182,24 @@ class GdprService {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$documents = $wpdb->get_results(
-			$wpdb->prepare( "SELECT path FROM {$table} WHERE application_id = %d", $application_id ),
+			$wpdb->prepare( "SELECT file_path FROM {$table} WHERE application_id = %d", $application_id ),
 			ARRAY_A
 		);
 
 		foreach ( $documents as $doc ) {
-			if ( ! empty( $doc['path'] ) && file_exists( $doc['path'] ) ) {
-				wp_delete_file( $doc['path'] );
+			if ( ! empty( $doc['file_path'] ) && file_exists( $doc['file_path'] ) ) {
+				wp_delete_file( $doc['file_path'] );
+
+				// Prüfen ob Datei tatsächlich gelöscht wurde (für DSGVO-Audit).
+				if ( file_exists( $doc['file_path'] ) ) {
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+					error_log(
+						sprintf(
+							'[Recruiting Playbook] GDPR: Failed to delete file: %s',
+							$doc['file_path']
+						)
+					);
+				}
 			}
 		}
 

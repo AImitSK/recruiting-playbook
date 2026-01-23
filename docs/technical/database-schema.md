@@ -708,8 +708,102 @@ CREATE TABLE {prefix}rp_email_log (
         'privacy_policy_url' => '/datenschutz/',
         'consent_text' => '...',
         'consent_version' => '2025-01',
+    ],
+
+    // PRO: Design & Branding Einstellungen
+    'design' => [
+        // Branding
+        'use_theme_color'      => true,           // Theme-Primärfarbe nutzen
+        'primary_color'        => '#2563eb',      // Custom Primärfarbe (Fallback)
+        'use_theme_logo'       => true,           // Theme-Logo nutzen
+        'custom_logo_id'       => 0,              // Attachment ID für Custom Logo
+        'hide_branding'        => false,          // "Powered by" verstecken
+
+        // Typografie
+        'use_theme_font'       => true,           // Theme-Schriftart erben
+        'custom_font_family'   => 'system-ui, sans-serif',
+        'font_size_h1'         => '2.5rem',
+        'font_size_h2'         => '2rem',
+        'font_size_h3'         => '1.5rem',
+        'font_size_h4'         => '1.25rem',
+        'font_size_h5'         => '1.1rem',
+        'font_size_h6'         => '1rem',
+        'font_size_body'       => '1rem',
+        'font_size_small'      => '0.875rem',
+
+        // Cards & Container
+        'card_border_radius'   => '8px',          // 0px - 24px
+        'card_shadow'          => 'medium',       // none, light, medium, strong, extra
+        'card_border_show'     => true,
+        'card_border_color'    => '#e2e8f0',
+
+        // Buttons
+        'use_theme_button'     => true,           // WordPress .wp-element-button nutzen
+        'button' => [
+            'bg_color'           => '#2563eb',    // Hintergrund Normal
+            'bg_color_hover'     => '#1d4ed8',    // Hintergrund Hover
+            'text_color'         => '#ffffff',    // Text Normal
+            'text_color_hover'   => '#ffffff',    // Text Hover
+            'border_show'        => false,        // Rahmen anzeigen
+            'border_color'       => '#2563eb',    // Rahmenfarbe Normal
+            'border_color_hover' => '#1d4ed8',    // Rahmenfarbe Hover
+            'shadow'             => 'light',      // none, light, medium, strong
+            'shadow_hover'       => 'medium',     // none, light, medium, strong
+            'border_radius'      => '6px',        // Eckenradius
+        ],
+
+        // Job-Liste Anzeige
+        'job_list_columns'     => 3,              // 2, 3 oder 4
+        'show_badges'          => true,
+        'show_salary'          => true,
+        'show_location'        => true,
     ]
 ]
+```
+
+### Schatten-Presets (card_shadow, button.shadow)
+
+| Wert | CSS Box-Shadow |
+|------|----------------|
+| `none` | `none` |
+| `light` | `0 1px 2px 0 rgb(0 0 0 / 0.05)` |
+| `medium` | `0 4px 6px -1px rgb(0 0 0 / 0.1)` |
+| `strong` | `0 10px 15px -3px rgb(0 0 0 / 0.1)` |
+| `extra` | `0 20px 25px -5px rgb(0 0 0 / 0.1)` |
+
+### Generiertes CSS (Beispiel)
+
+Die Design-Einstellungen werden als CSS Custom Properties ausgegeben:
+
+```css
+/* Dynamisch generiert basierend auf rp_settings['design'] */
+.rp-plugin {
+    /* Typografie */
+    --rp-text-h1: 2.5rem;
+    --rp-text-h2: 2rem;
+    --rp-text-h3: 1.5rem;
+    --rp-text-h4: 1.25rem;
+    --rp-text-h5: 1.1rem;
+    --rp-text-h6: 1rem;
+    --rp-text-body: 1rem;
+    --rp-text-small: 0.875rem;
+
+    /* Cards */
+    --rp-card-radius: 8px;
+    --rp-card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --rp-card-border-color: #e2e8f0;
+
+    /* Custom Buttons (wenn use_theme_button = false) */
+    --rp-btn-bg: #2563eb;
+    --rp-btn-bg-hover: #1d4ed8;
+    --rp-btn-text: #ffffff;
+    --rp-btn-text-hover: #ffffff;
+    --rp-btn-border: transparent;
+    --rp-btn-border-hover: transparent;
+    --rp-btn-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --rp-btn-shadow-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --rp-btn-radius: 6px;
+}
 ```
 
 ---

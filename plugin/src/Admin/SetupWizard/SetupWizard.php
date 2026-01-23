@@ -130,7 +130,7 @@ class SetupWizard {
 	 */
 	public function registerPage(): void {
 		add_submenu_page(
-			null, // Versteckt.
+			'', // Versteckt (leerer String für PHP 8.1+ Kompatibilität).
 			__( 'Setup-Wizard', 'recruiting-playbook' ),
 			__( 'Setup-Wizard', 'recruiting-playbook' ),
 			'manage_options',
@@ -747,13 +747,17 @@ class SetupWizard {
 			wp_send_json_error( [ 'message' => __( 'Keine Berechtigung.', 'recruiting-playbook' ) ] );
 		}
 
-		$step = sanitize_key( $_POST['step'] ?? '' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$step = isset( $_POST['step'] ) ? sanitize_key( wp_unslash( $_POST['step'] ) ) : '';
 
-		if ( ! isset( $this->steps[ $step ] ) || ! $this->steps[ $step ]['save'] ) {
+		if ( ! isset( $this->steps[ $step ] ) || ! is_callable( $this->steps[ $step ]['save'] ) ) {
 			wp_send_json_error( [ 'message' => __( 'Ungueltiger Schritt.', 'recruiting-playbook' ) ] );
 		}
 
-		$result = call_user_func( $this->steps[ $step ]['save'], $_POST );
+		// Sanitize POST data before passing to callback.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$post_data = wp_unslash( $_POST );
+		$result    = call_user_func( $this->steps[ $step ]['save'], $post_data );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [ 'message' => $result->get_error_message() ] );

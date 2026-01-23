@@ -108,11 +108,12 @@ class DocumentDownloadService {
 			ARRAY_A
 		);
 
-		if ( ! $document || ! file_exists( $document['path'] ) ) {
+		if ( ! $document || ! file_exists( $document['file_path'] ) ) {
 			wp_die( esc_html__( 'Dokument nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
 		}
 
 		// Download-Zähler erhöhen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$table} SET download_count = download_count + 1 WHERE id = %d",
@@ -124,16 +125,16 @@ class DocumentDownloadService {
 		self::logDownload( $document_id, (int) $document['application_id'] );
 
 		// Headers setzen.
-		header( 'Content-Type: ' . $document['mime_type'] );
+		header( 'Content-Type: ' . $document['file_type'] );
 		header( 'Content-Disposition: attachment; filename="' . $document['original_name'] . '"' );
-		header( 'Content-Length: ' . $document['size'] );
+		header( 'Content-Length: ' . $document['file_size'] );
 		header( 'Cache-Control: no-cache, must-revalidate' );
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
 		// Datei ausgeben.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
-		readfile( $document['path'] );
+		readfile( $document['file_path'] );
 		exit;
 	}
 
@@ -149,6 +150,7 @@ class DocumentDownloadService {
 		$log_table    = $wpdb->prefix . 'rp_activity_log';
 		$current_user = wp_get_current_user();
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$wpdb->insert(
 			$log_table,
 			[
@@ -157,7 +159,7 @@ class DocumentDownloadService {
 				'action'      => 'document_downloaded',
 				'user_id'     => $current_user->ID,
 				'user_name'   => $current_user->display_name,
-				'context'     => wp_json_encode( [ 'document_id' => $document_id ] ),
+				'message'     => sprintf( 'Dokument #%d heruntergeladen', $document_id ),
 				'ip_address'  => self::getClientIp(),
 				'created_at'  => current_time( 'mysql' ),
 			]
@@ -204,24 +206,49 @@ class DocumentDownloadService {
 	 * AJAX-Download verarbeiten
 	 */
 	public static function handleAjaxDownload(): void {
-		// Berechtigung prüfen.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
-		}
-
+		// Parameter auslesen.
 		$document_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 		$token       = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 
 		if ( ! $document_id || ! $token ) {
+			self::logFailedAccess( $document_id, 'missing_params' );
 			wp_die( esc_html__( 'Ungültige Anfrage.', 'recruiting-playbook' ), '', [ 'response' => 400 ] );
 		}
 
-		// Token validieren.
+		// Token zuerst validieren (enthält User-ID Prüfung).
 		if ( ! self::validateToken( $document_id, $token ) ) {
+			self::logFailedAccess( $document_id, 'invalid_token' );
 			wp_die( esc_html__( 'Download-Link abgelaufen oder ungültig.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+		}
+
+		// Dann Berechtigung prüfen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			self::logFailedAccess( $document_id, 'no_permission' );
+			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		// Download ausführen.
 		self::serveDownload( $document_id );
+	}
+
+	/**
+	 * Fehlgeschlagene Zugriffe loggen
+	 *
+	 * @param int    $document_id Document ID.
+	 * @param string $reason      Grund für den Fehler.
+	 */
+	private static function logFailedAccess( int $document_id, string $reason ): void {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log(
+				sprintf(
+					'[Recruiting Playbook] Document download failed: ID=%d, Reason=%s, IP=%s, User=%d',
+					$document_id,
+					$reason,
+					self::getClientIp(),
+					get_current_user_id()
+				)
+			);
+		}
 	}
 }

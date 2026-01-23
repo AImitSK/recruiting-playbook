@@ -108,18 +108,28 @@ class Menu {
 	 */
 	public function handleEarlyActions(): void {
 		// Nur auf unserer Seite.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
 		if ( ! isset( $_GET['page'] ) || 'rp-applications' !== $_GET['page'] ) {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
 		if ( empty( $_GET['action'] ) || empty( $_GET['id'] ) ) {
 			return;
 		}
 
+		// Berechtigung prüfen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
 		$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
-		$id     = absint( $_GET['id'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
+		$id = absint( $_GET['id'] );
 
 		// Status setzen.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird direkt danach geprüft.
 		if ( 'set_status' === $action && ! empty( $_GET['status'] ) ) {
 			check_admin_referer( 'rp_set_status_' . $id );
 

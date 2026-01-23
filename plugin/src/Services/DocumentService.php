@@ -63,12 +63,10 @@ class DocumentService {
 	 * Upload-Verzeichnis erstellen mit Sicherheitsdateien
 	 */
 	private function ensureUploadDir(): void {
-		if ( file_exists( $this->upload_dir ) ) {
-			return;
+		// Verzeichnis erstellen falls nicht vorhanden
+		if ( ! file_exists( $this->upload_dir ) ) {
+			wp_mkdir_p( $this->upload_dir );
 		}
-
-		// Verzeichnis erstellen
-		wp_mkdir_p( $this->upload_dir );
 
 		// Robuste .htaccess für Apache (mehrere Syntaxvarianten für Kompatibilität)
 		$htaccess = $this->upload_dir . '/.htaccess';
@@ -299,8 +297,8 @@ NGINX;
 			);
 		}
 
-		// MIME-Type validieren
-		$mime_type = $this->validateMimeType( $file['tmp_name'] );
+		// MIME-Type und Extension validieren.
+		$mime_type = $this->validateMimeType( $file['tmp_name'], $file['name'] );
 		if ( is_wp_error( $mime_type ) ) {
 			return $mime_type;
 		}
@@ -309,15 +307,26 @@ NGINX;
 		$extension = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
 		$safe_filename = $this->generateSafeFilename( $file['name'], $extension );
 
-		// Zielverzeichnis für diese Bewerbung
-		$app_dir = $this->upload_dir . '/' . $application_id;
+		// Zielverzeichnis für diese Bewerbung (absint als zusätzliche Sicherheit).
+		$app_dir = trailingslashit( $this->upload_dir ) . absint( $application_id );
 		if ( ! file_exists( $app_dir ) ) {
 			wp_mkdir_p( $app_dir );
 		}
 
-		// Datei verschieben
-		$destination = $app_dir . '/' . $safe_filename;
-		if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
+		// Datei verschieben mit Path Traversal Schutz.
+		$destination     = trailingslashit( $app_dir ) . $safe_filename;
+		$real_upload_dir = realpath( $this->upload_dir );
+
+		// Sicherstellen, dass Ziel innerhalb des Upload-Verzeichnisses liegt.
+		if ( ! $real_upload_dir || strpos( realpath( $app_dir ), $real_upload_dir ) !== 0 ) {
+			return new WP_Error(
+				'invalid_path',
+				__( 'Ungültiger Zielpfad.', 'recruiting-playbook' )
+			);
+		}
+
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( ! @move_uploaded_file( $file['tmp_name'], $destination ) ) {
 			return new WP_Error(
 				'move_failed',
 				__( 'Datei konnte nicht gespeichert werden.', 'recruiting-playbook' )
@@ -341,12 +350,13 @@ NGINX;
 	/**
 	 * MIME-Type validieren
 	 *
-	 * @param string $file_path Dateipfad.
+	 * @param string $file_path     Dateipfad.
+	 * @param string $original_name Ursprünglicher Dateiname für Extension-Check.
 	 * @return string|WP_Error MIME-Type oder Fehler.
 	 */
-	private function validateMimeType( string $file_path ): string|WP_Error {
+	private function validateMimeType( string $file_path, string $original_name = '' ): string|WP_Error {
 		// PHP-Fileinfo verwenden
-		$finfo = finfo_open( FILEINFO_MIME_TYPE );
+		$finfo     = finfo_open( FILEINFO_MIME_TYPE );
 		$mime_type = finfo_file( $finfo, $file_path );
 		finfo_close( $finfo );
 
@@ -359,6 +369,27 @@ NGINX;
 					$mime_type
 				)
 			);
+		}
+
+		// Optional: Extension-Mismatch-Check für zusätzliche Sicherheit.
+		if ( ! empty( $original_name ) ) {
+			$extension          = strtolower( pathinfo( $original_name, PATHINFO_EXTENSION ) );
+			$expected_extension = self::ALLOWED_MIMES[ $mime_type ];
+
+			// Erlaube jpg/jpeg als Varianten.
+			$extension_variants = [
+				'jpg'  => [ 'jpg', 'jpeg' ],
+				'jpeg' => [ 'jpg', 'jpeg' ],
+			];
+
+			$allowed_extensions = $extension_variants[ $expected_extension ] ?? [ $expected_extension ];
+
+			if ( ! in_array( $extension, $allowed_extensions, true ) ) {
+				return new WP_Error(
+					'extension_mismatch',
+					__( 'Die Dateiendung stimmt nicht mit dem Dateiinhalt überein.', 'recruiting-playbook' )
+				);
+			}
 		}
 
 		return $mime_type;

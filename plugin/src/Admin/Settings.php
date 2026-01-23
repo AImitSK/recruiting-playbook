@@ -191,7 +191,11 @@ class Settings {
 
 		$output['company_name']         = sanitize_text_field( $input['company_name'] ?? '' );
 		$output['notification_email']   = sanitize_email( $input['notification_email'] ?? '' );
-		$output['privacy_url']          = esc_url_raw( $input['privacy_url'] ?? '' );
+
+		// privacy_url kommt als Page-ID von wp_dropdown_pages, muss in URL konvertiert werden.
+		$privacy_page_id = absint( $input['privacy_url'] ?? 0 );
+		$output['privacy_url'] = $privacy_page_id ? get_permalink( $privacy_page_id ) : '';
+
 		$output['jobs_per_page']        = absint( $input['jobs_per_page'] ?? 10 );
 		$output['jobs_slug']            = sanitize_title( $input['jobs_slug'] ?? 'jobs' );
 		$output['enable_schema']        = ! empty( $input['enable_schema'] );

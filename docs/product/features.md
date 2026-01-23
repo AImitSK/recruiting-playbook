@@ -57,8 +57,16 @@
 | SEO-Vorschläge | ❌ | ❌ | ✅ |
 | Textbaustein-Bibliothek | ❌ | ❌ | ✅ |
 | | | | |
-| **Sonstiges** | | | |
+| **Design & Branding** | | | |
+| Theme-Farben/Schriften erben | ✅ | ✅ | ✅ |
+| Custom Primärfarbe | ❌ | ✅ | ✅ |
+| Typografie anpassen (H1–H6, Text) | ❌ | ✅ | ✅ |
+| Card-Design (Radius, Schatten) | ❌ | ✅ | ✅ |
+| Custom Button-Design | ❌ | ✅ | ✅ |
+| Job-Liste Spalten (2/3/4) | ❌ | ✅ | ✅ |
 | Branding entfernen | ❌ | ✅ | ✅ |
+| | | | |
+| **Sonstiges** | | | |
 | Premium-Support | ❌ | ✅ | ✅ |
 | Updates | ✅ | 1 Jahr | ✅ |
 
@@ -82,16 +90,19 @@ Felder:
 - Status (Entwurf, Aktiv, Pausiert, Archiviert)
 ```
 
-#### Templates
+#### Templates & Design
 
 **FREE:**
-- Klassisch (Liste)
-- Kachel-Ansicht
+- Standard-Design (erbt Theme-Farben automatisch)
+- Responsive Grid (3 Spalten)
 
-**PRO:**
-- + Modernes Card-Design
-- + Kompakt-Liste
-- + Branding-Anpassung (Farben, Logo)
+**PRO – Design Admin-Seite:**
+- Custom Primärfarbe (oder Theme-Farbe)
+- Typografie: H1–H6 Größen, Fließtext, kleine Texte
+- Cards: Eckenradius (0–24px), Schattenstärke (5 Stufen)
+- Buttons: Theme-Button ODER Custom (Farben, Rahmen, Schatten)
+- Job-Liste: Spaltenanzahl (2/3/4), Badges, Gehalt, Standort
+- "Powered by" Badge entfernen
 
 ---
 

@@ -1,5 +1,7 @@
 # Frontend-Architektur
 
+> **Hinweis:** Für aktuelle Design-Entscheidungen, CSS-Architektur und Tailwind-Konfiguration siehe [design-decisions.md](./design-decisions.md).
+
 ## Übersicht
 
 Das öffentliche Frontend (Stellenanzeigen, Bewerbungsformular) verwendet:

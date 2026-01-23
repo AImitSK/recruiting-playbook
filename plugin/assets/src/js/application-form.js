@@ -283,7 +283,8 @@ document.addEventListener('alpine:init', () => {
                 // Add form fields
                 for (const [key, value] of Object.entries(this.formData)) {
                     if (typeof value === 'boolean') {
-                        formData.append(key, value ? '1' : '0');
+                        // REST API expects 'true'/'false' strings for boolean validation
+                        formData.append(key, value ? 'true' : 'false');
                     } else {
                         formData.append(key, value);
                     }
