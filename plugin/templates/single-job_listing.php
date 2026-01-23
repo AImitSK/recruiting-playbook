@@ -488,10 +488,29 @@ while ( have_posts() ) :
 												<span class="rp-text-error">*</span>
 												<?php
 												$privacy_url = get_privacy_policy_url();
-												printf(
-													/* translators: %s: privacy policy link */
-													esc_html__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu.', 'recruiting-playbook' ),
-													$privacy_url ? '<a href="' . esc_url( $privacy_url ) . '" target="_blank" class="rp-underline">' . esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' ) . '</a>' : esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
+												if ( $privacy_url ) {
+													$privacy_link = sprintf(
+														'<a href="%s" target="_blank" class="rp-underline">%s</a>',
+														esc_url( $privacy_url ),
+														esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
+													);
+												} else {
+													$privacy_link = esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' );
+												}
+												// XSS-sicher: wp_kses erlaubt nur sichere HTML-Tags im Link.
+												echo wp_kses(
+													sprintf(
+														/* translators: %s: privacy policy link */
+														__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu.', 'recruiting-playbook' ),
+														$privacy_link
+													),
+													[
+														'a' => [
+															'href'   => [],
+															'target' => [],
+															'class'  => [],
+														],
+													]
 												);
 												?>
 											</span>

@@ -25,6 +25,17 @@ class DocumentDownloadService {
 	private const RATE_LIMIT = 100;
 
 	/**
+	 * Erlaubte MIME-Types für Downloads (Whitelist)
+	 */
+	private const ALLOWED_MIME_TYPES = [
+		'application/pdf',
+		'application/msword',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'image/jpeg',
+		'image/png',
+	];
+
+	/**
 	 * Download-URL generieren
 	 *
 	 * @param int $document_id Document ID.
@@ -134,6 +145,19 @@ class DocumentDownloadService {
 			wp_die( esc_html__( 'Datei nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
 		}
 
+		// Symlink-Check: Verhindert Path Traversal über Symlinks.
+		if ( is_link( $file_path ) || is_link( $real_file ) ) {
+			self::logFailedAccess( $document_id, 'symlink_detected' );
+			wp_die( esc_html__( 'Ungültiger Dateipfad.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+		}
+
+		// MIME-Type Whitelist Validierung (Header Injection Schutz).
+		$file_type = $document['file_type'];
+		if ( ! in_array( $file_type, self::ALLOWED_MIME_TYPES, true ) ) {
+			self::logFailedAccess( $document_id, 'invalid_mime_type' );
+			wp_die( esc_html__( 'Ungültiger Dateityp.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+		}
+
 		// Download-Zähler erhöhen.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
@@ -150,8 +174,8 @@ class DocumentDownloadService {
 		$safe_filename = str_replace( array( "\r", "\n", '"', '/' , '\\' ), '', $document['original_name'] );
 		$safe_filename = sanitize_file_name( $safe_filename );
 
-		// Headers setzen.
-		header( 'Content-Type: ' . $document['file_type'] );
+		// Headers setzen (file_type bereits gegen Whitelist validiert).
+		header( 'Content-Type: ' . $file_type );
 		header( 'Content-Disposition: attachment; filename="' . $safe_filename . '"' );
 		header( 'Content-Length: ' . $document['file_size'] );
 		header( 'Cache-Control: no-cache, must-revalidate' );
@@ -247,8 +271,8 @@ class DocumentDownloadService {
 			wp_die( esc_html__( 'Download-Link abgelaufen oder ungültig.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
-		// Dann Berechtigung prüfen.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// Dann Berechtigung prüfen (view_applications statt manage_options für präzisere Zugriffssteuerung).
+		if ( ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			self::logFailedAccess( $document_id, 'no_permission' );
 			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}

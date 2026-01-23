@@ -332,6 +332,14 @@ NGINX;
 		}
 
 		// Path Traversal Schutz: Sicherstellen, dass Ziel innerhalb des Upload-Verzeichnisses liegt.
+		// Symlink-Check: Verhindert Path Traversal über Symlinks.
+		if ( is_link( $app_dir ) ) {
+			return new WP_Error(
+				'symlink_detected',
+				__( 'Symlinks sind nicht erlaubt.', 'recruiting-playbook' )
+			);
+		}
+
 		$real_app_dir = realpath( $app_dir );
 		if ( ! $real_app_dir || strpos( $real_app_dir, $real_upload_dir ) !== 0 ) {
 			return new WP_Error(
@@ -350,8 +358,15 @@ NGINX;
 			);
 		}
 
-		// Dateiberechtigungen setzen
-		chmod( $destination, 0640 );
+		// Dateiberechtigungen setzen (mit Error-Handling).
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- chmod kann auf manchen Systemen fehlschlagen
+		if ( ! @chmod( $destination, 0640 ) ) {
+			// Fehler loggen, aber Upload nicht abbrechen - Datei wurde bereits gespeichert.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( sprintf( '[Recruiting Playbook] chmod failed for: %s', $destination ) );
+			}
+		}
 
 		// In Datenbank speichern
 		return $this->saveDocument( $application_id, [

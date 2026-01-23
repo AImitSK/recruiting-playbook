@@ -304,6 +304,17 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
+		// CSRF-Schutz: Nonce validieren.
+		// Das Nonce wird vom Frontend im X-WP-Nonce Header gesendet.
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return new WP_Error(
+				'rest_cookie_invalid_nonce',
+				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
 		// Spam-Schutz prüfen
 		$spam_check = $this->spam_protection->check( $request );
 		if ( is_wp_error( $spam_check ) ) {

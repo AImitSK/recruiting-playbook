@@ -205,7 +205,7 @@ class ApplicationService {
 		$offset = ( $page - 1 ) * $per_page;
 
 		// Gesamtzahl ermitteln
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are hardcoded (plugin prefix + constant suffix), $where_clause uses prepared placeholders
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$table} a
@@ -216,7 +216,7 @@ class ApplicationService {
 		);
 
 		// Daten abrufen
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names hardcoded, $orderby/$order from whitelist, LIMIT/OFFSET prepared
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT a.*, c.first_name, c.last_name, c.email, c.phone, c.salutation
