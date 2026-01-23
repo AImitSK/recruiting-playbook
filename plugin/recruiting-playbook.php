@@ -93,8 +93,8 @@ register_deactivation_hook(__FILE__, function() {
     Core\Deactivator::deactivate();
 });
 
-// Plugin initialisieren
-add_action('plugins_loaded', function() {
+// Plugin initialisieren (im init Hook mit Priorität 5 - vor Standard-Hooks)
+add_action('init', function() {
     if (!rp_check_requirements()) {
         return;
     }
@@ -110,4 +110,4 @@ add_action('plugins_loaded', function() {
     }
 
     Core\Plugin::getInstance()->init();
-});
+}, 5);

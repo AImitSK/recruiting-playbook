@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Test</title>
+</head>
+<body>
+    <h1>Test Application Form Submission</h1>
+    <button onclick="testSubmit()">Test Submit</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testSubmit() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Sending...';
+
+            try {
+                const formData = new FormData();
+                formData.append('job_id', '6');
+                formData.append('first_name', 'Test');
+                formData.append('last_name', 'User');
+                formData.append('email', 'test@example.com');
+                formData.append('privacy_consent', 'true');
+                formData.append('_hp_field', '');
+                formData.append('_form_timestamp', Date.now());
+
+                const response = await fetch('http://localhost:8080/wp-json/recruiting/v1/applications', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                resultEl.textContent = JSON.stringify(data, null, 2);
+
+                if (!response.ok) {
+                    resultEl.textContent = 'ERROR:\n' + resultEl.textContent;
+                }
+            } catch (err) {
+                resultEl.textContent = 'ERROR: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+# Recruiting Playbook - Docker Compose für Entwicklung
+# WordPress + MySQL + phpMyAdmin
+
+services:
+  # =============================================================
+  # WordPress Development Container (Haupt-Container)
+  # =============================================================
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # WordPress Installation (persistent)
+      - wordpress_data:/var/www/html
+
+      # Plugin-Code direkt ins Plugin-Verzeichnis mounten
+      - ../plugin:/var/www/html/wp-content/plugins/recruiting-playbook:cached
+
+      # Repo-Root für Setup-Skript und Dokumentation
+      - ..:/workspace:cached
+
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "true"
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', true);
+        define('SCRIPT_DEBUG', true);
+        define('WP_ENVIRONMENT_TYPE', 'development');
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  # =============================================================
+  # MySQL Datenbank
+  # =============================================================
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - rp-network
+
+  # =============================================================
+  # phpMyAdmin (Datenbank-Verwaltung)
+  # =============================================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - mysql
+    networks:
+      - rp-network
+
+  # =============================================================
+  # MailHog (E-Mail Testing - fängt alle E-Mails ab)
+  # =============================================================
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - rp-network
+
+# =============================================================
+# Volumes (Persistent Data)
+# =============================================================
+volumes:
+  wordpress_data:
+    name: rp_wordpress_data
+  mysql_data:
+    name: rp_mysql_data
+
+# =============================================================
+# Network
+# =============================================================
+networks:
+  rp-network:
+    name: rp-network

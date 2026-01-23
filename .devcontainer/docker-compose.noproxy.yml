@@ -1,0 +1,70 @@
+# Recruiting Playbook - Docker Compose OHNE Proxy
+# Überschreibt Proxy-Einstellungen
+
+services:
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HTTP_PROXY: ""
+        HTTPS_PROXY: ""
+        NO_PROXY: ""
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../plugin:/var/www/html/wp-content/plugins/recruiting-playbook:cached
+      - ..:/workspace:cached
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "true"
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', true);
+        define('SCRIPT_DEBUG', true);
+        define('WP_ENVIRONMENT_TYPE', 'development');
+      HTTP_PROXY: ""
+      HTTPS_PROXY: ""
+      NO_PROXY: ""
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      HTTP_PROXY: ""
+      HTTPS_PROXY: ""
+      NO_PROXY: ""
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - rp-network
+
+volumes:
+  wordpress_data:
+    name: rp_wordpress_data
+  mysql_data:
+    name: rp_mysql_data
+
+networks:
+  rp-network:
+    name: rp-network

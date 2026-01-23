@@ -83,27 +83,38 @@ else
 fi
 
 # =============================================================
-# 4. Deutsche Sprache installieren
+# 4. Upload-Verzeichnis Berechtigungen setzen
 # =============================================================
 echo ""
-echo "[4/7] Prüfe Sprache..."
+echo "[4/8] Setze Upload-Berechtigungen..."
+UPLOADS_DIR="/var/www/html/wp-content/uploads"
+mkdir -p "$UPLOADS_DIR"
+chown -R www-data:www-data "$UPLOADS_DIR"
+chmod -R 755 "$UPLOADS_DIR"
+echo -e "${GREEN}✓ Upload-Berechtigungen gesetzt${NC}"
+
+# =============================================================
+# 5. Deutsche Sprache installieren
+# =============================================================
+echo ""
+echo "[5/8] Prüfe Sprache..."
 wp language core install de_DE --allow-root 2>/dev/null || true
 wp site switch-language de_DE --allow-root 2>/dev/null || true
 echo -e "${GREEN}✓ Deutsch aktiviert${NC}"
 
 # =============================================================
-# 5. Permalinks setzen
+# 6. Permalinks setzen
 # =============================================================
 echo ""
-echo "[5/7] Setze Permalinks..."
+echo "[6/8] Setze Permalinks..."
 wp rewrite structure '/%postname%/' --allow-root
 echo -e "${GREEN}✓ Permalinks konfiguriert${NC}"
 
 # =============================================================
-# 6. Plugin aktivieren
+# 7. Plugin aktivieren
 # =============================================================
 echo ""
-echo "[6/7] Prüfe Plugin..."
+echo "[7/8] Prüfe Plugin..."
 PLUGIN_DIR="/var/www/html/wp-content/plugins/recruiting-playbook"
 if [ -f "$PLUGIN_DIR/recruiting-playbook.php" ]; then
     if ! wp plugin is-active recruiting-playbook --allow-root 2>/dev/null; then
@@ -117,10 +128,10 @@ else
 fi
 
 # =============================================================
-# 7. Composer Dependencies installieren
+# 8. Composer Dependencies installieren
 # =============================================================
 echo ""
-echo "[7/7] Prüfe Dependencies..."
+echo "[8/8] Prüfe Dependencies..."
 if [ -f "$PLUGIN_DIR/composer.json" ]; then
     cd "$PLUGIN_DIR"
     if [ ! -d "vendor" ]; then
