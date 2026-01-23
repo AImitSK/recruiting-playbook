@@ -55,15 +55,18 @@ class ApplicationService {
 		}
 
 		// 2. Bewerbung in DB speichern
+		// DSGVO: Consent-Daten nur speichern wenn tatsächlich Einwilligung gegeben wurde
+		$has_consent = ! empty( $data['privacy_consent'] );
+
 		$application_data = [
 			'job_id'              => (int) $data['job_id'],
 			'candidate_id'        => $candidate_id,
 			'status'              => ApplicationStatus::NEW,
 			'cover_letter'        => $data['cover_letter'] ?? '',
 			'source'              => 'website',
-			'consent_privacy'     => (int) $data['privacy_consent'],
-			'consent_privacy_at'  => current_time( 'mysql' ),
-			'consent_ip'          => $data['ip_address'] ?? '',
+			'consent_privacy'     => $has_consent ? 1 : 0,
+			'consent_privacy_at'  => $has_consent ? current_time( 'mysql' ) : null,
+			'consent_ip'          => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
 			'created_at'          => current_time( 'mysql' ),
 			'updated_at'          => current_time( 'mysql' ),
 		];
@@ -314,7 +317,13 @@ class ApplicationService {
 			$message .= ': ' . $note;
 		}
 
-		$this->logActivity( $id, 'status_changed', $message );
+		$this->logActivity(
+			$id,
+			'status_changed',
+			$message,
+			[ 'status' => $old_status ],
+			[ 'status' => $status ]
+		);
 
 		// E-Mails bei bestimmten Status-Änderungen
 		if ( ApplicationStatus::REJECTED === $status ) {
@@ -416,21 +425,33 @@ class ApplicationService {
 	 * @param int    $application_id Application ID.
 	 * @param string $action         Aktion.
 	 * @param string $message        Nachricht.
+	 * @param array  $old_value      Optionale alte Werte für Änderungen.
+	 * @param array  $new_value      Optionale neue Werte für Änderungen.
 	 */
-	private function logActivity( int $application_id, string $action, string $message ): void {
+	private function logActivity( int $application_id, string $action, string $message, array $old_value = [], array $new_value = [] ): void {
 		global $wpdb;
 
 		$table = $wpdb->prefix . 'rp_activity_log';
 
+		$current_user = wp_get_current_user();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$wpdb->insert(
 			$table,
 			[
-				'application_id' => $application_id,
-				'user_id'        => get_current_user_id() ?: null,
-				'action'         => $action,
-				'message'        => $message,
-				'created_at'     => current_time( 'mysql' ),
-			]
+				'object_type' => 'application',
+				'object_id'   => $application_id,
+				'action'      => $action,
+				'user_id'     => get_current_user_id() ?: null,
+				'user_name'   => $current_user->ID ? $current_user->display_name : null,
+				'old_value'   => ! empty( $old_value ) ? wp_json_encode( $old_value ) : null,
+				'new_value'   => ! empty( $new_value ) ? wp_json_encode( $new_value ) : null,
+				'message'     => $message,
+				'ip_address'  => isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : null,
+				'user_agent'  => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : null,
+				'created_at'  => current_time( 'mysql' ),
+			],
+			[ '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
 		);
 	}
 

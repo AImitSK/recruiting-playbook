@@ -393,18 +393,31 @@ NGINX;
 	private function saveDocument( int $application_id, array $data ): int|WP_Error {
 		global $wpdb;
 
+		// Candidate ID aus der Bewerbung holen
+		$applications_table = $wpdb->prefix . 'rp_applications';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$candidate_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT candidate_id FROM {$applications_table} WHERE id = %d",
+				$application_id
+			)
+		);
+
 		$table = $wpdb->prefix . 'rp_documents';
 
+		// Spaltennamen müssen mit Schema übereinstimmen
 		$inserted = $wpdb->insert(
 			$table,
 			[
 				'application_id' => $application_id,
-				'type'           => $data['type'],
-				'filename'       => $data['filename'],
+				'candidate_id'   => (int) $candidate_id,
+				'file_name'      => $data['filename'],
 				'original_name'  => $data['original_name'],
-				'mime_type'      => $data['mime_type'],
-				'size'           => $data['size'],
-				'path'           => $data['path'],
+				'file_path'      => $data['path'],
+				'file_type'      => $data['mime_type'],
+				'file_size'      => $data['size'],
+				'file_hash'      => md5_file( $data['path'] ) ?: '',
+				'document_type'  => $data['type'],
 				'created_at'     => current_time( 'mysql' ),
 			]
 		);
@@ -433,9 +446,9 @@ NGINX;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id, type, filename, original_name, mime_type, size, created_at
+				"SELECT id, document_type as type, file_name as filename, original_name, file_type as mime_type, file_size as size, created_at
 				FROM {$table}
-				WHERE application_id = %d
+				WHERE application_id = %d AND is_deleted = 0
 				ORDER BY created_at ASC",
 				$application_id
 			),
@@ -457,10 +470,19 @@ NGINX;
 		$table = $wpdb->prefix . 'rp_documents';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_row(
+		$row = $wpdb->get_row(
 			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $document_id ),
 			ARRAY_A
 		);
+
+		if ( ! $row ) {
+			return null;
+		}
+
+		// Alias für Abwärtskompatibilität
+		$row['path'] = $row['file_path'] ?? '';
+
+		return $row;
 	}
 
 	/**
@@ -478,8 +500,9 @@ NGINX;
 		}
 
 		// Datei löschen
-		if ( ! empty( $document['path'] ) && file_exists( $document['path'] ) ) {
-			wp_delete_file( $document['path'] );
+		$file_path = $document['file_path'] ?? $document['path'] ?? '';
+		if ( ! empty( $file_path ) && file_exists( $file_path ) ) {
+			wp_delete_file( $file_path );
 		}
 
 		// DB-Eintrag löschen

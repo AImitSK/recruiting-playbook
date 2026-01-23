@@ -95,20 +95,39 @@ class ApplicationList extends \WP_List_Table {
 		$current_page = $this->get_pagenum();
 		$offset       = ( $current_page - 1 ) * $per_page;
 
-		$where   = $this->build_where_clause();
-		$orderby = $this->get_orderby();
-		$order   = $this->get_order();
+		$where_data = $this->build_where_clause();
+		$orderby    = $this->get_orderby();
+		$order      = $this->get_order();
 
 		$applications_table = $wpdb->prefix . 'rp_applications';
 		$candidates_table   = $wpdb->prefix . 'rp_candidates';
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$total_items = (int) $wpdb->get_var(
-			"SELECT COUNT(a.id)
-			 FROM {$applications_table} a
-			 LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
-			 {$where}"
-		);
+		// Count Query mit sicheren Prepared Statements
+		if ( empty( $where_data['values'] ) ) {
+			// Keine Filter - einfache Query
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$total_items = (int) $wpdb->get_var(
+				"SELECT COUNT(a.id)
+				 FROM {$applications_table} a
+				 LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id"
+			);
+		} else {
+			// Mit Filtern - Prepared Statement
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$total_items = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(a.id)
+					 FROM {$applications_table} a
+					 LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
+					 WHERE {$where_data['clause']}",
+					...$where_data['values']
+				)
+			);
+		}
+
+		// Data Query mit sicheren Prepared Statements
+		$query_values = array_merge( $where_data['values'], [ $per_page, $offset ] );
+		$where_sql    = empty( $where_data['values'] ) ? '1=1' : $where_data['clause'];
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$this->items = $wpdb->get_results(
@@ -116,11 +135,10 @@ class ApplicationList extends \WP_List_Table {
 				"SELECT a.*, c.first_name, c.last_name, c.email, c.phone
 				 FROM {$applications_table} a
 				 LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
-				 {$where}
+				 WHERE {$where_sql}
 				 ORDER BY {$orderby} {$order}
 				 LIMIT %d OFFSET %d",
-				$per_page,
-				$offset
+				...$query_values
 			),
 			ARRAY_A
 		);
@@ -135,51 +153,55 @@ class ApplicationList extends \WP_List_Table {
 	}
 
 	/**
-	 * WHERE-Klausel bauen
+	 * WHERE-Klausel bauen (sicher mit Prepared Statements)
 	 *
-	 * @return string
+	 * @return array{clause: string, values: array}
 	 */
-	private function build_where_clause(): string {
-		global $wpdb;
-
-		$conditions = [ '1=1' ];
+	private function build_where_clause(): array {
+		$conditions = [];
+		$values     = [];
 
 		// Status-Filter.
-		if ( ! empty( $_GET['status'] ) ) {
-			$status       = sanitize_text_field( wp_unslash( $_GET['status'] ) );
-			$conditions[] = $wpdb->prepare( 'a.status = %s', $status );
+		if ( ! empty( $_GET['status'] ) && array_key_exists( sanitize_text_field( wp_unslash( $_GET['status'] ) ), ApplicationStatus::getAll() ) ) {
+			$conditions[] = 'a.status = %s';
+			$values[]     = sanitize_text_field( wp_unslash( $_GET['status'] ) );
 		}
 
 		// Job-Filter.
 		if ( ! empty( $_GET['job_id'] ) ) {
-			$job_id       = absint( $_GET['job_id'] );
-			$conditions[] = $wpdb->prepare( 'a.job_id = %d', $job_id );
+			$conditions[] = 'a.job_id = %d';
+			$values[]     = absint( $_GET['job_id'] );
 		}
 
 		// Suche.
 		if ( ! empty( $_GET['s'] ) ) {
+			global $wpdb;
 			$search       = '%' . $wpdb->esc_like( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) . '%';
-			$conditions[] = $wpdb->prepare(
-				'(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)',
-				$search,
-				$search,
-				$search
-			);
+			$conditions[] = '(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)';
+			$values[]     = $search;
+			$values[]     = $search;
+			$values[]     = $search;
 		}
 
 		// Datum von.
 		if ( ! empty( $_GET['date_from'] ) ) {
-			$date_from    = sanitize_text_field( wp_unslash( $_GET['date_from'] ) );
-			$conditions[] = $wpdb->prepare( 'DATE(a.created_at) >= %s', $date_from );
+			$conditions[] = 'DATE(a.created_at) >= %s';
+			$values[]     = sanitize_text_field( wp_unslash( $_GET['date_from'] ) );
 		}
 
 		// Datum bis.
 		if ( ! empty( $_GET['date_to'] ) ) {
-			$date_to      = sanitize_text_field( wp_unslash( $_GET['date_to'] ) );
-			$conditions[] = $wpdb->prepare( 'DATE(a.created_at) <= %s', $date_to );
+			$conditions[] = 'DATE(a.created_at) <= %s';
+			$values[]     = sanitize_text_field( wp_unslash( $_GET['date_to'] ) );
 		}
 
-		return 'WHERE ' . implode( ' AND ', $conditions );
+		// Klausel zusammenbauen
+		$clause = empty( $conditions ) ? '1=1' : implode( ' AND ', $conditions );
+
+		return [
+			'clause' => $clause,
+			'values' => $values,
+		];
 	}
 
 	/**
@@ -458,6 +480,7 @@ class ApplicationList extends \WP_List_Table {
 	public function process_bulk_action(): void {
 		$action = $this->current_action();
 
+		// Einzelne Aktionen (set_status etc.) werden in Menu::handleEarlyActions() verarbeitet.
 		if ( ! $action || empty( $_REQUEST['application_ids'] ) ) {
 			return;
 		}

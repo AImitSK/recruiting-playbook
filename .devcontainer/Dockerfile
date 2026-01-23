@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     mariadb-client \
     less \
     vim \
+    msmtp \
+    msmtp-mta \
     && rm -rf /var/lib/apt/lists/*
 
 # PHP Extensions für WordPress
@@ -52,6 +54,10 @@ RUN echo "upload_max_filesize = 64M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "display_errors = On" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# MailHog SMTP Konfiguration (E-Mail-Testing)
+RUN echo "account default\nhost mailhog\nport 1025\nfrom wordpress@localhost\n" > /etc/msmtprc \
+    && echo "sendmail_path = /usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mail.ini
 
 # Apache mod_rewrite für WordPress Permalinks
 RUN a2enmod rewrite

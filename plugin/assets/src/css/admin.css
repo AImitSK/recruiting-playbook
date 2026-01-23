@@ -66,12 +66,20 @@
 
 .rp-application-detail .postbox .hndle {
     cursor: default;
+    padding: 12px 15px;
+    margin: 0;
+    border-bottom: 1px solid #c3c4c7;
 }
 
 .rp-application-detail .postbox .hndle .count {
     font-weight: normal;
     color: #999;
     font-size: 13px;
+}
+
+.rp-application-detail .postbox .inside {
+    padding: 15px;
+    margin: 0;
 }
 
 /* Anschreiben-Box */

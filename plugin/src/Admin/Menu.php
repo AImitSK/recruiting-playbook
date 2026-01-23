@@ -38,6 +38,9 @@ class Menu {
 		$this->settings = new Settings();
 		$this->settings->register();
 
+		// Aktionen früh verarbeiten (vor Output).
+		add_action( 'admin_init', [ $this, 'handleEarlyActions' ] );
+
 		// Hauptmenü.
 		add_menu_page(
 			__( 'Recruiting Playbook', 'recruiting-playbook' ),
@@ -91,13 +94,86 @@ class Menu {
 
 		// Bewerbung-Detailansicht (versteckt).
 		add_submenu_page(
-			null,
+			'', // Versteckt (leerer String für PHP 8.1+ Kompatibilität).
 			__( 'Bewerbung', 'recruiting-playbook' ),
 			__( 'Bewerbung', 'recruiting-playbook' ),
 			'manage_options',
 			'rp-application-detail',
 			[ $this, 'renderApplicationDetail' ]
 		);
+	}
+
+	/**
+	 * Aktionen früh verarbeiten (vor jeglichem Output)
+	 */
+	public function handleEarlyActions(): void {
+		// Nur auf unserer Seite.
+		if ( ! isset( $_GET['page'] ) || 'rp-applications' !== $_GET['page'] ) {
+			return;
+		}
+
+		if ( empty( $_GET['action'] ) || empty( $_GET['id'] ) ) {
+			return;
+		}
+
+		$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
+		$id     = absint( $_GET['id'] );
+
+		// Status setzen.
+		if ( 'set_status' === $action && ! empty( $_GET['status'] ) ) {
+			check_admin_referer( 'rp_set_status_' . $id );
+
+			$status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
+
+			if ( ! array_key_exists( $status, ApplicationStatus::getAll() ) ) {
+				return;
+			}
+
+			global $wpdb;
+			$table = $wpdb->prefix . 'rp_applications';
+
+			$wpdb->update( $table, [ 'status' => $status ], [ 'id' => $id ] );
+
+			// Logging.
+			$log_table    = $wpdb->prefix . 'rp_activity_log';
+			$current_user = wp_get_current_user();
+
+			$wpdb->insert(
+				$log_table,
+				[
+					'object_type' => 'application',
+					'object_id'   => $id,
+					'action'      => 'status_changed',
+					'user_id'     => $current_user->ID,
+					'user_name'   => $current_user->display_name,
+					'new_value'   => $status,
+					'created_at'  => current_time( 'mysql' ),
+				]
+			);
+
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&updated=1' ) );
+			exit;
+		}
+
+		// Daten exportieren (DSGVO).
+		if ( 'export_data' === $action ) {
+			check_admin_referer( 'rp_export_data_' . $id );
+
+			$gdpr_service = new GdprService();
+			$gdpr_service->downloadApplicationData( $id );
+			// Kein exit hier, da downloadApplicationData selbst beendet.
+		}
+
+		// Löschen.
+		if ( 'delete' === $action ) {
+			check_admin_referer( 'rp_delete_' . $id );
+
+			$gdpr_service = new GdprService();
+			$gdpr_service->softDeleteApplication( $id );
+
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&deleted=1' ) );
+			exit;
+		}
 	}
 
 	/**
@@ -318,9 +394,6 @@ class Menu {
 	 * Bewerbungen rendern
 	 */
 	public function renderApplications(): void {
-		// Einzelne Aktionen verarbeiten.
-		$this->processApplicationActions();
-
 		echo '<div class="wrap">';
 		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Bewerbungen', 'recruiting-playbook' ) . '</h1>';
 
@@ -398,69 +471,6 @@ class Menu {
 		echo implode( ' | ', $links );
 		echo '</ul>';
 		echo '<div class="clear"></div>';
-	}
-
-	/**
-	 * Einzelaktionen verarbeiten
-	 */
-	private function processApplicationActions(): void {
-		if ( empty( $_GET['action'] ) || empty( $_GET['id'] ) ) {
-			return;
-		}
-
-		$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
-		$id     = absint( $_GET['id'] );
-
-		// Status setzen.
-		if ( 'set_status' === $action && ! empty( $_GET['status'] ) ) {
-			check_admin_referer( 'rp_set_status_' . $id );
-
-			$status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
-
-			global $wpdb;
-			$table = $wpdb->prefix . 'rp_applications';
-
-			$wpdb->update( $table, [ 'status' => $status ], [ 'id' => $id ] );
-
-			// Logging.
-			$log_table    = $wpdb->prefix . 'rp_activity_log';
-			$current_user = wp_get_current_user();
-
-			$wpdb->insert(
-				$log_table,
-				[
-					'object_type' => 'application',
-					'object_id'   => $id,
-					'action'      => 'status_changed',
-					'user_id'     => $current_user->ID,
-					'user_name'   => $current_user->display_name,
-					'new_value'   => $status,
-					'created_at'  => current_time( 'mysql' ),
-				]
-			);
-
-			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&updated=1' ) );
-			exit;
-		}
-
-		// Daten exportieren (DSGVO).
-		if ( 'export_data' === $action ) {
-			check_admin_referer( 'rp_export_data_' . $id );
-
-			$gdpr_service = new GdprService();
-			$gdpr_service->downloadApplicationData( $id );
-		}
-
-		// Löschen.
-		if ( 'delete' === $action ) {
-			check_admin_referer( 'rp_delete_' . $id );
-
-			$gdpr_service = new GdprService();
-			$gdpr_service->softDeleteApplication( $id );
-
-			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&deleted=1' ) );
-			exit;
-		}
 	}
 
 	/**

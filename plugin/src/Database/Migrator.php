@@ -14,7 +14,7 @@ namespace RecruitingPlaybook\Database;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.0.0';
+	private const SCHEMA_VERSION = '1.1.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**

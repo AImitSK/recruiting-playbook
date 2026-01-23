@@ -28,13 +28,14 @@ class ApplicationDetail {
 			wp_die( esc_html__( 'Keine Bewerbung angegeben.', 'recruiting-playbook' ) );
 		}
 
+		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
+		$this->processStatusUpdate( $id );
+
 		$application = $this->getApplication( $id );
 
 		if ( ! $application ) {
 			wp_die( esc_html__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ) );
 		}
-
-		$this->processStatusUpdate( $id );
 
 		$candidate    = $this->getCandidate( (int) $application['candidate_id'] );
 		$job          = get_post( $application['job_id'] );
@@ -271,58 +272,6 @@ class ApplicationDetail {
 				</div>
 			</div>
 		</div>
-
-		<style>
-			.rp-detail-grid {
-				display: grid;
-				grid-template-columns: 1fr 300px;
-				gap: 20px;
-				margin-top: 20px;
-			}
-			.rp-detail-main .postbox,
-			.rp-detail-sidebar .postbox {
-				margin-bottom: 20px;
-			}
-			.rp-cover-letter {
-				background: #f6f7f7;
-				padding: 15px;
-				border-radius: 4px;
-				white-space: pre-wrap;
-			}
-			.rp-activity-log {
-				margin: 0;
-				padding: 0;
-				list-style: none;
-			}
-			.rp-activity-log li {
-				padding: 8px 0;
-				border-bottom: 1px solid #eee;
-			}
-			.rp-activity-log li:last-child {
-				border-bottom: none;
-			}
-			.rp-log-time {
-				color: #666;
-				font-size: 12px;
-				display: block;
-			}
-			.rp-log-user {
-				font-weight: 500;
-			}
-			.button-link-delete {
-				color: #b32d2e !important;
-				border-color: #b32d2e !important;
-			}
-			.button-link-delete:hover {
-				background: #b32d2e !important;
-				color: white !important;
-			}
-			@media screen and (max-width: 960px) {
-				.rp-detail-grid {
-					grid-template-columns: 1fr;
-				}
-			}
-		</style>
 		<?php
 	}
 
@@ -376,7 +325,10 @@ class ApplicationDetail {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE application_id = %d ORDER BY created_at ASC",
+				"SELECT id, original_name, document_type as type, file_size as size, file_path, created_at
+				 FROM {$table}
+				 WHERE application_id = %d AND is_deleted = 0
+				 ORDER BY created_at ASC",
 				$application_id
 			),
 			ARRAY_A

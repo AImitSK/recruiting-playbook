@@ -5,12 +5,35 @@
  * Dieses Template kann im Theme überschrieben werden:
  * theme/recruiting-playbook/single-job_listing.php
  *
+ * Kompatibel mit Classic und Block Themes (FSE).
+ *
  * @package RecruitingPlaybook
  */
 
 defined( 'ABSPATH' ) || exit;
 
-get_header();
+/*
+ * Block Theme Detection & Header
+ * Block Themes (FSE) benötigen block_template_part() statt get_header()
+ */
+if ( wp_is_block_theme() ) {
+	?>
+	<!DOCTYPE html>
+	<html <?php language_attributes(); ?>>
+	<head>
+		<meta charset="<?php bloginfo( 'charset' ); ?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<?php wp_head(); ?>
+	</head>
+	<body <?php body_class(); ?>>
+	<?php wp_body_open(); ?>
+	<div class="wp-site-blocks">
+		<?php block_template_part( 'header' ); ?>
+		<main class="wp-block-group">
+	<?php
+} else {
+	get_header();
+}
 
 while ( have_posts() ) :
 	the_post();
@@ -60,12 +83,12 @@ while ( have_posts() ) :
 	];
 	?>
 
-	<article <?php post_class( 'rp-job-single' ); ?>>
-		<div class="rp-container rp-max-w-6xl rp-mx-auto rp-px-4 rp-py-8">
+	<article <?php post_class( 'rp-plugin' ); ?>>
+		<div class="rp-mx-auto rp-px-4 rp-py-8" style="max-width: var(--wp--style--global--wide-size, 1200px);">
 
 			<!-- Zurück-Link -->
 			<nav class="rp-mb-6">
-				<a href="<?php echo esc_url( get_post_type_archive_link( 'job_listing' ) ); ?>" class="rp-text-blue-600 hover:rp-text-blue-800 rp-no-underline">
+				<a href="<?php echo esc_url( get_post_type_archive_link( 'job_listing' ) ); ?>" class="rp-no-underline">
 					&larr; <?php esc_html_e( 'Alle Stellen', 'recruiting-playbook' ); ?>
 				</a>
 			</nav>
@@ -76,15 +99,15 @@ while ( have_posts() ) :
 				<div class="lg:rp-col-span-2">
 
 					<header class="rp-mb-8">
-						<h1 class="rp-job-title rp-text-3xl rp-font-bold rp-text-gray-900 rp-mb-4">
+						<h1 class="rp-mb-4">
 							<?php the_title(); ?>
 						</h1>
 
-						<div class="rp-flex rp-flex-wrap rp-gap-4 rp-text-sm rp-text-gray-600">
+						<div class="rp-flex rp-flex-wrap rp-gap-2 rp-text-xs">
 
 							<?php if ( $locations && ! is_wp_error( $locations ) ) : ?>
-								<span class="rp-flex rp-items-center rp-gap-1">
-									<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<span class="rp-badge rp-badge-gray">
+									<svg class="rp-w-3.5 rp-h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
 									</svg>
@@ -93,8 +116,8 @@ while ( have_posts() ) :
 							<?php endif; ?>
 
 							<?php if ( $types && ! is_wp_error( $types ) ) : ?>
-								<span class="rp-flex rp-items-center rp-gap-1">
-									<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<span class="rp-badge rp-badge-gray">
+									<svg class="rp-w-3.5 rp-h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
 									</svg>
 									<?php echo esc_html( $types[0]->name ); ?>
@@ -102,8 +125,8 @@ while ( have_posts() ) :
 							<?php endif; ?>
 
 							<?php if ( $remote_option && isset( $remote_labels[ $remote_option ] ) ) : ?>
-								<span class="rp-flex rp-items-center rp-gap-1 <?php echo 'no' !== $remote_option ? 'rp-text-green-600' : ''; ?>">
-									<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<span class="rp-badge rp-badge-gray">
+									<svg class="rp-w-3.5 rp-h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
 									</svg>
 									<?php echo esc_html( $remote_labels[ $remote_option ] ); ?>
@@ -114,7 +137,7 @@ while ( have_posts() ) :
 					</header>
 
 					<!-- Stellenbeschreibung -->
-					<div class="rp-job-description rp-prose rp-max-w-none rp-text-gray-700">
+					<div class="rp-job-description rp-prose rp-max-w-none">
 						<?php the_content(); ?>
 					</div>
 
@@ -123,9 +146,9 @@ while ( have_posts() ) :
 				<!-- Sidebar -->
 				<aside class="rp-space-y-6 lg:rp-sticky lg:rp-top-8">
 
-					<!-- Jetzt bewerben Button (ohne Box) -->
+					<!-- Jetzt bewerben Button -->
 					<div>
-						<a href="#rp-apply-form" class="rp-block rp-w-full rp-py-3 rp-px-6 rp-bg-blue-600 rp-text-white rp-text-center rp-font-semibold rp-rounded-lg hover:rp-bg-blue-700 rp-no-underline rp-transition-colors rp-shadow-md hover:rp-shadow-lg">
+						<a href="#apply-form" class="wp-element-button rp-block rp-w-full rp-py-3 rp-text-center rp-no-underline">
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
 						<?php if ( $deadline ) : ?>
@@ -142,59 +165,68 @@ while ( have_posts() ) :
 					</div>
 
 					<!-- Details -->
-					<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
-						<h3 class="rp-text-base rp-font-semibold rp-text-gray-900 rp-mb-4"><?php esc_html_e( 'Details', 'recruiting-playbook' ); ?></h3>
+					<div>
+						<h3 class="rp-mb-4"><?php esc_html_e( 'Details', 'recruiting-playbook' ); ?></h3>
 
-						<dl class="rp-text-sm rp-space-y-3">
-
+						<dl class="rp-divide-y rp-divide-gray-200 rp-text-sm">
 							<?php if ( $salary_display ) : ?>
-								<div>
-									<dt class="rp-font-medium rp-text-gray-700"><?php esc_html_e( 'Gehalt', 'recruiting-playbook' ); ?></dt>
-									<dd class="rp-text-gray-500"><?php echo esc_html( $salary_display ); ?></dd>
+								<div class="rp-flex rp-justify-between rp-py-3">
+									<dt class="rp-font-medium"><?php esc_html_e( 'Gehalt', 'recruiting-playbook' ); ?></dt>
+									<dd><?php echo esc_html( $salary_display ); ?></dd>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( $start_date ) : ?>
-								<div>
-									<dt class="rp-font-medium rp-text-gray-700"><?php esc_html_e( 'Startdatum', 'recruiting-playbook' ); ?></dt>
-									<dd class="rp-text-gray-500"><?php echo esc_html( $start_date ); ?></dd>
+								<div class="rp-flex rp-justify-between rp-py-3">
+									<dt class="rp-font-medium"><?php esc_html_e( 'Startdatum', 'recruiting-playbook' ); ?></dt>
+									<dd><?php echo esc_html( $start_date ); ?></dd>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( $categories && ! is_wp_error( $categories ) ) : ?>
-								<div>
-									<dt class="rp-font-medium rp-text-gray-700"><?php esc_html_e( 'Berufsfeld', 'recruiting-playbook' ); ?></dt>
-									<dd class="rp-text-gray-500"><?php echo esc_html( $categories[0]->name ); ?></dd>
+								<div class="rp-flex rp-justify-between rp-py-3">
+									<dt class="rp-font-medium"><?php esc_html_e( 'Berufsfeld', 'recruiting-playbook' ); ?></dt>
+									<dd><?php echo esc_html( $categories[0]->name ); ?></dd>
 								</div>
 							<?php endif; ?>
-
 						</dl>
 					</div>
 
 					<!-- Kontakt -->
 					<?php if ( $contact_person || $contact_email || $contact_phone ) : ?>
-						<div class="rp-job-card rp-bg-white rp-rounded-lg rp-p-6">
-							<h3 class="rp-text-base rp-font-semibold rp-text-gray-900 rp-mb-4"><?php esc_html_e( 'Ansprechpartner', 'recruiting-playbook' ); ?></h3>
+						<div>
+							<h3 class="rp-mb-4"><?php esc_html_e( 'Ansprechpartner', 'recruiting-playbook' ); ?></h3>
 
-							<?php if ( $contact_person ) : ?>
-								<p class="rp-font-medium rp-text-gray-900 rp-mb-2"><?php echo esc_html( $contact_person ); ?></p>
-							<?php endif; ?>
+							<dl class="rp-divide-y rp-divide-gray-200 rp-text-sm">
+								<?php if ( $contact_person ) : ?>
+									<div class="rp-flex rp-justify-between rp-py-3">
+										<dt class="rp-font-medium"><?php esc_html_e( 'Name', 'recruiting-playbook' ); ?></dt>
+										<dd><?php echo esc_html( $contact_person ); ?></dd>
+									</div>
+								<?php endif; ?>
 
-							<?php if ( $contact_email ) : ?>
-								<p class="rp-text-sm rp-mb-1">
-									<a href="mailto:<?php echo esc_attr( $contact_email ); ?>" class="rp-text-blue-600 hover:rp-text-blue-800 rp-no-underline">
-										<?php echo esc_html( $contact_email ); ?>
-									</a>
-								</p>
-							<?php endif; ?>
+								<?php if ( $contact_email ) : ?>
+									<div class="rp-flex rp-justify-between rp-py-3">
+										<dt class="rp-font-medium"><?php esc_html_e( 'E-Mail', 'recruiting-playbook' ); ?></dt>
+										<dd>
+											<a href="mailto:<?php echo esc_attr( $contact_email ); ?>" class="rp-underline">
+												<?php echo esc_html( $contact_email ); ?>
+											</a>
+										</dd>
+									</div>
+								<?php endif; ?>
 
-							<?php if ( $contact_phone ) : ?>
-								<p class="rp-text-sm">
-									<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $contact_phone ) ); ?>" class="rp-text-blue-600 hover:rp-text-blue-800 rp-no-underline">
-										<?php echo esc_html( $contact_phone ); ?>
-									</a>
-								</p>
-							<?php endif; ?>
+								<?php if ( $contact_phone ) : ?>
+									<div class="rp-flex rp-justify-between rp-py-3">
+										<dt class="rp-font-medium"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></dt>
+										<dd>
+											<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $contact_phone ) ); ?>" class="rp-underline">
+												<?php echo esc_html( $contact_phone ); ?>
+											</a>
+										</dd>
+									</div>
+								<?php endif; ?>
+							</dl>
 						</div>
 					<?php endif; ?>
 
@@ -203,14 +235,14 @@ while ( have_posts() ) :
 			</div>
 
 			<!-- Bewerbungsformular -->
-			<div id="rp-apply-form" class="rp-mt-12 rp-bg-gray-50 rp-rounded-lg rp-p-6 md:rp-p-8" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>">
+			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>">
 				<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?></h2>
 
 				<div x-data="applicationForm" x-cloak>
 					<!-- Erfolgs-Meldung -->
 					<template x-if="submitted">
 						<div class="rp-text-center rp-py-12">
-							<svg class="rp-w-16 rp-h-16 rp-text-green-500 rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 							</svg>
 							<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
@@ -222,8 +254,8 @@ while ( have_posts() ) :
 					<template x-if="!submitted">
 						<div>
 							<!-- Fehler-Meldung -->
-							<div x-show="error" x-cloak class="rp-bg-red-50 rp-border rp-border-red-200 rp-rounded-md rp-p-4 rp-mb-6">
-								<p class="rp-text-red-600 rp-text-sm" x-text="error"></p>
+							<div x-show="error" x-cloak class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-mb-6">
+								<p class="rp-text-error rp-text-sm" x-text="error"></p>
 							</div>
 
 							<!-- Fortschrittsanzeige -->
@@ -233,7 +265,7 @@ while ( have_posts() ) :
 									<span x-text="progress + '%'"></span>
 								</div>
 								<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
-									<div class="rp-h-full rp-bg-blue-600 rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
+									<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
 								</div>
 							</div>
 
@@ -246,12 +278,12 @@ while ( have_posts() ) :
 									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Persönliche Daten', 'recruiting-playbook' ); ?></h3>
 
 									<div class="rp-space-y-4">
-										<!-- Anrede, Vorname & Nachname: 1/5 | 2/5 | 2/5 auf Desktop -->
+										<!-- Anrede, Vorname & Nachname -->
 										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-5 rp-gap-4">
 											<!-- Anrede (1/5) -->
 											<div class="sm:rp-col-span-1">
-												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
-												<select x-model="formData.salutation" class="rp-form-select rp-w-full rp-h-10 rp-px-3 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
+												<label class="rp-label"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
+												<select x-model="formData.salutation" class="rp-input rp-select">
 													<option value=""><?php esc_html_e( 'Bitte wählen', 'recruiting-playbook' ); ?></option>
 													<option value="Herr"><?php esc_html_e( 'Herr', 'recruiting-playbook' ); ?></option>
 													<option value="Frau"><?php esc_html_e( 'Frau', 'recruiting-playbook' ); ?></option>
@@ -260,46 +292,45 @@ while ( have_posts() ) :
 											</div>
 											<!-- Vorname (2/5) -->
 											<div class="sm:rp-col-span-2">
-												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
-													<?php esc_html_e( 'Vorname', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
+												<label class="rp-label">
+													<?php esc_html_e( 'Vorname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 												</label>
 												<input type="text" x-model="formData.first_name"
-													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
-													:class="errors.first_name ? 'rp-border-red-500' : 'rp-border-gray-300'"
+													class="rp-input"
+													:class="errors.first_name ? 'rp-input-error' : ''"
 													required>
-												<p x-show="errors.first_name" x-text="errors.first_name" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
+												<p x-show="errors.first_name" x-text="errors.first_name" class="rp-error-text"></p>
 											</div>
 											<!-- Nachname (2/5) -->
 											<div class="sm:rp-col-span-2">
-												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
-													<?php esc_html_e( 'Nachname', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
+												<label class="rp-label">
+													<?php esc_html_e( 'Nachname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 												</label>
 												<input type="text" x-model="formData.last_name"
-													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
-													:class="errors.last_name ? 'rp-border-red-500' : 'rp-border-gray-300'"
+													class="rp-input"
+													:class="errors.last_name ? 'rp-input-error' : ''"
 													required>
-												<p x-show="errors.last_name" x-text="errors.last_name" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
+												<p x-show="errors.last_name" x-text="errors.last_name" class="rp-error-text"></p>
 											</div>
 										</div>
 
-										<!-- E-Mail & Telefon nebeneinander -->
+										<!-- E-Mail & Telefon -->
 										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 rp-gap-4">
 											<!-- E-Mail -->
 											<div>
-												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1">
-													<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-red-500">*</span>
+												<label class="rp-label">
+													<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 												</label>
 												<input type="email" x-model="formData.email"
-													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
-													:class="errors.email ? 'rp-border-red-500' : 'rp-border-gray-300'"
+													class="rp-input"
+													:class="errors.email ? 'rp-input-error' : ''"
 													required>
-												<p x-show="errors.email" x-text="errors.email" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
+												<p x-show="errors.email" x-text="errors.email" class="rp-error-text"></p>
 											</div>
 											<!-- Telefon -->
 											<div>
-												<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
-												<input type="tel" x-model="formData.phone"
-													class="rp-form-input rp-w-full rp-h-10 rp-px-3 rp-border rp-border-gray-300 rp-rounded-md rp-text-base focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500">
+												<label class="rp-label"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
+												<input type="tel" x-model="formData.phone" class="rp-input">
 											</div>
 										</div>
 									</div>
@@ -311,13 +342,13 @@ while ( have_posts() ) :
 
 									<!-- Lebenslauf -->
 									<div class="rp-mb-6">
-										<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
 										<div
-											@dragover.prevent="$el.classList.add('rp-border-blue-500', 'rp-bg-blue-50')"
-											@dragleave.prevent="$el.classList.remove('rp-border-blue-500', 'rp-bg-blue-50')"
-											@drop.prevent="$el.classList.remove('rp-border-blue-500', 'rp-bg-blue-50'); handleDrop($event, 'resume')"
+											@dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
+											@dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
+											@drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
 											class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
-											:class="files.resume ? 'rp-border-green-500 rp-bg-green-50' : ''"
+											:class="files.resume ? 'rp-border-success rp-bg-success-light' : ''"
 										>
 											<template x-if="!files.resume">
 												<div>
@@ -325,7 +356,7 @@ while ( have_posts() ) :
 														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
 													</svg>
 													<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?></p>
-													<label class="rp-text-blue-600 hover:rp-text-blue-800 rp-font-medium rp-cursor-pointer">
+													<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 														<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
 														<input type="file" @change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
 													</label>
@@ -335,7 +366,7 @@ while ( have_posts() ) :
 											<template x-if="files.resume">
 												<div class="rp-flex rp-items-center rp-justify-between">
 													<div class="rp-flex rp-items-center rp-gap-3">
-														<svg class="rp-w-6 rp-h-6 rp-text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<svg class="rp-w-6 rp-h-6 rp-text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 														</svg>
 														<div class="rp-text-left">
@@ -343,7 +374,7 @@ while ( have_posts() ) :
 															<p class="rp-text-xs rp-text-gray-500" x-text="formatFileSize(files.resume.size)"></p>
 														</div>
 													</div>
-													<button type="button" @click="removeFile('resume')" class="rp-p-1 rp-text-red-500 hover:rp-text-red-700">
+													<button type="button" @click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
 														<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 														</svg>
@@ -351,18 +382,18 @@ while ( have_posts() ) :
 												</div>
 											</template>
 										</div>
-										<p x-show="errors.resume" x-text="errors.resume" class="rp-mt-1 rp-text-sm rp-text-red-500"></p>
+										<p x-show="errors.resume" x-text="errors.resume" class="rp-error-text"></p>
 									</div>
 
 									<!-- Weitere Dokumente -->
 									<div class="rp-mb-6">
-										<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
 										<div
 											@dragover.prevent
 											@drop.prevent="handleDrop($event, 'documents')"
 											class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
 										>
-											<label class="rp-text-blue-600 hover:rp-text-blue-800 rp-font-medium rp-cursor-pointer">
+											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 												<?php esc_html_e( 'Dateien auswählen', 'recruiting-playbook' ); ?>
 												<input type="file" @change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
 											</label>
@@ -373,9 +404,9 @@ while ( have_posts() ) :
 										<template x-if="files.documents.length > 0">
 											<ul class="rp-mt-3 rp-space-y-2">
 												<template x-for="(file, index) in files.documents" :key="index">
-													<li class="rp-flex rp-items-center rp-justify-between rp-px-3 rp-py-2 rp-bg-gray-100 rp-rounded">
+													<li class="rp-flex rp-items-center rp-justify-between rp-px-3 rp-py-2 rp-border rp-border-gray-200 rp-rounded">
 														<span class="rp-text-sm rp-text-gray-700" x-text="file.name"></span>
-														<button type="button" @click="removeFile('documents', index)" class="rp-p-1 rp-text-red-500 hover:rp-text-red-700">
+														<button type="button" @click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
 															<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 																<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 															</svg>
@@ -388,9 +419,9 @@ while ( have_posts() ) :
 
 									<!-- Anschreiben -->
 									<div>
-										<label class="rp-block rp-text-sm rp-font-medium rp-text-gray-700 rp-mb-1"><?php esc_html_e( 'Anschreiben / Nachricht', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label"><?php esc_html_e( 'Anschreiben / Nachricht', 'recruiting-playbook' ); ?></label>
 										<textarea x-model="formData.cover_letter" rows="4"
-											class="rp-form-textarea rp-w-full rp-px-3 rp-py-2 rp-border rp-border-gray-300 rp-rounded-md rp-text-base rp-resize-y focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-blue-500 focus:rp-border-blue-500"
+											class="rp-input rp-textarea"
 											placeholder="<?php esc_attr_e( 'Optional: Fügen Sie ein kurzes Anschreiben hinzu...', 'recruiting-playbook' ); ?>"></textarea>
 									</div>
 								</div>
@@ -400,7 +431,7 @@ while ( have_posts() ) :
 									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Datenschutz & Absenden', 'recruiting-playbook' ); ?></h3>
 
 									<!-- Zusammenfassung -->
-									<div class="rp-bg-white rp-border rp-border-gray-200 rp-rounded-lg rp-p-5 rp-mb-6">
+									<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-5 rp-mb-6">
 										<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Ihre Angaben', 'recruiting-playbook' ); ?></h4>
 										<dl class="rp-text-sm rp-space-y-2">
 											<div class="rp-flex">
@@ -435,19 +466,20 @@ while ( have_posts() ) :
 									<!-- Datenschutz-Checkbox -->
 									<div class="rp-mb-6">
 										<label class="rp-flex rp-items-start rp-gap-3 rp-cursor-pointer">
-											<input type="checkbox" x-model="formData.privacy_consent" class="rp-form-checkbox rp-mt-1 rp-w-5 rp-h-5 rp-text-blue-600 rp-border-gray-300 rp-rounded focus:rp-ring-blue-500">
-											<span class="rp-text-sm rp-text-gray-700 rp-leading-relaxed">
+											<input type="checkbox" x-model="formData.privacy_consent" class="rp-checkbox rp-mt-1">
+											<span class="rp-text-sm rp-leading-relaxed">
+												<span class="rp-text-error">*</span>
 												<?php
 												$privacy_url = get_privacy_policy_url();
 												printf(
 													/* translators: %s: privacy policy link */
-													esc_html__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu. *', 'recruiting-playbook' ),
-													$privacy_url ? '<a href="' . esc_url( $privacy_url ) . '" target="_blank" class="rp-text-blue-600 hover:rp-text-blue-800 rp-underline">' . esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' ) . '</a>' : esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
+													esc_html__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu.', 'recruiting-playbook' ),
+													$privacy_url ? '<a href="' . esc_url( $privacy_url ) . '" target="_blank" class="rp-underline">' . esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' ) . '</a>' : esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
 												);
 												?>
 											</span>
 										</label>
-										<p x-show="errors.privacy_consent" x-text="errors.privacy_consent" class="rp-mt-2 rp-text-sm rp-text-red-500"></p>
+										<p x-show="errors.privacy_consent" x-text="errors.privacy_consent" class="rp-error-text rp-mt-2"></p>
 									</div>
 								</div>
 
@@ -457,7 +489,7 @@ while ( have_posts() ) :
 										type="button"
 										x-show="step > 1"
 										@click="prevStep"
-										class="rp-px-5 rp-py-2.5 rp-bg-white rp-border rp-border-gray-300 rp-text-gray-700 rp-font-medium rp-rounded-md hover:rp-bg-gray-50 rp-transition-colors"
+										class="wp-element-button is-style-outline"
 									>
 										<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
 									</button>
@@ -467,7 +499,7 @@ while ( have_posts() ) :
 										x-show="step < totalSteps"
 										type="button"
 										@click="nextStep"
-										class="rp-px-5 rp-py-2.5 rp-bg-blue-600 rp-text-white rp-font-medium rp-rounded-md hover:rp-bg-blue-700 rp-transition-colors"
+										class="wp-element-button"
 									>
 										<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
 									</button>
@@ -476,7 +508,7 @@ while ( have_posts() ) :
 										x-show="step === totalSteps"
 										type="submit"
 										:disabled="loading"
-										class="rp-px-5 rp-py-2.5 rp-bg-green-600 rp-text-white rp-font-medium rp-rounded-md hover:rp-bg-green-700 rp-transition-colors disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
+										class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
 									>
 										<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
 										<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
@@ -494,4 +526,18 @@ while ( have_posts() ) :
 	<?php
 endwhile;
 
-get_footer();
+/*
+ * Block Theme Detection & Footer
+ */
+if ( wp_is_block_theme() ) {
+	?>
+		</main>
+		<?php block_template_part( 'footer' ); ?>
+	</div>
+	<?php wp_footer(); ?>
+	</body>
+	</html>
+	<?php
+} else {
+	get_footer();
+}

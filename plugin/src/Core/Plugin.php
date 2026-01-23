@@ -20,6 +20,7 @@ use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Database\Migrator;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -54,6 +55,11 @@ final class Plugin {
 	 * Plugin initialisieren
 	 */
 	public function init(): void {
+		// Datenbank-Schema nur im Admin prüfen (Performance).
+		if ( is_admin() ) {
+			$this->maybeUpgradeDatabase();
+		}
+
 		// Internationalisierung laden.
 		$this->loadI18n();
 
@@ -80,6 +86,14 @@ final class Plugin {
 		// Assets laden.
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueueFrontendAssets' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAdminAssets' ] );
+	}
+
+	/**
+	 * Datenbank-Schema prüfen und aktualisieren
+	 */
+	private function maybeUpgradeDatabase(): void {
+		$migrator = new Migrator();
+		$migrator->createTables();
 	}
 
 	/**
@@ -229,7 +243,7 @@ final class Plugin {
 				'rp-frontend',
 				RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
 				[],
-				RP_VERSION
+				RP_VERSION . '-' . filemtime( $css_file )
 			);
 		}
 
