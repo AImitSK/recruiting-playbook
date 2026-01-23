@@ -107,7 +107,10 @@ class Menu {
 	 * Aktionen früh verarbeiten (vor jeglichem Output)
 	 */
 	public function handleEarlyActions(): void {
-		// Nur auf unserer Seite.
+		// Backup-Download (muss vor jeglichem Output passieren).
+		$this->handleBackupDownload();
+
+		// Nur auf Bewerbungen-Seite.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
 		if ( ! isset( $_GET['page'] ) || 'rp-applications' !== $_GET['page'] ) {
 			return;
@@ -492,15 +495,37 @@ class Menu {
 	}
 
 	/**
+	 * Backup-Download verarbeiten (vor Output)
+	 */
+	private function handleBackupDownload(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten geprüft.
+		if ( ! isset( $_GET['page'] ) || 'rp-export' !== $_GET['page'] ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird direkt danach geprüft.
+		if ( ! isset( $_POST['download_backup'] ) ) {
+			return;
+		}
+
+		// Berechtigung prüfen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Nonce prüfen.
+		check_admin_referer( 'rp_download_backup' );
+
+		// Download ausführen.
+		$exporter = new BackupExporter();
+		$exporter->download();
+		// exit wird in download() aufgerufen.
+	}
+
+	/**
 	 * Export-Seite rendern
 	 */
 	public function renderExport(): void {
-		// Download-Aktion.
-		if ( isset( $_POST['download_backup'] ) && check_admin_referer( 'rp_download_backup' ) ) {
-			$exporter = new BackupExporter();
-			$exporter->download();
-		}
-
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Daten exportieren', 'recruiting-playbook' ); ?></h1>

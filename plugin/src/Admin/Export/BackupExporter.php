@@ -190,7 +190,7 @@ class BackupExporter {
 
 		// Pfade entfernen aus Sicherheitsgründen.
 		foreach ( $documents as &$doc ) {
-			unset( $doc['path'] );
+			unset( $doc['file_path'] );
 		}
 
 		return $documents;
