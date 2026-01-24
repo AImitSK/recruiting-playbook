@@ -21,9 +21,10 @@ class ApplicationStatus {
 	public const HIRED     = 'hired';
 	public const REJECTED  = 'rejected';
 	public const WITHDRAWN = 'withdrawn';
+	public const DELETED   = 'deleted';
 
 	/**
-	 * Alle Status mit Labels
+	 * Alle Status mit Labels (inkl. gelöscht)
 	 *
 	 * @return array<string, string>
 	 */
@@ -36,7 +37,19 @@ class ApplicationStatus {
 			self::HIRED     => __( 'Eingestellt', 'recruiting-playbook' ),
 			self::REJECTED  => __( 'Abgelehnt', 'recruiting-playbook' ),
 			self::WITHDRAWN => __( 'Zurückgezogen', 'recruiting-playbook' ),
+			self::DELETED   => __( 'Gelöscht', 'recruiting-playbook' ),
 		];
+	}
+
+	/**
+	 * Sichtbare Status (ohne gelöscht) für normale Ansicht
+	 *
+	 * @return array<string, string>
+	 */
+	public static function getVisible(): array {
+		$all = self::getAll();
+		unset( $all[ self::DELETED ] );
+		return $all;
 	}
 
 	/**
@@ -54,6 +67,7 @@ class ApplicationStatus {
 			self::HIRED     => '#00a32a',
 			self::REJECTED  => '#d63638',
 			self::WITHDRAWN => '#787c82',
+			self::DELETED   => '#a7aaad',
 			default         => '#787c82',
 		};
 	}
@@ -72,6 +86,7 @@ class ApplicationStatus {
 			self::HIRED     => '#00a32a',
 			self::REJECTED  => '#d63638',
 			self::WITHDRAWN => '#787c82',
+			self::DELETED   => '#a7aaad',
 		];
 	}
 

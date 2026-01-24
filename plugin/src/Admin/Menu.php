@@ -116,6 +116,10 @@ class Menu {
 			return;
 		}
 
+		// Bulk-Actions verarbeiten (POST).
+		$this->handleBulkActions();
+
+		// Einzelaktionen (GET) - nur wenn action und id vorhanden.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
 		if ( empty( $_GET['action'] ) || empty( $_GET['id'] ) ) {
 			return;
@@ -187,6 +191,95 @@ class Menu {
 			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&deleted=1' ) );
 			exit;
 		}
+	}
+
+	/**
+	 * Bulk-Actions verarbeiten (vor Output)
+	 */
+	private function handleBulkActions(): void {
+		// Bulk-Action aus Dropdown ermitteln.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird unten geprüft.
+		$action = isset( $_POST['action'] ) && $_POST['action'] !== '-1'
+			? sanitize_text_field( wp_unslash( $_POST['action'] ) )
+			: ( isset( $_POST['action2'] ) && $_POST['action2'] !== '-1'
+				? sanitize_text_field( wp_unslash( $_POST['action2'] ) )
+				: '' );
+
+		// Keine Bulk-Action oder keine IDs ausgewählt.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird unten geprüft.
+		if ( empty( $action ) || empty( $_POST['application_ids'] ) ) {
+			return;
+		}
+
+		// Berechtigung prüfen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Nonce prüfen.
+		check_admin_referer( 'bulk-bewerbungen' );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- array_map mit absint sanitized.
+		$ids = array_map( 'absint', wp_unslash( $_POST['application_ids'] ) );
+
+		global $wpdb;
+		$table        = $wpdb->prefix . 'rp_applications';
+		$log_table    = $wpdb->prefix . 'rp_activity_log';
+		$current_user = wp_get_current_user();
+
+		switch ( $action ) {
+			case 'bulk_screening':
+				foreach ( $ids as $id ) {
+					$wpdb->update( $table, [ 'status' => 'screening' ], [ 'id' => $id ] );
+					$this->logStatusChange( $log_table, $id, 'screening', $current_user );
+				}
+				break;
+
+			case 'bulk_rejected':
+				foreach ( $ids as $id ) {
+					$wpdb->update( $table, [ 'status' => 'rejected' ], [ 'id' => $id ] );
+					$this->logStatusChange( $log_table, $id, 'rejected', $current_user );
+				}
+				break;
+
+			case 'bulk_delete':
+				$gdpr_service = new GdprService();
+				foreach ( $ids as $id ) {
+					$gdpr_service->softDeleteApplication( $id );
+				}
+				break;
+
+			default:
+				return; // Unbekannte Action - nicht redirecten.
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&bulk_updated=1' ) );
+		exit;
+	}
+
+	/**
+	 * Status-Änderung loggen (Helper für Bulk-Actions)
+	 *
+	 * @param string   $log_table    Log table name.
+	 * @param int      $id           Application ID.
+	 * @param string   $new_status   New status.
+	 * @param \WP_User $current_user Current user.
+	 */
+	private function logStatusChange( string $log_table, int $id, string $new_status, \WP_User $current_user ): void {
+		global $wpdb;
+
+		$wpdb->insert(
+			$log_table,
+			[
+				'object_type' => 'application',
+				'object_id'   => $id,
+				'action'      => 'status_changed',
+				'user_id'     => $current_user->ID,
+				'user_name'   => $current_user->display_name,
+				'new_value'   => $new_status,
+				'created_at'  => current_time( 'mysql' ),
+			]
+		);
 	}
 
 	/**
@@ -428,8 +521,17 @@ class Menu {
 		$list_table = new ApplicationList();
 		$list_table->prepare_items();
 
-		echo '<form method="get">';
+		echo '<form method="post">';
 		echo '<input type="hidden" name="page" value="rp-applications" />';
+		// Nonce für Bulk-Actions (WP_List_Table erwartet 'bulk-{plural}').
+		wp_nonce_field( 'bulk-bewerbungen' );
+		// Vorhandene Filter übernehmen.
+		if ( ! empty( $_GET['status'] ) ) {
+			echo '<input type="hidden" name="status" value="' . esc_attr( sanitize_text_field( wp_unslash( $_GET['status'] ) ) ) . '" />';
+		}
+		if ( ! empty( $_GET['job_id'] ) ) {
+			echo '<input type="hidden" name="job_id" value="' . esc_attr( absint( $_GET['job_id'] ) ) . '" />';
+		}
 		$list_table->search_box( __( 'Suchen', 'recruiting-playbook' ), 'search' );
 		$list_table->display();
 		echo '</form>';
@@ -452,7 +554,7 @@ class Menu {
 			OBJECT_K
 		);
 
-		$statuses = ApplicationStatus::getAll();
+		$statuses = ApplicationStatus::getVisible();
 		$colors   = ApplicationStatus::getColors();
 
 		echo '<ul class="subsubsub" style="margin-bottom: 15px;">';

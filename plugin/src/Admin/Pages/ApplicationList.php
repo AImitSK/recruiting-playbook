@@ -165,6 +165,10 @@ class ApplicationList extends \WP_List_Table {
 		if ( ! empty( $_GET['status'] ) && array_key_exists( sanitize_text_field( wp_unslash( $_GET['status'] ) ), ApplicationStatus::getAll() ) ) {
 			$conditions[] = 'a.status = %s';
 			$values[]     = sanitize_text_field( wp_unslash( $_GET['status'] ) );
+		} else {
+			// Gelöschte Bewerbungen standardmäßig ausblenden.
+			$conditions[] = 'a.status != %s';
+			$values[]     = 'deleted';
 		}
 
 		// Job-Filter.
@@ -420,7 +424,7 @@ class ApplicationList extends \WP_List_Table {
 		$current_status = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
 		echo '<select name="status">';
 		echo '<option value="">' . esc_html__( 'Alle Status', 'recruiting-playbook' ) . '</option>';
-		foreach ( ApplicationStatus::getAll() as $value => $label ) {
+		foreach ( ApplicationStatus::getVisible() as $value => $label ) {
 			printf(
 				'<option value="%s" %s>%s</option>',
 				esc_attr( $value ),
@@ -428,6 +432,12 @@ class ApplicationList extends \WP_List_Table {
 				esc_html( $label )
 			);
 		}
+		// Gelöschte als separate Option.
+		printf(
+			'<option value="deleted" %s>%s</option>',
+			selected( $current_status, 'deleted', false ),
+			esc_html__( '🗑️ Gelöscht', 'recruiting-playbook' )
+		);
 		echo '</select>';
 
 		// Job-Filter.
@@ -476,72 +486,14 @@ class ApplicationList extends \WP_List_Table {
 
 	/**
 	 * Bulk Actions verarbeiten
+	 *
+	 * Hinweis: Die eigentliche Verarbeitung erfolgt in Menu::handleBulkActions()
+	 * VOR dem Seitenrendering, damit der Redirect funktioniert.
+	 * Diese Methode ist nur noch für die WP_List_Table Kompatibilität vorhanden.
 	 */
 	public function process_bulk_action(): void {
-		$action = $this->current_action();
-
-		// Einzelne Aktionen (set_status etc.) werden in Menu::handleEarlyActions() verarbeitet.
-		if ( ! $action || empty( $_REQUEST['application_ids'] ) ) {
-			return;
-		}
-
-		check_admin_referer( 'bulk-' . $this->_args['plural'] );
-
-		$ids = array_map( 'absint', $_REQUEST['application_ids'] );
-
-		global $wpdb;
-		$table = $wpdb->prefix . 'rp_applications';
-
-		switch ( $action ) {
-			case 'bulk_screening':
-				foreach ( $ids as $id ) {
-					$wpdb->update( $table, [ 'status' => 'screening' ], [ 'id' => $id ] );
-					$this->log_status_change( $id, 'screening' );
-				}
-				break;
-
-			case 'bulk_rejected':
-				foreach ( $ids as $id ) {
-					$wpdb->update( $table, [ 'status' => 'rejected' ], [ 'id' => $id ] );
-					$this->log_status_change( $id, 'rejected' );
-				}
-				break;
-
-			case 'bulk_delete':
-				$gdpr_service = new \RecruitingPlaybook\Services\GdprService();
-				foreach ( $ids as $id ) {
-					$gdpr_service->softDeleteApplication( $id );
-				}
-				break;
-		}
-
-		wp_safe_redirect( remove_query_arg( [ 'action', 'action2', 'application_ids', '_wpnonce' ] ) );
-		exit;
+		// Bulk-Actions werden in Menu::handleBulkActions() verarbeitet.
+		// Diese Methode muss existieren, wird aber nicht mehr verwendet.
 	}
 
-	/**
-	 * Status-Änderung loggen
-	 *
-	 * @param int    $application_id Application ID.
-	 * @param string $new_status     New status.
-	 */
-	private function log_status_change( int $application_id, string $new_status ): void {
-		global $wpdb;
-
-		$log_table    = $wpdb->prefix . 'rp_activity_log';
-		$current_user = wp_get_current_user();
-
-		$wpdb->insert(
-			$log_table,
-			[
-				'object_type' => 'application',
-				'object_id'   => $application_id,
-				'action'      => 'status_changed',
-				'user_id'     => $current_user->ID,
-				'user_name'   => $current_user->display_name,
-				'new_value'   => $new_status,
-				'created_at'  => current_time( 'mysql' ),
-			]
-		);
-	}
 }
