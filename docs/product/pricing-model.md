@@ -21,7 +21,7 @@ Drei-Stufen-Modell nach klassischem Freemium-Ansatz:
 
 | Produkt | Preis | Typ | Inhalt |
 |---------|-------|-----|--------|
-| **Free** | 0 € | Kostenlos | 3 Stellen, Basis-Features |
+| **Free** | 0 € | Kostenlos | Unbegrenzte Stellen, Basis-Features |
 | **Pro** | 149 € | Einmalig | Unbegrenzt Stellen, Kanban, API |
 | **Pro Agency** | 249 € | Einmalig | Pro für 5 Websites |
 | **AI-Addon** | 19 €/Monat | Abo | 100 KI-Analysen/Monat |
@@ -38,7 +38,7 @@ Drei-Stufen-Modell nach klassischem Freemium-Ansatz:
 ### Enthaltene Features
 
 - ✅ Stellenanzeigen erstellen (Custom Post Type)
-- ✅ Bis zu **3 aktive Stellen** gleichzeitig
+- ✅ **Unbegrenzte aktive Stellen**
 - ✅ Standard-Bewerbungsformular
 - ✅ Lebenslauf-Upload
 - ✅ E-Mail-Benachrichtigung bei neuen Bewerbungen
@@ -50,7 +50,7 @@ Drei-Stufen-Modell nach klassischem Freemium-Ansatz:
 
 ### Einschränkungen
 
-- ❌ Maximal 3 aktive Stellen
+- ❌ Kein Kanban-Board / Status-Tracking
 - ❌ Kein Kanban-Board / Status-Tracking
 - ❌ Keine Benutzerrollen
 - ❌ Keine E-Mail-Templates
@@ -225,7 +225,7 @@ Das Alleinstellungsmerkmal des Plugins!
 
 | Feature | FREE | PRO | AI-ADDON |
 |---------|:----:|:---:|:--------:|
-| Stellen erstellen | ✅ (max 3) | ✅ ∞ | ✅ ∞ |
+| Stellen erstellen | ✅ ∞ | ✅ ∞ | ✅ ∞ |
 | Bewerbungsformular | ✅ Basic | ✅ Erweitert | ✅ Erweitert |
 | Bewerber-Liste | ✅ | ✅ | ✅ |
 | Kanban-Board | ❌ | ✅ | ✅ |

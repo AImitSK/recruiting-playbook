@@ -21,7 +21,7 @@ Ein WordPress-Plugin mit drei Stufen:
 
 | Tier | Preis | Kernfunktionen |
 |------|-------|----------------|
-| **Free** | 0 € | 3 Stellenanzeigen, Bewerbungsformular, E-Mail-Benachrichtigung |
+| **Free** | 0 € | Unbegrenzte Stellenanzeigen, Bewerbungsformular, E-Mail-Benachrichtigung |
 | **Pro** | 149 € einmalig | Unbegrenzt Stellen, Kanban-Board, E-Mail-Templates, API |
 | **AI-Addon** | 19 €/Monat | 🔥 KI-Bewerber-Analyse, Job-Matching, Texterstellung |
 
@@ -63,7 +63,7 @@ Das Alleinstellungsmerkmal – kein anderes WordPress-Plugin bietet das!
 
 | Produkt | Preis | Inhalt |
 |---------|-------|--------|
-| **Free** | 0 € | 3 Stellen, Basis-Features |
+| **Free** | 0 € | Unbegrenzte Stellen, Basis-Features |
 | **Pro** | 149 € einmalig | Unbegrenzt Stellen, Kanban, API, Page Builder |
 | **Pro Agency** | 249 € einmalig | Pro für 5 Websites |
 | **AI-Addon** | 19 €/Monat | 100 KI-Analysen/Monat |

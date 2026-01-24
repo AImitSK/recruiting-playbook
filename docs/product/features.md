@@ -6,7 +6,7 @@
 |---------|:----:|:---:|:--------:|
 | **Stellenanzeigen** | | | |
 | Custom Post Type für Stellen | ✅ | ✅ | ✅ |
-| Aktive Stellen | 3 | ∞ | ∞ |
+| Aktive Stellen | ∞ | ∞ | ∞ |
 | Stellen-Templates | 2 | 5+ | 5+ |
 | Custom Fields für Stellen | ❌ | ✅ | ✅ |
 | Stellen archivieren/duplizieren | ❌ | ✅ | ✅ |

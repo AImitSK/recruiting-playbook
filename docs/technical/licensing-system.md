@@ -66,7 +66,7 @@ Das Plugin verwendet ein eigenes Lizenz-System mit folgenden Eigenschaften:
 
 | Tier | Schlüssel-Prefix | Preis | Features |
 |------|------------------|-------|----------|
-| FREE | - (kein Schlüssel) | €0 | Basis-Features, 3 Stellen |
+| FREE | - (kein Schlüssel) | €0 | Basis-Features, unbegrenzte Stellen |
 | PRO | `RP-PRO-` | €149 einmalig | Unbegrenzt Stellen, Kanban, API, etc. |
 | AI_ADDON | `RP-AI-` | €19/Monat | KI-Texte (benötigt PRO) |
 | BUNDLE | `RP-BUNDLE-` | €299 + €19/Monat | PRO + AI |
@@ -96,8 +96,8 @@ RP-BUNDLE-C5P2-N8K4-M3L7-T9R2-2E4F
 
 | Feature | FREE | PRO | AI_ADDON | BUNDLE |
 |---------|:----:|:---:|:--------:|:------:|
-| `create_jobs` | ✅ (max 3) | ✅ | ✅ (max 3) | ✅ |
-| `unlimited_jobs` | ❌ | ✅ | ❌ | ✅ |
+| `create_jobs` | ✅ | ✅ | ✅ | ✅ |
+| `unlimited_jobs` | ✅ | ✅ | ✅ | ✅ |
 | `application_list` | ✅ | ✅ | ✅ | ✅ |
 | `kanban_board` | ❌ | ✅ | ❌ | ✅ |
 | `application_status` | Basic | Full | Basic | Full |
@@ -131,8 +131,8 @@ class FeatureFlags {
     private const FEATURES = [
         'FREE' => [
             'create_jobs'        => true,
-            'unlimited_jobs'     => false,
-            'max_jobs'           => 3,
+            'unlimited_jobs'     => true,
+            'max_jobs'           => -1, // unlimited
             'application_list'   => true,
             'kanban_board'       => false,
             'application_status' => 'basic', // new, hired, rejected
@@ -170,8 +170,8 @@ class FeatureFlags {
         'AI_ADDON' => [
             // Erbt von FREE, fügt AI hinzu
             'create_jobs'        => true,
-            'unlimited_jobs'     => false,
-            'max_jobs'           => 3,
+            'unlimited_jobs'     => true,
+            'max_jobs'           => -1, // unlimited
             'application_list'   => true,
             'kanban_board'       => false,
             'application_status' => 'basic',
@@ -272,7 +272,7 @@ class FeatureFlags {
  * 
  * Verwendung:
  *   if ( rp_can( 'kanban_board' ) ) { ... }
- *   $max = rp_can( 'max_jobs' ); // 3 oder -1
+ *   $max = rp_can( 'max_jobs' ); // -1 (unlimited)
  */
 function rp_can( string $feature ): mixed {
     static $flags = null;
@@ -324,20 +324,8 @@ if ( ! rp_can( 'kanban_board' ) ) {
     );
 }
 
-// Stellen-Limit prüfen
-$max_jobs = rp_can( 'max_jobs' );
-$current_jobs = rp_count_active_jobs();
-
-if ( $max_jobs !== -1 && $current_jobs >= $max_jobs ) {
-    return new WP_Error(
-        'job_limit_reached',
-        sprintf( 
-            __( 'Sie haben das Limit von %d Stellen erreicht.', 'recruiting-playbook' ),
-            $max_jobs 
-        ),
-        [ 'status' => 403, 'upgrade_url' => rp_upgrade_url() ]
-    );
-}
+// Hinweis: Unbegrenzte Stellen in allen Tiers (FREE, PRO, AI_ADDON, BUNDLE)
+// Kein Stellen-Limit mehr erforderlich
 
 // Bedingte UI-Elemente
 if ( rp_can( 'ai_job_generation' ) ) {

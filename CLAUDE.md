@@ -143,7 +143,7 @@ new → screening → interview → offer → hired
 2. **Progressive Enhancement**: Frontend works without JS, Alpine.js adds interactivity
 3. **Server-Side Rendering**: PHP renders content (SEO-friendly)
 4. **Soft Deletes**: GDPR compliance with `deleted_at` field and anonymization
-5. **Freemium Model**: Free (3 jobs) → Pro (unlimited, 149€) → AI-Addon (19€/month)
+5. **Freemium Model**: Free (unlimited jobs) → Pro (Kanban, API, 149€) → AI-Addon (19€/month)
 
 ## Testing Strategy
 

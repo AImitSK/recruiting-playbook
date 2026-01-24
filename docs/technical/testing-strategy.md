@@ -478,12 +478,12 @@ use RecruitingPlaybook\Licensing\FeatureFlags;
 class FeatureFlagsTest extends TestCase {
     
     /** @test */
-    public function free_tier_has_correct_limits(): void {
+    public function free_tier_has_correct_features(): void {
         $flags = new FeatureFlags( 'FREE' );
-        
+
         $this->assertTrue( $flags->can( 'create_jobs' ) );
-        $this->assertFalse( $flags->can( 'unlimited_jobs' ) );
-        $this->assertEquals( 3, $flags->get( 'max_jobs' ) );
+        $this->assertTrue( $flags->can( 'unlimited_jobs' ) );
+        $this->assertEquals( -1, $flags->get( 'max_jobs' ) );
         $this->assertFalse( $flags->can( 'kanban_board' ) );
         $this->assertFalse( $flags->can( 'api_access' ) );
         $this->assertFalse( $flags->can( 'ai_job_generation' ) );
@@ -504,9 +504,9 @@ class FeatureFlagsTest extends TestCase {
     /** @test */
     public function ai_addon_has_ai_but_not_pro(): void {
         $flags = new FeatureFlags( 'AI_ADDON' );
-        
-        $this->assertFalse( $flags->can( 'unlimited_jobs' ) );
-        $this->assertEquals( 3, $flags->get( 'max_jobs' ) );
+
+        $this->assertTrue( $flags->can( 'unlimited_jobs' ) );
+        $this->assertEquals( -1, $flags->get( 'max_jobs' ) );
         $this->assertFalse( $flags->can( 'kanban_board' ) );
         $this->assertTrue( $flags->can( 'ai_job_generation' ) );
         $this->assertTrue( $flags->can( 'ai_text_improvement' ) );

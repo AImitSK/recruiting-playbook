@@ -202,20 +202,6 @@
 
 ---
 
-#### US-2.8: Stellen-Limit (Free)
-> **Als** Admin  
-> **möchte ich** verstehen, warum ich nur 3 Stellen erstellen kann  
-> **damit** ich entscheide, ob ich upgraden möchte
-
-**Akzeptanzkriterien:**
-- [ ] Maximal 3 aktive Stellen in Free-Version
-- [ ] Bei Erreichen des Limits: Hinweis mit Upgrade-Option
-- [ ] Archivierte Stellen zählen nicht zum Limit
-- [ ] Klarer Hinweis "3 von 3 Stellen verwendet"
-
-**Priorität:** P0  
-**Story Points:** 2
-
 ---
 
 ### Epic 3: Stellenanzeigen (Frontend)
@@ -645,21 +631,6 @@
 
 ---
 
-### Epic 10: Unbegrenzte Stellen
-
-#### US-10.1: Stellen-Limit aufheben
-> **Als** Pro-Kunde  
-> **möchte ich** unbegrenzt Stellen erstellen  
-> **damit** ich alle offenen Positionen veröffentlichen kann
-
-**Akzeptanzkriterien:**
-- [ ] Kein Limit bei aktiver Pro-Lizenz
-- [ ] Lizenz-Prüfung bei Stellen-Erstellung
-- [ ] Hinweis wenn Lizenz abläuft
-
-**Priorität:** P0 (Pro)  
-**Story Points:** 2
-
 ---
 
 ### Epic 11: Benutzerrollen
@@ -943,7 +914,7 @@ AI    [KI-Text]     -           -          -          -
 
 - [ ] Plugin aktivieren/deaktivieren
 - [ ] Stellen erstellen/bearbeiten/veröffentlichen
-- [ ] Stellen-Limit (3 aktive)
+- [ ] Unbegrenzte Stellen
 - [ ] Stellen-Archivseite
 - [ ] Stellen-Einzelansicht
 - [ ] Bewerbungsformular mit Validierung
