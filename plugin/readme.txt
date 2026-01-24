@@ -1,5 +1,5 @@
 === Recruiting Playbook ===
-Contributors: AImitSK
+Contributors: aimitsk
 Tags: recruiting, job board, applicant tracking system, careers, jobs
 Requires at least: 6.0
 Tested up to: 6.7

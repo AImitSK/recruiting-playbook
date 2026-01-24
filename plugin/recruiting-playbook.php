@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Recruiting Playbook
- * Plugin URI: https://recruiting-playbook.de/
+ * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
  * Version: 1.0.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
- * Author: Recruiting Playbook
- * Author URI: https://recruiting-playbook.de
+ * Author: Stefan Kühne
+ * Author URI: https://sk-online-marketing.de
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: recruiting-playbook
