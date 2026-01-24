@@ -16,7 +16,25 @@
       "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''rp-apply-form''\\)\")",
       "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''alpinejs''\\)\")",
       "Bash(powershell -Command \"\\(\\(Invoke-WebRequest -Uri ''http://localhost:8080/jobs/senior-php-developer/'' -UseBasicParsing\\).Content -match ''application-form.js''\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose pull:*)",
+      "Bash(docker-compose:*)",
+      "Bash(echo:*)",
+      "WebSearch",
+      "WebFetch(domain:status.docker.com)",
+      "Bash(MSYS_NO_PATHCONV=1 docker exec:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install)",
+      "Bash(npx playwright test:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npm run build:css:*)",
+      "Bash(npm run build:admin-css:*)",
+      "Bash(powershell -Command \"Compress-Archive -Path * -DestinationPath ''../recruiting-playbook.zip'' -Force\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path plugin -Exclude ''node_modules'',''.git'',''tests'' | Compress-Archive -DestinationPath ''recruiting-playbook-upload.zip'' -Force\")",
+      "Bash(powershell -Command \"\\(Get-Item ''recruiting-playbook-upload.zip''\\).Length / 1MB\")",
+      "Bash(powershell -Command \"Expand-Archive -Path ''recruiting-playbook.zip'' -DestinationPath ''temp-check'' -Force\")",
+      "Bash(find:*)"
     ]
   }
 }
