@@ -1,5 +1,15 @@
 {
-  "buildCommand": null,
-  "outputDirectory": "website",
-  "framework": null
+  "version": 2,
+  "builds": [
+    {
+      "src": "website/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/website/$1"
+    }
+  ]
 }
