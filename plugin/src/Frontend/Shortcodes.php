@@ -1037,11 +1037,12 @@ class Shortcodes {
 			$alpine_deps[] = 'rp-application-form';
 		}
 
-		// Alpine.js (CDN) - muss NACH application-form.js geladen werden.
-		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) ) {
+		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
-				'https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
 				$alpine_deps,
 				'3.14.3',
 				true

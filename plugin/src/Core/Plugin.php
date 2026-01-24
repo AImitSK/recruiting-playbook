@@ -325,15 +325,18 @@ final class Plugin {
 			}
 		}
 
-		// Alpine.js (CDN) - muss NACH application-form.js geladen werden.
+		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
 		// Das defer-Attribut sorgt dafür, dass Alpine nach DOM-Ready initialisiert.
-		wp_enqueue_script(
-			'rp-alpine',
-			'https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js',
-			$alpine_deps, // Abhängigkeit: application-form.js muss zuerst laden (falls vorhanden)
-			'3.14.3',
-			true
-		);
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		if ( file_exists( $alpine_file ) ) {
+			wp_enqueue_script(
+				'rp-alpine',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				$alpine_deps, // Abhängigkeit: application-form.js muss zuerst laden (falls vorhanden)
+				'3.14.3',
+				true
+			);
+		}
 
 		// Defer-Attribut hinzufügen für Alpine.js (einmalig registrieren).
 		static $filter_added = false;
