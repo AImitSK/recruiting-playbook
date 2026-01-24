@@ -71,35 +71,29 @@ class DocumentService {
 		// Robuste .htaccess für Apache (mehrere Syntaxvarianten für Kompatibilität)
 		$htaccess = $this->upload_dir . '/.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
-			$htaccess_content = <<<HTACCESS
-# Recruiting Playbook - Dokumentenschutz
-# Blockiert direkten Zugriff auf alle Dateien in diesem Verzeichnis
-
-# Apache 2.4+
-<IfModule mod_authz_core.c>
-    Require all denied
-</IfModule>
-
-# Apache 2.2 (Fallback)
-<IfModule !mod_authz_core.c>
-    Order deny,allow
-    Deny from all
-</IfModule>
-
-# Zusätzlicher Schutz: Verhindert PHP-Ausführung
-<FilesMatch "\.ph(p[3-7]?|tml|ar)$">
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-    <IfModule !mod_authz_core.c>
-        Order deny,allow
-        Deny from all
-    </IfModule>
-</FilesMatch>
-
-# Verhindert Directory Listing
-Options -Indexes
-HTACCESS;
+			$htaccess_content = "# Recruiting Playbook - Dokumentenschutz\n";
+			$htaccess_content .= "# Blockiert direkten Zugriff auf alle Dateien in diesem Verzeichnis\n\n";
+			$htaccess_content .= "# Apache 2.4+\n";
+			$htaccess_content .= "<IfModule mod_authz_core.c>\n";
+			$htaccess_content .= "    Require all denied\n";
+			$htaccess_content .= "</IfModule>\n\n";
+			$htaccess_content .= "# Apache 2.2 (Fallback)\n";
+			$htaccess_content .= "<IfModule !mod_authz_core.c>\n";
+			$htaccess_content .= "    Order deny,allow\n";
+			$htaccess_content .= "    Deny from all\n";
+			$htaccess_content .= "</IfModule>\n\n";
+			$htaccess_content .= "# Zusätzlicher Schutz: Verhindert PHP-Ausführung\n";
+			$htaccess_content .= '<FilesMatch "\.ph(p[3-7]?|tml|ar)$">' . "\n";
+			$htaccess_content .= "    <IfModule mod_authz_core.c>\n";
+			$htaccess_content .= "        Require all denied\n";
+			$htaccess_content .= "    </IfModule>\n";
+			$htaccess_content .= "    <IfModule !mod_authz_core.c>\n";
+			$htaccess_content .= "        Order deny,allow\n";
+			$htaccess_content .= "        Deny from all\n";
+			$htaccess_content .= "    </IfModule>\n";
+			$htaccess_content .= "</FilesMatch>\n\n";
+			$htaccess_content .= "# Verhindert Directory Listing\n";
+			$htaccess_content .= "Options -Indexes\n";
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $htaccess, $htaccess_content );
 		}
@@ -114,23 +108,21 @@ HTACCESS;
 		// Nginx-Hinweis erstellen
 		$nginx_readme = $this->upload_dir . '/NGINX_SECURITY.txt';
 		if ( ! file_exists( $nginx_readme ) ) {
-			$nginx_content = <<<NGINX
-# WICHTIG für Nginx-Server:
-# Die .htaccess wird von Nginx ignoriert!
-#
-# Fügen Sie folgende Regel in Ihre Nginx-Konfiguration ein:
-#
-# location ~* /wp-content/uploads/recruiting-playbook/ {
-#     deny all;
-#     return 403;
-# }
-#
-# Alternativ in der Server-Block:
-#
-# location ~ ^/wp-content/uploads/recruiting-playbook/.*$ {
-#     internal;
-# }
-NGINX;
+			$nginx_content = "# WICHTIG für Nginx-Server:\n";
+			$nginx_content .= "# Die .htaccess wird von Nginx ignoriert!\n";
+			$nginx_content .= "#\n";
+			$nginx_content .= "# Fügen Sie folgende Regel in Ihre Nginx-Konfiguration ein:\n";
+			$nginx_content .= "#\n";
+			$nginx_content .= "# location ~* /wp-content/uploads/recruiting-playbook/ {\n";
+			$nginx_content .= "#     deny all;\n";
+			$nginx_content .= "#     return 403;\n";
+			$nginx_content .= "# }\n";
+			$nginx_content .= "#\n";
+			$nginx_content .= "# Alternativ in der Server-Block:\n";
+			$nginx_content .= "#\n";
+			$nginx_content .= "# location ~ ^/wp-content/uploads/recruiting-playbook/.*$ {\n";
+			$nginx_content .= "#     internal;\n";
+			$nginx_content .= "# }\n";
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $nginx_readme, $nginx_content );
 		}

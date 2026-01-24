@@ -98,13 +98,14 @@ final class Plugin {
 
 	/**
 	 * Übersetzungen laden
+	 *
+	 * Hinweis: Bei WordPress.org gehosteten Plugins werden Übersetzungen
+	 * seit WP 4.6 automatisch geladen. Diese Methode ist ein Platzhalter
+	 * für zukünftige Erweiterungen.
 	 */
 	private function loadI18n(): void {
-		load_plugin_textdomain(
-			'recruiting-playbook',
-			false,
-			dirname( RP_PLUGIN_BASENAME ) . '/languages/'
-		);
+		// WordPress.org lädt Übersetzungen automatisch für gehostete Plugins.
+		// Keine manuelle Initialisierung erforderlich.
 	}
 
 	/**
