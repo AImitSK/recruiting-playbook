@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Services;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Service für E-Mail-Versand
@@ -285,7 +288,9 @@ class EmailService {
 
 			case 'email-applicant-confirmation':
 				$greeting = ! empty( $app['salutation'] )
-					? sprintf( __( 'Guten Tag %s %s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: 1: Salutation (e.g. Herr/Frau), 2: Last name */
+					? sprintf( __( 'Guten Tag %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
 				$content = sprintf(
@@ -310,7 +315,9 @@ class EmailService {
 
 			case 'email-rejection':
 				$greeting = ! empty( $app['salutation'] )
-					? sprintf( __( 'Guten Tag %s %s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: 1: Salutation (e.g. Herr/Frau), 2: Last name */
+					? sprintf( __( 'Guten Tag %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
 				$content = sprintf(

@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Admin\MetaBoxes;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\PostTypes\JobListing;
 use WP_Post;

@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Admin\SetupWizard;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\EmailService;
 

@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Admin\Pages;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Constants\ApplicationStatus;
 

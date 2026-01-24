@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Services;
+
+defined( 'ABSPATH' ) || exit;
 
 use WP_REST_Request;
 use WP_Error;

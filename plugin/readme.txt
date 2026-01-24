@@ -8,71 +8,73 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Professionelles Stellenausschreibungs- und Bewerbermanagement für KMUs und Personaldienstleister direkt in WordPress integriert – jetzt mit unbegrenzten Stellenanzeigen.
+Professional job posting and applicant management for SMBs and recruiters – directly integrated into WordPress with unlimited job listings.
 
 == Description ==
 
-Das **Recruiting Playbook** ist die native WordPress-Lösung für kleine bis mittlere Unternehmen und Personaldienstleister, die ihren Bewerbungsprozess ohne teure Drittsoftware direkt auf der eigenen Website professionalisieren möchten.
+**Recruiting Playbook** is the native WordPress solution for small to medium-sized businesses and recruiters who want to professionalize their hiring process directly on their own website without expensive third-party software.
 
-Im Gegensatz zu anderen Lösungen bietet das Recruiting Playbook bereits in der kostenlosen Version die Möglichkeit, unbegrenzt viele Stellenanzeigen zu schalten und zu verwalten. Anstatt Bewerbungen in unübersichtlichen E-Mail-Postfächern oder Excel-Listen zu verlieren, bietet dieses Plugin einen strukturierten Workflow von der ersten Anzeige bis zur Einstellung.
+Unlike other solutions, Recruiting Playbook offers unlimited job listings even in the free version. Instead of losing applications in cluttered email inboxes or Excel spreadsheets, this plugin provides a structured workflow from the first posting to the final hire.
 
-**Kernfunktionen der Free-Version:**
-* **Unbegrenzte Stellenanzeigen:** Erstellen Sie so viele Jobangebote als Custom Post Type, wie Sie benötigen.
-* **Google for Jobs Integration:** Automatische Generierung des erforderlichen JSON-LD Schemas für maximale Sichtbarkeit in den Suchergebnissen.
-* **Modernes Bewerbungsformular:** Ein für mobile Geräte optimiertes Frontend-Formular inklusive sicherem Dateiupload für Lebensläufe.
-* **Sichere Dokumentenverwaltung:** Alle Uploads werden in einem geschützten Verzeichnis gespeichert, das vor direktem URL-Zugriff gesperrt ist.
-* **Integrierter Spam-Schutz:** Schutz durch Honeypot-Felder, verschlüsselte Tokens und Rate-Limiting.
-* **DSGVO-Bereit:** Inklusive Consent-Tracking und Funktionen zur Anonymisierung von Kandidatendaten.
+**Core Features (Free Version):**
 
-**Warum Recruiting Playbook?**
-Über 40% aller Websites nutzen WordPress. Viele Unternehmen stehen vor der Wahl zwischen "Excel-Chaos" und teuren SaaS-Lösungen. Das Recruiting Playbook schließt diese Lücke direkt in Ihrer gewohnten Umgebung – performant, sicher und erweiterbar.
+* **Unlimited Job Listings:** Create as many job postings as you need using a custom post type.
+* **Google for Jobs Integration:** Automatic JSON-LD schema generation for maximum visibility in search results.
+* **Modern Application Form:** A mobile-optimized frontend form with secure file upload for resumes.
+* **Secure Document Management:** All uploads are stored in a protected directory, blocked from direct URL access.
+* **Built-in Spam Protection:** Protection via honeypot fields, encrypted tokens, and rate limiting.
+* **GDPR Ready:** Includes consent tracking and candidate data anonymization features.
+
+**Why Recruiting Playbook?**
+
+Over 40% of all websites use WordPress. Many companies face the choice between "Excel chaos" and expensive SaaS solutions. Recruiting Playbook bridges this gap directly in your familiar environment – performant, secure, and extensible.
 
 == Installation ==
 
-1. Laden Sie den Plugin-Ordner in das Verzeichnis `/wp-content/plugins/` hoch oder installieren Sie das Plugin direkt über das WordPress-Backend.
-2. Aktivieren Sie das Plugin.
-3. Folgen Sie dem integrierten **Setup-Wizard**, um Ihren Firmennamen und die Benachrichtigungs-E-Mail einzurichten.
-4. Erstellen Sie Ihre erste Stelle unter "Recruiting" -> "Stellen".
+1. Upload the plugin folder to the `/wp-content/plugins/` directory or install the plugin directly through the WordPress admin.
+2. Activate the plugin.
+3. Follow the integrated **Setup Wizard** to configure your company name and notification email.
+4. Create your first job listing under "Recruiting" -> "Jobs".
 
 == Frequently Asked Questions ==
 
-= Gibt es ein Limit für die Anzahl der Stellenanzeigen? =
-Nein. In der aktuellen Version können Sie unbegrenzt viele aktive Stellenanzeigen gleichzeitig schalten.
+= Is there a limit on the number of job listings? =
+No. In the current version, you can publish unlimited active job listings simultaneously.
 
-= Werden meine Stellen bei Google for Jobs angezeigt? =
-Ja, das Plugin erstellt automatisch das notwendige Schema.org Markup. Sobald Google Ihre Seite indexiert, können die Stellen in den speziellen Job-Suchergebnissen erscheinen.
+= Will my jobs appear on Google for Jobs? =
+Yes, the plugin automatically creates the necessary Schema.org markup. Once Google indexes your page, your jobs can appear in the specialized job search results.
 
-= Wie sicher sind die Bewerberdaten? =
-Sicherheit hat Priorität. Dokumente liegen in einem geschützten Ordner. Zudem bietet das Plugin Werkzeuge zur DSGVO-konformen Löschung und Anonymisierung.
+= How secure is applicant data? =
+Security is a priority. Documents are stored in a protected folder. The plugin also provides tools for GDPR-compliant deletion and anonymization.
 
 == Upgrade Path: Pro & AI ==
 
-Das Recruiting Playbook wächst mit Ihren Anforderungen.
+Recruiting Playbook grows with your requirements.
 
 **Recruiting Playbook Pro:**
-Professionalisieren Sie Ihr Recruiting mit einem interaktiven Kanban-Board für das Bewerber-Tracking, anpassbaren E-Mail-Templates für Absagen oder Einladungen und einer vollständigen REST API für Drittsysteme.
+Professionalize your recruiting with an interactive Kanban board for applicant tracking, customizable email templates for rejections or invitations, and a full REST API for third-party systems.
 
-**AI-Addon (Demnächst):**
-Nutzen Sie modernste KI für automatisches Job-Matching. Bewerber erhalten sofort einen Match-Score und wertvolle Tipps zu ihren Einstellungschancen basierend auf ihrem Lebenslauf.
+**AI Addon (Coming Soon):**
+Use cutting-edge AI for automatic job matching. Applicants receive an instant match score and valuable tips about their hiring chances based on their resume.
 
 == Screenshots ==
 
-1. **Stellenübersicht** – Alle offenen Positionen auf einen Blick mit Standort, Beschäftigungsart und Remote-Option.
-2. **Stellendetailseite** – Professionelle Darstellung mit Google for Jobs Schema und integriertem Bewerbungsformular.
-3. **Bewerbungsformular** – Mehrstufiges, mobil-optimiertes Formular mit Datei-Upload und Fortschrittsanzeige.
-4. **Admin Dashboard** – Übersichtliche Verwaltung aller Bewerbungen mit Status-Tracking.
-5. **Setup-Wizard** – Einfache Erstkonfiguration in wenigen Schritten.
+1. **Job Overview** – All open positions at a glance with location, employment type, and remote option.
+2. **Job Detail Page** – Professional presentation with Google for Jobs schema and integrated application form.
+3. **Application Form** – Multi-step, mobile-optimized form with file upload and progress indicator.
+4. **Admin Dashboard** – Clear management of all applications with status tracking.
+5. **Setup Wizard** – Simple initial configuration in just a few steps.
 
 == Changelog ==
 
 = 1.0.0 =
-* Initialer Release der MVP-Version.
-* Unbegrenzte Stellenanzeigen und Bewerbungs-Workflow.
-* Google for Jobs Integration (Schema.org JSON-LD).
-* Mehrstufiges Bewerbungsformular mit Alpine.js.
-* Sichere Dokumentenverwaltung mit geschütztem Upload-Verzeichnis.
-* Integrierter Spam-Schutz (Honeypot, Rate-Limiting, Timestamp-Validierung).
-* DSGVO-konforme Datenverarbeitung mit Anonymisierungsfunktion.
-* Setup-Wizard für einfache Erstkonfiguration.
-* Responsive Design mit Tailwind CSS.
-* Shortcodes für flexible Einbindung: [rp_jobs], [rp_job_search], [rp_application_form].
+* Initial MVP release.
+* Unlimited job listings and application workflow.
+* Google for Jobs integration (Schema.org JSON-LD).
+* Multi-step application form with Alpine.js.
+* Secure document management with protected upload directory.
+* Built-in spam protection (honeypot, rate limiting, timestamp validation).
+* GDPR-compliant data processing with anonymization feature.
+* Setup wizard for easy initial configuration.
+* Responsive design with Tailwind CSS.
+* Shortcodes for flexible integration: [rp_jobs], [rp_job_search], [rp_application_form].

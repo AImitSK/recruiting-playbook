@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Admin\Export;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Backup-Export Klasse

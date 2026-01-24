@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Taxonomies;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\PostTypes\JobListing;
 

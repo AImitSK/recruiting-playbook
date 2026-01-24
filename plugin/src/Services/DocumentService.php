@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Services;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Constants\DocumentType;
 use WP_Error;
@@ -261,7 +264,16 @@ class DocumentService {
 	}
 
 	/**
+	 * Aktuelles Upload-Zielverzeichnis für wp_handle_upload Filter
+	 *
+	 * @var string|null
+	 */
+	private ?string $current_upload_subdir = null;
+
+	/**
 	 * Einzelne Datei verarbeiten
+	 *
+	 * Verwendet wp_handle_upload() für WordPress-konforme Datei-Uploads.
 	 *
 	 * @param int    $application_id Application ID.
 	 * @param array  $file           Datei-Array.
@@ -295,10 +307,6 @@ class DocumentService {
 			return $mime_type;
 		}
 
-		// Dateiname sichern
-		$extension = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
-		$safe_filename = $this->generateSafeFilename( $file['name'], $extension );
-
 		// Application ID validieren.
 		$app_id_safe = absint( $application_id );
 		if ( $app_id_safe <= 0 ) {
@@ -308,67 +316,84 @@ class DocumentService {
 			);
 		}
 
-		// Upload-Verzeichnis prüfen BEVOR Unterverzeichnis erstellt wird.
-		$real_upload_dir = realpath( $this->upload_dir );
-		if ( ! $real_upload_dir ) {
+		// Upload-Verzeichnis für diese Bewerbung setzen.
+		$this->current_upload_subdir = '/recruiting-playbook/applications/' . $app_id_safe;
+
+		// Filter für benutzerdefiniertes Upload-Verzeichnis hinzufügen.
+		add_filter( 'upload_dir', [ $this, 'filterUploadDir' ] );
+
+		// Dateiname mit Hash für Eindeutigkeit.
+		$extension = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
+		$safe_filename = $this->generateSafeFilename( $file['name'], $extension );
+
+		// Unique filename filter für unseren sicheren Dateinamen.
+		$filename_filter = function ( $dir, $name, $ext ) use ( $safe_filename ) {
+			return $safe_filename;
+		};
+		add_filter( 'wp_unique_filename', $filename_filter, 10, 3 );
+
+		// WordPress Upload-Handler verwenden.
+		$upload_overrides = [
+			'test_form'   => false,
+			'test_type'   => false, // Wir validieren MIME-Type selbst.
+			'mimes'       => self::ALLOWED_MIMES,
+			'unique_filename_callback' => function ( $dir, $name, $ext ) use ( $safe_filename ) {
+				return $safe_filename;
+			},
+		];
+
+		$uploaded = wp_handle_upload( $file, $upload_overrides );
+
+		// Filter entfernen.
+		remove_filter( 'upload_dir', [ $this, 'filterUploadDir' ] );
+		remove_filter( 'wp_unique_filename', $filename_filter, 10 );
+		$this->current_upload_subdir = null;
+
+		// Fehlerprüfung.
+		if ( isset( $uploaded['error'] ) ) {
 			return new WP_Error(
-				'invalid_upload_dir',
-				__( 'Upload-Verzeichnis nicht gefunden.', 'recruiting-playbook' )
+				'upload_failed',
+				$uploaded['error']
 			);
 		}
 
-		// Zielverzeichnis für diese Bewerbung.
-		$app_dir = trailingslashit( $this->upload_dir ) . $app_id_safe;
-		if ( ! file_exists( $app_dir ) ) {
-			wp_mkdir_p( $app_dir );
-		}
-
-		// Path Traversal Schutz: Sicherstellen, dass Ziel innerhalb des Upload-Verzeichnisses liegt.
-		// Symlink-Check: Verhindert Path Traversal über Symlinks.
-		if ( is_link( $app_dir ) ) {
-			return new WP_Error(
-				'symlink_detected',
-				__( 'Symlinks sind nicht erlaubt.', 'recruiting-playbook' )
-			);
-		}
-
-		$real_app_dir = realpath( $app_dir );
-		if ( ! $real_app_dir || strpos( $real_app_dir, $real_upload_dir ) !== 0 ) {
-			return new WP_Error(
-				'invalid_path',
-				__( 'Ungültiger Zielpfad.', 'recruiting-playbook' )
-			);
-		}
-
-		$destination = trailingslashit( $real_app_dir ) . $safe_filename;
-
-		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		if ( ! @move_uploaded_file( $file['tmp_name'], $destination ) ) {
-			return new WP_Error(
-				'move_failed',
-				__( 'Datei konnte nicht gespeichert werden.', 'recruiting-playbook' )
-			);
-		}
-
-		// Dateiberechtigungen setzen (mit Error-Handling).
+		// Dateiberechtigungen einschränken.
+		$destination = $uploaded['file'];
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- chmod kann auf manchen Systemen fehlschlagen
-		if ( ! @chmod( $destination, 0640 ) ) {
-			// Fehler loggen, aber Upload nicht abbrechen - Datei wurde bereits gespeichert.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-				error_log( sprintf( '[Recruiting Playbook] chmod failed for: %s', $destination ) );
-			}
-		}
+		@chmod( $destination, 0640 );
 
-		// In Datenbank speichern
+		// In Datenbank speichern.
 		return $this->saveDocument( $application_id, [
-			'filename'      => $safe_filename,
+			'filename'      => basename( $destination ),
 			'original_name' => sanitize_file_name( $file['name'] ),
-			'mime_type'     => $mime_type,
+			'mime_type'     => $uploaded['type'],
 			'size'          => $file['size'],
 			'type'          => $type,
 			'path'          => $destination,
 		] );
+	}
+
+	/**
+	 * Filter für benutzerdefiniertes Upload-Verzeichnis
+	 *
+	 * @param array $uploads Upload-Verzeichnis-Informationen.
+	 * @return array Modifizierte Upload-Informationen.
+	 */
+	public function filterUploadDir( array $uploads ): array {
+		if ( null === $this->current_upload_subdir ) {
+			return $uploads;
+		}
+
+		$uploads['subdir'] = $this->current_upload_subdir;
+		$uploads['path']   = $uploads['basedir'] . $this->current_upload_subdir;
+		$uploads['url']    = $uploads['baseurl'] . $this->current_upload_subdir;
+
+		// Verzeichnis erstellen falls nicht vorhanden.
+		if ( ! file_exists( $uploads['path'] ) ) {
+			wp_mkdir_p( $uploads['path'] );
+		}
+
+		return $uploads;
 	}
 
 	/**

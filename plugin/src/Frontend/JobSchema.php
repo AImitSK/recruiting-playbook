@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Frontend;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\PostTypes\JobListing;
 
@@ -68,7 +71,7 @@ class JobSchema {
 			'@type'         => 'JobPosting',
 			'title'         => get_the_title( $post ),
 			'description'   => $this->getDescription( $post ),
-			'datePosted'    => get_the_date( 'c', $post ),
+			'datePosted'    => gmdate( 'c', get_post_time( 'U', true, $post ) ),
 			'identifier'    => [
 				'@type' => 'PropertyValue',
 				'name'  => $settings['company_name'] ?? get_bloginfo( 'name' ),
@@ -80,7 +83,7 @@ class JobSchema {
 		// Bewerbungsfrist.
 		$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
 		if ( $deadline ) {
-			$schema['validThrough'] = date( 'c', strtotime( $deadline . ' 23:59:59' ) );
+			$schema['validThrough'] = gmdate( 'c', strtotime( $deadline . ' 23:59:59' ) );
 		}
 
 		// Beschäftigungsart.

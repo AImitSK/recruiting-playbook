@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Constants;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Bewerbungs-Status

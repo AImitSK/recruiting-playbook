@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Api;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\ApplicationService;
 use RecruitingPlaybook\Services\SpamProtection;

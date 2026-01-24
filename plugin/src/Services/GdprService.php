@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Services;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Service für DSGVO-Funktionen

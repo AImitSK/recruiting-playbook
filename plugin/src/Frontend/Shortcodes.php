@@ -16,7 +16,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Frontend;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\SpamProtection;
 

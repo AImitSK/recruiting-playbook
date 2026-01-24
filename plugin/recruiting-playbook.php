@@ -49,8 +49,8 @@ function rp_check_requirements(): bool {
             printf(
                 /* translators: 1: Required PHP version, 2: Current PHP version */
                 esc_html__('Recruiting Playbook benötigt PHP %1$s oder höher. Sie nutzen PHP %2$s.', 'recruiting-playbook'),
-                RP_MIN_PHP_VERSION,
-                PHP_VERSION
+                esc_html( RP_MIN_PHP_VERSION ),
+                esc_html( PHP_VERSION )
             );
             echo '</p></div>';
         });
@@ -65,8 +65,8 @@ function rp_check_requirements(): bool {
             printf(
                 /* translators: 1: Required WP version, 2: Current WP version */
                 esc_html__('Recruiting Playbook benötigt WordPress %1$s oder höher. Sie nutzen WordPress %2$s.', 'recruiting-playbook'),
-                RP_MIN_WP_VERSION,
-                $wp_version
+                esc_html( RP_MIN_WP_VERSION ),
+                esc_html( $wp_version )
             );
             echo '</p></div>';
         });

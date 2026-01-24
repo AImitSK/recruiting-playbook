@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Core;
 
+defined( 'ABSPATH' ) || exit;
+
 use RecruitingPlaybook\PostTypes\JobListing;
 use RecruitingPlaybook\Taxonomies\JobCategory;
 use RecruitingPlaybook\Taxonomies\JobLocation;

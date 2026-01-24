@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Services;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Service für sichere Dokument-Downloads
@@ -26,13 +29,18 @@ class DocumentDownloadService {
 
 	/**
 	 * Erlaubte MIME-Types für Downloads (Whitelist)
+	 *
+	 * Enthält auch Varianten die von verschiedenen Systemen verwendet werden.
 	 */
 	private const ALLOWED_MIME_TYPES = [
 		'application/pdf',
 		'application/msword',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 		'image/jpeg',
+		'image/jpg',       // Variante
+		'image/pjpeg',     // Progressive JPEG (IE)
 		'image/png',
+		'image/x-png',     // Ältere Variante
 	];
 
 	/**

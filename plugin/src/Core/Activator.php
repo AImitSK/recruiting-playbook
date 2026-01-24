@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Core;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\PostTypes\JobListing;

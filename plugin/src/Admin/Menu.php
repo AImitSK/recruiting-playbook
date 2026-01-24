@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
@@ -588,6 +590,7 @@ class Menu {
 			)
 		);
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $links contains pre-escaped HTML
 		echo implode( ' | ', $links );
 		echo '</ul>';
 		echo '<div class="clear"></div>';

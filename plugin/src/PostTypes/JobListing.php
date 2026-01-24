@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\PostTypes;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Custom Post Type: Stellenanzeigen

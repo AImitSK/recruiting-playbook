@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Admin;
+
+defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\EmailService;
 
@@ -418,10 +421,10 @@ class Settings {
 		$value = $settings[ $id ] ?? '';
 
 		wp_dropdown_pages( [
-			'name'             => self::OPTION_NAME . '[' . $id . ']',
-			'id'               => $id,
-			'selected'         => url_to_postid( $value ),
-			'show_option_none' => __( '— Seite auswählen —', 'recruiting-playbook' ),
+			'name'             => esc_attr( self::OPTION_NAME . '[' . $id . ']' ),
+			'id'               => esc_attr( $id ),
+			'selected'         => absint( url_to_postid( $value ) ),
+			'show_option_none' => esc_html__( '— Seite auswählen —', 'recruiting-playbook' ),
 		] );
 
 		if ( ! empty( $args['description'] ) ) :

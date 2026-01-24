@@ -7,7 +7,10 @@
 
 declare(strict_types=1);
 
+
 namespace RecruitingPlaybook\Database;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Datenbank-Migrationen verwalten

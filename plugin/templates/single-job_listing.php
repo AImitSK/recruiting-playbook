@@ -252,7 +252,7 @@ while ( have_posts() ) :
 			</div>
 
 			<!-- Bewerbungsformular -->
-			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
+			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-4 sm:rp-p-6 md:rp-p-8 rp-border rp-border-gray-200 rp-bg-white rp-overflow-hidden" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
 				<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?></h2>
 
 				<div x-data="applicationForm" x-cloak>
@@ -448,32 +448,32 @@ while ( have_posts() ) :
 									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Datenschutz & Absenden', 'recruiting-playbook' ); ?></h3>
 
 									<!-- Zusammenfassung -->
-									<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-5 rp-mb-6">
+									<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-4 sm:rp-p-5 rp-mb-6 rp-overflow-hidden">
 										<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Ihre Angaben', 'recruiting-playbook' ); ?></h4>
 										<dl class="rp-text-sm rp-space-y-2">
-											<div class="rp-flex">
-												<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Name:', 'recruiting-playbook' ); ?></dt>
-												<dd class="rp-text-gray-900" x-text="formData.salutation + ' ' + formData.first_name + ' ' + formData.last_name"></dd>
+											<div class="rp-flex rp-flex-wrap">
+												<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Name:', 'recruiting-playbook' ); ?></dt>
+												<dd class="rp-text-gray-900 rp-break-words" x-text="formData.salutation + ' ' + formData.first_name + ' ' + formData.last_name"></dd>
 											</div>
-											<div class="rp-flex">
-												<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?></dt>
-												<dd class="rp-text-gray-900" x-text="formData.email"></dd>
+											<div class="rp-flex rp-flex-wrap">
+												<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?></dt>
+												<dd class="rp-text-gray-900 rp-break-all" x-text="formData.email"></dd>
 											</div>
 											<template x-if="formData.phone">
-												<div class="rp-flex">
-													<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?></dt>
+												<div class="rp-flex rp-flex-wrap">
+													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?></dt>
 													<dd class="rp-text-gray-900" x-text="formData.phone"></dd>
 												</div>
 											</template>
 											<template x-if="files.resume">
-												<div class="rp-flex">
-													<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Lebenslauf:', 'recruiting-playbook' ); ?></dt>
-													<dd class="rp-text-gray-900" x-text="files.resume.name"></dd>
+												<div class="rp-flex rp-flex-wrap">
+													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Lebenslauf:', 'recruiting-playbook' ); ?></dt>
+													<dd class="rp-text-gray-900 rp-break-all" x-text="files.resume.name"></dd>
 												</div>
 											</template>
 											<template x-if="files.documents.length > 0">
-												<div class="rp-flex">
-													<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Dokumente:', 'recruiting-playbook' ); ?></dt>
+												<div class="rp-flex rp-flex-wrap">
+													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Dokumente:', 'recruiting-playbook' ); ?></dt>
 													<dd class="rp-text-gray-900" x-text="files.documents.length + ' Datei(en)'"></dd>
 												</div>
 											</template>

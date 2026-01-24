@@ -37,7 +37,7 @@ if ( wp_is_block_theme() ) {
 ?>
 
 <div class="rp-plugin rp-py-8 sm:rp-py-12">
-	<div class="rp-mx-auto rp-px-6 lg:rp-px-8" style="max-width: var(--wp--style--global--wide-size, 1280px);">
+	<div class="rp-mx-auto rp-px-4 sm:rp-px-6 lg:rp-px-8" style="max-width: var(--wp--style--global--wide-size, 1280px);">
 		<div>
 
 			<h2 class="rp-text-4xl rp-font-semibold rp-tracking-tight rp-text-gray-900 sm:rp-text-5xl">
@@ -109,53 +109,55 @@ if ( wp_is_block_theme() ) {
 								<?php endif; ?>
 							</div>
 
-							<div class="rp-relative rp-mt-8 rp-flex rp-items-center rp-justify-between rp-text-xs">
-								<div class="rp-flex rp-items-center rp-gap-2">
-									<?php
-									// Standort
-									$locations = get_the_terms( get_the_ID(), 'job_location' );
-									if ( $locations && ! is_wp_error( $locations ) ) :
-										?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-											</svg>
-											<?php echo esc_html( $locations[0]->name ); ?>
-										</span>
-									<?php endif; ?>
+							<!-- Tags -->
+							<div class="rp-relative rp-mt-4 rp-flex rp-flex-wrap rp-items-center rp-gap-2 rp-text-xs">
+								<?php
+								// Standort
+								$locations = get_the_terms( get_the_ID(), 'job_location' );
+								if ( $locations && ! is_wp_error( $locations ) ) :
+									?>
+									<span class="rp-badge rp-badge-gray">
+										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+										</svg>
+										<?php echo esc_html( $locations[0]->name ); ?>
+									</span>
+								<?php endif; ?>
 
-									<?php
-									// Beschäftigungsart
-									$types = get_the_terms( get_the_ID(), 'employment_type' );
-									if ( $types && ! is_wp_error( $types ) ) :
-										?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-											</svg>
-											<?php echo esc_html( $types[0]->name ); ?>
-										</span>
-									<?php endif; ?>
+								<?php
+								// Beschäftigungsart
+								$types = get_the_terms( get_the_ID(), 'employment_type' );
+								if ( $types && ! is_wp_error( $types ) ) :
+									?>
+									<span class="rp-badge rp-badge-gray">
+										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+										</svg>
+										<?php echo esc_html( $types[0]->name ); ?>
+									</span>
+								<?php endif; ?>
 
-									<?php
-									// Remote
-									$remote = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-									if ( $remote && 'no' !== $remote ) :
-										$remote_labels = [
-											'hybrid' => __( 'Hybrid', 'recruiting-playbook' ),
-											'full'   => __( 'Remote', 'recruiting-playbook' ),
-										];
-										?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-											</svg>
-											<?php echo esc_html( $remote_labels[ $remote ] ?? $remote ); ?>
-										</span>
-									<?php endif; ?>
-								</div>
+								<?php
+								// Remote
+								$remote = get_post_meta( get_the_ID(), '_rp_remote_option', true );
+								if ( $remote && 'no' !== $remote ) :
+									$remote_labels = [
+										'hybrid' => __( 'Hybrid', 'recruiting-playbook' ),
+										'full'   => __( 'Remote', 'recruiting-playbook' ),
+									];
+									?>
+									<span class="rp-badge rp-badge-gray">
+										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+										</svg>
+										<?php echo esc_html( $remote_labels[ $remote ] ?? $remote ); ?>
+									</span>
+								<?php endif; ?>
+							</div>
 
+							<!-- Button -->
+							<div class="rp-relative rp-mt-4">
 								<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
 									<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
 								</a>
