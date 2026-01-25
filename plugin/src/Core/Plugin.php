@@ -21,6 +21,10 @@ use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
+use RecruitingPlaybook\Api\NoteController;
+use RecruitingPlaybook\Api\RatingController;
+use RecruitingPlaybook\Api\ActivityController;
+use RecruitingPlaybook\Api\TalentPoolController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Licensing\LicenseManager;
@@ -217,6 +221,19 @@ final class Plugin {
 	public function registerRestRoutes(): void {
 		$application_controller = new ApplicationController();
 		$application_controller->register_routes();
+
+		// Pro-Feature Controller (Notes, Ratings, Timeline, Talent-Pool).
+		$note_controller = new NoteController();
+		$note_controller->register_routes();
+
+		$rating_controller = new RatingController();
+		$rating_controller->register_routes();
+
+		$activity_controller = new ActivityController();
+		$activity_controller->register_routes();
+
+		$talent_pool_controller = new TalentPoolController();
+		$talent_pool_controller->register_routes();
 	}
 
 	/**
