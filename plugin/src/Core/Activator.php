@@ -74,33 +74,64 @@ class Activator {
 	 * Custom Capabilities hinzufügen
 	 */
 	private static function addCapabilities(): void {
-		$admin = get_role( 'administrator' );
+		$admin  = get_role( 'administrator' );
+		$editor = get_role( 'editor' );
+
+		// Job Listing Capabilities (nur Admin).
+		$job_capabilities = [
+			'edit_job_listing',
+			'read_job_listing',
+			'delete_job_listing',
+			'edit_job_listings',
+			'edit_others_job_listings',
+			'publish_job_listings',
+			'read_private_job_listings',
+			'delete_job_listings',
+			'delete_private_job_listings',
+			'delete_published_job_listings',
+			'delete_others_job_listings',
+			'edit_private_job_listings',
+			'edit_published_job_listings',
+		];
+
+		// Recruiting Capabilities (Admin bekommt alle).
+		$recruiting_capabilities = [
+			'manage_recruiting',
+			'view_applications',
+			'edit_applications',
+			'delete_applications',
+			// Pro-Features: Applicant Management.
+			'view_notes',
+			'create_notes',
+			'edit_own_notes',
+			'edit_others_notes',
+			'delete_notes',
+			'rate_applications',
+			'manage_talent_pool',
+			'view_activity_log',
+		];
+
+		// Editor/Recruiter Capabilities (Subset).
+		$recruiter_capabilities = [
+			'view_applications',
+			'edit_applications',
+			'view_notes',
+			'create_notes',
+			'edit_own_notes',
+			'rate_applications',
+			'manage_talent_pool',
+			'view_activity_log',
+		];
 
 		if ( $admin ) {
-			// Job Listing Capabilities.
-			$capabilities = [
-				'edit_job_listing',
-				'read_job_listing',
-				'delete_job_listing',
-				'edit_job_listings',
-				'edit_others_job_listings',
-				'publish_job_listings',
-				'read_private_job_listings',
-				'delete_job_listings',
-				'delete_private_job_listings',
-				'delete_published_job_listings',
-				'delete_others_job_listings',
-				'edit_private_job_listings',
-				'edit_published_job_listings',
-				// Recruiting Capabilities.
-				'manage_recruiting',
-				'view_applications',
-				'edit_applications',
-				'delete_applications',
-			];
-
-			foreach ( $capabilities as $cap ) {
+			foreach ( array_merge( $job_capabilities, $recruiting_capabilities ) as $cap ) {
 				$admin->add_cap( $cap );
+			}
+		}
+
+		if ( $editor ) {
+			foreach ( $recruiter_capabilities as $cap ) {
+				$editor->add_cap( $cap );
 			}
 		}
 	}

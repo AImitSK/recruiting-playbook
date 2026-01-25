@@ -370,16 +370,38 @@ class TalentPoolController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Feature-Gate prüfen
+	 *
+	 * @return bool|WP_Error
+	 */
+	private function check_feature_gate(): bool|WP_Error {
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Berechtigung zum Lesen prüfen
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ): bool|WP_Error {
-		if ( ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Anzeigen des Talent-Pools.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -394,10 +416,15 @@ class TalentPoolController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function create_item_permissions_check( $request ): bool|WP_Error {
-		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Hinzufügen von Kandidaten zum Talent-Pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -412,10 +439,15 @@ class TalentPoolController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ): bool|WP_Error {
-		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Bearbeiten des Talent-Pools.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -430,10 +462,15 @@ class TalentPoolController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ): bool|WP_Error {
-		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Entfernen aus dem Talent-Pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

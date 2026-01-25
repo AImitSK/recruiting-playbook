@@ -205,16 +205,38 @@ class RatingController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Feature-Gate prüfen
+	 *
+	 * @return bool|WP_Error
+	 */
+	private function check_feature_gate(): bool|WP_Error {
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Berechtigung zum Lesen prüfen
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function get_ratings_permissions_check( WP_REST_Request $request ): bool|WP_Error {
-		if ( ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Anzeigen von Bewertungen.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -229,10 +251,15 @@ class RatingController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function create_rating_permissions_check( WP_REST_Request $request ): bool|WP_Error {
-		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
+		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'Keine Berechtigung zum Bewerten von Bewerbungen.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -247,10 +274,24 @@ class RatingController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_rating_permissions_check( WP_REST_Request $request ): bool|WP_Error {
+		$feature_check = $this->check_feature_gate();
+		if ( is_wp_error( $feature_check ) ) {
+			return $feature_check;
+		}
+
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// User kann nur eigene Bewertungen löschen (wird im Service geprüft).
+		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Keine Berechtigung zum Löschen von Bewertungen.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
