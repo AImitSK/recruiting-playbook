@@ -109,6 +109,10 @@ class Activator {
 			'rate_applications',
 			'manage_talent_pool',
 			'view_activity_log',
+			// Pro-Features: E-Mail-System.
+			'rp_manage_email_templates',
+			'rp_send_emails',
+			'rp_view_email_log',
 		];
 
 		// Editor/Recruiter Capabilities (Subset).
@@ -121,6 +125,9 @@ class Activator {
 			'rate_applications',
 			'manage_talent_pool',
 			'view_activity_log',
+			// E-Mail: Recruiter dürfen E-Mails senden und Log einsehen.
+			'rp_send_emails',
+			'rp_view_email_log',
 		];
 
 		if ( $admin ) {
