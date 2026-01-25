@@ -26,13 +26,15 @@ class Schema {
 		global $wpdb;
 
 		return [
-			'candidates'   => $wpdb->prefix . 'rp_candidates',
-			'applications' => $wpdb->prefix . 'rp_applications',
-			'documents'    => $wpdb->prefix . 'rp_documents',
-			'activity_log' => $wpdb->prefix . 'rp_activity_log',
-			'notes'        => $wpdb->prefix . 'rp_notes',
-			'ratings'      => $wpdb->prefix . 'rp_ratings',
-			'talent_pool'  => $wpdb->prefix . 'rp_talent_pool',
+			'candidates'      => $wpdb->prefix . 'rp_candidates',
+			'applications'    => $wpdb->prefix . 'rp_applications',
+			'documents'       => $wpdb->prefix . 'rp_documents',
+			'activity_log'    => $wpdb->prefix . 'rp_activity_log',
+			'notes'           => $wpdb->prefix . 'rp_notes',
+			'ratings'         => $wpdb->prefix . 'rp_ratings',
+			'talent_pool'     => $wpdb->prefix . 'rp_talent_pool',
+			'email_templates' => $wpdb->prefix . 'rp_email_templates',
+			'email_log'       => $wpdb->prefix . 'rp_email_log',
 		];
 	}
 
@@ -255,6 +257,86 @@ class Schema {
 			KEY expires_at (expires_at),
 			KEY tags (tags),
 			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_email_templates
+	 *
+	 * @return string
+	 */
+	public static function getEmailTemplatesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['email_templates'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			slug varchar(100) NOT NULL,
+			name varchar(255) NOT NULL,
+			subject varchar(255) NOT NULL,
+			body_html longtext NOT NULL,
+			body_text longtext DEFAULT NULL,
+			category varchar(50) DEFAULT 'custom',
+			is_active tinyint(1) DEFAULT 1,
+			is_default tinyint(1) DEFAULT 0,
+			is_system tinyint(1) DEFAULT 0,
+			variables longtext DEFAULT NULL,
+			settings longtext DEFAULT NULL,
+			created_by bigint(20) unsigned DEFAULT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY slug (slug),
+			KEY category (category),
+			KEY is_active (is_active),
+			KEY is_default (is_default),
+			KEY is_system (is_system),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_email_log
+	 *
+	 * @return string
+	 */
+	public static function getEmailLogTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['email_log'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned DEFAULT NULL,
+			candidate_id bigint(20) unsigned DEFAULT NULL,
+			template_id bigint(20) unsigned DEFAULT NULL,
+			recipient_email varchar(255) NOT NULL,
+			recipient_name varchar(255) DEFAULT NULL,
+			sender_email varchar(255) NOT NULL,
+			sender_name varchar(255) DEFAULT NULL,
+			subject varchar(255) NOT NULL,
+			body_html longtext NOT NULL,
+			body_text longtext DEFAULT NULL,
+			status varchar(20) DEFAULT 'pending',
+			error_message text DEFAULT NULL,
+			opened_at datetime DEFAULT NULL,
+			clicked_at datetime DEFAULT NULL,
+			metadata longtext DEFAULT NULL,
+			sent_by bigint(20) unsigned DEFAULT NULL,
+			scheduled_at datetime DEFAULT NULL,
+			sent_at datetime DEFAULT NULL,
+			created_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			KEY application_id (application_id),
+			KEY candidate_id (candidate_id),
+			KEY template_id (template_id),
+			KEY recipient_email (recipient_email),
+			KEY status (status),
+			KEY sent_at (sent_at),
+			KEY scheduled_at (scheduled_at),
+			KEY created_at (created_at)
 		) {$charset};";
 	}
 }
