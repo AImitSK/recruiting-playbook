@@ -111,6 +111,72 @@ function rp_features(): array {
 }
 
 /**
+ * Prüft ob User ein Feature nutzen darf (Capability + Feature-Flag)
+ *
+ * Kombiniert WordPress-Capability-Check mit Feature-Flag-Prüfung.
+ * Die Reihenfolge ist wichtig: Zuerst Capability (Security), dann Feature-Flag (Business-Logic).
+ *
+ * @param string $feature    Feature-Name für rp_can() (z.B. 'email_templates').
+ * @param string $capability WordPress Capability (z.B. 'rp_manage_email_templates').
+ * @return bool True wenn User Capability hat UND Feature verfügbar ist.
+ *
+ * @example
+ * if ( ! rp_user_can_use_feature( 'email_templates', 'rp_manage_email_templates' ) ) {
+ *     return new WP_Error( 'forbidden', 'Keine Berechtigung', [ 'status' => 403 ] );
+ * }
+ */
+function rp_user_can_use_feature( string $feature, string $capability ): bool {
+	// 1. Capability-Check (WordPress-Core-Security).
+	if ( ! current_user_can( $capability ) ) {
+		return false;
+	}
+
+	// 2. Feature-Flag-Check (Business-Logic).
+	if ( ! rp_can( $feature ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Prüft Capability und Feature-Flag und gibt WP_Error zurück bei Fehler
+ *
+ * Convenience-Funktion für REST API Permission Callbacks.
+ * Gibt true zurück bei Erfolg, WP_Error bei fehlender Berechtigung.
+ *
+ * @param string $feature       Feature-Name für rp_can().
+ * @param string $capability    WordPress Capability.
+ * @param string $error_code    WP_Error Code.
+ * @param string $error_message Fehlermeldung.
+ * @return bool|\WP_Error True bei Erfolg, WP_Error bei Fehler.
+ */
+function rp_check_feature_permission( string $feature, string $capability, string $error_code, string $error_message ) {
+	// 1. Capability-Check (WordPress-Core-Security).
+	if ( ! current_user_can( $capability ) ) {
+		return new \WP_Error(
+			'rest_forbidden',
+			$error_message,
+			[ 'status' => 403 ]
+		);
+	}
+
+	// 2. Feature-Flag-Check (Business-Logic).
+	if ( ! rp_can( $feature ) ) {
+		return new \WP_Error(
+			$error_code,
+			__( 'Diese Funktion erfordert Pro.', 'recruiting-playbook' ),
+			[
+				'status'      => 403,
+				'upgrade_url' => rp_upgrade_url( 'PRO' ),
+			]
+		);
+	}
+
+	return true;
+}
+
+/**
  * Zeigt Upgrade-Hinweis wenn Feature nicht verfügbar
  *
  * Prüft ob ein Feature verfügbar ist und zeigt bei Nicht-Verfügbarkeit

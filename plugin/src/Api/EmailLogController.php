@@ -301,11 +301,34 @@ class EmailLogController extends WP_REST_Controller {
 	/**
 	 * Berechtigung für Auflisten prüfen
 	 *
+	 * Prüft: 1. WordPress Capability, 2. Feature-Flag (Pro erforderlich).
+	 * Die Reihenfolge ist wichtig: Capability (Security) vor Feature-Flag (Business-Logic).
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
-		// Pro-Feature prüfen.
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_view_email_log',
+				'rest_email_log_required',
+				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		// 1. Capability-Check (WordPress-Core-Security).
+		if ( ! current_user_can( 'rp_view_email_log' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// 2. Feature-Flag-Check (Business-Logic).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_log_required',
@@ -317,25 +340,39 @@ class EmailLogController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'rp_view_email_log' ) && ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		return true;
 	}
 
 	/**
 	 * Berechtigung für erneutes Senden prüfen
 	 *
+	 * Prüft: 1. WordPress Capability, 2. Feature-Flag (Pro erforderlich).
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function resend_permissions_check( $request ) {
-		// Pro-Feature prüfen.
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_send_emails',
+				'rest_email_resend_required',
+				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		// 1. Capability-Check (WordPress-Core-Security).
+		if ( ! current_user_can( 'rp_send_emails' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// 2. Feature-Flag-Check (Business-Logic).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_resend_required',
@@ -344,14 +381,6 @@ class EmailLogController extends WP_REST_Controller {
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 				]
-			);
-		}
-
-		if ( ! current_user_can( 'rp_send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
 			);
 		}
 

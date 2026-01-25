@@ -32,7 +32,7 @@ class EmailSettingsPage {
 			'recruiting-playbook',
 			__( 'E-Mail-Templates', 'recruiting-playbook' ),
 			__( 'E-Mail-Templates', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_read_email_templates',
 			'rp-email-templates',
 			[ $this, 'render' ]
 		);

@@ -526,27 +526,42 @@ class EmailController extends WP_REST_Controller {
 	/**
 	 * Berechtigung für E-Mail-Versand prüfen
 	 *
+	 * Prüft: 1. WordPress Capability, 2. Feature-Flag (Pro erforderlich).
+	 * Die Reihenfolge ist wichtig: Capability (Security) vor Feature-Flag (Business-Logic).
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function send_email_permissions_check( $request ) {
-		// Pro-Feature prüfen.
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_send_emails',
+				'rest_email_send_required',
+				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		// 1. Capability-Check (WordPress-Core-Security).
+		if ( ! current_user_can( 'rp_send_emails' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// 2. Feature-Flag-Check (Business-Logic).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
-				'rest_email_templates_required',
+				'rest_email_send_required',
 				__( 'E-Mail-Versand erfordert Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 				]
-			);
-		}
-
-		if ( ! current_user_can( 'rp_send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
 			);
 		}
 

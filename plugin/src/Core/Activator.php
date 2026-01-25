@@ -72,6 +72,33 @@ class Activator {
 
 	/**
 	 * Custom Capabilities hinzufügen
+	 *
+	 * Job Listing Capabilities (nur Admin):
+	 * - edit_job_listing, read_job_listing, delete_job_listing, etc.
+	 *
+	 * Recruiting Capabilities (alle mit rp_ Präfix):
+	 * - rp_manage_recruiting: Zugriff auf Recruiting-Dashboard
+	 * - rp_view_applications: Bewerbungen anzeigen
+	 * - rp_edit_applications: Bewerbungen bearbeiten
+	 * - rp_delete_applications: Bewerbungen löschen
+	 *
+	 * Pro-Features: Applicant Management
+	 * - rp_view_notes: Notizen lesen
+	 * - rp_create_notes: Notizen erstellen
+	 * - rp_edit_own_notes: Eigene Notizen bearbeiten
+	 * - rp_edit_others_notes: Fremde Notizen bearbeiten (nur Admin)
+	 * - rp_delete_notes: Notizen löschen
+	 * - rp_rate_applications: Bewerbungen bewerten
+	 * - rp_manage_talent_pool: Talent-Pool verwalten
+	 * - rp_view_activity_log: Aktivitätslog einsehen
+	 *
+	 * Pro-Features: E-Mail-System (CRUD-Granularität)
+	 * - rp_read_email_templates: E-Mail-Templates anzeigen/lesen
+	 * - rp_create_email_templates: E-Mail-Templates erstellen
+	 * - rp_edit_email_templates: E-Mail-Templates bearbeiten
+	 * - rp_delete_email_templates: E-Mail-Templates löschen (nur Admin)
+	 * - rp_send_emails: E-Mails an Bewerber senden
+	 * - rp_view_email_log: E-Mail-Historie einsehen
 	 */
 	private static function addCapabilities(): void {
 		$admin  = get_role( 'administrator' );
@@ -95,37 +122,45 @@ class Activator {
 		];
 
 		// Recruiting Capabilities (Admin bekommt alle).
+		// Alle Capabilities verwenden rp_ Präfix zur Vermeidung von Konflikten.
 		$recruiting_capabilities = [
-			'manage_recruiting',
-			'view_applications',
-			'edit_applications',
-			'delete_applications',
+			'rp_manage_recruiting',
+			'rp_view_applications',
+			'rp_edit_applications',
+			'rp_delete_applications',
 			// Pro-Features: Applicant Management.
-			'view_notes',
-			'create_notes',
-			'edit_own_notes',
-			'edit_others_notes',
-			'delete_notes',
-			'rate_applications',
-			'manage_talent_pool',
-			'view_activity_log',
-			// Pro-Features: E-Mail-System.
-			'rp_manage_email_templates',
+			'rp_view_notes',
+			'rp_create_notes',
+			'rp_edit_own_notes',
+			'rp_edit_others_notes',
+			'rp_delete_notes',
+			'rp_rate_applications',
+			'rp_manage_talent_pool',
+			'rp_view_activity_log',
+			// Pro-Features: E-Mail-System (CRUD-Granularität).
+			'rp_read_email_templates',
+			'rp_create_email_templates',
+			'rp_edit_email_templates',
+			'rp_delete_email_templates',
 			'rp_send_emails',
 			'rp_view_email_log',
 		];
 
 		// Editor/Recruiter Capabilities (Subset).
+		// Editor kann Templates lesen/bearbeiten (nicht erstellen/löschen), E-Mails senden und Log einsehen.
 		$recruiter_capabilities = [
-			'view_applications',
-			'edit_applications',
-			'view_notes',
-			'create_notes',
-			'edit_own_notes',
-			'rate_applications',
-			'manage_talent_pool',
-			'view_activity_log',
-			// E-Mail: Recruiter dürfen E-Mails senden und Log einsehen.
+			'rp_view_applications',
+			'rp_edit_applications',
+			'rp_view_notes',
+			'rp_create_notes',
+			'rp_edit_own_notes',
+			'rp_rate_applications',
+			'rp_manage_talent_pool',
+			'rp_view_activity_log',
+			// E-Mail: Recruiter dürfen Templates lesen/bearbeiten, E-Mails senden und Log einsehen.
+			// Kein Erstellen/Löschen von Templates - das bleibt Admin-Recht.
+			'rp_read_email_templates',
+			'rp_edit_email_templates',
 			'rp_send_emails',
 			'rp_view_email_log',
 		];

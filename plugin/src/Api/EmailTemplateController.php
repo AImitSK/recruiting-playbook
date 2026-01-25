@@ -518,13 +518,36 @@ class EmailTemplateController extends WP_REST_Controller {
 	}
 
 	/**
-	 * Berechtigung für Auflisten prüfen
+	 * Berechtigung für Auflisten/Lesen prüfen
+	 *
+	 * Prüft: 1. WordPress Capability, 2. Feature-Flag (Pro erforderlich).
+	 * Die Reihenfolge ist wichtig: Capability (Security) vor Feature-Flag (Business-Logic).
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
-		// Pro-Feature prüfen.
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_read_email_templates',
+				'rest_email_templates_required',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		// 1. Capability-Check (WordPress-Core-Security).
+		if ( ! current_user_can( 'rp_read_email_templates' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// 2. Feature-Flag-Check (Business-Logic).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
@@ -536,11 +559,45 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'rp_manage_email_templates' ) && ! current_user_can( 'manage_options' ) ) {
+		return true;
+	}
+
+	/**
+	 * Berechtigung für Erstellen prüfen
+	 *
+	 * Erfordert rp_create_email_templates Capability (nur Admin).
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function create_item_permissions_check( $request ) {
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_create_email_templates',
+				'rest_email_templates_required',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu erstellen.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		if ( ! current_user_can( 'rp_create_email_templates' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' ),
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu erstellen.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
+			);
+		}
+
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return new WP_Error(
+				'rest_email_templates_required',
+				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
 			);
 		}
 
@@ -548,33 +605,87 @@ class EmailTemplateController extends WP_REST_Controller {
 	}
 
 	/**
-	 * Berechtigung für Erstellen prüfen
-	 *
-	 * @param WP_REST_Request $request Request.
-	 * @return bool|WP_Error
-	 */
-	public function create_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
-	}
-
-	/**
 	 * Berechtigung für Aktualisieren prüfen
+	 *
+	 * Erfordert rp_edit_email_templates Capability (Admin + Editor).
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_edit_email_templates',
+				'rest_email_templates_required',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu bearbeiten.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		if ( ! current_user_can( 'rp_edit_email_templates' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu bearbeiten.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return new WP_Error(
+				'rest_email_templates_required',
+				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
+		return true;
 	}
 
 	/**
 	 * Berechtigung für Löschen prüfen
 	 *
+	 * Erfordert rp_delete_email_templates Capability (nur Admin).
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		// Verwende Helper-Funktion für konsistente Prüfung.
+		if ( function_exists( 'rp_check_feature_permission' ) ) {
+			return rp_check_feature_permission(
+				'email_templates',
+				'rp_delete_email_templates',
+				'rest_email_templates_required',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu löschen.', 'recruiting-playbook' )
+			);
+		}
+
+		// Fallback falls Helper nicht verfügbar.
+		if ( ! current_user_can( 'rp_delete_email_templates' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu löschen.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return new WP_Error(
+				'rest_email_templates_required',
+				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
+		return true;
 	}
 
 	/**
