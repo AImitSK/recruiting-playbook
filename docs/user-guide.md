@@ -127,6 +127,56 @@ Neu → In Prüfung → Interview → Angebot → Eingestellt
 
 ---
 
+## Kanban-Board (Pro)
+
+Das Kanban-Board bietet eine visuelle Übersicht aller Bewerbungen, sortiert nach Status. Verfügbar mit der Pro-Version.
+
+### Zugriff
+
+**Recruiting** → **Kanban-Board**
+
+### Funktionen
+
+**Drag-and-Drop:**
+- Bewerbungen zwischen Spalten verschieben (Status ändern)
+- Bewerbungen innerhalb einer Spalte sortieren (Priorität)
+- Tastaturunterstützung: Leertaste zum Greifen, Pfeiltasten zum Bewegen
+
+**Filter:**
+- Nach Stelle filtern
+- Volltextsuche (Name, E-Mail)
+- Aktualisieren-Button für manuelle Aktualisierung
+
+**Spalten:**
+- Jede Spalte entspricht einem Status
+- Spalten können eingeklappt werden (Klick auf Header)
+- Anzahl der Bewerbungen pro Spalte wird angezeigt
+
+**Karten:**
+- Zeigen Name, E-Mail, Stelle und Eingangsdatum
+- Dokumenten-Anzahl wenn vorhanden
+- Klick öffnet Bewerbungs-Details
+
+### Tastatursteuerung
+
+| Taste | Aktion |
+|-------|--------|
+| **Tab** | Zwischen Karten navigieren |
+| **Leertaste** | Karte aufnehmen/ablegen |
+| **Pfeiltasten** | Karte bewegen |
+| **Escape** | Ziehen abbrechen |
+| **Enter** | Bewerbungs-Details öffnen |
+
+### Barrierefreiheit
+
+Das Kanban-Board ist vollständig barrierefrei:
+- Alle Aktionen per Tastatur ausführbar
+- Screen-Reader-Ankündigungen für alle Drag-Aktionen
+- Unterstützung für reduzierte Bewegung (prefers-reduced-motion)
+- Hoher Kontrast-Modus wird unterstützt
+
+---
+
 ## Frontend-Einbindung
 
 ### Karriereseite erstellen
@@ -265,6 +315,14 @@ GitHub Issues: https://github.com/AImitSK/recruiting-playbook/issues
 ---
 
 ## Changelog
+
+### Version 1.1.0 (Pro)
+- **NEU:** Kanban-Board für visuelle Bewerbungsverwaltung
+  - Drag-and-Drop mit Maus und Tastatur
+  - Vollständige Barrierefreiheit
+  - Echtzeit-Filterung
+- REST API Erweiterungen für Pro-Features
+- Lizenz-Management-System
 
 ### Version 1.0.0
 - Erste öffentliche Version

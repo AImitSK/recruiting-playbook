@@ -446,6 +446,97 @@ DELETE /wp-json/recruiting/v1/applications/{id}
 
 ---
 
+### Kanban-Board Endpoints (Pro)
+
+#### Bewerbungen für Kanban abrufen
+
+```
+GET /wp-json/recruiting/v1/applications?context=kanban
+```
+
+Optimierte Abfrage für das Kanban-Board mit zusätzlichen Feldern.
+
+**Query-Parameter:**
+
+| Parameter | Typ | Beschreibung |
+|-----------|-----|--------------|
+| `context` | string | `kanban` für optimierte Kanban-Daten |
+| `per_page` | int | Ergebnisse pro Seite (default: 200, max: 500) |
+| `job_id` | int | Filter nach Stelle |
+| `status` | string | Filter nach Status |
+
+**Response:**
+
+```json
+{
+  "items": [
+    {
+      "id": 456,
+      "job_id": 123,
+      "job_title": "Software Developer (m/w/d)",
+      "status": "screening",
+      "kanban_position": 10,
+      "first_name": "Max",
+      "last_name": "Mustermann",
+      "email": "max.mustermann@example.com",
+      "created_at": "2025-01-20T10:30:00+00:00",
+      "documents_count": 2
+    }
+  ]
+}
+```
+
+#### Kanban-Positionen sortieren
+
+```
+POST /wp-json/recruiting/v1/applications/reorder
+```
+
+Batch-Update der Kanban-Positionen innerhalb einer Spalte.
+
+**Request Body:**
+
+```json
+{
+  "status": "screening",
+  "positions": [
+    { "id": 456, "kanban_position": 10 },
+    { "id": 789, "kanban_position": 20 },
+    { "id": 123, "kanban_position": 30 }
+  ]
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Positionen wurden aktualisiert.",
+  "updated": 3
+}
+```
+
+#### Status mit Position ändern
+
+```
+PATCH /wp-json/recruiting/v1/applications/{id}/status
+```
+
+Erweiterter Status-Endpunkt mit Kanban-Position.
+
+**Request Body:**
+
+```json
+{
+  "status": "interview",
+  "kanban_position": 15,
+  "note": "Status via Kanban-Board geändert"
+}
+```
+
+---
+
 ### Webhooks
 
 #### Webhook registrieren
