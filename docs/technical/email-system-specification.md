@@ -10,16 +10,17 @@
 1. [Übersicht](#1-übersicht)
 2. [Architektur](#2-architektur)
 3. [Datenmodell](#3-datenmodell)
-4. [REST API Endpunkte](#4-rest-api-endpunkte)
-5. [E-Mail-Templates](#5-e-mail-templates)
-6. [Template-Editor](#6-template-editor)
-7. [Platzhalter-System](#7-platzhalter-system)
-8. [E-Mail-Versand](#8-e-mail-versand)
-9. [E-Mail-Historie](#9-e-mail-historie)
-10. [Queue & Action Scheduler](#10-queue--action-scheduler)
-11. [Admin-Oberfläche](#11-admin-oberfläche)
-12. [Berechtigungen](#12-berechtigungen)
-13. [Testing](#13-testing)
+4. [Repository Layer](#4-repository-layer)
+5. [REST API Endpunkte](#5-rest-api-endpunkte)
+6. [E-Mail-Templates](#6-e-mail-templates)
+7. [Template-Editor](#7-template-editor)
+8. [Platzhalter-System](#8-platzhalter-system)
+9. [E-Mail-Versand](#9-e-mail-versand)
+10. [E-Mail-Historie](#10-e-mail-historie)
+11. [Queue & Action Scheduler](#11-queue--action-scheduler)
+12. [Admin-Oberfläche](#12-admin-oberfläche)
+13. [Berechtigungen](#13-berechtigungen)
+14. [Testing](#14-testing)
 
 ---
 
@@ -339,7 +340,326 @@ pending → queued → sent → opened → clicked
 
 ---
 
-## 4. REST API Endpunkte
+## 4. Repository Layer
+
+Die Repository-Schicht kapselt den Datenbankzugriff für E-Mail-Templates und E-Mail-Logs. Alle Repositories folgen dem etablierten Pattern aus Phase 1 (siehe `NoteRepository`, `RatingRepository`).
+
+### 4.1 EmailTemplateRepository
+
+**Namespace:** `RecruitingPlaybook\Repositories\EmailTemplateRepository`
+
+**Verantwortlichkeiten:**
+- CRUD-Operationen für `rp_email_templates`
+- Slug-Generierung und -Validierung
+- Soft-Delete-Unterstützung
+- Template-Duplizierung
+- System-Template-Schutz
+
+#### Konstruktor
+
+```php
+public function __construct()
+```
+
+Initialisiert Repository mit Tabellenname aus `Schema::getTables()['email_templates']`.
+
+#### Methoden
+
+##### create( array $data ): int|false
+
+Erstellt neues E-Mail-Template.
+
+**Parameter:**
+- `$data['name']` (string, required) - Template-Name
+- `$data['subject']` (string, required) - E-Mail-Betreff
+- `$data['body_html']` (string, required) - HTML-Inhalt
+- `$data['body_text']` (string, optional) - Plain-Text-Version
+- `$data['category']` (string, default: 'custom') - Kategorie
+- `$data['slug']` (string, optional) - Wird aus name generiert wenn leer
+- `$data['variables']` (array, optional) - JSON: Verwendete Platzhalter
+- `$data['settings']` (array, optional) - JSON: Zusätzliche Einstellungen
+- `$data['is_active']` (int, default: 1) - Aktiv-Status
+- `$data['is_default']` (int, default: 0) - Standard für Kategorie
+- `$data['is_system']` (int, default: 0) - System-Template (nicht löschbar)
+
+**Return:** Insert-ID oder `false` bei Fehler
+
+**Beispiel:**
+```php
+$repository = new EmailTemplateRepository();
+$id = $repository->create([
+    'name' => 'Interview-Einladung',
+    'subject' => 'Einladung zum Vorstellungsgespräch: {stelle}',
+    'body_html' => '<p>Guten Tag {anrede} {nachname}...</p>',
+    'category' => 'interview',
+    'variables' => ['anrede', 'nachname', 'stelle', 'termin_datum'],
+]);
+```
+
+##### find( int $id ): ?array
+
+Lädt Template per ID. Ignoriert soft-deleted Templates.
+
+**Return:** Angereichertes Template-Array oder `null` wenn nicht gefunden
+
+**Enrichment:** Fügt hinzu:
+- `created_by_user` - User-Objekt (id, name)
+- `can_edit`, `can_delete` - Berechtigungs-Flags
+- Type-Casting für id, booleans
+- JSON-Dekodierung für variables, settings
+
+##### findBySlug( string $slug ): ?array
+
+Lädt Template per Slug.
+
+**Return:** Template-Array oder `null`
+
+##### findDefault( string $category ): ?array
+
+Lädt Standard-Template für Kategorie (WHERE `is_default = 1` AND `is_active = 1`).
+
+**Return:** Template-Array oder `null`
+
+##### findByCategory( string $category ): array
+
+Lädt alle aktiven Templates einer Kategorie.
+
+**Return:** Array von Templates
+
+##### getList( array $args = [] ): array
+
+Lädt alle Templates mit Filterung und Sortierung.
+
+**Args:**
+- `category` (string) - Filter per Kategorie
+- `is_active` (bool) - Nur aktive Templates
+- `search` (string) - Suche in name und subject
+- `orderby` (string, default: 'name') - Sortierung: name, category, created_at, updated_at
+- `order` (string, default: 'ASC') - ASC oder DESC
+
+**Return:** Array von Templates
+
+##### update( int $id, array $data ): bool
+
+Aktualisiert Template. Setzt automatisch `updated_at`.
+
+**Return:** `true` bei Erfolg, `false` bei Fehler
+
+##### softDelete( int $id ): bool
+
+Soft-Delete für Template. **System-Templates (`is_system = 1`) können nicht gelöscht werden.**
+
+**Return:** `true` bei Erfolg, `false` bei Fehler oder System-Template
+
+##### duplicate( int $id, string $new_name = '' ): int|false
+
+Dupliziert Template. Generiert automatisch Namen ("Name (Kopie)") wenn `$new_name` leer.
+
+**Return:** Neue Template-ID oder `false`
+
+##### slugExists( string $slug, ?int $exclude_id = null ): bool
+
+Prüft ob Slug bereits existiert. Optional eine ID ausschließen (für Updates).
+
+**Return:** `true` wenn Slug existiert
+
+---
+
+### 4.2 EmailLogRepository
+
+**Namespace:** `RecruitingPlaybook\Repositories\EmailLogRepository`
+
+**Verantwortlichkeiten:**
+- CRUD-Operationen für `rp_email_log`
+- E-Mail-Tracking (opened, clicked)
+- Statistiken und Reporting
+- Queue-Verwaltung
+
+#### Methoden
+
+##### create( array $data ): int|false
+
+Erstellt Log-Eintrag für gesendete/geplante E-Mail.
+
+**Parameter:**
+- `$data['application_id']` (int, optional) - FK zu rp_applications
+- `$data['candidate_id']` (int, optional) - FK zu rp_candidates
+- `$data['template_id']` (int, optional) - FK zu rp_email_templates
+- `$data['recipient_email']` (string, required) - Empfänger-E-Mail
+- `$data['recipient_name']` (string, optional) - Empfänger-Name
+- `$data['sender_email']` (string, required) - Absender-E-Mail
+- `$data['sender_name']` (string, optional) - Absender-Name
+- `$data['subject']` (string, required) - Betreff (nach Platzhalter-Ersetzung)
+- `$data['body_html']` (string, required) - HTML-Inhalt (nach Ersetzung)
+- `$data['body_text']` (string, optional) - Plain-Text
+- `$data['status']` (string, default: 'pending') - Status: pending, queued, sent, failed, cancelled
+- `$data['scheduled_at']` (string, optional) - Geplanter Versandzeitpunkt
+- `$data['metadata']` (array, optional) - JSON: Zusätzliche Daten
+- `$data['sent_by']` (int, optional) - FK zu wp_users
+
+**Return:** Insert-ID oder `false`
+
+##### find( int $id ): ?array
+
+Lädt Log-Eintrag per ID.
+
+**Enrichment:**
+- `sent_by_user` - User-Objekt (id, name)
+- `status_label`, `status_color` - UI-Daten für Status
+- `can_cancel`, `can_resend` - Berechtigungs-Flags
+- Type-Casting für alle IDs
+
+##### findByApplication( int $application_id, array $args = [] ): array
+
+Lädt alle E-Mails einer Bewerbung mit Paginierung.
+
+**Args:**
+- `per_page` (int, default: 20)
+- `page` (int, default: 1)
+- `status` (string, optional) - Filter per Status
+
+**Return:**
+```php
+[
+    'items' => [...],  // Array von Log-Einträgen
+    'total' => 42,     // Gesamt-Anzahl
+    'pages' => 3       // Anzahl Seiten
+]
+```
+
+##### findByCandidate( int $candidate_id, array $args = [] ): array
+
+Lädt alle E-Mails eines Kandidaten (über alle Bewerbungen). Gleiche Args/Return wie `findByApplication()`.
+
+##### getList( array $args = [] ): array
+
+Lädt alle Logs mit Filterung, Suche und Paginierung.
+
+**Args:**
+- `per_page`, `page` - Pagination
+- `status` (string) - Filter per Status
+- `search` (string) - Suche in recipient_email, recipient_name, subject
+- `orderby` (string, default: 'created_at') - created_at, sent_at, status, recipient_email
+- `order` (string, default: 'DESC')
+
+**Return:** Paginiertes Array wie `findByApplication()`
+
+##### getPendingForQueue( int $limit = 50 ): array
+
+Lädt pending E-Mails für Queue-Verarbeitung.
+
+**Bedingung:** `status = 'pending'` AND (`scheduled_at IS NULL` OR `scheduled_at <= NOW()`)
+
+**Return:** Array von Log-Einträgen (max. `$limit`)
+
+##### getScheduled( array $args = [] ): array
+
+Lädt geplante E-Mails (`scheduled_at > NOW()` AND `status = 'pending'`).
+
+**Return:** Paginiertes Array
+
+##### update( int $id, array $data ): bool
+
+Aktualisiert Log-Eintrag.
+
+**Return:** `true` bei Erfolg
+
+##### updateStatus( int $id, string $status, string $error = '' ): bool
+
+Dedizierte Methode für Status-Aktualisierung.
+
+**Verhalten:**
+- Bei `status = 'sent'`: Setzt `sent_at` automatisch
+- Bei `status = 'failed'`: Speichert `$error` in `error_message`
+
+**Return:** `true` bei Erfolg
+
+##### markAsOpened( int $id ): bool
+
+Setzt `opened_at` Timestamp. Nur wenn noch nicht gesetzt (E-Mail-Tracking-Pixel).
+
+**Return:** `true` bei Erfolg, `false` wenn bereits geöffnet
+
+##### markAsClicked( int $id ): bool
+
+Setzt `clicked_at` Timestamp. Setzt auch `opened_at` wenn noch nicht gesetzt.
+
+**Return:** `true` bei Erfolg, `false` wenn bereits geklickt
+
+##### cancelScheduled( int $id ): bool
+
+Storniert geplante E-Mail (setzt `status = 'cancelled'`). Nur für `status = 'pending'`.
+
+**Return:** `true` bei Erfolg, `false` wenn nicht pending
+
+##### getStatistics( string $start_date, string $end_date ): array
+
+Statistiken für Zeitraum.
+
+**Parameter:**
+- `$start_date` (string) - Format: 'Y-m-d'
+- `$end_date` (string) - Format: 'Y-m-d'
+
+**Return:**
+```php
+[
+    'total' => 100,          // Gesamt-Anzahl
+    'sent' => 95,            // Erfolgreich gesendet
+    'failed' => 3,           // Fehlgeschlagen
+    'pending' => 2,          // Ausstehend
+    'cancelled' => 0,        // Storniert
+    'opened' => 60,          // Geöffnet
+    'clicked' => 25,         // Geklickt
+    'open_rate' => 63.2,     // % (opened / sent)
+    'click_rate' => 26.3,    // % (clicked / sent)
+    'success_rate' => 95.0   // % (sent / total)
+]
+```
+
+---
+
+### 4.3 Pattern-Konventionen
+
+Alle Repositories folgen diesen Konventionen:
+
+**Constructor:**
+```php
+public function __construct() {
+    $this->table = Schema::getTables()['table_name'];
+}
+```
+
+**CRUD-Signaturen:**
+- `create( array $data ): int|false`
+- `find( int $id ): ?array`
+- `update( int $id, array $data ): bool`
+- `softDelete( int $id ): bool` (nur für Tabellen mit `deleted_at`)
+
+**Enrichment-Pattern:**
+```php
+private function enrichTemplate( array $template ): array {
+    // 1. JSON dekodieren
+    // 2. User-Daten laden
+    // 3. Berechtigungen prüfen
+    // 4. Type-Casting
+    return $template;
+}
+```
+
+**Sicherheit:**
+- Immer `$wpdb->prepare()` mit Platzhaltern
+- `$wpdb->esc_like()` für LIKE-Queries
+- `wp_json_encode()`/`json_decode()` für JSON-Felder
+- `defined( 'ABSPATH' ) || exit;` in jeder Datei
+
+**Type Safety:**
+- `declare(strict_types=1);`
+- Return-Type-Declarations für alle Methoden
+- Parameter-Type-Hints konsequent nutzen
+
+---
+
+## 5. REST API Endpunkte
 
 ### Email Templates API
 
@@ -682,7 +1002,7 @@ register_rest_route(
 
 ---
 
-## 5. E-Mail-Templates
+## 6. E-Mail-Templates
 
 ### Standard-Templates
 
@@ -866,7 +1186,7 @@ defined( 'ABSPATH' ) || exit;
 
 ---
 
-## 6. Template-Editor
+## 7. Template-Editor
 
 ### React-Komponente: TemplateEditor
 
@@ -1030,7 +1350,7 @@ export function TemplateEditor({ template, onSave, onCancel }) {
 
 ---
 
-## 7. Platzhalter-System
+## 8. Platzhalter-System
 
 ### Verfügbare Platzhalter
 
@@ -1448,7 +1768,7 @@ export function PlaceholderPicker({ onSelect }) {
 
 ---
 
-## 8. E-Mail-Versand
+## 9. E-Mail-Versand
 
 ### EmailService (erweitert)
 
@@ -1955,7 +2275,7 @@ export function EmailComposer({ applicationId, onSent, onCancel }) {
 
 ---
 
-## 9. E-Mail-Historie
+## 10. E-Mail-Historie
 
 ### EmailHistory (React)
 
@@ -2127,7 +2447,7 @@ export function EmailHistory({ applicationId, candidateId }) {
 
 ---
 
-## 10. Queue & Action Scheduler
+## 11. Queue & Action Scheduler
 
 ### Action Scheduler Integration
 
@@ -2311,7 +2631,7 @@ class EmailQueueService {
 
 ---
 
-## 11. Admin-Oberfläche
+## 12. Admin-Oberfläche
 
 ### Menü-Integration
 
@@ -2406,7 +2726,7 @@ const tabs = [
 
 ---
 
-## 12. Berechtigungen
+## 13. Berechtigungen
 
 ### Capabilities
 
@@ -2444,7 +2764,7 @@ public function view_email_log_permissions_check(): bool {
 
 ---
 
-## 13. Testing
+## 14. Testing
 
 ### Unit Tests
 
