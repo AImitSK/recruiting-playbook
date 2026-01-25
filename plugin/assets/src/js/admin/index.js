@@ -1,7 +1,7 @@
 /**
  * Admin Entry Point
  *
- * Initialisiert Kanban-Board und Bewerber-Detailseite
+ * Initialisiert Kanban-Board, Bewerber-Detailseite und Talent-Pool
  *
  * @package RecruitingPlaybook
  */
@@ -9,6 +9,7 @@
 import { createRoot } from '@wordpress/element';
 import { KanbanBoard } from './kanban/KanbanBoard';
 import { ApplicantDetail } from './applicant/ApplicantDetail';
+import { TalentPoolList } from './talent-pool/TalentPoolList';
 
 /**
  * Initialisiert das Kanban-Board
@@ -39,11 +40,24 @@ function initApplicantDetail() {
 }
 
 /**
+ * Initialisiert die Talent-Pool Seite
+ */
+function initTalentPool() {
+	const container = document.getElementById( 'rp-talent-pool-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <TalentPoolList /> );
+	}
+}
+
+/**
  * Initialisiert alle Admin-Komponenten
  */
 function initAdmin() {
 	initKanban();
 	initApplicantDetail();
+	initTalentPool();
 }
 
 // DOMContentLoaded könnte bereits gefeuert haben wenn Script im Footer lädt

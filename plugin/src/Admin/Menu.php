@@ -86,6 +86,16 @@ class Menu {
 			[ $this, 'renderKanban' ]
 		);
 
+		// Talent-Pool (Pro-Feature).
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Talent-Pool', 'recruiting-playbook' ),
+			$this->getTalentPoolMenuLabel(),
+			'manage_options',
+			'rp-talent-pool',
+			[ $this, 'renderTalentPool' ]
+		);
+
 		// Einstellungen.
 		add_submenu_page(
 			'recruiting-playbook',
@@ -748,5 +758,29 @@ class Menu {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * Talent-Pool-Menü-Label mit Lock-Icon für Free-User
+	 *
+	 * @return string Menü-Label.
+	 */
+	private function getTalentPoolMenuLabel(): string {
+		$label = __( 'Talent-Pool', 'recruiting-playbook' );
+
+		// Lock-Icon für Free-User.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
+			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
+		}
+
+		return $label;
+	}
+
+	/**
+	 * Talent-Pool-Seite rendern
+	 */
+	public function renderTalentPool(): void {
+		$talent_pool_page = new Pages\TalentPoolPage();
+		$talent_pool_page->render();
 	}
 }
