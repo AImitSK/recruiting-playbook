@@ -438,6 +438,18 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
 		if ( ! current_user_can( 'view_applications' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -465,6 +477,18 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
 		if ( ! current_user_can( 'edit_applications' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -679,6 +703,18 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
 		if ( ! current_user_can( 'delete_applications' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
