@@ -7,9 +7,9 @@
  */
 
 import { render, useState, useCallback } from '@wordpress/element';
-import { Snackbar } from '@wordpress/components';
+import { Notice } from '@wordpress/components';
 
-import { TemplateList, TemplateEditor } from './components';
+import { TemplateList, TemplateEditor, ErrorBoundary } from './components';
 import { useTemplates, usePlaceholders } from './hooks';
 
 /**
@@ -35,13 +35,11 @@ function EmailTemplatesApp() {
 		deleteTemplate,
 		duplicateTemplate,
 		resetTemplate,
-		refetch: refetchTemplates,
 	} = useTemplates();
 
 	const {
 		placeholders,
 		previewValues,
-		loading: placeholdersLoading,
 	} = usePlaceholders();
 
 	/**
@@ -143,6 +141,17 @@ function EmailTemplatesApp() {
 
 	return (
 		<div className="rp-email-templates-app">
+			{ notification && (
+				<Notice
+					status={ notification.type }
+					isDismissible={ true }
+					onRemove={ () => setNotification( null ) }
+					className="rp-notification"
+				>
+					{ notification.message }
+				</Notice>
+			) }
+
 			{ view === 'list' && (
 				<TemplateList
 					templates={ templates }
@@ -167,14 +176,6 @@ function EmailTemplatesApp() {
 					onCancel={ handleCancel }
 				/>
 			) }
-
-			{ notification && (
-				<Snackbar
-					className={ `rp-notification rp-notification--${ notification.type }` }
-				>
-					{ notification.message }
-				</Snackbar>
-			) }
 		</div>
 	);
 }
@@ -184,6 +185,11 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const container = document.getElementById( 'rp-email-templates-app' );
 
 	if ( container ) {
-		render( <EmailTemplatesApp />, container );
+		render(
+			<ErrorBoundary>
+				<EmailTemplatesApp />
+			</ErrorBoundary>,
+			container
+		);
 	}
 } );

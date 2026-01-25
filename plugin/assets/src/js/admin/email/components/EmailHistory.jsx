@@ -5,6 +5,7 @@
  */
 
 import { useState, useMemo } from '@wordpress/element';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	Card,
@@ -17,6 +18,7 @@ import {
 	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
 import { seen, backup, close } from '@wordpress/icons';
+import DOMPurify from 'dompurify';
 
 /**
  * Status-Badge Komponente
@@ -299,7 +301,9 @@ export function EmailHistory( {
 							<h4>{ i18n.message || 'Nachricht' }</h4>
 							<div
 								className="rp-email-history__view-content"
-								dangerouslySetInnerHTML={ { __html: viewingEmail.body_html || viewingEmail.body } }
+								dangerouslySetInnerHTML={ {
+									__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body ),
+								} }
 							/>
 						</div>
 					</div>
@@ -328,3 +332,32 @@ export function EmailHistory( {
 		</div>
 	);
 }
+
+EmailHistory.propTypes = {
+	emails: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.number.isRequired,
+			recipient_email: PropTypes.string,
+			subject: PropTypes.string,
+			status: PropTypes.string,
+			sent_at: PropTypes.string,
+			created_at: PropTypes.string,
+			scheduled_at: PropTypes.string,
+			can_cancel: PropTypes.bool,
+			body: PropTypes.string,
+			body_html: PropTypes.string,
+			error_message: PropTypes.string,
+		} )
+	),
+	loading: PropTypes.bool,
+	error: PropTypes.string,
+	pagination: PropTypes.shape( {
+		total: PropTypes.number,
+		pages: PropTypes.number,
+		page: PropTypes.number,
+		perPage: PropTypes.number,
+	} ),
+	onResend: PropTypes.func,
+	onCancel: PropTypes.func,
+	onPageChange: PropTypes.func,
+};

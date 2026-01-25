@@ -4,8 +4,9 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { handleApiError } from '../utils';
 
 /**
  * Hook zum Laden und Verwalten der E-Mail-Historie
@@ -27,7 +28,18 @@ export function useEmailHistory( options = {} ) {
 		perPage: 20,
 	} );
 
+	// Stabile Referenzen
+	const applicationId = options?.applicationId;
+	const candidateId = options?.candidateId;
+	const perPage = pagination.perPage;
 	const i18n = window.rpEmailData?.i18n || window.rpApplicant?.i18n || {};
+	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der E-Mails';
+	const errorSendingMsg = i18n.errorSending || 'Fehler beim Senden';
+	const errorCancellingMsg = i18n.errorCancelling || 'Fehler beim Stornieren';
+	const errorPreviewMsg = i18n.errorPreview || 'Fehler bei der Vorschau';
+
+	// AbortController Ref
+	const abortControllerRef = useRef( null );
 
 	/**
 	 * E-Mails vom Server laden
@@ -35,46 +47,69 @@ export function useEmailHistory( options = {} ) {
 	 * @param {number} page Seitennummer
 	 */
 	const fetchEmails = useCallback( async ( page = 1 ) => {
+		// Early return wenn keine ID vorhanden
+		if ( ! applicationId && ! candidateId ) {
+			setEmails( [] );
+			setLoading( false );
+			return;
+		}
+
+		// Vorherigen Request abbrechen
+		if ( abortControllerRef.current ) {
+			abortControllerRef.current.abort();
+		}
+		abortControllerRef.current = new AbortController();
+
 		try {
 			setLoading( true );
 			setError( null );
 
 			let path;
 
-			if ( options.applicationId ) {
-				path = `/recruiting/v1/applications/${ options.applicationId }/emails`;
-			} else if ( options.candidateId ) {
-				path = `/recruiting/v1/candidates/${ options.candidateId }/emails`;
+			if ( applicationId ) {
+				path = `/recruiting/v1/applications/${ applicationId }/emails`;
+			} else if ( candidateId ) {
+				path = `/recruiting/v1/candidates/${ candidateId }/emails`;
 			} else {
 				path = '/recruiting/v1/emails/log';
 			}
 
 			const params = new URLSearchParams();
 			params.append( 'page', page.toString() );
-			params.append( 'per_page', pagination.perPage.toString() );
+			params.append( 'per_page', perPage.toString() );
 
 			path += '?' + params.toString();
 
-			const data = await apiFetch( { path } );
+			const data = await apiFetch( {
+				path,
+				signal: abortControllerRef.current.signal,
+			} );
 
 			setEmails( data.items || [] );
 			setPagination( {
 				total: data.total || 0,
 				pages: data.pages || 1,
-				page: page,
-				perPage: pagination.perPage,
+				page,
+				perPage,
 			} );
 		} catch ( err ) {
-			console.error( 'Error fetching emails:', err );
-			setError( err.message || i18n.errorLoading || 'Fehler beim Laden der E-Mails' );
+			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+				console.error( 'Error fetching emails:', err );
+			}
 		} finally {
 			setLoading( false );
 		}
-	}, [ options.applicationId, options.candidateId, pagination.perPage, i18n.errorLoading ] );
+	}, [ applicationId, candidateId, perPage, errorLoadingMsg ] );
 
 	// Initial laden
 	useEffect( () => {
 		fetchEmails();
+
+		return () => {
+			if ( abortControllerRef.current ) {
+				abortControllerRef.current.abort();
+			}
+		};
 	}, [ fetchEmails ] );
 
 	/**
@@ -92,7 +127,7 @@ export function useEmailHistory( options = {} ) {
 				path: '/recruiting/v1/emails/send',
 				method: 'POST',
 				data: {
-					application_id: options.applicationId,
+					application_id: applicationId,
 					...data,
 				},
 			} );
@@ -102,13 +137,14 @@ export function useEmailHistory( options = {} ) {
 
 			return result;
 		} catch ( err ) {
-			console.error( 'Error sending email:', err );
-			setError( err.message || i18n.errorSending || 'Fehler beim Senden' );
+			if ( ! handleApiError( err, setError, errorSendingMsg ) ) {
+				console.error( 'Error sending email:', err );
+			}
 			return null;
 		} finally {
 			setSending( false );
 		}
-	}, [ options.applicationId, fetchEmails, i18n.errorSending ] );
+	}, [ applicationId, fetchEmails, errorSendingMsg ] );
 
 	/**
 	 * E-Mail erneut senden
@@ -131,13 +167,14 @@ export function useEmailHistory( options = {} ) {
 
 			return true;
 		} catch ( err ) {
-			console.error( 'Error resending email:', err );
-			setError( err.message || i18n.errorSending || 'Fehler beim erneuten Senden' );
+			if ( ! handleApiError( err, setError, errorSendingMsg ) ) {
+				console.error( 'Error resending email:', err );
+			}
 			return false;
 		} finally {
 			setSending( false );
 		}
-	}, [ fetchEmails, i18n.errorSending ] );
+	}, [ fetchEmails, errorSendingMsg ] );
 
 	/**
 	 * Geplante E-Mail stornieren
@@ -166,13 +203,14 @@ export function useEmailHistory( options = {} ) {
 
 			return true;
 		} catch ( err ) {
-			console.error( 'Error cancelling email:', err );
-			setError( err.message || i18n.errorCancelling || 'Fehler beim Stornieren' );
+			if ( ! handleApiError( err, setError, errorCancellingMsg ) ) {
+				console.error( 'Error cancelling email:', err );
+			}
 			return false;
 		} finally {
 			setSending( false );
 		}
-	}, [ i18n.errorCancelling ] );
+	}, [ errorCancellingMsg ] );
 
 	/**
 	 * Vorschau generieren
@@ -188,18 +226,19 @@ export function useEmailHistory( options = {} ) {
 				path: '/recruiting/v1/emails/preview',
 				method: 'POST',
 				data: {
-					application_id: options.applicationId,
+					application_id: applicationId,
 					...data,
 				},
 			} );
 
 			return result;
 		} catch ( err ) {
-			console.error( 'Error previewing email:', err );
-			setError( err.message || i18n.errorPreview || 'Fehler bei der Vorschau' );
+			if ( ! handleApiError( err, setError, errorPreviewMsg ) ) {
+				console.error( 'Error previewing email:', err );
+			}
 			return null;
 		}
-	}, [ options.applicationId, i18n.errorPreview ] );
+	}, [ applicationId, errorPreviewMsg ] );
 
 	/**
 	 * Seite wechseln

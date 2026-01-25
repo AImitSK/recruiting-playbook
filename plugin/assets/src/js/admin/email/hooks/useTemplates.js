@@ -4,8 +4,9 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { handleApiError } from '../utils';
 
 /**
  * Hook zum Laden und Verwalten von E-Mail-Templates
@@ -20,12 +21,26 @@ export function useTemplates( options = {} ) {
 	const [ error, setError ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
 
+	// Stabile Referenzen für Dependencies
+	const category = options?.category;
 	const i18n = window.rpEmailData?.i18n || {};
+	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der Templates';
+	const errorSavingMsg = i18n.errorSaving || 'Fehler beim Speichern';
+	const errorDeletingMsg = i18n.errorDeleting || 'Fehler beim Löschen';
+
+	// AbortController Ref für Cleanup
+	const abortControllerRef = useRef( null );
 
 	/**
 	 * Templates vom Server laden
 	 */
 	const fetchTemplates = useCallback( async () => {
+		// Vorherigen Request abbrechen
+		if ( abortControllerRef.current ) {
+			abortControllerRef.current.abort();
+		}
+		abortControllerRef.current = new AbortController();
+
 		try {
 			setLoading( true );
 			setError( null );
@@ -33,28 +48,39 @@ export function useTemplates( options = {} ) {
 			let path = '/recruiting/v1/email-templates';
 			const params = new URLSearchParams();
 
-			if ( options.category ) {
-				params.append( 'category', options.category );
+			if ( category ) {
+				params.append( 'category', category );
 			}
 
 			if ( params.toString() ) {
 				path += '?' + params.toString();
 			}
 
-			const data = await apiFetch( { path } );
+			const data = await apiFetch( {
+				path,
+				signal: abortControllerRef.current.signal,
+			} );
 
 			setTemplates( data.items || data || [] );
 		} catch ( err ) {
-			console.error( 'Error fetching templates:', err );
-			setError( err.message || i18n.errorLoading || 'Fehler beim Laden der Templates' );
+			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+				console.error( 'Error fetching templates:', err );
+			}
 		} finally {
 			setLoading( false );
 		}
-	}, [ options.category, i18n.errorLoading ] );
+	}, [ category, errorLoadingMsg ] );
 
 	// Initial laden
 	useEffect( () => {
 		fetchTemplates();
+
+		// Cleanup: Request abbrechen beim Unmount
+		return () => {
+			if ( abortControllerRef.current ) {
+				abortControllerRef.current.abort();
+			}
+		};
 	}, [ fetchTemplates ] );
 
 	/**
@@ -81,13 +107,14 @@ export function useTemplates( options = {} ) {
 
 			return newTemplate;
 		} catch ( err ) {
-			console.error( 'Error creating template:', err );
-			setError( err.message || i18n.errorSaving || 'Fehler beim Speichern' );
+			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
+				console.error( 'Error creating template:', err );
+			}
 			return null;
 		} finally {
 			setSaving( false );
 		}
-	}, [ i18n.errorSaving ] );
+	}, [ errorSavingMsg ] );
 
 	/**
 	 * Template aktualisieren
@@ -116,13 +143,14 @@ export function useTemplates( options = {} ) {
 
 			return updatedTemplate;
 		} catch ( err ) {
-			console.error( 'Error updating template:', err );
-			setError( err.message || i18n.errorSaving || 'Fehler beim Speichern' );
+			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
+				console.error( 'Error updating template:', err );
+			}
 			return null;
 		} finally {
 			setSaving( false );
 		}
-	}, [ i18n.errorSaving ] );
+	}, [ errorSavingMsg ] );
 
 	/**
 	 * Template löschen
@@ -147,17 +175,17 @@ export function useTemplates( options = {} ) {
 
 			return true;
 		} catch ( err ) {
-			console.error( 'Error deleting template:', err );
-
 			// Rollback
 			setTemplates( previousTemplates );
 
-			setError( err.message || i18n.errorDeleting || 'Fehler beim Löschen' );
+			if ( ! handleApiError( err, setError, errorDeletingMsg ) ) {
+				console.error( 'Error deleting template:', err );
+			}
 			return false;
 		} finally {
 			setSaving( false );
 		}
-	}, [ templates, i18n.errorDeleting ] );
+	}, [ templates, errorDeletingMsg ] );
 
 	/**
 	 * Template duplizieren
@@ -184,13 +212,14 @@ export function useTemplates( options = {} ) {
 
 			return newTemplate;
 		} catch ( err ) {
-			console.error( 'Error duplicating template:', err );
-			setError( err.message || i18n.errorSaving || 'Fehler beim Duplizieren' );
+			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
+				console.error( 'Error duplicating template:', err );
+			}
 			return null;
 		} finally {
 			setSaving( false );
 		}
-	}, [ i18n.errorSaving ] );
+	}, [ errorSavingMsg ] );
 
 	/**
 	 * Template auf Standard zurücksetzen
@@ -217,13 +246,14 @@ export function useTemplates( options = {} ) {
 
 			return resetTpl;
 		} catch ( err ) {
-			console.error( 'Error resetting template:', err );
-			setError( err.message || i18n.errorSaving || 'Fehler beim Zurücksetzen' );
+			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
+				console.error( 'Error resetting template:', err );
+			}
 			return null;
 		} finally {
 			setSaving( false );
 		}
-	}, [ i18n.errorSaving ] );
+	}, [ errorSavingMsg ] );
 
 	return {
 		templates,

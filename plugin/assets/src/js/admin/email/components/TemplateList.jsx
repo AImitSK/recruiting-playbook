@@ -5,6 +5,7 @@
  */
 
 import { useState, useMemo } from '@wordpress/element';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	Card,
@@ -287,3 +288,24 @@ export function TemplateList( {
 		</div>
 	);
 }
+
+TemplateList.propTypes = {
+	templates: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.number.isRequired,
+			name: PropTypes.string,
+			subject: PropTypes.string,
+			category: PropTypes.string,
+			is_system: PropTypes.bool,
+			is_default: PropTypes.bool,
+			is_active: PropTypes.bool,
+		} )
+	),
+	loading: PropTypes.bool,
+	error: PropTypes.string,
+	onSelect: PropTypes.func,
+	onDelete: PropTypes.func,
+	onDuplicate: PropTypes.func,
+	onReset: PropTypes.func,
+	onCreate: PropTypes.func,
+};

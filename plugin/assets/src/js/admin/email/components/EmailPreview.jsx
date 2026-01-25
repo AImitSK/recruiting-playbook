@@ -5,6 +5,7 @@
  */
 
 import { Card, CardBody, CardHeader } from '@wordpress/components';
+import DOMPurify from 'dompurify';
 
 /**
  * EmailPreview Komponente
@@ -22,7 +23,7 @@ export function EmailPreview( { subject = '', body = '', recipient = '' } ) {
 	 * Text in HTML mit Zeilenumbrüchen umwandeln
 	 *
 	 * @param {string} text Text
-	 * @return {string} HTML
+	 * @return {string} Sanitized HTML
 	 */
 	const textToHtml = ( text ) => {
 		if ( ! text ) {
@@ -31,24 +32,29 @@ export function EmailPreview( { subject = '', body = '', recipient = '' } ) {
 
 		// Einfache Markdown-ähnliche Formatierung
 		let html = text
-			// Escapen
+			// Escapen von HTML-Zeichen zuerst
 			.replace( /&/g, '&amp;' )
 			.replace( /</g, '&lt;' )
 			.replace( />/g, '&gt;' )
-			// Zeilenumbrüche
-			.replace( /\n\n/g, '</p><p>' )
-			.replace( /\n/g, '<br>' )
-			// Fett
+			// Fett (vor Kursiv, da ** auch * enthält)
 			.replace( /\*\*(.+?)\*\*/g, '<strong>$1</strong>' )
 			// Kursiv
 			.replace( /\*(.+?)\*/g, '<em>$1</em>' )
-			// Links
+			// Links mit URL-Validierung
 			.replace(
 				/\[([^\]]+)\]\(([^)]+)\)/g,
-				'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-			);
+				( match, linkText, url ) => {
+					// Nur sichere URLs erlauben (http/https)
+					const safeUrl = /^https?:\/\//.test( url ) ? url : '#';
+					return `<a href="${ safeUrl }" target="_blank" rel="noopener noreferrer">${ linkText }</a>`;
+				}
+			)
+			// Zeilenumbrüche zuletzt
+			.replace( /\n\n/g, '</p><p>' )
+			.replace( /\n/g, '<br>' );
 
-		return `<p>${ html }</p>`;
+		// DOMPurify sanitiert das Ergebnis zusätzlich
+		return DOMPurify.sanitize( `<p>${ html }</p>` );
 	};
 
 	return (

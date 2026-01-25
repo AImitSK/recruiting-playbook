@@ -10,3 +10,4 @@ export { PlaceholderPicker } from './PlaceholderPicker';
 export { EmailComposer } from './EmailComposer';
 export { EmailHistory } from './EmailHistory';
 export { EmailPreview } from './EmailPreview';
+export { ErrorBoundary } from './ErrorBoundary';

@@ -5,6 +5,7 @@
  */
 
 import { useState, useCallback, useEffect } from '@wordpress/element';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	Card,
@@ -166,9 +167,14 @@ export function EmailComposer( {
 	const validate = useCallback( () => {
 		const errors = {};
 
+		// E-Mail-Validierung mit verbesserter Regex
+		// Erlaubt: lokaler Teil mit Buchstaben, Zahlen, Punkten, Bindestrichen, Unterstrichen, Plus
+		// Domain muss mindestens 2 Zeichen TLD haben
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 		if ( ! formData.to.trim() ) {
 			errors.to = i18n.recipientRequired || 'Empfänger ist erforderlich';
-		} else if ( ! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( formData.to ) ) {
+		} else if ( ! emailRegex.test( formData.to.trim() ) ) {
 			errors.to = i18n.invalidEmail || 'Ungültige E-Mail-Adresse';
 		}
 
@@ -180,8 +186,13 @@ export function EmailComposer( {
 			errors.body = i18n.bodyRequired || 'Inhalt ist erforderlich';
 		}
 
-		if ( scheduleEnabled && ! scheduledAt ) {
-			errors.scheduledAt = i18n.scheduleRequired || 'Sendezeitpunkt ist erforderlich';
+		// Schedule-Validierung
+		if ( scheduleEnabled ) {
+			if ( ! scheduledAt ) {
+				errors.scheduledAt = i18n.scheduleRequired || 'Sendezeitpunkt ist erforderlich';
+			} else if ( new Date( scheduledAt ) <= new Date() ) {
+				errors.scheduledAt = i18n.schedulePastError || 'Sendezeitpunkt muss in der Zukunft liegen';
+			}
 		}
 
 		setValidationErrors( errors );
@@ -394,3 +405,25 @@ export function EmailComposer( {
 		</div>
 	);
 }
+
+EmailComposer.propTypes = {
+	templates: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.number.isRequired,
+			name: PropTypes.string,
+			subject: PropTypes.string,
+			body: PropTypes.string,
+		} )
+	),
+	placeholders: PropTypes.object,
+	previewValues: PropTypes.object,
+	recipient: PropTypes.shape( {
+		email: PropTypes.string,
+		name: PropTypes.string,
+	} ),
+	applicationId: PropTypes.number,
+	sending: PropTypes.bool,
+	error: PropTypes.string,
+	onSend: PropTypes.func.isRequired,
+	onCancel: PropTypes.func.isRequired,
+};

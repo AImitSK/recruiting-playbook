@@ -4,8 +4,9 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { handleApiError } from '../utils';
 
 /**
  * Hook zum Laden der verfügbaren Platzhalter
@@ -18,33 +19,52 @@ export function usePlaceholders() {
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 
+	// Stabile Referenzen
 	const i18n = window.rpEmailData?.i18n || {};
+	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der Platzhalter';
+
+	// AbortController Ref
+	const abortControllerRef = useRef( null );
 
 	/**
 	 * Platzhalter vom Server laden
 	 */
 	const fetchPlaceholders = useCallback( async () => {
+		// Vorherigen Request abbrechen
+		if ( abortControllerRef.current ) {
+			abortControllerRef.current.abort();
+		}
+		abortControllerRef.current = new AbortController();
+
 		try {
 			setLoading( true );
 			setError( null );
 
 			const data = await apiFetch( {
 				path: '/recruiting/v1/email-templates/placeholders',
+				signal: abortControllerRef.current.signal,
 			} );
 
 			setPlaceholders( data.groups || {} );
 			setPreviewValues( data.preview_values || {} );
 		} catch ( err ) {
-			console.error( 'Error fetching placeholders:', err );
-			setError( err.message || i18n.errorLoading || 'Fehler beim Laden der Platzhalter' );
+			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+				console.error( 'Error fetching placeholders:', err );
+			}
 		} finally {
 			setLoading( false );
 		}
-	}, [ i18n.errorLoading ] );
+	}, [ errorLoadingMsg ] );
 
 	// Initial laden
 	useEffect( () => {
 		fetchPlaceholders();
+
+		return () => {
+			if ( abortControllerRef.current ) {
+				abortControllerRef.current.abort();
+			}
+		};
 	}, [ fetchPlaceholders ] );
 
 	/**
