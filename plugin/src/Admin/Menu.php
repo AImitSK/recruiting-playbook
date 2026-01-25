@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
+use RecruitingPlaybook\Admin\Pages\LicensePage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Services\GdprService;
 use RecruitingPlaybook\Services\DocumentService;
@@ -92,6 +93,16 @@ class Menu {
 			'manage_options',
 			'rp-export',
 			[ $this, 'renderExport' ]
+		);
+
+		// Lizenz.
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Lizenz', 'recruiting-playbook' ),
+			$this->getLicenseMenuLabel(),
+			'manage_options',
+			'rp-license',
+			[ $this, 'renderLicense' ]
 		);
 
 		// Bewerbung-Detailansicht (versteckt).
@@ -678,5 +689,29 @@ class Menu {
 	 */
 	public function renderSettings(): void {
 		$this->settings->renderPage();
+	}
+
+	/**
+	 * Lizenz-Seite rendern
+	 */
+	public function renderLicense(): void {
+		$license_page = new LicensePage();
+		$license_page->render();
+	}
+
+	/**
+	 * Lizenz-Menü-Label mit Tier-Badge
+	 *
+	 * @return string Menü-Label mit optionalem Badge.
+	 */
+	private function getLicenseMenuLabel(): string {
+		$label = __( 'Lizenz', 'recruiting-playbook' );
+
+		// Tier-Badge hinzufügen wenn Pro aktiv.
+		if ( function_exists( 'rp_is_pro' ) && rp_is_pro() ) {
+			$label .= ' <span class="update-plugins count-1" style="background-color: #00a32a;"><span class="plugin-count">PRO</span></span>';
+		}
+
+		return $label;
 	}
 }

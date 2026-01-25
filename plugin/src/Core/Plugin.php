@@ -23,6 +23,7 @@ use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Database\Migrator;
+use RecruitingPlaybook\Licensing\LicenseManager;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -57,6 +58,12 @@ final class Plugin {
 	 * Plugin initialisieren
 	 */
 	public function init(): void {
+		// Lizenz-Helper-Funktionen laden.
+		$this->loadLicenseHelpers();
+
+		// Lizenz-Manager initialisieren.
+		LicenseManager::get_instance();
+
 		// Datenbank-Schema nur im Admin prüfen (Performance).
 		if ( is_admin() ) {
 			$this->maybeUpgradeDatabase();
@@ -108,6 +115,16 @@ final class Plugin {
 	private function loadI18n(): void {
 		// WordPress.org lädt Übersetzungen automatisch für gehostete Plugins.
 		// Keine manuelle Initialisierung erforderlich.
+	}
+
+	/**
+	 * Lizenz-Helper-Funktionen laden
+	 */
+	private function loadLicenseHelpers(): void {
+		$helpers_file = RP_PLUGIN_DIR . 'src/Licensing/helpers.php';
+		if ( file_exists( $helpers_file ) ) {
+			require_once $helpers_file;
+		}
 	}
 
 	/**
