@@ -126,20 +126,25 @@ class ApplicationController extends WP_REST_Controller {
 					'callback'            => [ $this, 'update_status' ],
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
-						'id'     => [
+						'id'              => [
 							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
-						'status' => [
+						'status'          => [
 							'description' => __( 'Neuer Status', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
 						],
-						'note'   => [
+						'note'            => [
 							'description' => __( 'Notiz zur Statusänderung', 'recruiting-playbook' ),
 							'type'        => 'string',
+							'required'    => false,
+						],
+						'kanban_position' => [
+							'description' => __( 'Position im Kanban-Board', 'recruiting-playbook' ),
+							'type'        => 'integer',
 							'required'    => false,
 						],
 					],
@@ -368,6 +373,8 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) {
+		$context = $request->get_param( 'context' ) ?: 'view';
+
 		$args = [
 			'job_id'   => $request->get_param( 'job_id' ),
 			'status'   => $request->get_param( 'status' ),
@@ -376,9 +383,15 @@ class ApplicationController extends WP_REST_Controller {
 			'page'     => $request->get_param( 'page' ) ?: 1,
 			'orderby'  => $request->get_param( 'orderby' ) ?: 'date',
 			'order'    => $request->get_param( 'order' ) ?: 'desc',
+			'context'  => $context,
 		];
 
-		$result = $this->application_service->list( $args );
+		// Kanban-Kontext: Spezielle Methode mit Dokumentenanzahl.
+		if ( 'kanban' === $context ) {
+			$result = $this->application_service->listForKanban( $args );
+		} else {
+			$result = $this->application_service->list( $args );
+		}
 
 		return new WP_REST_Response( $result, 200 );
 	}
@@ -412,11 +425,12 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_status( $request ) {
-		$id     = (int) $request->get_param( 'id' );
-		$status = $request->get_param( 'status' );
-		$note   = $request->get_param( 'note' ) ?: '';
+		$id              = (int) $request->get_param( 'id' );
+		$status          = $request->get_param( 'status' );
+		$note            = $request->get_param( 'note' ) ?: '';
+		$kanban_position = $request->get_param( 'kanban_position' );
 
-		$result = $this->application_service->updateStatus( $id, $status, $note );
+		$result = $this->application_service->updateStatus( $id, $status, $note, $kanban_position );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -524,7 +538,7 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'integer',
 				'default'     => 20,
 				'minimum'     => 1,
-				'maximum'     => 100,
+				'maximum'     => 200,
 			],
 			'page'     => [
 				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
@@ -535,7 +549,7 @@ class ApplicationController extends WP_REST_Controller {
 			'orderby'  => [
 				'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
 				'type'        => 'string',
-				'enum'        => [ 'date', 'name', 'status' ],
+				'enum'        => [ 'date', 'name', 'status', 'kanban_position' ],
 				'default'     => 'date',
 			],
 			'order'    => [
@@ -543,6 +557,12 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'string',
 				'enum'        => [ 'asc', 'desc' ],
 				'default'     => 'desc',
+			],
+			'context'  => [
+				'description' => __( 'Kontext für die Abfrage (kanban: mit Dokumentenanzahl)', 'recruiting-playbook' ),
+				'type'        => 'string',
+				'enum'        => [ 'view', 'kanban' ],
+				'default'     => 'view',
 			],
 		];
 	}

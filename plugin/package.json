@@ -7,6 +7,7 @@
         "dev:css": "tailwindcss -i ./assets/src/css/main.css -o ./assets/dist/css/frontend.css --watch",
         "dev:admin-css": "tailwindcss -i ./assets/src/css/admin.css -o ./assets/dist/css/admin.css --watch",
         "dev:wizard-css": "tailwindcss -i ./assets/src/css/wizard.css -o ./assets/dist/css/wizard.css --watch",
+        "dev:kanban-css": "tailwindcss -i ./assets/src/css/admin-kanban.css -o ./assets/dist/css/admin-kanban.css --watch",
         "dev:js": "esbuild assets/src/js/frontend.js --bundle --sourcemap --outfile=assets/dist/js/frontend.js --watch",
         "dev:wizard-js": "esbuild assets/src/js/wizard.js --bundle --sourcemap --outfile=assets/dist/js/wizard.js --watch",
         "dev:admin-js": "wp-scripts start --webpack-src-dir=assets/src/js/admin --output-path=assets/dist/js",
@@ -14,6 +15,7 @@
         "build:css": "tailwindcss -i ./assets/src/css/main.css -o ./assets/dist/css/frontend.css --minify",
         "build:admin-css": "tailwindcss -i ./assets/src/css/admin.css -o ./assets/dist/css/admin.css --minify",
         "build:wizard-css": "tailwindcss -i ./assets/src/css/wizard.css -o ./assets/dist/css/wizard.css --minify",
+        "build:kanban-css": "tailwindcss -i ./assets/src/css/admin-kanban.css -o ./assets/dist/css/admin-kanban.css --minify",
         "build:js": "esbuild assets/src/js/frontend.js --bundle --minify --outfile=assets/dist/js/frontend.js",
         "build:wizard-js": "esbuild assets/src/js/wizard.js --bundle --minify --outfile=assets/dist/js/wizard.js",
         "build:admin-js": "wp-scripts build --webpack-src-dir=assets/src/js/admin --output-path=assets/dist/js",
@@ -27,6 +29,9 @@
         "pot": "wp i18n make-pot . languages/recruiting-playbook.pot --exclude=node_modules,vendor,tests"
     },
     "dependencies": {
+        "@dnd-kit/core": "^6.1.0",
+        "@dnd-kit/sortable": "^8.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
         "alpinejs": "^3.14.0"
     },
     "devDependencies": {

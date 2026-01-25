@@ -251,14 +251,113 @@ class ApplicationService {
 	}
 
 	/**
+	 * Bewerbungen für Kanban-Board auflisten
+	 *
+	 * Optimiert für Kanban-Board: Flache Struktur mit Dokumentenanzahl.
+	 *
+	 * @param array $args Filter-Argumente.
+	 * @return array Mit 'items' Array für Frontend.
+	 */
+	public function listForKanban( array $args = [] ): array {
+		global $wpdb;
+
+		$table            = $wpdb->prefix . 'rp_applications';
+		$candidates_table = $wpdb->prefix . 'rp_candidates';
+		$documents_table  = $wpdb->prefix . 'rp_documents';
+
+		$where  = [ '1=1', 'a.deleted_at IS NULL' ];
+		$values = [];
+
+		// Filter: Job ID.
+		if ( ! empty( $args['job_id'] ) ) {
+			$where[]  = 'a.job_id = %d';
+			$values[] = (int) $args['job_id'];
+		}
+
+		// Filter: Status.
+		if ( ! empty( $args['status'] ) ) {
+			$where[]  = 'a.status = %s';
+			$values[] = $args['status'];
+		}
+
+		// Filter: Suche.
+		if ( ! empty( $args['search'] ) ) {
+			$search   = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$where[]  = '(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)';
+			$values[] = $search;
+			$values[] = $search;
+			$values[] = $search;
+		}
+
+		$where_clause = implode( ' AND ', $where );
+
+		// Sortierung für Kanban: Status + Position.
+		$allowed_orderby = [
+			'date'            => 'a.created_at',
+			'name'            => 'c.last_name',
+			'status'          => 'a.status',
+			'kanban_position' => 'a.kanban_position',
+		];
+		$orderby_key = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
+		$orderby     = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
+		$order       = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
+
+		// Pagination - Kanban kann mehr anzeigen.
+		$per_page = min( max( (int) ( $args['per_page'] ?? 200 ), 1 ), 500 );
+		$page     = max( (int) ( $args['page'] ?? 1 ), 1 );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		// Query mit Dokumentenanzahl als Subquery.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT
+					a.id,
+					a.job_id,
+					a.status,
+					a.kanban_position,
+					a.created_at,
+					c.first_name,
+					c.last_name,
+					c.email,
+					(SELECT COUNT(*) FROM {$documents_table} d WHERE d.application_id = a.id) AS documents_count
+				FROM {$table} a
+				LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
+				WHERE {$where_clause}
+				ORDER BY {$orderby} {$order}
+				LIMIT %d OFFSET %d",
+				...array_merge( $values, [ $per_page, $offset ] )
+			),
+			ARRAY_A
+		);
+
+		// Job-Titel hinzufügen.
+		foreach ( $results as &$row ) {
+			$job              = get_post( (int) $row['job_id'] );
+			$row['job_title'] = $job ? $job->post_title : '';
+
+			// Typen konvertieren.
+			$row['id']              = (int) $row['id'];
+			$row['job_id']          = (int) $row['job_id'];
+			$row['kanban_position'] = (int) $row['kanban_position'];
+			$row['documents_count'] = (int) $row['documents_count'];
+		}
+
+		return [
+			'items' => $results,
+		];
+	}
+
+	/**
 	 * Status einer Bewerbung ändern
 	 *
-	 * @param int    $id     Application ID.
-	 * @param string $status Neuer Status.
-	 * @param string $note   Optionale Notiz.
+	 * @param int      $id              Application ID.
+	 * @param string   $status          Neuer Status.
+	 * @param string   $note            Optionale Notiz.
+	 * @param int|null $kanban_position Optionale Kanban-Position.
 	 * @return bool|WP_Error
 	 */
-	public function updateStatus( int $id, string $status, string $note = '' ): bool|WP_Error {
+	public function updateStatus( int $id, string $status, string $note = '', ?int $kanban_position = null ): bool|WP_Error {
 		global $wpdb;
 
 		// Validieren
@@ -293,15 +392,24 @@ class ApplicationService {
 		// Status aktualisieren
 		$table = $wpdb->prefix . 'rp_applications';
 
+		$update_data = [
+			'status'     => $status,
+			'updated_at' => current_time( 'mysql' ),
+		];
+		$update_format = [ '%s', '%s' ];
+
+		// Kanban-Position aktualisieren wenn übergeben.
+		if ( null !== $kanban_position ) {
+			$update_data['kanban_position'] = $kanban_position;
+			$update_format[]                = '%d';
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$updated = $wpdb->update(
 			$table,
-			[
-				'status'     => $status,
-				'updated_at' => current_time( 'mysql' ),
-			],
+			$update_data,
 			[ 'id' => $id ],
-			[ '%s', '%s' ],
+			$update_format,
 			[ '%d' ]
 		);
 
