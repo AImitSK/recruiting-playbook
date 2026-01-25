@@ -7,10 +7,11 @@
 
 declare(strict_types=1);
 
-
 namespace RecruitingPlaybook\Services;
 
 defined( 'ABSPATH' ) || exit;
+
+use RecruitingPlaybook\Repositories\EmailLogRepository;
 
 /**
  * Service für E-Mail-Versand
@@ -32,6 +33,34 @@ class EmailService {
 	private string $from_name;
 
 	/**
+	 * Template Service
+	 *
+	 * @var EmailTemplateService|null
+	 */
+	private ?EmailTemplateService $templateService = null;
+
+	/**
+	 * Queue Service
+	 *
+	 * @var EmailQueueService|null
+	 */
+	private ?EmailQueueService $queueService = null;
+
+	/**
+	 * Placeholder Service
+	 *
+	 * @var PlaceholderService|null
+	 */
+	private ?PlaceholderService $placeholderService = null;
+
+	/**
+	 * Log Repository
+	 *
+	 * @var EmailLogRepository|null
+	 */
+	private ?EmailLogRepository $logRepository = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -39,6 +68,54 @@ class EmailService {
 
 		$this->from_email = $settings['notification_email'] ?? get_option( 'admin_email' );
 		$this->from_name  = $settings['company_name'] ?? get_bloginfo( 'name' );
+	}
+
+	/**
+	 * Template Service lazy-laden
+	 *
+	 * @return EmailTemplateService
+	 */
+	private function getTemplateService(): EmailTemplateService {
+		if ( null === $this->templateService ) {
+			$this->templateService = new EmailTemplateService();
+		}
+		return $this->templateService;
+	}
+
+	/**
+	 * Queue Service lazy-laden
+	 *
+	 * @return EmailQueueService
+	 */
+	private function getQueueService(): EmailQueueService {
+		if ( null === $this->queueService ) {
+			$this->queueService = new EmailQueueService();
+		}
+		return $this->queueService;
+	}
+
+	/**
+	 * Placeholder Service lazy-laden
+	 *
+	 * @return PlaceholderService
+	 */
+	private function getPlaceholderService(): PlaceholderService {
+		if ( null === $this->placeholderService ) {
+			$this->placeholderService = new PlaceholderService();
+		}
+		return $this->placeholderService;
+	}
+
+	/**
+	 * Log Repository lazy-laden
+	 *
+	 * @return EmailLogRepository
+	 */
+	private function getLogRepository(): EmailLogRepository {
+		if ( null === $this->logRepository ) {
+			$this->logRepository = new EmailLogRepository();
+		}
+		return $this->logRepository;
 	}
 
 	/**
@@ -167,6 +244,237 @@ class EmailService {
 	}
 
 	/**
+	 * E-Mail mit Template senden (Pro-Feature)
+	 *
+	 * @param int   $template_id    Template-ID.
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param array $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @param bool  $use_queue      Queue verwenden.
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true ): int|bool {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			return false;
+		}
+
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter aufbauen.
+		$context = $this->buildContext( $application, $custom_data );
+
+		// Template rendern.
+		$rendered = $this->getTemplateService()->render( $template_id, $context );
+		if ( ! $rendered ) {
+			return false;
+		}
+
+		$email_data = [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'template_id'     => $template_id,
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $rendered['subject'],
+			'body_html'       => $rendered['body_html'],
+			'body_text'       => $rendered['body_text'],
+		];
+
+		if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+			return $this->getQueueService()->enqueue( $email_data );
+		}
+
+		// Direkt senden.
+		$sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+
+		// In Log speichern.
+		if ( $sent ) {
+			$email_data['status'] = 'sent';
+			$email_data['sent_at'] = current_time( 'mysql' );
+		} else {
+			$email_data['status'] = 'failed';
+		}
+		$this->getLogRepository()->create( $email_data );
+
+		return $sent;
+	}
+
+	/**
+	 * E-Mail mit Template-Slug senden
+	 *
+	 * @param string $template_slug Template-Slug.
+	 * @param int    $application_id Bewerbungs-ID.
+	 * @param array  $custom_data   Zusätzliche Platzhalter-Daten.
+	 * @param bool   $use_queue     Queue verwenden.
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendWithTemplateSlug( string $template_slug, int $application_id, array $custom_data = [], bool $use_queue = true ): int|bool {
+		$template = $this->getTemplateService()->findBySlug( $template_slug );
+
+		if ( ! $template ) {
+			return false;
+		}
+
+		return $this->sendWithTemplate( (int) $template['id'], $application_id, $custom_data, $use_queue );
+	}
+
+	/**
+	 * Benutzerdefinierte E-Mail senden (ohne Template)
+	 *
+	 * @param int    $application_id Bewerbungs-ID.
+	 * @param string $subject        Betreff.
+	 * @param string $body_html      HTML-Inhalt.
+	 * @param bool   $use_queue      Queue verwenden.
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendCustomEmail( int $application_id, string $subject, string $body_html, bool $use_queue = true ): int|bool {
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter.
+		$context = $this->buildContext( $application, [] );
+
+		// Platzhalter ersetzen.
+		$subject   = $this->getPlaceholderService()->replace( $subject, $context );
+		$body_html = $this->getPlaceholderService()->replace( $body_html, $context );
+
+		$email_data = [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $subject,
+			'body_html'       => $body_html,
+			'body_text'       => wp_strip_all_tags( $body_html ),
+		];
+
+		if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+			return $this->getQueueService()->enqueue( $email_data );
+		}
+
+		// Direkt senden.
+		$sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+
+		// In Log speichern.
+		$email_data['status'] = $sent ? 'sent' : 'failed';
+		if ( $sent ) {
+			$email_data['sent_at'] = current_time( 'mysql' );
+		}
+		$this->getLogRepository()->create( $email_data );
+
+		return $sent;
+	}
+
+	/**
+	 * E-Mail für späteren Versand planen
+	 *
+	 * @param int    $template_id    Template-ID.
+	 * @param int    $application_id Bewerbungs-ID.
+	 * @param string $scheduled_at   Geplanter Zeitpunkt (Y-m-d H:i:s).
+	 * @param array  $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @return int|false Log-ID oder false bei Fehler.
+	 */
+	public function scheduleEmail( int $template_id, int $application_id, string $scheduled_at, array $custom_data = [] ): int|false {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			return false;
+		}
+
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter.
+		$context = $this->buildContext( $application, $custom_data );
+
+		// Template rendern.
+		$rendered = $this->getTemplateService()->render( $template_id, $context );
+		if ( ! $rendered ) {
+			return false;
+		}
+
+		return $this->getQueueService()->schedule( [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'template_id'     => $template_id,
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $rendered['subject'],
+			'body_html'       => $rendered['body_html'],
+			'body_text'       => $rendered['body_text'],
+		], $scheduled_at );
+	}
+
+	/**
+	 * E-Mail-Historie für Bewerbung abrufen
+	 *
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param array $args           Query-Argumente.
+	 * @return array
+	 */
+	public function getHistory( int $application_id, array $args = [] ): array {
+		return $this->getLogRepository()->findByApplication( $application_id, $args );
+	}
+
+	/**
+	 * E-Mail-Historie für Kandidaten abrufen
+	 *
+	 * @param int   $candidate_id Kandidaten-ID.
+	 * @param array $args         Query-Argumente.
+	 * @return array
+	 */
+	public function getHistoryByCandidate( int $candidate_id, array $args = [] ): array {
+		return $this->getLogRepository()->findByCandidate( $candidate_id, $args );
+	}
+
+	/**
+	 * Kontext für Platzhalter aufbauen
+	 *
+	 * @param array $application Bewerbungs-Daten.
+	 * @param array $custom_data Zusätzliche Daten.
+	 * @return array
+	 */
+	private function buildContext( array $application, array $custom_data ): array {
+		$job = null;
+		if ( ! empty( $application['job_id'] ) ) {
+			$job_post = get_post( (int) $application['job_id'] );
+			if ( $job_post ) {
+				$job = [
+					'title'           => $job_post->post_title,
+					'url'             => get_permalink( $job_post ),
+					'location'        => get_post_meta( $job_post->ID, '_job_location', true ) ?: '',
+					'employment_type' => get_post_meta( $job_post->ID, '_employment_type', true ) ?: '',
+				];
+			}
+		}
+
+		return [
+			'application' => $application,
+			'candidate'   => [
+				'salutation'  => $application['salutation'] ?? '',
+				'first_name'  => $application['first_name'] ?? '',
+				'last_name'   => $application['last_name'] ?? '',
+				'email'       => $application['email'] ?? '',
+				'phone'       => $application['phone'] ?? '',
+			],
+			'job'         => $job ?? [],
+			'custom'      => $custom_data,
+		];
+	}
+
+	/**
 	 * Bewerbungsdaten für E-Mail abrufen
 	 *
 	 * @param int $application_id Application ID.
@@ -199,8 +507,10 @@ class EmailService {
 
 		return [
 			'id'             => $application_id,
+			'candidate_id'   => $row['candidate_id'],
 			'job_id'         => $row['job_id'],
 			'job_title'      => $job ? $job->post_title : '',
+			'status'         => $row['status'] ?? 'new',
 			'salutation'     => $row['salutation'] ?? '',
 			'first_name'     => $row['first_name'],
 			'last_name'      => $row['last_name'],
