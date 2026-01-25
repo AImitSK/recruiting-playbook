@@ -260,16 +260,17 @@ class LicensePage {
 	 */
 	private function render_feature_comparison(): void {
 		$features = array(
-			'unlimited_jobs'      => __( 'Unbegrenzte Stellenanzeigen', 'recruiting-playbook' ),
-			'application_list'    => __( 'Bewerberliste', 'recruiting-playbook' ),
-			'kanban_board'        => __( 'Kanban-Board', 'recruiting-playbook' ),
-			'email_templates'     => __( 'E-Mail-Templates', 'recruiting-playbook' ),
-			'api_access'          => __( 'REST API Zugang', 'recruiting-playbook' ),
-			'webhooks'            => __( 'Webhooks', 'recruiting-playbook' ),
-			'design_settings'     => __( 'Design-Einstellungen', 'recruiting-playbook' ),
-			'user_roles'          => __( 'Benutzerrollen', 'recruiting-playbook' ),
-			'ai_job_generation'   => __( 'KI-Stellenanzeigen', 'recruiting-playbook' ),
-			'ai_text_improvement' => __( 'KI-Textverbesserung', 'recruiting-playbook' ),
+			'unlimited_jobs'               => __( 'Unbegrenzte Stellenanzeigen', 'recruiting-playbook' ),
+			'application_list'             => __( 'Bewerberliste', 'recruiting-playbook' ),
+			'kanban_board'                 => __( 'Kanban-Board', 'recruiting-playbook' ),
+			'advanced_applicant_management' => __( 'Erweitertes Bewerbermanagement', 'recruiting-playbook' ),
+			'email_templates'              => __( 'E-Mail-Templates', 'recruiting-playbook' ),
+			'api_access'                   => __( 'REST API Zugang', 'recruiting-playbook' ),
+			'webhooks'                     => __( 'Webhooks', 'recruiting-playbook' ),
+			'design_settings'              => __( 'Design-Einstellungen', 'recruiting-playbook' ),
+			'user_roles'                   => __( 'Benutzerrollen', 'recruiting-playbook' ),
+			'ai_job_generation'            => __( 'KI-Stellenanzeigen', 'recruiting-playbook' ),
+			'ai_text_improvement'          => __( 'KI-Textverbesserung', 'recruiting-playbook' ),
 		);
 
 		$tiers = array(

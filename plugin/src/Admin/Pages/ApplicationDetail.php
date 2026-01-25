@@ -22,6 +22,80 @@ use RecruitingPlaybook\Services\DocumentDownloadService;
 class ApplicationDetail {
 
 	/**
+	 * Prüft ob Pro-Features verfügbar sind
+	 *
+	 * @return bool
+	 */
+	private function hasProFeatures(): bool {
+		return function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' );
+	}
+
+	/**
+	 * Assets für Pro-Features laden
+	 *
+	 * @param int $application_id Bewerbungs-ID.
+	 */
+	public function enqueue_assets( int $application_id ): void {
+		// CSS für Bewerber-Detailseite.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-applicant.css';
+		if ( file_exists( $css_file ) ) {
+			wp_enqueue_style(
+				'rp-applicant',
+				RP_PLUGIN_URL . 'assets/dist/css/admin-applicant.css',
+				[ 'rp-admin' ],
+				RP_VERSION
+			);
+		}
+
+		// Pro-Features: React-Komponenten.
+		if ( $this->hasProFeatures() ) {
+			$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/index.js';
+			$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/index.asset.php';
+
+			if ( file_exists( $js_file ) && file_exists( $asset_file ) ) {
+				$assets = include $asset_file;
+
+				wp_enqueue_script(
+					'rp-applicant',
+					RP_PLUGIN_URL . 'assets/dist/js/index.js',
+					$assets['dependencies'] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
+					$assets['version'] ?? RP_VERSION,
+					true
+				);
+
+				wp_set_script_translations( 'rp-applicant', 'recruiting-playbook' );
+
+				// Konfiguration für React.
+				wp_localize_script(
+					'rp-applicant',
+					'rpApplicant',
+					[
+						'applicationId' => $application_id,
+						'apiUrl'        => rest_url( 'recruiting/v1/' ),
+						'nonce'         => wp_create_nonce( 'wp_rest' ),
+						'listUrl'       => admin_url( 'admin.php?page=rp-applications' ),
+						'i18n'          => [
+							'loadingApplication'      => __( 'Lade Bewerbung...', 'recruiting-playbook' ),
+							'errorLoadingApplication' => __( 'Fehler beim Laden der Bewerbung', 'recruiting-playbook' ),
+							'applicationNotFound'     => __( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ),
+							'errorChangingStatus'     => __( 'Fehler beim Ändern des Status', 'recruiting-playbook' ),
+							'backToList'              => __( 'Zurück zur Liste', 'recruiting-playbook' ),
+							'application'             => __( 'Bewerbung', 'recruiting-playbook' ),
+							'status'                  => __( 'Status', 'recruiting-playbook' ),
+							'rating'                  => __( 'Bewertung', 'recruiting-playbook' ),
+							'documents'               => __( 'Dokumente', 'recruiting-playbook' ),
+							'view'                    => __( 'Ansehen', 'recruiting-playbook' ),
+							'download'                => __( 'Herunterladen', 'recruiting-playbook' ),
+							'appliedOn'               => __( 'Beworben am', 'recruiting-playbook' ),
+							'retry'                   => __( 'Erneut versuchen', 'recruiting-playbook' ),
+						],
+					]
+				);
+			}
+		}
+	}
+
+	/**
 	 * Seite rendern
 	 */
 	public function render(): void {
@@ -31,6 +105,16 @@ class ApplicationDetail {
 			wp_die( esc_html__( 'Keine Bewerbung angegeben.', 'recruiting-playbook' ) );
 		}
 
+		// Assets laden.
+		$this->enqueue_assets( $id );
+
+		// Pro-Features: React-basierte Detailseite.
+		if ( $this->hasProFeatures() ) {
+			$this->renderProVersion( $id );
+			return;
+		}
+
+		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
 
@@ -456,5 +540,25 @@ class ApplicationDetail {
 			default:
 				return $action;
 		}
+	}
+
+	/**
+	 * Pro-Version der Detailseite rendern (React-basiert)
+	 *
+	 * @param int $id Application ID.
+	 */
+	private function renderProVersion( int $id ): void {
+		?>
+		<div class="wrap rp-applicant-detail-wrap">
+			<div id="rp-applicant-detail-root" data-application-id="<?php echo esc_attr( $id ); ?>">
+				<div class="rp-applicant-detail rp-applicant-detail--loading">
+					<div class="rp-applicant-detail__loading">
+						<span class="spinner is-active"></span>
+						<?php esc_html_e( 'Lade Bewerbung...', 'recruiting-playbook' ); ?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 }
