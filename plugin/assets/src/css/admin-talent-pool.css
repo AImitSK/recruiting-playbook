@@ -132,18 +132,24 @@
 	max-width: 400px;
 }
 
-.rp-talent-pool__search .dashicons {
+.rp-talent-pool__search > .dashicons {
 	position: absolute;
-	left: 12px;
+	left: 10px;
 	top: 50%;
 	transform: translateY(-50%);
 	color: #787c82;
 	pointer-events: none;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	z-index: 1;
 }
 
-.rp-talent-pool__search-input {
+.rp-talent-pool__filters .rp-talent-pool__search-input,
+input.rp-talent-pool__search-input {
 	width: 100%;
-	padding: 8px 36px;
+	padding: 8px 36px 8px 38px !important;
 	border: 1px solid #c3c4c7;
 	border-radius: 4px;
 	font-size: 14px;
@@ -181,9 +187,12 @@
 
 .rp-talent-pool__tag-filter {
 	min-width: 150px;
-	padding: 8px 12px;
+	padding: 0 12px !important;
 	border: 1px solid #c3c4c7;
 	border-radius: 4px;
+	height: 38px;
+	font-size: 14px;
+	line-height: 38px;
 }
 
 /* ==========================================================================
@@ -534,6 +543,7 @@
 	border-radius: 4px;
 	font-size: 13px;
 	color: #b26200;
+	margin-bottom: 24px;
 }
 
 .rp-talent-pool__gdpr-notice .dashicons {

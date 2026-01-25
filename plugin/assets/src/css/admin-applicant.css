@@ -257,6 +257,19 @@
 	gap: 8px;
 }
 
+.rp-notes-panel__header .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.rp-notes-panel__header .button .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+}
+
 .rp-notes-panel__count {
 	display: inline-flex;
 	align-items: center;

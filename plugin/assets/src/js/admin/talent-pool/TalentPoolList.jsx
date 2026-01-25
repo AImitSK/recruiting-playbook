@@ -135,18 +135,6 @@ export function TalentPoolList() {
 						{ i18n.subtitle || 'Vielversprechende Kandidaten für zukünftige Stellen' }
 					</p>
 				</div>
-
-				<div className="rp-talent-pool__stats">
-					<div className="rp-talent-pool__stat">
-						<span className="rp-talent-pool__stat-value">{ total }</span>
-						<span className="rp-talent-pool__stat-label">
-							{ total === 1
-								? ( i18n.candidate || 'Kandidat' )
-								: ( i18n.candidates || 'Kandidaten' )
-							}
-						</span>
-					</div>
-				</div>
 			</div>
 
 			{ /* Filter-Leiste */ }
@@ -190,6 +178,12 @@ export function TalentPoolList() {
 						) ) }
 					</select>
 				</div>
+			</div>
+
+			{ /* DSGVO-Hinweis */ }
+			<div className="rp-talent-pool__gdpr-notice">
+				<span className="dashicons dashicons-info-outline"></span>
+				{ i18n.gdprNotice || 'DSGVO-Hinweis: Kandidaten werden nach Ablauf automatisch aus dem Pool entfernt.' }
 			</div>
 
 			{ /* Inhalt */ }
@@ -253,12 +247,6 @@ export function TalentPoolList() {
 							</div>
 						</div>
 					) }
-
-					{ /* DSGVO-Hinweis */ }
-					<div className="rp-talent-pool__gdpr-notice">
-						<span className="dashicons dashicons-info-outline"></span>
-						{ i18n.gdprNotice || 'DSGVO-Hinweis: Kandidaten werden nach Ablauf automatisch aus dem Pool entfernt.' }
-					</div>
 				</>
 			) }
 
