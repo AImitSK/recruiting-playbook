@@ -208,6 +208,7 @@ CREATE TABLE {$prefix}rp_email_templates (
     category        varchar(50) DEFAULT 'custom',
     is_active       tinyint(1) DEFAULT 1,
     is_default      tinyint(1) DEFAULT 0,
+    is_system       tinyint(1) DEFAULT 0,
     variables       longtext DEFAULT NULL,
     settings        longtext DEFAULT NULL,
     created_by      bigint(20) unsigned DEFAULT NULL,
@@ -219,6 +220,7 @@ CREATE TABLE {$prefix}rp_email_templates (
     KEY category (category),
     KEY is_active (is_active),
     KEY is_default (is_default),
+    KEY is_system (is_system),
     KEY deleted_at (deleted_at)
 ) {$charset_collate};
 ```
@@ -236,6 +238,7 @@ CREATE TABLE {$prefix}rp_email_templates (
 | `category` | varchar | Kategorie: system, application, interview, offer, custom |
 | `is_active` | tinyint | Template aktiv/inaktiv |
 | `is_default` | tinyint | Standard-Template für diese Kategorie |
+| `is_system` | tinyint | System-Template (nicht löschbar, nur duplizierbar) |
 | `variables` | longtext | JSON: Verwendete Platzhalter |
 | `settings` | longtext | JSON: Zusätzliche Einstellungen |
 | `created_by` | bigint | FK zu wp_users |
@@ -287,6 +290,7 @@ CREATE TABLE {$prefix}rp_email_log (
     KEY recipient_email (recipient_email),
     KEY status (status),
     KEY sent_at (sent_at),
+    KEY scheduled_at (scheduled_at),
     KEY created_at (created_at)
 ) {$charset_collate};
 ```
@@ -2860,6 +2864,7 @@ class CreateEmailTables {
             category varchar(50) DEFAULT 'custom',
             is_active tinyint(1) DEFAULT 1,
             is_default tinyint(1) DEFAULT 0,
+            is_system tinyint(1) DEFAULT 0,
             variables longtext DEFAULT NULL,
             settings longtext DEFAULT NULL,
             created_by bigint(20) unsigned DEFAULT NULL,
@@ -2871,6 +2876,7 @@ class CreateEmailTables {
             KEY category (category),
             KEY is_active (is_active),
             KEY is_default (is_default),
+            KEY is_system (is_system),
             KEY deleted_at (deleted_at)
         ) {$charset};";
 
@@ -2905,6 +2911,7 @@ class CreateEmailTables {
             KEY recipient_email (recipient_email),
             KEY status (status),
             KEY sent_at (sent_at),
+            KEY scheduled_at (scheduled_at),
             KEY created_at (created_at)
         ) {$charset};";
 
