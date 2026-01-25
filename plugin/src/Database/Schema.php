@@ -82,6 +82,7 @@ class Schema {
 			candidate_id bigint(20) unsigned NOT NULL,
 			job_id bigint(20) unsigned NOT NULL,
 			status varchar(50) DEFAULT 'new',
+			kanban_position int(11) DEFAULT 0,
 			cover_letter longtext DEFAULT '',
 			custom_fields longtext DEFAULT '',
 			source varchar(50) DEFAULT 'website',
@@ -97,6 +98,7 @@ class Schema {
 			KEY candidate_id (candidate_id),
 			KEY job_id (job_id),
 			KEY status (status),
+			KEY kanban_sort (status, kanban_position),
 			KEY created_at (created_at)
 		) {$charset};";
 	}

@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
+use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\LicensePage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Services\GdprService;
@@ -73,6 +74,16 @@ class Menu {
 			'manage_options',
 			'rp-applications',
 			[ $this, 'renderApplications' ]
+		);
+
+		// Kanban-Board (Pro-Feature).
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Kanban-Board', 'recruiting-playbook' ),
+			$this->getKanbanMenuLabel(),
+			'manage_options',
+			'rp-kanban',
+			[ $this, 'renderKanban' ]
 		);
 
 		// Einstellungen.
@@ -697,6 +708,30 @@ class Menu {
 	public function renderLicense(): void {
 		$license_page = new LicensePage();
 		$license_page->render();
+	}
+
+	/**
+	 * Kanban-Board rendern
+	 */
+	public function renderKanban(): void {
+		$kanban_page = new KanbanBoard();
+		$kanban_page->render();
+	}
+
+	/**
+	 * Kanban-Menü-Label mit Lock-Icon für Free-User
+	 *
+	 * @return string Menü-Label.
+	 */
+	private function getKanbanMenuLabel(): string {
+		$label = __( 'Kanban-Board', 'recruiting-playbook' );
+
+		// Lock-Icon für Free-User.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'kanban_board' ) ) {
+			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
+		}
+
+		return $label;
 	}
 
 	/**

@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.1.0';
+	private const SCHEMA_VERSION = '1.2.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -39,11 +39,56 @@ class Migrator {
 		dbDelta( Schema::getDocumentsTableSql() );
 		dbDelta( Schema::getActivityLogTableSql() );
 
+		// Spezielle Migrationen für bestehende Installationen.
+		$this->runMigrations( $current_version );
+
 		// Version speichern.
 		update_option( self::SCHEMA_OPTION, self::SCHEMA_VERSION );
 
 		// Log erstellen.
 		$this->log( 'Database migrated to version ' . self::SCHEMA_VERSION );
+	}
+
+	/**
+	 * Spezielle Migrationen ausführen
+	 *
+	 * @param string $from_version Version von der migriert wird.
+	 */
+	private function runMigrations( string $from_version ): void {
+		// Migration 1.2.0: kanban_position Spalte hinzufügen.
+		if ( version_compare( $from_version, '1.2.0', '<' ) ) {
+			$this->migrateToKanbanPosition();
+		}
+	}
+
+	/**
+	 * Migration: kanban_position Spalte hinzufügen
+	 */
+	private function migrateToKanbanPosition(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['applications'];
+
+		// Prüfen ob Spalte bereits existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$column_exists = $wpdb->get_results(
+			$wpdb->prepare(
+				"SHOW COLUMNS FROM {$table} LIKE %s",
+				'kanban_position'
+			)
+		);
+
+		if ( empty( $column_exists ) ) {
+			// Spalte hinzufügen.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD COLUMN kanban_position int(11) DEFAULT 0 AFTER status" );
+
+			// Index hinzufügen.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD INDEX kanban_sort (status, kanban_position)" );
+
+			$this->log( 'Added kanban_position column to applications table' );
+		}
 	}
 
 	/**
