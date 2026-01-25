@@ -37,10 +37,10 @@ if ( ! empty( $settings['company_email'] ) ) {
 ?>
 <!-- Footer -->
 <tr>
-	<td style="background-color: #f8f9fa; padding: 30px 40px; text-align: center; border-top: 1px solid #e9ecef;">
+	<td style="background-color: #f8f9fa; padding: 30px 40px; text-align: center; border-top: 1px solid #e9ecef; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
 		<!-- Firmenname -->
-		<p style="margin: 0 0 15px 0; color: #6c757d; font-size: 14px; font-weight: 600;">
+		<p style="margin: 0 0 15px 0; padding: 0; color: #6c757d; font-size: 14px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 			<?php echo esc_html( $company ); ?>
 		</p>
 

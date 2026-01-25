@@ -22,6 +22,26 @@ class EmailRenderer {
 	private const TEMPLATE_DIR = 'templates/emails/';
 
 	/**
+	 * Erlaubte Template-Dateien (Whitelist gegen Path Traversal)
+	 */
+	private const ALLOWED_TEMPLATES = [
+		'base-layout.php',
+		'application-received.php',
+		'interview-invitation.php',
+		'rejection.php',
+		'offer-letter.php',
+		'hr-new-application.php',
+	];
+
+	/**
+	 * Free-Tier Templates (ohne Pro-Lizenz verfügbar)
+	 */
+	private const FREE_TEMPLATES = [
+		'application-received',
+		'hr-new-application',
+	];
+
+	/**
 	 * Verfügbare System-Templates
 	 */
 	private const SYSTEM_TEMPLATES = [
@@ -58,7 +78,30 @@ class EmailRenderer {
 		// Base-Layout rendern.
 		ob_start();
 		include $this->getTemplatePath( 'base-layout.php' );
-		return ob_get_clean();
+		$output = ob_get_clean();
+
+		// Fallback bei ob_get_clean() Fehler.
+		if ( false === $output ) {
+			return '';
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Prüfen ob Template in aktueller Lizenz-Stufe erlaubt ist
+	 *
+	 * @param string $template_slug Template-Slug.
+	 * @return bool True wenn erlaubt.
+	 */
+	private function isTemplateAllowed( string $template_slug ): bool {
+		// Pro-Feature Check: Alle Templates erlaubt.
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+			return true;
+		}
+
+		// Free-Tier: Nur Basis-Templates.
+		return in_array( $template_slug, self::FREE_TEMPLATES, true );
 	}
 
 	/**
@@ -70,6 +113,11 @@ class EmailRenderer {
 	 * @return string|null Vollständige HTML-E-Mail oder null wenn Template nicht existiert.
 	 */
 	public function renderSystemTemplate( string $template_slug, array $placeholders = [], array $options = [] ): ?string {
+		// Feature-Gate: Pro-Templates benötigen Lizenz.
+		if ( ! $this->isTemplateAllowed( $template_slug ) ) {
+			return null;
+		}
+
 		if ( ! isset( self::SYSTEM_TEMPLATES[ $template_slug ] ) ) {
 			return null;
 		}
@@ -195,7 +243,7 @@ class EmailRenderer {
 	}
 
 	/**
-	 * Template-Pfad ermitteln
+	 * Template-Pfad ermitteln (mit Path Traversal Schutz)
 	 *
 	 * Prüft zuerst im Theme (für Overrides), dann im Plugin.
 	 *
@@ -203,10 +251,30 @@ class EmailRenderer {
 	 * @return string Vollständiger Pfad.
 	 */
 	private function getTemplatePath( string $template ): string {
-		// Zuerst im Theme suchen (für Overrides).
+		// Security: Basename extrahieren (verhindert ../ Path Traversal).
+		$template = basename( $template );
+
+		// Security: Nur .php Dateien erlauben.
+		if ( ! str_ends_with( $template, '.php' ) ) {
+			$template .= '.php';
+		}
+
+		// Security: Whitelist-Check gegen erlaubte Templates.
+		if ( ! in_array( $template, self::ALLOWED_TEMPLATES, true ) ) {
+			// Fallback auf Base-Layout bei ungültigem Template.
+			return RP_PLUGIN_DIR . self::TEMPLATE_DIR . 'base-layout.php';
+		}
+
+		// Theme-Override prüfen.
 		$theme_path = get_stylesheet_directory() . '/recruiting-playbook/emails/' . $template;
-		if ( file_exists( $theme_path ) ) {
-			return $theme_path;
+		if ( file_exists( $theme_path ) && is_file( $theme_path ) ) {
+			// Security: Sicherstellen dass Pfad im erwarteten Verzeichnis liegt.
+			$real_theme_path = realpath( $theme_path );
+			$expected_dir    = realpath( get_stylesheet_directory() );
+
+			if ( $real_theme_path && $expected_dir && str_starts_with( $real_theme_path, $expected_dir ) ) {
+				return $theme_path;
+			}
 		}
 
 		// Fallback: Plugin-Verzeichnis.
@@ -214,7 +282,21 @@ class EmailRenderer {
 	}
 
 	/**
-	 * Platzhalter im Text ersetzen
+	 * Platzhalter-Wert für HTML-Kontext escapen
+	 *
+	 * @param mixed $value Platzhalter-Wert.
+	 * @return string Escaped Wert.
+	 */
+	private function escapePlaceholderValue( $value ): string {
+		if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
+			return '';
+		}
+
+		return esc_html( (string) $value );
+	}
+
+	/**
+	 * Platzhalter im Text ersetzen (mit XSS-Schutz)
 	 *
 	 * @param string $text         Text mit Platzhaltern.
 	 * @param array  $placeholders Platzhalter-Werte.
@@ -226,12 +308,10 @@ class EmailRenderer {
 		}
 
 		foreach ( $placeholders as $key => $value ) {
-			// Nur Strings ersetzen.
-			if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
-				continue;
-			}
+			// Security: Wert für HTML escapen (XSS-Schutz).
+			$escaped_value = $this->escapePlaceholderValue( $value );
 
-			$text = str_replace( '{' . $key . '}', (string) $value, $text );
+			$text = str_replace( '{' . $key . '}', $escaped_value, $text );
 		}
 
 		return $text;

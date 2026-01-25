@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 
 $placeholders = $placeholders ?? [];
 ?>
-<p><?php echo esc_html( $placeholders['anrede_formal'] ?? 'Sehr geehrte Bewerberin, sehr geehrter Bewerber' ); ?>,</p>
+<p><?php echo esc_html( $placeholders['anrede_formal'] ?? __( 'Sehr geehrte Bewerberin, sehr geehrter Bewerber', 'recruiting-playbook' ) ); ?>,</p>
 
 <p>
 	<?php

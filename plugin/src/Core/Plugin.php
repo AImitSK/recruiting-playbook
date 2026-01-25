@@ -107,9 +107,58 @@ final class Plugin {
 	private function loadActionScheduler(): void {
 		$action_scheduler_file = RP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
 
-		if ( file_exists( $action_scheduler_file ) ) {
-			require_once $action_scheduler_file;
+		if ( ! file_exists( $action_scheduler_file ) ) {
+			// Admin-Notice für fehlende Dependency.
+			add_action( 'admin_notices', [ $this, 'showActionSchedulerMissingNotice' ] );
+			return;
 		}
+
+		require_once $action_scheduler_file;
+
+		// Verifizieren dass Action Scheduler funktioniert.
+		if ( ! function_exists( 'as_schedule_single_action' ) ) {
+			add_action( 'admin_notices', [ $this, 'showActionSchedulerBrokenNotice' ] );
+		}
+	}
+
+	/**
+	 * Admin-Notice: Action Scheduler fehlt
+	 */
+	public function showActionSchedulerMissingNotice(): void {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+		?>
+		<div class="notice notice-error">
+			<p>
+				<strong><?php esc_html_e( 'Recruiting Playbook:', 'recruiting-playbook' ); ?></strong>
+				<?php
+				printf(
+					/* translators: %s: composer install command */
+					esc_html__( 'Action Scheduler Bibliothek fehlt. Bitte führen Sie %s im Plugin-Verzeichnis aus.', 'recruiting-playbook' ),
+					'<code>composer install</code>'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Admin-Notice: Action Scheduler defekt
+	 */
+	public function showActionSchedulerBrokenNotice(): void {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+		?>
+		<div class="notice notice-warning">
+			<p>
+				<strong><?php esc_html_e( 'Recruiting Playbook:', 'recruiting-playbook' ); ?></strong>
+				<?php esc_html_e( 'Action Scheduler wurde geladen, aber die Funktionen sind nicht verfügbar. E-Mail-Queue möglicherweise nicht funktional.', 'recruiting-playbook' ); ?>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**

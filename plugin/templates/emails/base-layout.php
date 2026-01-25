@@ -91,12 +91,12 @@ $text_color      = apply_filters( 'rp_email_text_color', '#333333' );
 	</div>
 
 	<!-- Wrapper-Tabelle -->
-	<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4;">
+	<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f4f4; margin: 0; padding: 0;">
 		<tr>
-			<td align="center" style="padding: 20px 10px;">
+			<td align="center" style="padding: 20px 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
 				<!-- E-Mail Container -->
-				<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="email-container" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+				<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="email-container" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
 
 					<?php
 					// Header einbinden.
@@ -105,11 +105,15 @@ $text_color      = apply_filters( 'rp_email_text_color', '#333333' );
 
 					<!-- Content -->
 					<tr>
-						<td style="padding: 30px 40px; color: <?php echo esc_attr( $text_color ); ?>; font-size: 16px; line-height: 1.6;">
+						<td style="padding: 30px 40px; color: <?php echo esc_attr( $text_color ); ?>; font-size: 16px; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 							<?php
-							// Der eigentliche E-Mail-Inhalt.
-							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is already escaped by caller
-							echo $content;
+							/**
+							 * E-Mail-Inhalt ausgeben.
+							 *
+							 * Security: wp_kses_post() erlaubt sichere HTML-Tags für E-Mail-Content.
+							 * Platzhalter werden bereits in EmailRenderer::replacePlaceholders() escaped.
+							 */
+							echo wp_kses_post( $content );
 							?>
 						</td>
 					</tr>
