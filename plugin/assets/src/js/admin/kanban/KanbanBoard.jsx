@@ -23,6 +23,25 @@ import { KanbanCard } from './KanbanCard';
 import { useApplications } from './hooks/useApplications';
 
 /**
+ * Debounce-Funktion für verzögerte Ausführung
+ *
+ * @param {Function} func     Funktion zum Ausführen
+ * @param {number}   wait     Verzögerung in ms
+ * @return {Function} Debounced Funktion
+ */
+function debounce( func, wait ) {
+	let timeout;
+	return function executedFunction( ...args ) {
+		const later = () => {
+			clearTimeout( timeout );
+			func( ...args );
+		};
+		clearTimeout( timeout );
+		timeout = setTimeout( later, wait );
+	};
+}
+
+/**
  * Benutzerdefinierte Kollisionserkennung
  * Prüft zuerst Pointer-Position, dann Rechteck-Überschneidung
  */
@@ -84,6 +103,12 @@ export function KanbanBoard() {
 		}
 	}, [] );
 
+	// Debounced Search Handler (300ms Verzögerung für bessere Performance)
+	const debouncedSetSearchTerm = useMemo(
+		() => debounce( ( value ) => setSearchTerm( value ), 300 ),
+		[]
+	);
+
 	// Filter aus Toolbar synchronisieren
 	useEffect( () => {
 		const jobSelect = document.getElementById( 'rp-kanban-job-filter' );
@@ -91,7 +116,7 @@ export function KanbanBoard() {
 		const refreshBtn = document.getElementById( 'rp-kanban-refresh' );
 
 		const handleJobChange = ( e ) => setJobFilter( e.target.value );
-		const handleSearch = ( e ) => setSearchTerm( e.target.value );
+		const handleSearch = ( e ) => debouncedSetSearchTerm( e.target.value );
 		const handleRefresh = () => refetch();
 
 		if ( jobSelect ) {
@@ -115,7 +140,7 @@ export function KanbanBoard() {
 				refreshBtn.removeEventListener( 'click', handleRefresh );
 			}
 		};
-	}, [ refetch ] );
+	}, [ refetch, debouncedSetSearchTerm ] );
 
 	// Gefilterte Bewerbungen
 	const filteredApplications = applications.filter( ( app ) => {

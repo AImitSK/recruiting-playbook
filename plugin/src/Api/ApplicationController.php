@@ -903,6 +903,18 @@ class ApplicationController extends WP_REST_Controller {
 			);
 		}
 
+		// Rate Limiting: Max 1 Request pro Sekunde pro User (DoS-Schutz).
+		$user_id       = get_current_user_id();
+		$transient_key = "rp_reorder_limit_{$user_id}";
+		if ( get_transient( $transient_key ) ) {
+			return new WP_Error(
+				'too_many_requests',
+				__( 'Zu viele Anfragen. Bitte warten Sie kurz.', 'recruiting-playbook' ),
+				[ 'status' => 429 ]
+			);
+		}
+		set_transient( $transient_key, true, 1 );
+
 		$status    = $request->get_param( 'status' );
 		$positions = $request->get_param( 'positions' );
 

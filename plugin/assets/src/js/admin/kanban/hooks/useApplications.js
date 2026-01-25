@@ -4,7 +4,7 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -16,6 +16,9 @@ export function useApplications() {
 	const [ applications, setApplications ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
+
+	// Ref für True Rollback (speichert vorherigen Zustand vor optimistic update)
+	const previousApplicationsRef = useRef( null );
 
 	/**
 	 * Bewerbungen vom Server laden
@@ -70,6 +73,9 @@ export function useApplications() {
 	 */
 	const updateStatus = useCallback(
 		async ( id, newStatus, newPosition = 0 ) => {
+			// Snapshot für True Rollback speichern
+			previousApplicationsRef.current = [ ...applications ];
+
 			// Optimistic Update
 			setApplications( ( prev ) =>
 				prev.map( ( app ) =>
@@ -94,17 +100,23 @@ export function useApplications() {
 					},
 				} );
 
-				// Optional: Erfolgsmeldung anzeigen
+				// Erfolgsmeldung anzeigen
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
 					i18n.statusChanged || 'Status geändert',
 					'success'
 				);
+
+				// Snapshot zurücksetzen nach Erfolg
+				previousApplicationsRef.current = null;
 			} catch ( err ) {
 				console.error( 'Error updating status:', err );
 
-				// Rollback bei Fehler
-				fetchApplications();
+				// True Rollback: Vorherigen Zustand wiederherstellen (kein Server-Reload)
+				if ( previousApplicationsRef.current ) {
+					setApplications( previousApplicationsRef.current );
+					previousApplicationsRef.current = null;
+				}
 
 				// Fehlermeldung anzeigen
 				const i18n = window.rpKanban?.i18n || {};
@@ -114,7 +126,7 @@ export function useApplications() {
 				);
 			}
 		},
-		[ fetchApplications ]
+		[ applications ]
 	);
 
 	/**
@@ -134,6 +146,9 @@ export function useApplications() {
 			if ( oldIndex === -1 || newIndex === -1 || oldIndex === newIndex ) {
 				return;
 			}
+
+			// Snapshot für True Rollback speichern
+			previousApplicationsRef.current = [ ...applications ];
 
 			// Neue Reihenfolge berechnen (arrayMove-Logik)
 			const newOrder = [ ...columnItems ];
@@ -167,11 +182,17 @@ export function useApplications() {
 						positions: updates,
 					},
 				} );
+
+				// Snapshot zurücksetzen nach Erfolg
+				previousApplicationsRef.current = null;
 			} catch ( err ) {
 				console.error( 'Error reordering:', err );
 
-				// Rollback bei Fehler
-				fetchApplications();
+				// True Rollback: Vorherigen Zustand wiederherstellen
+				if ( previousApplicationsRef.current ) {
+					setApplications( previousApplicationsRef.current );
+					previousApplicationsRef.current = null;
+				}
 
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
@@ -180,7 +201,7 @@ export function useApplications() {
 				);
 			}
 		},
-		[ fetchApplications ]
+		[ applications ]
 	);
 
 	/**
@@ -200,6 +221,9 @@ export function useApplications() {
 			if ( ! app ) {
 				return;
 			}
+
+			// Snapshot für True Rollback speichern
+			previousApplicationsRef.current = [ ...applications ];
 
 			// An der richtigen Position einfügen
 			newItems.splice( targetPosition, 0, { ...app, status: newStatus } );
@@ -259,11 +283,17 @@ export function useApplications() {
 					i18n.statusChanged || 'Status geändert',
 					'success'
 				);
+
+				// Snapshot zurücksetzen nach Erfolg
+				previousApplicationsRef.current = null;
 			} catch ( err ) {
 				console.error( 'Error moving application:', err );
 
-				// Rollback bei Fehler
-				fetchApplications();
+				// True Rollback: Vorherigen Zustand wiederherstellen
+				if ( previousApplicationsRef.current ) {
+					setApplications( previousApplicationsRef.current );
+					previousApplicationsRef.current = null;
+				}
 
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
@@ -272,7 +302,7 @@ export function useApplications() {
 				);
 			}
 		},
-		[ applications, fetchApplications ]
+		[ applications ]
 	);
 
 	return {

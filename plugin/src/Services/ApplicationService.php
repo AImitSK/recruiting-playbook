@@ -325,7 +325,7 @@ class ApplicationService {
 		$page     = max( (int) ( $args['page'] ?? 1 ), 1 );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		// Query mit Dokumentenanzahl als Subquery.
+		// Query mit Dokumentenanzahl via LEFT JOIN (effizienter als Subquery).
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
 		$results = $wpdb->get_results(
@@ -339,10 +339,12 @@ class ApplicationService {
 					c.first_name,
 					c.last_name,
 					c.email,
-					(SELECT COUNT(*) FROM {$documents_table} d WHERE d.application_id = a.id) AS documents_count
+					COUNT(d.id) AS documents_count
 				FROM {$table} a
 				LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
+				LEFT JOIN {$documents_table} d ON d.application_id = a.id
 				WHERE {$where_clause}
+				GROUP BY a.id, a.job_id, a.status, a.kanban_position, a.created_at, c.first_name, c.last_name, c.email
 				ORDER BY {$orderby} {$order}
 				LIMIT %d OFFSET %d",
 				...array_merge( $values, [ $per_page, $offset ] )
