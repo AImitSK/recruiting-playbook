@@ -38,6 +38,16 @@ class LicenseManager {
 	private const INTEGRITY_KEY = 'rp_license_integrity';
 
 	/**
+	 * Transient key for lock mechanism
+	 */
+	private const LOCK_KEY = 'rp_license_check_lock';
+
+	/**
+	 * Lock duration in seconds
+	 */
+	private const LOCK_DURATION = 30;
+
+	/**
 	 * Cache duration in seconds (24 hours)
 	 */
 	private const CACHE_DURATION = DAY_IN_SECONDS;
@@ -111,6 +121,19 @@ class LicenseManager {
 		// 5. Integritätssignatur speichern.
 		$signature = $this->create_integrity_signature( $license_data );
 		update_option( self::INTEGRITY_KEY, $signature );
+
+		// 5b. Sofort verifizieren, dass Speicherung korrekt war.
+		if ( ! $this->verify_integrity( $license_data ) ) {
+			// Speicherung fehlgeschlagen - aufräumen.
+			delete_option( self::OPTION_KEY );
+			delete_option( self::INTEGRITY_KEY );
+
+			return array(
+				'success' => false,
+				'error'   => 'integrity_check_failed',
+				'message' => __( 'Lizenz konnte nicht sicher gespeichert werden. Bitte versuchen Sie es erneut.', 'recruiting-playbook' ),
+			);
+		}
 
 		// 6. Cache leeren.
 		delete_transient( self::CACHE_KEY );
@@ -212,6 +235,13 @@ class LicenseManager {
 		// Integritäts-Check.
 		if ( ! $this->verify_integrity( $license ) ) {
 			do_action( 'rp_license_tampering_detected', $license );
+
+			// Bei Manipulation sofort alle Lizenzdaten löschen.
+			delete_option( self::OPTION_KEY );
+			delete_option( self::INTEGRITY_KEY );
+			delete_transient( self::CACHE_KEY );
+			$this->license_data = null;
+
 			return false;
 		}
 
@@ -243,6 +273,22 @@ class LicenseManager {
 			return false;
 		}
 
+		// Lock-Mechanismus: Verhindert Race Conditions bei gleichzeitigen Requests.
+		if ( get_transient( self::LOCK_KEY ) ) {
+			// Ein anderer Request führt bereits den Check durch.
+			// Kurz warten und Cache erneut prüfen.
+			usleep( 500000 ); // 0.5 Sekunden.
+			$cache = get_transient( self::CACHE_KEY );
+			if ( false !== $cache ) {
+				return $cache['valid'] ?? false;
+			}
+			// Fallback: Lizenz als gültig annehmen während Lock aktiv.
+			return true;
+		}
+
+		// Lock setzen.
+		set_transient( self::LOCK_KEY, true, self::LOCK_DURATION );
+
 		// Remote-Check versuchen.
 		$validation = $this->validate_remote( $license['key'] );
 
@@ -260,6 +306,9 @@ class LicenseManager {
 			// Last check aktualisieren.
 			$license['last_check'] = time();
 			update_option( self::OPTION_KEY, $license );
+
+			// Lock freigeben.
+			delete_transient( self::LOCK_KEY );
 
 			return true;
 		}
@@ -280,6 +329,9 @@ class LicenseManager {
 					HOUR_IN_SECONDS
 				);
 
+				// Lock freigeben.
+				delete_transient( self::LOCK_KEY );
+
 				return true;
 			}
 
@@ -294,6 +346,9 @@ class LicenseManager {
 				HOUR_IN_SECONDS
 			);
 
+			// Lock freigeben.
+			delete_transient( self::LOCK_KEY );
+
 			return false;
 		}
 
@@ -306,6 +361,9 @@ class LicenseManager {
 			),
 			self::CACHE_DURATION
 		);
+
+		// Lock freigeben.
+		delete_transient( self::LOCK_KEY );
 
 		return false;
 	}
@@ -325,6 +383,8 @@ class LicenseManager {
 	/**
 	 * Checksum validieren
 	 *
+	 * Verwendet HMAC-SHA256 für kryptographisch sichere Validierung.
+	 *
 	 * @param string $key Lizenzschlüssel.
 	 * @return bool True wenn Checksum gültig.
 	 */
@@ -335,10 +395,27 @@ class LicenseManager {
 		$checksum = substr( $key, -4 );
 		$payload  = substr( $key, 0, -5 ); // Ohne "-XXXX".
 
-		// Einfache Checksum: CRC32 gekürzt.
-		$calculated = strtoupper( substr( dechex( crc32( $payload ) ), 0, 4 ) );
+		// HMAC-SHA256 Checksum (erste 4 Hex-Zeichen).
+		$secret     = $this->get_license_secret();
+		$calculated = strtoupper( substr( hash_hmac( 'sha256', $payload, $secret ), 0, 4 ) );
 
-		return $checksum === $calculated;
+		return hash_equals( $checksum, $calculated );
+	}
+
+	/**
+	 * License Secret für Checksum-Berechnung
+	 *
+	 * Kann über Konstante RP_LICENSE_SECRET in wp-config.php definiert werden.
+	 *
+	 * @return string Secret für HMAC.
+	 */
+	private function get_license_secret(): string {
+		if ( defined( 'RP_LICENSE_SECRET' ) && RP_LICENSE_SECRET ) {
+			return RP_LICENSE_SECRET;
+		}
+
+		// Fallback für Entwicklung (sollte in Produktion immer definiert sein).
+		return 'rp-default-license-secret-change-in-production';
 	}
 
 	/**

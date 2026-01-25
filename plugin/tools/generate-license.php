@@ -15,6 +15,9 @@ if ( php_sapi_name() !== 'cli' ) {
 	die( 'Dieses Tool kann nur über die Kommandozeile ausgeführt werden.' . PHP_EOL );
 }
 
+// License Secret (muss mit RP_LICENSE_SECRET in wp-config.php übereinstimmen).
+$license_secret = getenv( 'RP_LICENSE_SECRET' ) ?: 'rp-default-license-secret-change-in-production';
+
 // Tier aus Argument lesen.
 $tier = strtoupper( $argv[1] ?? '' );
 
@@ -51,10 +54,11 @@ function generate_random_block(): string {
 /**
  * Generiert einen vollständigen Lizenzschlüssel
  *
- * @param string $tier Tier-Name (PRO, AI, BUNDLE).
+ * @param string $tier   Tier-Name (PRO, AI, BUNDLE).
+ * @param string $secret License Secret für HMAC.
  * @return string Vollständiger Lizenzschlüssel.
  */
-function generate_license_key( string $tier ): string {
+function generate_license_key( string $tier, string $secret ): string {
 	$prefix = "RP-{$tier}";
 
 	// 4 zufällige Blöcke.
@@ -65,8 +69,8 @@ function generate_license_key( string $tier ): string {
 
 	$payload = $prefix . '-' . implode( '-', $blocks );
 
-	// Checksum berechnen (CRC32, erste 4 Hex-Zeichen).
-	$checksum = strtoupper( substr( dechex( crc32( $payload ) ), 0, 4 ) );
+	// HMAC-SHA256 Checksum (erste 4 Hex-Zeichen).
+	$checksum = strtoupper( substr( hash_hmac( 'sha256', $payload, $secret ), 0, 4 ) );
 
 	return $payload . '-' . $checksum;
 }
@@ -74,10 +78,11 @@ function generate_license_key( string $tier ): string {
 /**
  * Validiert einen Lizenzschlüssel
  *
- * @param string $key Lizenzschlüssel.
+ * @param string $key    Lizenzschlüssel.
+ * @param string $secret License Secret für HMAC.
  * @return bool True wenn gültig.
  */
-function validate_license_key( string $key ): bool {
+function validate_license_key( string $key, string $secret ): bool {
 	// Format prüfen.
 	$pattern = '/^RP-(PRO|AI|BUNDLE)-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/';
 
@@ -85,20 +90,20 @@ function validate_license_key( string $key ): bool {
 		return false;
 	}
 
-	// Checksum prüfen.
+	// HMAC-SHA256 Checksum prüfen.
 	$checksum = substr( $key, -4 );
 	$payload  = substr( $key, 0, -5 );
 
-	$calculated = strtoupper( substr( dechex( crc32( $payload ) ), 0, 4 ) );
+	$calculated = strtoupper( substr( hash_hmac( 'sha256', $payload, $secret ), 0, 4 ) );
 
-	return $checksum === $calculated;
+	return hash_equals( $checksum, $calculated );
 }
 
 // Lizenzschlüssel generieren.
-$license_key = generate_license_key( $tier );
+$license_key = generate_license_key( $tier, $license_secret );
 
 // Validierung testen.
-$is_valid = validate_license_key( $license_key );
+$is_valid = validate_license_key( $license_key, $license_secret );
 
 // Ausgabe.
 echo PHP_EOL;
@@ -116,13 +121,13 @@ echo PHP_EOL;
 
 // Optional: Mehrere Schlüssel generieren.
 if ( isset( $argv[2] ) && is_numeric( $argv[2] ) ) {
-	$count = min( (int) $argv[2], 100 );
+	$count = max( 1, min( (int) $argv[2], 100 ) ); // Min 1, Max 100.
 
 	echo 'Weitere Schlüssel (' . $count . '):' . PHP_EOL;
 	echo '----------------------------------------' . PHP_EOL;
 
 	for ( $i = 0; $i < $count; $i++ ) {
-		echo generate_license_key( $tier ) . PHP_EOL;
+		echo generate_license_key( $tier, $license_secret ) . PHP_EOL;
 	}
 
 	echo PHP_EOL;
