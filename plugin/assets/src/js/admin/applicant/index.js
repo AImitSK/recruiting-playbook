@@ -6,6 +6,9 @@
  * @package RecruitingPlaybook
  */
 
+// Hauptkomponente
+export { ApplicantDetail } from './ApplicantDetail';
+
 // Notizen
 export { NotesPanel } from './NotesPanel';
 export { NoteEditor } from './NoteEditor';

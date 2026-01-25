@@ -1,0 +1,1083 @@
+/**
+ * Applicant Management Styles
+ *
+ * Styles für Bewerber-Detail, Notizen, Bewertungen, Timeline, Talent-Pool
+ *
+ * @package RecruitingPlaybook
+ */
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.rp-applicant-detail {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.rp-applicant-detail--loading,
+.rp-applicant-detail--error,
+.rp-applicant-detail--not-found {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 300px;
+	gap: 16px;
+}
+
+.rp-applicant-detail__header {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	margin-bottom: 24px;
+	flex-wrap: wrap;
+}
+
+.rp-applicant-detail__title {
+	flex: 1;
+	margin: 0;
+	font-size: 23px;
+	font-weight: 400;
+}
+
+.rp-applicant-detail__actions {
+	display: flex;
+	gap: 8px;
+}
+
+.rp-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	text-decoration: none;
+	color: #2271b1;
+}
+
+.rp-back-link:hover {
+	color: #135e96;
+}
+
+.rp-applicant-detail__layout {
+	display: grid;
+	grid-template-columns: 1fr 380px;
+	gap: 24px;
+}
+
+@media (max-width: 1200px) {
+	.rp-applicant-detail__layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.rp-applicant-detail__main {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.rp-applicant-detail__sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+
+.rp-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px;
+}
+
+.rp-card__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 16px 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.rp-card__title .dashicons {
+	color: #787c82;
+}
+
+/* ==========================================================================
+   Candidate Info
+   ========================================================================== */
+
+.rp-candidate-info__header {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.rp-candidate-info__avatar {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background: #2271b1;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+	font-weight: 500;
+	flex-shrink: 0;
+}
+
+.rp-candidate-info__details {
+	flex: 1;
+	min-width: 0;
+}
+
+.rp-candidate-info__name {
+	margin: 0 0 8px 0;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.rp-candidate-info__contact {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.rp-candidate-info__email,
+.rp-candidate-info__phone {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.rp-candidate-info__email:hover,
+.rp-candidate-info__phone:hover {
+	color: #135e96;
+}
+
+.rp-candidate-info__status {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 0;
+	border-top: 1px solid #f0f0f1;
+	border-bottom: 1px solid #f0f0f1;
+	margin-bottom: 16px;
+}
+
+.rp-candidate-info__status label {
+	font-weight: 600;
+}
+
+.rp-status-select {
+	min-width: 180px;
+	border-width: 2px;
+}
+
+.rp-candidate-info__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.rp-candidate-info__meta-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: #50575e;
+	font-size: 13px;
+}
+
+.rp-candidate-info__meta-item .dashicons {
+	color: #787c82;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ==========================================================================
+   Documents
+   ========================================================================== */
+
+.rp-documents-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.rp-document {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px;
+	background: #f6f7f7;
+	border-radius: 4px;
+}
+
+.rp-document .dashicons {
+	color: #787c82;
+}
+
+.rp-document__name {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.rp-document__actions {
+	display: flex;
+	gap: 4px;
+}
+
+/* ==========================================================================
+   Notes Panel
+   ========================================================================== */
+
+.rp-notes-panel__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.rp-notes-panel__header h3 {
+	flex: 1;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rp-notes-panel__count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	background: #f0f0f1;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.rp-notes-panel__loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 40px;
+	color: #787c82;
+}
+
+.rp-notes-panel__empty {
+	text-align: center;
+	padding: 40px 20px;
+	color: #787c82;
+}
+
+.rp-notes-panel__empty .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+	opacity: 0.5;
+}
+
+.rp-notes-panel__new {
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.rp-notes-panel__list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* Note Item */
+.rp-note {
+	padding: 16px;
+	background: #f6f7f7;
+	border-radius: 4px;
+	border-left: 3px solid #2271b1;
+}
+
+.rp-note--private {
+	border-left-color: #dba617;
+	background: #fef8e8;
+}
+
+.rp-note--editing {
+	background: #fff;
+	border: 1px solid #2271b1;
+}
+
+.rp-note__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.rp-note__avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.rp-note__author {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1;
+}
+
+.rp-note__author-name {
+	font-weight: 600;
+}
+
+.rp-note__private-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	background: #dba617;
+	color: #fff;
+	border-radius: 3px;
+	font-size: 11px;
+}
+
+.rp-note__private-badge .dashicons {
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
+}
+
+.rp-note__meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #787c82;
+	font-size: 12px;
+}
+
+.rp-note__content {
+	line-height: 1.6;
+}
+
+.rp-note__content p:first-child {
+	margin-top: 0;
+}
+
+.rp-note__content p:last-child {
+	margin-bottom: 0;
+}
+
+.rp-note__actions {
+	display: flex;
+	gap: 12px;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rp-note__actions .button-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+}
+
+.rp-note__delete-confirm {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+}
+
+/* Note Editor */
+.rp-note-editor__textarea {
+	width: 100%;
+	min-height: 100px;
+	padding: 12px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	resize: vertical;
+}
+
+.rp-note-editor__textarea:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.rp-note-editor__footer {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.rp-note-editor__options {
+	flex: 1;
+}
+
+.rp-note-editor__private {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.rp-note-editor__actions {
+	display: flex;
+	gap: 8px;
+}
+
+.rp-note-editor__hint {
+	width: 100%;
+	font-size: 12px;
+	color: #787c82;
+}
+
+.rp-note-editor__hint kbd {
+	display: inline-block;
+	padding: 2px 6px;
+	background: #f0f0f1;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	font-family: inherit;
+	font-size: 11px;
+}
+
+/* ==========================================================================
+   Rating Stars
+   ========================================================================== */
+
+.rp-rating--loading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #787c82;
+}
+
+.rp-rating-stars {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.rp-rating-star {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: #c3c4c7;
+	transition: transform 0.1s;
+}
+
+.rp-rating-star:hover:not(:disabled) {
+	transform: scale(1.2);
+}
+
+.rp-rating-star.is-filled,
+.rp-rating-star.is-hover {
+	color: #f0b849;
+}
+
+.rp-rating-star:disabled {
+	cursor: default;
+}
+
+.rp-rating-star .dashicons {
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
+}
+
+.rp-rating-average {
+	margin-left: 8px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.rp-rating-count {
+	font-weight: normal;
+	color: #787c82;
+	margin-left: 4px;
+}
+
+/* Rating Tabs */
+.rp-rating-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-bottom: 16px;
+}
+
+.rp-rating-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.rp-rating-tab:hover {
+	background: #f0f0f1;
+}
+
+.rp-rating-tab.is-active {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}
+
+.rp-rating-tab-value {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	background: rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+	font-size: 11px;
+}
+
+.rp-rating-tab.is-active .rp-rating-tab-value {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+/* Rating Categories */
+.rp-rating-category {
+	display: none;
+	padding: 16px;
+	background: #f6f7f7;
+	border-radius: 4px;
+}
+
+.rp-rating-category.is-visible {
+	display: block;
+}
+
+.rp-rating-category-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+	font-weight: 600;
+}
+
+/* Rating Distribution */
+.rp-rating-distribution {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.rp-rating-distribution h4 {
+	margin: 0 0 12px 0;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.rp-rating-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.rp-rating-bar-label {
+	width: 40px;
+	font-size: 12px;
+	text-align: right;
+}
+
+.rp-rating-bar-label .dashicons {
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
+	color: #f0b849;
+}
+
+.rp-rating-bar-track {
+	flex: 1;
+	height: 8px;
+	background: #f0f0f1;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.rp-rating-bar-fill {
+	height: 100%;
+	background: #f0b849;
+	border-radius: 4px;
+	transition: width 0.3s;
+}
+
+.rp-rating-bar-count {
+	width: 24px;
+	font-size: 12px;
+	color: #787c82;
+}
+
+/* Rating Badge */
+.rp-rating-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 6px;
+	background: #fef8e8;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #b26200;
+}
+
+.rp-rating-badge .dashicons {
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
+	color: #f0b849;
+}
+
+/* ==========================================================================
+   Timeline
+   ========================================================================== */
+
+.rp-timeline--loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 200px;
+	color: #787c82;
+}
+
+.rp-timeline__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.rp-timeline__header h3 {
+	flex: 1;
+	margin: 0;
+}
+
+.rp-timeline__refresh {
+	background: none;
+	border: none;
+	padding: 4px;
+	cursor: pointer;
+	color: #787c82;
+	border-radius: 4px;
+}
+
+.rp-timeline__refresh:hover {
+	background: #f0f0f1;
+	color: #2271b1;
+}
+
+.rp-timeline__refresh .is-spinning {
+	animation: rp-spin 1s linear infinite;
+}
+
+@keyframes rp-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.rp-timeline__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-bottom: 16px;
+}
+
+.rp-timeline__filter {
+	padding: 6px 12px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 20px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.rp-timeline__filter:hover {
+	background: #f0f0f1;
+}
+
+.rp-timeline__filter.is-active {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}
+
+.rp-timeline__empty {
+	text-align: center;
+	padding: 40px 20px;
+	color: #787c82;
+}
+
+.rp-timeline__empty .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+	opacity: 0.5;
+}
+
+.rp-timeline__group {
+	margin-bottom: 24px;
+}
+
+.rp-timeline__date {
+	font-size: 12px;
+	font-weight: 600;
+	color: #787c82;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.rp-timeline__items {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.rp-timeline__load-more {
+	text-align: center;
+	margin-top: 16px;
+}
+
+/* Timeline Item */
+.rp-timeline-item {
+	display: flex;
+	gap: 12px;
+	padding: 12px;
+	background: #f6f7f7;
+	border-radius: 4px;
+	border-left: 3px solid var(--item-color, #787c82);
+}
+
+.rp-timeline-item__icon {
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--item-color, #787c82);
+	color: #fff;
+	border-radius: 50%;
+}
+
+.rp-timeline-item__icon .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.rp-timeline-item__content {
+	flex: 1;
+	min-width: 0;
+}
+
+.rp-timeline-item__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.rp-timeline-item__avatar {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.rp-timeline-item__message {
+	flex: 1;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.rp-timeline-item__time {
+	font-size: 11px;
+	color: #787c82;
+	white-space: nowrap;
+}
+
+.rp-timeline-item__detail {
+	margin-top: 8px;
+	padding: 8px;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 4px;
+	font-size: 12px;
+}
+
+/* Status Change */
+.rp-timeline-status-change {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rp-status-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.rp-status-badge[data-status="new"] { background: #e6f2ff; color: #2271b1; }
+.rp-status-badge[data-status="screening"] { background: #fef8e8; color: #b26200; }
+.rp-status-badge[data-status="interview"] { background: #f3e8ff; color: #7c3aed; }
+.rp-status-badge[data-status="offer"] { background: #e6ffed; color: #00a32a; }
+.rp-status-badge[data-status="hired"] { background: #e6ffed; color: #00a32a; }
+.rp-status-badge[data-status="rejected"] { background: #ffe6e6; color: #d63638; }
+.rp-status-badge[data-status="withdrawn"] { background: #f0f0f1; color: #787c82; }
+
+/* Note Preview */
+.rp-timeline-note-preview {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	font-style: italic;
+	color: #50575e;
+}
+
+.rp-timeline-note-preview .dashicons {
+	flex-shrink: 0;
+	color: #787c82;
+}
+
+/* Rating */
+.rp-timeline-rating {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rp-timeline-rating .dashicons {
+	color: #f0b849;
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+.rp-timeline-rating-old {
+	color: #787c82;
+	text-decoration: line-through;
+}
+
+.rp-timeline-rating-new {
+	font-weight: 600;
+}
+
+.rp-timeline-rating-category {
+	color: #787c82;
+}
+
+/* ==========================================================================
+   Talent Pool
+   ========================================================================== */
+
+.rp-talent-pool-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.rp-talent-pool-btn:hover:not(:disabled) {
+	background: #f0f0f1;
+	border-color: #8c8f94;
+}
+
+.rp-talent-pool-btn.is-in-pool {
+	background: #e6f2ff;
+	border-color: #2271b1;
+	color: #2271b1;
+}
+
+.rp-talent-pool-btn:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.rp-talent-pool-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	background: #e6f2ff;
+	border-radius: 50%;
+	color: #2271b1;
+}
+
+.rp-talent-pool-badge .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* ==========================================================================
+   Modal
+   ========================================================================== */
+
+.rp-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	padding: 20px;
+}
+
+.rp-modal {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	max-width: 500px;
+	width: 100%;
+	max-height: 90vh;
+	overflow: auto;
+}
+
+.rp-modal--small {
+	max-width: 400px;
+}
+
+.rp-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.rp-modal__header h3 {
+	margin: 0;
+	font-size: 16px;
+}
+
+.rp-modal__close {
+	background: none;
+	border: none;
+	padding: 4px;
+	cursor: pointer;
+	color: #787c82;
+	border-radius: 4px;
+}
+
+.rp-modal__close:hover {
+	background: #f0f0f1;
+	color: #d63638;
+}
+
+.rp-modal__body {
+	padding: 20px;
+}
+
+.rp-modal__footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 16px 20px;
+	border-top: 1px solid #f0f0f1;
+	background: #f6f7f7;
+}
+
+/* Form Fields */
+.rp-form-field {
+	margin-bottom: 16px;
+}
+
+.rp-form-field:last-child {
+	margin-bottom: 0;
+}
+
+.rp-form-field label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+}
+
+.rp-form-field input[type="text"],
+.rp-form-field textarea {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.rp-form-field input[type="text"]:focus,
+.rp-form-field textarea:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.rp-form-hint {
+	margin: 6px 0 0 0;
+	font-size: 12px;
+	color: #787c82;
+}
+
+.rp-gdpr-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 12px;
+	background: #fef8e8;
+	border-radius: 4px;
+	font-size: 12px;
+	color: #b26200;
+	margin: 0;
+}
+
+.rp-gdpr-notice .dashicons {
+	flex-shrink: 0;
+}
