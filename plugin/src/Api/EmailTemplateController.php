@@ -276,12 +276,23 @@ class EmailTemplateController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
+		$category = $request->get_param( 'category' ) ?: 'custom';
+
+		// System-Templates können nicht über API erstellt werden.
+		if ( 'system' === $category ) {
+			return new WP_Error(
+				'rest_invalid_category',
+				__( 'System-Templates können nicht manuell erstellt werden.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
 		$data = [
 			'name'      => $request->get_param( 'name' ),
 			'subject'   => $request->get_param( 'subject' ),
 			'body_html' => $request->get_param( 'body_html' ),
 			'body_text' => $request->get_param( 'body_text' ),
-			'category'  => $request->get_param( 'category' ) ?: 'custom',
+			'category'  => $category,
 			'is_active' => $request->get_param( 'is_active' ) ?? true,
 			'settings'  => $request->get_param( 'settings' ) ?: [],
 		];
@@ -525,7 +536,7 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'manage_email_templates' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_manage_email_templates' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' ),

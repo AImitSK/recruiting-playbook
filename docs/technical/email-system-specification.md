@@ -672,6 +672,9 @@ private function enrichTemplate( array $template ): array {
 | DELETE | `/recruiting/v1/email-templates/{id}` | Template löschen |
 | POST | `/recruiting/v1/email-templates/{id}/duplicate` | Template duplizieren |
 | POST | `/recruiting/v1/email-templates/{id}/reset` | Auf Standard zurücksetzen |
+| POST | `/recruiting/v1/email-templates/{id}/set-default` | Als Standard für Kategorie setzen |
+| GET | `/recruiting/v1/email-templates/placeholders` | Verfügbare Platzhalter laden |
+| GET | `/recruiting/v1/email-templates/categories` | Template-Kategorien laden |
 
 #### GET /email-templates
 
@@ -782,6 +785,8 @@ register_rest_route(
 | POST | `/recruiting/v1/emails/send` | E-Mail senden |
 | POST | `/recruiting/v1/emails/preview` | Vorschau generieren |
 | POST | `/recruiting/v1/emails/send-bulk` | Massen-E-Mail |
+| POST | `/recruiting/v1/emails/{id}/cancel` | Geplante E-Mail stornieren |
+| GET | `/recruiting/v1/emails/queue-stats` | Warteschlangen-Statistiken |
 
 #### POST /emails/send
 
@@ -914,6 +919,7 @@ register_rest_route(
 |---------|----------|--------------|
 | GET | `/recruiting/v1/emails/log` | Alle E-Mails (gefiltert) |
 | GET | `/recruiting/v1/emails/log/{id}` | Einzelne E-Mail Details |
+| GET | `/recruiting/v1/emails/log/scheduled` | Geplante E-Mails abrufen |
 | GET | `/recruiting/v1/applications/{id}/emails` | E-Mails einer Bewerbung |
 | GET | `/recruiting/v1/candidates/{id}/emails` | E-Mails eines Kandidaten |
 | POST | `/recruiting/v1/emails/log/{id}/resend` | E-Mail erneut senden |

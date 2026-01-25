@@ -143,6 +143,41 @@ class EmailController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// Bulk-E-Mail senden
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/send-bulk',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'send_bulk_email' ],
+					'permission_callback' => [ $this, 'send_email_permissions_check' ],
+					'args'                => [
+						'application_ids'  => [
+							'description' => __( 'Array von Bewerbungs-IDs', 'recruiting-playbook' ),
+							'type'        => 'array',
+							'items'       => [ 'type' => 'integer' ],
+							'required'    => true,
+						],
+						'template_id'      => [
+							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'type'        => 'integer',
+							'required'    => true,
+						],
+						'custom_variables' => [
+							'description' => __( 'Globale Platzhalter-Werte für alle E-Mails', 'recruiting-playbook' ),
+							'type'        => 'object',
+						],
+						'send_immediately' => [
+							'description' => __( 'Sofort senden (nicht in Queue)', 'recruiting-playbook' ),
+							'type'        => 'boolean',
+							'default'     => false,
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -398,6 +433,97 @@ class EmailController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Bulk-E-Mails senden
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function send_bulk_email( $request ) {
+		$application_ids   = $request->get_param( 'application_ids' );
+		$template_id       = (int) $request->get_param( 'template_id' );
+		$custom_variables  = $request->get_param( 'custom_variables' ) ?: [];
+		$send_immediately  = (bool) $request->get_param( 'send_immediately' );
+
+		if ( empty( $application_ids ) || ! is_array( $application_ids ) ) {
+			return new WP_Error(
+				'rest_invalid_application_ids',
+				__( 'Bewerbungs-IDs müssen als Array übergeben werden.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Template validieren.
+		$template = $this->template_service->find( $template_id );
+		if ( ! $template ) {
+			return new WP_Error(
+				'rest_template_not_found',
+				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$results = [
+			'total'       => count( $application_ids ),
+			'queued'      => 0,
+			'failed'      => 0,
+			'errors'      => [],
+			'email_log_ids' => [],
+		];
+
+		$use_queue = ! $send_immediately;
+
+		foreach ( $application_ids as $application_id ) {
+			$application = $this->application_service->get( (int) $application_id );
+
+			if ( ! $application ) {
+				$results['failed']++;
+				$results['errors'][] = [
+					'application_id' => $application_id,
+					'error'          => __( 'Bewerbung nicht gefunden', 'recruiting-playbook' ),
+				];
+				continue;
+			}
+
+			$result = $this->email_service->sendWithTemplate(
+				$template_id,
+				(int) $application_id,
+				$custom_variables,
+				$use_queue
+			);
+
+			if ( false === $result ) {
+				$results['failed']++;
+				$results['errors'][] = [
+					'application_id' => $application_id,
+					'error'          => __( 'E-Mail konnte nicht gesendet werden', 'recruiting-playbook' ),
+				];
+			} else {
+				$results['queued']++;
+				if ( is_int( $result ) ) {
+					$results['email_log_ids'][] = $result;
+				}
+			}
+		}
+
+		$status = $results['failed'] === 0 ? 'success' : ( $results['queued'] > 0 ? 'partial' : 'failed' );
+
+		return new WP_REST_Response(
+			[
+				'success' => $results['failed'] === 0,
+				'status'  => $status,
+				'message' => sprintf(
+					/* translators: 1: number of queued emails, 2: number of failed emails */
+					__( '%1$d E-Mails in Warteschlange, %2$d fehlgeschlagen.', 'recruiting-playbook' ),
+					$results['queued'],
+					$results['failed']
+				),
+				'results' => $results,
+			],
+			200
+		);
+	}
+
+	/**
 	 * Berechtigung für E-Mail-Versand prüfen
 	 *
 	 * @param WP_REST_Request $request Request.
@@ -416,7 +542,7 @@ class EmailController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' ),

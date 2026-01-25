@@ -317,7 +317,7 @@ class EmailLogController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'view_email_log' ) && ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_view_email_log' ) && ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' ),
@@ -347,7 +347,7 @@ class EmailLogController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_send_emails' ) && ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' ),
