@@ -298,9 +298,13 @@ function showNotice( message, type = 'info' ) {
 	const existingNotices = document.querySelectorAll( '.rp-kanban-notice' );
 	existingNotices.forEach( ( notice ) => notice.remove() );
 
+	// Type validieren (XSS-Schutz).
+	const allowedTypes = [ 'success', 'error', 'warning', 'info' ];
+	const safeType = allowedTypes.includes( type ) ? type : 'info';
+
 	// Neue Notice erstellen
 	const notice = document.createElement( 'div' );
-	notice.className = `notice notice-${ type } is-dismissible rp-kanban-notice`;
+	notice.className = `notice notice-${ safeType } is-dismissible rp-kanban-notice`;
 	notice.style.cssText = 'position: fixed; top: 50px; right: 20px; z-index: 99999; max-width: 300px;';
 	notice.innerHTML = `
 		<p>${ escapeHtml( message ) }</p>

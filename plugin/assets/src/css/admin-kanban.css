@@ -113,21 +113,44 @@
 }
 
 /* Collapsed state */
+.rp-kanban-column.is-collapsed {
+	min-height: 400px;
+}
+
 .rp-kanban-column.is-collapsed .rp-kanban-column-header {
-	writing-mode: vertical-rl;
-	text-orientation: mixed;
+	flex-direction: column;
+	align-items: center;
 	padding: 12px 8px;
 	height: 100%;
-	flex-direction: column;
+	border-bottom: none;
+	border-radius: 3px;
+}
+
+.rp-kanban-column.is-collapsed .rp-kanban-column-color {
+	width: 24px;
+	height: 4px;
+	margin-bottom: 8px;
 }
 
 .rp-kanban-column.is-collapsed .rp-kanban-column-title {
 	writing-mode: vertical-rl;
 	text-orientation: mixed;
+	transform: rotate(180deg);
+	flex: 1;
+	text-align: center;
+	white-space: nowrap;
 }
 
 .rp-kanban-column.is-collapsed .rp-kanban-column-count {
+	margin-top: 8px;
+}
+
+.rp-kanban-column.is-collapsed .rp-kanban-collapse-btn {
 	margin-top: auto;
+}
+
+.rp-kanban-column.is-collapsed .rp-kanban-collapse-btn .dashicons {
+	transform: rotate(-90deg);
 }
 
 /* Column Content */
@@ -358,6 +381,18 @@
 
 .rp-kanban-toolbar-actions {
 	margin-left: auto;
+}
+
+/* Refresh Button */
+#rp-kanban-refresh {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 30px;
+}
+
+#rp-kanban-refresh .dashicons {
+	line-height: 1;
 }
 
 /* ==========================================================================

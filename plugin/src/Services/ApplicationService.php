@@ -233,10 +233,28 @@ class ApplicationService {
 			ARRAY_A
 		);
 
-		// Job-Titel hinzufügen
+		// Job-Titel in einem Batch laden (verhindert N+1 Query Problem).
+		$job_ids = array_unique( array_filter( array_column( $results, 'job_id' ) ) );
+		$jobs    = [];
+
+		if ( ! empty( $job_ids ) ) {
+			$job_posts = get_posts(
+				[
+					'post_type'      => 'job_listing',
+					'include'        => $job_ids,
+					'posts_per_page' => count( $job_ids ),
+					'post_status'    => 'any',
+				]
+			);
+
+			foreach ( $job_posts as $post ) {
+				$jobs[ $post->ID ] = $post->post_title;
+			}
+		}
+
+		// Job-Titel hinzufügen.
 		foreach ( $results as &$row ) {
-			$job = get_post( (int) $row['job_id'] );
-			$row['job_title'] = $job ? $job->post_title : '';
+			$row['job_title'] = $jobs[ (int) $row['job_id'] ] ?? '';
 		}
 
 		return [
@@ -308,7 +326,8 @@ class ApplicationService {
 		$offset   = ( $page - 1 ) * $per_page;
 
 		// Query mit Dokumentenanzahl als Subquery.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
@@ -331,12 +350,28 @@ class ApplicationService {
 			ARRAY_A
 		);
 
-		// Job-Titel hinzufügen.
-		foreach ( $results as &$row ) {
-			$job              = get_post( (int) $row['job_id'] );
-			$row['job_title'] = $job ? $job->post_title : '';
+		// Job-Titel in einem Batch laden (verhindert N+1 Query Problem).
+		$job_ids = array_unique( array_filter( array_column( $results, 'job_id' ) ) );
+		$jobs    = [];
 
-			// Typen konvertieren.
+		if ( ! empty( $job_ids ) ) {
+			$job_posts = get_posts(
+				[
+					'post_type'      => 'job_listing',
+					'include'        => $job_ids,
+					'posts_per_page' => count( $job_ids ),
+					'post_status'    => 'any',
+				]
+			);
+
+			foreach ( $job_posts as $post ) {
+				$jobs[ $post->ID ] = $post->post_title;
+			}
+		}
+
+		// Job-Titel und Typen konvertieren.
+		foreach ( $results as &$row ) {
+			$row['job_title']       = $jobs[ (int) $row['job_id'] ] ?? '';
 			$row['id']              = (int) $row['id'];
 			$row['job_id']          = (int) $row['job_id'];
 			$row['kanban_position'] = (int) $row['kanban_position'];

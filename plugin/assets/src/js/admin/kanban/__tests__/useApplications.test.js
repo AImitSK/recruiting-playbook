@@ -95,6 +95,9 @@ describe( 'useApplications Hook', () => {
 		} );
 
 		it( 'behandelt API-Fehler', async () => {
+			// Erwarte console.error-Aufruf im Hook
+			jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
 			apiFetch.mockRejectedValue( new Error( 'API Error' ) );
 
 			const { result } = renderHook( () => useApplications() );
@@ -105,6 +108,10 @@ describe( 'useApplications Hook', () => {
 
 			expect( result.current.applications ).toEqual( [] );
 			expect( result.current.error ).toBe( 'API Error' );
+			expect( console.error ).toHaveBeenCalled();
+
+			// eslint-disable-next-line no-console
+			console.error.mockRestore();
 		} );
 
 		it( 'behandelt direktes Array-Response', async () => {

@@ -163,6 +163,25 @@ export function KanbanBoard() {
 		? applications.find( ( app ) => app.id === activeId )
 		: null;
 
+	// Ankündigung nach erfolgreichem Drop
+	const announceDropResult = useCallback(
+		( app, targetColumn, isSameColumn ) => {
+			const name = `${ app.first_name } ${ app.last_name }`.trim();
+			const columnLabel = targetColumn?.label || '';
+
+			if ( isSameColumn ) {
+				announce(
+					__( `${ name } neu sortiert in ${ columnLabel }.`, 'recruiting-playbook' )
+				);
+			} else {
+				announce(
+					__( `${ name } verschoben nach ${ columnLabel }.`, 'recruiting-playbook' )
+				);
+			}
+		},
+		[ announce ]
+	);
+
 	// Drag-Start Handler
 	const handleDragStart = useCallback( ( event ) => {
 		const { active } = event;
@@ -279,29 +298,15 @@ export function KanbanBoard() {
 		announce( __( 'Verschieben abgebrochen.', 'recruiting-playbook' ) );
 	}, [ announce ] );
 
-	// Ankündigung nach erfolgreichem Drop
-	const announceDropResult = useCallback(
-		( app, targetColumn, isSameColumn ) => {
-			const name = `${ app.first_name } ${ app.last_name }`.trim();
-			const columnLabel = targetColumn?.label || '';
-
-			if ( isSameColumn ) {
-				announce(
-					__( `${ name } neu sortiert in ${ columnLabel }.`, 'recruiting-playbook' )
-				);
-			} else {
-				announce(
-					__( `${ name } verschoben nach ${ columnLabel }.`, 'recruiting-playbook' )
-				);
-			}
-		},
-		[ announce ]
-	);
-
 	if ( loading ) {
 		return (
-			<div className="rp-kanban-loading">
-				<span className="spinner is-active"></span>
+			<div
+				className="rp-kanban-loading"
+				role="status"
+				aria-live="polite"
+				aria-busy="true"
+			>
+				<span className="spinner is-active" aria-hidden="true"></span>
 				{ window.rpKanban?.i18n?.loading || __( 'Lade Bewerbungen...', 'recruiting-playbook' ) }
 			</div>
 		);
@@ -309,7 +314,11 @@ export function KanbanBoard() {
 
 	if ( error ) {
 		return (
-			<div className="rp-kanban-error notice notice-error">
+			<div
+				className="rp-kanban-error notice notice-error"
+				role="alert"
+				aria-live="assertive"
+			>
 				<p>{ error }</p>
 				<button onClick={ refetch } className="button">
 					{ window.rpKanban?.i18n?.retry || __( 'Erneut versuchen', 'recruiting-playbook' ) }

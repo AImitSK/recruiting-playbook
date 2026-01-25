@@ -893,6 +893,16 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function reorder_applications( $request ) {
+		// CSRF-Schutz: Nonce validieren (Defense in Depth).
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return new WP_Error(
+				'rest_cookie_invalid_nonce',
+				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
 		$status    = $request->get_param( 'status' );
 		$positions = $request->get_param( 'positions' );
 
