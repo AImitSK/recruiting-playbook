@@ -30,6 +30,9 @@ class Schema {
 			'applications' => $wpdb->prefix . 'rp_applications',
 			'documents'    => $wpdb->prefix . 'rp_documents',
 			'activity_log' => $wpdb->prefix . 'rp_activity_log',
+			'notes'        => $wpdb->prefix . 'rp_notes',
+			'ratings'      => $wpdb->prefix . 'rp_ratings',
+			'talent_pool'  => $wpdb->prefix . 'rp_talent_pool',
 		];
 	}
 
@@ -94,12 +97,14 @@ class Schema {
 			user_agent varchar(500) DEFAULT '',
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			deleted_at datetime DEFAULT NULL,
 			PRIMARY KEY (id),
 			KEY candidate_id (candidate_id),
 			KEY job_id (job_id),
 			KEY status (status),
 			KEY kanban_sort (status, kanban_position),
-			KEY created_at (created_at)
+			KEY created_at (created_at),
+			KEY deleted_at (deleted_at)
 		) {$charset};";
 	}
 
@@ -156,6 +161,7 @@ class Schema {
 			old_value longtext DEFAULT NULL,
 			new_value longtext DEFAULT NULL,
 			message longtext DEFAULT NULL,
+			meta longtext DEFAULT NULL,
 			ip_address varchar(45) DEFAULT NULL,
 			user_agent varchar(500) DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -164,6 +170,91 @@ class Schema {
 			KEY user_id (user_id),
 			KEY action (action),
 			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_notes
+	 *
+	 * @return string
+	 */
+	public static function getNotesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['notes'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned DEFAULT NULL,
+			candidate_id bigint(20) unsigned NOT NULL,
+			user_id bigint(20) unsigned NOT NULL,
+			content longtext NOT NULL,
+			is_private tinyint(1) DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY application_id (application_id),
+			KEY candidate_id (candidate_id),
+			KEY user_id (user_id),
+			KEY created_at (created_at),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_ratings
+	 *
+	 * @return string
+	 */
+	public static function getRatingsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['ratings'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned NOT NULL,
+			user_id bigint(20) unsigned NOT NULL,
+			rating tinyint(1) unsigned NOT NULL,
+			category varchar(50) DEFAULT 'overall',
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_application_category (user_id, application_id, category),
+			KEY application_id (application_id),
+			KEY rating (rating),
+			KEY category (category)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_talent_pool
+	 *
+	 * @return string
+	 */
+	public static function getTalentPoolTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['talent_pool'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			candidate_id bigint(20) unsigned NOT NULL,
+			added_by bigint(20) unsigned NOT NULL,
+			reason longtext DEFAULT NULL,
+			tags varchar(255) DEFAULT NULL,
+			expires_at datetime NOT NULL,
+			reminder_sent tinyint(1) DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY candidate_id (candidate_id),
+			KEY added_by (added_by),
+			KEY expires_at (expires_at),
+			KEY tags (tags),
+			KEY deleted_at (deleted_at)
 		) {$charset};";
 	}
 }

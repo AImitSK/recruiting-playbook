@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.2.0';
+	private const SCHEMA_VERSION = '1.3.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -38,6 +38,9 @@ class Migrator {
 		dbDelta( Schema::getApplicationsTableSql() );
 		dbDelta( Schema::getDocumentsTableSql() );
 		dbDelta( Schema::getActivityLogTableSql() );
+		dbDelta( Schema::getNotesTableSql() );
+		dbDelta( Schema::getRatingsTableSql() );
+		dbDelta( Schema::getTalentPoolTableSql() );
 
 		// Spezielle Migrationen für bestehende Installationen.
 		$this->runMigrations( $current_version );
@@ -58,6 +61,12 @@ class Migrator {
 		// Migration 1.2.0: kanban_position Spalte hinzufügen.
 		if ( version_compare( $from_version, '1.2.0', '<' ) ) {
 			$this->migrateToKanbanPosition();
+		}
+
+		// Migration 1.3.0: Activity Log meta Spalte + Pro-Features Tabellen.
+		if ( version_compare( $from_version, '1.3.0', '<' ) ) {
+			$this->migrateToActivityLogMeta();
+			$this->migrateToApplicationsDeletedAt();
 		}
 	}
 
@@ -88,6 +97,62 @@ class Migrator {
 			$wpdb->query( "ALTER TABLE {$table} ADD INDEX kanban_sort (status, kanban_position)" );
 
 			$this->log( 'Added kanban_position column to applications table' );
+		}
+	}
+
+	/**
+	 * Migration: Activity Log meta Spalte hinzufügen
+	 */
+	private function migrateToActivityLogMeta(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['activity_log'];
+
+		// Prüfen ob meta Spalte bereits existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$column_exists = $wpdb->get_results(
+			$wpdb->prepare(
+				"SHOW COLUMNS FROM {$table} LIKE %s",
+				'meta'
+			)
+		);
+
+		if ( empty( $column_exists ) ) {
+			// Spalte hinzufügen nach message.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD COLUMN meta longtext DEFAULT NULL AFTER message" );
+
+			$this->log( 'Added meta column to activity_log table' );
+		}
+	}
+
+	/**
+	 * Migration: Applications deleted_at Spalte hinzufügen
+	 */
+	private function migrateToApplicationsDeletedAt(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['applications'];
+
+		// Prüfen ob deleted_at Spalte bereits existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$column_exists = $wpdb->get_results(
+			$wpdb->prepare(
+				"SHOW COLUMNS FROM {$table} LIKE %s",
+				'deleted_at'
+			)
+		);
+
+		if ( empty( $column_exists ) ) {
+			// Spalte hinzufügen.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD COLUMN deleted_at datetime DEFAULT NULL AFTER updated_at" );
+
+			// Index hinzufügen.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD INDEX deleted_at (deleted_at)" );
+
+			$this->log( 'Added deleted_at column to applications table' );
 		}
 	}
 
