@@ -12,11 +12,14 @@ namespace RecruitingPlaybook\Services;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
+use RecruitingPlaybook\Traits\HasIpAddress;
 
 /**
  * Service für Activity Log Operationen
  */
 class ActivityService {
+
+	use HasIpAddress;
 
 	/**
 	 * Tabellen-Name
@@ -48,7 +51,7 @@ class ActivityService {
 			'user_id'     => get_current_user_id() ?: null,
 			'user_name'   => $current_user->ID ? $current_user->display_name : null,
 			'created_at'  => current_time( 'mysql' ),
-			'ip_address'  => $this->getClientIp(),
+			'ip_address'  => $this->getAnonymizedClientIp(),
 		];
 
 		$data = wp_parse_args( $data, $defaults );
@@ -333,31 +336,4 @@ class ActivityService {
 		];
 	}
 
-	/**
-	 * Client-IP ermitteln
-	 *
-	 * @return string
-	 */
-	private function getClientIp(): string {
-		$ip_keys = [
-			'HTTP_CF_CONNECTING_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_REAL_IP',
-			'REMOTE_ADDR',
-		];
-
-		foreach ( $ip_keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ] ) ) {
-				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
-				if ( strpos( $ip, ',' ) !== false ) {
-					$ip = trim( explode( ',', $ip )[0] );
-				}
-				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					return $ip;
-				}
-			}
-		}
-
-		return '';
-	}
 }

@@ -13,12 +13,15 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
 use RecruitingPlaybook\Repositories\TalentPoolRepository;
+use RecruitingPlaybook\Traits\HasIpAddress;
 use WP_Error;
 
 /**
  * Service für Talent-Pool Operationen
  */
 class TalentPoolService {
+
+	use HasIpAddress;
 
 	/**
 	 * Talent Pool Repository
@@ -327,7 +330,7 @@ class TalentPoolService {
 		);
 
 		$current_user = wp_get_current_user();
-		$ip_address   = $this->getClientIp();
+		$ip_address   = $this->getAnonymizedClientIp();
 
 		foreach ( $application_ids as $application_id ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -349,31 +352,4 @@ class TalentPoolService {
 		}
 	}
 
-	/**
-	 * Client-IP ermitteln
-	 *
-	 * @return string
-	 */
-	private function getClientIp(): string {
-		$ip_keys = [
-			'HTTP_CF_CONNECTING_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_REAL_IP',
-			'REMOTE_ADDR',
-		];
-
-		foreach ( $ip_keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ] ) ) {
-				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
-				if ( strpos( $ip, ',' ) !== false ) {
-					$ip = trim( explode( ',', $ip )[0] );
-				}
-				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					return $ip;
-				}
-			}
-		}
-
-		return '';
-	}
 }
