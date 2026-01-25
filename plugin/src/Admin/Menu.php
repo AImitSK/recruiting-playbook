@@ -135,6 +135,16 @@ class Menu {
 			'rp-application-detail',
 			[ $this, 'renderApplicationDetail' ]
 		);
+
+		// Bulk-E-Mail-Seite (versteckt, Pro-Feature).
+		add_submenu_page(
+			'',
+			__( 'Massen-E-Mail', 'recruiting-playbook' ),
+			__( 'Massen-E-Mail', 'recruiting-playbook' ),
+			'manage_options',
+			'rp-bulk-email',
+			[ $this, 'renderBulkEmail' ]
+		);
 	}
 
 	/**
@@ -183,7 +193,18 @@ class Menu {
 			global $wpdb;
 			$table = $wpdb->prefix . 'rp_applications';
 
+			// Alten Status für Hook abrufen.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$old_status = $wpdb->get_var(
+				$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+			);
+
 			$wpdb->update( $table, [ 'status' => $status ], [ 'id' => $id ] );
+
+			// Action für Auto-E-Mail und andere Hooks auslösen.
+			if ( $old_status && $old_status !== $status ) {
+				do_action( 'rp_application_status_changed', $id, $old_status, $status );
+			}
 
 			// Logging.
 			$log_table    = $wpdb->prefix . 'rp_activity_log';
@@ -264,15 +285,37 @@ class Menu {
 		switch ( $action ) {
 			case 'bulk_screening':
 				foreach ( $ids as $id ) {
+					// Alten Status abrufen.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+					$old_status = $wpdb->get_var(
+						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+					);
+
 					$wpdb->update( $table, [ 'status' => 'screening' ], [ 'id' => $id ] );
 					$this->logStatusChange( $log_table, $id, 'screening', $current_user );
+
+					// Action für Auto-E-Mail auslösen.
+					if ( $old_status && 'screening' !== $old_status ) {
+						do_action( 'rp_application_status_changed', $id, $old_status, 'screening' );
+					}
 				}
 				break;
 
 			case 'bulk_rejected':
 				foreach ( $ids as $id ) {
+					// Alten Status abrufen.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+					$old_status = $wpdb->get_var(
+						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+					);
+
 					$wpdb->update( $table, [ 'status' => 'rejected' ], [ 'id' => $id ] );
 					$this->logStatusChange( $log_table, $id, 'rejected', $current_user );
+
+					// Action für Auto-E-Mail auslösen.
+					if ( $old_status && 'rejected' !== $old_status ) {
+						do_action( 'rp_application_status_changed', $id, $old_status, 'rejected' );
+					}
 				}
 				break;
 
@@ -282,6 +325,18 @@ class Menu {
 					$gdpr_service->softDeleteApplication( $id );
 				}
 				break;
+
+			case 'bulk_email':
+				// Pro-Feature Check.
+				if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+					wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&error=pro_required' ) );
+					exit;
+				}
+
+				// IDs in Transient speichern für Bulk-Email-Seite.
+				set_transient( 'rp_bulk_email_ids_' . $current_user->ID, $ids, 300 ); // 5 Minuten gültig.
+				wp_safe_redirect( admin_url( 'admin.php?page=rp-bulk-email' ) );
+				exit;
 
 			default:
 				return; // Unbekannte Action - nicht redirecten.
@@ -782,5 +837,233 @@ class Menu {
 	public function renderTalentPool(): void {
 		$talent_pool_page = new Pages\TalentPoolPage();
 		$talent_pool_page->render();
+	}
+
+	/**
+	 * Bulk-E-Mail-Seite rendern
+	 */
+	public function renderBulkEmail(): void {
+		// Pro-Feature Check.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			wp_die(
+				esc_html__( 'Massen-E-Mail erfordert Pro.', 'recruiting-playbook' ),
+				esc_html__( 'Pro-Feature erforderlich', 'recruiting-playbook' ),
+				[ 'response' => 403 ]
+			);
+		}
+
+		$current_user = wp_get_current_user();
+		$transient_key = 'rp_bulk_email_ids_' . $current_user->ID;
+		$application_ids = get_transient( $transient_key );
+
+		// Keine IDs vorhanden.
+		if ( empty( $application_ids ) || ! is_array( $application_ids ) ) {
+			?>
+			<div class="wrap">
+				<h1><?php esc_html_e( 'Massen-E-Mail', 'recruiting-playbook' ); ?></h1>
+				<div class="notice notice-error">
+					<p><?php esc_html_e( 'Keine Bewerbungen ausgewählt. Bitte wählen Sie Bewerbungen in der Liste aus.', 'recruiting-playbook' ); ?></p>
+				</div>
+				<p>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button">
+						<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
+					</a>
+				</p>
+			</div>
+			<?php
+			return;
+		}
+
+		// Templates laden.
+		global $wpdb;
+		$templates_table = $wpdb->prefix . 'rp_email_templates';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$templates = $wpdb->get_results(
+			"SELECT id, name, subject FROM {$templates_table} WHERE is_active = 1 ORDER BY name ASC",
+			ARRAY_A
+		) ?: [];
+
+		// Bewerber-Informationen laden.
+		$applications_table = $wpdb->prefix . 'rp_applications';
+		$candidates_table = $wpdb->prefix . 'rp_candidates';
+		$placeholders = implode( ',', array_fill( 0, count( $application_ids ), '%d' ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$recipients = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT a.id, c.first_name, c.last_name, c.email
+				 FROM {$applications_table} a
+				 LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
+				 WHERE a.id IN ({$placeholders})",
+				...$application_ids
+			),
+			ARRAY_A
+		) ?: [];
+
+		// Formular wurde abgeschickt.
+		if ( isset( $_POST['send_bulk_email'] ) ) {
+			check_admin_referer( 'rp_bulk_email' );
+
+			$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+
+			if ( ! $template_id ) {
+				echo '<div class="notice notice-error"><p>' . esc_html__( 'Bitte wählen Sie ein Template aus.', 'recruiting-playbook' ) . '</p></div>';
+			} else {
+				$email_service = new EmailService();
+				$success_count = 0;
+				$error_count = 0;
+
+				foreach ( $application_ids as $app_id ) {
+					$result = $email_service->sendWithTemplate( $template_id, (int) $app_id );
+					if ( false !== $result ) {
+						$success_count++;
+
+						// Aktivitäts-Log.
+						$log_table = $wpdb->prefix . 'rp_activity_log';
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+						$wpdb->insert(
+							$log_table,
+							[
+								'object_type' => 'application',
+								'object_id'   => $app_id,
+								'action'      => 'email_sent',
+								'user_id'     => $current_user->ID,
+								'user_name'   => $current_user->display_name,
+								'message'     => sprintf( 'Bulk-E-Mail mit Template #%d', $template_id ),
+								'created_at'  => current_time( 'mysql' ),
+							]
+						);
+					} else {
+						$error_count++;
+					}
+				}
+
+				// Transient löschen.
+				delete_transient( $transient_key );
+
+				// Ergebnis anzeigen.
+				?>
+				<div class="wrap">
+					<h1><?php esc_html_e( 'Massen-E-Mail', 'recruiting-playbook' ); ?></h1>
+					<div class="notice notice-success">
+						<p>
+							<?php
+							printf(
+								/* translators: 1: success count, 2: error count */
+								esc_html__( '%1$d E-Mails erfolgreich gesendet, %2$d fehlgeschlagen.', 'recruiting-playbook' ),
+								$success_count,
+								$error_count
+							);
+							?>
+						</p>
+					</div>
+					<p>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button button-primary">
+							<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
+						</a>
+					</p>
+				</div>
+				<?php
+				return;
+			}
+		}
+
+		// Formular anzeigen.
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Massen-E-Mail senden', 'recruiting-playbook' ); ?></h1>
+
+			<div class="card" style="max-width: 800px; padding: 20px;">
+				<h2>
+					<?php
+					printf(
+						/* translators: %d: number of recipients */
+						esc_html__( '%d Empfänger ausgewählt', 'recruiting-playbook' ),
+						count( $recipients )
+					);
+					?>
+				</h2>
+
+				<table class="widefat striped" style="margin-bottom: 20px;">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Name', 'recruiting-playbook' ); ?></th>
+							<th><?php esc_html_e( 'E-Mail', 'recruiting-playbook' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $recipients as $recipient ) : ?>
+							<tr>
+								<td><?php echo esc_html( trim( $recipient['first_name'] . ' ' . $recipient['last_name'] ) ); ?></td>
+								<td><?php echo esc_html( $recipient['email'] ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+
+				<?php if ( empty( $templates ) ) : ?>
+					<div class="notice notice-warning inline">
+						<p>
+							<?php esc_html_e( 'Keine E-Mail-Templates vorhanden.', 'recruiting-playbook' ); ?>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>">
+								<?php esc_html_e( 'Templates erstellen', 'recruiting-playbook' ); ?>
+							</a>
+						</p>
+					</div>
+				<?php else : ?>
+					<form method="post">
+						<?php wp_nonce_field( 'rp_bulk_email' ); ?>
+
+						<table class="form-table">
+							<tr>
+								<th scope="row">
+									<label for="template_id"><?php esc_html_e( 'E-Mail-Template', 'recruiting-playbook' ); ?></label>
+								</th>
+								<td>
+									<select name="template_id" id="template_id" class="regular-text" required>
+										<option value=""><?php esc_html_e( '— Template wählen —', 'recruiting-playbook' ); ?></option>
+										<?php foreach ( $templates as $template ) : ?>
+											<option value="<?php echo esc_attr( $template['id'] ); ?>">
+												<?php echo esc_html( $template['name'] ); ?>
+												(<?php echo esc_html( $template['subject'] ); ?>)
+											</option>
+										<?php endforeach; ?>
+									</select>
+									<p class="description">
+										<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>" target="_blank">
+											<?php esc_html_e( 'Templates verwalten', 'recruiting-playbook' ); ?>
+										</a>
+									</p>
+								</td>
+							</tr>
+						</table>
+
+						<div class="notice notice-warning inline" style="margin: 15px 0;">
+							<p>
+								<strong><?php esc_html_e( 'Achtung:', 'recruiting-playbook' ); ?></strong>
+								<?php esc_html_e( 'Die E-Mails werden sofort an alle ausgewählten Empfänger gesendet.', 'recruiting-playbook' ); ?>
+							</p>
+						</div>
+
+						<p class="submit">
+							<button type="submit" name="send_bulk_email" class="button button-primary">
+								<span class="dashicons dashicons-email-alt" style="margin-top: 3px;"></span>
+								<?php
+								printf(
+									/* translators: %d: number of recipients */
+									esc_html__( '%d E-Mails senden', 'recruiting-playbook' ),
+									count( $recipients )
+								);
+								?>
+							</button>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button">
+								<?php esc_html_e( 'Abbrechen', 'recruiting-playbook' ); ?>
+							</a>
+						</p>
+					</form>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
 	}
 }

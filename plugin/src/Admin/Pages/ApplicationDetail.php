@@ -15,6 +15,9 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Constants\ApplicationStatus;
 use RecruitingPlaybook\Constants\DocumentType;
 use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Services\EmailService;
+use RecruitingPlaybook\Services\EmailTemplateService;
+use RecruitingPlaybook\Repositories\EmailLogRepository;
 
 /**
  * Detailansicht einer Bewerbung
@@ -117,6 +120,7 @@ class ApplicationDetail {
 		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
+		$this->processEmailSend( $id );
 
 		$application = $this->getApplication( $id );
 
@@ -128,6 +132,8 @@ class ApplicationDetail {
 		$job          = get_post( $application['job_id'] );
 		$documents    = $this->getDocuments( $id );
 		$activity_log = $this->getActivityLog( $id );
+		$email_history = $this->getEmailHistory( $id );
+		$email_templates = $this->getEmailTemplates();
 
 		?>
 		<div class="wrap rp-application-detail">
@@ -264,6 +270,8 @@ class ApplicationDetail {
 							<?php endif; ?>
 						</div>
 					</div>
+
+					<?php $this->renderEmailHistory( $email_history ); ?>
 				</div>
 
 				<!-- Sidebar -->
@@ -294,6 +302,8 @@ class ApplicationDetail {
 							</form>
 						</div>
 					</div>
+
+					<?php $this->renderEmailComposer( $id, $candidate, $email_templates ); ?>
 
 					<!-- Stelle -->
 					<div class="postbox">
@@ -477,6 +487,9 @@ class ApplicationDetail {
 
 		$wpdb->update( $table, [ 'status' => $new_status ], [ 'id' => $id ] );
 
+		// Action für Auto-E-Mail und andere Hooks auslösen.
+		do_action( 'rp_application_status_changed', $id, $old_status, $new_status );
+
 		$log_table    = $wpdb->prefix . 'rp_activity_log';
 		$current_user = wp_get_current_user();
 
@@ -560,5 +573,364 @@ class ApplicationDetail {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * E-Mail-Historie laden
+	 *
+	 * @param int $application_id Application ID.
+	 * @return array
+	 */
+	private function getEmailHistory( int $application_id ): array {
+		// Pro-Feature Check.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return [];
+		}
+
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_email_log';
+
+		// Prüfen ob Tabelle existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$table_exists = $wpdb->get_var(
+			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
+		);
+
+		if ( ! $table_exists ) {
+			return [];
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, recipient_email, subject, status, template_id, created_at, sent_at, error_message
+				 FROM {$table}
+				 WHERE application_id = %d
+				 ORDER BY created_at DESC
+				 LIMIT 20",
+				$application_id
+			),
+			ARRAY_A
+		) ?: [];
+	}
+
+	/**
+	 * E-Mail-Templates laden
+	 *
+	 * @return array
+	 */
+	private function getEmailTemplates(): array {
+		// Pro-Feature Check.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return [];
+		}
+
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_email_templates';
+
+		// Prüfen ob Tabelle existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$table_exists = $wpdb->get_var(
+			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
+		);
+
+		if ( ! $table_exists ) {
+			return [];
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		return $wpdb->get_results(
+			"SELECT id, name, subject FROM {$table} WHERE is_active = 1 ORDER BY name ASC",
+			ARRAY_A
+		) ?: [];
+	}
+
+	/**
+	 * E-Mail-Composer rendern
+	 *
+	 * @param int   $application_id Application ID.
+	 * @param array $candidate      Kandidaten-Daten.
+	 * @param array $templates      Verfügbare Templates.
+	 */
+	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
+		// Pro-Feature Check.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			?>
+			<div class="postbox">
+				<h2 class="hndle"><?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?></h2>
+				<div class="inside">
+					<p class="description">
+						<?php esc_html_e( 'E-Mail-Versand ist ein Pro-Feature.', 'recruiting-playbook' ); ?>
+					</p>
+					<?php if ( function_exists( 'rp_upgrade_url' ) ) : ?>
+						<p>
+							<a href="<?php echo esc_url( rp_upgrade_url( 'PRO' ) ); ?>" class="button" target="_blank">
+								<?php esc_html_e( 'Auf Pro upgraden', 'recruiting-playbook' ); ?>
+							</a>
+						</p>
+					<?php endif; ?>
+				</div>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( empty( $templates ) ) {
+			?>
+			<div class="postbox">
+				<h2 class="hndle"><?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?></h2>
+				<div class="inside">
+					<p class="description">
+						<?php esc_html_e( 'Keine E-Mail-Templates vorhanden.', 'recruiting-playbook' ); ?>
+					</p>
+					<p>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>" class="button">
+							<?php esc_html_e( 'Templates erstellen', 'recruiting-playbook' ); ?>
+						</a>
+					</p>
+				</div>
+			</div>
+			<?php
+			return;
+		}
+
+		?>
+		<div class="postbox">
+			<h2 class="hndle">
+				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
+				<?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?>
+			</h2>
+			<div class="inside">
+				<form method="post" id="rp-email-composer-form">
+					<?php wp_nonce_field( 'rp_send_email_' . $application_id ); ?>
+					<input type="hidden" name="application_id" value="<?php echo esc_attr( $application_id ); ?>" />
+
+					<p>
+						<strong><?php esc_html_e( 'An:', 'recruiting-playbook' ); ?></strong><br>
+						<?php echo esc_html( $candidate['email'] ); ?>
+					</p>
+
+					<p>
+						<label for="rp-email-template"><strong><?php esc_html_e( 'Template:', 'recruiting-playbook' ); ?></strong></label>
+						<select name="template_id" id="rp-email-template" style="width: 100%;" required>
+							<option value=""><?php esc_html_e( '— Template wählen —', 'recruiting-playbook' ); ?></option>
+							<?php foreach ( $templates as $template ) : ?>
+								<option value="<?php echo esc_attr( $template['id'] ); ?>">
+									<?php echo esc_html( $template['name'] ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</p>
+
+					<p id="rp-email-preview-info" style="display: none;">
+						<strong><?php esc_html_e( 'Betreff:', 'recruiting-playbook' ); ?></strong>
+						<span id="rp-email-preview-subject" style="font-style: italic;"></span>
+					</p>
+
+					<p>
+						<button type="submit" name="send_email" class="button button-primary" style="width: 100%;">
+							<span class="dashicons dashicons-email-alt" style="margin-top: 3px;"></span>
+							<?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?>
+						</button>
+					</p>
+
+					<p class="description" style="margin-top: 10px;">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>">
+							<?php esc_html_e( 'Templates verwalten', 'recruiting-playbook' ); ?>
+						</a>
+					</p>
+				</form>
+			</div>
+		</div>
+
+		<script>
+		jQuery(document).ready(function($) {
+			var templates = <?php echo wp_json_encode( array_column( $templates, 'subject', 'id' ) ); ?>;
+			$('#rp-email-template').on('change', function() {
+				var id = $(this).val();
+				if (id && templates[id]) {
+					$('#rp-email-preview-info').show();
+					$('#rp-email-preview-subject').text(templates[id]);
+				} else {
+					$('#rp-email-preview-info').hide();
+				}
+			});
+		});
+		</script>
+		<?php
+	}
+
+	/**
+	 * E-Mail-Historie rendern
+	 *
+	 * @param array $emails E-Mail-Einträge.
+	 */
+	private function renderEmailHistory( array $emails ): void {
+		// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return;
+		}
+
+		?>
+		<div class="postbox">
+			<h2 class="hndle">
+				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
+				<?php esc_html_e( 'E-Mail-Verlauf', 'recruiting-playbook' ); ?>
+				<span class="count">(<?php echo count( $emails ); ?>)</span>
+			</h2>
+			<div class="inside">
+				<?php if ( empty( $emails ) ) : ?>
+					<p class="description">
+						<?php esc_html_e( 'Noch keine E-Mails an diesen Bewerber gesendet.', 'recruiting-playbook' ); ?>
+					</p>
+				<?php else : ?>
+					<table class="widefat striped">
+						<thead>
+							<tr>
+								<th><?php esc_html_e( 'Datum', 'recruiting-playbook' ); ?></th>
+								<th><?php esc_html_e( 'Betreff', 'recruiting-playbook' ); ?></th>
+								<th><?php esc_html_e( 'Status', 'recruiting-playbook' ); ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $emails as $email ) : ?>
+								<tr>
+									<td>
+										<?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $email['created_at'] ) ) ); ?>
+									</td>
+									<td>
+										<?php echo esc_html( $email['subject'] ); ?>
+									</td>
+									<td>
+										<?php $this->renderEmailStatus( $email['status'], $email['error_message'] ?? '' ); ?>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * E-Mail-Status Badge rendern
+	 *
+	 * @param string $status        Status.
+	 * @param string $error_message Fehlermeldung.
+	 */
+	private function renderEmailStatus( string $status, string $error_message = '' ): void {
+		$labels = [
+			'pending'   => __( 'Ausstehend', 'recruiting-playbook' ),
+			'queued'    => __( 'In Warteschlange', 'recruiting-playbook' ),
+			'sent'      => __( 'Gesendet', 'recruiting-playbook' ),
+			'failed'    => __( 'Fehlgeschlagen', 'recruiting-playbook' ),
+			'cancelled' => __( 'Abgebrochen', 'recruiting-playbook' ),
+		];
+
+		$colors = [
+			'pending'   => '#dba617',
+			'queued'    => '#2271b1',
+			'sent'      => '#00a32a',
+			'failed'    => '#d63638',
+			'cancelled' => '#787c82',
+		];
+
+		$label = $labels[ $status ] ?? $status;
+		$color = $colors[ $status ] ?? '#787c82';
+
+		printf(
+			'<span class="rp-status-badge" style="background-color: %s; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;" title="%s">%s</span>',
+			esc_attr( $color ),
+			esc_attr( $error_message ),
+			esc_html( $label )
+		);
+	}
+
+	/**
+	 * E-Mail-Versand verarbeiten
+	 *
+	 * @param int $application_id Application ID.
+	 */
+	private function processEmailSend( int $application_id ): void {
+		if ( ! isset( $_POST['send_email'] ) ) {
+			return;
+		}
+
+		check_admin_referer( 'rp_send_email_' . $application_id );
+
+		// Pro-Feature Check.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			add_action(
+				'admin_notices',
+				function () {
+					echo '<div class="notice notice-error is-dismissible"><p>';
+					esc_html_e( 'E-Mail-Versand erfordert Pro.', 'recruiting-playbook' );
+					echo '</p></div>';
+				}
+			);
+			return;
+		}
+
+		$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+
+		if ( ! $template_id ) {
+			add_action(
+				'admin_notices',
+				function () {
+					echo '<div class="notice notice-error is-dismissible"><p>';
+					esc_html_e( 'Bitte wählen Sie ein Template aus.', 'recruiting-playbook' );
+					echo '</p></div>';
+				}
+			);
+			return;
+		}
+
+		// E-Mail über den Service senden.
+		$email_service = new EmailService();
+		$result = $email_service->sendWithTemplate( $template_id, $application_id );
+
+		if ( false === $result ) {
+			add_action(
+				'admin_notices',
+				function () {
+					echo '<div class="notice notice-error is-dismissible"><p>';
+					esc_html_e( 'E-Mail konnte nicht gesendet werden.', 'recruiting-playbook' );
+					echo '</p></div>';
+				}
+			);
+			return;
+		}
+
+		// Aktivitäts-Log eintragen.
+		global $wpdb;
+		$log_table    = $wpdb->prefix . 'rp_activity_log';
+		$current_user = wp_get_current_user();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$log_table,
+			[
+				'object_type' => 'application',
+				'object_id'   => $application_id,
+				'action'      => 'email_sent',
+				'user_id'     => $current_user->ID,
+				'user_name'   => $current_user->display_name,
+				'message'     => sprintf( 'E-Mail mit Template #%d gesendet', $template_id ),
+				'created_at'  => current_time( 'mysql' ),
+			]
+		);
+
+		add_action(
+			'admin_notices',
+			function () {
+				echo '<div class="notice notice-success is-dismissible"><p>';
+				esc_html_e( 'E-Mail wurde gesendet.', 'recruiting-playbook' );
+				echo '</p></div>';
+			}
+		);
 	}
 }

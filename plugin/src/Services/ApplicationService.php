@@ -481,8 +481,9 @@ class ApplicationService {
 			$this->email_service->sendRejectionEmail( $id );
 		}
 
-		// Hook für Erweiterungen
-		do_action( 'rp_application_status_changed', $id, $status, $old_status );
+		// Hook für Auto-E-Mail und andere Erweiterungen.
+		// Parameter: $application_id, $old_status, $new_status (chronologische Reihenfolge).
+		do_action( 'rp_application_status_changed', $id, $old_status, $status );
 
 		return true;
 	}

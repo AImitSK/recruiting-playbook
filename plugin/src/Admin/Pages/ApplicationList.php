@@ -73,11 +73,18 @@ class ApplicationList extends \WP_List_Table {
 	 * @return array<string, string>
 	 */
 	public function get_bulk_actions(): array {
-		return [
+		$actions = [
 			'bulk_screening' => __( 'Status: In Prüfung', 'recruiting-playbook' ),
 			'bulk_rejected'  => __( 'Status: Abgelehnt', 'recruiting-playbook' ),
 			'bulk_delete'    => __( 'Löschen', 'recruiting-playbook' ),
 		];
+
+		// Pro-Feature: Bulk-E-Mail.
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+			$actions['bulk_email'] = __( '✉️ E-Mail senden', 'recruiting-playbook' );
+		}
+
+		return $actions;
 	}
 
 	/**

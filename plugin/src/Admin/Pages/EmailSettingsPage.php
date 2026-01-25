@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\EmailTemplateService;
 use RecruitingPlaybook\Services\PlaceholderService;
+use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Repositories\EmailTemplateRepository;
 
 /**
@@ -84,6 +85,12 @@ class EmailSettingsPage {
 			check_admin_referer( 'rp_delete_template_' . $template_id );
 			$this->deleteTemplate( $template_id );
 		}
+
+		// Auto-E-Mail-Einstellungen speichern.
+		if ( isset( $_POST['rp_save_auto_email'] ) ) {
+			check_admin_referer( 'rp_save_auto_email' );
+			$this->saveAutoEmailSettings();
+		}
 	}
 
 	/**
@@ -147,11 +154,13 @@ class EmailSettingsPage {
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$template_id = isset( $_GET['template_id'] ) ? absint( $_GET['template_id'] ) : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'templates';
 
 		echo '<div class="wrap">';
 		echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates', 'recruiting-playbook' ) . '</h1>';
 
-		if ( 'list' === $action ) {
+		if ( 'list' === $action && 'templates' === $tab ) {
 			echo '<a href="' . esc_url( admin_url( 'admin.php?page=rp-email-templates&action=new' ) ) . '" class="page-title-action">';
 			echo esc_html__( 'Neues Template', 'recruiting-playbook' );
 			echo '</a>';
@@ -159,19 +168,57 @@ class EmailSettingsPage {
 
 		echo '<hr class="wp-header-end">';
 
+		// Tabs rendern (nur bei list-Ansicht).
+		if ( 'list' === $action ) {
+			$this->renderTabs( $tab );
+		}
+
 		// Erfolgsmeldungen.
 		$this->renderMessages();
 
-		switch ( $action ) {
-			case 'new':
-			case 'edit':
-				$this->renderForm( $template_id );
-				break;
-			default:
-				$this->renderList();
+		// Tab-spezifischer Inhalt.
+		if ( 'auto-email' === $tab && 'list' === $action ) {
+			$this->renderAutoEmailSettings();
+		} else {
+			switch ( $action ) {
+				case 'new':
+				case 'edit':
+					$this->renderForm( $template_id );
+					break;
+				default:
+					$this->renderList();
+			}
 		}
 
 		echo '</div>';
+	}
+
+	/**
+	 * Tabs rendern
+	 *
+	 * @param string $current_tab Aktueller Tab.
+	 */
+	private function renderTabs( string $current_tab ): void {
+		$tabs = [
+			'templates'  => __( 'Templates', 'recruiting-playbook' ),
+			'auto-email' => __( 'Automatische E-Mails', 'recruiting-playbook' ),
+		];
+
+		echo '<nav class="nav-tab-wrapper wp-clearfix" style="margin-bottom: 20px;">';
+
+		foreach ( $tabs as $tab_id => $tab_label ) {
+			$url   = admin_url( 'admin.php?page=rp-email-templates&tab=' . $tab_id );
+			$class = ( $tab_id === $current_tab ) ? 'nav-tab nav-tab-active' : 'nav-tab';
+
+			printf(
+				'<a href="%s" class="%s">%s</a>',
+				esc_url( $url ),
+				esc_attr( $class ),
+				esc_html( $tab_label )
+			);
+		}
+
+		echo '</nav>';
 	}
 
 	/**
@@ -187,9 +234,10 @@ class EmailSettingsPage {
 		$message = sanitize_text_field( wp_unslash( $_GET['message'] ) );
 
 		$messages = [
-			'created' => __( 'Template wurde erstellt.', 'recruiting-playbook' ),
-			'updated' => __( 'Template wurde aktualisiert.', 'recruiting-playbook' ),
-			'deleted' => __( 'Template wurde gelöscht.', 'recruiting-playbook' ),
+			'created'        => __( 'Template wurde erstellt.', 'recruiting-playbook' ),
+			'updated'        => __( 'Template wurde aktualisiert.', 'recruiting-playbook' ),
+			'deleted'        => __( 'Template wurde gelöscht.', 'recruiting-playbook' ),
+			'settings_saved' => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
 		];
 
 		if ( isset( $messages[ $message ] ) ) {
@@ -452,5 +500,135 @@ class EmailSettingsPage {
 		echo '</p>';
 		echo '</div>';
 		echo '</div>';
+	}
+
+	/**
+	 * Auto-E-Mail Einstellungen rendern
+	 */
+	private function renderAutoEmailSettings(): void {
+		$auto_email_service = new AutoEmailService();
+		$settings           = $auto_email_service->getSettings();
+		$statuses           = AutoEmailService::getAvailableStatuses();
+
+		// Templates laden.
+		$repository = new EmailTemplateRepository();
+		$templates  = $repository->getList( [ 'include_inactive' => false ] );
+
+		?>
+		<div class="card" style="max-width: 900px; padding: 20px;">
+			<h2><?php esc_html_e( 'Automatische E-Mails bei Status-Änderungen', 'recruiting-playbook' ); ?></h2>
+			<p class="description">
+				<?php esc_html_e( 'Konfigurieren Sie, welche E-Mails automatisch gesendet werden, wenn sich der Status einer Bewerbung ändert.', 'recruiting-playbook' ); ?>
+			</p>
+
+			<form method="post">
+				<?php wp_nonce_field( 'rp_save_auto_email' ); ?>
+
+				<table class="widefat striped" style="margin-top: 20px;">
+					<thead>
+						<tr>
+							<th style="width: 5%;"><?php esc_html_e( 'Aktiv', 'recruiting-playbook' ); ?></th>
+							<th style="width: 20%;"><?php esc_html_e( 'Bei Status', 'recruiting-playbook' ); ?></th>
+							<th style="width: 50%;"><?php esc_html_e( 'E-Mail-Template', 'recruiting-playbook' ); ?></th>
+							<th style="width: 25%;"><?php esc_html_e( 'Verzögerung', 'recruiting-playbook' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $statuses as $status_key => $status_label ) : ?>
+							<?php
+							$status_settings = $settings[ $status_key ] ?? [];
+							$is_enabled      = ! empty( $status_settings['enabled'] );
+							$template_id     = (int) ( $status_settings['template_id'] ?? 0 );
+							$delay           = (int) ( $status_settings['delay'] ?? 0 );
+							?>
+							<tr>
+								<td>
+									<input type="checkbox"
+									       name="auto_email[<?php echo esc_attr( $status_key ); ?>][enabled]"
+									       value="1"
+									       <?php checked( $is_enabled ); ?>>
+								</td>
+								<td>
+									<strong><?php echo esc_html( $status_label ); ?></strong>
+									<p class="description" style="margin: 0;">
+										<?php
+										printf(
+											/* translators: %s: status name */
+											esc_html__( 'Wenn Status auf "%s" gesetzt wird', 'recruiting-playbook' ),
+											$status_label
+										);
+										?>
+									</p>
+								</td>
+								<td>
+									<select name="auto_email[<?php echo esc_attr( $status_key ); ?>][template_id]" style="width: 100%;">
+										<option value=""><?php esc_html_e( '— Kein Template —', 'recruiting-playbook' ); ?></option>
+										<?php foreach ( $templates as $template ) : ?>
+											<option value="<?php echo esc_attr( $template['id'] ); ?>" <?php selected( $template_id, (int) $template['id'] ); ?>>
+												<?php echo esc_html( $template['name'] ); ?>
+												(<?php echo esc_html( $template['subject'] ?? '' ); ?>)
+											</option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<select name="auto_email[<?php echo esc_attr( $status_key ); ?>][delay]" style="width: 100%;">
+										<option value="0" <?php selected( $delay, 0 ); ?>><?php esc_html_e( 'Sofort', 'recruiting-playbook' ); ?></option>
+										<option value="5" <?php selected( $delay, 5 ); ?>><?php esc_html_e( '5 Minuten', 'recruiting-playbook' ); ?></option>
+										<option value="15" <?php selected( $delay, 15 ); ?>><?php esc_html_e( '15 Minuten', 'recruiting-playbook' ); ?></option>
+										<option value="30" <?php selected( $delay, 30 ); ?>><?php esc_html_e( '30 Minuten', 'recruiting-playbook' ); ?></option>
+										<option value="60" <?php selected( $delay, 60 ); ?>><?php esc_html_e( '1 Stunde', 'recruiting-playbook' ); ?></option>
+										<option value="120" <?php selected( $delay, 120 ); ?>><?php esc_html_e( '2 Stunden', 'recruiting-playbook' ); ?></option>
+										<option value="1440" <?php selected( $delay, 1440 ); ?>><?php esc_html_e( '24 Stunden', 'recruiting-playbook' ); ?></option>
+									</select>
+									<p class="description" style="margin: 0; font-size: 11px;">
+										<?php esc_html_e( 'Wartezeit vor dem Versand', 'recruiting-playbook' ); ?>
+									</p>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+
+				<div class="notice notice-info inline" style="margin-top: 20px;">
+					<p>
+						<strong><?php esc_html_e( 'Tipp:', 'recruiting-playbook' ); ?></strong>
+						<?php esc_html_e( 'Eine Verzögerung gibt Ihnen Zeit, versehentliche Status-Änderungen zu korrigieren, bevor die E-Mail versendet wird.', 'recruiting-playbook' ); ?>
+					</p>
+				</div>
+
+				<p class="submit">
+					<button type="submit" name="rp_save_auto_email" class="button button-primary">
+						<?php esc_html_e( 'Einstellungen speichern', 'recruiting-playbook' ); ?>
+					</button>
+				</p>
+			</form>
+		</div>
+
+		<?php if ( empty( $templates ) ) : ?>
+			<div class="notice notice-warning inline" style="margin-top: 20px; max-width: 900px;">
+				<p>
+					<?php esc_html_e( 'Keine E-Mail-Templates vorhanden.', 'recruiting-playbook' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates&action=new' ) ); ?>">
+						<?php esc_html_e( 'Erstellen Sie zuerst ein Template.', 'recruiting-playbook' ); ?>
+					</a>
+				</p>
+			</div>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Auto-E-Mail Einstellungen speichern
+	 */
+	private function saveAutoEmailSettings(): void {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Wird in AutoEmailService sanitiert
+		$settings = isset( $_POST['auto_email'] ) ? wp_unslash( $_POST['auto_email'] ) : [];
+
+		$auto_email_service = new AutoEmailService();
+		$auto_email_service->saveSettings( $settings );
+
+		wp_safe_redirect( admin_url( 'admin.php?page=rp-email-templates&tab=auto-email&message=settings_saved' ) );
+		exit;
 	}
 }

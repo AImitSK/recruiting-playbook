@@ -31,6 +31,7 @@ use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
+use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Licensing\LicenseManager;
 use RecruitingPlaybook\Traits\Singleton;
@@ -69,6 +70,9 @@ final class Plugin {
 
 		// E-Mail Queue Service initialisieren (Pro-Feature).
 		$this->initEmailQueueService();
+
+		// Auto-E-Mail Service initialisieren (Pro-Feature).
+		$this->initAutoEmailService();
 
 		// Admin-Bereich.
 		if ( is_admin() ) {
@@ -191,6 +195,22 @@ final class Plugin {
 	private function loadI18n(): void {
 		// WordPress.org lädt Übersetzungen automatisch für gehostete Plugins.
 		// Keine manuelle Initialisierung erforderlich.
+	}
+
+	/**
+	 * Auto-E-Mail Service initialisieren
+	 *
+	 * Registriert Hooks für automatischen E-Mail-Versand bei Status-Änderungen.
+	 * Pro-Feature: Nur aktiv wenn E-Mail-Templates Feature verfügbar ist.
+	 */
+	private function initAutoEmailService(): void {
+		// Prüfen ob Feature verfügbar ist.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return;
+		}
+
+		$auto_email_service = new AutoEmailService();
+		$auto_email_service->registerHooks();
 	}
 
 	/**
