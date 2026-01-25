@@ -18,6 +18,7 @@ use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
 use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
+use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\ApplicationController;
@@ -234,6 +235,9 @@ final class Plugin {
 		// Admin-Menü registrieren.
 		$menu = new Menu();
 		add_action( 'admin_menu', [ $menu, 'register' ] );
+
+		// E-Mail-Templates Seite registrieren (eigenes Submenu).
+		new EmailSettingsPage();
 
 		// Meta-Boxen registrieren.
 		$job_meta = new JobMeta();
