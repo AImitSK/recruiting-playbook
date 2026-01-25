@@ -503,7 +503,8 @@ class ApplicationController extends WP_REST_Controller {
 			);
 		}
 
-		if ( ! current_user_can( 'view_applications' ) ) {
+		// Prüfe rp_view_applications ODER manage_options (Admin-Fallback).
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, Bewerbungen anzuzeigen.', 'recruiting-playbook' ),

@@ -279,8 +279,8 @@ class DocumentDownloadService {
 			wp_die( esc_html__( 'Download-Link abgelaufen oder ungültig.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
-		// Dann Berechtigung prüfen (view_applications statt manage_options für präzisere Zugriffssteuerung).
-		if ( ! current_user_can( 'view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+		// Dann Berechtigung prüfen (rp_view_applications ODER manage_options als Fallback).
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			self::logFailedAccess( $document_id, 'no_permission' );
 			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}

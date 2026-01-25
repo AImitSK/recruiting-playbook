@@ -23,7 +23,8 @@ class KanbanBoard {
 	 */
 	public function render(): void {
 		// Capability-Check MUSS zuerst kommen (Sicherheit).
-		if ( ! current_user_can( 'view_applications' ) ) {
+		// Prüfe rp_view_applications ODER manage_options (Admin-Fallback).
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die(
 				esc_html__( 'Sie haben keine Berechtigung, diese Seite anzuzeigen.', 'recruiting-playbook' ),
 				esc_html__( 'Zugriff verweigert', 'recruiting-playbook' ),
