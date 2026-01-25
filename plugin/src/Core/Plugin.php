@@ -25,6 +25,9 @@ use RecruitingPlaybook\Api\NoteController;
 use RecruitingPlaybook\Api\RatingController;
 use RecruitingPlaybook\Api\ActivityController;
 use RecruitingPlaybook\Api\TalentPoolController;
+use RecruitingPlaybook\Api\EmailTemplateController;
+use RecruitingPlaybook\Api\EmailController;
+use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Licensing\LicenseManager;
@@ -234,6 +237,16 @@ final class Plugin {
 
 		$talent_pool_controller = new TalentPoolController();
 		$talent_pool_controller->register_routes();
+
+		// Pro-Feature Controller (E-Mail-System).
+		$email_template_controller = new EmailTemplateController();
+		$email_template_controller->register_routes();
+
+		$email_controller = new EmailController();
+		$email_controller->register_routes();
+
+		$email_log_controller = new EmailLogController();
+		$email_log_controller->register_routes();
 	}
 
 	/**
