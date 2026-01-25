@@ -2,10 +2,24 @@
 /**
  * Lizenzschlüssel-Generator (CLI Tool)
  *
+ * Generiert gültige Lizenzschlüssel für das Recruiting Playbook Plugin.
+ * Die Schlüssel verwenden HMAC-SHA256 für die Checksum-Validierung.
+ *
  * Verwendung:
- *   php generate-license.php PRO
- *   php generate-license.php AI
- *   php generate-license.php BUNDLE
+ *   php generate-license.php TIER [ANZAHL]
+ *
+ * Argumente:
+ *   TIER    - Lizenz-Tier: PRO, AI oder BUNDLE (erforderlich)
+ *   ANZAHL  - Anzahl zusätzlicher Schlüssel (1-100, optional)
+ *
+ * Beispiele:
+ *   php generate-license.php PRO          - Einen Pro-Schlüssel erstellen
+ *   php generate-license.php AI           - Einen AI-Addon-Schlüssel erstellen
+ *   php generate-license.php BUNDLE       - Einen Bundle-Schlüssel erstellen
+ *   php generate-license.php PRO 10       - 11 Pro-Schlüssel erstellen (1 + 10)
+ *
+ * Umgebungsvariablen:
+ *   RP_LICENSE_SECRET - Secret für HMAC (muss mit wp-config.php übereinstimmen)
  *
  * @package RecruitingPlaybook
  */
@@ -120,17 +134,27 @@ echo 'Validierung: ' . ( $is_valid ? 'OK' : 'FEHLER' ) . PHP_EOL;
 echo PHP_EOL;
 
 // Optional: Mehrere Schlüssel generieren.
-if ( isset( $argv[2] ) && is_numeric( $argv[2] ) ) {
-	$count = max( 1, min( (int) $argv[2], 100 ) ); // Min 1, Max 100.
+if ( isset( $argv[2] ) ) {
+	if ( ! is_numeric( $argv[2] ) ) {
+		echo 'WARNUNG: Ungültige Anzahl "' . $argv[2] . '" - muss eine Zahl sein.' . PHP_EOL;
+		echo PHP_EOL;
+	} else {
+		$requested = (int) $argv[2];
+		$count     = max( 1, min( $requested, 100 ) ); // Min 1, Max 100.
 
-	echo 'Weitere Schlüssel (' . $count . '):' . PHP_EOL;
-	echo '----------------------------------------' . PHP_EOL;
+		if ( $requested > 100 ) {
+			echo 'HINWEIS: Maximal 100 Schlüssel erlaubt, generiere ' . $count . '.' . PHP_EOL;
+		}
 
-	for ( $i = 0; $i < $count; $i++ ) {
-		echo generate_license_key( $tier, $license_secret ) . PHP_EOL;
+		echo 'Weitere Schlüssel (' . $count . '):' . PHP_EOL;
+		echo '----------------------------------------' . PHP_EOL;
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			echo generate_license_key( $tier, $license_secret ) . PHP_EOL;
+		}
+
+		echo PHP_EOL;
 	}
-
-	echo PHP_EOL;
 }
 
 exit( 0 );

@@ -24,40 +24,19 @@ use RecruitingPlaybook\Api\ApplicationController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Licensing\LicenseManager;
+use RecruitingPlaybook\Traits\Singleton;
 
 /**
  * Haupt-Plugin-Klasse (Singleton)
  */
 final class Plugin {
 
-	/**
-	 * Singleton instance
-	 *
-	 * @var Plugin|null
-	 */
-	private static ?Plugin $instance = null;
+	use Singleton;
 
 	/**
-	 * Private constructor for singleton
+	 * Plugin initialisieren (called by Singleton trait)
 	 */
-	private function __construct() {}
-
-	/**
-	 * Get singleton instance
-	 *
-	 * @return self
-	 */
-	public static function getInstance(): self {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Plugin initialisieren
-	 */
-	public function init(): void {
+	protected function init(): void {
 		// Lizenz-Helper-Funktionen laden.
 		$this->loadLicenseHelpers();
 
@@ -438,17 +417,4 @@ final class Plugin {
 		}
 	}
 
-	/**
-	 * Prevent cloning
-	 */
-	private function __clone() {}
-
-	/**
-	 * Prevent unserialization
-	 *
-	 * @throws \Exception Always.
-	 */
-	public function __wakeup(): void {
-		throw new \Exception( 'Cannot unserialize singleton' );
-	}
 }

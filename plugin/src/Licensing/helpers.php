@@ -113,10 +113,35 @@ function rp_features(): array {
 /**
  * Zeigt Upgrade-Hinweis wenn Feature nicht verfügbar
  *
- * @param string $feature      Feature-Name.
- * @param string $feature_name Anzeigename des Features.
+ * Prüft ob ein Feature verfügbar ist und zeigt bei Nicht-Verfügbarkeit
+ * automatisch einen Upgrade-Hinweis an. Nützlich für Feature-Gating in
+ * Admin-Seiten und Formularen.
+ *
+ * @param string $feature       Feature-Name (z.B. 'kanban_board', 'api_access').
+ * @param string $feature_name  Anzeigename des Features für den Benutzer.
  * @param string $required_tier Benötigter Tier (PRO, AI_ADDON, BUNDLE).
- * @return bool True wenn Feature verfügbar, false wenn Hinweis gezeigt wurde.
+ * @return bool True wenn Feature verfügbar und Code fortgesetzt werden kann,
+ *              false wenn Upgrade-Hinweis angezeigt wurde.
+ *
+ * @example Feature-Check mit Upgrade-Hinweis
+ * ```php
+ * // Am Anfang einer Feature-spezifischen Admin-Seite
+ * if ( ! rp_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' ) ) {
+ *     return; // Upgrade-Hinweis wurde angezeigt, Funktion beenden
+ * }
+ *
+ * // Feature ist verfügbar, normalen Code ausführen
+ * render_kanban_board();
+ * ```
+ *
+ * @example Inline-Feature-Check
+ * ```php
+ * <div class="feature-section">
+ *     <?php if ( rp_require_feature( 'api_access', 'REST API', 'PRO' ) ) : ?>
+ *         <!-- API-Einstellungen hier -->
+ *     <?php endif; ?>
+ * </div>
+ * ```
  */
 function rp_require_feature( string $feature, string $feature_name, string $required_tier = 'PRO' ): bool {
 	if ( rp_can( $feature ) ) {

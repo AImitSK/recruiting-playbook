@@ -109,5 +109,5 @@ add_action('init', function() {
         return;
     }
 
-    Core\Plugin::getInstance()->init();
+    Core\Plugin::get_instance();
 }, 5);
