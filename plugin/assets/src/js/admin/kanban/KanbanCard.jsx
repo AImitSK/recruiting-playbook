@@ -7,6 +7,8 @@
 import { __ } from '@wordpress/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { RatingBadge } from '../applicant/RatingStars';
+import { TalentPoolBadge } from '../applicant/TalentPoolButton';
 
 export function KanbanCard( {
 	application,
@@ -119,14 +121,36 @@ export function KanbanCard( {
 				</span>
 			</div>
 
-			{ application.documents_count > 0 && (
-				<div className="rp-kanban-card-documents">
-					<span className="dashicons dashicons-media-document" aria-hidden="true" />
-					<span aria-label={ `${ application.documents_count } Dokumente` }>
+			{ /* Footer mit Badges */ }
+			<div className="rp-kanban-card-footer">
+				{ /* Dokumente */ }
+				{ application.documents_count > 0 && (
+					<span className="rp-kanban-card-badge" title={ `${ application.documents_count } Dokumente` }>
+						<span className="dashicons dashicons-media-document" aria-hidden="true" />
 						{ application.documents_count }
 					</span>
-				</div>
-			) }
+				) }
+
+				{ /* Notizen */ }
+				{ application.notes_count > 0 && (
+					<span className="rp-kanban-card-badge" title={ `${ application.notes_count } Notizen` }>
+						<span className="dashicons dashicons-edit" aria-hidden="true" />
+						{ application.notes_count }
+					</span>
+				) }
+
+				{ /* Spacer */ }
+				<span className="rp-kanban-card-spacer" />
+
+				{ /* Talent-Pool Badge */ }
+				<TalentPoolBadge inPool={ application.in_talent_pool } />
+
+				{ /* Rating Badge */ }
+				<RatingBadge
+					average={ application.average_rating }
+					count={ application.ratings_count }
+				/>
+			</div>
 		</article>
 	);
 }
