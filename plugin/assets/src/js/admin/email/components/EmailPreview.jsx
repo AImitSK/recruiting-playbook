@@ -5,7 +5,14 @@
  */
 
 import { Card, CardBody, CardHeader } from '@wordpress/components';
+import PropTypes from 'prop-types';
 import DOMPurify from 'dompurify';
+
+// DOMPurify-Konfiguration: Nur sichere Tags für E-Mail-Vorschau
+const DOMPURIFY_CONFIG = {
+	ALLOWED_TAGS: [ 'p', 'br', 'strong', 'em', 'a', 'ul', 'ol', 'li' ],
+	ALLOWED_ATTR: [ 'href', 'target', 'rel' ],
+};
 
 /**
  * EmailPreview Komponente
@@ -40,21 +47,28 @@ export function EmailPreview( { subject = '', body = '', recipient = '' } ) {
 			.replace( /\*\*(.+?)\*\*/g, '<strong>$1</strong>' )
 			// Kursiv
 			.replace( /\*(.+?)\*/g, '<em>$1</em>' )
-			// Links mit URL-Validierung
+			// Links mit URL-Validierung UND Link-Text-Escaping (XSS-Schutz)
 			.replace(
 				/\[([^\]]+)\]\(([^)]+)\)/g,
 				( match, linkText, url ) => {
+					// Link-Text escapen (bereits escaped durch vorherige Replacements,
+					// aber sicherheitshalber nochmal prüfen)
+					const escapedLinkText = linkText
+						.replace( /&/g, '&amp;' )
+						.replace( /</g, '&lt;' )
+						.replace( />/g, '&gt;' )
+						.replace( /"/g, '&quot;' );
 					// Nur sichere URLs erlauben (http/https)
 					const safeUrl = /^https?:\/\//.test( url ) ? url : '#';
-					return `<a href="${ safeUrl }" target="_blank" rel="noopener noreferrer">${ linkText }</a>`;
+					return `<a href="${ safeUrl }" target="_blank" rel="noopener noreferrer">${ escapedLinkText }</a>`;
 				}
 			)
 			// Zeilenumbrüche zuletzt
 			.replace( /\n\n/g, '</p><p>' )
 			.replace( /\n/g, '<br>' );
 
-		// DOMPurify sanitiert das Ergebnis zusätzlich
-		return DOMPurify.sanitize( `<p>${ html }</p>` );
+		// DOMPurify sanitiert das Ergebnis mit restriktiver Konfiguration
+		return DOMPurify.sanitize( `<p>${ html }</p>`, DOMPURIFY_CONFIG );
 	};
 
 	return (
@@ -104,3 +118,9 @@ export function EmailPreview( { subject = '', body = '', recipient = '' } ) {
 		</div>
 	);
 }
+
+EmailPreview.propTypes = {
+	subject: PropTypes.string,
+	body: PropTypes.string,
+	recipient: PropTypes.string,
+};

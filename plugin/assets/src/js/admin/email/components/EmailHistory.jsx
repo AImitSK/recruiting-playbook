@@ -19,39 +19,14 @@ import {
 } from '@wordpress/components';
 import { seen, backup, close } from '@wordpress/icons';
 import DOMPurify from 'dompurify';
+import { StatusBadge } from './StatusBadge';
 
-/**
- * Status-Badge Komponente
- *
- * @param {Object} props        Props
- * @param {string} props.status Status
- * @return {JSX.Element} Badge
- */
-function StatusBadge( { status } ) {
-	const i18n = window.rpEmailData?.i18n || {};
-
-	const statusLabels = {
-		sent: i18n.statusSent || 'Gesendet',
-		failed: i18n.statusFailed || 'Fehlgeschlagen',
-		pending: i18n.statusPending || 'Ausstehend',
-		scheduled: i18n.statusScheduled || 'Geplant',
-		cancelled: i18n.statusCancelled || 'Storniert',
-	};
-
-	const statusClasses = {
-		sent: 'rp-status--success',
-		failed: 'rp-status--error',
-		pending: 'rp-status--warning',
-		scheduled: 'rp-status--info',
-		cancelled: 'rp-status--neutral',
-	};
-
-	return (
-		<span className={ `rp-status ${ statusClasses[ status ] || '' }` }>
-			{ statusLabels[ status ] || status }
-		</span>
-	);
-}
+// DOMPurify-Konfiguration: Nur sichere Tags für E-Mail-Inhalte
+const DOMPURIFY_CONFIG = {
+	ALLOWED_TAGS: [ 'p', 'br', 'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'div', 'span' ],
+	ALLOWED_ATTR: [ 'href', 'target', 'rel', 'class', 'style' ],
+	FORBID_TAGS: [ 'script', 'iframe', 'object', 'embed', 'form', 'input' ],
+};
 
 /**
  * EmailHistory Komponente
@@ -302,7 +277,7 @@ export function EmailHistory( {
 							<div
 								className="rp-email-history__view-content"
 								dangerouslySetInnerHTML={ {
-									__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body ),
+									__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body, DOMPURIFY_CONFIG ),
 								} }
 							/>
 						</div>

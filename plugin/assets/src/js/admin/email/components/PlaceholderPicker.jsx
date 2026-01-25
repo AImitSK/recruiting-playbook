@@ -5,6 +5,7 @@
  */
 
 import { useState, useMemo } from '@wordpress/element';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	Popover,
@@ -216,3 +217,21 @@ export function PlaceholderPicker( {
 
 	return compact ? renderPopover() : renderInlineList();
 }
+
+PlaceholderPicker.propTypes = {
+	placeholders: PropTypes.objectOf(
+		PropTypes.shape( {
+			label: PropTypes.string,
+			items: PropTypes.objectOf(
+				PropTypes.shape( {
+					label: PropTypes.string,
+					description: PropTypes.string,
+				} )
+			),
+		} )
+	),
+	onSelect: PropTypes.func,
+	buttonLabel: PropTypes.string,
+	compact: PropTypes.bool,
+	showSearch: PropTypes.bool,
+};

@@ -6,7 +6,7 @@
  * @package RecruitingPlaybook
  */
 
-import { render, useState, useCallback } from '@wordpress/element';
+import { render, useState, useCallback, useRef, useEffect } from '@wordpress/element';
 import { Notice } from '@wordpress/components';
 
 import { TemplateList, TemplateEditor, ErrorBoundary } from './components';
@@ -21,6 +21,9 @@ function EmailTemplatesApp() {
 	const [ view, setView ] = useState( 'list' ); // 'list' | 'edit' | 'create'
 	const [ selectedTemplate, setSelectedTemplate ] = useState( null );
 	const [ notification, setNotification ] = useState( null );
+
+	// Ref für Notification-Timeout (Memory Leak Prevention)
+	const notificationTimeoutRef = useRef( null );
 
 	const i18n = window.rpEmailData?.i18n || {};
 
@@ -42,6 +45,15 @@ function EmailTemplatesApp() {
 		previewValues,
 	} = usePlaceholders();
 
+	// Cleanup bei Unmount
+	useEffect( () => {
+		return () => {
+			if ( notificationTimeoutRef.current ) {
+				clearTimeout( notificationTimeoutRef.current );
+			}
+		};
+	}, [] );
+
 	/**
 	 * Benachrichtigung anzeigen
 	 *
@@ -49,8 +61,17 @@ function EmailTemplatesApp() {
 	 * @param {string} type    Typ ('success' | 'error')
 	 */
 	const showNotification = useCallback( ( message, type = 'success' ) => {
+		// Vorheriges Timeout aufräumen
+		if ( notificationTimeoutRef.current ) {
+			clearTimeout( notificationTimeoutRef.current );
+		}
+
 		setNotification( { message, type } );
-		setTimeout( () => setNotification( null ), 3000 );
+
+		notificationTimeoutRef.current = setTimeout( () => {
+			setNotification( null );
+			notificationTimeoutRef.current = null;
+		}, 3000 );
 	}, [] );
 
 	/**

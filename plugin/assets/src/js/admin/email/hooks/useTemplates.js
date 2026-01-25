@@ -28,8 +28,9 @@ export function useTemplates( options = {} ) {
 	const errorSavingMsg = i18n.errorSaving || 'Fehler beim Speichern';
 	const errorDeletingMsg = i18n.errorDeleting || 'Fehler beim Löschen';
 
-	// AbortController Ref für Cleanup
+	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );
+	const isMountedRef = useRef( true );
 
 	/**
 	 * Templates vom Server laden
@@ -61,22 +62,32 @@ export function useTemplates( options = {} ) {
 				signal: abortControllerRef.current.signal,
 			} );
 
-			setTemplates( data.items || data || [] );
+			// Nur State setzen wenn noch mounted
+			if ( isMountedRef.current ) {
+				setTemplates( data.items || data || [] );
+			}
 		} catch ( err ) {
-			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+			// AbortError explizit ignorieren
+			if ( err?.name === 'AbortError' ) {
+				return;
+			}
+			if ( isMountedRef.current && ! handleApiError( err, setError, errorLoadingMsg ) ) {
 				console.error( 'Error fetching templates:', err );
 			}
 		} finally {
-			setLoading( false );
+			if ( isMountedRef.current ) {
+				setLoading( false );
+			}
 		}
 	}, [ category, errorLoadingMsg ] );
 
-	// Initial laden
+	// Initial laden und Cleanup
 	useEffect( () => {
+		isMountedRef.current = true;
 		fetchTemplates();
 
-		// Cleanup: Request abbrechen beim Unmount
 		return () => {
+			isMountedRef.current = false;
 			if ( abortControllerRef.current ) {
 				abortControllerRef.current.abort();
 			}
@@ -100,6 +111,10 @@ export function useTemplates( options = {} ) {
 				data,
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
+
 			const newTemplate = result.template || result;
 
 			// Optimistic Update
@@ -107,12 +122,17 @@ export function useTemplates( options = {} ) {
 
 			return newTemplate;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
 				console.error( 'Error creating template:', err );
 			}
 			return null;
 		} finally {
-			setSaving( false );
+			if ( isMountedRef.current ) {
+				setSaving( false );
+			}
 		}
 	}, [ errorSavingMsg ] );
 
@@ -134,6 +154,10 @@ export function useTemplates( options = {} ) {
 				data,
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
+
 			const updatedTemplate = result.template || result;
 
 			// Optimistic Update
@@ -143,12 +167,17 @@ export function useTemplates( options = {} ) {
 
 			return updatedTemplate;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
 				console.error( 'Error updating template:', err );
 			}
 			return null;
 		} finally {
-			setSaving( false );
+			if ( isMountedRef.current ) {
+				setSaving( false );
+			}
 		}
 	}, [ errorSavingMsg ] );
 
@@ -175,6 +204,9 @@ export function useTemplates( options = {} ) {
 
 			return true;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return false;
+			}
 			// Rollback
 			setTemplates( previousTemplates );
 
@@ -183,7 +215,9 @@ export function useTemplates( options = {} ) {
 			}
 			return false;
 		} finally {
-			setSaving( false );
+			if ( isMountedRef.current ) {
+				setSaving( false );
+			}
 		}
 	}, [ templates, errorDeletingMsg ] );
 
@@ -205,6 +239,10 @@ export function useTemplates( options = {} ) {
 				data: { name: newName },
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
+
 			const newTemplate = result.template || result;
 
 			// Optimistic Update
@@ -212,12 +250,17 @@ export function useTemplates( options = {} ) {
 
 			return newTemplate;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
 				console.error( 'Error duplicating template:', err );
 			}
 			return null;
 		} finally {
-			setSaving( false );
+			if ( isMountedRef.current ) {
+				setSaving( false );
+			}
 		}
 	}, [ errorSavingMsg ] );
 
@@ -237,6 +280,10 @@ export function useTemplates( options = {} ) {
 				method: 'POST',
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
+
 			const resetTpl = result.template || result;
 
 			// Optimistic Update
@@ -246,12 +293,17 @@ export function useTemplates( options = {} ) {
 
 			return resetTpl;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
 				console.error( 'Error resetting template:', err );
 			}
 			return null;
 		} finally {
-			setSaving( false );
+			if ( isMountedRef.current ) {
+				setSaving( false );
+			}
 		}
 	}, [ errorSavingMsg ] );
 

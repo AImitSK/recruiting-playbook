@@ -4,7 +4,8 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+import PropTypes from 'prop-types';
 import {
 	Button,
 	Card,
@@ -21,6 +22,7 @@ import {
 } from '@wordpress/components';
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { EmailPreview } from './EmailPreview';
+import { replacePlaceholders } from '../utils';
 
 /**
  * TemplateEditor Komponente
@@ -95,15 +97,16 @@ export function TemplateEditor( {
 	const updateField = useCallback( ( field, value ) => {
 		setFormData( ( prev ) => ( { ...prev, [ field ]: value } ) );
 
-		// Validierungsfehler entfernen
-		if ( validationErrors[ field ] ) {
-			setValidationErrors( ( prev ) => {
-				const newErrors = { ...prev };
-				delete newErrors[ field ];
-				return newErrors;
-			} );
-		}
-	}, [ validationErrors ] );
+		// Validierungsfehler entfernen (ohne validationErrors als Dependency)
+		setValidationErrors( ( prev ) => {
+			if ( ! prev[ field ] ) {
+				return prev; // Keine Änderung nötig
+			}
+			const newErrors = { ...prev };
+			delete newErrors[ field ];
+			return newErrors;
+		} );
+	}, [] ); // Keine Dependencies - verwendet nur setState callbacks
 
 	/**
 	 * Platzhalter in Feld einfügen
@@ -131,16 +134,27 @@ export function TemplateEditor( {
 	const validate = useCallback( () => {
 		const errors = {};
 
+		// Konstanten für Längen-Limits
+		const MAX_NAME_LENGTH = 100;
+		const MAX_SUBJECT_LENGTH = 255;
+		const MAX_BODY_LENGTH = 50000;
+
 		if ( ! formData.name.trim() ) {
 			errors.name = i18n.nameRequired || 'Name ist erforderlich';
+		} else if ( formData.name.length > MAX_NAME_LENGTH ) {
+			errors.name = `${ i18n.nameTooLong || 'Name zu lang' } (max. ${ MAX_NAME_LENGTH })`;
 		}
 
 		if ( ! formData.subject.trim() ) {
 			errors.subject = i18n.subjectRequired || 'Betreff ist erforderlich';
+		} else if ( formData.subject.length > MAX_SUBJECT_LENGTH ) {
+			errors.subject = `${ i18n.subjectTooLong || 'Betreff zu lang' } (max. ${ MAX_SUBJECT_LENGTH })`;
 		}
 
 		if ( ! formData.body.trim() ) {
 			errors.body = i18n.bodyRequired || 'Inhalt ist erforderlich';
+		} else if ( formData.body.length > MAX_BODY_LENGTH ) {
+			errors.body = `${ i18n.bodyTooLong || 'Inhalt zu lang' } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
 		setValidationErrors( errors );
@@ -162,23 +176,13 @@ export function TemplateEditor( {
 
 	/**
 	 * Platzhalter im Text ersetzen (für Vorschau)
+	 * Verwendet die zentrale Utility-Funktion mit XSS-Schutz.
 	 *
 	 * @param {string} text Text
-	 * @return {string} Text mit ersetzten Platzhaltern
+	 * @return {string} Text mit ersetzten Platzhaltern (HTML-escaped)
 	 */
-	const replacePlaceholders = useCallback( ( text ) => {
-		if ( ! text ) {
-			return '';
-		}
-
-		let result = text;
-
-		Object.entries( previewValues ).forEach( ( [ key, value ] ) => {
-			const regex = new RegExp( `\\{${ key }\\}`, 'g' );
-			result = result.replace( regex, value );
-		} );
-
-		return result;
+	const getPreviewText = useCallback( ( text ) => {
+		return replacePlaceholders( text, previewValues );
 	}, [ previewValues ] );
 
 	return (
@@ -289,8 +293,8 @@ export function TemplateEditor( {
 						</div>
 					) : (
 						<EmailPreview
-							subject={ replacePlaceholders( formData.subject ) }
-							body={ replacePlaceholders( formData.body ) }
+							subject={ getPreviewText( formData.subject ) }
+							body={ getPreviewText( formData.body ) }
 						/>
 					) }
 
@@ -314,3 +318,21 @@ export function TemplateEditor( {
 		</div>
 	);
 }
+
+TemplateEditor.propTypes = {
+	template: PropTypes.shape( {
+		id: PropTypes.number,
+		name: PropTypes.string,
+		subject: PropTypes.string,
+		body: PropTypes.string,
+		category: PropTypes.string,
+		is_active: PropTypes.bool,
+		is_system: PropTypes.bool,
+	} ),
+	placeholders: PropTypes.object,
+	previewValues: PropTypes.object,
+	saving: PropTypes.bool,
+	error: PropTypes.string,
+	onSave: PropTypes.func.isRequired,
+	onCancel: PropTypes.func.isRequired,
+};

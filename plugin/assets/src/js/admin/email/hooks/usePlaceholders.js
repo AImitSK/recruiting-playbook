@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { handleApiError } from '../utils';
+import { handleApiError, replacePlaceholders as replacePlaceholdersUtil } from '../utils';
 
 /**
  * Hook zum Laden der verfügbaren Platzhalter
@@ -23,8 +23,9 @@ export function usePlaceholders() {
 	const i18n = window.rpEmailData?.i18n || {};
 	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der Platzhalter';
 
-	// AbortController Ref
+	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );
+	const isMountedRef = useRef( true );
 
 	/**
 	 * Platzhalter vom Server laden
@@ -45,22 +46,33 @@ export function usePlaceholders() {
 				signal: abortControllerRef.current.signal,
 			} );
 
-			setPlaceholders( data.groups || {} );
-			setPreviewValues( data.preview_values || {} );
+			// Nur State setzen wenn noch mounted
+			if ( isMountedRef.current ) {
+				setPlaceholders( data.groups || {} );
+				setPreviewValues( data.preview_values || {} );
+			}
 		} catch ( err ) {
-			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+			// AbortError explizit ignorieren
+			if ( err?.name === 'AbortError' ) {
+				return;
+			}
+			if ( isMountedRef.current && ! handleApiError( err, setError, errorLoadingMsg ) ) {
 				console.error( 'Error fetching placeholders:', err );
 			}
 		} finally {
-			setLoading( false );
+			if ( isMountedRef.current ) {
+				setLoading( false );
+			}
 		}
 	}, [ errorLoadingMsg ] );
 
-	// Initial laden
+	// Initial laden und Cleanup
 	useEffect( () => {
+		isMountedRef.current = true;
 		fetchPlaceholders();
 
 		return () => {
+			isMountedRef.current = false;
 			if ( abortControllerRef.current ) {
 				abortControllerRef.current.abort();
 			}
@@ -70,22 +82,13 @@ export function usePlaceholders() {
 	/**
 	 * Platzhalter in Text ersetzen (für Vorschau)
 	 *
+	 * Verwendet die zentrale Utility-Funktion mit XSS-Schutz.
+	 *
 	 * @param {string} text Text mit Platzhaltern
-	 * @return {string} Text mit ersetzten Platzhaltern
+	 * @return {string} Text mit ersetzten Platzhaltern (HTML-escaped)
 	 */
 	const replacePlaceholders = useCallback( ( text ) => {
-		if ( ! text ) {
-			return '';
-		}
-
-		let result = text;
-
-		Object.entries( previewValues ).forEach( ( [ key, value ] ) => {
-			const regex = new RegExp( `\\{${ key }\\}`, 'g' );
-			result = result.replace( regex, value );
-		} );
-
-		return result;
+		return replacePlaceholdersUtil( text, previewValues );
 	}, [ previewValues ] );
 
 	/**

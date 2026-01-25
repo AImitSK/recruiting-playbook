@@ -4,7 +4,7 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useState, useCallback, useEffect, useMemo } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import {
 	Button,
@@ -25,6 +25,7 @@ import {
 import { calendar } from '@wordpress/icons';
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { EmailPreview } from './EmailPreview';
+import { replacePlaceholders } from '../utils';
 
 /**
  * EmailComposer Komponente
@@ -73,11 +74,12 @@ export function EmailComposer( {
 		}
 	}, [ recipient.email ] );
 
-	// Template-Optionen
-	const templateOptions = [
-		{ value: '', label: i18n.selectTemplate || '-- Template auswählen --' },
+	// Template-Optionen (mit useMemo für Performance)
+	const selectTemplateLabel = i18n.selectTemplate || '-- Template auswählen --';
+	const templateOptions = useMemo( () => [
+		{ value: '', label: selectTemplateLabel },
 		...templates.map( ( t ) => ( { value: String( t.id ), label: t.name } ) ),
-	];
+	], [ templates, selectTemplateLabel ] );
 
 	/**
 	 * Template auswählen und Felder füllen
@@ -110,15 +112,16 @@ export function EmailComposer( {
 	const updateField = useCallback( ( field, value ) => {
 		setFormData( ( prev ) => ( { ...prev, [ field ]: value } ) );
 
-		// Validierungsfehler entfernen
-		if ( validationErrors[ field ] ) {
-			setValidationErrors( ( prev ) => {
-				const newErrors = { ...prev };
-				delete newErrors[ field ];
-				return newErrors;
-			} );
-		}
-	}, [ validationErrors ] );
+		// Validierungsfehler entfernen (ohne validationErrors als Dependency)
+		setValidationErrors( ( prev ) => {
+			if ( ! prev[ field ] ) {
+				return prev; // Keine Änderung nötig
+			}
+			const newErrors = { ...prev };
+			delete newErrors[ field ];
+			return newErrors;
+		} );
+	}, [] ); // Keine Dependencies - verwendet nur setState callbacks
 
 	/**
 	 * Platzhalter in Feld einfügen
@@ -140,23 +143,13 @@ export function EmailComposer( {
 
 	/**
 	 * Platzhalter ersetzen (für Vorschau)
+	 * Verwendet die zentrale Utility-Funktion mit XSS-Schutz.
 	 *
 	 * @param {string} text Text
-	 * @return {string} Text mit ersetzten Platzhaltern
+	 * @return {string} Text mit ersetzten Platzhaltern (HTML-escaped)
 	 */
-	const replacePlaceholders = useCallback( ( text ) => {
-		if ( ! text ) {
-			return '';
-		}
-
-		let result = text;
-
-		Object.entries( previewValues ).forEach( ( [ key, value ] ) => {
-			const regex = new RegExp( `\\{${ key }\\}`, 'g' );
-			result = result.replace( regex, value );
-		} );
-
-		return result;
+	const getPreviewText = useCallback( ( text ) => {
+		return replacePlaceholders( text, previewValues );
 	}, [ previewValues ] );
 
 	/**
@@ -167,10 +160,14 @@ export function EmailComposer( {
 	const validate = useCallback( () => {
 		const errors = {};
 
-		// E-Mail-Validierung mit verbesserter Regex
-		// Erlaubt: lokaler Teil mit Buchstaben, Zahlen, Punkten, Bindestrichen, Unterstrichen, Plus
-		// Domain muss mindestens 2 Zeichen TLD haben
-		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		// Konstanten für Längen-Limits
+		const MAX_SUBJECT_LENGTH = 255;
+		const MAX_BODY_LENGTH = 50000;
+		const MAX_SCHEDULE_DAYS = 365;
+
+		// E-Mail-Validierung mit ReDoS-sicherer Regex (Längenlimits)
+		// Local part: max 64 Zeichen, Domain: max 255 Zeichen
+		const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
 
 		if ( ! formData.to.trim() ) {
 			errors.to = i18n.recipientRequired || 'Empfänger ist erforderlich';
@@ -180,18 +177,31 @@ export function EmailComposer( {
 
 		if ( ! formData.subject.trim() ) {
 			errors.subject = i18n.subjectRequired || 'Betreff ist erforderlich';
+		} else if ( formData.subject.length > MAX_SUBJECT_LENGTH ) {
+			errors.subject = `${ i18n.subjectTooLong || 'Betreff zu lang' } (max. ${ MAX_SUBJECT_LENGTH })`;
 		}
 
 		if ( ! formData.body.trim() ) {
 			errors.body = i18n.bodyRequired || 'Inhalt ist erforderlich';
+		} else if ( formData.body.length > MAX_BODY_LENGTH ) {
+			errors.body = `${ i18n.bodyTooLong || 'Inhalt zu lang' } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
 		// Schedule-Validierung
 		if ( scheduleEnabled ) {
 			if ( ! scheduledAt ) {
 				errors.scheduledAt = i18n.scheduleRequired || 'Sendezeitpunkt ist erforderlich';
-			} else if ( new Date( scheduledAt ) <= new Date() ) {
-				errors.scheduledAt = i18n.schedulePastError || 'Sendezeitpunkt muss in der Zukunft liegen';
+			} else {
+				const scheduleDate = new Date( scheduledAt );
+				const now = new Date();
+				const maxDate = new Date();
+				maxDate.setDate( maxDate.getDate() + MAX_SCHEDULE_DAYS );
+
+				if ( scheduleDate <= now ) {
+					errors.scheduledAt = i18n.schedulePastError || 'Sendezeitpunkt muss in der Zukunft liegen';
+				} else if ( scheduleDate > maxDate ) {
+					errors.scheduledAt = `${ i18n.scheduleTooFar || 'Sendezeitpunkt zu weit in der Zukunft' } (max. ${ MAX_SCHEDULE_DAYS } Tage)`;
+				}
 			}
 		}
 
@@ -377,8 +387,8 @@ export function EmailComposer( {
 						</div>
 					) : (
 						<EmailPreview
-							subject={ replacePlaceholders( formData.subject ) }
-							body={ replacePlaceholders( formData.body ) }
+							subject={ getPreviewText( formData.subject ) }
+							body={ getPreviewText( formData.body ) }
 							recipient={ formData.to }
 						/>
 					) }

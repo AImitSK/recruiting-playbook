@@ -38,8 +38,9 @@ export function useEmailHistory( options = {} ) {
 	const errorCancellingMsg = i18n.errorCancelling || 'Fehler beim Stornieren';
 	const errorPreviewMsg = i18n.errorPreview || 'Fehler bei der Vorschau';
 
-	// AbortController Ref
+	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );
+	const isMountedRef = useRef( true );
 
 	/**
 	 * E-Mails vom Server laden
@@ -85,27 +86,38 @@ export function useEmailHistory( options = {} ) {
 				signal: abortControllerRef.current.signal,
 			} );
 
-			setEmails( data.items || [] );
-			setPagination( {
-				total: data.total || 0,
-				pages: data.pages || 1,
-				page,
-				perPage,
-			} );
+			// Nur State setzen wenn noch mounted
+			if ( isMountedRef.current ) {
+				setEmails( data.items || [] );
+				setPagination( {
+					total: data.total || 0,
+					pages: data.pages || 1,
+					page,
+					perPage,
+				} );
+			}
 		} catch ( err ) {
-			if ( ! handleApiError( err, setError, errorLoadingMsg ) ) {
+			// AbortError explizit ignorieren
+			if ( err?.name === 'AbortError' ) {
+				return;
+			}
+			if ( isMountedRef.current && ! handleApiError( err, setError, errorLoadingMsg ) ) {
 				console.error( 'Error fetching emails:', err );
 			}
 		} finally {
-			setLoading( false );
+			if ( isMountedRef.current ) {
+				setLoading( false );
+			}
 		}
 	}, [ applicationId, candidateId, perPage, errorLoadingMsg ] );
 
-	// Initial laden
+	// Initial laden und Cleanup
 	useEffect( () => {
+		isMountedRef.current = true;
 		fetchEmails();
 
 		return () => {
+			isMountedRef.current = false;
 			if ( abortControllerRef.current ) {
 				abortControllerRef.current.abort();
 			}
@@ -132,17 +144,26 @@ export function useEmailHistory( options = {} ) {
 				},
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
+
 			// Nach erfolgreichem Senden neu laden
 			await fetchEmails();
 
 			return result;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorSendingMsg ) ) {
 				console.error( 'Error sending email:', err );
 			}
 			return null;
 		} finally {
-			setSending( false );
+			if ( isMountedRef.current ) {
+				setSending( false );
+			}
 		}
 	}, [ applicationId, fetchEmails, errorSendingMsg ] );
 
@@ -162,17 +183,26 @@ export function useEmailHistory( options = {} ) {
 				method: 'POST',
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return false;
+			}
+
 			// Nach erfolgreichem Senden neu laden
 			await fetchEmails();
 
 			return true;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return false;
+			}
 			if ( ! handleApiError( err, setError, errorSendingMsg ) ) {
 				console.error( 'Error resending email:', err );
 			}
 			return false;
 		} finally {
-			setSending( false );
+			if ( isMountedRef.current ) {
+				setSending( false );
+			}
 		}
 	}, [ fetchEmails, errorSendingMsg ] );
 
@@ -192,6 +222,10 @@ export function useEmailHistory( options = {} ) {
 				method: 'POST',
 			} );
 
+			if ( ! isMountedRef.current ) {
+				return false;
+			}
+
 			// Optimistic Update
 			setEmails( ( prev ) =>
 				prev.map( ( email ) =>
@@ -203,12 +237,17 @@ export function useEmailHistory( options = {} ) {
 
 			return true;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return false;
+			}
 			if ( ! handleApiError( err, setError, errorCancellingMsg ) ) {
 				console.error( 'Error cancelling email:', err );
 			}
 			return false;
 		} finally {
-			setSending( false );
+			if ( isMountedRef.current ) {
+				setSending( false );
+			}
 		}
 	}, [ errorCancellingMsg ] );
 
@@ -233,6 +272,9 @@ export function useEmailHistory( options = {} ) {
 
 			return result;
 		} catch ( err ) {
+			if ( ! isMountedRef.current ) {
+				return null;
+			}
 			if ( ! handleApiError( err, setError, errorPreviewMsg ) ) {
 				console.error( 'Error previewing email:', err );
 			}
