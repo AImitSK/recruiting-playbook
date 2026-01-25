@@ -25,6 +25,9 @@ class LicensePage {
 		$license_manager = LicenseManager::get_instance();
 		$status          = $license_manager->get_status();
 
+		// Enqueue styles.
+		$this->enqueue_styles();
+
 		// Handle form submission.
 		$this->handle_form_submission();
 
@@ -42,53 +45,19 @@ class LicensePage {
 
 			<?php $this->render_feature_comparison(); ?>
 		</div>
-
-		<style>
-			.rp-license-page { max-width: 800px; }
-			.rp-license-card {
-				background: #fff;
-				border: 1px solid #c3c4c7;
-				border-radius: 4px;
-				padding: 24px;
-				margin-top: 20px;
-			}
-			.rp-license-status {
-				padding: 16px;
-				border-radius: 4px;
-				margin-bottom: 24px;
-			}
-			.rp-license-status--free { background: #f0f0f1; border-left: 4px solid #72aee6; }
-			.rp-license-status--pro { background: #e7f5e7; border-left: 4px solid #00a32a; }
-			.rp-license-status--ai_addon { background: #fef8e7; border-left: 4px solid #dba617; }
-			.rp-license-status--bundle { background: #e7e7f5; border-left: 4px solid #6b5ce7; }
-			.rp-license-status h2 { margin: 0 0 8px; font-size: 18px; }
-			.rp-license-status p { margin: 4px 0; color: #50575e; }
-			.rp-license-status .dashicons { vertical-align: middle; margin-right: 4px; }
-			.rp-upgrade-box {
-				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-				color: #fff;
-				padding: 24px;
-				border-radius: 8px;
-				margin-top: 24px;
-			}
-			.rp-upgrade-box h3 { color: #fff; margin-top: 0; }
-			.rp-upgrade-box ul { margin: 16px 0; }
-			.rp-upgrade-box li { margin: 8px 0; }
-			.rp-upgrade-box .button {
-				background: #fff;
-				color: #667eea;
-				border: none;
-				font-weight: 600;
-			}
-			.rp-upgrade-box .button:hover { background: #f0f0f1; color: #764ba2; }
-			.rp-feature-table { margin-top: 32px; }
-			.rp-feature-table th { text-align: left; padding: 12px 8px; }
-			.rp-feature-table td { padding: 8px; border-bottom: 1px solid #f0f0f1; }
-			.rp-feature-table .dashicons-yes { color: #00a32a; }
-			.rp-feature-table .dashicons-no { color: #d63638; }
-			.rp-offline-notice { color: #996800; }
-		</style>
 		<?php
+	}
+
+	/**
+	 * Enqueue license page styles
+	 */
+	private function enqueue_styles(): void {
+		wp_enqueue_style(
+			'rp-admin-license',
+			RP_PLUGIN_URL . 'assets/dist/css/admin-license.css',
+			array(),
+			RP_VERSION
+		);
 	}
 
 	/**

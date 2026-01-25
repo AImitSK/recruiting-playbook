@@ -123,7 +123,9 @@ Alles aus FREE, plus:
 
 **Preis:** 19 €/Monat oder 179 €/Jahr (2 Monate gratis)
 
-**Voraussetzung:** PRO-Lizenz erforderlich
+**Hinweis:** Kann separat oder als Bundle mit PRO erworben werden.
+- **AI-Addon alleine:** FREE-Features + KI-Features
+- **AI-Addon + PRO (Bundle):** Alle Features zum Vorteilspreis
 
 **Ziel:** Recurring Revenue, Differenzierung, USP, Lock-in
 
@@ -223,24 +225,26 @@ Das Alleinstellungsmerkmal des Plugins!
 
 ## Feature-Matrix
 
-| Feature | FREE | PRO | AI-ADDON |
-|---------|:----:|:---:|:--------:|
-| Stellen erstellen | ✅ ∞ | ✅ ∞ | ✅ ∞ |
-| Bewerbungsformular | ✅ Basic | ✅ Erweitert | ✅ Erweitert |
-| Bewerber-Liste | ✅ | ✅ | ✅ |
-| Kanban-Board | ❌ | ✅ | ✅ |
-| Status-Workflow | ❌ | ✅ | ✅ |
-| Benutzerrollen | ❌ | ✅ | ✅ |
-| E-Mail-Templates | ❌ | ✅ | ✅ |
-| REST API | ❌ | ✅ | ✅ |
-| Webhooks | ❌ | ✅ | ✅ |
-| Reporting | ❌ | ✅ | ✅ |
-| Page Builder Support | Shortcodes | ✅ Nativ | ✅ Nativ |
-| **KI Job-Match** | ❌ | ❌ | ✅ |
-| **KI Job-Finder** | ❌ | ❌ | ✅ |
-| **KI Chancen-Check** | ❌ | ❌ | ✅ |
-| **KI Texterstellung** | ❌ | ❌ | ✅ |
-| Support | Community | 1 Jahr | 1 Jahr |
+| Feature | FREE | PRO | AI-ADDON | BUNDLE |
+|---------|:----:|:---:|:--------:|:------:|
+| Stellen erstellen | ✅ ∞ | ✅ ∞ | ✅ ∞ | ✅ ∞ |
+| Bewerbungsformular | ✅ Basic | ✅ Erweitert | ✅ Basic | ✅ Erweitert |
+| Bewerber-Liste | ✅ | ✅ | ✅ | ✅ |
+| Kanban-Board | ❌ | ✅ | ❌ | ✅ |
+| Status-Workflow | ❌ | ✅ | ❌ | ✅ |
+| Benutzerrollen | ❌ | ✅ | ❌ | ✅ |
+| E-Mail-Templates | ❌ | ✅ | ❌ | ✅ |
+| REST API | ❌ | ✅ | ❌ | ✅ |
+| Webhooks | ❌ | ✅ | ❌ | ✅ |
+| Reporting | Basic | ✅ Full | Basic | ✅ Full |
+| Page Builder Support | Shortcodes | ✅ Nativ | Shortcodes | ✅ Nativ |
+| **KI Job-Match** | ❌ | ❌ | ✅ | ✅ |
+| **KI Job-Finder** | ❌ | ❌ | ✅ | ✅ |
+| **KI Chancen-Check** | ❌ | ❌ | ✅ | ✅ |
+| **KI Texterstellung** | ❌ | ❌ | ✅ | ✅ |
+| Support | Community | 1 Jahr | 1 Jahr | 1 Jahr |
+
+> **Empfehlung:** Für die beste Kombination aus Bewerbermanagement und KI-Features empfehlen wir das **BUNDLE** (PRO + AI).
 
 ---
 
@@ -297,10 +301,10 @@ RP-BUNDLE-C5P2-N8K4-M3L7-T9R2-2E4F   (Pro + AI)
 
 | Tier | Schlüssel-Prefix | Inhalt |
 |------|------------------|--------|
-| FREE | - (kein Schlüssel) | Basis |
-| PRO | `RP-PRO-` | Pro-Features |
-| AI_ADDON | `RP-AI-` | KI-Features (benötigt Pro) |
-| BUNDLE | `RP-BUNDLE-` | Pro + AI kombiniert |
+| FREE | - (kein Schlüssel) | Basis-Features |
+| PRO | `RP-PRO-` | Pro-Features (Kanban, API, etc.) |
+| AI_ADDON | `RP-AI-` | FREE + KI-Features |
+| BUNDLE | `RP-BUNDLE-` | PRO + AI kombiniert (beste Option) |
 
 ### Domain-Bindung
 
