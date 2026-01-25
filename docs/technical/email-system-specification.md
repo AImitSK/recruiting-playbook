@@ -1650,6 +1650,84 @@ class PlaceholderService {
             ],
         ];
     }
+
+    /**
+     * Platzhalter nach Gruppen gruppiert abrufen
+     * (Alternative Struktur für Frontend)
+     */
+    public function getPlaceholdersByGroup(): array {
+        $result = [];
+        foreach ( self::PLACEHOLDERS as $key => $config ) {
+            $group = $config['group'];
+            if ( ! isset( $result[ $group ] ) ) {
+                $result[ $group ] = [];
+            }
+            $result[ $group ][ $key ] = $config['label'];
+        }
+        return $result;
+    }
+
+    /**
+     * Preview-Werte für Template-Vorschau
+     */
+    public function getPreviewValues(): array {
+        return [
+            // Kandidat
+            'anrede'          => 'Herr',
+            'anrede_formal'   => 'Sehr geehrter Herr Mustermann',
+            'vorname'         => 'Max',
+            'nachname'        => 'Mustermann',
+            'name'            => 'Max Mustermann',
+            'email'           => 'max.mustermann@example.com',
+            'telefon'         => '+49 123 456789',
+            // Bewerbung
+            'bewerbung_id'    => 'RP-2024-0001',
+            'bewerbung_datum' => '15. Januar 2024',
+            'bewerbung_status'=> 'In Prüfung',
+            // Stelle
+            'stelle'          => 'Senior Software Developer',
+            'stelle_ort'      => 'München',
+            'stelle_typ'      => 'Vollzeit',
+            'stelle_url'      => 'https://example.com/jobs/senior-developer',
+            // Firma
+            'firma'           => 'Muster GmbH',
+            'firma_website'   => 'https://example.com',
+            // ... weitere Preview-Werte
+        ];
+    }
+
+    /**
+     * Template-Vorschau mit Preview-Werten rendern
+     */
+    public function renderPreview( string $text ): string {
+        $preview_values = $this->getPreviewValues();
+
+        foreach ( $preview_values as $key => $value ) {
+            $text = str_replace( "{{$key}}", $value, $text );
+        }
+
+        // Unbekannte Platzhalter markieren
+        return preg_replace(
+            '/\{([a-z_]+)\}/',
+            '<span class="unknown-placeholder">{$1}</span>',
+            $text
+        );
+    }
+
+    /**
+     * Platzhalter in Text finden
+     */
+    public function findPlaceholders( string $text ): array {
+        preg_match_all( '/\{([a-z_]+)\}/', $text, $matches );
+        return array_unique( $matches[1] ?? [] );
+    }
+
+    /**
+     * Prüfen ob Platzhalter gültig ist
+     */
+    public function isValidPlaceholder( string $key ): bool {
+        return isset( self::PLACEHOLDERS[ $key ] );
+    }
 }
 ```
 
@@ -1772,6 +1850,10 @@ export function PlaceholderPicker({ onSelect }) {
 
 ### EmailService (erweitert)
 
+Der bestehende `EmailService` wird um Pro-Features erweitert: Template-basierter Versand, Queue-Integration und Historie-Abruf.
+
+**Architektur:** Lazy-Loading Pattern für Services (bessere Performance, nur bei Bedarf instanziiert).
+
 ```php
 <?php
 /**
@@ -1783,190 +1865,360 @@ declare(strict_types=1);
 namespace RecruitingPlaybook\Services;
 
 use RecruitingPlaybook\Repositories\EmailLogRepository;
-use RecruitingPlaybook\Repositories\EmailTemplateRepository;
 
 class EmailService {
 
-    private PlaceholderService $placeholders;
-    private EmailLogRepository $logRepository;
-    private EmailTemplateRepository $templateRepository;
-    private EmailQueueService $queueService;
+    private string $from_email;
+    private string $from_name;
+
+    // Lazy-loaded Services
+    private ?EmailTemplateService $templateService = null;
+    private ?EmailQueueService $queueService = null;
+    private ?PlaceholderService $placeholderService = null;
+    private ?EmailLogRepository $logRepository = null;
 
     public function __construct() {
-        $this->placeholders       = new PlaceholderService();
-        $this->logRepository      = new EmailLogRepository();
-        $this->templateRepository = new EmailTemplateRepository();
-        $this->queueService       = new EmailQueueService();
+        $settings = get_option( 'rp_settings', [] );
+        $this->from_email = $settings['notification_email'] ?? get_option( 'admin_email' );
+        $this->from_name  = $settings['company_name'] ?? get_bloginfo( 'name' );
+    }
+
+    // Lazy-Loader für Services
+    private function getTemplateService(): EmailTemplateService {
+        return $this->templateService ??= new EmailTemplateService();
+    }
+
+    private function getQueueService(): EmailQueueService {
+        return $this->queueService ??= new EmailQueueService();
+    }
+
+    private function getPlaceholderService(): PlaceholderService {
+        return $this->placeholderService ??= new PlaceholderService();
+    }
+
+    private function getLogRepository(): EmailLogRepository {
+        return $this->logRepository ??= new EmailLogRepository();
     }
 
     /**
-     * E-Mail mit Template senden
+     * E-Mail mit Template senden (Pro-Feature)
      *
-     * @param int   $applicationId    Bewerbungs-ID
-     * @param int   $templateId       Template-ID
-     * @param array $customVariables  Zusätzliche Platzhalter
-     * @param array $options          Optionen (send_immediately, scheduled_at)
-     * @return array Result mit email_log_id
+     * @param int   $template_id    Template-ID
+     * @param int   $application_id Bewerbungs-ID
+     * @param array $custom_data    Zusätzliche Platzhalter-Daten
+     * @param bool  $use_queue      Queue verwenden (true) oder direkt senden (false)
+     * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler
      */
     public function sendWithTemplate(
-        int $applicationId,
-        int $templateId,
-        array $customVariables = [],
-        array $options = []
-    ): array {
-        // Template laden
-        $template = $this->templateRepository->find( $templateId );
-        if ( ! $template ) {
-            return [
-                'success' => false,
-                'error'   => __( 'Template nicht gefunden', 'recruiting-playbook' ),
-            ];
+        int $template_id,
+        int $application_id,
+        array $custom_data = [],
+        bool $use_queue = true
+    ): int|bool {
+        // Pro-Feature Check
+        if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+            return false;
         }
 
-        // Kontext aufbauen
-        $context = $this->buildContext( $applicationId, $customVariables );
-        if ( is_wp_error( $context ) ) {
-            return [
-                'success' => false,
-                'error'   => $context->get_error_message(),
-            ];
+        $application = $this->getApplicationData( $application_id );
+        if ( ! $application ) {
+            return false;
         }
 
-        // Platzhalter ersetzen
-        $subject  = $this->placeholders->replace( $template['subject'], $context );
-        $bodyHtml = $this->placeholders->replace( $template['body_html'], $context );
-        $bodyText = $this->generatePlainText( $bodyHtml );
+        // Kontext für Platzhalter aufbauen
+        $context = $this->buildContext( $application, $custom_data );
 
-        // In Basis-Layout einbetten
-        $bodyHtml = $this->wrapInLayout( $bodyHtml, $context );
-
-        // E-Mail-Log erstellen
-        $logId = $this->logRepository->create( [
-            'application_id'  => $applicationId,
-            'candidate_id'    => $context['candidate']['id'] ?? null,
-            'template_id'     => $templateId,
-            'recipient_email' => $context['candidate']['email'],
-            'recipient_name'  => $context['candidate']['name'],
-            'sender_email'    => $this->getFromEmail(),
-            'sender_name'     => $this->getFromName(),
-            'subject'         => $subject,
-            'body_html'       => $bodyHtml,
-            'body_text'       => $bodyText,
-            'status'          => 'pending',
-            'sent_by'         => get_current_user_id(),
-            'scheduled_at'    => $options['scheduled_at'] ?? null,
-        ] );
-
-        // Sofort senden oder in Queue
-        if ( ! empty( $options['send_immediately'] ) ) {
-            return $this->sendNow( $logId );
+        // Template rendern
+        $rendered = $this->getTemplateService()->render( $template_id, $context );
+        if ( ! $rendered ) {
+            return false;
         }
 
-        // In Queue einreihen
-        $this->queueService->enqueue( $logId, $options['scheduled_at'] ?? null );
-
-        return [
-            'success'      => true,
-            'email_log_id' => $logId,
-            'status'       => 'queued',
-            'message'      => __( 'E-Mail wurde in die Warteschlange eingereiht', 'recruiting-playbook' ),
+        $email_data = [
+            'application_id'  => $application_id,
+            'candidate_id'    => (int) $application['candidate_id'],
+            'template_id'     => $template_id,
+            'recipient_email' => $application['email'],
+            'recipient_name'  => $application['candidate_name'],
+            'sender_email'    => $this->from_email,
+            'sender_name'     => $this->from_name,
+            'subject'         => $rendered['subject'],
+            'body_html'       => $rendered['body_html'],
+            'body_text'       => $rendered['body_text'],
         ];
+
+        if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+            return $this->getQueueService()->enqueue( $email_data );
+        }
+
+        // Direkt senden
+        $sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+
+        // In Log speichern
+        $email_data['status'] = $sent ? 'sent' : 'failed';
+        if ( $sent ) {
+            $email_data['sent_at'] = current_time( 'mysql' );
+        }
+        $this->getLogRepository()->create( $email_data );
+
+        return $sent;
     }
 
     /**
-     * E-Mail sofort senden
-     *
-     * @param int $logId E-Mail-Log-ID
-     * @return array
+     * E-Mail per Template-Slug senden
      */
-    public function sendNow( int $logId ): array {
-        $email = $this->logRepository->find( $logId );
-        if ( ! $email ) {
-            return [
-                'success' => false,
-                'error'   => __( 'E-Mail nicht gefunden', 'recruiting-playbook' ),
-            ];
+    public function sendWithTemplateSlug(
+        string $template_slug,
+        int $application_id,
+        array $custom_data = [],
+        bool $use_queue = true
+    ): int|bool {
+        $template = $this->getTemplateService()->findBySlug( $template_slug );
+        if ( ! $template ) {
+            return false;
+        }
+        return $this->sendWithTemplate( (int) $template['id'], $application_id, $custom_data, $use_queue );
+    }
+
+    /**
+     * Benutzerdefinierte E-Mail senden (ohne Template)
+     */
+    public function sendCustomEmail(
+        int $application_id,
+        string $subject,
+        string $body_html,
+        bool $use_queue = true
+    ): int|bool {
+        $application = $this->getApplicationData( $application_id );
+        if ( ! $application ) {
+            return false;
         }
 
-        // Header
-        $headers = [
-            'Content-Type: text/html; charset=UTF-8',
-            sprintf( 'From: %s <%s>', $email['sender_name'], $email['sender_email'] ),
+        $context = $this->buildContext( $application, [] );
+
+        // Platzhalter ersetzen
+        $subject   = $this->getPlaceholderService()->replace( $subject, $context );
+        $body_html = $this->getPlaceholderService()->replace( $body_html, $context );
+
+        $email_data = [
+            'application_id'  => $application_id,
+            'candidate_id'    => (int) $application['candidate_id'],
+            'recipient_email' => $application['email'],
+            'recipient_name'  => $application['candidate_name'],
+            'sender_email'    => $this->from_email,
+            'sender_name'     => $this->from_name,
+            'subject'         => $subject,
+            'body_html'       => $body_html,
+            'body_text'       => wp_strip_all_tags( $body_html ),
         ];
 
-        // Senden
-        $sent = wp_mail(
-            $email['recipient_email'],
-            $email['subject'],
-            $email['body_html'],
-            $headers
-        );
-
-        // Log aktualisieren
-        $this->logRepository->update( $logId, [
-            'status'  => $sent ? 'sent' : 'failed',
-            'sent_at' => current_time( 'mysql' ),
-            'error_message' => $sent ? null : __( 'wp_mail fehlgeschlagen', 'recruiting-playbook' ),
-        ] );
-
-        // Activity Log
-        if ( $sent && $email['application_id'] ) {
-            $this->logActivity( $email );
+        if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+            return $this->getQueueService()->enqueue( $email_data );
         }
 
-        return [
-            'success'      => $sent,
-            'email_log_id' => $logId,
-            'status'       => $sent ? 'sent' : 'failed',
-            'message'      => $sent
-                ? __( 'E-Mail wurde gesendet', 'recruiting-playbook' )
-                : __( 'E-Mail konnte nicht gesendet werden', 'recruiting-playbook' ),
-        ];
+        $sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+        $email_data['status'] = $sent ? 'sent' : 'failed';
+        if ( $sent ) {
+            $email_data['sent_at'] = current_time( 'mysql' );
+        }
+        $this->getLogRepository()->create( $email_data );
+
+        return $sent;
+    }
+
+    /**
+     * E-Mail für späteren Versand planen
+     */
+    public function scheduleEmail(
+        int $template_id,
+        int $application_id,
+        string $scheduled_at,
+        array $custom_data = []
+    ): int|false {
+        if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+            return false;
+        }
+
+        $application = $this->getApplicationData( $application_id );
+        if ( ! $application ) {
+            return false;
+        }
+
+        $context = $this->buildContext( $application, $custom_data );
+        $rendered = $this->getTemplateService()->render( $template_id, $context );
+        if ( ! $rendered ) {
+            return false;
+        }
+
+        return $this->getQueueService()->schedule( [
+            'application_id'  => $application_id,
+            'candidate_id'    => (int) $application['candidate_id'],
+            'template_id'     => $template_id,
+            'recipient_email' => $application['email'],
+            'recipient_name'  => $application['candidate_name'],
+            'sender_email'    => $this->from_email,
+            'sender_name'     => $this->from_name,
+            'subject'         => $rendered['subject'],
+            'body_html'       => $rendered['body_html'],
+            'body_text'       => $rendered['body_text'],
+        ], $scheduled_at );
+    }
+
+    /**
+     * E-Mail-Historie für Bewerbung abrufen
+     */
+    public function getHistory( int $application_id, array $args = [] ): array {
+        return $this->getLogRepository()->findByApplication( $application_id, $args );
+    }
+
+    /**
+     * E-Mail-Historie für Kandidaten abrufen
+     */
+    public function getHistoryByCandidate( int $candidate_id, array $args = [] ): array {
+        return $this->getLogRepository()->findByCandidate( $candidate_id, $args );
     }
 
     /**
      * Kontext für Platzhalter aufbauen
      */
-    private function buildContext( int $applicationId, array $custom = [] ): array|\WP_Error {
-        global $wpdb;
-
-        $tables = \RecruitingPlaybook\Database\Schema::getTables();
-
-        // Bewerbung + Kandidat laden
-        $row = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT a.*, c.id as candidate_id, c.salutation, c.first_name, c.last_name, c.email, c.phone
-                FROM {$tables['applications']} a
-                LEFT JOIN {$tables['candidates']} c ON a.candidate_id = c.id
-                WHERE a.id = %d AND a.deleted_at IS NULL",
-                $applicationId
-            ),
-            ARRAY_A
-        );
-
-        if ( ! $row ) {
-            return new \WP_Error( 'not_found', __( 'Bewerbung nicht gefunden', 'recruiting-playbook' ) );
+    private function buildContext( array $application, array $custom_data ): array {
+        $job = null;
+        if ( ! empty( $application['job_id'] ) ) {
+            $job_post = get_post( (int) $application['job_id'] );
+            if ( $job_post ) {
+                $job = [
+                    'title'           => $job_post->post_title,
+                    'url'             => get_permalink( $job_post ),
+                    'location'        => get_post_meta( $job_post->ID, '_job_location', true ) ?: '',
+                    'employment_type' => get_post_meta( $job_post->ID, '_employment_type', true ) ?: '',
+                ];
+            }
         }
 
-        // Job laden
-        $job = get_post( (int) $row['job_id'] );
-
         return [
-            'application' => [
-                'id'         => $applicationId,
-                'status'     => $row['status'],
-                'created_at' => $row['created_at'],
+            'application' => $application,
+            'candidate'   => [
+                'salutation'  => $application['salutation'] ?? '',
+                'first_name'  => $application['first_name'] ?? '',
+                'last_name'   => $application['last_name'] ?? '',
+                'email'       => $application['email'] ?? '',
+                'phone'       => $application['phone'] ?? '',
             ],
-            'candidate' => [
-                'id'         => $row['candidate_id'],
-                'salutation' => $row['salutation'],
-                'first_name' => $row['first_name'],
-                'last_name'  => $row['last_name'],
-                'name'       => trim( $row['first_name'] . ' ' . $row['last_name'] ),
-                'email'      => $row['email'],
-                'phone'      => $row['phone'],
-            ],
-            'job' => [
+            'job'         => $job ?? [],
+            'custom'      => $custom_data,
+        ];
+    }
+
+    // ... bestehende send(), getApplicationData() etc. bleiben unverändert
+}
+```
+
+### EmailTemplateService
+
+Geschäftslogik für Template-Verwaltung, Rendering und Validierung.
+
+```php
+class EmailTemplateService {
+
+    private EmailTemplateRepository $repository;
+    private PlaceholderService $placeholderService;
+
+    /**
+     * Template erstellen
+     */
+    public function create( array $data ): array|false;
+
+    /**
+     * Template aktualisieren (System-Templates eingeschränkt)
+     */
+    public function update( int $id, array $data ): array|false;
+
+    /**
+     * Template löschen (System-Templates geschützt)
+     */
+    public function delete( int $id ): bool;
+
+    /**
+     * Template duplizieren
+     */
+    public function duplicate( int $id, string $new_name = '' ): array|false;
+
+    /**
+     * Template per ID laden
+     */
+    public function find( int $id ): ?array;
+
+    /**
+     * Template per Slug laden
+     */
+    public function findBySlug( string $slug ): ?array;
+
+    /**
+     * Standard-Template für Kategorie laden
+     */
+    public function getDefault( string $category ): ?array;
+
+    /**
+     * Template als Standard setzen
+     */
+    public function setAsDefault( int $id, string $category ): bool;
+
+    /**
+     * Template rendern mit Kontext
+     * @return array{subject: string, body_html: string, body_text: string}|null
+     */
+    public function render( int $template_id, array $context ): ?array;
+
+    /**
+     * Template-Vorschau mit Preview-Daten
+     * @return array{subject: string, body_html: string}|null
+     */
+    public function preview( int $template_id ): ?array;
+
+    /**
+     * System-Template auf Standard zurücksetzen
+     */
+    public function resetToDefault( int $id ): bool;
+
+    /**
+     * Verfügbare Kategorien
+     */
+    public function getCategories(): array {
+        return [
+            'application' => [ 'label' => 'Bewerbung', 'description' => 'Templates für Bewerbungsprozess' ],
+            'interview'   => [ 'label' => 'Interview', 'description' => 'Templates für Intervieweinladungen' ],
+            'offer'       => [ 'label' => 'Angebot', 'description' => 'Templates für Stellenangebote' ],
+            'custom'      => [ 'label' => 'Benutzerdefiniert', 'description' => 'Eigene Templates' ],
+        ];
+    }
+}
+```
+
+### Hinweis zur buildContext() Methode
+
+Die `buildContext()` Methode erwartet ein bereits geladenes `$application` Array (aus `getApplicationData()`), nicht eine ID. Dies ermöglicht:
+- Vermeidung doppelter DB-Abfragen
+- Bessere Testbarkeit (Dependency Injection)
+- Konsistenz mit bestehendem `getApplicationData()` Pattern
+
+```php
+// Verwendung:
+$application = $this->getApplicationData( $application_id );
+if ( ! $application ) {
+    return false;
+}
+$context = $this->buildContext( $application, $custom_data );
+```
+
+---
+
+### Alte Signatur (veraltet, nicht mehr gültig)
+
+Die folgende Signatur war ursprünglich geplant, wurde aber zugunsten des oben beschriebenen Patterns verworfen:
+
+```php
+// VERALTET - Nicht implementiert!
+// private function buildContext( int $applicationId, array $custom = [] ): array|\WP_Error {
                 'id'              => $row['job_id'],
                 'title'           => $job ? $job->post_title : '',
                 'url'             => $job ? get_permalink( $job ) : '',
@@ -2461,160 +2713,222 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Services;
 
+use RecruitingPlaybook\Repositories\EmailLogRepository;
+
 class EmailQueueService {
 
     /**
-     * Action Scheduler Hook
+     * Action Scheduler Hooks
      */
-    private const HOOK_SEND_EMAIL = 'rp_send_queued_email';
-    private const HOOK_SEND_BULK  = 'rp_send_bulk_email';
-    private const GROUP           = 'recruiting-playbook-emails';
+    private const HOOK_SEND_EMAIL    = 'rp_send_queued_email';
+    private const HOOK_PROCESS_QUEUE = 'rp_process_email_queue';
 
     /**
-     * E-Mail in Queue einreihen
-     *
-     * @param int         $emailLogId   E-Mail-Log-ID
-     * @param string|null $scheduledAt  Geplanter Zeitpunkt (null = sofort)
-     * @return int Action ID
+     * Konfiguration
      */
-    public function enqueue( int $emailLogId, ?string $scheduledAt = null ): int {
-        // Log-Status aktualisieren
-        $repository = new \RecruitingPlaybook\Repositories\EmailLogRepository();
-        $repository->update( $emailLogId, [ 'status' => 'queued' ] );
+    private const MAX_RETRIES = 3;
+    private const BATCH_SIZE  = 50;
 
-        // In Action Scheduler einreihen
-        $timestamp = $scheduledAt
-            ? strtotime( $scheduledAt )
-            : time();
+    private EmailLogRepository $logRepository;
 
-        $actionId = as_schedule_single_action(
-            $timestamp,
-            self::HOOK_SEND_EMAIL,
-            [ 'email_log_id' => $emailLogId ],
-            self::GROUP
-        );
-
-        return $actionId;
+    public function __construct( ?EmailLogRepository $logRepository = null ) {
+        $this->logRepository = $logRepository ?? new EmailLogRepository();
     }
 
     /**
-     * Bulk-E-Mails in Queue einreihen
+     * E-Mail zur Queue hinzufügen
      *
-     * @param array       $emailLogIds  Array von E-Mail-Log-IDs
-     * @param int         $batchSize    Batch-Größe
-     * @param string|null $scheduledAt  Geplanter Zeitpunkt
-     * @return int Anzahl eingereihter Batches
+     * Erstellt einen Log-Eintrag und plant den Versand.
+     *
+     * @param array $email_data E-Mail-Daten mit:
+     *   - recipient_email (required)
+     *   - sender_email (required)
+     *   - subject (required)
+     *   - body_html (required)
+     *   - application_id, candidate_id, template_id (optional)
+     *   - recipient_name, sender_name, body_text (optional)
+     *   - scheduled_at (optional, für zeitversetzten Versand)
+     *   - metadata (optional)
+     * @return int|false Log-ID oder false bei Fehler
      */
-    public function enqueueBulk( array $emailLogIds, int $batchSize = 10, ?string $scheduledAt = null ): int {
-        $batches = array_chunk( $emailLogIds, $batchSize );
-        $count   = 0;
+    public function enqueue( array $email_data ): int|false {
+        // Log-Eintrag erstellen
+        $log_id = $this->logRepository->create( [
+            'application_id'  => $email_data['application_id'] ?? null,
+            'candidate_id'    => $email_data['candidate_id'] ?? null,
+            'template_id'     => $email_data['template_id'] ?? null,
+            'recipient_email' => $email_data['recipient_email'],
+            'recipient_name'  => $email_data['recipient_name'] ?? '',
+            'sender_email'    => $email_data['sender_email'],
+            'sender_name'     => $email_data['sender_name'] ?? '',
+            'subject'         => $email_data['subject'],
+            'body_html'       => $email_data['body_html'],
+            'body_text'       => $email_data['body_text'] ?? '',
+            'status'          => 'pending',
+            'scheduled_at'    => $email_data['scheduled_at'] ?? null,
+            'metadata'        => $email_data['metadata'] ?? [],
+        ] );
 
-        $timestamp = $scheduledAt ? strtotime( $scheduledAt ) : time();
-
-        foreach ( $batches as $index => $batch ) {
-            as_schedule_single_action(
-                $timestamp + ( $index * 60 ), // 1 Minute Abstand zwischen Batches
-                self::HOOK_SEND_BULK,
-                [ 'email_log_ids' => $batch ],
-                self::GROUP
-            );
-            ++$count;
+        if ( false === $log_id ) {
+            return false;
         }
 
-        return $count;
+        // Action Scheduler Job erstellen
+        $this->scheduleEmail( $log_id, $email_data['scheduled_at'] ?? null );
+
+        return $log_id;
+    }
+
+    /**
+     * E-Mail für späteren Versand planen
+     */
+    public function schedule( array $email_data, string $scheduled_at ): int|false {
+        $email_data['scheduled_at'] = $scheduled_at;
+        return $this->enqueue( $email_data );
+    }
+
+    /**
+     * Geplante E-Mail stornieren
+     */
+    public function cancel( int $log_id ): bool {
+        $log = $this->logRepository->find( $log_id );
+
+        if ( ! $log || 'pending' !== $log['status'] ) {
+            return false;
+        }
+
+        $this->unscheduleEmail( $log_id );
+        return $this->logRepository->updateStatus( $log_id, 'cancelled' );
+    }
+
+    /**
+     * E-Mail erneut senden
+     */
+    public function resend( int $log_id ): int|false {
+        $log = $this->logRepository->find( $log_id );
+
+        if ( ! $log ) {
+            return false;
+        }
+
+        return $this->enqueue( [
+            'application_id'  => $log['application_id'],
+            'candidate_id'    => $log['candidate_id'],
+            'template_id'     => $log['template_id'],
+            'recipient_email' => $log['recipient_email'],
+            'recipient_name'  => $log['recipient_name'],
+            'sender_email'    => $log['sender_email'],
+            'sender_name'     => $log['sender_name'],
+            'subject'         => $log['subject'],
+            'body_html'       => $log['body_html'],
+            'body_text'       => $log['body_text'],
+            'metadata'        => array_merge(
+                $log['metadata'] ?? [],
+                [ 'resent_from' => $log_id ]
+            ),
+        ] );
     }
 
     /**
      * Hooks registrieren
      */
-    public static function registerHooks(): void {
-        add_action( self::HOOK_SEND_EMAIL, [ self::class, 'processQueuedEmail' ] );
-        add_action( self::HOOK_SEND_BULK, [ self::class, 'processBulkEmail' ] );
+    public function registerHooks(): void {
+        add_action( self::HOOK_SEND_EMAIL, [ $this, 'processSingleEmail' ], 10, 1 );
+        add_action( self::HOOK_PROCESS_QUEUE, [ $this, 'processQueue' ] );
     }
 
     /**
-     * Einzelne E-Mail aus Queue verarbeiten
-     *
-     * @param int $emailLogId E-Mail-Log-ID
+     * Einzelne E-Mail verarbeiten (Action Scheduler Callback)
      */
-    public static function processQueuedEmail( int $emailLogId ): void {
-        $emailService = new EmailService();
-        $result       = $emailService->sendNow( $emailLogId );
+    public function processSingleEmail( int $log_id ): void {
+        $log = $this->logRepository->find( $log_id );
 
-        // Bei Fehler: Retry einplanen
-        if ( ! $result['success'] ) {
-            $repository = new \RecruitingPlaybook\Repositories\EmailLogRepository();
-            $email      = $repository->find( $emailLogId );
+        if ( ! $log || 'pending' !== $log['status'] ) {
+            return;
+        }
 
-            $retryCount = (int) ( $email['metadata']['retry_count'] ?? 0 );
+        $this->logRepository->updateStatus( $log_id, 'queued' );
+        $result = $this->sendEmail( $log );
 
-            if ( $retryCount < 3 ) {
-                // Retry mit Backoff
-                $delay = pow( 2, $retryCount ) * 60; // 1min, 2min, 4min
+        if ( $result ) {
+            $this->logRepository->updateStatus( $log_id, 'sent' );
+            $this->logActivity( $log, 'sent' );
+        } else {
+            $retry_count = (int) ( $log['metadata']['retry_count'] ?? 0 );
 
-                as_schedule_single_action(
-                    time() + $delay,
-                    self::HOOK_SEND_EMAIL,
-                    [ 'email_log_id' => $emailLogId ],
-                    self::GROUP
-                );
-
-                $repository->update( $emailLogId, [
-                    'metadata' => wp_json_encode( [
-                        'retry_count' => $retryCount + 1,
-                        'last_retry'  => current_time( 'mysql' ),
-                    ] ),
+            if ( $retry_count < self::MAX_RETRIES ) {
+                // Exponential Backoff: 1, 2, 4 Minuten
+                $delay = pow( 2, $retry_count ) * 60;
+                $this->logRepository->update( $log_id, [
+                    'status'   => 'pending',
+                    'metadata' => array_merge(
+                        $log['metadata'] ?? [],
+                        [ 'retry_count' => $retry_count + 1 ]
+                    ),
                 ] );
+                $this->scheduleEmail( $log_id, gmdate( 'Y-m-d H:i:s', time() + $delay ) );
+            } else {
+                $this->logRepository->updateStatus(
+                    $log_id,
+                    'failed',
+                    __( 'Maximale Versuche erreicht', 'recruiting-playbook' )
+                );
             }
         }
     }
 
     /**
-     * Bulk-E-Mails verarbeiten
-     *
-     * @param array $emailLogIds Array von E-Mail-Log-IDs
+     * Queue-Statistiken (letzte 24 Stunden)
      */
-    public static function processBulkEmail( array $emailLogIds ): void {
-        $emailService = new EmailService();
+    public function getQueueStats(): array {
+        global $wpdb;
+        $table = $wpdb->prefix . 'rp_email_log';
 
-        foreach ( $emailLogIds as $emailLogId ) {
-            $emailService->sendNow( $emailLogId );
+        $stats = $wpdb->get_row(
+            "SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN status = 'queued' THEN 1 ELSE 0 END) as processing,
+                SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent,
+                SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed
+            FROM {$table}
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+            ARRAY_A
+        );
 
-            // Kurze Pause zwischen E-Mails
-            usleep( 100000 ); // 100ms
-        }
+        return [
+            'total'      => (int) ( $stats['total'] ?? 0 ),
+            'pending'    => (int) ( $stats['pending'] ?? 0 ),
+            'processing' => (int) ( $stats['processing'] ?? 0 ),
+            'sent'       => (int) ( $stats['sent'] ?? 0 ),
+            'failed'     => (int) ( $stats['failed'] ?? 0 ),
+        ];
     }
 
     /**
-     * Queue-Status abrufen
-     *
-     * @return array
+     * Prüfen ob Action Scheduler verfügbar ist
      */
-    public function getQueueStatus(): array {
-        $pending = as_get_scheduled_actions( [
-            'hook'   => self::HOOK_SEND_EMAIL,
-            'status' => \ActionScheduler_Store::STATUS_PENDING,
-            'group'  => self::GROUP,
-        ], 'ids' );
+    public function isActionSchedulerAvailable(): bool {
+        return function_exists( 'as_enqueue_async_action' );
+    }
 
-        $running = as_get_scheduled_actions( [
-            'hook'   => self::HOOK_SEND_EMAIL,
-            'status' => \ActionScheduler_Store::STATUS_RUNNING,
-            'group'  => self::GROUP,
-        ], 'ids' );
+    /**
+     * Queue-Verarbeitung starten (Cron-Job registrieren)
+     */
+    public function scheduleQueueProcessing(): void {
+        if ( ! $this->isActionSchedulerAvailable() ) {
+            return;
+        }
 
-        $failed = as_get_scheduled_actions( [
-            'hook'   => self::HOOK_SEND_EMAIL,
-            'status' => \ActionScheduler_Store::STATUS_FAILED,
-            'group'  => self::GROUP,
-            'date'   => as_get_datetime_object( '-24 hours' ),
-        ], 'ids' );
-
-        return [
-            'pending' => count( $pending ),
-            'running' => count( $running ),
-            'failed'  => count( $failed ),
-        ];
+        if ( false === as_has_scheduled_action( self::HOOK_PROCESS_QUEUE, [], 'recruiting-playbook' ) ) {
+            as_schedule_recurring_action(
+                time(),
+                5 * MINUTE_IN_SECONDS,
+                self::HOOK_PROCESS_QUEUE,
+                [],
+                'recruiting-playbook'
+            );
+        }
     }
 }
 ```
