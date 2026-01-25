@@ -4,11 +4,10 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+import { useState, useEffect, useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	DndContext,
-	closestCenter,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
@@ -16,7 +15,9 @@ import {
 	DragOverlay,
 	pointerWithin,
 	rectIntersection,
+	closestCorners,
 } from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
 import { useApplications } from './hooks/useApplications';
@@ -51,15 +52,37 @@ export function KanbanBoard() {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ activeId, setActiveId ] = useState( null );
 
-	// Sensoren für Drag-and-Drop
+	// Ref für Live-Region (Screen Reader Ankündigungen)
+	const liveRegionRef = useRef( null );
+
+	// Sensoren für Drag-and-Drop mit Keyboard-Support
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
 			activationConstraint: {
 				distance: 8,
 			},
 		} ),
-		useSensor( KeyboardSensor )
+		useSensor( KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		} )
 	);
+
+	/**
+	 * Screen Reader Ankündigung
+	 *
+	 * @param {string} message Nachricht für Screen Reader
+	 */
+	const announce = useCallback( ( message ) => {
+		if ( liveRegionRef.current ) {
+			liveRegionRef.current.textContent = message;
+			// Nach kurzer Zeit leeren für nächste Ankündigung
+			setTimeout( () => {
+				if ( liveRegionRef.current ) {
+					liveRegionRef.current.textContent = '';
+				}
+			}, 1000 );
+		}
+	}, [] );
 
 	// Filter aus Toolbar synchronisieren
 	useEffect( () => {
@@ -142,8 +165,20 @@ export function KanbanBoard() {
 
 	// Drag-Start Handler
 	const handleDragStart = useCallback( ( event ) => {
-		setActiveId( event.active.id );
-	}, [] );
+		const { active } = event;
+		setActiveId( active.id );
+
+		// Screen Reader Ankündigung
+		const app = applications.find( ( a ) => a.id === active.id );
+		if ( app ) {
+			const name = `${ app.first_name } ${ app.last_name }`.trim();
+			const column = columns.find( ( c ) => c.id === app.status );
+			const columnLabel = column?.label || app.status;
+			announce(
+				__( `${ name } aufgenommen aus ${ columnLabel }. Nutze Pfeiltasten zum Verschieben.`, 'recruiting-playbook' )
+			);
+		}
+	}, [ applications, columns, announce ] );
 
 	// Drag-End Handler
 	const handleDragEnd = useCallback(
@@ -206,6 +241,7 @@ export function KanbanBoard() {
 					overId,
 					activeColumn.applications
 				);
+				announceDropResult( activeApp, targetColumn, true );
 				return;
 			}
 
@@ -231,15 +267,36 @@ export function KanbanBoard() {
 					targetPosition,
 					targetColumn.applications
 				);
+				announceDropResult( activeApp, targetColumn, false );
 			}
 		},
-		[ applications, columns, statuses, findColumnByCardId, reorderInColumn, moveToColumn ]
+		[ applications, columns, statuses, findColumnByCardId, reorderInColumn, moveToColumn, announceDropResult ]
 	);
 
 	// Drag-Cancel Handler
 	const handleDragCancel = useCallback( () => {
 		setActiveId( null );
-	}, [] );
+		announce( __( 'Verschieben abgebrochen.', 'recruiting-playbook' ) );
+	}, [ announce ] );
+
+	// Ankündigung nach erfolgreichem Drop
+	const announceDropResult = useCallback(
+		( app, targetColumn, isSameColumn ) => {
+			const name = `${ app.first_name } ${ app.last_name }`.trim();
+			const columnLabel = targetColumn?.label || '';
+
+			if ( isSameColumn ) {
+				announce(
+					__( `${ name } neu sortiert in ${ columnLabel }.`, 'recruiting-playbook' )
+				);
+			} else {
+				announce(
+					__( `${ name } verschoben nach ${ columnLabel }.`, 'recruiting-playbook' )
+				);
+			}
+		},
+		[ announce ]
+	);
 
 	if ( loading ) {
 		return (
@@ -262,34 +319,51 @@ export function KanbanBoard() {
 	}
 
 	return (
-		<DndContext
-			sensors={ sensors }
-			collisionDetection={ customCollisionDetection }
-			onDragStart={ handleDragStart }
-			onDragEnd={ handleDragEnd }
-			onDragCancel={ handleDragCancel }
-		>
-			<div className="rp-kanban-board">
-				{ columns.map( ( column ) => (
-					<KanbanColumn
-						key={ column.id }
-						status={ column.id }
-						label={ column.label }
-						color={ column.color }
-						collapsed={ column.collapsed }
-						applications={ column.applications }
-					/>
-				) ) }
-			</div>
+		<>
+			{ /* Screen Reader Live Region */ }
+			<div
+				ref={ liveRegionRef }
+				role="status"
+				aria-live="polite"
+				aria-atomic="true"
+				className="screen-reader-text"
+			/>
 
-			<DragOverlay>
-				{ activeApplication ? (
-					<KanbanCard
-						application={ activeApplication }
-						isDragging={ true }
-					/>
-				) : null }
-			</DragOverlay>
-		</DndContext>
+			<DndContext
+				sensors={ sensors }
+				collisionDetection={ customCollisionDetection }
+				onDragStart={ handleDragStart }
+				onDragEnd={ handleDragEnd }
+				onDragCancel={ handleDragCancel }
+			>
+				<div
+					className="rp-kanban-board"
+					role="region"
+					aria-label={ __( 'Kanban-Board für Bewerbungen', 'recruiting-playbook' ) }
+				>
+					{ columns.map( ( column, index ) => (
+						<KanbanColumn
+							key={ column.id }
+							status={ column.id }
+							label={ column.label }
+							color={ column.color }
+							collapsed={ column.collapsed }
+							applications={ column.applications }
+							columnIndex={ index }
+							totalColumns={ columns.length }
+						/>
+					) ) }
+				</div>
+
+				<DragOverlay>
+					{ activeApplication ? (
+						<KanbanCard
+							application={ activeApplication }
+							isDragging={ true }
+						/>
+					) : null }
+				</DragOverlay>
+			</DndContext>
+		</>
 	);
 }

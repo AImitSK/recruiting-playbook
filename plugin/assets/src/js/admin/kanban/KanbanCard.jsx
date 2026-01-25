@@ -8,7 +8,13 @@ import { __ } from '@wordpress/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export function KanbanCard( { application, isDragging: isDraggingOverlay = false } ) {
+export function KanbanCard( {
+	application,
+	isDragging: isDraggingOverlay = false,
+	index = 0,
+	totalInColumn = 1,
+	columnLabel = '',
+} ) {
 	const {
 		attributes,
 		listeners,
@@ -37,6 +43,16 @@ export function KanbanCard( { application, isDragging: isDraggingOverlay = false
 	const i18n = window.rpKanban?.i18n || {};
 	const detailUrl = window.rpKanban?.detailUrl || '';
 
+	// Aria-Label für die Karte
+	const jobTitle = application.job_title || __( 'Keine Stelle', 'recruiting-playbook' );
+	const dateText = formatDaysAgo( daysAgo, i18n );
+	const positionText = `${ index + 1 } von ${ totalInColumn }`;
+	const documentsText = application.documents_count > 0
+		? `, ${ application.documents_count } ${ application.documents_count === 1 ? 'Dokument' : 'Dokumente' }`
+		: '';
+
+	const cardAriaLabel = `${ fullName }, ${ jobTitle }, ${ dateText }${ documentsText }. Position ${ positionText } in ${ columnLabel }. Drücke Leertaste zum Ziehen.`;
+
 	const handleClick = ( e ) => {
 		// Nicht navigieren wenn wir draggen
 		if ( isDragging || isDraggingOverlay ) {
@@ -55,13 +71,14 @@ export function KanbanCard( { application, isDragging: isDraggingOverlay = false
 	};
 
 	const handleKeyDown = ( e ) => {
-		if ( e.key === 'Enter' && ! isDragging ) {
+		// Enter öffnet Details (nur wenn nicht am Draggen)
+		if ( e.key === 'Enter' && ! isDragging && ! e.defaultPrevented ) {
 			handleClick( e );
 		}
 	};
 
 	return (
-		<div
+		<article
 			ref={ setNodeRef }
 			style={ style }
 			className={ `rp-kanban-card ${ isDragging || isDraggingOverlay ? 'is-dragging' : '' }` }
@@ -69,13 +86,17 @@ export function KanbanCard( { application, isDragging: isDraggingOverlay = false
 			{ ...listeners }
 			onClick={ handleClick }
 			onKeyDown={ handleKeyDown }
-			role="button"
+			role="listitem"
 			tabIndex={ 0 }
+			aria-label={ cardAriaLabel }
+			aria-grabbed={ isDragging || isDraggingOverlay }
+			data-application-id={ application.id }
 		>
 			<div className="rp-kanban-card-header">
 				<div
 					className="rp-kanban-card-avatar"
 					style={ { backgroundColor: getAvatarColor( application.id ) } }
+					aria-hidden="true"
 				>
 					{ initials }
 				</div>
@@ -89,22 +110,24 @@ export function KanbanCard( { application, isDragging: isDraggingOverlay = false
 
 			<div className="rp-kanban-card-meta">
 				<span className="rp-kanban-card-job" title={ application.job_title }>
-					<span className="dashicons dashicons-businessman" />
-					{ application.job_title || __( 'Keine Stelle', 'recruiting-playbook' ) }
+					<span className="dashicons dashicons-businessman" aria-hidden="true" />
+					{ jobTitle }
 				</span>
 				<span className="rp-kanban-card-date">
-					<span className="dashicons dashicons-calendar-alt" />
-					{ formatDaysAgo( daysAgo, i18n ) }
+					<span className="dashicons dashicons-calendar-alt" aria-hidden="true" />
+					{ dateText }
 				</span>
 			</div>
 
 			{ application.documents_count > 0 && (
 				<div className="rp-kanban-card-documents">
-					<span className="dashicons dashicons-media-document" />
-					{ application.documents_count }
+					<span className="dashicons dashicons-media-document" aria-hidden="true" />
+					<span aria-label={ `${ application.documents_count } Dokumente` }>
+						{ application.documents_count }
+					</span>
 				</div>
 			) }
-		</div>
+		</article>
 	);
 }
 

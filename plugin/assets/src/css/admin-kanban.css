@@ -465,11 +465,60 @@
    Accessibility
    ========================================================================== */
 
+/* Screen reader only text */
+.screen-reader-text {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+/* Focus visible for keyboard navigation */
+.rp-kanban-card:focus-visible {
+	outline: 3px solid #2271b1;
+	outline-offset: 2px;
+	box-shadow: 0 0 0 4px rgba(34, 113, 177, 0.2);
+}
+
+.rp-kanban-column-header:focus-visible {
+	outline: 3px solid #2271b1;
+	outline-offset: -3px;
+	box-shadow: inset 0 0 0 2px rgba(34, 113, 177, 0.2);
+}
+
+.rp-kanban-collapse-btn:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+	background: #e5e5e5;
+}
+
+/* Grabbed state for drag */
+.rp-kanban-card[aria-grabbed="true"] {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.3);
+}
+
+/* Drop target highlight */
+.rp-kanban-column.is-over .rp-kanban-column-content {
+	background: rgba(34, 113, 177, 0.05);
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.rp-kanban-card,
-	.rp-kanban-notice {
+	.rp-kanban-notice,
+	.rp-kanban-column {
 		transition: none;
 		animation: none;
+	}
+
+	[data-dnd-kit-sortable-overlay] .rp-kanban-card {
+		transform: none;
 	}
 }
 
@@ -481,7 +530,44 @@
 	}
 
 	.rp-kanban-card:focus,
-	.rp-kanban-column-header:focus {
+	.rp-kanban-card:focus-visible,
+	.rp-kanban-column-header:focus,
+	.rp-kanban-column-header:focus-visible {
 		outline-width: 3px;
+		outline-style: solid;
+	}
+
+	.rp-kanban-empty {
+		border-width: 3px;
+	}
+
+	.rp-kanban-column.is-over {
+		border-width: 3px;
+	}
+}
+
+/* Dark mode support (WordPress admin) */
+@media (prefers-color-scheme: dark) {
+	body.admin-color-modern .rp-kanban-column {
+		background: #1e1e1e;
+		border-color: #3c434a;
+	}
+
+	body.admin-color-modern .rp-kanban-column-header {
+		background: #2c3338;
+		border-color: #3c434a;
+	}
+
+	body.admin-color-modern .rp-kanban-card {
+		background: #2c3338;
+		border-color: #3c434a;
+	}
+
+	body.admin-color-modern .rp-kanban-card-name {
+		color: #f0f0f1;
+	}
+
+	body.admin-color-modern .rp-kanban-column-title {
+		color: #f0f0f1;
 	}
 }
