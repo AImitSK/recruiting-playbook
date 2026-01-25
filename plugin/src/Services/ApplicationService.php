@@ -588,4 +588,68 @@ class ApplicationService {
 
 		return $labels[ $status ] ?? $status;
 	}
+
+	/**
+	 * Kanban-Positionen in einer Spalte neu sortieren
+	 *
+	 * @param string $status    Status/Spalte.
+	 * @param array  $positions Array mit ['id' => int, 'kanban_position' => int].
+	 * @return int|WP_Error Anzahl aktualisierter Einträge oder Fehler.
+	 */
+	public function reorderPositions( string $status, array $positions ): int|WP_Error {
+		global $wpdb;
+
+		$table   = $wpdb->prefix . 'rp_applications';
+		$updated = 0;
+
+		// Validieren
+		$valid_statuses = [
+			ApplicationStatus::NEW,
+			ApplicationStatus::SCREENING,
+			ApplicationStatus::INTERVIEW,
+			ApplicationStatus::OFFER,
+			ApplicationStatus::HIRED,
+			ApplicationStatus::REJECTED,
+			ApplicationStatus::WITHDRAWN,
+		];
+
+		if ( ! in_array( $status, $valid_statuses, true ) ) {
+			return new WP_Error(
+				'invalid_status',
+				__( 'Ungültiger Status.', 'recruiting-playbook' )
+			);
+		}
+
+		// Jede Position aktualisieren
+		foreach ( $positions as $position ) {
+			if ( ! isset( $position['id'], $position['kanban_position'] ) ) {
+				continue;
+			}
+
+			$id              = (int) $position['id'];
+			$kanban_position = (int) $position['kanban_position'];
+
+			// Nur aktualisieren wenn Bewerbung im richtigen Status ist
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$result = $wpdb->update(
+				$table,
+				[
+					'kanban_position' => $kanban_position,
+					'updated_at'      => current_time( 'mysql' ),
+				],
+				[
+					'id'     => $id,
+					'status' => $status,
+				],
+				[ '%d', '%s' ],
+				[ '%d', '%s' ]
+			);
+
+			if ( false !== $result && $result > 0 ) {
+				++$updated;
+			}
+		}
+
+		return $updated;
+	}
 }

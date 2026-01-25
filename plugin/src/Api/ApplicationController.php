@@ -229,6 +229,45 @@ class ApplicationController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// Kanban: Positionen neu sortieren (Batch-Update)
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/reorder',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'reorder_applications' ],
+					'permission_callback' => [ $this, 'update_item_permissions_check' ],
+					'args'                => [
+						'status'    => [
+							'description' => __( 'Status/Spalte der zu sortierenden Bewerbungen', 'recruiting-playbook' ),
+							'type'        => 'string',
+							'required'    => true,
+							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
+						],
+						'positions' => [
+							'description' => __( 'Array mit ID und neuer Position', 'recruiting-playbook' ),
+							'type'        => 'array',
+							'required'    => true,
+							'items'       => [
+								'type'       => 'object',
+								'properties' => [
+									'id'              => [
+										'type'     => 'integer',
+										'required' => true,
+									],
+									'kanban_position' => [
+										'type'     => 'integer',
+										'required' => true,
+									],
+								],
+							],
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -842,6 +881,40 @@ class ApplicationController extends WP_REST_Controller {
 				'daily_counts'  => $daily_counts,
 				'top_jobs'      => $top_jobs,
 				'total'         => $total,
+			],
+			200
+		);
+	}
+
+	/**
+	 * Kanban: Positionen neu sortieren
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reorder_applications( $request ) {
+		$status    = $request->get_param( 'status' );
+		$positions = $request->get_param( 'positions' );
+
+		if ( empty( $positions ) || ! is_array( $positions ) ) {
+			return new WP_Error(
+				'invalid_positions',
+				__( 'Ungültige Positionen.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$result = $this->application_service->reorderPositions( $status, $positions );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'message' => __( 'Positionen wurden aktualisiert.', 'recruiting-playbook' ),
+				'updated' => $result,
 			],
 			200
 		);
