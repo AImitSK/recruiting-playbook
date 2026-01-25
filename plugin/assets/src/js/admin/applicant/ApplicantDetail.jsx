@@ -12,6 +12,7 @@ import { NotesPanel } from './NotesPanel';
 import { RatingDetailed } from './RatingStars';
 import { Timeline } from './Timeline';
 import { TalentPoolButton } from './TalentPoolButton';
+import { EmailTab } from './EmailTab';
 
 /**
  * Status-Optionen
@@ -69,9 +70,11 @@ export function ApplicantDetail( { applicationId } ) {
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ statusChanging, setStatusChanging ] = useState( false );
+	const [ activeTab, setActiveTab ] = useState( 'details' );
 
 	const i18n = window.rpApplicant?.i18n || {};
 	const config = window.rpApplicant || {};
+	const canSendEmails = config.canSendEmails !== false;
 
 	/**
 	 * Bewerbung laden
@@ -213,140 +216,177 @@ export function ApplicantDetail( { applicationId } ) {
 				</div>
 			</div>
 
-			{ /* Layout: Main + Sidebar */ }
-			<div className="rp-applicant-detail__layout">
-				{ /* Main Content */ }
-				<div className="rp-applicant-detail__main">
-					{ /* Kandidaten-Info Card */ }
-					<div className="rp-card rp-candidate-info">
-						<div className="rp-candidate-info__header">
-							<div className="rp-candidate-info__avatar">
-								{ getInitials( application.first_name, application.last_name ) }
-							</div>
-							<div className="rp-candidate-info__details">
-								<h2 className="rp-candidate-info__name">
-									{ application.first_name } { application.last_name }
-								</h2>
-								<div className="rp-candidate-info__contact">
-									{ application.email && (
-										<a href={ `mailto:${ application.email }` } className="rp-candidate-info__email">
-											<span className="dashicons dashicons-email"></span>
-											{ application.email }
-										</a>
-									) }
-									{ application.phone && (
-										<a href={ `tel:${ application.phone }` } className="rp-candidate-info__phone">
-											<span className="dashicons dashicons-phone"></span>
-											{ application.phone }
-										</a>
-									) }
+			{ /* Tabs */ }
+			{ canSendEmails && (
+				<div className="rp-applicant-detail__tabs">
+					<button
+						type="button"
+						className={ `rp-tab ${ activeTab === 'details' ? 'rp-tab--active' : '' }` }
+						onClick={ () => setActiveTab( 'details' ) }
+					>
+						<span className="dashicons dashicons-id-alt"></span>
+						{ i18n.details || 'Details' }
+					</button>
+					<button
+						type="button"
+						className={ `rp-tab ${ activeTab === 'email' ? 'rp-tab--active' : '' }` }
+						onClick={ () => setActiveTab( 'email' ) }
+					>
+						<span className="dashicons dashicons-email-alt"></span>
+						{ i18n.email || 'E-Mail' }
+					</button>
+				</div>
+			) }
+
+			{ /* Tab: Details */ }
+			{ ( activeTab === 'details' || ! canSendEmails ) && (
+				<div className="rp-applicant-detail__layout">
+					{ /* Main Content */ }
+					<div className="rp-applicant-detail__main">
+						{ /* Kandidaten-Info Card */ }
+						<div className="rp-card rp-candidate-info">
+							<div className="rp-candidate-info__header">
+								<div className="rp-candidate-info__avatar">
+									{ getInitials( application.first_name, application.last_name ) }
+								</div>
+								<div className="rp-candidate-info__details">
+									<h2 className="rp-candidate-info__name">
+										{ application.first_name } { application.last_name }
+									</h2>
+									<div className="rp-candidate-info__contact">
+										{ application.email && (
+											<a href={ `mailto:${ application.email }` } className="rp-candidate-info__email">
+												<span className="dashicons dashicons-email"></span>
+												{ application.email }
+											</a>
+										) }
+										{ application.phone && (
+											<a href={ `tel:${ application.phone }` } className="rp-candidate-info__phone">
+												<span className="dashicons dashicons-phone"></span>
+												{ application.phone }
+											</a>
+										) }
+									</div>
 								</div>
 							</div>
-						</div>
 
-						{ /* Status-Auswahl */ }
-						<div className="rp-candidate-info__status">
-							<label htmlFor="rp-status-select">
-								{ i18n.status || 'Status' }:
-							</label>
-							<select
-								id="rp-status-select"
-								value={ application.status }
-								onChange={ ( e ) => handleStatusChange( e.target.value ) }
-								disabled={ statusChanging }
-								className="rp-status-select"
-								style={ { borderColor: currentStatus?.color } }
-							>
-								{ STATUS_OPTIONS.map( ( option ) => (
-									<option key={ option.value } value={ option.value }>
-										{ option.label }
-									</option>
-								) ) }
-							</select>
-							{ statusChanging && <span className="spinner is-active"></span> }
-						</div>
+							{ /* Status-Auswahl */ }
+							<div className="rp-candidate-info__status">
+								<label htmlFor="rp-status-select">
+									{ i18n.status || 'Status' }:
+								</label>
+								<select
+									id="rp-status-select"
+									value={ application.status }
+									onChange={ ( e ) => handleStatusChange( e.target.value ) }
+									disabled={ statusChanging }
+									className="rp-status-select"
+									style={ { borderColor: currentStatus?.color } }
+								>
+									{ STATUS_OPTIONS.map( ( option ) => (
+										<option key={ option.value } value={ option.value }>
+											{ option.label }
+										</option>
+									) ) }
+								</select>
+								{ statusChanging && <span className="spinner is-active"></span> }
+							</div>
 
-						{ /* Meta-Infos */ }
-						<div className="rp-candidate-info__meta">
-							{ application.job_title && (
+							{ /* Meta-Infos */ }
+							<div className="rp-candidate-info__meta">
+								{ application.job_title && (
+									<div className="rp-candidate-info__meta-item">
+										<span className="dashicons dashicons-businessman"></span>
+										<span>{ application.job_title }</span>
+									</div>
+								) }
 								<div className="rp-candidate-info__meta-item">
-									<span className="dashicons dashicons-businessman"></span>
-									<span>{ application.job_title }</span>
+									<span className="dashicons dashicons-calendar-alt"></span>
+									<span>
+										{ i18n.appliedOn || 'Beworben am' }: { formatDate( application.created_at ) }
+									</span>
 								</div>
-							) }
-							<div className="rp-candidate-info__meta-item">
-								<span className="dashicons dashicons-calendar-alt"></span>
-								<span>
-									{ i18n.appliedOn || 'Beworben am' }: { formatDate( application.created_at ) }
-								</span>
 							</div>
 						</div>
-					</div>
 
-					{ /* Bewertung */ }
-					<div className="rp-card">
-						<h3 className="rp-card__title">
-							<span className="dashicons dashicons-star-filled"></span>
-							{ i18n.rating || 'Bewertung' }
-						</h3>
-						<RatingDetailed
-							applicationId={ applicationId }
-							showDistribution={ true }
-						/>
-					</div>
-
-					{ /* Dokumente */ }
-					{ application.documents && application.documents.length > 0 && (
+						{ /* Bewertung */ }
 						<div className="rp-card">
 							<h3 className="rp-card__title">
-								<span className="dashicons dashicons-media-document"></span>
-								{ i18n.documents || 'Dokumente' }
+								<span className="dashicons dashicons-star-filled"></span>
+								{ i18n.rating || 'Bewertung' }
 							</h3>
-							<div className="rp-documents-list">
-								{ application.documents.map( ( doc ) => (
-									<div key={ doc.id } className="rp-document">
-										<span className="dashicons dashicons-media-default"></span>
-										<span className="rp-document__name">{ doc.filename }</span>
-										<div className="rp-document__actions">
-											{ doc.view_url && (
-												<a
-													href={ doc.view_url }
-													target="_blank"
-													rel="noopener noreferrer"
-													className="button button-small"
-												>
-													{ i18n.view || 'Ansehen' }
-												</a>
-											) }
-											{ doc.download_url && (
-												<a
-													href={ doc.download_url }
-													className="button button-small"
-													download
-												>
-													{ i18n.download || 'Herunterladen' }
-												</a>
-											) }
-										</div>
-									</div>
-								) ) }
-							</div>
+							<RatingDetailed
+								applicationId={ applicationId }
+								showDistribution={ true }
+							/>
 						</div>
-					) }
 
-					{ /* Notizen */ }
-					<div className="rp-card">
-						<NotesPanel applicationId={ applicationId } />
+						{ /* Dokumente */ }
+						{ application.documents && application.documents.length > 0 && (
+							<div className="rp-card">
+								<h3 className="rp-card__title">
+									<span className="dashicons dashicons-media-document"></span>
+									{ i18n.documents || 'Dokumente' }
+								</h3>
+								<div className="rp-documents-list">
+									{ application.documents.map( ( doc ) => (
+										<div key={ doc.id } className="rp-document">
+											<span className="dashicons dashicons-media-default"></span>
+											<span className="rp-document__name">{ doc.filename }</span>
+											<div className="rp-document__actions">
+												{ doc.view_url && (
+													<a
+														href={ doc.view_url }
+														target="_blank"
+														rel="noopener noreferrer"
+														className="button button-small"
+													>
+														{ i18n.view || 'Ansehen' }
+													</a>
+												) }
+												{ doc.download_url && (
+													<a
+														href={ doc.download_url }
+														className="button button-small"
+														download
+													>
+														{ i18n.download || 'Herunterladen' }
+													</a>
+												) }
+											</div>
+										</div>
+									) ) }
+								</div>
+							</div>
+						) }
+
+						{ /* Notizen */ }
+						<div className="rp-card">
+							<NotesPanel applicationId={ applicationId } />
+						</div>
+					</div>
+
+					{ /* Sidebar: Timeline */ }
+					<div className="rp-applicant-detail__sidebar">
+						<div className="rp-card">
+							<Timeline applicationId={ applicationId } />
+						</div>
 					</div>
 				</div>
+			) }
 
-				{ /* Sidebar: Timeline */ }
-				<div className="rp-applicant-detail__sidebar">
-					<div className="rp-card">
-						<Timeline applicationId={ applicationId } />
-					</div>
+			{ /* Tab: E-Mail */ }
+			{ activeTab === 'email' && canSendEmails && (
+				<div className="rp-applicant-detail__email-tab">
+					<EmailTab
+						applicationId={ applicationId }
+						recipient={ {
+							email: application.email,
+							name: `${ application.first_name } ${ application.last_name }`,
+						} }
+					/>
 				</div>
-			</div>
+			) }
 		</div>
 	);
 }

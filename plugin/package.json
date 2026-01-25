@@ -10,6 +10,7 @@
         "dev:kanban-css": "tailwindcss -i ./assets/src/css/admin-kanban.css -o ./assets/dist/css/admin-kanban.css --watch",
         "dev:applicant-css": "tailwindcss -i ./assets/src/css/admin-applicant.css -o ./assets/dist/css/admin-applicant.css --watch",
         "dev:talent-pool-css": "tailwindcss -i ./assets/src/css/admin-talent-pool.css -o ./assets/dist/css/admin-talent-pool.css --watch",
+        "dev:email-css": "cp ./assets/src/css/admin-email.css ./assets/dist/css/admin-email.css",
         "dev:js": "esbuild assets/src/js/frontend.js --bundle --sourcemap --outfile=assets/dist/js/frontend.js --watch",
         "dev:wizard-js": "esbuild assets/src/js/wizard.js --bundle --sourcemap --outfile=assets/dist/js/wizard.js --watch",
         "dev:admin-js": "wp-scripts start --webpack-src-dir=assets/src/js/admin --output-path=assets/dist/js",
@@ -21,6 +22,7 @@
         "build:2-kanban-css": "tailwindcss -i ./assets/src/css/admin-kanban.css -o ./assets/dist/css/admin-kanban.css --minify",
         "build:2-applicant-css": "tailwindcss -i ./assets/src/css/admin-applicant.css -o ./assets/dist/css/admin-applicant.css --minify",
         "build:2-talent-pool-css": "tailwindcss -i ./assets/src/css/admin-talent-pool.css -o ./assets/dist/css/admin-talent-pool.css --minify",
+        "build:2-email-css": "cp ./assets/src/css/admin-email.css ./assets/dist/css/admin-email.css",
         "build:2-frontend-js": "esbuild assets/src/js/frontend.js --bundle --minify --outfile=assets/dist/js/frontend.js",
         "build:2-wizard-js": "esbuild assets/src/js/wizard.js --bundle --minify --outfile=assets/dist/js/wizard.js",
         "build:2-alpine": "cp node_modules/alpinejs/dist/cdn.min.js assets/dist/js/alpine.min.js",
@@ -37,8 +39,10 @@
         "@dnd-kit/sortable": "^8.0.0",
         "@dnd-kit/utilities": "^3.2.2",
         "@wordpress/api-fetch": "^7.38.0",
+        "@wordpress/components": "^28.0.0",
         "@wordpress/element": "^6.38.0",
         "@wordpress/i18n": "^6.11.0",
+        "@wordpress/icons": "^10.0.0",
         "alpinejs": "^3.14.0"
     },
     "devDependencies": {
