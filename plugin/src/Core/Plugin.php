@@ -29,6 +29,7 @@ use RecruitingPlaybook\Api\EmailTemplateController;
 use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Licensing\LicenseManager;
 use RecruitingPlaybook\Traits\Singleton;
@@ -44,6 +45,9 @@ final class Plugin {
 	 * Plugin initialisieren (called by Singleton trait)
 	 */
 	protected function init(): void {
+		// Action Scheduler laden (muss früh passieren).
+		$this->loadActionScheduler();
+
 		// Lizenz-Helper-Funktionen laden.
 		$this->loadLicenseHelpers();
 
@@ -61,6 +65,9 @@ final class Plugin {
 		// Post Types & Taxonomien registrieren.
 		$this->registerPostTypes();
 		$this->registerTaxonomies();
+
+		// E-Mail Queue Service initialisieren (Pro-Feature).
+		$this->initEmailQueueService();
 
 		// Admin-Bereich.
 		if ( is_admin() ) {
@@ -89,6 +96,39 @@ final class Plugin {
 	private function maybeUpgradeDatabase(): void {
 		$migrator = new Migrator();
 		$migrator->createTables();
+	}
+
+	/**
+	 * Action Scheduler laden
+	 *
+	 * Action Scheduler ist eine Bibliothek für zuverlässige asynchrone Aufgaben.
+	 * Wird für E-Mail-Queue und andere Hintergrund-Jobs verwendet.
+	 */
+	private function loadActionScheduler(): void {
+		$action_scheduler_file = RP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+
+		if ( file_exists( $action_scheduler_file ) ) {
+			require_once $action_scheduler_file;
+		}
+	}
+
+	/**
+	 * E-Mail Queue Service initialisieren
+	 *
+	 * Registriert Hooks für den Queue-basierten E-Mail-Versand.
+	 * Pro-Feature: Nur aktiv wenn E-Mail-Templates Feature verfügbar ist.
+	 */
+	private function initEmailQueueService(): void {
+		// Prüfen ob Feature verfügbar ist.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			return;
+		}
+
+		$email_queue_service = new EmailQueueService();
+		$email_queue_service->registerHooks();
+
+		// Queue-Verarbeitung bei Aktivierung starten.
+		add_action( 'init', [ $email_queue_service, 'scheduleQueueProcessing' ] );
 	}
 
 	/**
