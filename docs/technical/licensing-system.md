@@ -68,8 +68,11 @@ Das Plugin verwendet ein eigenes Lizenz-System mit folgenden Eigenschaften:
 |------|------------------|-------|----------|
 | FREE | - (kein Schlüssel) | €0 | Basis-Features, unbegrenzte Stellen |
 | PRO | `RP-PRO-` | €149 einmalig | Unbegrenzt Stellen, Kanban, API, etc. |
-| AI_ADDON | `RP-AI-` | €19/Monat | KI-Texte (benötigt PRO) |
-| BUNDLE | `RP-BUNDLE-` | €299 + €19/Monat | PRO + AI |
+| AI_ADDON | `RP-AI-` | €19/Monat | FREE + KI-Features (standalone) |
+| BUNDLE | `RP-BUNDLE-` | €299 + €19/Monat | PRO + AI (alle Features) |
+
+> **Hinweis:** AI_ADDON kann **ohne PRO** erworben werden und bietet FREE-Features + KI-Features.
+> Für alle Features (Kanban, API, etc. + KI) wird das BUNDLE empfohlen.
 
 ### Schlüssel-Format
 
@@ -168,7 +171,7 @@ class FeatureFlags {
             'priority_support'   => true,
         ],
         'AI_ADDON' => [
-            // Erbt von FREE, fügt AI hinzu
+            // Standalone: FREE-Features + KI-Features (KEIN PRO erforderlich)
             'create_jobs'        => true,
             'unlimited_jobs'     => true,
             'max_jobs'           => -1, // unlimited
@@ -628,15 +631,10 @@ class LicenseManager {
         
         // Tier extrahieren
         $tier = $this->extract_tier( $key );
-        
-        // Für AI: Prüfen ob PRO auch aktiv (oder BUNDLE)
-        if ( $tier === 'AI_ADDON' ) {
-            $existing = $this->get_license();
-            if ( ! $existing || ! in_array( $existing['tier'], [ 'PRO', 'BUNDLE' ], true ) ) {
-                // AI alleine erlauben, aber mit Free-Limits
-            }
-        }
-        
+
+        // AI_ADDON ist als Standalone erlaubt (FREE + KI-Features)
+        // Für alle Features: BUNDLE empfehlen
+
         return [
             'success'    => true,
             'tier'       => $tier,
@@ -686,19 +684,42 @@ class LicenseManager {
     }
     
     /**
-     * Checksum validieren
-     * 
-     * Einfacher Algorithmus für Phase 1
+     * Checksum validieren (HMAC-SHA256)
+     *
+     * Kryptographisch sichere Validierung mit Secret.
      */
     private function validate_checksum( string $key ): bool {
+        $key = strtoupper( $key );
+
         // Letzte 4 Zeichen = Checksum
         $checksum = substr( $key, -4 );
         $payload = substr( $key, 0, -5 ); // Ohne "-XXXX"
-        
-        // Einfache Checksum: CRC32 gekürzt
-        $calculated = strtoupper( substr( dechex( crc32( $payload ) ), 0, 4 ) );
-        
-        return $checksum === $calculated;
+
+        // HMAC-SHA256 Checksum (erste 4 Hex-Zeichen)
+        $secret = $this->get_license_secret();
+        $calculated = strtoupper( substr( hash_hmac( 'sha256', $payload, $secret ), 0, 4 ) );
+
+        return hash_equals( $checksum, $calculated );
+    }
+
+    /**
+     * License Secret für Checksum-Berechnung
+     *
+     * WICHTIG: In Produktion MUSS RP_LICENSE_SECRET in wp-config.php definiert werden!
+     *
+     * Setup:
+     *   define( 'RP_LICENSE_SECRET', 'IHR-SICHERES-SECRET-HIER' );
+     *
+     * Secret generieren (Bash):
+     *   openssl rand -base64 32
+     */
+    private function get_license_secret(): string {
+        if ( defined( 'RP_LICENSE_SECRET' ) && RP_LICENSE_SECRET ) {
+            return RP_LICENSE_SECRET;
+        }
+
+        // Fallback für Entwicklung (NICHT in Produktion verwenden!)
+        return 'rp-default-license-secret-change-in-production';
     }
     
     /**
@@ -781,19 +802,24 @@ Für Phase 1 ein einfaches Tool zur manuellen Generierung:
 
 ```php
 <?php
-// tools/generate-license.php (CLI)
-
 /**
- * Lizenzschlüssel generieren
- * 
- * Verwendung: php generate-license.php PRO
+ * Lizenzschlüssel-Generator (CLI Tool)
+ *
+ * Verwendung:
+ *   php generate-license.php TIER [ANZAHL]
+ *
+ * Umgebungsvariablen:
+ *   RP_LICENSE_SECRET - Secret für HMAC (muss mit wp-config.php übereinstimmen)
  */
 
 if ( php_sapi_name() !== 'cli' ) {
     die( 'CLI only' );
 }
 
-$tier = $argv[1] ?? 'PRO';
+// License Secret (muss mit RP_LICENSE_SECRET in wp-config.php übereinstimmen)
+$license_secret = getenv( 'RP_LICENSE_SECRET' ) ?: 'rp-default-license-secret-change-in-production';
+
+$tier = strtoupper( $argv[1] ?? '' );
 $valid_tiers = [ 'PRO', 'AI', 'BUNDLE' ];
 
 if ( ! in_array( $tier, $valid_tiers, true ) ) {
@@ -809,23 +835,23 @@ function generate_random_block(): string {
     return $block;
 }
 
-function generate_license_key( string $tier ): string {
+function generate_license_key( string $tier, string $secret ): string {
     $prefix = "RP-{$tier}";
-    
+
     $blocks = [];
     for ( $i = 0; $i < 4; $i++ ) {
         $blocks[] = generate_random_block();
     }
-    
+
     $payload = $prefix . '-' . implode( '-', $blocks );
-    
-    // Checksum
-    $checksum = strtoupper( substr( dechex( crc32( $payload ) ), 0, 4 ) );
-    
+
+    // HMAC-SHA256 Checksum (erste 4 Hex-Zeichen)
+    $checksum = strtoupper( substr( hash_hmac( 'sha256', $payload, $secret ), 0, 4 ) );
+
     return $payload . '-' . $checksum;
 }
 
-$key = generate_license_key( $tier );
+$key = generate_license_key( $tier, $license_secret );
 
 echo "Generierter Lizenzschlüssel ($tier):\n";
 echo $key . "\n";
@@ -1185,17 +1211,128 @@ function UpgradePrompt({ feature, tier = 'PRO' }) {
 
 ---
 
+## Implementierte Sicherheitsmaßnahmen
+
+### 1. HMAC-SHA256 Checksums
+
+**Ersetzt:** CRC32 (nicht kryptographisch sicher)
+
+**Implementierung:**
+- Secret: `RP_LICENSE_SECRET` aus wp-config.php
+- Algorithmus: HMAC-SHA256, erste 4 Hex-Zeichen
+- Timing-Safe Comparison: `hash_equals()`
+
+**Setup erforderlich (wp-config.php):**
+```php
+define( 'RP_LICENSE_SECRET', 'IHR-SICHERES-SECRET-HIER' );
+```
+
+**Secret generieren:**
+```bash
+openssl rand -base64 32
+```
+
+---
+
+### 2. Race Condition Prevention
+
+**Problem:** Mehrere gleichzeitige Requests könnten parallel Lizenz-Validierungen durchführen und inkonsistente Cache-Ergebnisse erzeugen.
+
+**Lösung:** Transient-basierter Lock-Mechanismus in `check_and_cache()`:
+
+```php
+// Lock prüfen
+if ( get_transient( self::LOCK_KEY ) ) {
+    usleep( 500000 ); // 0.5s warten
+    $cache = get_transient( self::CACHE_KEY );
+    if ( false !== $cache ) {
+        return $cache['valid'] ?? false;
+    }
+    // Fallback während Lock: Lizenz als gültig annehmen
+    return true;
+}
+
+// Lock setzen (30 Sekunden)
+set_transient( self::LOCK_KEY, true, self::LOCK_DURATION );
+```
+
+**Konstanten:**
+- `LOCK_KEY`: `rp_license_check_lock`
+- `LOCK_DURATION`: 30 Sekunden
+
+---
+
+### 3. Integrity Signature mit Tamper Detection
+
+**Ablauf bei Aktivierung:**
+1. Lizenzdaten in `wp_options` speichern
+2. HMAC-Signatur erstellen und separat speichern
+3. **Sofortige Verifikation** nach dem Speichern (Post-Save Verification)
+4. Bei Fehler: Alles löschen, Fehler zurückgeben
+
+**Ablauf bei `is_valid()` Check:**
+1. Gespeicherte Signatur laden
+2. Erwartete Signatur aus aktuellen Daten berechnen
+3. Timing-safe Vergleich mit `hash_equals()`
+4. **Bei Manipulation:**
+   - Action Hook `rp_license_tampering_detected` feuern
+   - **Sofort alle Lizenzdaten löschen** (Option, Signatur, Cache)
+   - Rückgabe: `false` (Lizenz ungültig)
+
+**Code-Beispiel (is_valid):**
+```php
+// Integritäts-Check
+if ( ! $this->verify_integrity( $license ) ) {
+    do_action( 'rp_license_tampering_detected', $license );
+
+    // Bei Manipulation sofort alle Lizenzdaten löschen
+    delete_option( self::OPTION_KEY );
+    delete_option( self::INTEGRITY_KEY );
+    delete_transient( self::CACHE_KEY );
+    $this->license_data = null;
+
+    return false;
+}
+```
+
+**Signatur-Secret:**
+- Basiert auf WordPress-spezifischen Konstanten
+- Kombination: `NONCE_KEY` + `SECURE_AUTH_KEY` + `DB_NAME` + `site_url()`
+- Nicht direkt manipulierbar ohne DB-Zugriff
+
+---
+
+### 4. Admin-Styles extrahiert
+
+Die License-Seite verwendet externe CSS-Datei statt Inline-Styles:
+
+```php
+wp_enqueue_style(
+    'rp-admin-license',
+    RP_PLUGIN_URL . 'assets/dist/css/admin-license.css',
+    [],
+    RP_VERSION
+);
+```
+
+**Datei:** `assets/dist/css/admin-license.css`
+
+---
+
 ## Zusammenfassung
 
-### Phase 1 (Jetzt)
+### Phase 1 (Implementiert ✅)
 
 - [x] Feature Flags implementieren
 - [x] `rp_can()` Helper-Funktion
 - [x] License Manager mit Offline-Validierung
-- [x] Einfache Checksum-Validierung
+- [x] **HMAC-SHA256 Checksum** (ersetzt CRC32)
+- [x] **Race Condition Lock-Mechanismus**
+- [x] **Integrity Signature mit Tamper Detection**
 - [x] Lizenz-Einstellungsseite im Admin
 - [x] Upgrade-Prompts
 - [x] GitHub Update Checker
+- [x] Singleton Trait für LicenseManager und Plugin
 
 ### Phase 2 (Später: Zahlungsintegration)
 
@@ -1444,4 +1581,4 @@ add_action( 'rp_license_tampering_detected', function( $license ) {
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: Januar 2025 (Security Fixes dokumentiert)*
