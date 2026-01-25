@@ -19,3 +19,7 @@ export { useRating } from './hooks/useRating';
 export { Timeline } from './Timeline';
 export { TimelineItem } from './TimelineItem';
 export { useTimeline } from './hooks/useTimeline';
+
+// Talent-Pool
+export { TalentPoolButton, TalentPoolBadge } from './TalentPoolButton';
+export { useTalentPool, useTalentPoolList } from './hooks/useTalentPool';
