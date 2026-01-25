@@ -64,9 +64,7 @@ class EmailTemplateServiceTest extends TestCase {
 		Functions\when( '__' )->returnArg();
 		Functions\when( 'esc_html__' )->returnArg();
 		Functions\when( 'esc_html' )->returnArg();
-		Functions\when( 'is_wp_error' )->alias( function( $thing ) {
-			return $thing instanceof \WP_Error;
-		} );
+		// is_wp_error is already defined in stubs - don't mock it.
 		Functions\when( 'wp_strip_all_tags' )->alias( function( $string ) {
 			return strip_tags( $string );
 		} );
