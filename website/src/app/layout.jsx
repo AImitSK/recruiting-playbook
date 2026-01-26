@@ -10,7 +10,7 @@ export const metadata = {
       'Recruiting Playbook - Professionelles Bewerbermanagement für WordPress',
   },
   description:
-    'Stellenanzeigen erstellen, Bewerbungen verwalten, Bewerber einstellen — direkt auf deiner WordPress-Website. Kostenlos, DSGVO-konform, mit optionaler KI.',
+    'Stellenanzeigen erstellen, Bewerbungen verwalten, Bewerber einstellen. Direkt auf deiner WordPress-Website. Kostenlos, DSGVO-konform, mit optionaler KI.',
 }
 
 const inter = Inter({

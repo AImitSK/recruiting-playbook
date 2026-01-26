@@ -15,7 +15,7 @@ export function CallToAction() {
           </h2>
           <p className="mt-4 text-lg tracking-tight text-white">
             Installieren Sie das Plugin, erstellen Sie Ihre erste Stelle und
-            empfangen Sie Bewerbungen — noch heute.
+            empfangen Sie Bewerbungen. Noch heute.
           </p>
           <Button href="#" color="white" className="mt-10">
             Kostenlos herunterladen

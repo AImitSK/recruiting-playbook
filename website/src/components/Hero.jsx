@@ -24,7 +24,7 @@ export function Hero() {
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
         Stellenanzeigen erstellen, Bewerbungen verwalten, Bewerber einstellen
-        — kostenlos, DSGVO-konform und mit optionaler KI-Analyse.
+        Kostenlos, DSGVO-konform und mit optionaler KI-Analyse.
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
         <Button href="#pricing" color="blue">
@@ -36,7 +36,7 @@ export function Hero() {
       </div>
       <div className="mt-24 lg:mt-32">
         <p className="font-display text-base text-slate-900">
-          Alles was Sie brauchen — in einem Plugin
+          Alles was Sie brauchen. In einem Plugin.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
           {[

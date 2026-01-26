@@ -3,7 +3,7 @@ import { Container } from '@/components/Container'
 const features = [
   {
     name: 'Free',
-    summary: 'Alles Wichtige — kostenlos und ohne Limits.',
+    summary: 'Alles Wichtige. Kostenlos und ohne Limits.',
     features: [
       'Unbegrenzte Stellenanzeigen',
       'Mehrstufiges Bewerbungsformular',
@@ -58,7 +58,7 @@ export function SecondaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            Drei Versionen — ein Plugin.
+            Drei Versionen. Ein Plugin.
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
             Starten Sie kostenlos und erweitern Sie bei Bedarf. Kein Vendor

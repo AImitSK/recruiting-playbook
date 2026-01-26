@@ -42,7 +42,7 @@ const faqs = [
     {
       question: 'Welche KI wird für die Analyse verwendet?',
       answer:
-        'Wir nutzen Claude von Anthropic. Es werden keine personenbezogenen Daten an die KI übermittelt — nur Stellenanforderungen und anonymisierte Qualifikationen.',
+        'Wir nutzen Claude von Anthropic. Es werden keine personenbezogenen Daten an die KI übermittelt, sondern nur Stellenanforderungen und anonymisierte Qualifikationen.',
     },
     {
       question: 'Gibt es eine REST API?',
@@ -81,7 +81,7 @@ export function Faqs() {
             Häufig gestellte Fragen
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Sie finden keine Antwort? Schreiben Sie uns — wir helfen gerne
+            Sie finden keine Antwort? Schreiben Sie uns, wir helfen gerne
             weiter.
           </p>
         </div>

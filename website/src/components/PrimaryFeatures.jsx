@@ -15,7 +15,7 @@ const features = [
   {
     title: 'Stellenanzeigen',
     description:
-      'Erstellen Sie professionelle Stellenanzeigen mit Google for Jobs Schema — automatisch optimiert für maximale Sichtbarkeit in Suchmaschinen.',
+      'Erstellen Sie professionelle Stellenanzeigen mit Google for Jobs Schema. Automatisch optimiert für maximale Sichtbarkeit in Suchmaschinen.',
     image: screenshotJobDetail,
   },
   {
@@ -27,13 +27,13 @@ const features = [
   {
     title: 'Bewerberverwaltung',
     description:
-      'Alle Bewerbungen auf einen Blick — filtern nach Status, Stelle und Zeitraum. Mit Pro: Kanban-Board für visuelles Tracking.',
+      'Alle Bewerbungen auf einen Blick. Filtern nach Status, Stelle und Zeitraum. Mit Pro: Kanban-Board für visuelles Tracking.',
     image: screenshotApplications,
   },
   {
     title: 'WordPress Admin',
     description:
-      'Nahtlos in WordPress integriert. Stellen verwalten, Bewerbungen bearbeiten, Einstellungen konfigurieren — alles im vertrauten Backend.',
+      'Nahtlos in WordPress integriert. Stellen verwalten, Bewerbungen bearbeiten, Einstellungen konfigurieren. Alles im vertrauten Backend.',
     image: screenshotAdmin,
   },
 ]
@@ -65,7 +65,7 @@ export function PrimaryFeatures() {
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">
-            Alles für Ihr Recruiting — in einem Plugin.
+            Alles für Ihr Recruiting. In einem Plugin.
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
             Von der Stellenanzeige bis zur Einstellung. Recruiting Playbook

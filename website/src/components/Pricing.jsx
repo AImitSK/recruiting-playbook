@@ -106,7 +106,7 @@ export function Pricing() {
             name="Free"
             price="0 €"
             priceDetail="Für immer kostenlos"
-            description="Perfekt zum Starten — ohne Limits bei Stellenanzeigen."
+            description="Perfekt zum Starten. Ohne Limits bei Stellenanzeigen."
             href="#"
             cta="Herunterladen"
             features={[
@@ -122,7 +122,7 @@ export function Pricing() {
             featured
             name="Pro"
             price="149 €"
-            priceDetail="Einmalig — Lifetime-Lizenz (1 Website)"
+            priceDetail="Einmalig. Lifetime-Lizenz (1 Website)"
             description="Professionelles Bewerbermanagement für Teams und Agenturen."
             href="#"
             cta="Pro kaufen"
