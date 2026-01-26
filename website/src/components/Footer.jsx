@@ -21,9 +21,9 @@ export function Footer() {
           />
           <nav className="mt-10 text-sm" aria-label="Schnelllinks">
             <div className="-my-1 flex justify-center gap-x-6">
-              <NavLink href="#features">Features</NavLink>
-              <NavLink href="#pricing">Preise</NavLink>
-              <NavLink href="#faq">FAQ</NavLink>
+              <NavLink href="/features">Features</NavLink>
+              <NavLink href="/pricing">Preise</NavLink>
+              <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/docs">Dokumentation</NavLink>
             </div>
           </nav>
