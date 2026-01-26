@@ -11,6 +11,7 @@ export const metadata = {
   },
   description:
     'Stellenanzeigen erstellen, Bewerbungen verwalten, Bewerber einstellen. Direkt auf deiner WordPress-Website. Kostenlos, DSGVO-konform, mit optionaler KI.',
+  manifest: '/manifest.webmanifest',
 }
 
 const inter = Inter({

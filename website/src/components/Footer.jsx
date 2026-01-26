@@ -14,9 +14,9 @@ export function Footer() {
           <Image
             src={rpIcon}
             alt="Recruiting Playbook"
-            width={40}
-            height={40}
-            className="mx-auto h-10 w-10"
+            width={52}
+            height={52}
+            className="mx-auto h-[52px] w-[52px]"
             unoptimized
           />
           <nav className="mt-10 text-sm" aria-label="Schnelllinks">
