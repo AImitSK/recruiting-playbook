@@ -1,4 +1,5 @@
 import { compileMDX } from 'next-mdx-remote/rsc'
+import remarkGfm from 'remark-gfm'
 import { createHighlighter } from 'shiki'
 import { mdxComponents } from '@/components/docs/MDXComponents'
 
@@ -22,6 +23,9 @@ export async function compileMdx(source) {
     components: mdxComponents(highlighter),
     options: {
       parseFrontmatter: true,
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+      },
     },
   })
 
