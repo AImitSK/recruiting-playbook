@@ -1,0 +1,127 @@
+---
+title: Erste Schritte
+description: Installation, Systemanforderungen und Setup-Wizard - so starten Sie mit Recruiting Playbook.
+---
+
+## Systemanforderungen
+
+Bevor Sie Recruiting Playbook installieren, stellen Sie sicher, dass Ihre Umgebung die folgenden Anforderungen erfuellt:
+
+| Anforderung | Mindestversion |
+|-------------|---------------|
+| WordPress | 6.0 oder hoeher |
+| PHP | 8.0 oder hoeher |
+| MySQL | 5.7 oder hoeher |
+
+## Installation
+
+1. **Plugin hochladen** - WordPress Admin &rarr; Plugins &rarr; Installieren &rarr; Plugin hochladen. Waehlen Sie die ZIP-Datei aus und klicken Sie auf "Installieren".
+2. **Plugin aktivieren** - Nach der Installation auf "Aktivieren" klicken. Der Setup-Wizard startet automatisch.
+3. **Setup-Wizard abschliessen** - Folgen Sie den Schritten unten.
+
+Alternativ koennen Sie den Plugin-Ordner manuell nach `wp-content/plugins/recruiting-playbook` kopieren und das Plugin anschliessend im Admin-Bereich aktivieren.
+
+## Setup-Wizard
+
+Der Setup-Wizard fuehrt Sie durch die Erstkonfiguration in fuenf Schritten:
+
+### Schritt 1: Willkommen
+
+Uebersicht der Plugin-Features und was Sie erwartet.
+
+### Schritt 2: Firmendaten
+
+- Firmenname eingeben
+- Das Logo wird automatisch vom Theme uebernommen (Customizer &rarr; Website-Identitaet)
+
+### Schritt 3: E-Mail-Konfiguration
+
+- E-Mail-Adresse fuer Bewerbungsbenachrichtigungen festlegen
+- SMTP-Status pruefen
+- Test-E-Mail senden, um die Zustellung zu verifizieren
+
+<Callout type="warning" title="SMTP empfohlen">
+Ohne SMTP-Plugin landen E-Mails haeufig im Spam-Ordner. Richten Sie vor dem Go-Live ein SMTP-Plugin ein. Mehr dazu unter [E-Mail-Konfiguration](/docs/email).
+</Callout>
+
+### Schritt 4: Erste Stelle
+
+Optional koennen Sie direkt Ihre erste Stellenanzeige erstellen. Dieser Schritt kann auch uebersprungen werden.
+
+### Schritt 5: Fertig
+
+Zusammenfassung der Konfiguration und Links zu den wichtigsten Seiten.
+
+## Features im Ueberblick
+
+### Stellenverwaltung
+
+- Custom Post Type fuer Stellenanzeigen
+- Kategorien: Berufsfelder, Standorte, Beschaeftigungsarten
+- Gehaltsinformationen mit Verstecken-Option
+- Remote/Hybrid-Optionen
+- Automatisches Google for Jobs Schema (JSON-LD)
+
+### Bewerbungen
+
+- Mehrstufiges Bewerbungsformular
+- Drag & Drop Datei-Upload
+- Spam-Schutz (Honeypot, Rate-Limiting)
+- E-Mail-Benachrichtigungen
+- DSGVO-konforme Datenspeicherung
+
+### Administration
+
+- Uebersichtliches Dashboard
+- Bewerber-Listenverwaltung mit Filtern
+- Status-Management (Neu &rarr; In Pruefung &rarr; Interview &rarr; Angebot &rarr; Eingestellt)
+- Backup-Export als JSON
+
+## Stellenanzeigen erstellen
+
+1. WordPress Admin &rarr; **Recruiting** &rarr; **Stellen** &rarr; **Erstellen**
+2. Titel und Beschreibung eingeben
+3. Kategorien zuweisen:
+   - **Berufsfeld**: z.B. IT, Pflege, Verwaltung
+   - **Standort**: z.B. Berlin, Muenchen
+   - **Beschaeftigungsart**: Vollzeit, Teilzeit, Minijob, etc.
+
+### Stellen-Details
+
+| Feld | Beschreibung |
+|------|-------------|
+| Gehalt | Min/Max-Werte, Waehrung, Zeitraum (Monat/Jahr/Stunde) |
+| Gehalt verstecken | Checkbox, um Gehalt nicht oeffentlich anzuzeigen |
+| Bewerbungsfrist | Datum, bis wann Bewerbungen moeglich sind |
+| Ansprechpartner | Name, E-Mail, Telefon |
+| Remote-Option | Vor Ort / Hybrid / Remote |
+| Startdatum | Wann die Stelle besetzt werden soll |
+
+### Google for Jobs
+
+Das Plugin generiert automatisch strukturierte Daten (JSON-LD) fuer Google for Jobs. Fuer optimales Ranking sollten diese Felder ausgefuellt sein:
+
+- Titel (Pflicht)
+- Beschreibung mit mindestens 100 Zeichen (Pflicht)
+- Standort oder Remote (Pflicht)
+- Beschaeftigungsart (Pflicht)
+- Gehalt (empfohlen)
+- Bewerbungsfrist (empfohlen)
+
+<Callout type="tip" title="Schema pruefen">
+Testen Sie Ihre strukturierten Daten mit dem [Google Rich Results Test](https://search.google.com/test/rich-results).
+</Callout>
+
+## Karriereseite einrichten
+
+1. Erstellen Sie eine neue WordPress-Seite (z.B. "Karriere" oder "Jobs")
+2. Fuegen Sie den Shortcode `[rp_job_search]` ein
+3. Veroeffentlichen Sie die Seite
+
+Weitere Shortcodes und Optionen finden Sie unter [Shortcodes](/docs/shortcodes).
+
+## Naechste Schritte
+
+- [Shortcodes](/docs/shortcodes) - Alle verfuegbaren Shortcodes und Parameter
+- [E-Mail-Konfiguration](/docs/email) - SMTP einrichten fuer zuverlaessige Zustellung
+- [DSGVO](/docs/gdpr) - Datenschutz-Einstellungen konfigurieren

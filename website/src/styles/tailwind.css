@@ -2,6 +2,21 @@
 
 @plugin '@tailwindcss/forms';
 
+/* Docs prose spacing */
+.docs-prose > * + * {
+  margin-top: 0;
+}
+.docs-prose > * + h2 {
+  margin-top: 2.5rem;
+}
+.docs-prose > * + h3 {
+  margin-top: 2rem;
+}
+.docs-prose > h2 + *,
+.docs-prose > h3 + * {
+  margin-top: 1rem;
+}
+
 @theme {
   --text-*: initial;
   --text-xs: 0.75rem;

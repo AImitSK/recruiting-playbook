@@ -1,0 +1,206 @@
+---
+title: Hooks & Filter
+description: Actions und Filters fuer Entwickler, die das Plugin erweitern moechten.
+---
+
+Recruiting Playbook bietet eine Reihe von WordPress-Actions und Filters, mit denen Entwickler das Verhalten des Plugins anpassen und erweitern koennen.
+
+## Actions
+
+### rp_application_received
+
+Wird ausgeloest, nachdem eine neue Bewerbung erfolgreich eingegangen ist.
+
+```php
+add_action( 'rp_application_received', function( $application ) {
+    // Beispiel: Externe API benachrichtigen
+    wp_remote_post( 'https://api.example.com/notify', [
+        'body' => json_encode( [
+            'event' => 'new_application',
+            'job_id' => $application->job_id,
+        ] ),
+    ] );
+}, 10, 1 );
+```
+
+**Parameter:**
+- `$application` *(Application)* - Das Application-Model-Objekt
+
+### rp_application_status_changed
+
+Wird nach jeder Status-Aenderung einer Bewerbung ausgeloest.
+
+```php
+add_action( 'rp_application_status_changed', function( $application, $old_status, $new_status ) {
+    if ( $new_status === 'interview' ) {
+        // Beispiel: Interview-Termin in externen Kalender eintragen
+    }
+}, 10, 3 );
+```
+
+**Parameter:**
+- `$application` *(Application)* - Das aktualisierte Application-Objekt
+- `$old_status` *(string)* - Vorheriger Status
+- `$new_status` *(string)* - Neuer Status
+
+### rp_application_hired
+
+Wird ausgeloest, wenn ein Bewerber eingestellt wird (Status wechselt zu `hired`).
+
+```php
+add_action( 'rp_application_hired', function( $application ) {
+    // Beispiel: Bewerber in HR-System anlegen
+}, 10, 1 );
+```
+
+### rp_application_created
+
+Wird direkt nach dem Erstellen einer Bewerbung in der Datenbank ausgeloest.
+
+```php
+add_action( 'rp_application_created', function( $application_id, $data ) {
+    // Beispiel: Logging
+    error_log( "Neue Bewerbung #{$application_id} fuer Stelle #{$data['job_id']}" );
+}, 10, 2 );
+```
+
+### rp_before_candidate_delete / rp_after_candidate_delete
+
+Werden vor und nach einer DSGVO-Loeschung ausgeloest.
+
+```php
+add_action( 'rp_before_candidate_delete', function( $candidate_id ) {
+    // Beispiel: Daten in externem System loeschen
+}, 10, 1 );
+
+add_action( 'rp_after_candidate_delete', function( $candidate_id ) {
+    // Beispiel: Bestaetigung senden
+}, 10, 1 );
+```
+
+### rp_spam_blocked
+
+Wird ausgeloest, wenn eine Bewerbung als Spam erkannt und blockiert wird.
+
+```php
+add_action( 'rp_spam_blocked', function( $type, $ip, $request ) {
+    // Beispiel: IP-Adresse loggen
+    error_log( "Spam blockiert: Typ={$type}, IP={$ip}" );
+}, 10, 3 );
+```
+
+**Parameter:**
+- `$type` *(string)* - Art des Spam-Schutzes (z.B. `honeypot`, `rate_limit`)
+- `$ip` *(string)* - IP-Adresse
+- `$request` *(array)* - Request-Daten
+
+## Filters
+
+### rp_application_form_fields
+
+Felder des Bewerbungsformulars anpassen, hinzufuegen oder entfernen.
+
+```php
+add_filter( 'rp_application_form_fields', function( $fields, $job_id ) {
+    // Beispiel: Zusaetzliches Feld hinzufuegen
+    $fields['earliest_start'] = [
+        'type'     => 'date',
+        'label'    => 'Fruehester Starttermin',
+        'required' => false,
+    ];
+
+    return $fields;
+}, 10, 2 );
+```
+
+**Parameter:**
+- `$fields` *(array)* - Formularfelder-Array
+- `$job_id` *(int)* - ID der aktuellen Stelle
+
+### rp_notification_recipients
+
+E-Mail-Empfaenger fuer Bewerbungsbenachrichtigungen aendern.
+
+```php
+add_filter( 'rp_notification_recipients', function( $recipients, $application ) {
+    // Beispiel: Abteilungsleiter hinzufuegen
+    $recipients[] = 'hr-leitung@example.com';
+    return $recipients;
+}, 10, 2 );
+```
+
+### rp_allowed_file_types
+
+Erlaubte Dateitypen fuer den Upload anpassen.
+
+```php
+add_filter( 'rp_allowed_file_types', function( $types ) {
+    // Standard: ['pdf', 'doc', 'docx']
+    $types[] = 'jpg';
+    $types[] = 'png';
+    return $types;
+} );
+```
+
+### rp_max_file_size
+
+Maximale Dateigroesse fuer Uploads aendern (in Bytes).
+
+```php
+add_filter( 'rp_max_file_size', function( $size ) {
+    return 20 * 1024 * 1024; // 20 MB
+} );
+```
+
+<Callout type="info">
+Der Standardwert betraegt 10 MB. Beachten Sie auch die PHP-Limits `upload_max_filesize` und `post_max_size` in Ihrer Server-Konfiguration.
+</Callout>
+
+### rp_job_query_args
+
+Die WP_Query-Argumente fuer Stellenanzeigen anpassen.
+
+```php
+add_filter( 'rp_job_query_args', function( $query_args ) {
+    // Beispiel: Nur aktive Stellen der letzten 30 Tage
+    $query_args['date_query'] = [
+        [ 'after' => '30 days ago' ],
+    ];
+    return $query_args;
+} );
+```
+
+### rp_api_application_response
+
+API-Antwort fuer Bewerbungen anpassen (REST API).
+
+```php
+add_filter( 'rp_api_application_response', function( $response, $application ) {
+    // Beispiel: Zusaetzliches Feld in API-Antwort
+    $response['department'] = get_post_meta(
+        $application->job_id, '_department', true
+    );
+    return $response;
+}, 10, 2 );
+```
+
+## Status-Workflow
+
+Zum Verstaendnis der Actions: Bewerbungen durchlaufen folgenden Status-Workflow:
+
+```
+Neu -> In Pruefung -> Interview -> Angebot -> Eingestellt
+  \         \            \           \
+   +---------+-----------+-----------+---> Abgelehnt
+                                          Zurueckgezogen
+```
+
+| Status | Schluessel | Erlaubte Uebergaenge |
+|--------|-----------|---------------------|
+| Neu | `new` | `screening`, `rejected`, `withdrawn` |
+| In Pruefung | `screening` | `interview`, `rejected`, `withdrawn` |
+| Interview | `interview` | `offer`, `rejected`, `withdrawn` |
+| Angebot | `offer` | `hired`, `rejected`, `withdrawn` |
+| Eingestellt | `hired` | - |
+| Abgelehnt | `rejected` | - |
+| Zurueckgezogen | `withdrawn` | - |

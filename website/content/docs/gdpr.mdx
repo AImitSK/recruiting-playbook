@@ -1,0 +1,114 @@
+---
+title: DSGVO
+description: Datenschutz-Grundverordnung - so arbeitet Recruiting Playbook DSGVO-konform.
+---
+
+Recruiting Playbook ist von Grund auf fuer DSGVO-Konformitaet konzipiert. Alle personenbezogenen Daten werden nur mit Einwilligung gespeichert und koennen jederzeit exportiert oder geloescht werden.
+
+## Gesetzliche Anforderungen
+
+| Anforderung | Umsetzung im Plugin |
+|-------------|---------------------|
+| **Einwilligung** | Checkbox mit Timestamp und Link zur Datenschutzerklaerung |
+| **Zweckbindung** | Daten werden nur fuer den Bewerbungsprozess genutzt |
+| **Loeschfristen** | Automatische Loeschung nach konfigurierbarem Zeitraum (Pro) |
+| **Auskunftsrecht** | Export aller Daten eines Bewerbers (Pro) |
+| **Recht auf Loeschung** | Manuelles Loeschen mit Bestaetigungsdialog |
+| **Datenminimierung** | Nur notwendige Felder als Pflichtfelder |
+
+## Consent-Management
+
+### Bewerbungsformular
+
+Das Bewerbungsformular enthaelt zwei Einwilligungs-Checkboxen:
+
+1. **Datenschutz-Einwilligung** (Pflicht) - "Ich habe die Datenschutzerklaerung gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu."
+2. **Talent-Pool** (optional) - "Ich moechte in den Talent-Pool aufgenommen werden und auch fuer zukuenftige Stellen kontaktiert werden."
+
+### Was gespeichert wird
+
+Fuer jede Einwilligung protokolliert das Plugin:
+
+- Consent-Text (versioniert)
+- Timestamp der Einwilligung
+- IP-Adresse (optional, konfigurierbar)
+- Status der Checkboxen
+
+<Callout type="info" title="Datenschutzerklaerung verlinken">
+Konfigurieren Sie die URL Ihrer Datenschutzerklaerung unter **Recruiting** &rarr; **Einstellungen** &rarr; **Allgemein**. Diese wird automatisch im Formular verlinkt.
+</Callout>
+
+## Soft-Delete und Anonymisierung
+
+Recruiting Playbook verwendet **Soft-Delete** statt permanenter Loeschung:
+
+- Geloeschte Datensaetze erhalten ein `deleted_at` Timestamp
+- Daten koennen innerhalb einer Frist wiederhergestellt werden
+- Nach Ablauf der Frist werden Daten endgueltig anonymisiert
+
+### Anonymisierung
+
+Bei der endgueltigen Loeschung werden personenbezogene Daten durch Platzhalter ersetzt:
+- Name &rarr; "Anonymisiert"
+- E-Mail &rarr; geloescht
+- Telefon &rarr; geloescht
+- Dokumente &rarr; Dateien geloescht
+
+Die statistische Auswertung (z.B. Bewerbungen pro Stelle) bleibt erhalten.
+
+## Loeschfristen (Pro)
+
+In der Pro-Version koennen Sie automatische Loeschfristen konfigurieren:
+
+| Kategorie | Standardwert | Konfigurierbar |
+|-----------|-------------|---------------|
+| Abgelehnte Bewerber | 6 Monate | Ja |
+| Eingestellte Bewerber | Nach Uebernahme in HR-System | Ja |
+| Talent-Pool | 24 Monate | Ja |
+
+<Callout type="tip">
+Aktivieren Sie E-Mail-Erinnerungen vor der automatischen Loeschung, damit Bewerber informiert werden.
+</Callout>
+
+## Datenexport (Pro)
+
+Pro-Nutzer koennen alle Daten eines Bewerbers mit einem Klick exportieren:
+
+- Alle Stammdaten
+- Alle hochgeladenen Dokumente
+- Alle Notizen und Bewertungen
+- E-Mail-Kommunikation
+- Consent-Historie
+
+**Formate:** ZIP mit JSON-Dateien und Dokumenten, oder PDF-Report.
+
+## DSGVO-Features nach Version
+
+| Feature | Free | Pro |
+|---------|:----:|:---:|
+| Consent-Checkbox | Ja | Ja |
+| Loeschfunktion (manuell) | Ja | Ja |
+| Automatische Loeschfristen | - | Ja |
+| Datenexport pro Bewerber | - | Ja |
+| Consent-Protokoll | - | Ja |
+| E-Mail-Erinnerung vor Loeschung | - | Ja |
+
+## AVV fuer KI-Nutzung
+
+Bei Nutzung des KI-Addons:
+
+- Es werden **keine personenbezogenen Daten** an die KI-API uebermittelt
+- Nur Stellendaten (Titel, Beschreibung) werden fuer die Textgenerierung verwendet
+- AVV-Vorlage steht zum Download bereit
+
+<Callout type="warning" title="Auftragsverarbeitung">
+Wenn Sie das KI-Addon nutzen, informieren Sie Ihre Bewerber in der Datenschutzerklaerung ueber die Datenverarbeitung durch Drittanbieter.
+</Callout>
+
+## Checkliste fuer Betreiber
+
+1. Datenschutzerklaerung-URL in den Einstellungen hinterlegen
+2. Consent-Checkbox im Formular aktiviert lassen
+3. Loeschfristen konfigurieren (Pro)
+4. Regelmaessig pruefbar: Recruiting &rarr; Werkzeuge &rarr; Integritaets-Check
+5. Bei KI-Nutzung: AVV mit dem API-Provider abschliessen

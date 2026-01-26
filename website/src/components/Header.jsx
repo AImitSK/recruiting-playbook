@@ -69,6 +69,7 @@ function MobileNavigation() {
         <MobileNavLink href="#features">Features</MobileNavLink>
         <MobileNavLink href="#pricing">Preise</MobileNavLink>
         <MobileNavLink href="#faq">FAQ</MobileNavLink>
+        <MobileNavLink href="/docs">Dokumentation</MobileNavLink>
         <hr className="m-2 border-slate-300/40" />
         <MobileNavLink href="https://github.com/AImitSK/recruiting-playbook">
           GitHub
@@ -91,6 +92,7 @@ export function Header() {
               <NavLink href="#features">Features</NavLink>
               <NavLink href="#pricing">Preise</NavLink>
               <NavLink href="#faq">FAQ</NavLink>
+              <NavLink href="/docs">Dokumentation</NavLink>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
