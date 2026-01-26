@@ -1,15 +1,24 @@
 import Link from 'next/link'
 
+import Image from 'next/image'
+
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
+import rpIcon from '@/images/rp-icon.png'
 
 export function Footer() {
   return (
     <footer className="bg-slate-50">
       <Container>
         <div className="py-16">
-          <Logo className="mx-auto h-10 w-auto" />
+          <Image
+            src={rpIcon}
+            alt="Recruiting Playbook"
+            width={40}
+            height={40}
+            className="mx-auto h-10 w-10"
+            unoptimized
+          />
           <nav className="mt-10 text-sm" aria-label="Schnelllinks">
             <div className="-my-1 flex justify-center gap-x-6">
               <NavLink href="#features">Features</NavLink>
