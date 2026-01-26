@@ -99,7 +99,7 @@ export function Header() {
                 GitHub
               </NavLink>
             </div>
-            <Button href="#pricing" color="blue">
+            <Button href="/recruiting-playbook.zip" color="blue" download>
               <span>
                 Kostenlos starten
               </span>

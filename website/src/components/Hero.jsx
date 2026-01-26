@@ -27,7 +27,7 @@ export function Hero() {
         Kostenlos, DSGVO-konform und mit optionaler KI-Analyse.
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
-        <Button href="#pricing" color="blue">
+        <Button href="/recruiting-playbook.zip" color="blue" download>
           Kostenlos herunterladen
         </Button>
         <Button href="#features" variant="outline">

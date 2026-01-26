@@ -43,10 +43,14 @@ export function Footer() {
               </svg>
             </Link>
           </div>
-          <p className="mt-6 text-sm text-slate-500 sm:mt-0">
-            Copyright &copy; {new Date().getFullYear()} Recruiting Playbook.
-            Alle Rechte vorbehalten.
-          </p>
+          <div className="mt-6 flex items-center gap-x-4 text-sm text-slate-500 sm:mt-0">
+            <p>
+              Copyright &copy; {new Date().getFullYear()} Recruiting Playbook.
+            </p>
+            <Link href="/impressum" className="hover:text-slate-700">
+              Impressum
+            </Link>
+          </div>
         </div>
       </Container>
     </footer>

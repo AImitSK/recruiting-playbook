@@ -24,7 +24,7 @@ const variantStyles = {
   },
 }
 
-export function Button({ className, ...props }) {
+export function Button({ className, download, ...props }) {
   props.variant ??= 'solid'
   props.color ??= 'slate'
 
@@ -40,6 +40,8 @@ export function Button({ className, ...props }) {
 
   return typeof props.href === 'undefined' ? (
     <button className={className} {...props} />
+  ) : download ? (
+    <a className={className} download {...props} />
   ) : (
     <Link className={className} {...props} />
   )

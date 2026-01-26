@@ -17,7 +17,7 @@ export function CallToAction() {
             Installieren Sie das Plugin, erstellen Sie Ihre erste Stelle und
             empfangen Sie Bewerbungen. Noch heute.
           </p>
-          <Button href="#" color="white" className="mt-10">
+          <Button href="/recruiting-playbook.zip" color="white" className="mt-10" download>
             Kostenlos herunterladen
           </Button>
         </div>

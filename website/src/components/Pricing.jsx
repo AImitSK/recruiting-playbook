@@ -30,7 +30,7 @@ function CheckIcon({ className, ...props }) {
   )
 }
 
-function Plan({ name, price, priceDetail, description, href, features, featured = false, cta }) {
+function Plan({ name, price, priceDetail, description, href, features, featured = false, cta, download = false }) {
   return (
     <section
       className={clsx(
@@ -77,6 +77,7 @@ function Plan({ name, price, priceDetail, description, href, features, featured 
         color="white"
         className="mt-8"
         aria-label={`${cta || 'Jetzt starten'} - ${name}`}
+        {...(download ? { download: true } : {})}
       >
         {cta || 'Jetzt starten'}
       </Button>
@@ -107,8 +108,9 @@ export function Pricing() {
             price="0 €"
             priceDetail="Für immer kostenlos"
             description="Perfekt zum Starten. Ohne Limits bei Stellenanzeigen."
-            href="#"
+            href="/recruiting-playbook.zip"
             cta="Herunterladen"
+            download
             features={[
               'Unbegrenzte Stellenanzeigen',
               'Mehrstufiges Bewerbungsformular',
