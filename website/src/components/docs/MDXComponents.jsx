@@ -74,7 +74,7 @@ export function mdxComponents(highlighter) {
       const lang = langMatch ? langMatch[1] : null
 
       return (
-        <div className="mt-4">
+        <div className="my-6">
           <CodeBlock highlighter={highlighter} code={code.trim()} lang={lang} />
         </div>
       )
