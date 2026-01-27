@@ -100,11 +100,10 @@ class PlaceholderService {
 		$values['stelle_typ'] = $job['employment_type'] ?? '';
 		$values['stelle_url'] = $job['url'] ?? '';
 
-		// Firmen-Platzhalter.
-		$company                 = $settings['company'] ?? [];
-		$values['firma']         = $company['name'] ?? $settings['company_name'] ?? get_bloginfo( 'name' );
-		$values['firma_adresse'] = $this->formatCompanyAddress( $company );
-		$values['firma_website'] = $company['website'] ?? home_url();
+		// Firmen-Platzhalter (aus flacher rp_settings Struktur).
+		$values['firma']         = $settings['company_name'] ?? get_bloginfo( 'name' );
+		$values['firma_adresse'] = $this->formatCompanyAddress( $settings );
+		$values['firma_website'] = $settings['company_website'] ?? home_url();
 
 		// Custom-Platzhalter überschreiben (für Erweiterbarkeit).
 		foreach ( $custom as $key => $value ) {
@@ -444,19 +443,25 @@ class PlaceholderService {
 	 * @param array $company Firmendaten aus rp_settings['company'].
 	 * @return string Formatierte Adresse.
 	 */
-	private function formatCompanyAddress( array $company ): string {
+	/**
+	 * Firmenadresse formatieren
+	 *
+	 * @param array $settings Plugin-Einstellungen mit company_* Feldern.
+	 * @return string Formatierte Adresse.
+	 */
+	private function formatCompanyAddress( array $settings ): string {
 		$parts = [];
 
-		if ( ! empty( $company['street'] ) ) {
-			$parts[] = $company['street'];
+		if ( ! empty( $settings['company_street'] ) ) {
+			$parts[] = $settings['company_street'];
 		}
 
 		$city_parts = [];
-		if ( ! empty( $company['zip'] ) ) {
-			$city_parts[] = $company['zip'];
+		if ( ! empty( $settings['company_zip'] ) ) {
+			$city_parts[] = $settings['company_zip'];
 		}
-		if ( ! empty( $company['city'] ) ) {
-			$city_parts[] = $company['city'];
+		if ( ! empty( $settings['company_city'] ) ) {
+			$city_parts[] = $settings['company_city'];
 		}
 		if ( ! empty( $city_parts ) ) {
 			$parts[] = implode( ' ', $city_parts );

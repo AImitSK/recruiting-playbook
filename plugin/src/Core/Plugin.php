@@ -30,6 +30,7 @@ use RecruitingPlaybook\Api\EmailTemplateController;
 use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Api\SignatureController;
+use RecruitingPlaybook\Api\SettingsController;
 use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
@@ -366,6 +367,10 @@ final class Plugin {
 		// Signature Controller (für E-Mail-Signaturen).
 		$signature_controller = new SignatureController();
 		$signature_controller->register_routes();
+
+		// Settings Controller (für Firmendaten etc.).
+		$settings_controller = new SettingsController();
+		$settings_controller->register_routes();
 
 		// License Controller.
 		$license_controller = new LicenseController();

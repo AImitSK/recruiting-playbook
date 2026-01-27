@@ -339,12 +339,20 @@ class SignatureService {
 	/**
 	 * Firmendaten aus Plugin-Einstellungen laden
 	 *
-	 * @return array Firmendaten.
+	 * @return array Firmendaten (normalisiert zu name, street, zip, city, phone, website, email).
 	 */
 	private function getCompanyData(): array {
 		$settings = get_option( 'rp_settings', [] );
 
-		return $settings['company'] ?? [];
+		return [
+			'name'    => $settings['company_name'] ?? get_bloginfo( 'name' ),
+			'street'  => $settings['company_street'] ?? '',
+			'zip'     => $settings['company_zip'] ?? '',
+			'city'    => $settings['company_city'] ?? '',
+			'phone'   => $settings['company_phone'] ?? '',
+			'website' => $settings['company_website'] ?? home_url(),
+			'email'   => $settings['company_email'] ?? get_option( 'admin_email' ),
+		];
 	}
 
 	/**
