@@ -52,7 +52,7 @@ class TalentPoolService {
 	 * @return array|WP_Error
 	 */
 	public function add( int $candidate_id, string $reason = '', string $tags = '', ?string $expires_at = null ): array|WP_Error {
-		// Prüfen ob bereits im Pool.
+		// Prüfen ob bereits im Pool (aktiv).
 		if ( $this->repository->exists( $candidate_id ) ) {
 			return new WP_Error(
 				'already_exists',
@@ -84,13 +84,27 @@ class TalentPoolService {
 		// Tags normalisieren.
 		$normalized_tags = $this->normalizeTags( $tags );
 
-		$entry_id = $this->repository->create( [
-			'candidate_id' => $candidate_id,
-			'added_by'     => get_current_user_id(),
-			'reason'       => sanitize_textarea_field( $reason ),
-			'tags'         => $normalized_tags,
-			'expires_at'   => $expires_at,
-		] );
+		// Prüfen ob soft-deleted Eintrag existiert und reaktivieren.
+		$existing_entry = $this->repository->findDeletedByCandidate( $candidate_id );
+		if ( $existing_entry ) {
+			$entry_id = $this->repository->reactivate(
+				(int) $existing_entry['id'],
+				[
+					'added_by'   => get_current_user_id(),
+					'reason'     => sanitize_textarea_field( $reason ),
+					'tags'       => $normalized_tags,
+					'expires_at' => $expires_at,
+				]
+			);
+		} else {
+			$entry_id = $this->repository->create( [
+				'candidate_id' => $candidate_id,
+				'added_by'     => get_current_user_id(),
+				'reason'       => sanitize_textarea_field( $reason ),
+				'tags'         => $normalized_tags,
+				'expires_at'   => $expires_at,
+			] );
+		}
 
 		if ( ! $entry_id ) {
 			return new WP_Error(

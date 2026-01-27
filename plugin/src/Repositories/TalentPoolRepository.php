@@ -164,6 +164,60 @@ class TalentPoolRepository {
 	}
 
 	/**
+	 * Soft-deleted Eintrag für Kandidat finden
+	 *
+	 * @param int $candidate_id Kandidaten-ID.
+	 * @return array|null
+	 */
+	public function findDeletedByCandidate( int $candidate_id ): ?array {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$entry = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$this->table}
+				WHERE candidate_id = %d AND deleted_at IS NOT NULL",
+				$candidate_id
+			),
+			ARRAY_A
+		);
+
+		return $entry ?: null;
+	}
+
+	/**
+	 * Soft-deleted Eintrag reaktivieren
+	 *
+	 * @param int   $id   Eintrag-ID.
+	 * @param array $data Neue Daten.
+	 * @return int|false Entry ID oder false bei Fehler.
+	 */
+	public function reactivate( int $id, array $data ): int|false {
+		global $wpdb;
+
+		// Ablaufdatum berechnen falls nicht gesetzt.
+		if ( empty( $data['expires_at'] ) ) {
+			$retention_months   = (int) get_option( 'rp_talent_pool_retention', self::DEFAULT_RETENTION_MONTHS );
+			$data['expires_at'] = gmdate( 'Y-m-d H:i:s', strtotime( "+{$retention_months} months" ) );
+		}
+
+		$data['deleted_at']    = null;
+		$data['reminder_sent'] = 0;
+		$data['updated_at']    = current_time( 'mysql' );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$result = $wpdb->update(
+			$this->table,
+			$data,
+			[ 'id' => $id ],
+			$this->getFormats( $data ),
+			[ '%d' ]
+		);
+
+		return false !== $result ? $id : false;
+	}
+
+	/**
 	 * Talent-Pool Liste laden
 	 *
 	 * @param array $args Query-Argumente.

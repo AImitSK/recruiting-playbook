@@ -52,15 +52,15 @@ class ApplicationDetail {
 
 		// Pro-Features: React-Komponenten.
 		if ( $this->hasProFeatures() ) {
-			$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/index.js';
-			$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/index.asset.php';
+			$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin.js';
+			$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
 
 			if ( file_exists( $js_file ) && file_exists( $asset_file ) ) {
 				$assets = include $asset_file;
 
 				wp_enqueue_script(
 					'rp-applicant',
-					RP_PLUGIN_URL . 'assets/dist/js/index.js',
+					RP_PLUGIN_URL . 'assets/dist/js/admin.js',
 					$assets['dependencies'] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
 					$assets['version'] ?? RP_VERSION,
 					true

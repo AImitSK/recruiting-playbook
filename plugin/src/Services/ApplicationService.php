@@ -149,6 +149,13 @@ class ApplicationService {
 		// Dokumente laden
 		$application['documents'] = $this->document_service->getByApplication( $id );
 
+		// Talent-Pool Status laden (Pro-Feature).
+		$application['in_talent_pool'] = false;
+		if ( function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' ) ) {
+			$talent_pool_service = new TalentPoolService();
+			$application['in_talent_pool'] = $talent_pool_service->isInPool( (int) $application['candidate_id'] );
+		}
+
 		return $application;
 	}
 
