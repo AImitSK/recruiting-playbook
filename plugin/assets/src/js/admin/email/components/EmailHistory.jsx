@@ -4,8 +4,9 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import PropTypes from 'prop-types';
 import {
 	Eye,
@@ -211,8 +212,33 @@ export function EmailHistory( {
 } ) {
 	const [ statusFilter, setStatusFilter ] = useState( '' );
 	const [ viewingEmail, setViewingEmail ] = useState( null );
+	const [ viewingLoading, setViewingLoading ] = useState( false );
 	const [ confirmResend, setConfirmResend ] = useState( null );
 	const [ confirmCancel, setConfirmCancel ] = useState( null );
+
+	/**
+	 * E-Mail-Details laden und Modal öffnen
+	 *
+	 * @param {Object} email E-Mail aus der Liste
+	 */
+	const handleViewEmail = useCallback( async ( email ) => {
+		setViewingLoading( true );
+		setViewingEmail( email ); // Zeige erstmal die Basisdaten
+
+		try {
+			// Vollständige E-Mail-Details laden (inkl. body_html)
+			const fullEmail = await apiFetch( {
+				path: `/recruiting/v1/emails/log/${ email.id }`,
+			} );
+
+			setViewingEmail( fullEmail );
+		} catch ( err ) {
+			console.error( 'Error fetching email details:', err );
+			// Bei Fehler: Basisdaten behalten
+		} finally {
+			setViewingLoading( false );
+		}
+	}, [] );
 
 	// Gefilterte E-Mails
 	const filteredEmails = useMemo( () => {
@@ -357,7 +383,7 @@ export function EmailHistory( {
 											<TableCell>
 												<button
 													type="button"
-													onClick={ () => setViewingEmail( email ) }
+													onClick={ () => handleViewEmail( email ) }
 													style={ {
 														background: 'none',
 														border: 'none',
@@ -380,7 +406,7 @@ export function EmailHistory( {
 													<Button
 														variant="ghost"
 														size="icon"
-														onClick={ () => setViewingEmail( email ) }
+														onClick={ () => handleViewEmail( email ) }
 														title={ __( 'Anzeigen', 'recruiting-playbook' ) }
 													>
 														<Eye style={ { width: '1rem', height: '1rem' } } />
@@ -494,18 +520,25 @@ export function EmailHistory( {
 							<h4 style={ { margin: '0 0 0.75rem 0', fontSize: '0.875rem', fontWeight: 600, color: '#374151' } }>
 								{ __( 'Nachricht', 'recruiting-playbook' ) }
 							</h4>
-							<div
-								style={ {
-									padding: '1rem',
-									backgroundColor: '#f9fafb',
-									borderRadius: '0.375rem',
-									fontSize: '0.875rem',
-									lineHeight: 1.6,
-								} }
-								dangerouslySetInnerHTML={ {
-									__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body, DOMPURIFY_CONFIG ),
-								} }
-							/>
+							{ viewingLoading ? (
+								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', color: '#6b7280' } }>
+									<Spinner />
+									<span style={ { marginLeft: '0.5rem' } }>{ __( 'Lade...', 'recruiting-playbook' ) }</span>
+								</div>
+							) : (
+								<div
+									style={ {
+										padding: '1rem',
+										backgroundColor: '#f9fafb',
+										borderRadius: '0.375rem',
+										fontSize: '0.875rem',
+										lineHeight: 1.6,
+									} }
+									dangerouslySetInnerHTML={ {
+										__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body || '', DOMPURIFY_CONFIG ),
+									} }
+								/>
+							) }
 						</div>
 					</div>
 				</Modal>
