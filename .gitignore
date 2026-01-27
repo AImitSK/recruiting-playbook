@@ -54,6 +54,21 @@ plugin/node_modules/
 plugin/vendor/
 
 # =============================================================
+# Screenshots (development/debugging only)
+# =============================================================
+docs/screenshot/
+plugin/screenshots/
+**/screenshots/
+*.screenshot.png
+
+# =============================================================
+# Test artifacts
+# =============================================================
+plugin/tests/e2e/test-cv.pdf
+**/test-results/
+**/playwright-report/
+
+# =============================================================
 # Dev Container (do not ignore - needed for development)
 # =============================================================
 # .devcontainer/ is tracked!

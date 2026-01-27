@@ -601,7 +601,30 @@ CREATE TABLE {prefix}rp_webhook_deliveries (
 
 ---
 
-## 8. E-Mail-Templates – wp_options + Custom Table
+## 8. E-Mail-Templates – wp_options + Custom Tables
+
+> ⚠️ **Ergänzung (Januar 2025):** Siehe [email-signature-specification.md](email-signature-specification.md) für:
+> - Neue Tabelle `rp_signatures` (Signaturen pro User + Firmen-Signatur)
+> - Erweiterte Firmendaten unter `rp_settings['company']`
+
+### Neue Tabelle: rp_signatures (Pro)
+
+```sql
+CREATE TABLE {prefix}rp_signatures (
+    id              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    user_id         bigint(20) unsigned DEFAULT NULL,  -- NULL = Firmen-Signatur
+    name            varchar(100) NOT NULL,
+    greeting        varchar(255) DEFAULT NULL,
+    content         text NOT NULL,
+    is_default      tinyint(1) DEFAULT 0,
+    include_company tinyint(1) DEFAULT 1,
+    created_at      datetime DEFAULT CURRENT_TIMESTAMP,
+    updated_at      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY user_id (user_id),
+    KEY is_default (user_id, is_default)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+```
 
 ### Einstellungen in wp_options
 
@@ -951,6 +974,7 @@ class BackupExporter {
         'rp_webhooks',
         'rp_webhook_deliveries',
         'rp_email_log',
+        'rp_signatures',
     ];
 
     /**

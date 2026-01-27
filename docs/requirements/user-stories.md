@@ -667,35 +667,58 @@
 
 ### Epic 12: E-Mail-Templates
 
+> Siehe [email-signature-specification.md](../technical/email-signature-specification.md) für aktualisiertes Konzept
+
 #### US-12.1: E-Mail-Templates verwalten
-> **Als** Recruiter  
-> **möchte ich** E-Mail-Vorlagen anpassen  
+> **Als** Recruiter
+> **möchte ich** E-Mail-Vorlagen anpassen
 > **damit** unsere Kommunikation professionell ist
 
 **Akzeptanzkriterien:**
-- [ ] Templates für: Eingangsbestätigung, Absage, Interview-Einladung
+- [ ] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen, Talent-Pool-Aufnahme
+- [ ] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken `___` statt Pseudo-Variablen)
 - [ ] WYSIWYG-Editor
-- [ ] Platzhalter: {bewerber_name}, {stelle}, {firma}, etc.
+- [ ] Nur echte Platzhalter: {vorname}, {stelle}, {firma}, etc. (16 Stück)
+- [ ] Templates enthalten KEINE Signatur (wird separat angehängt)
 - [ ] Vorschau-Funktion
 - [ ] Pro Sprache ein Template
 
-**Priorität:** P1 (Pro)  
+**Priorität:** P1 (Pro)
 **Story Points:** 5
 
 ---
 
+#### US-12.1b: Signaturen verwalten
+> **Als** Recruiter
+> **möchte ich** meine E-Mail-Signatur verwalten
+> **damit** meine E-Mails professionell aussehen
+
+**Akzeptanzkriterien:**
+- [ ] Persönliche Signaturen erstellen/bearbeiten
+- [ ] Eine Signatur als Standard markieren
+- [ ] Firmen-Signatur als Fallback (Admin)
+- [ ] Firmendaten automatisch anhängbar
+- [ ] Vorschau der Signatur
+
+**Priorität:** P1 (Pro)
+**Story Points:** 3
+
+---
+
 #### US-12.2: E-Mail an Bewerber senden
-> **Als** Recruiter  
-> **möchte ich** E-Mails direkt aus dem Plugin senden  
+> **Als** Recruiter
+> **möchte ich** E-Mails direkt aus dem Plugin senden
 > **damit** ich nicht zwischen Tools wechseln muss
 
 **Akzeptanzkriterien:**
 - [ ] "E-Mail senden" Button in Bewerber-Detailansicht
 - [ ] Template auswählen oder Freitext
+- [ ] Signatur-Auswahl vor dem Versand
+- [ ] Bei manuellen Templates: Lücken ausfüllen
 - [ ] E-Mail wird geloggt
 - [ ] Bewerber-E-Mail wird vorausgefüllt
 
-**Priorität:** P1 (Pro)  
+**Priorität:** P1 (Pro)
 **Story Points:** 3
 
 ---

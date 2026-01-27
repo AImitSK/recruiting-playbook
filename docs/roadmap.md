@@ -336,10 +336,15 @@ Design & Branding │                   │
 
 ### M2.3: E-Mail-System (Pro)
 
+> Siehe [email-signature-specification.md](technical/email-signature-specification.md) für aktualisiertes Konzept
+
 - [ ] Template-Editor (WYSIWYG)
-- [ ] Platzhalter ({vorname}, {stelle}, {firma})
-- [ ] Templates: Eingangsbestätigung, Absage, Interview-Einladung
-- [ ] Manueller Versand aus Backend
+- [ ] Platzhalter (16 echte: {vorname}, {stelle}, {firma}, etc.)
+- [ ] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen
+- [ ] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken)
+- [ ] Signaturen-Verwaltung (pro User + Firmen-Signatur)
+- [ ] Firmendaten-Einstellungen
+- [ ] Manueller Versand aus Backend mit Signatur-Auswahl
 - [ ] E-Mail-Historie pro Bewerber
 - [ ] **Queued Delivery via Action Scheduler**
 

@@ -5,6 +5,22 @@
 
 ---
 
+> ⚠️ **WICHTIG: Konzept-Aktualisierung (Januar 2025)**
+>
+> Diese Spezifikation wird durch folgende Dokumente ergänzt/überschrieben:
+>
+> **→ [email-signature-specification.md](email-signature-specification.md)**
+>
+> Wesentliche Änderungen:
+> - **Templates enthalten keine Signatur mehr** – Signatur wird separat verwaltet
+> - **Platzhalter bereinigt** – 17 Pseudo-Variablen entfernt (termin_*, absender_*, kontakt_*, etc.)
+> - **Neue Tab-Struktur**: E-Mail-Templates → [Vorlagen] [Signaturen] [Automatisierung]
+> - **Firmendaten-Tab** unter Einstellungen
+> - **Nur 3 automatisierbare E-Mails**: Eingangsbestätigung, Absage, Zurückgezogen
+> - **Manuelle Templates mit Lücken** (`___`) statt Pseudo-Variablen
+
+---
+
 ## Inhaltsverzeichnis
 
 1. [Übersicht](#1-übersicht)
@@ -1010,7 +1026,15 @@ register_rest_route(
 
 ## 6. E-Mail-Templates
 
-### Standard-Templates
+> ⚠️ **VERALTET** – Siehe [email-signature-specification.md](email-signature-specification.md) für die neuen Templates.
+>
+> **Wichtige Änderungen:**
+> - Templates enthalten **keine Signatur mehr** (kein `{absender_name}`, kein "Mit freundlichen Grüßen")
+> - Signatur wird **automatisch angehängt** basierend auf User-Auswahl
+> - Interview/Angebots-Templates nutzen **Lücken (`___`)** statt Pseudo-Variablen
+> - Neue Templates: `Aufnahme in Talent-Pool`, `Passende Stelle verfügbar`
+
+### ~~Standard-Templates~~ (VERALTET)
 
 #### 1. Bewerbungsbestätigung (application-confirmation)
 
@@ -1358,7 +1382,21 @@ export function TemplateEditor({ template, onSave, onCancel }) {
 
 ## 8. Platzhalter-System
 
-### Verfügbare Platzhalter
+> ⚠️ **VERALTET** – Siehe [email-signature-specification.md](email-signature-specification.md) für die bereinigte Platzhalter-Liste.
+>
+> **Entfernte Platzhalter:**
+> - `{absender_*}` → Kommt aus Signatur
+> - `{kontakt_*}` → Kommt aus Firmendaten
+> - `{termin_*}` → Pseudo-Variable (manuelle Eingabe)
+> - `{start_datum}`, `{vertragsart}`, `{arbeitszeit}`, `{antwort_frist}` → Pseudo-Variablen
+>
+> **Verbleibende echte Platzhalter (16 Stück):**
+> - Bewerber: `{anrede}`, `{anrede_formal}`, `{vorname}`, `{nachname}`, `{name}`, `{email}`, `{telefon}`
+> - Bewerbung: `{bewerbung_id}`, `{bewerbung_datum}`, `{bewerbung_status}`
+> - Stelle: `{stelle}`, `{stelle_ort}`, `{stelle_typ}`, `{stelle_url}`
+> - Firma: `{firma}`, `{firma_website}`
+
+### ~~Verfügbare Platzhalter~~ (VERALTET)
 
 #### Kandidaten-Daten
 
