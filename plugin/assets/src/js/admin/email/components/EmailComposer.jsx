@@ -98,7 +98,7 @@ export function EmailComposer( {
 			setFormData( ( prev ) => ( {
 				...prev,
 				subject: template.subject || '',
-				body: template.body || '',
+				body: template.body_html || template.body || '',
 			} ) );
 		}
 	}, [ templates ] );
