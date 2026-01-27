@@ -105,6 +105,65 @@
     margin-left: 0;
 }
 
+/* Form components - Override WordPress admin defaults */
+.rp-admin input[type="text"],
+.rp-admin input[type="email"],
+.rp-admin input[type="password"],
+.rp-admin input[type="number"],
+.rp-admin input[type="url"],
+.rp-admin input[type="tel"],
+.rp-admin input[type="search"],
+.rp-admin textarea {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+.rp-admin input[type="text"]:focus,
+.rp-admin input[type="email"]:focus,
+.rp-admin input[type="password"]:focus,
+.rp-admin input[type="number"]:focus,
+.rp-admin input[type="url"]:focus,
+.rp-admin input[type="tel"]:focus,
+.rp-admin input[type="search"]:focus,
+.rp-admin textarea:focus {
+    border-color: #1d71b8 !important;
+    box-shadow: 0 0 0 1px #1d71b8 !important;
+    outline: none !important;
+}
+
+.rp-admin .rp-select {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+}
+
+.rp-admin .rp-select-wrapper {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Rich Text Editor - Override WordPress admin */
+.rp-admin .rp-rich-text-editor__content {
+    min-height: 300px !important;
+    padding: 1.5rem !important;
+    font-size: 16px !important;
+    line-height: 1.9 !important;
+    color: #1f2937 !important;
+}
+
+.rp-admin .rp-rich-text-editor__content:empty:before {
+    font-size: 16px !important;
+    line-height: 1.9 !important;
+}
+
 /* Dashboard Cards */
 .rp-dashboard-card {
     @apply rp-bg-white rp-rounded-lg rp-shadow-sm rp-border rp-border-gray-200 rp-p-4;

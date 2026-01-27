@@ -5,24 +5,21 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	TextControl,
-	TextareaControl,
-	SelectControl,
-	ToggleControl,
-	Notice,
-	Spinner,
-	Flex,
-	FlexItem,
-	DateTimePicker,
-	Popover,
-} from '@wordpress/components';
-import { calendar } from '@wordpress/icons';
+import { Calendar } from 'lucide-react';
+import { DateTimePicker, Popover } from '@wordpress/components';
+
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Switch } from '../../components/ui/switch';
+import { Label } from '../../components/ui/label';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Spinner } from '../../components/ui/spinner';
+import { RichTextEditor } from '../../components/ui/rich-text-editor';
+
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { EmailPreview } from './EmailPreview';
 import { replacePlaceholders } from '../utils';
@@ -74,13 +71,6 @@ export function EmailComposer( {
 		}
 	}, [ recipient.email ] );
 
-	// Template-Optionen (mit useMemo für Performance)
-	const selectTemplateLabel = i18n.selectTemplate || '-- Template auswählen --';
-	const templateOptions = useMemo( () => [
-		{ value: '', label: selectTemplateLabel },
-		...templates.map( ( t ) => ( { value: String( t.id ), label: t.name } ) ),
-	], [ templates, selectTemplateLabel ] );
-
 	/**
 	 * Template auswählen und Felder füllen
 	 *
@@ -112,41 +102,21 @@ export function EmailComposer( {
 	const updateField = useCallback( ( field, value ) => {
 		setFormData( ( prev ) => ( { ...prev, [ field ]: value } ) );
 
-		// Validierungsfehler entfernen (ohne validationErrors als Dependency)
 		setValidationErrors( ( prev ) => {
 			if ( ! prev[ field ] ) {
-				return prev; // Keine Änderung nötig
+				return prev;
 			}
 			const newErrors = { ...prev };
 			delete newErrors[ field ];
 			return newErrors;
 		} );
-	}, [] ); // Keine Dependencies - verwendet nur setState callbacks
-
-	/**
-	 * Platzhalter in Feld einfügen
-	 *
-	 * @param {string} placeholder Platzhalter
-	 * @param {string} field       Zielfeld
-	 */
-	const insertPlaceholder = useCallback( ( placeholder, field = 'body' ) => {
-		const placeholderText = `{${ placeholder }}`;
-
-		setFormData( ( prev ) => {
-			const currentValue = prev[ field ] || '';
-			return {
-				...prev,
-				[ field ]: currentValue + placeholderText,
-			};
-		} );
 	}, [] );
 
 	/**
 	 * Platzhalter ersetzen (für Vorschau)
-	 * Verwendet die zentrale Utility-Funktion mit XSS-Schutz.
 	 *
 	 * @param {string} text Text
-	 * @return {string} Text mit ersetzten Platzhaltern (HTML-escaped)
+	 * @return {string} Text mit ersetzten Platzhaltern
 	 */
 	const getPreviewText = useCallback( ( text ) => {
 		return replacePlaceholders( text, previewValues );
@@ -160,37 +130,33 @@ export function EmailComposer( {
 	const validate = useCallback( () => {
 		const errors = {};
 
-		// Konstanten für Längen-Limits
 		const MAX_SUBJECT_LENGTH = 255;
 		const MAX_BODY_LENGTH = 50000;
 		const MAX_SCHEDULE_DAYS = 365;
 
-		// E-Mail-Validierung mit ReDoS-sicherer Regex (Längenlimits)
-		// Local part: max 64 Zeichen, Domain: max 255 Zeichen
 		const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
 
 		if ( ! formData.to.trim() ) {
-			errors.to = i18n.recipientRequired || 'Empfänger ist erforderlich';
+			errors.to = i18n.recipientRequired || __( 'Empfänger ist erforderlich', 'recruiting-playbook' );
 		} else if ( ! emailRegex.test( formData.to.trim() ) ) {
-			errors.to = i18n.invalidEmail || 'Ungültige E-Mail-Adresse';
+			errors.to = i18n.invalidEmail || __( 'Ungültige E-Mail-Adresse', 'recruiting-playbook' );
 		}
 
 		if ( ! formData.subject.trim() ) {
-			errors.subject = i18n.subjectRequired || 'Betreff ist erforderlich';
+			errors.subject = i18n.subjectRequired || __( 'Betreff ist erforderlich', 'recruiting-playbook' );
 		} else if ( formData.subject.length > MAX_SUBJECT_LENGTH ) {
-			errors.subject = `${ i18n.subjectTooLong || 'Betreff zu lang' } (max. ${ MAX_SUBJECT_LENGTH })`;
+			errors.subject = `${ i18n.subjectTooLong || __( 'Betreff zu lang', 'recruiting-playbook' ) } (max. ${ MAX_SUBJECT_LENGTH })`;
 		}
 
 		if ( ! formData.body.trim() ) {
-			errors.body = i18n.bodyRequired || 'Inhalt ist erforderlich';
+			errors.body = i18n.bodyRequired || __( 'Inhalt ist erforderlich', 'recruiting-playbook' );
 		} else if ( formData.body.length > MAX_BODY_LENGTH ) {
-			errors.body = `${ i18n.bodyTooLong || 'Inhalt zu lang' } (max. ${ MAX_BODY_LENGTH })`;
+			errors.body = `${ i18n.bodyTooLong || __( 'Inhalt zu lang', 'recruiting-playbook' ) } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
-		// Schedule-Validierung
 		if ( scheduleEnabled ) {
 			if ( ! scheduledAt ) {
-				errors.scheduledAt = i18n.scheduleRequired || 'Sendezeitpunkt ist erforderlich';
+				errors.scheduledAt = i18n.scheduleRequired || __( 'Sendezeitpunkt ist erforderlich', 'recruiting-playbook' );
 			} else {
 				const scheduleDate = new Date( scheduledAt );
 				const now = new Date();
@@ -198,9 +164,9 @@ export function EmailComposer( {
 				maxDate.setDate( maxDate.getDate() + MAX_SCHEDULE_DAYS );
 
 				if ( scheduleDate <= now ) {
-					errors.scheduledAt = i18n.schedulePastError || 'Sendezeitpunkt muss in der Zukunft liegen';
+					errors.scheduledAt = i18n.schedulePastError || __( 'Sendezeitpunkt muss in der Zukunft liegen', 'recruiting-playbook' );
 				} else if ( scheduleDate > maxDate ) {
-					errors.scheduledAt = `${ i18n.scheduleTooFar || 'Sendezeitpunkt zu weit in der Zukunft' } (max. ${ MAX_SCHEDULE_DAYS } Tage)`;
+					errors.scheduledAt = `${ i18n.scheduleTooFar || __( 'Sendezeitpunkt zu weit in der Zukunft', 'recruiting-playbook' ) } (max. ${ MAX_SCHEDULE_DAYS } Tage)`;
 				}
 			}
 		}
@@ -254,136 +220,156 @@ export function EmailComposer( {
 	return (
 		<div className="rp-email-composer">
 			{ error && (
-				<Notice status="error" isDismissible={ false }>
-					{ error }
-				</Notice>
+				<Alert variant="destructive" style={ { marginBottom: '1rem' } }>
+					<AlertDescription>{ error }</AlertDescription>
+				</Alert>
 			) }
 
 			<Card>
 				<CardHeader>
-					<Flex>
-						<FlexItem>
-							<h2>{ i18n.composeEmail || 'E-Mail verfassen' }</h2>
-						</FlexItem>
-						<FlexItem>
-							<div className="rp-email-composer__tabs">
-								<Button
-									variant={ activeTab === 'compose' ? 'primary' : 'secondary' }
-									onClick={ () => setActiveTab( 'compose' ) }
-								>
-									{ i18n.compose || 'Verfassen' }
-								</Button>
-								<Button
-									variant={ activeTab === 'preview' ? 'primary' : 'secondary' }
-									onClick={ () => setActiveTab( 'preview' ) }
-								>
-									{ i18n.preview || 'Vorschau' }
-								</Button>
-							</div>
-						</FlexItem>
-					</Flex>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+						<CardTitle>{ i18n.composeEmail || __( 'E-Mail verfassen', 'recruiting-playbook' ) }</CardTitle>
+						<div style={ { display: 'flex', gap: '0.5rem' } }>
+							<Button
+								variant={ activeTab === 'compose' ? 'default' : 'outline' }
+								size="sm"
+								onClick={ () => setActiveTab( 'compose' ) }
+							>
+								{ i18n.compose || __( 'Verfassen', 'recruiting-playbook' ) }
+							</Button>
+							<Button
+								variant={ activeTab === 'preview' ? 'default' : 'outline' }
+								size="sm"
+								onClick={ () => setActiveTab( 'preview' ) }
+							>
+								{ i18n.preview || __( 'Vorschau', 'recruiting-playbook' ) }
+							</Button>
+						</div>
+					</div>
 				</CardHeader>
 
-				<CardBody>
+				<CardContent>
 					{ activeTab === 'compose' ? (
-						<div className="rp-email-composer__form">
-							<div className="rp-email-composer__main">
-								<SelectControl
-									label={ i18n.template || 'Template' }
-									value={ selectedTemplate }
-									options={ templateOptions }
-									onChange={ handleTemplateSelect }
-								/>
-
-								<TextControl
-									label={ i18n.recipient || 'Empfänger' }
-									type="email"
-									value={ formData.to }
-									onChange={ ( value ) => updateField( 'to', value ) }
-									help={ validationErrors.to }
-									className={ validationErrors.to ? 'has-error' : '' }
-								/>
-
-								<div className="rp-email-composer__subject-row">
-									<TextControl
-										label={ i18n.subject || 'Betreff' }
-										value={ formData.subject }
-										onChange={ ( value ) => updateField( 'subject', value ) }
-										help={ validationErrors.subject }
-										className={ validationErrors.subject ? 'has-error' : '' }
-									/>
-									<PlaceholderPicker
-										placeholders={ placeholders }
-										onSelect={ ( ph ) => insertPlaceholder( ph, 'subject' ) }
-										buttonLabel={ i18n.insertPlaceholder || 'Platzhalter' }
-										compact
-									/>
+						<div style={ { display: 'grid', gridTemplateColumns: '1fr 280px', gap: '1.5rem' } }>
+							<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
+								{ /* Template */ }
+								<div>
+									<Label htmlFor="template">{ i18n.template || __( 'Template', 'recruiting-playbook' ) }</Label>
+									<Select
+										id="template"
+										value={ selectedTemplate }
+										onChange={ ( e ) => handleTemplateSelect( e.target.value ) }
+									>
+										<option value="">{ i18n.selectTemplate || __( '-- Template auswählen --', 'recruiting-playbook' ) }</option>
+										{ templates.map( ( t ) => (
+											<option key={ t.id } value={ String( t.id ) }>{ t.name }</option>
+										) ) }
+									</Select>
 								</div>
 
-								<div className="rp-email-composer__body-row">
-									<TextareaControl
-										label={ i18n.message || 'Nachricht' }
-										value={ formData.body }
-										onChange={ ( value ) => updateField( 'body', value ) }
-										rows={ 12 }
-										help={ validationErrors.body }
-										className={ validationErrors.body ? 'has-error' : '' }
+								{ /* Empfänger */ }
+								<div>
+									<Label htmlFor="recipient">{ i18n.recipient || __( 'Empfänger', 'recruiting-playbook' ) }</Label>
+									<Input
+										id="recipient"
+										type="email"
+										value={ formData.to }
+										onChange={ ( e ) => updateField( 'to', e.target.value ) }
+										style={ validationErrors.to ? { borderColor: '#d63638' } : {} }
 									/>
-								</div>
-
-								<div className="rp-email-composer__schedule">
-									<ToggleControl
-										label={ i18n.scheduleEmail || 'E-Mail zeitversetzt senden' }
-										checked={ scheduleEnabled }
-										onChange={ setScheduleEnabled }
-									/>
-
-									{ scheduleEnabled && (
-										<div className="rp-email-composer__schedule-picker">
-											<Button
-												icon={ calendar }
-												variant="secondary"
-												onClick={ () => setShowSchedulePicker( ! showSchedulePicker ) }
-											>
-												{ scheduledAt
-													? formatScheduledDate( scheduledAt )
-													: ( i18n.selectDateTime || 'Zeitpunkt wählen' )
-												}
-											</Button>
-
-											{ showSchedulePicker && (
-												<Popover
-													onClose={ () => setShowSchedulePicker( false ) }
-													placement="bottom-start"
-												>
-													<DateTimePicker
-														currentDate={ scheduledAt }
-														onChange={ ( date ) => {
-															setScheduledAt( date );
-															setShowSchedulePicker( false );
-														} }
-														is12Hour={ false }
-													/>
-												</Popover>
-											) }
-
-											{ validationErrors.scheduledAt && (
-												<p className="rp-email-composer__error">
-													{ validationErrors.scheduledAt }
-												</p>
-											) }
-										</div>
+									{ validationErrors.to && (
+										<p style={ { color: '#d63638', fontSize: '0.75rem', marginTop: '0.25rem' } }>
+											{ validationErrors.to }
+										</p>
 									) }
 								</div>
+
+								{ /* Betreff */ }
+								<div>
+									<Label htmlFor="subject">{ i18n.subject || __( 'Betreff', 'recruiting-playbook' ) }</Label>
+									<Input
+										id="subject"
+										type="text"
+										value={ formData.subject }
+										onChange={ ( e ) => updateField( 'subject', e.target.value ) }
+										style={ validationErrors.subject ? { borderColor: '#d63638' } : {} }
+									/>
+									{ validationErrors.subject && (
+										<p style={ { color: '#d63638', fontSize: '0.75rem', marginTop: '0.25rem' } }>
+											{ validationErrors.subject }
+										</p>
+									) }
+								</div>
+
+								{ /* Nachricht - WYSIWYG Editor */ }
+								<div>
+									<Label htmlFor="body">{ i18n.message || __( 'Nachricht', 'recruiting-playbook' ) }</Label>
+									<RichTextEditor
+										value={ formData.body }
+										onChange={ ( value ) => updateField( 'body', value ) }
+										placeholder={ i18n.messagePlaceholder || __( 'Nachricht eingeben...', 'recruiting-playbook' ) }
+										style={ validationErrors.body ? { borderColor: '#d63638' } : {} }
+									/>
+									{ validationErrors.body && (
+										<p style={ { color: '#d63638', fontSize: '0.75rem', marginTop: '0.25rem' } }>
+											{ validationErrors.body }
+										</p>
+									) }
+								</div>
+
+								{ /* Zeitversetzt senden */ }
+								<div style={ { display: 'flex', alignItems: 'center', gap: '0.75rem', paddingTop: '0.5rem' } }>
+									<Switch
+										id="schedule"
+										checked={ scheduleEnabled }
+										onCheckedChange={ setScheduleEnabled }
+									/>
+									<Label htmlFor="schedule" style={ { marginBottom: 0, cursor: 'pointer' } }>
+										{ i18n.scheduleEmail || __( 'E-Mail zeitversetzt senden', 'recruiting-playbook' ) }
+									</Label>
+								</div>
+
+								{ scheduleEnabled && (
+									<div style={ { marginLeft: '3rem' } }>
+										<Button
+											variant="outline"
+											onClick={ () => setShowSchedulePicker( ! showSchedulePicker ) }
+											style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }
+										>
+											<Calendar style={ { width: '1rem', height: '1rem' } } />
+											{ scheduledAt
+												? formatScheduledDate( scheduledAt )
+												: ( i18n.selectDateTime || __( 'Zeitpunkt wählen', 'recruiting-playbook' ) )
+											}
+										</Button>
+
+										{ showSchedulePicker && (
+											<Popover
+												onClose={ () => setShowSchedulePicker( false ) }
+												placement="bottom-start"
+											>
+												<DateTimePicker
+													currentDate={ scheduledAt }
+													onChange={ ( date ) => {
+														setScheduledAt( date );
+														setShowSchedulePicker( false );
+													} }
+													is12Hour={ false }
+												/>
+											</Popover>
+										) }
+
+										{ validationErrors.scheduledAt && (
+											<p style={ { color: '#d63638', fontSize: '0.75rem', marginTop: '0.5rem' } }>
+												{ validationErrors.scheduledAt }
+											</p>
+										) }
+									</div>
+								) }
 							</div>
 
-							<div className="rp-email-composer__sidebar">
-								<PlaceholderPicker
-									placeholders={ placeholders }
-									onSelect={ ( ph ) => insertPlaceholder( ph, 'body' ) }
-									showSearch
-								/>
-							</div>
+							{ /* Sidebar mit Platzhaltern */ }
+							<PlaceholderPicker placeholders={ placeholders } />
 						</div>
 					) : (
 						<EmailPreview
@@ -393,24 +379,25 @@ export function EmailComposer( {
 						/>
 					) }
 
-					<div className="rp-email-composer__actions">
-						<Button variant="secondary" onClick={ onCancel } disabled={ sending }>
-							{ i18n.cancel || 'Abbrechen' }
+					{ /* Aktionen */ }
+					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
+						<Button variant="outline" onClick={ onCancel } disabled={ sending }>
+							{ i18n.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
 						</Button>
-						<Button variant="primary" onClick={ handleSend } disabled={ sending }>
+						<Button onClick={ handleSend } disabled={ sending }>
 							{ sending ? (
 								<>
-									<Spinner />
-									{ i18n.sending || 'Senden...' }
+									<Spinner size="sm" style={ { marginRight: '0.5rem' } } />
+									{ i18n.sending || __( 'Senden...', 'recruiting-playbook' ) }
 								</>
 							) : scheduleEnabled ? (
-								i18n.scheduleEmail || 'Planen'
+								i18n.scheduleEmail || __( 'Planen', 'recruiting-playbook' )
 							) : (
-								i18n.send || 'Senden'
+								i18n.send || __( 'Senden', 'recruiting-playbook' )
 							) }
 						</Button>
 					</div>
-				</CardBody>
+				</CardContent>
 			</Card>
 		</div>
 	);

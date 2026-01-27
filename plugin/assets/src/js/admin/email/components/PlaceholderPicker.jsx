@@ -1,221 +1,160 @@
 /**
- * PlaceholderPicker - Auswahl von E-Mail-Platzhaltern
+ * PlaceholderPicker - Kompakte Sidebar für E-Mail-Platzhalter
  *
  * @package RecruitingPlaybook
  */
 
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useCallback } from '@wordpress/element';
 import PropTypes from 'prop-types';
-import {
-	Button,
-	Popover,
-	SearchControl,
-	Card,
-	CardBody,
-	CardHeader,
-} from '@wordpress/components';
-import { plus } from '@wordpress/icons';
+import { Copy, Check } from 'lucide-react';
 
 /**
- * PlaceholderPicker Komponente
+ * PlaceholderPicker Komponente (nur Sidebar)
  *
- * @param {Object}   props             Props
- * @param {Object}   props.placeholders Platzhalter-Gruppen
- * @param {Function} props.onSelect    Callback bei Auswahl
- * @param {string}   props.buttonLabel Button-Label
- * @param {boolean}  props.compact     Kompakte Darstellung
- * @param {boolean}  props.showSearch  Suchfeld anzeigen
+ * @param {Object} props              Props
+ * @param {Object} props.placeholders Platzhalter-Gruppen
+ * @param {Object} props.style        Zusätzliche Styles
  * @return {JSX.Element} Komponente
  */
-export function PlaceholderPicker( {
-	placeholders = {},
-	onSelect,
-	buttonLabel,
-	compact = false,
-	showSearch = false,
-} ) {
-	const [ isOpen, setIsOpen ] = useState( false );
-	const [ search, setSearch ] = useState( '' );
+export function PlaceholderPicker( { placeholders = {}, style = {} } ) {
+	const [ copiedKey, setCopiedKey ] = useState( null );
 
 	const i18n = window.rpEmailData?.i18n || {};
 
-	// Gefilterte Platzhalter
-	const filteredGroups = useMemo( () => {
-		if ( ! search ) {
-			return placeholders;
-		}
-
-		const searchLower = search.toLowerCase();
-		const filtered = {};
-
-		Object.entries( placeholders ).forEach( ( [ groupKey, group ] ) => {
-			if ( ! group.items ) {
-				return;
-			}
-
-			const filteredItems = {};
-
-			Object.entries( group.items ).forEach( ( [ key, item ] ) => {
-				const matchesKey = key.toLowerCase().includes( searchLower );
-				const matchesLabel = item.label?.toLowerCase().includes( searchLower );
-				const matchesDescription = item.description?.toLowerCase().includes( searchLower );
-
-				if ( matchesKey || matchesLabel || matchesDescription ) {
-					filteredItems[ key ] = item;
-				}
-			} );
-
-			if ( Object.keys( filteredItems ).length > 0 ) {
-				filtered[ groupKey ] = {
-					...group,
-					items: filteredItems,
-				};
-			}
-		} );
-
-		return filtered;
-	}, [ placeholders, search ] );
-
 	/**
-	 * Platzhalter auswählen
+	 * Platzhalter in Zwischenablage kopieren
 	 *
 	 * @param {string} key Platzhalter-Key
 	 */
-	const handleSelect = ( key ) => {
-		if ( onSelect ) {
-			onSelect( key );
-		}
+	const handleCopy = useCallback( ( key ) => {
+		const text = `{${ key }}`;
+		navigator.clipboard.writeText( text ).then( () => {
+			setCopiedKey( key );
+			setTimeout( () => setCopiedKey( null ), 1500 );
+		} );
+	}, [] );
 
-		if ( compact ) {
-			setIsOpen( false );
-		}
-	};
-
-	/**
-	 * Inline-Liste rendern (für Sidebar)
-	 */
-	const renderInlineList = () => (
-		<Card className="rp-placeholder-picker">
-			<CardHeader>
-				<h3>{ i18n.placeholders || 'Platzhalter' }</h3>
-			</CardHeader>
-			<CardBody>
-				{ showSearch && (
-					<SearchControl
-						value={ search }
-						onChange={ setSearch }
-						placeholder={ i18n.searchPlaceholders || 'Suchen...' }
-					/>
-				) }
-
-				<div className="rp-placeholder-picker__groups">
-					{ Object.entries( filteredGroups ).map( ( [ groupKey, group ] ) => (
-						<div key={ groupKey } className="rp-placeholder-picker__group">
-							<h4 className="rp-placeholder-picker__group-title">
-								{ group.label || groupKey }
-							</h4>
-							<ul className="rp-placeholder-picker__items">
-								{ Object.entries( group.items || {} ).map( ( [ key, item ] ) => (
-									<li key={ key } className="rp-placeholder-picker__item">
-										<button
-											type="button"
-											className="rp-placeholder-picker__button"
-											onClick={ () => handleSelect( key ) }
-											title={ item.description || '' }
-										>
-											<code className="rp-placeholder-picker__code">
-												{ `{${ key }}` }
-											</code>
-											<span className="rp-placeholder-picker__label">
-												{ item.label || key }
-											</span>
-										</button>
-									</li>
-								) ) }
-							</ul>
-						</div>
-					) ) }
-
-					{ Object.keys( filteredGroups ).length === 0 && (
-						<p className="rp-placeholder-picker__empty">
-							{ i18n.noPlaceholdersFound || 'Keine Platzhalter gefunden.' }
-						</p>
-					) }
-				</div>
-			</CardBody>
-		</Card>
-	);
-
-	/**
-	 * Popover rendern (für kompakte Darstellung)
-	 */
-	const renderPopover = () => (
-		<>
-			<Button
-				icon={ plus }
-				variant="secondary"
-				onClick={ () => setIsOpen( ! isOpen ) }
-				className="rp-placeholder-picker__trigger"
+	return (
+		<div
+			style={ {
+				backgroundColor: '#fafafa',
+				border: '1px solid #e5e7eb',
+				borderRadius: '8px',
+				padding: '16px',
+				...style,
+			} }
+		>
+			<h3
+				style={ {
+					fontSize: '14px',
+					fontWeight: 600,
+					color: '#18181b',
+					marginTop: 0,
+					marginBottom: '16px',
+				} }
 			>
-				{ buttonLabel || i18n.insertPlaceholder || 'Platzhalter einfügen' }
-			</Button>
+				{ i18n.placeholders || 'Platzhalter' }
+			</h3>
 
-			{ isOpen && (
-				<Popover
-					onClose={ () => setIsOpen( false ) }
-					placement="bottom-start"
-					className="rp-placeholder-picker__popover"
-				>
-					<div className="rp-placeholder-picker__popover-content">
-						{ showSearch && (
-							<SearchControl
-								value={ search }
-								onChange={ setSearch }
-								placeholder={ i18n.searchPlaceholders || 'Suchen...' }
-							/>
-						) }
-
-						<div className="rp-placeholder-picker__groups">
-							{ Object.entries( filteredGroups ).map( ( [ groupKey, group ] ) => (
-								<div key={ groupKey } className="rp-placeholder-picker__group">
-									<h4 className="rp-placeholder-picker__group-title">
-										{ group.label || groupKey }
-									</h4>
-									<ul className="rp-placeholder-picker__items">
-										{ Object.entries( group.items || {} ).map( ( [ key, item ] ) => (
-											<li key={ key } className="rp-placeholder-picker__item">
-												<button
-													type="button"
-													className="rp-placeholder-picker__button"
-													onClick={ () => handleSelect( key ) }
-													title={ item.description || '' }
-												>
-													<code className="rp-placeholder-picker__code">
-														{ `{${ key }}` }
-													</code>
-													<span className="rp-placeholder-picker__label">
-														{ item.label || key }
-													</span>
-												</button>
-											</li>
-										) ) }
-									</ul>
-								</div>
+			<div style={ { display: 'flex', flexDirection: 'column', gap: '16px' } }>
+				{ Object.entries( placeholders ).map( ( [ groupKey, group ] ) => (
+					<div key={ groupKey }>
+						<h4
+							style={ {
+								fontSize: '11px',
+								fontWeight: 600,
+								textTransform: 'uppercase',
+								letterSpacing: '0.05em',
+								color: '#71717a',
+								marginTop: 0,
+								marginBottom: '8px',
+							} }
+						>
+							{ group.label || groupKey }
+						</h4>
+						<ul style={ { listStyle: 'none', margin: 0, padding: 0 } }>
+							{ Object.entries( group.placeholders || {} ).map( ( [ key ] ) => (
+								<li
+									key={ key }
+									style={ {
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										height: '28px',
+										padding: '0 4px',
+										borderRadius: '4px',
+										transition: 'background-color 150ms',
+									} }
+									onMouseEnter={ ( e ) => { e.currentTarget.style.backgroundColor = '#f0f0f0'; } }
+									onMouseLeave={ ( e ) => { e.currentTarget.style.backgroundColor = 'transparent'; } }
+								>
+									<code
+										style={ {
+											fontSize: '12px',
+											fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+											color: '#374151',
+										} }
+									>
+										{ `{${ key }}` }
+									</code>
+									<button
+										type="button"
+										onClick={ () => handleCopy( key ) }
+										title={ i18n.copyToClipboard || 'In Zwischenablage kopieren' }
+										style={ {
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											width: '24px',
+											height: '24px',
+											border: 'none',
+											background: 'transparent',
+											borderRadius: '4px',
+											cursor: 'pointer',
+											color: copiedKey === key ? '#22c55e' : '#9ca3af',
+											transition: 'color 150ms, background-color 150ms',
+										} }
+										onMouseEnter={ ( e ) => {
+											if ( copiedKey !== key ) {
+												e.currentTarget.style.backgroundColor = '#e5e7eb';
+												e.currentTarget.style.color = '#6b7280';
+											}
+										} }
+										onMouseLeave={ ( e ) => {
+											e.currentTarget.style.backgroundColor = 'transparent';
+											if ( copiedKey !== key ) {
+												e.currentTarget.style.color = '#9ca3af';
+											}
+										} }
+									>
+										{ copiedKey === key ? (
+											<Check style={ { width: '14px', height: '14px' } } />
+										) : (
+											<Copy style={ { width: '14px', height: '14px' } } />
+										) }
+									</button>
+								</li>
 							) ) }
-
-							{ Object.keys( filteredGroups ).length === 0 && (
-								<p className="rp-placeholder-picker__empty">
-									{ i18n.noPlaceholdersFound || 'Keine Platzhalter gefunden.' }
-								</p>
-							) }
-						</div>
+						</ul>
 					</div>
-				</Popover>
-			) }
-		</>
-	);
+				) ) }
 
-	return compact ? renderPopover() : renderInlineList();
+				{ Object.keys( placeholders ).length === 0 && (
+					<p
+						style={ {
+							color: '#9ca3af',
+							fontStyle: 'italic',
+							textAlign: 'center',
+							margin: 0,
+							fontSize: '13px',
+						} }
+					>
+						{ i18n.noPlaceholders || 'Keine Platzhalter verfügbar.' }
+					</p>
+				) }
+			</div>
+		</div>
+	);
 }
 
 PlaceholderPicker.propTypes = {
@@ -230,8 +169,5 @@ PlaceholderPicker.propTypes = {
 			),
 		} )
 	),
-	onSelect: PropTypes.func,
-	buttonLabel: PropTypes.string,
-	compact: PropTypes.bool,
-	showSearch: PropTypes.bool,
+	style: PropTypes.object,
 };

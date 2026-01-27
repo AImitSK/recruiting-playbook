@@ -493,12 +493,12 @@ class EmailTemplateController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_placeholders( $request ) {
-		$placeholders   = $this->placeholder_service->getAvailablePlaceholders();
+		$groups         = $this->placeholder_service->getPlaceholdersByGroup();
 		$preview_values = $this->placeholder_service->getPreviewValues();
 
 		return new WP_REST_Response(
 			[
-				'groups'         => $placeholders,
+				'groups'         => $groups,
 				'preview_values' => $preview_values,
 			],
 			200
