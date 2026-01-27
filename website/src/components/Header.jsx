@@ -71,6 +71,7 @@ function MobileNavigation() {
         <MobileNavLink href="/ai">KI-Addon</MobileNavLink>
         <MobileNavLink href="/docs">Dokumentation</MobileNavLink>
         <MobileNavLink href="/api">API</MobileNavLink>
+        <MobileNavLink href="/support">Support</MobileNavLink>
         <hr className="m-2 border-slate-300/40" />
         <MobileNavLink href="https://github.com/AImitSK/recruiting-playbook">
           GitHub
@@ -95,6 +96,7 @@ export function Header() {
               <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/docs">Dokumentation</NavLink>
               <NavLink href="/api">API</NavLink>
+              <NavLink href="/support">Support</NavLink>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
