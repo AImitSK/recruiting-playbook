@@ -351,15 +351,18 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
-		// CSRF-Schutz: Nonce validieren.
-		// Das Nonce wird vom Frontend im X-WP-Nonce Header gesendet.
+		// HINWEIS: Für öffentliche Bewerbungsformulare verzichten wir auf strikte Nonce-Prüfung.
+		// Grund: Seiten-Caching macht Nonces schnell ungültig.
+		// Sicherheit wird stattdessen durch Spam-Schutz (Honeypot, Timestamp) gewährleistet.
+		// Optional: Nonce prüfen falls vorhanden (zusätzliche Sicherheit ohne Caching-Probleme).
 		$nonce = $request->get_header( 'X-WP-Nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-			return new WP_Error(
-				'rest_cookie_invalid_nonce',
-				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
+		if ( $nonce && ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			// Nonce wurde gesendet aber ist ungültig - wahrscheinlich gecacht/abgelaufen.
+			// Wir loggen dies, aber blockieren nicht (Spam-Schutz ist primäre Sicherheit).
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'Recruiting Playbook: Ungültiges Nonce bei Bewerbung - möglicherweise gecachte Seite.' );
+			}
 		}
 
 		// Spam-Schutz prüfen

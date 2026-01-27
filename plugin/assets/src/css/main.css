@@ -127,7 +127,36 @@
         --rp-z-dropdown: 50;
         --rp-z-modal: 100;
         --rp-z-tooltip: 150;
+
+        /* ─────────────────────────────────────────────────────────────────────
+           SHADCN/UI VARIABLEN - Für Tailwind Kompatibilität
+           Diese Variablen werden von Tailwind-generierten Klassen wie
+           rp-bg-primary verwendet. Sie verweisen auf unsere --rp-color-* Tokens.
+           ───────────────────────────────────────────────────────────────────── */
+
+        /* Primärfarbe als HSL für Tailwind (z.B. rp-bg-primary) */
+        --primary: 217 91% 60%;  /* ~#2563eb - Fallback HSL-Wert */
+        --primary-foreground: 0 0% 100%;
     }
+}
+
+/* =============================================================================
+   TAILWIND HSL VARIABLE OVERRIDES
+
+   Tailwind generiert Klassen wie rp-bg-primary mit hsl(var(--primary)).
+   Das funktioniert im Frontend nicht, weil --primary als HSL-Wert erwartet wird.
+   Diese Overrides setzen die Farbe direkt mit unseren --rp-color-* Tokens.
+   ============================================================================= */
+.rp-plugin .rp-bg-primary {
+    background-color: var(--rp-color-primary) !important;
+}
+
+.rp-plugin .rp-text-primary {
+    color: var(--rp-color-primary) !important;
+}
+
+.rp-plugin .rp-border-primary {
+    border-color: var(--rp-color-primary) !important;
 }
 
 /* =============================================================================
