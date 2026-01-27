@@ -77,6 +77,8 @@ class ApplicationDetail {
 						'apiUrl'        => rest_url( 'recruiting/v1/' ),
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
 						'listUrl'       => admin_url( 'admin.php?page=rp-applications' ),
+						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+						'canSendEmails' => function_exists( 'rp_can' ) && rp_can( 'email_templates' ),
 						'i18n'          => [
 							'loadingApplication'      => __( 'Lade Bewerbung...', 'recruiting-playbook' ),
 							'errorLoadingApplication' => __( 'Fehler beim Laden der Bewerbung', 'recruiting-playbook' ),
@@ -562,15 +564,8 @@ class ApplicationDetail {
 	 */
 	private function renderProVersion( int $id ): void {
 		?>
-		<div class="wrap rp-applicant-detail-wrap">
-			<div id="rp-applicant-detail-root" data-application-id="<?php echo esc_attr( $id ); ?>">
-				<div class="rp-applicant-detail rp-applicant-detail--loading">
-					<div class="rp-applicant-detail__loading">
-						<span class="spinner is-active"></span>
-						<?php esc_html_e( 'Lade Bewerbung...', 'recruiting-playbook' ); ?>
-					</div>
-				</div>
-			</div>
+		<div class="wrap rp-admin">
+			<div id="rp-applicant-detail-root" data-application-id="<?php echo esc_attr( $id ); ?>"></div>
 		</div>
 		<?php
 	}

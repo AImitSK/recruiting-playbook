@@ -1,18 +1,17 @@
 /**
  * Timeline Component
  *
- * Activity Timeline mit Filterung und Gruppierung
+ * Activity Timeline - shadcn/ui Style
  *
  * @package RecruitingPlaybook
  */
 
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { RefreshCw, Clock, MessageSquare, Star, Mail, FileText, UserCheck } from 'lucide-react';
+import { Button } from '../components/ui/button';
 import { useTimeline } from './hooks/useTimeline';
-import { TimelineItem } from './TimelineItem';
 
-/**
- * Kategorie-Filter
- */
 const CATEGORY_FILTERS = [
 	{ id: 'all', label: 'Alle' },
 	{ id: 'status', label: 'Status' },
@@ -22,31 +21,53 @@ const CATEGORY_FILTERS = [
 	{ id: 'document', label: 'Dokumente' },
 ];
 
-/**
- * Items nach Datum gruppieren
- *
- * @param {Array} items Timeline-Items
- * @return {Object} Gruppierte Items { 'YYYY-MM-DD': [...items] }
- */
+const ACTIVITY_ICONS = {
+	status_changed: UserCheck,
+	note_added: MessageSquare,
+	note_updated: MessageSquare,
+	rating_added: Star,
+	rating_updated: Star,
+	email_sent: Mail,
+	document_uploaded: FileText,
+	created: Clock,
+};
+
+const ACTIVITY_COLORS = {
+	status_changed: '#1d71b8',
+	note_added: '#6b7280',
+	note_updated: '#6b7280',
+	rating_added: '#f59e0b',
+	rating_updated: '#f59e0b',
+	email_sent: '#2fac66',
+	document_uploaded: '#8b5cf6',
+	created: '#1d71b8',
+};
+
+function Spinner( { size = '1rem' } ) {
+	return (
+		<div
+			style={ {
+				width: size,
+				height: size,
+				border: '2px solid #e5e7eb',
+				borderTopColor: '#1d71b8',
+				borderRadius: '50%',
+				animation: 'spin 0.8s linear infinite',
+			} }
+		/>
+	);
+}
+
 function groupByDate( items ) {
 	return items.reduce( ( groups, item ) => {
 		const date = item.created_at.split( 'T' )[ 0 ];
-		if ( ! groups[ date ] ) {
-			groups[ date ] = [];
-		}
+		if ( ! groups[ date ] ) groups[ date ] = [];
 		groups[ date ].push( item );
 		return groups;
 	}, {} );
 }
 
-/**
- * Datum-Header formatieren
- *
- * @param {string} dateString ISO-Datum (YYYY-MM-DD)
- * @return {string} Formatiertes Datum
- */
 function formatDateHeader( dateString ) {
-	const i18n = window.rpApplicant?.i18n || {};
 	const date = new Date( dateString );
 	const today = new Date();
 	const yesterday = new Date( today );
@@ -55,12 +76,8 @@ function formatDateHeader( dateString ) {
 	const todayString = today.toISOString().split( 'T' )[ 0 ];
 	const yesterdayString = yesterday.toISOString().split( 'T' )[ 0 ];
 
-	if ( dateString === todayString ) {
-		return i18n.today || 'Heute';
-	}
-	if ( dateString === yesterdayString ) {
-		return i18n.yesterday || 'Gestern';
-	}
+	if ( dateString === todayString ) return __( 'Heute', 'recruiting-playbook' );
+	if ( dateString === yesterdayString ) return __( 'Gestern', 'recruiting-playbook' );
 
 	return date.toLocaleDateString( 'de-DE', {
 		weekday: 'long',
@@ -70,14 +87,81 @@ function formatDateHeader( dateString ) {
 	} );
 }
 
-/**
- * Timeline Komponente
- *
- * @param {Object} props               Props
- * @param {number} props.applicationId Bewerbungs-ID
- * @return {JSX.Element} Komponente
- */
-export function Timeline( { applicationId } ) {
+function formatTime( dateString ) {
+	return new Date( dateString ).toLocaleTimeString( 'de-DE', {
+		hour: '2-digit',
+		minute: '2-digit',
+	} );
+}
+
+function TimelineItem( { item } ) {
+	const Icon = ACTIVITY_ICONS[ item.action ] || Clock;
+	const color = ACTIVITY_COLORS[ item.action ] || '#6b7280';
+
+	return (
+		<div
+			style={ {
+				display: 'flex',
+				gap: '0.75rem',
+				padding: '0.75rem',
+				backgroundColor: '#f9fafb',
+				borderRadius: '0.375rem',
+				borderLeft: `3px solid ${ color }`,
+			} }
+		>
+			<div
+				style={ {
+					width: '1.75rem',
+					height: '1.75rem',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					backgroundColor: color,
+					color: '#fff',
+					borderRadius: '50%',
+					flexShrink: 0,
+				} }
+			>
+				<Icon style={ { width: '0.875rem', height: '0.875rem' } } />
+			</div>
+
+			<div style={ { flex: 1, minWidth: 0 } }>
+				<div style={ { display: 'flex', alignItems: 'flex-start', gap: '0.5rem', flexWrap: 'wrap' } }>
+					{ item.user?.avatar && (
+						<img
+							src={ item.user.avatar }
+							alt={ item.user.name }
+							style={ { width: '1.25rem', height: '1.25rem', borderRadius: '50%' } }
+						/>
+					) }
+					<span style={ { flex: 1, fontSize: '0.8125rem', color: '#374151', lineHeight: 1.4 } }>
+						{ item.message }
+					</span>
+					<span style={ { fontSize: '0.6875rem', color: '#9ca3af', whiteSpace: 'nowrap' } }>
+						{ formatTime( item.created_at ) }
+					</span>
+				</div>
+
+				{ item.detail && (
+					<div
+						style={ {
+							marginTop: '0.5rem',
+							padding: '0.5rem',
+							backgroundColor: 'rgba(255,255,255,0.5)',
+							borderRadius: '0.25rem',
+							fontSize: '0.75rem',
+							color: '#6b7280',
+						} }
+					>
+						{ item.detail }
+					</div>
+				) }
+			</div>
+		</div>
+	);
+}
+
+export function Timeline( { applicationId, compact = false } ) {
 	const [ filter, setFilter ] = useState( 'all' );
 	const {
 		items,
@@ -88,90 +172,109 @@ export function Timeline( { applicationId } ) {
 		refresh,
 	} = useTimeline( applicationId, filter );
 
-	const i18n = window.rpApplicant?.i18n || {};
-
-	// Lokalisierte Filter-Labels
-	const getFilterLabel = ( filterId ) => {
-		const labels = {
-			all: i18n.filterAll || 'Alle',
-			status: i18n.filterStatus || 'Status',
-			note: i18n.filterNotes || 'Notizen',
-			rating: i18n.filterRatings || 'Bewertungen',
-			email: i18n.filterEmails || 'E-Mails',
-			document: i18n.filterDocuments || 'Dokumente',
-		};
-		return labels[ filterId ] || filterId;
-	};
-
-	// Items nach Datum gruppieren
 	const groupedItems = groupByDate( items );
 
-	// Loading-Zustand (initial)
 	if ( loading && items.length === 0 ) {
 		return (
-			<div className="rp-timeline rp-timeline--loading">
-				<div className="rp-timeline__header">
-					<h3>{ i18n.timeline || 'Verlauf' }</h3>
-				</div>
-				<div className="rp-timeline__loading">
-					<span className="spinner is-active"></span>
-					{ i18n.loading || 'Laden...' }
-				</div>
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', gap: '0.5rem', color: '#6b7280' } }>
+				<Spinner />
+				{ __( 'Laden...', 'recruiting-playbook' ) }
 			</div>
 		);
 	}
 
 	return (
-		<div className="rp-timeline">
-			<div className="rp-timeline__header">
-				<h3>{ i18n.timeline || 'Verlauf' }</h3>
-				<button
-					type="button"
-					className="rp-timeline__refresh"
-					onClick={ refresh }
-					title={ i18n.refresh || 'Aktualisieren' }
-					disabled={ loading }
-				>
-					<span className={ `dashicons dashicons-update${ loading ? ' is-spinning' : '' }` }></span>
-				</button>
-			</div>
-
-			{ /* Filter-Tabs */ }
-			<div className="rp-timeline__filters">
-				{ CATEGORY_FILTERS.map( ( cat ) => (
+		<div>
+			{ /* Header */ }
+			{ ! compact && (
+				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
+					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' } }>
+						{ __( 'Verlauf', 'recruiting-playbook' ) }
+					</h3>
 					<button
-						key={ cat.id }
 						type="button"
-						className={ `rp-timeline__filter${ filter === cat.id ? ' is-active' : '' }` }
-						onClick={ () => setFilter( cat.id ) }
+						onClick={ refresh }
+						disabled={ loading }
+						title={ __( 'Aktualisieren', 'recruiting-playbook' ) }
+						style={ {
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							width: '2rem',
+							height: '2rem',
+							background: 'none',
+							border: '1px solid #e5e7eb',
+							borderRadius: '0.375rem',
+							cursor: 'pointer',
+							color: loading ? '#9ca3af' : '#6b7280',
+						} }
 					>
-						{ getFilterLabel( cat.id ) }
+						<RefreshCw style={ { width: '1rem', height: '1rem', animation: loading ? 'spin 1s linear infinite' : 'none' } } />
 					</button>
-				) ) }
-			</div>
-
-			{ /* Fehler-Anzeige */ }
-			{ error && (
-				<div className="notice notice-error">
-					<p>{ error }</p>
 				</div>
 			) }
 
-			{ /* Timeline-Inhalt */ }
-			<div className="rp-timeline__content">
+			{ /* Filter Tabs */ }
+			{ ! compact && (
+				<div style={ { display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginBottom: '1rem' } }>
+					{ CATEGORY_FILTERS.map( ( cat ) => (
+						<button
+							key={ cat.id }
+							type="button"
+							onClick={ () => setFilter( cat.id ) }
+							style={ {
+								padding: '0.375rem 0.75rem',
+								backgroundColor: filter === cat.id ? '#1d71b8' : '#f3f4f6',
+								color: filter === cat.id ? '#fff' : '#6b7280',
+								border: 'none',
+								borderRadius: '9999px',
+								fontSize: '0.75rem',
+								fontWeight: 500,
+								cursor: 'pointer',
+								transition: 'all 0.15s ease',
+							} }
+						>
+							{ cat.label }
+						</button>
+					) ) }
+				</div>
+			) }
+
+			{ /* Error */ }
+			{ error && (
+				<div style={ { padding: '0.75rem', backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: '0.375rem', marginBottom: '1rem', fontSize: '0.875rem' } }>
+					{ error }
+				</div>
+			) }
+
+			{ /* Content */ }
+			<div>
 				{ Object.keys( groupedItems ).length === 0 ? (
-					<div className="rp-timeline__empty">
-						<span className="dashicons dashicons-clock"></span>
-						<p>{ i18n.noActivities || 'Noch keine Aktivitäten' }</p>
+					<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
+						<Clock style={ { width: '2.5rem', height: '2.5rem', marginBottom: '0.75rem', opacity: 0.3 } } />
+						<p style={ { margin: 0 } }>{ __( 'Noch keine Aktivitäten', 'recruiting-playbook' ) }</p>
 					</div>
 				) : (
 					Object.entries( groupedItems ).map( ( [ date, dateItems ] ) => (
-						<div key={ date } className="rp-timeline__group">
-							<div className="rp-timeline__date">
-								{ formatDateHeader( date ) }
-							</div>
-							<div className="rp-timeline__items">
-								{ dateItems.map( ( item ) => (
+						<div key={ date } style={ { marginBottom: '1.5rem' } }>
+							{ ! compact && (
+								<div
+									style={ {
+										fontSize: '0.75rem',
+										fontWeight: 600,
+										color: '#6b7280',
+										textTransform: 'uppercase',
+										letterSpacing: '0.05em',
+										marginBottom: '0.75rem',
+										paddingBottom: '0.5rem',
+										borderBottom: '1px solid #e5e7eb',
+									} }
+								>
+									{ formatDateHeader( date ) }
+								</div>
+							) }
+							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+								{ dateItems.slice( 0, compact ? 5 : undefined ).map( ( item ) => (
 									<TimelineItem key={ item.id } item={ item } />
 								) ) }
 							</div>
@@ -179,27 +282,23 @@ export function Timeline( { applicationId } ) {
 					) )
 				) }
 
-				{ /* Mehr laden Button */ }
-				{ hasMore && (
-					<div className="rp-timeline__load-more">
-						<button
-							type="button"
-							className="button"
-							onClick={ loadMore }
-							disabled={ loading }
-						>
+				{ hasMore && ! compact && (
+					<div style={ { textAlign: 'center', marginTop: '1rem' } }>
+						<Button variant="outline" onClick={ loadMore } disabled={ loading }>
 							{ loading ? (
 								<>
-									<span className="spinner is-active"></span>
-									{ i18n.loading || 'Laden...' }
+									<Spinner size="0.875rem" />
+									{ __( 'Laden...', 'recruiting-playbook' ) }
 								</>
 							) : (
-								i18n.loadMore || 'Mehr laden'
+								__( 'Mehr laden', 'recruiting-playbook' )
 							) }
-						</button>
+						</Button>
 					</div>
 				) }
 			</div>
+
+			<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
 		</div>
 	);
 }

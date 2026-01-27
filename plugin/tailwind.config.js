@@ -10,6 +10,7 @@ module.exports = {
         './templates/**/*.php',
         './src/**/*.php',
         './assets/src/js/**/*.js',
+        './assets/src/js/**/*.jsx',
     ],
 
     theme: {
@@ -21,10 +22,11 @@ module.exports = {
             colors: {
                 // Primärfarbe - vom Theme/Admin überschreibbar
                 primary: {
-                    DEFAULT: 'var(--rp-color-primary)',
+                    DEFAULT: 'hsl(var(--primary))',
                     hover: 'var(--rp-color-primary-hover)',
                     light: 'var(--rp-color-primary-light)',
                     contrast: 'var(--rp-color-primary-contrast)',
+                    foreground: 'hsl(var(--primary-foreground))',
                 },
                 // Status-Farben - fest
                 success: {
@@ -46,9 +48,38 @@ module.exports = {
                 // Neutral-Farben
                 surface: 'var(--rp-color-surface)',
                 border: {
-                    DEFAULT: 'var(--rp-color-border)',
+                    DEFAULT: 'hsl(var(--border))',
                     dark: 'var(--rp-color-border-dark)',
                 },
+                // shadcn/ui semantic colors
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
+                card: {
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))',
+                },
+                popover: {
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
+                },
+                secondary: {
+                    DEFAULT: 'hsl(var(--secondary))',
+                    foreground: 'hsl(var(--secondary-foreground))',
+                },
+                muted: {
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
+                },
+                accent: {
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))',
+                },
+                destructive: {
+                    DEFAULT: 'hsl(var(--destructive))',
+                    foreground: 'hsl(var(--destructive-foreground))',
+                },
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
             },
 
             /*

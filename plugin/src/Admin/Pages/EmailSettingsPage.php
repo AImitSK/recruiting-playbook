@@ -261,6 +261,7 @@ class EmailSettingsPage {
 		];
 
 		?>
+		<div style="max-width: 900px;">
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
@@ -334,6 +335,7 @@ class EmailSettingsPage {
 			<p><?php esc_html_e( 'Diese Platzhalter können in E-Mail-Templates verwendet werden:', 'recruiting-playbook' ); ?></p>
 			<?php $this->renderPlaceholderList(); ?>
 		</div>
+		</div><!-- .max-width container -->
 		<?php
 	}
 
@@ -362,6 +364,7 @@ class EmailSettingsPage {
 		];
 
 		?>
+		<div style="max-width: 900px;">
 		<form method="post" action="">
 			<?php wp_nonce_field( 'rp_save_template' ); ?>
 			<input type="hidden" name="template_id" value="<?php echo esc_attr( $template_id ); ?>">
@@ -461,6 +464,7 @@ class EmailSettingsPage {
 			<h3><?php esc_html_e( 'Platzhalter einfügen', 'recruiting-playbook' ); ?></h3>
 			<?php $this->renderPlaceholderList(); ?>
 		</div>
+		</div><!-- .max-width container -->
 		<?php
 	}
 

@@ -34,7 +34,12 @@
       "Bash(powershell -Command \"Get-ChildItem -Path plugin -Exclude ''node_modules'',''.git'',''tests'' | Compress-Archive -DestinationPath ''recruiting-playbook-upload.zip'' -Force\")",
       "Bash(powershell -Command \"\\(Get-Item ''recruiting-playbook-upload.zip''\\).Length / 1MB\")",
       "Bash(powershell -Command \"Expand-Archive -Path ''recruiting-playbook.zip'' -DestinationPath ''temp-check'' -Force\")",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)",
+      "Bash(composer phpcs:*)",
+      "Bash(vendor/bin/phpcs:*)",
+      "Bash(npm run build:2-admin-css:*)"
     ]
   }
 }

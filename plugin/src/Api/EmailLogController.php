@@ -249,10 +249,9 @@ class EmailLogController extends WP_REST_Controller {
 	public function get_application_emails( $request ) {
 		$application_id = (int) $request->get_param( 'id' );
 
-		$args                   = $this->buildQueryArgs( $request );
-		$args['application_id'] = $application_id;
+		$args = $this->buildQueryArgs( $request );
 
-		$result = $this->log_repository->paginate( $args );
+		$result = $this->log_repository->findByApplication( $application_id, $args );
 
 		// Daten anreichern.
 		$result['items'] = array_map( [ $this, 'enrichLogEntry' ], $result['items'] );
@@ -269,10 +268,9 @@ class EmailLogController extends WP_REST_Controller {
 	public function get_candidate_emails( $request ) {
 		$candidate_id = (int) $request->get_param( 'id' );
 
-		$args                 = $this->buildQueryArgs( $request );
-		$args['candidate_id'] = $candidate_id;
+		$args = $this->buildQueryArgs( $request );
 
-		$result = $this->log_repository->paginate( $args );
+		$result = $this->log_repository->findByCandidate( $candidate_id, $args );
 
 		// Daten anreichern.
 		$result['items'] = array_map( [ $this, 'enrichLogEntry' ], $result['items'] );

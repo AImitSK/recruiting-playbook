@@ -29,6 +29,7 @@ use RecruitingPlaybook\Api\TalentPoolController;
 use RecruitingPlaybook\Api\EmailTemplateController;
 use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
+use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -360,6 +361,10 @@ final class Plugin {
 
 		$email_log_controller = new EmailLogController();
 		$email_log_controller->register_routes();
+
+		// License Controller.
+		$license_controller = new LicenseController();
+		$license_controller->register_routes();
 	}
 
 	/**
@@ -538,13 +543,20 @@ final class Plugin {
 		}
 
 		// Admin JS.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/admin.js';
+		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin.js';
+		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
+
 		if ( file_exists( $js_file ) ) {
+			// Load dependencies from generated asset file.
+			$asset = file_exists( $asset_file )
+				? require $asset_file
+				: [ 'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ], 'version' => RP_VERSION ];
+
 			wp_enqueue_script(
 				'rp-admin',
 				RP_PLUGIN_URL . 'assets/dist/js/admin.js',
-				[ 'wp-element', 'wp-components', 'wp-api-fetch' ],
-				RP_VERSION,
+				$asset['dependencies'],
+				$asset['version'],
 				true
 			);
 
@@ -557,6 +569,9 @@ final class Plugin {
 					'adminUrl' => admin_url(),
 				]
 			);
+
+			// Set translations for JS.
+			wp_set_script_translations( 'rp-admin', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
 		}
 	}
 

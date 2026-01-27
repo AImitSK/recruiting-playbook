@@ -10,6 +10,9 @@ import { createRoot } from '@wordpress/element';
 import { KanbanBoard } from './kanban/KanbanBoard';
 import { ApplicantDetail } from './applicant/ApplicantDetail';
 import { TalentPoolList } from './talent-pool/TalentPoolList';
+import { LicensePage } from './license/LicensePage';
+import { DashboardPage } from './dashboard/DashboardPage';
+import { ApplicationsPage } from './applications/ApplicationsPage';
 
 /**
  * Initialisiert das Kanban-Board
@@ -52,12 +55,51 @@ function initTalentPool() {
 }
 
 /**
+ * Initialisiert die Lizenz-Seite
+ */
+function initLicense() {
+	const container = document.getElementById( 'rp-license-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <LicensePage /> );
+	}
+}
+
+/**
+ * Initialisiert das Dashboard
+ */
+function initDashboard() {
+	const container = document.getElementById( 'rp-dashboard-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <DashboardPage /> );
+	}
+}
+
+/**
+ * Initialisiert die Bewerbungsliste
+ */
+function initApplications() {
+	const container = document.getElementById( 'rp-applications-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <ApplicationsPage /> );
+	}
+}
+
+/**
  * Initialisiert alle Admin-Komponenten
  */
 function initAdmin() {
+	initDashboard();
+	initApplications();
 	initKanban();
 	initApplicantDetail();
 	initTalentPool();
+	initLicense();
 }
 
 // DOMContentLoaded könnte bereits gefeuert haben wenn Script im Footer lädt

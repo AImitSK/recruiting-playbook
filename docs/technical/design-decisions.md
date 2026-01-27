@@ -1,6 +1,8 @@
 # Design-Entscheidungen
 
-Dieses Dokument dokumentiert alle wichtigen Design-Entscheidungen für das Frontend des Recruiting Playbook Plugins.
+Dieses Dokument dokumentiert alle wichtigen Design-Entscheidungen für das Recruiting Playbook Plugin.
+
+> **Hinweis:** Für die Admin-UI Architektur (shadcn/ui) siehe [admin-ui-architecture.md](./admin-ui-architecture.md).
 
 ## Inhaltsverzeichnis
 
@@ -11,6 +13,7 @@ Dieses Dokument dokumentiert alle wichtigen Design-Entscheidungen für das Front
 5. [Anleitung für Design-Änderungen](#5-anleitung-für-design-änderungen)
 6. [Block Theme Kompatibilität](#6-block-theme-kompatibilität)
 7. [Button-Strategie](#7-button-strategie)
+8. [Admin-UI (WordPress Backend)](#8-admin-ui-wordpress-backend)
 
 ---
 
@@ -346,6 +349,49 @@ Für Buttons, die sich ins Theme einfügen sollen, die WordPress-Klasse `wp-elem
 
 ---
 
+---
+
+## 8. Admin-UI (WordPress Backend)
+
+### Entscheidung: shadcn/ui für das Admin-Backend
+
+**Datum:** Januar 2025
+
+**Problem:**
+Das Admin-Backend hatte inkonsistentes Design:
+- Verschiedene Seitenbreiten (800px, 900px, 1400px)
+- Unterschiedliche Tab-Styles
+- Mix aus @wordpress/components und eigenem CSS
+- Kein einheitliches Design-System
+
+**Evaluierte Optionen:**
+
+| Option | Lizenz | Bewertung |
+|--------|--------|-----------|
+| **Tailwind UI** | Proprietary | ❌ Lizenz verbietet Redistribution in Plugins |
+| **@wordpress/components** | GPL | ❌ Veraltet, inkonsistentes Design |
+| **Material UI** | MIT | ❌ Zu schwer, zu viele Dependencies |
+| **shadcn/ui** | MIT | ✅ Gewählt |
+
+**Lösung: shadcn/ui**
+
+- **MIT-Lizenz** - Erlaubt Verwendung in kommerziellen WordPress-Plugins
+- **Copy-Paste** - Komponenten werden ins Projekt kopiert, keine externe Abhängigkeit
+- **Tailwind-basiert** - Konsistent mit dem Frontend
+- **Radix UI** - Barrierefreie Primitives (ARIA-konform)
+- **Anpassbar** - Eigene Design-Tokens möglich
+
+**Technische Umsetzung:**
+
+```
+Frontend (Public):     Alpine.js + Tailwind CSS (rp-Prefix)
+Admin (WordPress):     React + shadcn/ui + Tailwind CSS (rp-Prefix)
+```
+
+**Details:** Siehe [admin-ui-architecture.md](./admin-ui-architecture.md)
+
+---
+
 ## Changelog
 
 | Datum | Änderung | Autor |
@@ -356,3 +402,4 @@ Für Buttons, die sich ins Theme einfügen sollen, die WordPress-Klasse `wp-elem
 | 2025-01-23 | Primärfarbe von WordPress Theme-Variablen | Claude |
 | 2025-01-23 | Block Theme Kompatibilität (FSE) | Claude |
 | 2025-01-23 | Button-Strategie: wp-element-button für Theme-Integration | Claude |
+| 2025-01-26 | Admin-UI: shadcn/ui als Komponenten-Bibliothek | Claude |

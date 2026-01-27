@@ -8,6 +8,27 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
+import {
+	ArrowLeft,
+	Mail,
+	Phone,
+	Briefcase,
+	Calendar,
+	FileText,
+	Download,
+	Eye,
+	MessageSquare,
+	Clock,
+	Users,
+} from 'lucide-react';
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from '../components/ui/card';
+import { Button } from '../components/ui/button';
 import { NotesPanel } from './NotesPanel';
 import { RatingDetailed } from './RatingStars';
 import { Timeline } from './Timeline';
@@ -15,43 +36,33 @@ import { TalentPoolButton } from './TalentPoolButton';
 import { EmailTab } from './EmailTab';
 
 /**
- * Status-Optionen
+ * Status-Konfiguration mit Farben
  */
-const STATUS_OPTIONS = [
-	{ value: 'new', label: 'Neu', color: '#2271b1' },
-	{ value: 'screening', label: 'In Prüfung', color: '#dba617' },
-	{ value: 'interview', label: 'Interview', color: '#9b59b6' },
-	{ value: 'offer', label: 'Angebot', color: '#00a32a' },
-	{ value: 'hired', label: 'Eingestellt', color: '#00a32a' },
-	{ value: 'rejected', label: 'Abgelehnt', color: '#d63638' },
-	{ value: 'withdrawn', label: 'Zurückgezogen', color: '#787c82' },
-];
+const STATUS_CONFIG = {
+	new: { label: 'Neu', color: '#2271b1', bg: '#e6f3ff' },
+	screening: { label: 'In Prüfung', color: '#dba617', bg: '#fff8e6' },
+	interview: { label: 'Interview', color: '#9b59b6', bg: '#f5e6ff' },
+	offer: { label: 'Angebot', color: '#1e8cbe', bg: '#e6f5ff' },
+	hired: { label: 'Eingestellt', color: '#2fac66', bg: '#e6f5ec' },
+	rejected: { label: 'Abgelehnt', color: '#d63638', bg: '#ffe6e6' },
+	withdrawn: { label: 'Zurückgezogen', color: '#787c82', bg: '#f0f0f0' },
+};
 
-/**
- * Initialen aus Namen generieren
- *
- * @param {string} firstName Vorname
- * @param {string} lastName  Nachname
- * @return {string} Initialen
- */
+const STATUS_OPTIONS = Object.entries( STATUS_CONFIG ).map( ( [ value, config ] ) => ( {
+	value,
+	label: config.label,
+	color: config.color,
+} ) );
+
 function getInitials( firstName, lastName ) {
 	const first = firstName?.charAt( 0 )?.toUpperCase() || '';
 	const last = lastName?.charAt( 0 )?.toUpperCase() || '';
 	return `${ first }${ last }` || '?';
 }
 
-/**
- * Datum formatieren
- *
- * @param {string} dateString ISO-Datum
- * @return {string} Formatiertes Datum
- */
 function formatDate( dateString ) {
-	if ( ! dateString ) {
-		return '-';
-	}
-	const date = new Date( dateString );
-	return date.toLocaleDateString( 'de-DE', {
+	if ( ! dateString ) return '-';
+	return new Date( dateString ).toLocaleDateString( 'de-DE', {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
@@ -59,11 +70,75 @@ function formatDate( dateString ) {
 }
 
 /**
+ * Tab Component - shadcn/ui Style
+ */
+function Tab( { active, onClick, children, count } ) {
+	return (
+		<button
+			type="button"
+			onClick={ onClick }
+			style={ {
+				padding: '0.5rem 1rem',
+				fontSize: '0.875rem',
+				fontWeight: 500,
+				color: active ? '#1f2937' : '#6b7280',
+				backgroundColor: active ? '#fff' : 'transparent',
+				border: '1px solid',
+				borderColor: active ? '#e5e7eb' : 'transparent',
+				borderBottomColor: active ? '#fff' : 'transparent',
+				borderRadius: active ? '0.375rem 0.375rem 0 0' : '0.375rem',
+				marginBottom: active ? '-1px' : '0',
+				cursor: 'pointer',
+				display: 'inline-flex',
+				alignItems: 'center',
+				gap: '0.5rem',
+				transition: 'all 0.15s ease',
+			} }
+		>
+			{ children }
+			{ count !== undefined && count > 0 && (
+				<span
+					style={ {
+						backgroundColor: active ? '#1d71b8' : '#e5e7eb',
+						color: active ? '#fff' : '#6b7280',
+						padding: '0.125rem 0.5rem',
+						borderRadius: '9999px',
+						fontSize: '0.75rem',
+						fontWeight: 500,
+						minWidth: '1.25rem',
+						textAlign: 'center',
+					} }
+				>
+					{ count }
+				</span>
+			) }
+		</button>
+	);
+}
+
+/**
+ * Loading Spinner
+ */
+function Spinner( { size = '1.5rem' } ) {
+	return (
+		<>
+			<div
+				style={ {
+					width: size,
+					height: size,
+					border: '2px solid #e5e7eb',
+					borderTopColor: '#1d71b8',
+					borderRadius: '50%',
+					animation: 'spin 0.8s linear infinite',
+				} }
+			/>
+			<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
+		</>
+	);
+}
+
+/**
  * Bewerber-Detailseite Komponente
- *
- * @param {Object} props               Props
- * @param {number} props.applicationId Bewerbungs-ID
- * @return {JSX.Element} Komponente
  */
 export function ApplicantDetail( { applicationId } ) {
 	const [ application, setApplication ] = useState( null );
@@ -72,60 +147,52 @@ export function ApplicantDetail( { applicationId } ) {
 	const [ statusChanging, setStatusChanging ] = useState( false );
 	const [ activeTab, setActiveTab ] = useState( 'details' );
 
-	const i18n = window.rpApplicant?.i18n || {};
 	const config = window.rpApplicant || {};
 	const canSendEmails = config.canSendEmails !== false;
+	const logoUrl = config.logoUrl;
 
-	/**
-	 * Bewerbung laden
-	 */
 	const loadApplication = useCallback( async () => {
-		if ( ! applicationId ) {
-			return;
-		}
+		if ( ! applicationId ) return;
 
 		try {
 			setLoading( true );
 			setError( null );
-
 			const data = await apiFetch( {
 				path: `/recruiting/v1/applications/${ applicationId }`,
 			} );
 
-			setApplication( data );
+			// Flatten candidate data for easier access
+			const candidate = data.candidate || {};
+			const flatData = {
+				...data,
+				first_name: candidate.first_name || '',
+				last_name: candidate.last_name || '',
+				email: candidate.email || '',
+				phone: candidate.phone || '',
+				salutation: candidate.salutation || '',
+				job_title: data.job?.title || '',
+			};
+
+			setApplication( flatData );
 		} catch ( err ) {
 			console.error( 'Error loading application:', err );
-			setError(
-				err.message ||
-				i18n.errorLoadingApplication ||
-				'Fehler beim Laden der Bewerbung'
-			);
+			setError( err.message || __( 'Fehler beim Laden der Bewerbung', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
-	}, [ applicationId, i18n.errorLoadingApplication ] );
+	}, [ applicationId ] );
 
-	// Initial laden
 	useEffect( () => {
 		loadApplication();
 	}, [ loadApplication ] );
 
-	/**
-	 * Status ändern
-	 *
-	 * @param {string} newStatus Neuer Status
-	 */
 	const handleStatusChange = async ( newStatus ) => {
-		if ( ! application || statusChanging ) {
-			return;
-		}
+		if ( ! application || statusChanging ) return;
 
 		const previousStatus = application.status;
 
 		try {
 			setStatusChanging( true );
-
-			// Optimistic Update
 			setApplication( ( prev ) => ( { ...prev, status: newStatus } ) );
 
 			await apiFetch( {
@@ -135,22 +202,13 @@ export function ApplicantDetail( { applicationId } ) {
 			} );
 		} catch ( err ) {
 			console.error( 'Error changing status:', err );
-
-			// Rollback
 			setApplication( ( prev ) => ( { ...prev, status: previousStatus } ) );
-
-			// Fehlermeldung
-			alert( err.message || i18n.errorChangingStatus || 'Fehler beim Ändern des Status' );
+			alert( err.message || __( 'Fehler beim Ändern des Status', 'recruiting-playbook' ) );
 		} finally {
 			setStatusChanging( false );
 		}
 	};
 
-	/**
-	 * Talent-Pool Status geändert
-	 *
-	 * @param {boolean} inPool Im Pool?
-	 */
 	const handleTalentPoolChange = ( inPool ) => {
 		setApplication( ( prev ) => ( { ...prev, in_talent_pool: inPool } ) );
 	};
@@ -158,10 +216,10 @@ export function ApplicantDetail( { applicationId } ) {
 	// Loading
 	if ( loading ) {
 		return (
-			<div className="rp-applicant-detail rp-applicant-detail--loading">
-				<div className="rp-applicant-detail__loading">
-					<span className="spinner is-active"></span>
-					{ i18n.loadingApplication || 'Lade Bewerbung...' }
+			<div className="rp-admin" style={ { padding: '20px 0' } }>
+				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '0.75rem', color: '#6b7280' } }>
+					<Spinner />
+					<span>{ __( 'Lade Bewerbung...', 'recruiting-playbook' ) }</span>
 				</div>
 			</div>
 		);
@@ -170,223 +228,410 @@ export function ApplicantDetail( { applicationId } ) {
 	// Error
 	if ( error ) {
 		return (
-			<div className="rp-applicant-detail rp-applicant-detail--error">
-				<div className="notice notice-error">
-					<p>{ error }</p>
-				</div>
-				<button type="button" className="button" onClick={ loadApplication }>
-					{ i18n.retry || 'Erneut versuchen' }
-				</button>
+			<div className="rp-admin" style={ { padding: '20px 0' } }>
+				<Card>
+					<CardContent style={ { padding: '3rem', textAlign: 'center' } }>
+						<p style={ { color: '#d63638', marginBottom: '1.5rem' } }>{ error }</p>
+						<Button onClick={ loadApplication }>
+							{ __( 'Erneut versuchen', 'recruiting-playbook' ) }
+						</Button>
+					</CardContent>
+				</Card>
 			</div>
 		);
 	}
 
-	// Nicht gefunden
 	if ( ! application ) {
 		return (
-			<div className="rp-applicant-detail rp-applicant-detail--not-found">
-				<div className="notice notice-warning">
-					<p>{ i18n.applicationNotFound || 'Bewerbung nicht gefunden.' }</p>
-				</div>
+			<div className="rp-admin" style={ { padding: '20px 0' } }>
+				<Card>
+					<CardContent style={ { padding: '3rem', textAlign: 'center', color: '#6b7280' } }>
+						{ __( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ) }
+					</CardContent>
+				</Card>
 			</div>
 		);
 	}
 
-	const currentStatus = STATUS_OPTIONS.find( ( s ) => s.value === application.status );
+	const currentStatus = STATUS_CONFIG[ application.status ];
+	const documentsCount = application.documents?.length || 0;
 
 	return (
-		<div className="rp-applicant-detail">
-			{ /* Header */ }
-			<div className="rp-applicant-detail__header">
-				<a href={ config.listUrl || '#' } className="rp-back-link">
-					<span className="dashicons dashicons-arrow-left-alt"></span>
-					{ i18n.backToList || 'Zurück zur Liste' }
-				</a>
+		<div className="rp-admin" style={ { padding: '20px 0' } }>
+			<div style={ { maxWidth: '1400px' } }>
+				{ /* Logo */ }
+				{ logoUrl && (
+					<div style={ { marginBottom: '1.5rem' } }>
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
+					</div>
+				) }
 
-				<h1 className="rp-applicant-detail__title">
-					{ i18n.application || 'Bewerbung' } #{ applicationId }
-				</h1>
+				{ /* Header */ }
+				<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' } }>
+					<a
+						href={ config.listUrl || '#' }
+						style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }
+					>
+						<ArrowLeft style={ { width: '1rem', height: '1rem' } } />
+						{ __( 'Zurück zur Liste', 'recruiting-playbook' ) }
+					</a>
 
-				<div className="rp-applicant-detail__actions">
+					<h1 style={ { flex: 1, margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
+					</h1>
+
 					<TalentPoolButton
 						candidateId={ application.candidate_id }
 						inPool={ application.in_talent_pool }
 						onStatusChange={ handleTalentPoolChange }
 					/>
 				</div>
-			</div>
 
-			{ /* Tabs */ }
-			{ canSendEmails && (
-				<div className="rp-applicant-detail__tabs">
-					<button
-						type="button"
-						className={ `rp-tab ${ activeTab === 'details' ? 'rp-tab--active' : '' }` }
-						onClick={ () => setActiveTab( 'details' ) }
-					>
-						<span className="dashicons dashicons-id-alt"></span>
-						{ i18n.details || 'Details' }
-					</button>
-					<button
-						type="button"
-						className={ `rp-tab ${ activeTab === 'email' ? 'rp-tab--active' : '' }` }
-						onClick={ () => setActiveTab( 'email' ) }
-					>
-						<span className="dashicons dashicons-email-alt"></span>
-						{ i18n.email || 'E-Mail' }
-					</button>
+				{ /* Tabs - shadcn/ui Style */ }
+				<div style={ { display: 'flex', gap: '0.25rem', borderBottom: '1px solid #e5e7eb', marginBottom: '1.5rem' } }>
+					<Tab active={ activeTab === 'details' } onClick={ () => setActiveTab( 'details' ) }>
+						{ __( 'Details', 'recruiting-playbook' ) }
+					</Tab>
+					<Tab active={ activeTab === 'documents' } onClick={ () => setActiveTab( 'documents' ) } count={ documentsCount }>
+						{ __( 'Dokumente', 'recruiting-playbook' ) }
+					</Tab>
+					<Tab active={ activeTab === 'notes' } onClick={ () => setActiveTab( 'notes' ) }>
+						{ __( 'Notizen', 'recruiting-playbook' ) }
+					</Tab>
+					<Tab active={ activeTab === 'timeline' } onClick={ () => setActiveTab( 'timeline' ) }>
+						{ __( 'Verlauf', 'recruiting-playbook' ) }
+					</Tab>
+					{ canSendEmails && (
+						<Tab active={ activeTab === 'email' } onClick={ () => setActiveTab( 'email' ) }>
+							{ __( 'E-Mail', 'recruiting-playbook' ) }
+						</Tab>
+					) }
 				</div>
-			) }
 
-			{ /* Tab: Details */ }
-			{ ( activeTab === 'details' || ! canSendEmails ) && (
-				<div className="rp-applicant-detail__layout">
+				{ /* Tab Content */ }
+				<div style={ { display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem' } }>
 					{ /* Main Content */ }
-					<div className="rp-applicant-detail__main">
-						{ /* Kandidaten-Info Card */ }
-						<div className="rp-card rp-candidate-info">
-							<div className="rp-candidate-info__header">
-								<div className="rp-candidate-info__avatar">
-									{ getInitials( application.first_name, application.last_name ) }
-								</div>
-								<div className="rp-candidate-info__details">
-									<h2 className="rp-candidate-info__name">
-										{ application.first_name } { application.last_name }
-									</h2>
-									<div className="rp-candidate-info__contact">
-										{ application.email && (
-											<a href={ `mailto:${ application.email }` } className="rp-candidate-info__email">
-												<span className="dashicons dashicons-email"></span>
-												{ application.email }
-											</a>
-										) }
-										{ application.phone && (
-											<a href={ `tel:${ application.phone }` } className="rp-candidate-info__phone">
-												<span className="dashicons dashicons-phone"></span>
-												{ application.phone }
-											</a>
-										) }
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
+						{ /* Kandidaten-Info Card - immer sichtbar */ }
+						<Card>
+							<CardContent style={ { padding: '1.5rem' } }>
+								<div style={ { display: 'flex', gap: '1rem', marginBottom: '1.5rem' } }>
+									<div
+										style={ {
+											width: '64px',
+											height: '64px',
+											borderRadius: '50%',
+											backgroundColor: '#1d71b8',
+											color: '#fff',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											fontSize: '1.5rem',
+											fontWeight: 500,
+											flexShrink: 0,
+										} }
+									>
+										{ getInitials( application.first_name, application.last_name ) }
+									</div>
+									<div style={ { flex: 1 } }>
+										<h2 style={ { margin: '0 0 0.5rem 0', fontSize: '1.25rem', fontWeight: 600, color: '#1f2937' } }>
+											{ application.first_name } { application.last_name }
+										</h2>
+										<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1rem' } }>
+											{ application.email && (
+												<a href={ `mailto:${ application.email }` } style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }>
+													<Mail style={ { width: '1rem', height: '1rem' } } />
+													{ application.email }
+												</a>
+											) }
+											{ application.phone && (
+												<a href={ `tel:${ application.phone }` } style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }>
+													<Phone style={ { width: '1rem', height: '1rem' } } />
+													{ application.phone }
+												</a>
+											) }
+										</div>
 									</div>
 								</div>
-							</div>
 
-							{ /* Status-Auswahl */ }
-							<div className="rp-candidate-info__status">
-								<label htmlFor="rp-status-select">
-									{ i18n.status || 'Status' }:
-								</label>
-								<select
-									id="rp-status-select"
-									value={ application.status }
-									onChange={ ( e ) => handleStatusChange( e.target.value ) }
-									disabled={ statusChanging }
-									className="rp-status-select"
-									style={ { borderColor: currentStatus?.color } }
-								>
-									{ STATUS_OPTIONS.map( ( option ) => (
-										<option key={ option.value } value={ option.value }>
-											{ option.label }
-										</option>
-									) ) }
-								</select>
-								{ statusChanging && <span className="spinner is-active"></span> }
-							</div>
-
-							{ /* Meta-Infos */ }
-							<div className="rp-candidate-info__meta">
-								{ application.job_title && (
-									<div className="rp-candidate-info__meta-item">
-										<span className="dashicons dashicons-businessman"></span>
-										<span>{ application.job_title }</span>
-									</div>
-								) }
-								<div className="rp-candidate-info__meta-item">
-									<span className="dashicons dashicons-calendar-alt"></span>
-									<span>
-										{ i18n.appliedOn || 'Beworben am' }: { formatDate( application.created_at ) }
-									</span>
+								{ /* Status */ }
+								<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 0', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb', marginBottom: '1rem' } }>
+									<label htmlFor="rp-status-select" style={ { fontWeight: 600, color: '#1f2937' } }>
+										{ __( 'Status', 'recruiting-playbook' ) }:
+									</label>
+									<select
+										id="rp-status-select"
+										value={ application.status }
+										onChange={ ( e ) => handleStatusChange( e.target.value ) }
+										disabled={ statusChanging }
+										style={ {
+											padding: '0.5rem 2rem 0.5rem 0.75rem',
+											border: `2px solid ${ currentStatus?.color || '#e5e7eb' }`,
+											borderRadius: '0.375rem',
+											fontSize: '0.875rem',
+											backgroundColor: '#fff',
+											cursor: statusChanging ? 'not-allowed' : 'pointer',
+											minWidth: '180px',
+										} }
+									>
+										{ STATUS_OPTIONS.map( ( option ) => (
+											<option key={ option.value } value={ option.value }>{ option.label }</option>
+										) ) }
+									</select>
+									{ statusChanging && <Spinner size="1rem" /> }
 								</div>
-							</div>
-						</div>
 
-						{ /* Bewertung */ }
-						<div className="rp-card">
-							<h3 className="rp-card__title">
-								<span className="dashicons dashicons-star-filled"></span>
-								{ i18n.rating || 'Bewertung' }
-							</h3>
-							<RatingDetailed
-								applicationId={ applicationId }
-								showDistribution={ true }
-							/>
-						</div>
+								{ /* Meta */ }
+								<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1.5rem' } }>
+									{ application.job_title && (
+										<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
+											<Briefcase style={ { width: '1rem', height: '1rem' } } />
+											<span>{ application.job_title }</span>
+										</div>
+									) }
+									<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
+										<Calendar style={ { width: '1rem', height: '1rem' } } />
+										<span>{ __( 'Beworben am', 'recruiting-playbook' ) }: { formatDate( application.created_at ) }</span>
+									</div>
+								</div>
+							</CardContent>
+						</Card>
 
-						{ /* Dokumente */ }
-						{ application.documents && application.documents.length > 0 && (
-							<div className="rp-card">
-								<h3 className="rp-card__title">
-									<span className="dashicons dashicons-media-document"></span>
-									{ i18n.documents || 'Dokumente' }
-								</h3>
-								<div className="rp-documents-list">
-									{ application.documents.map( ( doc ) => (
-										<div key={ doc.id } className="rp-document">
-											<span className="dashicons dashicons-media-default"></span>
-											<span className="rp-document__name">{ doc.filename }</span>
-											<div className="rp-document__actions">
-												{ doc.view_url && (
-													<a
-														href={ doc.view_url }
-														target="_blank"
-														rel="noopener noreferrer"
-														className="button button-small"
-													>
-														{ i18n.view || 'Ansehen' }
-													</a>
-												) }
-												{ doc.download_url && (
-													<a
-														href={ doc.download_url }
-														className="button button-small"
-														download
-													>
-														{ i18n.download || 'Herunterladen' }
-													</a>
-												) }
+						{ /* Tab: Details */ }
+						{ activeTab === 'details' && (
+							<>
+								{ /* Kandidaten-Details */ }
+								<Card>
+									<CardHeader>
+										<CardTitle>{ __( 'Kandidaten-Details', 'recruiting-playbook' ) }</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
+											{ application.salutation && (
+												<div>
+													<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+														{ __( 'Anrede', 'recruiting-playbook' ) }
+													</div>
+													<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+														{ application.salutation }
+													</div>
+												</div>
+											) }
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Vorname', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.first_name || '-' }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Nachname', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.last_name || '-' }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'E-Mail', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.email ? (
+														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
+															{ application.email }
+														</a>
+													) : '-' }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Telefon', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.phone ? (
+														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
+															{ application.phone }
+														</a>
+													) : '-' }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Stelle', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.job_title || '-' }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Beworben am', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ formatDate( application.created_at ) }
+												</div>
+											</div>
+											<div>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
+													{ __( 'Quelle', 'recruiting-playbook' ) }
+												</div>
+												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
+													{ application.source || 'Website' }
+												</div>
 											</div>
 										</div>
-									) ) }
-								</div>
-							</div>
+
+										{ /* Anschreiben */ }
+										{ application.cover_letter && (
+											<div style={ { marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
+												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' } }>
+													{ __( 'Anschreiben', 'recruiting-playbook' ) }
+												</div>
+												<div
+													style={ {
+														fontSize: '0.875rem',
+														color: '#1f2937',
+														lineHeight: 1.6,
+														whiteSpace: 'pre-wrap',
+														padding: '1rem',
+														backgroundColor: '#f9fafb',
+														borderRadius: '0.375rem',
+													} }
+													dangerouslySetInnerHTML={ { __html: application.cover_letter } }
+												/>
+											</div>
+										) }
+									</CardContent>
+								</Card>
+
+								{ /* Bewertung */ }
+								<Card>
+									<CardHeader>
+										<CardTitle>{ __( 'Bewertung', 'recruiting-playbook' ) }</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<RatingDetailed applicationId={ applicationId } showDistribution={ true } />
+									</CardContent>
+								</Card>
+							</>
 						) }
 
-						{ /* Notizen */ }
-						<div className="rp-card">
-							<NotesPanel applicationId={ applicationId } />
-						</div>
+						{ /* Tab: Dokumente */ }
+						{ activeTab === 'documents' && (
+							<Card>
+								<CardHeader>
+									<CardTitle>{ __( 'Dokumente', 'recruiting-playbook' ) } ({ documentsCount })</CardTitle>
+								</CardHeader>
+								<CardContent>
+									{ documentsCount === 0 ? (
+										<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
+											<FileText style={ { width: '3rem', height: '3rem', marginBottom: '0.75rem', opacity: 0.5 } } />
+											<p>{ __( 'Keine Dokumente vorhanden', 'recruiting-playbook' ) }</p>
+										</div>
+									) : (
+										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+											{ application.documents.map( ( doc ) => (
+												<div
+													key={ doc.id }
+													style={ {
+														display: 'flex',
+														alignItems: 'center',
+														gap: '0.75rem',
+														padding: '0.75rem 1rem',
+														backgroundColor: '#f9fafb',
+														borderRadius: '0.375rem',
+													} }
+												>
+													<FileText style={ { width: '1.25rem', height: '1.25rem', color: '#6b7280', flexShrink: 0 } } />
+													<span style={ { flex: 1, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
+														{ doc.filename }
+													</span>
+													<div style={ { display: 'flex', gap: '0.5rem' } }>
+														{ doc.view_url && (
+															<Button variant="outline" size="sm" asChild>
+																<a href={ doc.view_url } target="_blank" rel="noopener noreferrer">
+																	<Eye style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
+																	{ __( 'Ansehen', 'recruiting-playbook' ) }
+																</a>
+															</Button>
+														) }
+														{ doc.download_url && (
+															<Button size="sm" asChild>
+																<a href={ doc.download_url } download>
+																	<Download style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
+																	{ __( 'Download', 'recruiting-playbook' ) }
+																</a>
+															</Button>
+														) }
+													</div>
+												</div>
+											) ) }
+										</div>
+									) }
+								</CardContent>
+							</Card>
+						) }
+
+						{ /* Tab: Notizen */ }
+						{ activeTab === 'notes' && (
+							<Card>
+								<CardContent style={ { padding: '1.5rem' } }>
+									<NotesPanel applicationId={ applicationId } />
+								</CardContent>
+							</Card>
+						) }
+
+						{ /* Tab: Timeline */ }
+						{ activeTab === 'timeline' && (
+							<Card>
+								<CardContent style={ { padding: '1.5rem' } }>
+									<Timeline applicationId={ applicationId } />
+								</CardContent>
+							</Card>
+						) }
+
+						{ /* Tab: E-Mail */ }
+						{ activeTab === 'email' && canSendEmails && (
+							<Card>
+								<CardContent style={ { padding: '1.5rem' } }>
+									<EmailTab
+										applicationId={ applicationId }
+										recipient={ {
+											email: application.email,
+											name: `${ application.first_name } ${ application.last_name }`,
+										} }
+									/>
+								</CardContent>
+							</Card>
+						) }
 					</div>
 
-					{ /* Sidebar: Timeline */ }
-					<div className="rp-applicant-detail__sidebar">
-						<div className="rp-card">
-							<Timeline applicationId={ applicationId } />
-						</div>
+					{ /* Sidebar */ }
+					<div>
+						<Card>
+							<CardHeader>
+								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+									<Clock style={ { width: '1rem', height: '1rem' } } />
+									{ __( 'Aktivität', 'recruiting-playbook' ) }
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<Timeline applicationId={ applicationId } compact />
+							</CardContent>
+						</Card>
 					</div>
 				</div>
-			) }
+			</div>
 
-			{ /* Tab: E-Mail */ }
-			{ activeTab === 'email' && canSendEmails && (
-				<div className="rp-applicant-detail__email-tab">
-					<EmailTab
-						applicationId={ applicationId }
-						recipient={ {
-							email: application.email,
-							name: `${ application.first_name } ${ application.last_name }`,
-						} }
-					/>
-				</div>
-			) }
+			<style>{ `
+				@media (max-width: 1200px) {
+					.rp-admin [style*="grid-template-columns: 1fr 380px"] {
+						grid-template-columns: 1fr !important;
+					}
+				}
+			` }</style>
 		</div>
 	);
 }

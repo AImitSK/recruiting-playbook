@@ -12,6 +12,7 @@ namespace RecruitingPlaybook\Admin\Pages;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Licensing\LicenseManager;
+use RecruitingPlaybook\Licensing\FeatureFlags;
 
 /**
  * License Page Klasse
@@ -22,6 +23,50 @@ class LicensePage {
 	 * Render the license page
 	 */
 	public function render(): void {
+		$license_manager = LicenseManager::get_instance();
+		$status          = $license_manager->get_status();
+
+		// Enqueue scripts and styles.
+		$this->enqueue_assets( $status );
+
+		?>
+		<div class="wrap rp-admin">
+			<div id="rp-license-root"></div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Enqueue assets for React License page
+	 *
+	 * @param array<string, mixed> $status License status.
+	 */
+	private function enqueue_assets( array $status ): void {
+		// Admin JS is already enqueued by Admin class.
+		// Localize data for React component.
+		$features = array(
+			'FREE'     => FeatureFlags::get_tier_features( 'FREE' ),
+			'PRO'      => FeatureFlags::get_tier_features( 'PRO' ),
+			'AI_ADDON' => FeatureFlags::get_tier_features( 'AI_ADDON' ),
+			'BUNDLE'   => FeatureFlags::get_tier_features( 'BUNDLE' ),
+		);
+
+		wp_localize_script(
+			'rp-admin',
+			'rpLicenseData',
+			array(
+				'status'   => $status,
+				'features' => $features,
+				'nonce'    => wp_create_nonce( 'wp_rest' ),
+				'logoUrl'  => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			)
+		);
+	}
+
+	/**
+	 * Render the license page (legacy PHP version - kept for reference)
+	 */
+	public function render_legacy(): void {
 		$license_manager = LicenseManager::get_instance();
 		$status          = $license_manager->get_status();
 

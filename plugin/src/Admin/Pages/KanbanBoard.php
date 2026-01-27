@@ -145,28 +145,10 @@ class KanbanBoard {
 			wp_add_inline_style( 'wp-admin', $this->get_inline_styles() );
 		}
 
-		// JavaScript.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/index.js';
-		if ( file_exists( $js_file ) ) {
-			$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/index.asset.php';
-			$asset      = file_exists( $asset_file )
-				? require $asset_file
-				: [ 'dependencies' => [], 'version' => RP_VERSION ];
-
-			wp_enqueue_script(
-				'rp-kanban',
-				RP_PLUGIN_URL . 'assets/dist/js/index.js',
-				array_merge( $asset['dependencies'], [ 'wp-element', 'wp-api-fetch', 'wp-i18n' ] ),
-				$asset['version'],
-				true
-			);
-
-			wp_set_script_translations( 'rp-kanban', 'recruiting-playbook' );
-		}
-
-		// Lokalisierung.
+		// JavaScript wird bereits von Plugin.php geladen (rp-admin).
+		// Hier nur die Kanban-spezifische Lokalisierung hinzufügen.
 		wp_localize_script(
-			'rp-kanban',
+			'rp-admin',
 			'rpKanban',
 			[
 				'apiUrl'    => rest_url( 'recruiting/v1/' ),

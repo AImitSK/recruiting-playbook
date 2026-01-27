@@ -1,23 +1,99 @@
 /**
  * Talent Pool Button Component
  *
- * Toggle-Button zum Hinzufügen/Entfernen aus dem Talent-Pool
+ * Toggle-Button zum Hinzufügen/Entfernen aus dem Talent-Pool - shadcn/ui Style
  *
  * @package RecruitingPlaybook
  */
 
 import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { Users, Plus, X, Info } from 'lucide-react';
+import { Button } from '../components/ui/button';
 import { useTalentPool } from './hooks/useTalentPool';
 
-/**
- * Talent-Pool Button Komponente
- *
- * @param {Object}  props               Props
- * @param {number}  props.candidateId   Kandidaten-ID
- * @param {boolean} props.inPool        Initial im Pool?
- * @param {Function} props.onStatusChange Callback bei Statusänderung
- * @return {JSX.Element} Komponente
- */
+function Spinner( { size = '1rem' } ) {
+	return (
+		<div
+			style={ {
+				width: size,
+				height: size,
+				border: '2px solid #e5e7eb',
+				borderTopColor: '#1d71b8',
+				borderRadius: '50%',
+				animation: 'spin 0.8s linear infinite',
+			} }
+		/>
+	);
+}
+
+function Modal( { title, children, onClose } ) {
+	return (
+		<div
+			style={ {
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				backgroundColor: 'rgba(0, 0, 0, 0.5)',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				zIndex: 100000,
+				padding: '1rem',
+			} }
+			onClick={ onClose }
+		>
+			<div
+				style={ {
+					backgroundColor: '#fff',
+					borderRadius: '0.5rem',
+					boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+					maxWidth: '500px',
+					width: '100%',
+					maxHeight: '90vh',
+					overflow: 'auto',
+				} }
+				onClick={ ( e ) => e.stopPropagation() }
+			>
+				<div
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						padding: '1rem 1.5rem',
+						borderBottom: '1px solid #e5e7eb',
+					} }
+				>
+					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' } }>
+						{ title }
+					</h3>
+					<button
+						type="button"
+						onClick={ onClose }
+						style={ {
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							width: '2rem',
+							height: '2rem',
+							background: 'none',
+							border: 'none',
+							borderRadius: '0.375rem',
+							cursor: 'pointer',
+							color: '#6b7280',
+						} }
+					>
+						<X style={ { width: '1.25rem', height: '1.25rem' } } />
+					</button>
+				</div>
+				{ children }
+			</div>
+		</div>
+	);
+}
+
 export function TalentPoolButton( { candidateId, inPool = false, onStatusChange } ) {
 	const [ showModal, setShowModal ] = useState( false );
 	const [ reason, setReason ] = useState( '' );
@@ -32,232 +108,231 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 		removeFromPool,
 	} = useTalentPool( candidateId, inPool );
 
-	const i18n = window.rpApplicant?.i18n || {};
-
-	/**
-	 * Zum Pool hinzufügen
-	 */
 	const handleAdd = async () => {
 		const success = await addToPool( reason, tags );
 		if ( success ) {
 			setShowModal( false );
 			setReason( '' );
 			setTags( '' );
-			if ( onStatusChange ) {
-				onStatusChange( true );
-			}
+			if ( onStatusChange ) onStatusChange( true );
 		}
 	};
 
-	/**
-	 * Aus Pool entfernen
-	 */
 	const handleRemove = async () => {
 		const success = await removeFromPool();
 		if ( success ) {
 			setShowConfirmRemove( false );
-			if ( onStatusChange ) {
-				onStatusChange( false );
-			}
+			if ( onStatusChange ) onStatusChange( false );
 		}
 	};
 
-	// Im Pool: Button zum Entfernen
+	// Im Pool
 	if ( isInPool ) {
 		return (
 			<>
-				<button
-					type="button"
-					className="rp-talent-pool-btn is-in-pool"
+				<Button
+					variant="outline"
 					onClick={ () => setShowConfirmRemove( true ) }
 					disabled={ loading }
-					title={ i18n.removeFromTalentPool || 'Aus Talent-Pool entfernen' }
+					style={ {
+						backgroundColor: '#e6f3ff',
+						borderColor: '#1d71b8',
+						color: '#1d71b8',
+					} }
 				>
-					<span className="dashicons dashicons-groups"></span>
-					{ i18n.inTalentPool || 'Im Talent-Pool' }
-					{ loading && <span className="spinner is-active"></span> }
-				</button>
+					<Users style={ { width: '1rem', height: '1rem' } } />
+					{ __( 'Im Talent-Pool', 'recruiting-playbook' ) }
+					{ loading && <Spinner size="0.875rem" /> }
+				</Button>
 
-				{ /* Bestätigungs-Dialog */ }
 				{ showConfirmRemove && (
-					<div className="rp-modal-overlay" onClick={ () => setShowConfirmRemove( false ) }>
-						<div className="rp-modal rp-modal--small" onClick={ ( e ) => e.stopPropagation() }>
-							<div className="rp-modal__header">
-								<h3>{ i18n.removeFromTalentPool || 'Aus Talent-Pool entfernen' }</h3>
-								<button
-									type="button"
-									className="rp-modal__close"
-									onClick={ () => setShowConfirmRemove( false ) }
-								>
-									<span className="dashicons dashicons-no-alt"></span>
-								</button>
-							</div>
-
-							<div className="rp-modal__body">
-								<p>{ i18n.confirmRemoveFromTalentPool || 'Kandidat wirklich aus dem Talent-Pool entfernen?' }</p>
-								{ error && (
-									<div className="notice notice-error">
-										<p>{ error }</p>
-									</div>
-								) }
-							</div>
-
-							<div className="rp-modal__footer">
-								<button
-									type="button"
-									className="button"
-									onClick={ () => setShowConfirmRemove( false ) }
-									disabled={ loading }
-								>
-									{ i18n.cancel || 'Abbrechen' }
-								</button>
-								<button
-									type="button"
-									className="button button-primary button-link-delete"
-									onClick={ handleRemove }
-									disabled={ loading }
-								>
-									{ loading ? (
-										<span className="spinner is-active"></span>
-									) : (
-										i18n.remove || 'Entfernen'
-									) }
-								</button>
-							</div>
+					<Modal
+						title={ __( 'Aus Talent-Pool entfernen', 'recruiting-playbook' ) }
+						onClose={ () => setShowConfirmRemove( false ) }
+					>
+						<div style={ { padding: '1.5rem' } }>
+							<p style={ { margin: '0 0 1rem 0', color: '#374151' } }>
+								{ __( 'Kandidat wirklich aus dem Talent-Pool entfernen?', 'recruiting-playbook' ) }
+							</p>
+							{ error && (
+								<div style={ { padding: '0.75rem', backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: '0.375rem', marginBottom: '1rem', fontSize: '0.875rem' } }>
+									{ error }
+								</div>
+							) }
 						</div>
-					</div>
+						<div
+							style={ {
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: '0.5rem',
+								padding: '1rem 1.5rem',
+								borderTop: '1px solid #e5e7eb',
+								backgroundColor: '#f9fafb',
+							} }
+						>
+							<Button variant="outline" onClick={ () => setShowConfirmRemove( false ) } disabled={ loading }>
+								{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							</Button>
+							<Button
+								onClick={ handleRemove }
+								disabled={ loading }
+								style={ { backgroundColor: '#d63638' } }
+							>
+								{ loading ? <Spinner size="0.875rem" /> : __( 'Entfernen', 'recruiting-playbook' ) }
+							</Button>
+						</div>
+					</Modal>
 				) }
+
+				<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
 			</>
 		);
 	}
 
-	// Nicht im Pool: Button zum Hinzufügen
+	// Nicht im Pool
 	return (
 		<>
-			<button
-				type="button"
-				className="rp-talent-pool-btn"
+			<Button
+				variant="outline"
 				onClick={ () => setShowModal( true ) }
 				disabled={ loading }
-				title={ i18n.addToTalentPool || 'Zum Talent-Pool hinzufügen' }
 			>
-				<span className="dashicons dashicons-plus-alt"></span>
-				{ i18n.talentPool || 'Talent-Pool' }
-			</button>
+				<Plus style={ { width: '1rem', height: '1rem' } } />
+				{ __( 'Talent-Pool', 'recruiting-playbook' ) }
+			</Button>
 
-			{ /* Modal zum Hinzufügen */ }
 			{ showModal && (
-				<div className="rp-modal-overlay" onClick={ () => setShowModal( false ) }>
-					<div className="rp-modal" onClick={ ( e ) => e.stopPropagation() }>
-						<div className="rp-modal__header">
-							<h3>{ i18n.addToTalentPool || 'Zum Talent-Pool hinzufügen' }</h3>
-							<button
-								type="button"
-								className="rp-modal__close"
-								onClick={ () => setShowModal( false ) }
+				<Modal
+					title={ __( 'Zum Talent-Pool hinzufügen', 'recruiting-playbook' ) }
+					onClose={ () => setShowModal( false ) }
+				>
+					<div style={ { padding: '1.5rem' } }>
+						{ error && (
+							<div style={ { padding: '0.75rem', backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: '0.375rem', marginBottom: '1rem', fontSize: '0.875rem' } }>
+								{ error }
+							</div>
+						) }
+
+						<div style={ { marginBottom: '1rem' } }>
+							<label
+								htmlFor="rp-talent-reason"
+								style={ { display: 'block', marginBottom: '0.375rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' } }
 							>
-								<span className="dashicons dashicons-no-alt"></span>
-							</button>
+								{ __( 'Grund für Aufnahme', 'recruiting-playbook' ) }
+							</label>
+							<textarea
+								id="rp-talent-reason"
+								value={ reason }
+								onChange={ ( e ) => setReason( e.target.value ) }
+								placeholder={ __( 'z.B. Sehr guter Kandidat, aber aktuell keine passende Stelle...', 'recruiting-playbook' ) }
+								rows={ 3 }
+								disabled={ loading }
+								style={ {
+									width: '100%',
+									padding: '0.5rem 0.75rem',
+									border: '1px solid #e5e7eb',
+									borderRadius: '0.375rem',
+									fontSize: '0.875rem',
+									resize: 'vertical',
+									fontFamily: 'inherit',
+								} }
+							/>
 						</div>
 
-						<div className="rp-modal__body">
-							{ error && (
-								<div className="notice notice-error">
-									<p>{ error }</p>
-								</div>
-							) }
-
-							<div className="rp-form-field">
-								<label htmlFor="rp-talent-reason">
-									{ i18n.reasonForAdding || 'Grund für Aufnahme' }
-								</label>
-								<textarea
-									id="rp-talent-reason"
-									value={ reason }
-									onChange={ ( e ) => setReason( e.target.value ) }
-									placeholder={ i18n.reasonPlaceholder || 'z.B. Sehr guter Kandidat, aber aktuell keine passende Stelle...' }
-									rows={ 3 }
-									disabled={ loading }
-								/>
-							</div>
-
-							<div className="rp-form-field">
-								<label htmlFor="rp-talent-tags">
-									{ i18n.tags || 'Tags (komma-separiert)' }
-								</label>
-								<input
-									type="text"
-									id="rp-talent-tags"
-									value={ tags }
-									onChange={ ( e ) => setTags( e.target.value ) }
-									placeholder={ i18n.tagsPlaceholder || 'z.B. php, react, senior, remote' }
-									disabled={ loading }
-								/>
-								<p className="rp-form-hint">
-									{ i18n.tagsHint || 'Tags helfen, Kandidaten später schneller zu finden.' }
-								</p>
-							</div>
-
-							<div className="rp-form-field">
-								<p className="rp-gdpr-notice">
-									<span className="dashicons dashicons-info"></span>
-									{ i18n.gdprNotice || 'Der Eintrag wird nach 24 Monaten automatisch gelöscht (DSGVO).' }
-								</p>
-							</div>
+						<div style={ { marginBottom: '1rem' } }>
+							<label
+								htmlFor="rp-talent-tags"
+								style={ { display: 'block', marginBottom: '0.375rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' } }
+							>
+								{ __( 'Tags (komma-separiert)', 'recruiting-playbook' ) }
+							</label>
+							<input
+								type="text"
+								id="rp-talent-tags"
+								value={ tags }
+								onChange={ ( e ) => setTags( e.target.value ) }
+								placeholder={ __( 'z.B. php, react, senior, remote', 'recruiting-playbook' ) }
+								disabled={ loading }
+								style={ {
+									width: '100%',
+									padding: '0.5rem 0.75rem',
+									border: '1px solid #e5e7eb',
+									borderRadius: '0.375rem',
+									fontSize: '0.875rem',
+								} }
+							/>
+							<p style={ { margin: '0.375rem 0 0 0', fontSize: '0.75rem', color: '#6b7280' } }>
+								{ __( 'Tags helfen, Kandidaten später schneller zu finden.', 'recruiting-playbook' ) }
+							</p>
 						</div>
 
-						<div className="rp-modal__footer">
-							<button
-								type="button"
-								className="button"
-								onClick={ () => setShowModal( false ) }
-								disabled={ loading }
-							>
-								{ i18n.cancel || 'Abbrechen' }
-							</button>
-							<button
-								type="button"
-								className="button button-primary"
-								onClick={ handleAdd }
-								disabled={ loading }
-							>
-								{ loading ? (
-									<>
-										<span className="spinner is-active"></span>
-										{ i18n.adding || 'Hinzufügen...' }
-									</>
-								) : (
-									i18n.add || 'Hinzufügen'
-								) }
-							</button>
+						<div
+							style={ {
+								display: 'flex',
+								alignItems: 'flex-start',
+								gap: '0.5rem',
+								padding: '0.75rem',
+								backgroundColor: '#fef3c7',
+								borderRadius: '0.375rem',
+								fontSize: '0.75rem',
+								color: '#92400e',
+							} }
+						>
+							<Info style={ { width: '1rem', height: '1rem', flexShrink: 0, marginTop: '0.125rem' } } />
+							<span>{ __( 'Der Eintrag wird nach 24 Monaten automatisch gelöscht (DSGVO).', 'recruiting-playbook' ) }</span>
 						</div>
 					</div>
-				</div>
+
+					<div
+						style={ {
+							display: 'flex',
+							justifyContent: 'flex-end',
+							gap: '0.5rem',
+							padding: '1rem 1.5rem',
+							borderTop: '1px solid #e5e7eb',
+							backgroundColor: '#f9fafb',
+						} }
+					>
+						<Button variant="outline" onClick={ () => setShowModal( false ) } disabled={ loading }>
+							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+						</Button>
+						<Button onClick={ handleAdd } disabled={ loading }>
+							{ loading ? (
+								<>
+									<Spinner size="0.875rem" />
+									{ __( 'Hinzufügen...', 'recruiting-playbook' ) }
+								</>
+							) : (
+								__( 'Hinzufügen', 'recruiting-playbook' )
+							) }
+						</Button>
+					</div>
+				</Modal>
 			) }
+
+			<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
 		</>
 	);
 }
 
-/**
- * Kompakte Talent-Pool Badge für Listen
- *
- * @param {Object}  props        Props
- * @param {boolean} props.inPool Im Pool?
- * @return {JSX.Element|null} Badge oder null
- */
 export function TalentPoolBadge( { inPool } ) {
-	if ( ! inPool ) {
-		return null;
-	}
-
-	const i18n = window.rpApplicant?.i18n || {};
+	if ( ! inPool ) return null;
 
 	return (
 		<span
-			className="rp-talent-pool-badge"
-			title={ i18n.inTalentPool || 'Im Talent-Pool' }
+			style={ {
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				width: '1.5rem',
+				height: '1.5rem',
+				backgroundColor: '#e6f3ff',
+				borderRadius: '50%',
+				color: '#1d71b8',
+			} }
+			title={ __( 'Im Talent-Pool', 'recruiting-playbook' ) }
 		>
-			<span className="dashicons dashicons-groups"></span>
+			<Users style={ { width: '0.875rem', height: '0.875rem' } } />
 		</span>
 	);
 }
