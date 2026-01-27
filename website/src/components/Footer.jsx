@@ -49,8 +49,14 @@ export function Footer() {
             <p>
               Copyright &copy; {new Date().getFullYear()} Recruiting Playbook.
             </p>
-            <Link href="/impressum" className="hover:text-slate-700">
+            <Link href="/legal/imprint" className="hover:text-slate-700">
               Impressum
+            </Link>
+            <Link href="/legal/privacy" className="hover:text-slate-700">
+              Datenschutz
+            </Link>
+            <Link href="/legal/terms" className="hover:text-slate-700">
+              AGB
             </Link>
           </div>
         </div>
