@@ -158,36 +158,23 @@ class EmailSettingsPage {
 		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'templates';
 
 		echo '<div class="wrap">';
-		echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates', 'recruiting-playbook' ) . '</h1>';
-
-		if ( 'list' === $action && 'templates' === $tab ) {
-			echo '<a href="' . esc_url( admin_url( 'admin.php?page=rp-email-templates&action=new' ) ) . '" class="page-title-action">';
-			echo esc_html__( 'Neues Template', 'recruiting-playbook' );
-			echo '</a>';
-		}
-
+		echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates & Signaturen', 'recruiting-playbook' ) . '</h1>';
 		echo '<hr class="wp-header-end">';
-
-		// Tabs rendern (nur bei list-Ansicht).
-		if ( 'list' === $action ) {
-			$this->renderTabs( $tab );
-		}
 
 		// Erfolgsmeldungen.
 		$this->renderMessages();
 
-		// Tab-spezifischer Inhalt.
+		// Auto-E-Mail Tab (legacy PHP) vs. React App.
 		if ( 'auto-email' === $tab && 'list' === $action ) {
+			// Tabs für Auto-E-Mail Seite.
+			$this->renderTabs( $tab );
 			$this->renderAutoEmailSettings();
+		} elseif ( 'new' === $action || 'edit' === $action ) {
+			// Legacy PHP Form für Template-Bearbeitung (falls noch benötigt).
+			$this->renderForm( $template_id );
 		} else {
-			switch ( $action ) {
-				case 'new':
-				case 'edit':
-					$this->renderForm( $template_id );
-					break;
-				default:
-					$this->renderList();
-			}
+			// React App für Templates & Signaturen.
+			$this->renderList();
 		}
 
 		echo '</div>';
@@ -246,96 +233,17 @@ class EmailSettingsPage {
 	}
 
 	/**
-	 * Template-Liste rendern
+	 * Template-Liste rendern (React App)
 	 */
 	private function renderList(): void {
-		$repository = new EmailTemplateRepository();
-		$templates  = $repository->getList( [ 'include_inactive' => true ] );
-
-		$categories = [
-			'application' => __( 'Bewerbung', 'recruiting-playbook' ),
-			'interview'   => __( 'Interview', 'recruiting-playbook' ),
-			'offer'       => __( 'Angebot', 'recruiting-playbook' ),
-			'rejection'   => __( 'Absage', 'recruiting-playbook' ),
-			'custom'      => __( 'Benutzerdefiniert', 'recruiting-playbook' ),
-		];
-
+		// React App Container - die React App übernimmt Templates und Signaturen.
 		?>
-		<div style="max-width: 900px;">
-		<table class="wp-list-table widefat fixed striped">
-			<thead>
-				<tr>
-					<th scope="col" style="width: 25%;"><?php esc_html_e( 'Name', 'recruiting-playbook' ); ?></th>
-					<th scope="col" style="width: 30%;"><?php esc_html_e( 'Betreff', 'recruiting-playbook' ); ?></th>
-					<th scope="col" style="width: 15%;"><?php esc_html_e( 'Kategorie', 'recruiting-playbook' ); ?></th>
-					<th scope="col" style="width: 10%;"><?php esc_html_e( 'Typ', 'recruiting-playbook' ); ?></th>
-					<th scope="col" style="width: 10%;"><?php esc_html_e( 'Status', 'recruiting-playbook' ); ?></th>
-					<th scope="col" style="width: 10%;"><?php esc_html_e( 'Aktionen', 'recruiting-playbook' ); ?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php if ( empty( $templates ) ) : ?>
-					<tr>
-						<td colspan="6"><?php esc_html_e( 'Keine Templates gefunden.', 'recruiting-playbook' ); ?></td>
-					</tr>
-				<?php else : ?>
-					<?php foreach ( $templates as $template ) : ?>
-						<?php
-						$is_system = ! empty( $template['is_system'] );
-						$is_active = ! empty( $template['is_active'] );
-						$category  = $template['category'] ?? 'custom';
-						?>
-						<tr>
-							<td>
-								<strong>
-									<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates&action=edit&template_id=' . $template['id'] ) ); ?>">
-										<?php echo esc_html( $template['name'] ); ?>
-									</a>
-								</strong>
-								<?php if ( $is_system ) : ?>
-									<span class="dashicons dashicons-lock" title="<?php esc_attr_e( 'System-Template', 'recruiting-playbook' ); ?>" style="color: #999; font-size: 14px;"></span>
-								<?php endif; ?>
-							</td>
-							<td><?php echo esc_html( $template['subject'] ?? '' ); ?></td>
-							<td><?php echo esc_html( $categories[ $category ] ?? $category ); ?></td>
-							<td>
-								<?php if ( $is_system ) : ?>
-									<span class="dashicons dashicons-admin-site" style="color: #2271b1;"></span>
-									<?php esc_html_e( 'System', 'recruiting-playbook' ); ?>
-								<?php else : ?>
-									<span class="dashicons dashicons-admin-users" style="color: #72aee6;"></span>
-									<?php esc_html_e( 'Custom', 'recruiting-playbook' ); ?>
-								<?php endif; ?>
-							</td>
-							<td>
-								<?php if ( $is_active ) : ?>
-									<span style="color: #00a32a;">● <?php esc_html_e( 'Aktiv', 'recruiting-playbook' ); ?></span>
-								<?php else : ?>
-									<span style="color: #999;">○ <?php esc_html_e( 'Inaktiv', 'recruiting-playbook' ); ?></span>
-								<?php endif; ?>
-							</td>
-							<td>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates&action=edit&template_id=' . $template['id'] ) ); ?>" class="button button-small">
-									<?php esc_html_e( 'Bearbeiten', 'recruiting-playbook' ); ?>
-								</a>
-								<?php if ( ! $is_system ) : ?>
-									<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=rp-email-templates&action=delete&template_id=' . $template['id'] ), 'rp_delete_template_' . $template['id'] ) ); ?>" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Wirklich löschen?', 'recruiting-playbook' ); ?>');">
-										<?php esc_html_e( 'Löschen', 'recruiting-playbook' ); ?>
-									</a>
-								<?php endif; ?>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				<?php endif; ?>
-			</tbody>
-		</table>
-
-		<div class="card" style="max-width: 600px; margin-top: 20px; padding: 15px;">
-			<h3><?php esc_html_e( 'Verfügbare Platzhalter', 'recruiting-playbook' ); ?></h3>
-			<p><?php esc_html_e( 'Diese Platzhalter können in E-Mail-Templates verwendet werden:', 'recruiting-playbook' ); ?></p>
-			<?php $this->renderPlaceholderList(); ?>
+		<div id="rp-email-templates-app" style="margin-top: 20px;">
+			<div style="display: flex; justify-content: center; align-items: center; padding: 60px;">
+				<span class="spinner is-active" style="float: none;"></span>
+				<span style="margin-left: 10px;"><?php esc_html_e( 'Laden...', 'recruiting-playbook' ); ?></span>
+			</div>
 		</div>
-		</div><!-- .max-width container -->
 		<?php
 	}
 

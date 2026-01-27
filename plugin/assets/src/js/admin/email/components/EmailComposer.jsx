@@ -4,10 +4,10 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useCallback, useEffect, useMemo } from '@wordpress/element';
+import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { Calendar } from 'lucide-react';
+import { Calendar, PenTool } from 'lucide-react';
 import { DateTimePicker, Popover } from '@wordpress/components';
 
 import { Button } from '../../components/ui/button';
@@ -29,6 +29,7 @@ import { replacePlaceholders } from '../utils';
  *
  * @param {Object}   props               Props
  * @param {Array}    props.templates     Verfügbare Templates
+ * @param {Array}    props.signatures    Verfügbare Signaturen
  * @param {Object}   props.placeholders  Verfügbare Platzhalter
  * @param {Object}   props.previewValues Preview-Werte für Platzhalter
  * @param {Object}   props.recipient     Empfänger-Daten
@@ -41,6 +42,7 @@ import { replacePlaceholders } from '../utils';
  */
 export function EmailComposer( {
 	templates = [],
+	signatures = [],
 	placeholders = {},
 	previewValues = {},
 	recipient = {},
@@ -51,6 +53,7 @@ export function EmailComposer( {
 	onCancel,
 } ) {
 	const [ selectedTemplate, setSelectedTemplate ] = useState( '' );
+	const [ selectedSignature, setSelectedSignature ] = useState( '' );
 	const [ formData, setFormData ] = useState( {
 		to: recipient.email || '',
 		subject: '',
@@ -63,6 +66,18 @@ export function EmailComposer( {
 	const [ validationErrors, setValidationErrors ] = useState( {} );
 
 	const i18n = window.rpEmailData?.i18n || {};
+
+	// Standard-Signatur vorauswählen
+	useEffect( () => {
+		if ( signatures.length > 0 && ! selectedSignature ) {
+			const defaultSig = signatures.find( ( s ) => s.is_default );
+			if ( defaultSig ) {
+				setSelectedSignature( String( defaultSig.id ) );
+			} else if ( signatures[ 0 ] ) {
+				setSelectedSignature( String( signatures[ 0 ].id ) );
+			}
+		}
+	}, [ signatures, selectedSignature ] );
 
 	// Empfänger-E-Mail aktualisieren wenn sich recipient ändert
 	useEffect( () => {
@@ -188,6 +203,7 @@ export function EmailComposer( {
 			subject: formData.subject,
 			body: formData.body,
 			template_id: selectedTemplate || null,
+			signature_id: selectedSignature ? parseInt( selectedSignature, 10 ) : null,
 			application_id: applicationId,
 		};
 
@@ -198,7 +214,7 @@ export function EmailComposer( {
 		if ( onSend ) {
 			onSend( emailData );
 		}
-	}, [ formData, selectedTemplate, applicationId, scheduleEnabled, scheduledAt, validate, onSend ] );
+	}, [ formData, selectedTemplate, selectedSignature, applicationId, scheduleEnabled, scheduledAt, validate, onSend ] );
 
 	/**
 	 * Sendezeitpunkt formatieren
@@ -252,19 +268,42 @@ export function EmailComposer( {
 					{ activeTab === 'compose' ? (
 						<div style={ { display: 'grid', gridTemplateColumns: '1fr 280px', gap: '1.5rem' } }>
 							<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
-								{ /* Template */ }
-								<div>
-									<Label htmlFor="template">{ i18n.template || __( 'Template', 'recruiting-playbook' ) }</Label>
-									<Select
-										id="template"
-										value={ selectedTemplate }
-										onChange={ ( e ) => handleTemplateSelect( e.target.value ) }
-									>
-										<option value="">{ i18n.selectTemplate || __( '-- Template auswählen --', 'recruiting-playbook' ) }</option>
-										{ templates.map( ( t ) => (
-											<option key={ t.id } value={ String( t.id ) }>{ t.name }</option>
-										) ) }
-									</Select>
+								{ /* Template und Signatur in einer Zeile */ }
+								<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
+									{ /* Template */ }
+									<div>
+										<Label htmlFor="template">{ i18n.template || __( 'Template', 'recruiting-playbook' ) }</Label>
+										<Select
+											id="template"
+											value={ selectedTemplate }
+											onChange={ ( e ) => handleTemplateSelect( e.target.value ) }
+										>
+											<option value="">{ i18n.selectTemplate || __( '-- Template auswählen --', 'recruiting-playbook' ) }</option>
+											{ templates.map( ( t ) => (
+												<option key={ t.id } value={ String( t.id ) }>{ t.name }</option>
+											) ) }
+										</Select>
+									</div>
+
+									{ /* Signatur */ }
+									<div>
+										<Label htmlFor="signature" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
+											<PenTool style={ { width: '0.875rem', height: '0.875rem' } } />
+											{ i18n.signature || __( 'Signatur', 'recruiting-playbook' ) }
+										</Label>
+										<Select
+											id="signature"
+											value={ selectedSignature }
+											onChange={ ( e ) => setSelectedSignature( e.target.value ) }
+										>
+											<option value="">{ i18n.noSignature || __( '-- Keine Signatur --', 'recruiting-playbook' ) }</option>
+											{ signatures.map( ( s ) => (
+												<option key={ s.id } value={ String( s.id ) }>
+													{ s.name }{ s.is_default ? ` (${ i18n.default || 'Standard' })` : '' }
+												</option>
+											) ) }
+										</Select>
+									</div>
 								</div>
 
 								{ /* Empfänger */ }
@@ -410,6 +449,13 @@ EmailComposer.propTypes = {
 			name: PropTypes.string,
 			subject: PropTypes.string,
 			body: PropTypes.string,
+		} )
+	),
+	signatures: PropTypes.arrayOf(
+		PropTypes.shape( {
+			id: PropTypes.number.isRequired,
+			name: PropTypes.string,
+			is_default: PropTypes.bool,
 		} )
 	),
 	placeholders: PropTypes.object,

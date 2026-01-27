@@ -61,6 +61,13 @@ class EmailService {
 	private ?EmailLogRepository $logRepository = null;
 
 	/**
+	 * Signature Service
+	 *
+	 * @var SignatureService|null
+	 */
+	private ?SignatureService $signatureService = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -116,6 +123,18 @@ class EmailService {
 			$this->logRepository = new EmailLogRepository();
 		}
 		return $this->logRepository;
+	}
+
+	/**
+	 * Signature Service lazy-laden
+	 *
+	 * @return SignatureService
+	 */
+	private function getSignatureService(): SignatureService {
+		if ( null === $this->signatureService ) {
+			$this->signatureService = new SignatureService();
+		}
+		return $this->signatureService;
 	}
 
 	/**
@@ -246,13 +265,14 @@ class EmailService {
 	/**
 	 * E-Mail mit Template senden (Pro-Feature)
 	 *
-	 * @param int   $template_id    Template-ID.
-	 * @param int   $application_id Bewerbungs-ID.
-	 * @param array $custom_data    Zusätzliche Platzhalter-Daten.
-	 * @param bool  $use_queue      Queue verwenden.
+	 * @param int      $template_id    Template-ID.
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param array    $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
 	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
 	 */
-	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true ): int|bool {
+	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
 		// Pro-Feature Check.
 		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
 			return false;
@@ -272,6 +292,12 @@ class EmailService {
 			return false;
 		}
 
+		// Signatur anhängen (außer wenn explizit 0 = keine Signatur).
+		$body_html = $rendered['body_html'];
+		if ( 0 !== $signature_id ) {
+			$body_html = $this->appendSignature( $body_html, $signature_id );
+		}
+
 		$email_data = [
 			'application_id'  => $application_id,
 			'candidate_id'    => (int) $application['candidate_id'],
@@ -281,8 +307,8 @@ class EmailService {
 			'sender_email'    => $this->from_email,
 			'sender_name'     => $this->from_name,
 			'subject'         => $rendered['subject'],
-			'body_html'       => $rendered['body_html'],
-			'body_text'       => $rendered['body_text'],
+			'body_html'       => $body_html,
+			'body_text'       => wp_strip_all_tags( $body_html ),
 		];
 
 		if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
@@ -307,32 +333,34 @@ class EmailService {
 	/**
 	 * E-Mail mit Template-Slug senden
 	 *
-	 * @param string $template_slug Template-Slug.
-	 * @param int    $application_id Bewerbungs-ID.
-	 * @param array  $custom_data   Zusätzliche Platzhalter-Daten.
-	 * @param bool   $use_queue     Queue verwenden.
+	 * @param string   $template_slug  Template-Slug.
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param array    $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
 	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
 	 */
-	public function sendWithTemplateSlug( string $template_slug, int $application_id, array $custom_data = [], bool $use_queue = true ): int|bool {
+	public function sendWithTemplateSlug( string $template_slug, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
 		$template = $this->getTemplateService()->findBySlug( $template_slug );
 
 		if ( ! $template ) {
 			return false;
 		}
 
-		return $this->sendWithTemplate( (int) $template['id'], $application_id, $custom_data, $use_queue );
+		return $this->sendWithTemplate( (int) $template['id'], $application_id, $custom_data, $use_queue, $signature_id );
 	}
 
 	/**
 	 * Benutzerdefinierte E-Mail senden (ohne Template)
 	 *
-	 * @param int    $application_id Bewerbungs-ID.
-	 * @param string $subject        Betreff.
-	 * @param string $body_html      HTML-Inhalt.
-	 * @param bool   $use_queue      Queue verwenden.
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param string   $subject        Betreff.
+	 * @param string   $body_html      HTML-Inhalt.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
 	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
 	 */
-	public function sendCustomEmail( int $application_id, string $subject, string $body_html, bool $use_queue = true ): int|bool {
+	public function sendCustomEmail( int $application_id, string $subject, string $body_html, bool $use_queue = true, ?int $signature_id = null ): int|bool {
 		$application = $this->getApplicationData( $application_id );
 		if ( ! $application ) {
 			return false;
@@ -344,6 +372,11 @@ class EmailService {
 		// Platzhalter ersetzen.
 		$subject   = $this->getPlaceholderService()->replace( $subject, $context );
 		$body_html = $this->getPlaceholderService()->replace( $body_html, $context );
+
+		// Signatur anhängen (außer wenn explizit 0 = keine Signatur).
+		if ( 0 !== $signature_id ) {
+			$body_html = $this->appendSignature( $body_html, $signature_id );
+		}
 
 		$email_data = [
 			'application_id'  => $application_id,
@@ -707,6 +740,50 @@ class EmailService {
 
 		// Hook für optionales DB-Logging (Pro-Feature)
 		do_action( 'rp_email_sent', $to, $subject, $sent );
+	}
+
+	/**
+	 * Signatur an E-Mail-Body anhängen
+	 *
+	 * Verwendet die Fallback-Kette:
+	 * 1. Explizit angegebene Signatur (wenn $signature_id gesetzt)
+	 * 2. User-Default-Signatur (für aktuellen User)
+	 * 3. Firmen-Signatur
+	 * 4. Minimale Signatur
+	 *
+	 * @param string   $body_html     E-Mail-Body ohne Signatur.
+	 * @param int|null $signature_id  Signatur-ID (null = automatisch).
+	 * @param int|null $user_id       User-ID für Fallback (null = aktueller User).
+	 * @return string E-Mail-Body mit Signatur.
+	 */
+	private function appendSignature( string $body_html, ?int $signature_id = null, ?int $user_id = null ): string {
+		// User-ID für Fallback bestimmen.
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id() ?: null;
+		}
+
+		// Signatur mit Fallback-Kette rendern.
+		$signature = $this->getSignatureService()->renderWithFallback( $signature_id, $user_id );
+
+		if ( empty( $signature ) ) {
+			return $body_html;
+		}
+
+		return $body_html . $signature;
+	}
+
+	/**
+	 * Firmen-Signatur für automatische E-Mails anhängen
+	 *
+	 * Automatische E-Mails (Eingangsbestätigung, Absage etc.) verwenden
+	 * immer die Firmen-Signatur, da kein konkreter Absender-User existiert.
+	 *
+	 * @param string $body_html E-Mail-Body ohne Signatur.
+	 * @return string E-Mail-Body mit Firmen-Signatur.
+	 */
+	private function appendCompanySignature( string $body_html ): string {
+		// null, null = keine explizite Signatur, kein User → Firmen-Signatur.
+		return $this->appendSignature( $body_html, null, null );
 	}
 
 	/**

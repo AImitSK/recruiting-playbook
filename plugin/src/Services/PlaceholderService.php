@@ -18,16 +18,17 @@ class PlaceholderService {
 
 	/**
 	 * Platzhalter-Gruppen mit Labels
+	 *
+	 * Nur echte Variablen die aus der Datenbank gefüllt werden.
+	 * Pseudo-Variablen (termin_*, absender_*, kontakt_*, Angebot) wurden entfernt.
+	 *
+	 * @see docs/technical/email-signature-specification.md
 	 */
 	private const GROUPS = [
 		'candidate'   => 'Kandidat',
 		'application' => 'Bewerbung',
 		'job'         => 'Stelle',
 		'company'     => 'Firma',
-		'sender'      => 'Absender',
-		'interview'   => 'Interview',
-		'offer'       => 'Angebot',
-		'contact'     => 'Kontakt',
 	];
 
 	/**
@@ -100,36 +101,12 @@ class PlaceholderService {
 		$values['stelle_url'] = $job['url'] ?? '';
 
 		// Firmen-Platzhalter.
-		$values['firma']         = $settings['company_name'] ?? get_bloginfo( 'name' );
-		$values['firma_adresse'] = $settings['company_address'] ?? '';
-		$values['firma_website'] = home_url();
+		$company                 = $settings['company'] ?? [];
+		$values['firma']         = $company['name'] ?? $settings['company_name'] ?? get_bloginfo( 'name' );
+		$values['firma_adresse'] = $this->formatCompanyAddress( $company );
+		$values['firma_website'] = $company['website'] ?? home_url();
 
-		// Absender-Platzhalter.
-		$current_user             = wp_get_current_user();
-		$values['absender_name']  = $current_user->display_name ?? '';
-		$values['absender_email'] = $current_user->user_email ?? '';
-		$values['absender_telefon']  = get_user_meta( $current_user->ID, 'phone', true ) ?: '';
-		$values['absender_position'] = get_user_meta( $current_user->ID, 'job_title', true ) ?: '';
-
-		// Kontakt-Platzhalter.
-		$values['kontakt_name']    = $settings['contact_name'] ?? $values['absender_name'];
-		$values['kontakt_email']   = $settings['notification_email'] ?? get_option( 'admin_email' );
-		$values['kontakt_telefon'] = $settings['company_phone'] ?? '';
-
-		// Interview-Platzhalter (aus custom).
-		$values['termin_datum']      = $custom['termin_datum'] ?? '';
-		$values['termin_uhrzeit']    = $custom['termin_uhrzeit'] ?? '';
-		$values['termin_ort']        = $custom['termin_ort'] ?? '';
-		$values['termin_teilnehmer'] = $custom['termin_teilnehmer'] ?? '';
-		$values['termin_dauer']      = $custom['termin_dauer'] ?? '';
-
-		// Angebots-Platzhalter (aus custom).
-		$values['start_datum']   = $custom['start_datum'] ?? '';
-		$values['vertragsart']   = $custom['vertragsart'] ?? '';
-		$values['arbeitszeit']   = $custom['arbeitszeit'] ?? '';
-		$values['antwort_frist'] = $custom['antwort_frist'] ?? '';
-
-		// Custom-Platzhalter überschreiben.
+		// Custom-Platzhalter überschreiben (für Erweiterbarkeit).
 		foreach ( $custom as $key => $value ) {
 			if ( ! isset( $values[ $key ] ) ) {
 				$values[ $key ] = $value;
@@ -177,43 +154,39 @@ class PlaceholderService {
 	/**
 	 * Vorschau-Werte für Platzhalter generieren
 	 *
+	 * Nur echte Variablen die automatisch aus der Datenbank gefüllt werden.
+	 *
 	 * @return array<string, string>
 	 */
 	public function getPreviewValues(): array {
+		$settings = get_option( 'rp_settings', [] );
+		$company  = $settings['company'] ?? [];
+
 		return [
-			'vorname'            => 'Max',
-			'nachname'           => 'Mustermann',
-			'name'               => 'Max Mustermann',
-			'email'              => 'max.mustermann@example.com',
-			'telefon'            => '+49 123 456789',
-			'anrede'             => 'Herr',
-			'anrede_formal'      => 'Sehr geehrter Herr Mustermann',
-			'bewerbung_id'       => '#2025-0042',
-			'bewerbung_datum'    => date_i18n( get_option( 'date_format' ) ),
-			'bewerbung_status'   => __( 'In Prüfung', 'recruiting-playbook' ),
-			'stelle'             => 'Senior PHP Developer',
-			'stelle_ort'         => 'Berlin',
-			'stelle_typ'         => 'Vollzeit',
-			'stelle_url'         => home_url( '/jobs/senior-php-developer/' ),
-			'firma'              => get_option( 'rp_settings', [] )['company_name'] ?? get_bloginfo( 'name' ),
-			'firma_adresse'      => 'Musterstraße 1, 12345 Berlin',
-			'firma_website'      => home_url(),
-			'absender_name'      => wp_get_current_user()->display_name ?? 'HR Team',
-			'absender_email'     => wp_get_current_user()->user_email ?? get_option( 'admin_email' ),
-			'absender_telefon'   => '+49 30 12345-67',
-			'absender_position'  => 'HR Manager',
-			'kontakt_name'       => 'Maria Schmidt',
-			'kontakt_email'      => get_option( 'admin_email' ),
-			'kontakt_telefon'    => '+49 30 12345-0',
-			'termin_datum'       => date_i18n( get_option( 'date_format' ), strtotime( '+7 days' ) ),
-			'termin_uhrzeit'     => '14:00 Uhr',
-			'termin_ort'         => 'Hauptgebäude, Raum 302',
-			'termin_teilnehmer'  => 'Herr Müller (Abteilungsleiter)',
-			'termin_dauer'       => 'ca. 60 Minuten',
-			'start_datum'        => date_i18n( get_option( 'date_format' ), strtotime( '+1 month' ) ),
-			'vertragsart'        => 'Unbefristet',
-			'arbeitszeit'        => '40 Stunden/Woche',
-			'antwort_frist'      => date_i18n( get_option( 'date_format' ), strtotime( '+14 days' ) ),
+			// Kandidat.
+			'anrede'           => 'Herr',
+			'anrede_formal'    => 'Sehr geehrter Herr Mustermann',
+			'vorname'          => 'Max',
+			'nachname'         => 'Mustermann',
+			'name'             => 'Max Mustermann',
+			'email'            => 'max.mustermann@example.com',
+			'telefon'          => '+49 123 456789',
+
+			// Bewerbung.
+			'bewerbung_id'     => '#2025-0042',
+			'bewerbung_datum'  => date_i18n( get_option( 'date_format' ) ),
+			'bewerbung_status' => __( 'In Prüfung', 'recruiting-playbook' ),
+
+			// Stelle.
+			'stelle'           => 'Senior PHP Developer',
+			'stelle_ort'       => 'Berlin',
+			'stelle_typ'       => 'Vollzeit',
+			'stelle_url'       => home_url( '/jobs/senior-php-developer/' ),
+
+			// Firma.
+			'firma'            => $company['name'] ?? $settings['company_name'] ?? get_bloginfo( 'name' ),
+			'firma_adresse'    => 'Musterstraße 1, 12345 Berlin',
+			'firma_website'    => $company['website'] ?? home_url(),
 		];
 	}
 
@@ -358,190 +331,137 @@ class PlaceholderService {
 	/**
 	 * Platzhalter-Definitionen
 	 *
+	 * Nur echte Variablen die automatisch aus der Datenbank gefüllt werden.
+	 * Pseudo-Variablen (termin_*, absender_*, kontakt_*, Angebot) wurden entfernt.
+	 *
+	 * Für Interview-Einladungen, Angebote etc. verwenden Templates stattdessen
+	 * Lücken-Text (___) den der User manuell ausfüllt.
+	 *
+	 * @see docs/technical/email-signature-specification.md
+	 *
 	 * @return array
 	 */
 	private function getDefinitions(): array {
 		return [
-			// Kandidat.
-			'anrede'             => [
+			// Kandidat (7 Platzhalter).
+			'anrede'           => [
 				'label'       => __( 'Anrede', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Herr / Frau', 'recruiting-playbook' ),
 			],
-			'anrede_formal'      => [
+			'anrede_formal'    => [
 				'label'       => __( 'Formelle Anrede', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Sehr geehrter Herr Mustermann', 'recruiting-playbook' ),
 			],
-			'vorname'            => [
+			'vorname'          => [
 				'label'       => __( 'Vorname', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Vorname des Kandidaten', 'recruiting-playbook' ),
 			],
-			'nachname'           => [
+			'nachname'         => [
 				'label'       => __( 'Nachname', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Nachname des Kandidaten', 'recruiting-playbook' ),
 			],
-			'name'               => [
+			'name'             => [
 				'label'       => __( 'Vollständiger Name', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Vor- und Nachname', 'recruiting-playbook' ),
 			],
-			'email'              => [
+			'email'            => [
 				'label'       => __( 'E-Mail', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'E-Mail-Adresse des Kandidaten', 'recruiting-playbook' ),
 			],
-			'telefon'            => [
+			'telefon'          => [
 				'label'       => __( 'Telefon', 'recruiting-playbook' ),
 				'group'       => 'candidate',
 				'description' => __( 'Telefonnummer des Kandidaten', 'recruiting-playbook' ),
 			],
 
-			// Bewerbung.
-			'bewerbung_id'       => [
+			// Bewerbung (3 Platzhalter).
+			'bewerbung_id'     => [
 				'label'       => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
 				'group'       => 'application',
 				'description' => __( 'Referenznummer der Bewerbung', 'recruiting-playbook' ),
 			],
-			'bewerbung_datum'    => [
+			'bewerbung_datum'  => [
 				'label'       => __( 'Bewerbungsdatum', 'recruiting-playbook' ),
 				'group'       => 'application',
 				'description' => __( 'Eingangsdatum der Bewerbung', 'recruiting-playbook' ),
 			],
-			'bewerbung_status'   => [
+			'bewerbung_status' => [
 				'label'       => __( 'Bewerbungsstatus', 'recruiting-playbook' ),
 				'group'       => 'application',
 				'description' => __( 'Aktueller Status der Bewerbung', 'recruiting-playbook' ),
 			],
 
-			// Stelle.
-			'stelle'             => [
+			// Stelle (4 Platzhalter).
+			'stelle'           => [
 				'label'       => __( 'Stellentitel', 'recruiting-playbook' ),
 				'group'       => 'job',
 				'description' => __( 'Titel der Stelle', 'recruiting-playbook' ),
 			],
-			'stelle_ort'         => [
+			'stelle_ort'       => [
 				'label'       => __( 'Arbeitsort', 'recruiting-playbook' ),
 				'group'       => 'job',
 				'description' => __( 'Standort der Stelle', 'recruiting-playbook' ),
 			],
-			'stelle_typ'         => [
+			'stelle_typ'       => [
 				'label'       => __( 'Beschäftigungsart', 'recruiting-playbook' ),
 				'group'       => 'job',
 				'description' => __( 'Vollzeit, Teilzeit, etc.', 'recruiting-playbook' ),
 			],
-			'stelle_url'         => [
+			'stelle_url'       => [
 				'label'       => __( 'Stellen-URL', 'recruiting-playbook' ),
 				'group'       => 'job',
 				'description' => __( 'Link zur Stellenanzeige', 'recruiting-playbook' ),
 			],
 
-			// Firma.
-			'firma'              => [
+			// Firma (3 Platzhalter).
+			'firma'            => [
 				'label'       => __( 'Firmenname', 'recruiting-playbook' ),
 				'group'       => 'company',
 				'description' => __( 'Name des Unternehmens', 'recruiting-playbook' ),
 			],
-			'firma_adresse'      => [
+			'firma_adresse'    => [
 				'label'       => __( 'Firmenadresse', 'recruiting-playbook' ),
 				'group'       => 'company',
 				'description' => __( 'Adresse des Unternehmens', 'recruiting-playbook' ),
 			],
-			'firma_website'      => [
+			'firma_website'    => [
 				'label'       => __( 'Firmenwebsite', 'recruiting-playbook' ),
 				'group'       => 'company',
 				'description' => __( 'Website des Unternehmens', 'recruiting-playbook' ),
 			],
-
-			// Absender.
-			'absender_name'      => [
-				'label'       => __( 'Absender Name', 'recruiting-playbook' ),
-				'group'       => 'sender',
-				'description' => __( 'Name des aktuellen Benutzers', 'recruiting-playbook' ),
-			],
-			'absender_email'     => [
-				'label'       => __( 'Absender E-Mail', 'recruiting-playbook' ),
-				'group'       => 'sender',
-				'description' => __( 'E-Mail des aktuellen Benutzers', 'recruiting-playbook' ),
-			],
-			'absender_telefon'   => [
-				'label'       => __( 'Absender Telefon', 'recruiting-playbook' ),
-				'group'       => 'sender',
-				'description' => __( 'Telefon des aktuellen Benutzers', 'recruiting-playbook' ),
-			],
-			'absender_position'  => [
-				'label'       => __( 'Absender Position', 'recruiting-playbook' ),
-				'group'       => 'sender',
-				'description' => __( 'Position des aktuellen Benutzers', 'recruiting-playbook' ),
-			],
-
-			// Kontakt.
-			'kontakt_name'       => [
-				'label'       => __( 'Kontakt Name', 'recruiting-playbook' ),
-				'group'       => 'contact',
-				'description' => __( 'Ansprechpartner', 'recruiting-playbook' ),
-			],
-			'kontakt_email'      => [
-				'label'       => __( 'Kontakt E-Mail', 'recruiting-playbook' ),
-				'group'       => 'contact',
-				'description' => __( 'Kontakt E-Mail-Adresse', 'recruiting-playbook' ),
-			],
-			'kontakt_telefon'    => [
-				'label'       => __( 'Kontakt Telefon', 'recruiting-playbook' ),
-				'group'       => 'contact',
-				'description' => __( 'Kontakt Telefonnummer', 'recruiting-playbook' ),
-			],
-
-			// Interview.
-			'termin_datum'       => [
-				'label'       => __( 'Termin Datum', 'recruiting-playbook' ),
-				'group'       => 'interview',
-				'description' => __( 'Datum des Interviews', 'recruiting-playbook' ),
-			],
-			'termin_uhrzeit'     => [
-				'label'       => __( 'Termin Uhrzeit', 'recruiting-playbook' ),
-				'group'       => 'interview',
-				'description' => __( 'Uhrzeit des Interviews', 'recruiting-playbook' ),
-			],
-			'termin_ort'         => [
-				'label'       => __( 'Termin Ort', 'recruiting-playbook' ),
-				'group'       => 'interview',
-				'description' => __( 'Ort/Adresse des Interviews', 'recruiting-playbook' ),
-			],
-			'termin_teilnehmer'  => [
-				'label'       => __( 'Gesprächspartner', 'recruiting-playbook' ),
-				'group'       => 'interview',
-				'description' => __( 'Teilnehmer am Interview', 'recruiting-playbook' ),
-			],
-			'termin_dauer'       => [
-				'label'       => __( 'Termin Dauer', 'recruiting-playbook' ),
-				'group'       => 'interview',
-				'description' => __( 'Geschätzte Dauer', 'recruiting-playbook' ),
-			],
-
-			// Angebot.
-			'start_datum'        => [
-				'label'       => __( 'Eintrittsdatum', 'recruiting-playbook' ),
-				'group'       => 'offer',
-				'description' => __( 'Gewünschtes Eintrittsdatum', 'recruiting-playbook' ),
-			],
-			'vertragsart'        => [
-				'label'       => __( 'Vertragsart', 'recruiting-playbook' ),
-				'group'       => 'offer',
-				'description' => __( 'Befristet/Unbefristet', 'recruiting-playbook' ),
-			],
-			'arbeitszeit'        => [
-				'label'       => __( 'Arbeitszeit', 'recruiting-playbook' ),
-				'group'       => 'offer',
-				'description' => __( 'Wöchentliche Arbeitszeit', 'recruiting-playbook' ),
-			],
-			'antwort_frist'      => [
-				'label'       => __( 'Antwortfrist', 'recruiting-playbook' ),
-				'group'       => 'offer',
-				'description' => __( 'Frist für die Rückmeldung', 'recruiting-playbook' ),
-			],
 		];
+	}
+
+	/**
+	 * Firmenadresse formatieren
+	 *
+	 * @param array $company Firmendaten aus rp_settings['company'].
+	 * @return string Formatierte Adresse.
+	 */
+	private function formatCompanyAddress( array $company ): string {
+		$parts = [];
+
+		if ( ! empty( $company['street'] ) ) {
+			$parts[] = $company['street'];
+		}
+
+		$city_parts = [];
+		if ( ! empty( $company['zip'] ) ) {
+			$city_parts[] = $company['zip'];
+		}
+		if ( ! empty( $company['city'] ) ) {
+			$city_parts[] = $company['city'];
+		}
+		if ( ! empty( $city_parts ) ) {
+			$parts[] = implode( ' ', $city_parts );
+		}
+
+		return implode( ', ', $parts );
 	}
 }

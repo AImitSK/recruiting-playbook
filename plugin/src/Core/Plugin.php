@@ -29,6 +29,7 @@ use RecruitingPlaybook\Api\TalentPoolController;
 use RecruitingPlaybook\Api\EmailTemplateController;
 use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
+use RecruitingPlaybook\Api\SignatureController;
 use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
@@ -362,6 +363,10 @@ final class Plugin {
 		$email_log_controller = new EmailLogController();
 		$email_log_controller->register_routes();
 
+		// Signature Controller (für E-Mail-Signaturen).
+		$signature_controller = new SignatureController();
+		$signature_controller->register_routes();
+
 		// License Controller.
 		$license_controller = new LicenseController();
 		$license_controller->register_routes();
@@ -572,6 +577,137 @@ final class Plugin {
 
 			// Set translations for JS.
 			wp_set_script_translations( 'rp-admin', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
+		}
+
+		// E-Mail Admin App Script (für Templates & Signaturen Seite).
+		$this->enqueueEmailAdminAssets( $hook );
+	}
+
+	/**
+	 * E-Mail Admin Assets laden
+	 *
+	 * @param string $hook Current admin page hook.
+	 */
+	private function enqueueEmailAdminAssets( string $hook ): void {
+		// Nur auf E-Mail-Templates Seite laden.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'rp-email-templates' !== $page ) {
+			return;
+		}
+
+		// Admin Email CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-email.css';
+		if ( file_exists( $css_file ) ) {
+			wp_enqueue_style(
+				'rp-admin-email',
+				RP_PLUGIN_URL . 'assets/dist/css/admin-email.css',
+				[ 'rp-admin' ],
+				RP_VERSION
+			);
+		}
+
+		// Admin Email JS.
+		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin-email.js';
+		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin-email.asset.php';
+
+		if ( file_exists( $js_file ) ) {
+			// Load dependencies from generated asset file.
+			$asset = file_exists( $asset_file )
+				? require $asset_file
+				: [ 'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ], 'version' => RP_VERSION ];
+
+			wp_enqueue_script(
+				'rp-admin-email',
+				RP_PLUGIN_URL . 'assets/dist/js/admin-email.js',
+				$asset['dependencies'],
+				$asset['version'],
+				true
+			);
+
+			// Lokalisierung für E-Mail-Admin.
+			wp_localize_script(
+				'rp-admin-email',
+				'rpEmailData',
+				[
+					'apiUrl'  => rest_url( 'recruiting/v1/' ),
+					'nonce'   => wp_create_nonce( 'wp_rest' ),
+					'isAdmin' => current_user_can( 'manage_options' ),
+					'userId'  => get_current_user_id(),
+					'i18n'    => [
+						// Allgemein.
+						'loading'        => __( 'Laden...', 'recruiting-playbook' ),
+						'save'           => __( 'Speichern', 'recruiting-playbook' ),
+						'saving'         => __( 'Speichern...', 'recruiting-playbook' ),
+						'cancel'         => __( 'Abbrechen', 'recruiting-playbook' ),
+						'delete'         => __( 'Löschen', 'recruiting-playbook' ),
+						'edit'           => __( 'Bearbeiten', 'recruiting-playbook' ),
+						'preview'        => __( 'Vorschau', 'recruiting-playbook' ),
+						'name'           => __( 'Name', 'recruiting-playbook' ),
+						'status'         => __( 'Status', 'recruiting-playbook' ),
+						'actions'        => __( 'Aktionen', 'recruiting-playbook' ),
+						'default'        => __( 'Standard', 'recruiting-playbook' ),
+						'errorLoading'   => __( 'Fehler beim Laden', 'recruiting-playbook' ),
+						'errorSaving'    => __( 'Fehler beim Speichern', 'recruiting-playbook' ),
+						'errorDeleting'  => __( 'Fehler beim Löschen', 'recruiting-playbook' ),
+
+						// Tabs.
+						'templates'  => __( 'Templates', 'recruiting-playbook' ),
+						'signatures' => __( 'Signaturen', 'recruiting-playbook' ),
+
+						// Templates.
+						'newTemplate'       => __( 'Neues Template', 'recruiting-playbook' ),
+						'editTemplate'      => __( 'Template bearbeiten', 'recruiting-playbook' ),
+						'templateSaved'     => __( 'Template wurde gespeichert.', 'recruiting-playbook' ),
+						'templateDeleted'   => __( 'Template wurde gelöscht.', 'recruiting-playbook' ),
+						'templateDuplicated' => __( 'Template wurde dupliziert.', 'recruiting-playbook' ),
+						'templateReset'     => __( 'Template wurde zurückgesetzt.', 'recruiting-playbook' ),
+						'confirmDelete'     => __( 'Möchten Sie dieses Template wirklich löschen?', 'recruiting-playbook' ),
+						'noTemplates'       => __( 'Keine Templates gefunden.', 'recruiting-playbook' ),
+						'subject'           => __( 'Betreff', 'recruiting-playbook' ),
+						'category'          => __( 'Kategorie', 'recruiting-playbook' ),
+						'body'              => __( 'Inhalt', 'recruiting-playbook' ),
+						'active'            => __( 'Aktiv', 'recruiting-playbook' ),
+						'system'            => __( 'System', 'recruiting-playbook' ),
+						'inactive'          => __( 'Inaktiv', 'recruiting-playbook' ),
+						'allCategories'     => __( 'Alle Kategorien', 'recruiting-playbook' ),
+
+						// Signaturen.
+						'newSignature'            => __( 'Neue Signatur', 'recruiting-playbook' ),
+						'editSignature'           => __( 'Signatur bearbeiten', 'recruiting-playbook' ),
+						'mySignatures'            => __( 'Meine Signaturen', 'recruiting-playbook' ),
+						'companySignature'        => __( 'Firmen-Signatur', 'recruiting-playbook' ),
+						'editCompanySignature'    => __( 'Firmen-Signatur bearbeiten', 'recruiting-playbook' ),
+						'signatureSaved'          => __( 'Signatur wurde gespeichert.', 'recruiting-playbook' ),
+						'signatureDeleted'        => __( 'Signatur wurde gelöscht.', 'recruiting-playbook' ),
+						'signatureSetDefault'     => __( 'Standard-Signatur wurde gesetzt.', 'recruiting-playbook' ),
+						'setAsDefault'            => __( 'Als Standard setzen', 'recruiting-playbook' ),
+						'noSignatures'            => __( 'Keine Signaturen vorhanden.', 'recruiting-playbook' ),
+						'noCompanySignature'      => __( 'Keine Firmen-Signatur vorhanden.', 'recruiting-playbook' ),
+						'confirmDeleteSignature'  => __( 'Möchten Sie diese Signatur wirklich löschen?', 'recruiting-playbook' ),
+						'signatureContent'        => __( 'Signatur-Inhalt', 'recruiting-playbook' ),
+						'signatureHint'           => __( 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.', 'recruiting-playbook' ),
+						'companySignatureHint'    => __( 'Die Firmen-Signatur wird verwendet, wenn ein Benutzer keine eigene Signatur hat.', 'recruiting-playbook' ),
+						'createSignatureHint'     => __( 'Erstellen Sie Ihre erste Signatur, um E-Mails zu personalisieren.', 'recruiting-playbook' ),
+						'signaturePreviewHint'    => __( 'So wird Ihre Signatur in E-Mails aussehen:', 'recruiting-playbook' ),
+
+						// Kategorien.
+						'categories' => [
+							'application'   => __( 'Bewerbung', 'recruiting-playbook' ),
+							'status_change' => __( 'Statusänderung', 'recruiting-playbook' ),
+							'interview'     => __( 'Interview', 'recruiting-playbook' ),
+							'offer'         => __( 'Angebot', 'recruiting-playbook' ),
+							'rejection'     => __( 'Absage', 'recruiting-playbook' ),
+							'custom'        => __( 'Benutzerdefiniert', 'recruiting-playbook' ),
+							'system'        => __( 'System', 'recruiting-playbook' ),
+						],
+					],
+				]
+			);
+
+			// Set translations for JS.
+			wp_set_script_translations( 'rp-admin-email', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
 		}
 	}
 

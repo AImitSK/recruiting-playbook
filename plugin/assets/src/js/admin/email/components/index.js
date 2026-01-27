@@ -6,6 +6,8 @@
 
 export { TemplateList } from './TemplateList';
 export { TemplateEditor } from './TemplateEditor';
+export { SignatureList } from './SignatureList';
+export { SignatureEditor } from './SignatureEditor';
 export { PlaceholderPicker } from './PlaceholderPicker';
 export { EmailComposer } from './EmailComposer';
 export { EmailHistory } from './EmailHistory';

@@ -194,6 +194,7 @@ class EmailController extends WP_REST_Controller {
 		$custom_variables = $request->get_param( 'custom_variables' ) ?: [];
 		$send_immediately = (bool) $request->get_param( 'send_immediately' );
 		$scheduled_at     = $request->get_param( 'scheduled_at' );
+		$signature_id     = $request->get_param( 'signature_id' ); // null = auto, 0 = keine.
 
 		// Bewerbung validieren.
 		$application = $this->application_service->get( $application_id );
@@ -236,7 +237,8 @@ class EmailController extends WP_REST_Controller {
 					(int) $template_id,
 					$application_id,
 					$custom_variables,
-					$use_queue
+					$use_queue,
+					$signature_id
 				);
 			}
 		} else {
@@ -245,7 +247,8 @@ class EmailController extends WP_REST_Controller {
 				$application_id,
 				$subject,
 				$body,
-				$use_queue
+				$use_queue,
+				$signature_id
 			);
 		}
 
@@ -472,6 +475,9 @@ class EmailController extends WP_REST_Controller {
 
 		$use_queue = ! $send_immediately;
 
+		// Signatur-ID aus Request (optional).
+		$signature_id = $request->get_param( 'signature_id' );
+
 		foreach ( $application_ids as $application_id ) {
 			$application = $this->application_service->get( (int) $application_id );
 
@@ -488,7 +494,8 @@ class EmailController extends WP_REST_Controller {
 				$template_id,
 				(int) $application_id,
 				$custom_variables,
-				$use_queue
+				$use_queue,
+				$signature_id
 			);
 
 			if ( false === $result ) {
@@ -608,6 +615,10 @@ class EmailController extends WP_REST_Controller {
 				'type'        => 'string',
 				'format'      => 'date-time',
 			],
+			'signature_id'     => [
+				'description' => __( 'Signatur-ID (null = automatisch, 0 = keine)', 'recruiting-playbook' ),
+				'type'        => 'integer',
+			],
 		];
 	}
 
@@ -637,6 +648,10 @@ class EmailController extends WP_REST_Controller {
 			'custom_variables' => [
 				'description' => __( 'Zusätzliche Platzhalter-Werte', 'recruiting-playbook' ),
 				'type'        => 'object',
+			],
+			'signature_id'     => [
+				'description' => __( 'Signatur-ID für Vorschau', 'recruiting-playbook' ),
+				'type'        => 'integer',
 			],
 		];
 	}

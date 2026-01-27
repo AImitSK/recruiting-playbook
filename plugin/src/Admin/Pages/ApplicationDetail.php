@@ -18,6 +18,7 @@ use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailService;
 use RecruitingPlaybook\Services\EmailTemplateService;
 use RecruitingPlaybook\Repositories\EmailLogRepository;
+use RecruitingPlaybook\Repositories\SignatureRepository;
 
 /**
  * Detailansicht einer Bewerbung
@@ -719,6 +720,32 @@ class ApplicationDetail {
 						</select>
 					</p>
 
+					<?php
+					// Signaturen laden.
+					$signature_repo = new SignatureRepository();
+					$signatures     = $signature_repo->getByUserId( get_current_user_id() );
+					$company_sig    = $signature_repo->getCompanyDefault();
+					?>
+					<p>
+						<label for="rp-email-signature"><strong><?php esc_html_e( 'Signatur:', 'recruiting-playbook' ); ?></strong></label>
+						<select name="signature_id" id="rp-email-signature" style="width: 100%;">
+							<option value=""><?php esc_html_e( '— Keine Signatur —', 'recruiting-playbook' ); ?></option>
+							<?php if ( $company_sig ) : ?>
+								<option value="<?php echo esc_attr( $company_sig['id'] ); ?>">
+									<?php esc_html_e( 'Firmen-Signatur', 'recruiting-playbook' ); ?>
+								</option>
+							<?php endif; ?>
+							<?php foreach ( $signatures as $signature ) : ?>
+								<option value="<?php echo esc_attr( $signature['id'] ); ?>" <?php selected( ! empty( $signature['is_default'] ) ); ?>>
+									<?php echo esc_html( $signature['name'] ); ?>
+									<?php if ( ! empty( $signature['is_default'] ) ) : ?>
+										(<?php esc_html_e( 'Standard', 'recruiting-playbook' ); ?>)
+									<?php endif; ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</p>
+
 					<p id="rp-email-preview-info" style="display: none;">
 						<strong><?php esc_html_e( 'Betreff:', 'recruiting-playbook' ); ?></strong>
 						<span id="rp-email-preview-subject" style="font-style: italic;"></span>
@@ -870,7 +897,8 @@ class ApplicationDetail {
 			return;
 		}
 
-		$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+		$template_id  = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+		$signature_id = isset( $_POST['signature_id'] ) && '' !== $_POST['signature_id'] ? absint( $_POST['signature_id'] ) : null;
 
 		if ( ! $template_id ) {
 			add_action(
@@ -884,9 +912,9 @@ class ApplicationDetail {
 			return;
 		}
 
-		// E-Mail über den Service senden.
+		// E-Mail über den Service senden (mit optionaler Signatur).
 		$email_service = new EmailService();
-		$result = $email_service->sendWithTemplate( $template_id, $application_id );
+		$result = $email_service->sendWithTemplate( $template_id, $application_id, [], true, $signature_id );
 
 		if ( false === $result ) {
 			add_action(

@@ -5,5 +5,6 @@
  */
 
 export { useTemplates } from './useTemplates';
+export { useSignatures } from './useSignatures';
 export { useEmailHistory } from './useEmailHistory';
 export { usePlaceholders } from './usePlaceholders';

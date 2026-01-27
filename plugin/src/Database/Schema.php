@@ -35,6 +35,7 @@ class Schema {
 			'talent_pool'     => $wpdb->prefix . 'rp_talent_pool',
 			'email_templates' => $wpdb->prefix . 'rp_email_templates',
 			'email_log'       => $wpdb->prefix . 'rp_email_log',
+			'signatures'      => $wpdb->prefix . 'rp_signatures',
 		];
 	}
 
@@ -337,6 +338,32 @@ class Schema {
 			KEY sent_at (sent_at),
 			KEY scheduled_at (scheduled_at),
 			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_signatures
+	 *
+	 * @return string
+	 */
+	public static function getSignaturesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['signatures'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			user_id bigint(20) unsigned DEFAULT NULL,
+			name varchar(100) NOT NULL,
+			greeting varchar(255) DEFAULT NULL,
+			content text NOT NULL,
+			is_default tinyint(1) DEFAULT 0,
+			include_company tinyint(1) DEFAULT 1,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY user_id (user_id),
+			KEY is_default (user_id, is_default)
 		) {$charset};";
 	}
 }

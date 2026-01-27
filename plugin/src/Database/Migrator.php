@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.4.0';
+	private const SCHEMA_VERSION = '1.5.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -43,6 +43,7 @@ class Migrator {
 		dbDelta( Schema::getTalentPoolTableSql() );
 		dbDelta( Schema::getEmailTemplatesTableSql() );
 		dbDelta( Schema::getEmailLogTableSql() );
+		dbDelta( Schema::getSignaturesTableSql() );
 
 		// Spezielle Migrationen für bestehende Installationen.
 		$this->runMigrations( $current_version );
@@ -74,6 +75,11 @@ class Migrator {
 		// Migration 1.4.0: E-Mail-System Tabellen + Standard-Templates.
 		if ( version_compare( $from_version, '1.4.0', '<' ) ) {
 			$this->seedDefaultEmailTemplates();
+		}
+
+		// Migration 1.5.0: Signaturen-Tabelle + Default Firmen-Signatur.
+		if ( version_compare( $from_version, '1.5.0', '<' ) ) {
+			$this->seedDefaultCompanySignature();
 		}
 	}
 
@@ -206,6 +212,56 @@ class Migrator {
 		}
 
 		$this->log( 'Seeded ' . count( $templates ) . ' default email templates' );
+	}
+
+	/**
+	 * Migration: Default Firmen-Signatur erstellen
+	 */
+	private function seedDefaultCompanySignature(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['signatures'];
+		$now   = current_time( 'mysql' );
+
+		// Prüfen ob bereits eine Firmen-Signatur existiert (user_id = NULL).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$exists = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL",
+				[]
+			)
+		);
+
+		if ( $exists > 0 ) {
+			return;
+		}
+
+		// Firmenname aus Einstellungen oder Blog-Name.
+		$settings     = get_option( 'rp_settings', [] );
+		$company_name = $settings['company']['name'] ?? $settings['general']['company_name'] ?? get_bloginfo( 'name' );
+
+		// Default Firmen-Signatur erstellen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$table,
+			[
+				'user_id'         => null,
+				'name'            => __( 'Firmen-Signatur', 'recruiting-playbook' ),
+				'greeting'        => __( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
+				'content'         => sprintf(
+					"%s\n%s",
+					__( 'Ihr HR Team', 'recruiting-playbook' ),
+					$company_name
+				),
+				'is_default'      => 1,
+				'include_company' => 1,
+				'created_at'      => $now,
+				'updated_at'      => $now,
+			],
+			[ null, '%s', '%s', '%s', '%d', '%d', '%s', '%s' ]
+		);
+
+		$this->log( 'Created default company signature' );
 	}
 
 	/**
