@@ -5,9 +5,9 @@
  */
 
 import { useState, useCallback } from '@wordpress/element';
-import { Button, Notice, Spinner } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
-
+import { __ } from '@wordpress/i18n';
+import { Plus } from 'lucide-react';
+import { Button } from '../components/ui/button';
 import { EmailComposer, EmailHistory } from '../email/components';
 import { useTemplates, useEmailHistory, usePlaceholders } from '../email/hooks';
 
@@ -97,50 +97,46 @@ export function EmailTab( { applicationId, recipient = {} } ) {
 
 	if ( isLoading && view === 'history' && emails.length === 0 ) {
 		return (
-			<div className="rp-email-tab rp-email-tab--loading">
-				<Spinner />
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem', color: '#6b7280' } }>
+				<div style={ { width: '1.5rem', height: '1.5rem', border: '2px solid #e5e7eb', borderTopColor: '#1d71b8', borderRadius: '50%', animation: 'spin 0.8s linear infinite' } } />
+				<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
 			</div>
 		);
 	}
 
 	return (
-		<div className="rp-email-tab">
+		<div>
 			{ notification && (
-				<Notice
-					status={ notification.type }
-					isDismissible={ true }
-					onRemove={ () => setNotification( null ) }
+				<div
+					style={ {
+						padding: '0.75rem 1rem',
+						marginBottom: '1rem',
+						borderRadius: '0.375rem',
+						backgroundColor: notification.type === 'success' ? '#e6f5ec' : '#ffe6e6',
+						color: notification.type === 'success' ? '#2fac66' : '#d63638',
+						fontSize: '0.875rem',
+					} }
 				>
 					{ notification.message }
-				</Notice>
+				</div>
 			) }
 
 			{ view === 'history' ? (
-				<>
-					<div className="rp-email-tab__header">
-						<h3 className="rp-email-tab__title">
-							<span className="dashicons dashicons-email-alt"></span>
-							{ i18n.emailHistory || 'E-Mail-Verlauf' }
-						</h3>
-						<Button
-							variant="primary"
-							icon={ plus }
-							onClick={ () => setView( 'compose' ) }
-						>
+				<EmailHistory
+					emails={ emails }
+					loading={ emailsLoading }
+					error={ emailsError }
+					pagination={ pagination }
+					onResend={ handleResend }
+					onCancel={ handleCancel }
+					onPageChange={ goToPage }
+					action={
+						<Button onClick={ () => setView( 'compose' ) }>
+							<Plus style={ { width: '1rem', height: '1rem', marginRight: '0.375rem' } } />
 							{ i18n.newEmail || 'Neue E-Mail' }
 						</Button>
-					</div>
-
-					<EmailHistory
-						emails={ emails }
-						loading={ emailsLoading }
-						error={ emailsError }
-						pagination={ pagination }
-						onResend={ handleResend }
-						onCancel={ handleCancel }
-						onPageChange={ goToPage }
-					/>
-				</>
+					}
+				/>
 			) : (
 				<EmailComposer
 					templates={ templates }

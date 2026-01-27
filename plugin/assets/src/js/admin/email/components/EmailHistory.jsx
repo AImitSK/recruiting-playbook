@@ -1,5 +1,5 @@
 /**
- * EmailHistory - Liste der versendeten E-Mails (shadcn/ui Design)
+ * EmailHistory - Liste der versendeten E-Mails (shadcn/ui Dashboard Design)
  *
  * @package RecruitingPlaybook
  */
@@ -16,6 +16,7 @@ import {
 	ChevronRight,
 	Mail,
 	AlertCircle,
+	MoreHorizontal,
 } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import {
@@ -23,17 +24,21 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
+	CardDescription,
 } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
+import { Select, SelectOption } from '../../components/ui/select';
+import { Spinner } from '../../components/ui/spinner';
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '../../components/ui/table';
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '../../components/ui/alert-dialog';
 
 // DOMPurify-Konfiguration: Nur sichere Tags für E-Mail-Inhalte
 const DOMPURIFY_CONFIG = {
@@ -43,18 +48,28 @@ const DOMPURIFY_CONFIG = {
 };
 
 /**
- * Status Badge Komponente
+ * Status Badge Komponente - shadcn/ui style
  */
 function StatusBadge( { status } ) {
 	const config = {
-		sent: { label: __( 'Gesendet', 'recruiting-playbook' ), color: '#2fac66', bg: '#e6f5ec' },
-		failed: { label: __( 'Fehlgeschlagen', 'recruiting-playbook' ), color: '#d63638', bg: '#ffe6e6' },
-		pending: { label: __( 'Ausstehend', 'recruiting-playbook' ), color: '#dba617', bg: '#fff8e6' },
-		scheduled: { label: __( 'Geplant', 'recruiting-playbook' ), color: '#2271b1', bg: '#e6f3ff' },
-		cancelled: { label: __( 'Storniert', 'recruiting-playbook' ), color: '#787c82', bg: '#f0f0f0' },
+		sent: { label: __( 'Gesendet', 'recruiting-playbook' ), variant: 'success' },
+		failed: { label: __( 'Fehlgeschlagen', 'recruiting-playbook' ), variant: 'destructive' },
+		pending: { label: __( 'Ausstehend', 'recruiting-playbook' ), variant: 'warning' },
+		scheduled: { label: __( 'Geplant', 'recruiting-playbook' ), variant: 'secondary' },
+		cancelled: { label: __( 'Storniert', 'recruiting-playbook' ), variant: 'outline' },
 	};
 
 	const statusConfig = config[ status ] || config.pending;
+
+	const variantStyles = {
+		success: { backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0' },
+		destructive: { backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' },
+		warning: { backgroundColor: '#fefce8', color: '#ca8a04', border: '1px solid #fef08a' },
+		secondary: { backgroundColor: '#f4f4f5', color: '#3f3f46', border: '1px solid #e4e4e7' },
+		outline: { backgroundColor: 'transparent', color: '#71717a', border: '1px solid #e4e4e7' },
+	};
+
+	const style = variantStyles[ statusConfig.variant ] || variantStyles.secondary;
 
 	return (
 		<span
@@ -65,8 +80,8 @@ function StatusBadge( { status } ) {
 				borderRadius: '9999px',
 				fontSize: '0.75rem',
 				fontWeight: 500,
-				backgroundColor: statusConfig.bg,
-				color: statusConfig.color,
+				lineHeight: 1,
+				...style,
 			} }
 		>
 			{ statusConfig.label }
@@ -75,7 +90,7 @@ function StatusBadge( { status } ) {
 }
 
 /**
- * Modal Komponente
+ * Modal Komponente - shadcn/ui style
  */
 function Modal( { title, children, onClose } ) {
 	return (
@@ -98,12 +113,14 @@ function Modal( { title, children, onClose } ) {
 			<div
 				style={ {
 					backgroundColor: '#fff',
-					borderRadius: '0.5rem',
-					boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+					borderRadius: '0.75rem',
+					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
 					maxWidth: '700px',
 					width: '100%',
 					maxHeight: '90vh',
-					overflow: 'auto',
+					overflow: 'hidden',
+					display: 'flex',
+					flexDirection: 'column',
 				} }
 				onClick={ ( e ) => e.stopPropagation() }
 			>
@@ -112,89 +129,26 @@ function Modal( { title, children, onClose } ) {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'space-between',
-						padding: '1rem 1.5rem',
+						padding: '1.25rem 1.5rem',
 						borderBottom: '1px solid #e5e7eb',
 					} }
 				>
-					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' } }>
+					<h3 style={ { margin: 0, fontSize: '1.125rem', fontWeight: 600, color: '#18181b' } }>
 						{ title }
 					</h3>
-					<button
-						type="button"
+					<Button
+						variant="ghost"
+						size="icon"
 						onClick={ onClose }
-						style={ {
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							width: '2rem',
-							height: '2rem',
-							background: 'none',
-							border: 'none',
-							borderRadius: '0.375rem',
-							cursor: 'pointer',
-							color: '#6b7280',
-						} }
 					>
 						<X style={ { width: '1.25rem', height: '1.25rem' } } />
-					</button>
+					</Button>
 				</div>
-				{ children }
+				<div style={ { overflow: 'auto', flex: 1 } }>
+					{ children }
+				</div>
 			</div>
 		</div>
-	);
-}
-
-/**
- * Confirm Dialog Komponente
- */
-function ConfirmDialog( { title, message, onConfirm, onCancel, confirmLabel, isDestructive } ) {
-	return (
-		<Modal title={ title } onClose={ onCancel }>
-			<div style={ { padding: '1.5rem' } }>
-				<p style={ { margin: 0, color: '#374151' } }>{ message }</p>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					justifyContent: 'flex-end',
-					gap: '0.5rem',
-					padding: '1rem 1.5rem',
-					borderTop: '1px solid #e5e7eb',
-					backgroundColor: '#f9fafb',
-				} }
-			>
-				<Button variant="outline" onClick={ onCancel }>
-					{ __( 'Abbrechen', 'recruiting-playbook' ) }
-				</Button>
-				<Button
-					onClick={ onConfirm }
-					style={ isDestructive ? { backgroundColor: '#d63638' } : {} }
-				>
-					{ confirmLabel }
-				</Button>
-			</div>
-		</Modal>
-	);
-}
-
-/**
- * Spinner Komponente
- */
-function Spinner() {
-	return (
-		<>
-			<div
-				style={ {
-					width: '1.5rem',
-					height: '1.5rem',
-					border: '2px solid #e5e7eb',
-					borderTopColor: '#1d71b8',
-					borderRadius: '50%',
-					animation: 'spin 0.8s linear infinite',
-				} }
-			/>
-			<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
-		</>
 	);
 }
 
@@ -209,6 +163,7 @@ export function EmailHistory( {
 	onResend,
 	onCancel,
 	onPageChange,
+	action = null, // Button/Action für Header (z.B. "Neue E-Mail")
 } ) {
 	const [ statusFilter, setStatusFilter ] = useState( '' );
 	const [ viewingEmail, setViewingEmail ] = useState( null );
@@ -218,23 +173,18 @@ export function EmailHistory( {
 
 	/**
 	 * E-Mail-Details laden und Modal öffnen
-	 *
-	 * @param {Object} email E-Mail aus der Liste
 	 */
 	const handleViewEmail = useCallback( async ( email ) => {
 		setViewingLoading( true );
-		setViewingEmail( email ); // Zeige erstmal die Basisdaten
+		setViewingEmail( email );
 
 		try {
-			// Vollständige E-Mail-Details laden (inkl. body_html)
 			const fullEmail = await apiFetch( {
 				path: `/recruiting/v1/emails/log/${ email.id }`,
 			} );
-
 			setViewingEmail( fullEmail );
 		} catch ( err ) {
 			console.error( 'Error fetching email details:', err );
-			// Bei Fehler: Basisdaten behalten
 		} finally {
 			setViewingLoading( false );
 		}
@@ -266,8 +216,11 @@ export function EmailHistory( {
 			return '-';
 		}
 		return new Date( date ).toLocaleString( 'de-DE', {
-			dateStyle: 'medium',
-			timeStyle: 'short',
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
 		} );
 	};
 
@@ -293,8 +246,8 @@ export function EmailHistory( {
 
 	if ( loading ) {
 		return (
-			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem', gap: '0.75rem', color: '#6b7280' } }>
-				<Spinner />
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem', gap: '0.75rem', color: '#71717a' } }>
+				<Spinner size="default" />
 				<span>{ __( 'Lade E-Mail-Verlauf...', 'recruiting-playbook' ) }</span>
 			</div>
 		);
@@ -307,151 +260,189 @@ export function EmailHistory( {
 					style={ {
 						display: 'flex',
 						alignItems: 'center',
-						gap: '0.5rem',
-						padding: '0.75rem 1rem',
-						backgroundColor: '#ffe6e6',
-						borderLeft: '4px solid #d63638',
-						borderRadius: '0.375rem',
-						marginBottom: '1rem',
-						color: '#d63638',
+						gap: '0.75rem',
+						padding: '1rem',
+						backgroundColor: '#fef2f2',
+						border: '1px solid #fecaca',
+						borderRadius: '0.5rem',
+						marginBottom: '1.5rem',
+						color: '#dc2626',
 						fontSize: '0.875rem',
 					} }
 				>
-					<AlertCircle style={ { width: '1rem', height: '1rem', flexShrink: 0 } } />
+					<AlertCircle style={ { width: '1.25rem', height: '1.25rem', flexShrink: 0 } } />
 					{ error }
 				</div>
 			) }
 
-			<Card>
-				<CardHeader>
-					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' } }>
-						<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-							{ __( 'E-Mails', 'recruiting-playbook' ) }
-							{ emails.length > 0 && (
-								<Badge variant="secondary">{ emails.length }</Badge>
-							) }
-						</CardTitle>
-						<select
-							value={ statusFilter }
-							onChange={ ( e ) => setStatusFilter( e.target.value ) }
-							style={ {
-								padding: '0.5rem 2rem 0.5rem 0.75rem',
-								border: '1px solid #e5e7eb',
-								borderRadius: '0.375rem',
-								fontSize: '0.875rem',
-								backgroundColor: '#fff',
-								cursor: 'pointer',
-							} }
-						>
-							{ statusOptions.map( ( option ) => (
-								<option key={ option.value } value={ option.value }>
-									{ option.label }
-								</option>
-							) ) }
-						</select>
+			<Card style={ { border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' } }>
+				<CardHeader style={ { padding: '20px 24px 16px 24px' } }>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' } }>
+						<div style={ { display: 'flex', alignItems: 'center', gap: '1rem' } }>
+							<div>
+								<CardTitle style={ { fontSize: '1.125rem', fontWeight: 600, color: '#18181b', margin: 0 } }>
+									{ __( 'E-Mail Verlauf', 'recruiting-playbook' ) }
+								</CardTitle>
+								<CardDescription style={ { marginTop: '4px', fontSize: '0.875rem', color: '#71717a' } }>
+									{ emails.length > 0
+										? `${ emails.length } ${ emails.length === 1 ? __( 'E-Mail', 'recruiting-playbook' ) : __( 'E-Mails', 'recruiting-playbook' ) }`
+										: __( 'Keine E-Mails vorhanden', 'recruiting-playbook' )
+									}
+								</CardDescription>
+							</div>
+						</div>
+						<div style={ { display: 'flex', alignItems: 'center', gap: '12px' } }>
+							<Select
+								value={ statusFilter }
+								onChange={ ( e ) => setStatusFilter( e.target.value ) }
+								style={ { minWidth: '160px' } }
+							>
+								{ statusOptions.map( ( option ) => (
+									<SelectOption key={ option.value } value={ option.value }>
+										{ option.label }
+									</SelectOption>
+								) ) }
+							</Select>
+							{ action }
+						</div>
 					</div>
 				</CardHeader>
 
-				<CardContent>
+				<CardContent style={ { padding: 0 } }>
 					{ filteredEmails.length === 0 ? (
-						<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
-							<Mail style={ { width: '3rem', height: '3rem', marginBottom: '0.75rem', opacity: 0.5 } } />
-							<p>{ __( 'Keine E-Mails gefunden.', 'recruiting-playbook' ) }</p>
+						<div style={ { textAlign: 'center', padding: '4rem 2rem', color: '#71717a' } }>
+							<Mail style={ { width: '3rem', height: '3rem', margin: '0 auto 1rem', opacity: 0.3 } } />
+							<p style={ { margin: 0, fontSize: '0.875rem' } }>
+								{ __( 'Keine E-Mails gefunden.', 'recruiting-playbook' ) }
+							</p>
 						</div>
 					) : (
 						<>
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>{ __( 'Datum', 'recruiting-playbook' ) }</TableHead>
-										<TableHead>{ __( 'Empfänger', 'recruiting-playbook' ) }</TableHead>
-										<TableHead>{ __( 'Betreff', 'recruiting-playbook' ) }</TableHead>
-										<TableHead>{ __( 'Status', 'recruiting-playbook' ) }</TableHead>
-										<TableHead style={ { textAlign: 'right' } }>{ __( 'Aktionen', 'recruiting-playbook' ) }</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{ filteredEmails.map( ( email ) => (
-										<TableRow key={ email.id }>
-											<TableCell style={ { whiteSpace: 'nowrap' } }>
-												{ email.status === 'scheduled'
-													? formatDate( email.scheduled_at )
-													: formatDate( email.sent_at || email.created_at )
-												}
-											</TableCell>
-											<TableCell>{ email.recipient?.email || email.recipient_email }</TableCell>
-											<TableCell>
-												<button
-													type="button"
-													onClick={ () => handleViewEmail( email ) }
-													style={ {
-														background: 'none',
-														border: 'none',
-														padding: 0,
-														color: '#1d71b8',
-														cursor: 'pointer',
-														textDecoration: 'none',
-														fontSize: 'inherit',
-														textAlign: 'left',
-													} }
+							<div style={ { overflowX: 'auto' } }>
+								<table style={ { width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' } }>
+									<thead>
+										<tr style={ { backgroundColor: '#fafafa', borderBottom: '1px solid #e5e7eb' } }>
+											<th style={ { padding: '12px 16px', paddingLeft: '24px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
+												{ __( 'Datum', 'recruiting-playbook' ) }
+											</th>
+											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
+												{ __( 'Empfänger', 'recruiting-playbook' ) }
+											</th>
+											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
+												{ __( 'Betreff', 'recruiting-playbook' ) }
+											</th>
+											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
+												{ __( 'Status', 'recruiting-playbook' ) }
+											</th>
+											<th style={ { padding: '12px 16px', paddingRight: '24px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap', width: '100px' } }>
+												{ __( 'Aktionen', 'recruiting-playbook' ) }
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{ filteredEmails.map( ( email, index ) => (
+											<tr
+												key={ email.id }
+												style={ {
+													borderBottom: index < filteredEmails.length - 1 ? '1px solid #e5e7eb' : 'none',
+													transition: 'background-color 150ms',
+												} }
+												onMouseEnter={ ( e ) => { e.currentTarget.style.backgroundColor = '#fafafa'; } }
+												onMouseLeave={ ( e ) => { e.currentTarget.style.backgroundColor = 'transparent'; } }
+											>
+												<td
+													style={ { padding: '16px', paddingLeft: '24px', whiteSpace: 'nowrap', color: '#71717a' } }
+													title={ email.status === 'scheduled' ? formatDate( email.scheduled_at ) : formatDate( email.sent_at || email.created_at ) }
 												>
-													{ email.subject }
-												</button>
-											</TableCell>
-											<TableCell>
-												<StatusBadge status={ email.status } />
-											</TableCell>
-											<TableCell>
-												<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.25rem' } }>
-													<Button
-														variant="ghost"
-														size="icon"
+													{ email.status === 'scheduled'
+														? formatDate( email.scheduled_at )
+														: formatDate( email.sent_at || email.created_at )
+													}
+												</td>
+												<td
+													style={ { padding: '16px', fontWeight: 500, color: '#18181b', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+													title={ email.recipient?.email || email.recipient_email }
+												>
+													{ email.recipient?.email || email.recipient_email }
+												</td>
+												<td style={ { padding: '16px', maxWidth: '280px' } }>
+													<button
+														type="button"
 														onClick={ () => handleViewEmail( email ) }
-														title={ __( 'Anzeigen', 'recruiting-playbook' ) }
+														title={ email.subject }
+														style={ {
+															background: 'none',
+															border: 'none',
+															padding: 0,
+															color: '#18181b',
+															cursor: 'pointer',
+															fontSize: '0.875rem',
+															textAlign: 'left',
+															maxWidth: '100%',
+															overflow: 'hidden',
+															textOverflow: 'ellipsis',
+															whiteSpace: 'nowrap',
+															display: 'block',
+														} }
+														onMouseEnter={ ( e ) => { e.currentTarget.style.color = '#1d71b8'; } }
+														onMouseLeave={ ( e ) => { e.currentTarget.style.color = '#18181b'; } }
 													>
-														<Eye style={ { width: '1rem', height: '1rem' } } />
-													</Button>
-													{ email.status === 'failed' && (
+														{ email.subject }
+													</button>
+												</td>
+												<td style={ { padding: '16px' } }>
+													<StatusBadge status={ email.status } />
+												</td>
+												<td style={ { padding: '16px', paddingRight: '24px' } }>
+													<div style={ { display: 'flex', gap: '4px' } }>
 														<Button
 															variant="ghost"
 															size="icon"
-															onClick={ () => setConfirmResend( email ) }
-															title={ __( 'Erneut senden', 'recruiting-playbook' ) }
+															onClick={ () => handleViewEmail( email ) }
+															title={ __( 'Anzeigen', 'recruiting-playbook' ) }
 														>
-															<RefreshCw style={ { width: '1rem', height: '1rem' } } />
+															<Eye style={ { width: '1rem', height: '1rem' } } />
 														</Button>
-													) }
-													{ email.can_cancel && (
-														<Button
-															variant="ghost"
-															size="icon"
-															onClick={ () => setConfirmCancel( email ) }
-															title={ __( 'Stornieren', 'recruiting-playbook' ) }
-															style={ { color: '#d63638' } }
-														>
-															<X style={ { width: '1rem', height: '1rem' } } />
-														</Button>
-													) }
-												</div>
-											</TableCell>
-										</TableRow>
-									) ) }
-								</TableBody>
-							</Table>
+														{ email.status === 'failed' && (
+															<Button
+																variant="ghost"
+																size="icon"
+																onClick={ () => setConfirmResend( email ) }
+																title={ __( 'Erneut senden', 'recruiting-playbook' ) }
+															>
+																<RefreshCw style={ { width: '1rem', height: '1rem' } } />
+															</Button>
+														) }
+														{ email.can_cancel && (
+															<Button
+																variant="ghost"
+																size="icon"
+																onClick={ () => setConfirmCancel( email ) }
+																title={ __( 'Stornieren', 'recruiting-playbook' ) }
+															>
+																<X style={ { width: '1rem', height: '1rem', color: '#dc2626' } } />
+															</Button>
+														) }
+													</div>
+												</td>
+											</tr>
+										) ) }
+									</tbody>
+								</table>
+							</div>
 
-							{ /* Pagination */ }
+							{ /* Pagination - shadcn/ui style */ }
 							{ pagination.pages > 1 && (
 								<div
 									style={ {
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'space-between',
-										padding: '0.75rem 0',
-										marginTop: '1rem',
+										padding: '1rem 1.5rem',
 										borderTop: '1px solid #e5e7eb',
 									} }
 								>
-									<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
+									<span style={ { fontSize: '0.875rem', color: '#71717a' } }>
 										{ __( 'Seite', 'recruiting-playbook' ) } { pagination.page } { __( 'von', 'recruiting-playbook' ) } { pagination.pages }
 									</span>
 									<div style={ { display: 'flex', gap: '0.5rem' } }>
@@ -461,7 +452,8 @@ export function EmailHistory( {
 											disabled={ pagination.page <= 1 }
 											onClick={ () => onPageChange && onPageChange( pagination.page - 1 ) }
 										>
-											<ChevronLeft style={ { width: '1rem', height: '1rem' } } />
+											<ChevronLeft style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
+											{ __( 'Zurück', 'recruiting-playbook' ) }
 										</Button>
 										<Button
 											variant="outline"
@@ -469,7 +461,8 @@ export function EmailHistory( {
 											disabled={ pagination.page >= pagination.pages }
 											onClick={ () => onPageChange && onPageChange( pagination.page + 1 ) }
 										>
-											<ChevronRight style={ { width: '1rem', height: '1rem' } } />
+											{ __( 'Weiter', 'recruiting-playbook' ) }
+											<ChevronRight style={ { width: '1rem', height: '1rem', marginLeft: '0.25rem' } } />
 										</Button>
 									</div>
 								</div>
@@ -483,56 +476,69 @@ export function EmailHistory( {
 			{ viewingEmail && (
 				<Modal title={ viewingEmail.subject } onClose={ () => setViewingEmail( null ) }>
 					<div style={ { padding: '1.5rem' } }>
-						<div style={ { marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-							<div style={ { display: 'flex', gap: '0.5rem', fontSize: '0.875rem' } }>
-								<strong style={ { color: '#6b7280', minWidth: '80px' } }>{ __( 'Empfänger', 'recruiting-playbook' ) }:</strong>
-								<span style={ { color: '#1f2937' } }>{ viewingEmail.recipient?.email || viewingEmail.recipient_email }</span>
-							</div>
-							<div style={ { display: 'flex', gap: '0.5rem', fontSize: '0.875rem' } }>
-								<strong style={ { color: '#6b7280', minWidth: '80px' } }>{ __( 'Datum', 'recruiting-playbook' ) }:</strong>
-								<span style={ { color: '#1f2937' } }>{ formatDate( viewingEmail.sent_at || viewingEmail.created_at ) }</span>
-							</div>
-							<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem' } }>
-								<strong style={ { color: '#6b7280', minWidth: '80px' } }>{ __( 'Status', 'recruiting-playbook' ) }:</strong>
-								<StatusBadge status={ viewingEmail.status } />
-							</div>
-							{ viewingEmail.error_message && (
-								<div
-									style={ {
-										display: 'flex',
-										alignItems: 'center',
-										gap: '0.5rem',
-										padding: '0.5rem 0.75rem',
-										backgroundColor: '#ffe6e6',
-										borderRadius: '0.375rem',
-										marginTop: '0.5rem',
-										color: '#d63638',
-										fontSize: '0.875rem',
-									} }
-								>
-									<AlertCircle style={ { width: '1rem', height: '1rem', flexShrink: 0 } } />
-									{ viewingEmail.error_message }
-								</div>
-							) }
+						{ /* Meta-Informationen */ }
+						<div
+							style={ {
+								display: 'grid',
+								gridTemplateColumns: 'auto 1fr',
+								gap: '0.5rem 1rem',
+								padding: '1rem',
+								backgroundColor: '#fafafa',
+								borderRadius: '0.5rem',
+								fontSize: '0.875rem',
+								marginBottom: '1.5rem',
+							} }
+						>
+							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Empfänger', 'recruiting-playbook' ) }:</span>
+							<span style={ { color: '#18181b' } }>{ viewingEmail.recipient?.email || viewingEmail.recipient_email }</span>
+
+							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Datum', 'recruiting-playbook' ) }:</span>
+							<span style={ { color: '#18181b' } }>{ formatDate( viewingEmail.sent_at || viewingEmail.created_at ) }</span>
+
+							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Status', 'recruiting-playbook' ) }:</span>
+							<span><StatusBadge status={ viewingEmail.status } /></span>
 						</div>
 
-						<div style={ { borderTop: '1px solid #e5e7eb', paddingTop: '1rem' } }>
-							<h4 style={ { margin: '0 0 0.75rem 0', fontSize: '0.875rem', fontWeight: 600, color: '#374151' } }>
+						{ viewingEmail.error_message && (
+							<div
+								style={ {
+									display: 'flex',
+									alignItems: 'center',
+									gap: '0.75rem',
+									padding: '1rem',
+									backgroundColor: '#fef2f2',
+									border: '1px solid #fecaca',
+									borderRadius: '0.5rem',
+									marginBottom: '1.5rem',
+									color: '#dc2626',
+									fontSize: '0.875rem',
+								} }
+							>
+								<AlertCircle style={ { width: '1.25rem', height: '1.25rem', flexShrink: 0 } } />
+								{ viewingEmail.error_message }
+							</div>
+						) }
+
+						{ /* E-Mail-Inhalt */ }
+						<div>
+							<h4 style={ { margin: '0 0 0.75rem 0', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a' } }>
 								{ __( 'Nachricht', 'recruiting-playbook' ) }
 							</h4>
 							{ viewingLoading ? (
-								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', color: '#6b7280' } }>
-									<Spinner />
-									<span style={ { marginLeft: '0.5rem' } }>{ __( 'Lade...', 'recruiting-playbook' ) }</span>
+								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem', color: '#71717a' } }>
+									<Spinner size="default" />
+									<span style={ { marginLeft: '0.75rem' } }>{ __( 'Lade...', 'recruiting-playbook' ) }</span>
 								</div>
 							) : (
 								<div
 									style={ {
-										padding: '1rem',
-										backgroundColor: '#f9fafb',
-										borderRadius: '0.375rem',
+										padding: '1.25rem',
+										backgroundColor: '#fafafa',
+										borderRadius: '0.5rem',
+										border: '1px solid #e5e7eb',
 										fontSize: '0.875rem',
-										lineHeight: 1.6,
+										lineHeight: 1.7,
+										color: '#18181b',
 									} }
 									dangerouslySetInnerHTML={ {
 										__html: DOMPurify.sanitize( viewingEmail.body_html || viewingEmail.body || '', DOMPURIFY_CONFIG ),
@@ -545,27 +551,40 @@ export function EmailHistory( {
 			) }
 
 			{ /* Erneut senden Bestätigung */ }
-			{ confirmResend && (
-				<ConfirmDialog
-					title={ __( 'E-Mail erneut senden', 'recruiting-playbook' ) }
-					message={ __( 'Möchten Sie diese E-Mail erneut senden?', 'recruiting-playbook' ) }
-					confirmLabel={ __( 'Erneut senden', 'recruiting-playbook' ) }
-					onConfirm={ handleResendConfirm }
-					onCancel={ () => setConfirmResend( null ) }
-				/>
-			) }
+			<AlertDialog open={ !! confirmResend } onOpenChange={ () => setConfirmResend( null ) }>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{ __( 'E-Mail erneut senden', 'recruiting-playbook' ) }</AlertDialogTitle>
+						<AlertDialogDescription>
+							{ __( 'Möchten Sie diese E-Mail erneut senden?', 'recruiting-playbook' ) }
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>{ __( 'Abbrechen', 'recruiting-playbook' ) }</AlertDialogCancel>
+						<AlertDialogAction onClick={ handleResendConfirm }>
+							{ __( 'Erneut senden', 'recruiting-playbook' ) }
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 
 			{ /* Stornieren Bestätigung */ }
-			{ confirmCancel && (
-				<ConfirmDialog
-					title={ __( 'E-Mail stornieren', 'recruiting-playbook' ) }
-					message={ __( 'Möchten Sie diese geplante E-Mail stornieren?', 'recruiting-playbook' ) }
-					confirmLabel={ __( 'Stornieren', 'recruiting-playbook' ) }
-					isDestructive
-					onConfirm={ handleCancelConfirm }
-					onCancel={ () => setConfirmCancel( null ) }
-				/>
-			) }
+			<AlertDialog open={ !! confirmCancel } onOpenChange={ () => setConfirmCancel( null ) }>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{ __( 'E-Mail stornieren', 'recruiting-playbook' ) }</AlertDialogTitle>
+						<AlertDialogDescription>
+							{ __( 'Möchten Sie diese geplante E-Mail stornieren?', 'recruiting-playbook' ) }
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>{ __( 'Abbrechen', 'recruiting-playbook' ) }</AlertDialogCancel>
+						<AlertDialogAction onClick={ handleCancelConfirm } variant="destructive">
+							{ __( 'Stornieren', 'recruiting-playbook' ) }
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
@@ -597,4 +616,5 @@ EmailHistory.propTypes = {
 	onResend: PropTypes.func,
 	onCancel: PropTypes.func,
 	onPageChange: PropTypes.func,
+	action: PropTypes.node,
 };

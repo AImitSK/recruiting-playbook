@@ -47,17 +47,26 @@ const Button = forwardRef(
 				backgroundColor: '#1d71b8',
 				color: '#ffffff',
 				border: 'none',
+				borderRadius: '0.375rem',
 			},
 			outline: {
 				backgroundColor: 'transparent',
 				color: '#1d71b8',
 				border: '1px solid #1d71b8',
+				borderRadius: '0.375rem',
+			},
+			ghost: {
+				backgroundColor: 'transparent',
+				color: '#374151',
+				border: 'none',
+				borderRadius: '0.375rem',
 			},
 		};
 
 		const hoverStyles = {
 			default: { backgroundColor: '#36a9e1' },
 			outline: { backgroundColor: '#f0f7fc' },
+			ghost: { backgroundColor: '#f3f4f6' },
 		};
 
 		const baseStyle = variantStyles[ variant ] || variantStyles.default;

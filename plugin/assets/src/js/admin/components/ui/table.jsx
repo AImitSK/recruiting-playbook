@@ -1,5 +1,5 @@
 /**
- * Table Component (shadcn/ui)
+ * Table Component (shadcn/ui style)
  *
  * @package RecruitingPlaybook
  */
@@ -8,10 +8,22 @@ import { forwardRef } from '@wordpress/element';
 import { cn } from '../../lib/utils';
 
 const Table = forwardRef( ( { className, ...props }, ref ) => (
-	<div className="rp-relative rp-w-full rp-overflow-auto">
+	<div
+		className={ cn( 'rp-table-wrapper', className ) }
+		style={ {
+			position: 'relative',
+			width: '100%',
+			overflow: 'auto',
+		} }
+	>
 		<table
 			ref={ ref }
-			className={ cn( 'rp-w-full rp-caption-bottom rp-text-sm', className ) }
+			style={ {
+				width: '100%',
+				captionSide: 'bottom',
+				fontSize: '0.875rem',
+				borderCollapse: 'collapse',
+			} }
 			{ ...props }
 		/>
 	</div>
@@ -21,7 +33,10 @@ Table.displayName = 'Table';
 const TableHeader = forwardRef( ( { className, ...props }, ref ) => (
 	<thead
 		ref={ ref }
-		className={ cn( '[&_tr]:rp-border-b', className ) }
+		className={ cn( 'rp-table-header', className ) }
+		style={ {
+			backgroundColor: '#fafafa',
+		} }
 		{ ...props }
 	/>
 ) );
@@ -30,7 +45,7 @@ TableHeader.displayName = 'TableHeader';
 const TableBody = forwardRef( ( { className, ...props }, ref ) => (
 	<tbody
 		ref={ ref }
-		className={ cn( '[&_tr:last-child]:rp-border-0', className ) }
+		className={ cn( 'rp-table-body', className ) }
 		{ ...props }
 	/>
 ) );
@@ -39,22 +54,35 @@ TableBody.displayName = 'TableBody';
 const TableFooter = forwardRef( ( { className, ...props }, ref ) => (
 	<tfoot
 		ref={ ref }
-		className={ cn(
-			'rp-border-t rp-bg-muted/50 rp-font-medium [&>tr]:last:rp-border-b-0',
-			className
-		) }
+		className={ cn( 'rp-table-footer', className ) }
+		style={ {
+			borderTop: '1px solid #e5e7eb',
+			backgroundColor: 'rgba(250, 250, 250, 0.5)',
+			fontWeight: 500,
+		} }
 		{ ...props }
 	/>
 ) );
 TableFooter.displayName = 'TableFooter';
 
-const TableRow = forwardRef( ( { className, ...props }, ref ) => (
+const TableRow = forwardRef( ( { className, isHeader = false, ...props }, ref ) => (
 	<tr
 		ref={ ref }
-		className={ cn(
-			'rp-border-b rp-transition-colors hover:rp-bg-muted/50 data-[state=selected]:rp-bg-muted',
-			className
-		) }
+		className={ cn( 'rp-table-row', className ) }
+		style={ {
+			borderBottom: '1px solid #e5e7eb',
+			transition: 'background-color 150ms ease',
+		} }
+		onMouseEnter={ ( e ) => {
+			if ( ! isHeader ) {
+				e.currentTarget.style.backgroundColor = '#fafafa';
+			}
+		} }
+		onMouseLeave={ ( e ) => {
+			if ( ! isHeader ) {
+				e.currentTarget.style.backgroundColor = 'transparent';
+			}
+		} }
 		{ ...props }
 	/>
 ) );
@@ -63,11 +91,19 @@ TableRow.displayName = 'TableRow';
 const TableHead = forwardRef( ( { className, ...props }, ref ) => (
 	<th
 		ref={ ref }
-		className={ cn(
-			'rp-h-12 rp-px-4 rp-text-left rp-align-middle rp-font-medium rp-text-muted-foreground [&:has([role=checkbox])]:rp-pr-0',
-			className
-		) }
-		style={ { padding: '0.75rem 1rem', fontWeight: 500, color: 'hsl(215.4, 16.3%, 46.9%)' } }
+		className={ cn( 'rp-table-head', className ) }
+		style={ {
+			height: '3rem',
+			padding: '0.75rem 1rem',
+			textAlign: 'left',
+			verticalAlign: 'middle',
+			fontWeight: 500,
+			fontSize: '0.75rem',
+			textTransform: 'uppercase',
+			letterSpacing: '0.05em',
+			color: '#71717a',
+			whiteSpace: 'nowrap',
+		} }
 		{ ...props }
 	/>
 ) );
@@ -76,11 +112,12 @@ TableHead.displayName = 'TableHead';
 const TableCell = forwardRef( ( { className, ...props }, ref ) => (
 	<td
 		ref={ ref }
-		className={ cn(
-			'rp-p-4 rp-align-middle [&:has([role=checkbox])]:rp-pr-0',
-			className
-		) }
-		style={ { padding: '0.75rem 1rem' } }
+		className={ cn( 'rp-table-cell', className ) }
+		style={ {
+			padding: '1rem',
+			verticalAlign: 'middle',
+			color: '#1f2937',
+		} }
 		{ ...props }
 	/>
 ) );
@@ -89,7 +126,12 @@ TableCell.displayName = 'TableCell';
 const TableCaption = forwardRef( ( { className, ...props }, ref ) => (
 	<caption
 		ref={ ref }
-		className={ cn( 'rp-mt-4 rp-text-sm rp-text-muted-foreground', className ) }
+		className={ cn( 'rp-table-caption', className ) }
+		style={ {
+			marginTop: '1rem',
+			fontSize: '0.875rem',
+			color: '#71717a',
+		} }
 		{ ...props }
 	/>
 ) );

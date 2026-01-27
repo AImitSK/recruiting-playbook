@@ -4,22 +4,17 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import PropTypes from 'prop-types';
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	TextControl,
-	TextareaControl,
-	SelectControl,
-	ToggleControl,
-	Notice,
-	Spinner,
-	Flex,
-	FlexItem,
-} from '@wordpress/components';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Select, SelectOption } from '../../components/ui/select';
+import { Switch } from '../../components/ui/switch';
+import { Label } from '../../components/ui/label';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Spinner } from '../../components/ui/spinner';
+import { RichTextEditor } from '../../components/ui/rich-text-editor';
 import { PlaceholderPicker } from './PlaceholderPicker';
 import { EmailPreview } from './EmailPreview';
 import { replacePlaceholders } from '../utils';
@@ -188,98 +183,149 @@ export function TemplateEditor( {
 	return (
 		<div className="rp-template-editor">
 			{ error && (
-				<Notice status="error" isDismissible={ false }>
-					{ error }
-				</Notice>
+				<Alert variant="destructive" style={ { marginBottom: '1rem' } }>
+					<AlertDescription>{ error }</AlertDescription>
+				</Alert>
 			) }
 
 			<Card>
 				<CardHeader>
-					<Flex>
-						<FlexItem>
-							<h2>
-								{ isNew
-									? ( i18n.newTemplate || 'Neues Template' )
-									: ( i18n.editTemplate || 'Template bearbeiten' )
-								}
-							</h2>
-						</FlexItem>
-						<FlexItem>
-							<div className="rp-template-editor__tabs">
-								<Button
-									variant={ activeTab === 'edit' ? 'primary' : 'secondary' }
-									onClick={ () => setActiveTab( 'edit' ) }
-								>
-									{ i18n.edit || 'Bearbeiten' }
-								</Button>
-								<Button
-									variant={ activeTab === 'preview' ? 'primary' : 'secondary' }
-									onClick={ () => setActiveTab( 'preview' ) }
-								>
-									{ i18n.preview || 'Vorschau' }
-								</Button>
-							</div>
-						</FlexItem>
-					</Flex>
+					<div
+						style={ {
+							display: 'flex',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+							flexWrap: 'wrap',
+							gap: '1rem',
+						} }
+					>
+						<CardTitle>
+							{ isNew
+								? ( i18n.newTemplate || 'Neues Template' )
+								: ( i18n.editTemplate || 'Template bearbeiten' )
+							}
+						</CardTitle>
+						<div
+							className="rp-template-editor__tabs"
+							style={ { display: 'flex', gap: '0.25rem' } }
+						>
+							<Button
+								variant={ activeTab === 'edit' ? 'default' : 'outline' }
+								size="sm"
+								onClick={ () => setActiveTab( 'edit' ) }
+							>
+								{ i18n.edit || 'Bearbeiten' }
+							</Button>
+							<Button
+								variant={ activeTab === 'preview' ? 'default' : 'outline' }
+								size="sm"
+								onClick={ () => setActiveTab( 'preview' ) }
+							>
+								{ i18n.preview || 'Vorschau' }
+							</Button>
+						</div>
+					</div>
 				</CardHeader>
 
-				<CardBody>
+				<CardContent>
 					{ activeTab === 'edit' ? (
-						<div className="rp-template-editor__form">
+						<div
+							className="rp-template-editor__form"
+							style={ {
+								display: 'grid',
+								gridTemplateColumns: '1fr 280px',
+								gap: '1.5rem',
+							} }
+						>
 							<div className="rp-template-editor__main">
-								<TextControl
-									label={ i18n.name || 'Name' }
-									value={ formData.name }
-									onChange={ ( value ) => updateField( 'name', value ) }
-									disabled={ isSystem }
-									help={ validationErrors.name }
-									className={ validationErrors.name ? 'has-error' : '' }
-								/>
+								<div style={ { marginBottom: '1rem' } }>
+									<Label htmlFor="template-name">{ i18n.name || 'Name' }</Label>
+									<Input
+										id="template-name"
+										value={ formData.name }
+										onChange={ ( e ) => updateField( 'name', e.target.value ) }
+										disabled={ isSystem }
+										style={ validationErrors.name ? { borderColor: '#dc2626' } : {} }
+									/>
+									{ validationErrors.name && (
+										<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+											{ validationErrors.name }
+										</p>
+									) }
+								</div>
 
-								<Flex>
-									<FlexItem isBlock>
-										<SelectControl
-											label={ i18n.category || 'Kategorie' }
+								<div
+									style={ {
+										display: 'grid',
+										gridTemplateColumns: '1fr auto',
+										gap: '1rem',
+										marginBottom: '1rem',
+									} }
+								>
+									<div>
+										<Label htmlFor="template-category">{ i18n.category || 'Kategorie' }</Label>
+										<Select
+											id="template-category"
 											value={ formData.category }
-											options={ categoryOptions }
-											onChange={ ( value ) => updateField( 'category', value ) }
+											onChange={ ( e ) => updateField( 'category', e.target.value ) }
 											disabled={ isSystem }
-										/>
-									</FlexItem>
-									<FlexItem>
-										<ToggleControl
-											label={ i18n.active || 'Aktiv' }
+										>
+											{ categoryOptions.map( ( { value, label } ) => (
+												<SelectOption key={ value } value={ value }>{ label }</SelectOption>
+											) ) }
+										</Select>
+									</div>
+									<div style={ { display: 'flex', alignItems: 'flex-end', gap: '0.5rem', paddingBottom: '0.25rem' } }>
+										<Switch
+											id="template-active"
 											checked={ formData.is_active }
-											onChange={ ( value ) => updateField( 'is_active', value ) }
+											onCheckedChange={ ( value ) => updateField( 'is_active', value ) }
 										/>
-									</FlexItem>
-								</Flex>
+										<Label htmlFor="template-active" style={ { marginBottom: 0 } }>
+											{ i18n.active || 'Aktiv' }
+										</Label>
+									</div>
+								</div>
 
-								<div className="rp-template-editor__subject-row">
-									<TextControl
-										label={ i18n.subject || 'Betreff' }
+								<div className="rp-template-editor__subject-row" style={ { marginBottom: '1rem' } }>
+									<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' } }>
+										<Label htmlFor="template-subject" style={ { marginBottom: 0 } }>
+											{ i18n.subject || 'Betreff' }
+										</Label>
+										<PlaceholderPicker
+											placeholders={ placeholders }
+											onSelect={ ( ph ) => insertPlaceholder( ph, 'subject' ) }
+											buttonLabel={ i18n.insertPlaceholder || 'Platzhalter' }
+											compact
+										/>
+									</div>
+									<Input
+										id="template-subject"
 										value={ formData.subject }
-										onChange={ ( value ) => updateField( 'subject', value ) }
-										help={ validationErrors.subject }
-										className={ validationErrors.subject ? 'has-error' : '' }
+										onChange={ ( e ) => updateField( 'subject', e.target.value ) }
+										style={ validationErrors.subject ? { borderColor: '#dc2626' } : {} }
 									/>
-									<PlaceholderPicker
-										placeholders={ placeholders }
-										onSelect={ ( ph ) => insertPlaceholder( ph, 'subject' ) }
-										buttonLabel={ i18n.insertPlaceholder || 'Platzhalter' }
-										compact
-									/>
+									{ validationErrors.subject && (
+										<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+											{ validationErrors.subject }
+										</p>
+									) }
 								</div>
 
 								<div className="rp-template-editor__body-row">
-									<TextareaControl
-										label={ i18n.body || 'Inhalt' }
+									<Label htmlFor="template-body">{ i18n.body || 'Inhalt' }</Label>
+									<RichTextEditor
 										value={ formData.body }
 										onChange={ ( value ) => updateField( 'body', value ) }
-										rows={ 15 }
-										help={ validationErrors.body }
-										className={ validationErrors.body ? 'has-error' : '' }
+										placeholder={ i18n.bodyPlaceholder || 'Inhalt eingeben...' }
+										minHeight="300px"
+										style={ validationErrors.body ? { borderColor: '#dc2626' } : {} }
 									/>
+									{ validationErrors.body && (
+										<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+											{ validationErrors.body }
+										</p>
+									) }
 								</div>
 							</div>
 
@@ -298,14 +344,24 @@ export function TemplateEditor( {
 						/>
 					) }
 
-					<div className="rp-template-editor__actions">
-						<Button variant="secondary" onClick={ onCancel } disabled={ saving }>
+					<div
+						className="rp-template-editor__actions"
+						style={ {
+							display: 'flex',
+							justifyContent: 'flex-end',
+							gap: '0.5rem',
+							marginTop: '1.5rem',
+							paddingTop: '1.5rem',
+							borderTop: '1px solid #e5e7eb',
+						} }
+					>
+						<Button variant="outline" onClick={ onCancel } disabled={ saving }>
 							{ i18n.cancel || 'Abbrechen' }
 						</Button>
-						<Button variant="primary" onClick={ handleSave } disabled={ saving }>
+						<Button onClick={ handleSave } disabled={ saving }>
 							{ saving ? (
 								<>
-									<Spinner />
+									<Spinner size="sm" style={ { marginRight: '0.5rem' } } />
 									{ i18n.saving || 'Speichern...' }
 								</>
 							) : (
@@ -313,7 +369,7 @@ export function TemplateEditor( {
 							) }
 						</Button>
 					</div>
-				</CardBody>
+				</CardContent>
 			</Card>
 		</div>
 	);

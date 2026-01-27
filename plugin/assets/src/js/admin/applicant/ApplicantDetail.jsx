@@ -29,6 +29,8 @@ import {
 	CardTitle,
 } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
+import { Spinner } from '../components/ui/spinner';
 import { NotesPanel } from './NotesPanel';
 import { RatingDetailed } from './RatingStars';
 import { Timeline } from './Timeline';
@@ -69,73 +71,6 @@ function formatDate( dateString ) {
 	} );
 }
 
-/**
- * Tab Component - shadcn/ui Style
- */
-function Tab( { active, onClick, children, count } ) {
-	return (
-		<button
-			type="button"
-			onClick={ onClick }
-			style={ {
-				padding: '0.5rem 1rem',
-				fontSize: '0.875rem',
-				fontWeight: 500,
-				color: active ? '#1f2937' : '#6b7280',
-				backgroundColor: active ? '#fff' : 'transparent',
-				border: '1px solid',
-				borderColor: active ? '#e5e7eb' : 'transparent',
-				borderBottomColor: active ? '#fff' : 'transparent',
-				borderRadius: active ? '0.375rem 0.375rem 0 0' : '0.375rem',
-				marginBottom: active ? '-1px' : '0',
-				cursor: 'pointer',
-				display: 'inline-flex',
-				alignItems: 'center',
-				gap: '0.5rem',
-				transition: 'all 0.15s ease',
-			} }
-		>
-			{ children }
-			{ count !== undefined && count > 0 && (
-				<span
-					style={ {
-						backgroundColor: active ? '#1d71b8' : '#e5e7eb',
-						color: active ? '#fff' : '#6b7280',
-						padding: '0.125rem 0.5rem',
-						borderRadius: '9999px',
-						fontSize: '0.75rem',
-						fontWeight: 500,
-						minWidth: '1.25rem',
-						textAlign: 'center',
-					} }
-				>
-					{ count }
-				</span>
-			) }
-		</button>
-	);
-}
-
-/**
- * Loading Spinner
- */
-function Spinner( { size = '1.5rem' } ) {
-	return (
-		<>
-			<div
-				style={ {
-					width: size,
-					height: size,
-					border: '2px solid #e5e7eb',
-					borderTopColor: '#1d71b8',
-					borderRadius: '50%',
-					animation: 'spin 0.8s linear infinite',
-				} }
-			/>
-			<style>{ `@keyframes spin { to { transform: rotate(360deg); } }` }</style>
-		</>
-	);
-}
 
 /**
  * Bewerber-Detailseite Komponente
@@ -218,7 +153,7 @@ export function ApplicantDetail( { applicationId } ) {
 		return (
 			<div className="rp-admin" style={ { padding: '20px 0' } }>
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '0.75rem', color: '#6b7280' } }>
-					<Spinner />
+					<Spinner size="default" />
 					<span>{ __( 'Lade Bewerbung...', 'recruiting-playbook' ) }</span>
 				</div>
 			</div>
@@ -288,25 +223,27 @@ export function ApplicantDetail( { applicationId } ) {
 				</div>
 
 				{ /* Tabs - shadcn/ui Style */ }
-				<div style={ { display: 'flex', gap: '0.25rem', borderBottom: '1px solid #e5e7eb', marginBottom: '1.5rem' } }>
-					<Tab active={ activeTab === 'details' } onClick={ () => setActiveTab( 'details' ) }>
-						{ __( 'Details', 'recruiting-playbook' ) }
-					</Tab>
-					<Tab active={ activeTab === 'documents' } onClick={ () => setActiveTab( 'documents' ) } count={ documentsCount }>
-						{ __( 'Dokumente', 'recruiting-playbook' ) }
-					</Tab>
-					<Tab active={ activeTab === 'notes' } onClick={ () => setActiveTab( 'notes' ) }>
-						{ __( 'Notizen', 'recruiting-playbook' ) }
-					</Tab>
-					<Tab active={ activeTab === 'timeline' } onClick={ () => setActiveTab( 'timeline' ) }>
-						{ __( 'Verlauf', 'recruiting-playbook' ) }
-					</Tab>
-					{ canSendEmails && (
-						<Tab active={ activeTab === 'email' } onClick={ () => setActiveTab( 'email' ) }>
-							{ __( 'E-Mail', 'recruiting-playbook' ) }
-						</Tab>
-					) }
-				</div>
+				<Tabs value={ activeTab } onValueChange={ setActiveTab } style={ { marginBottom: '1.5rem' } }>
+					<TabsList>
+						<TabsTrigger value="details">
+							{ __( 'Details', 'recruiting-playbook' ) }
+						</TabsTrigger>
+						<TabsTrigger value="documents" count={ documentsCount }>
+							{ __( 'Dokumente', 'recruiting-playbook' ) }
+						</TabsTrigger>
+						<TabsTrigger value="notes">
+							{ __( 'Notizen', 'recruiting-playbook' ) }
+						</TabsTrigger>
+						<TabsTrigger value="timeline">
+							{ __( 'Verlauf', 'recruiting-playbook' ) }
+						</TabsTrigger>
+						{ canSendEmails && (
+							<TabsTrigger value="email">
+								{ __( 'E-Mail', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
+					</TabsList>
+				</Tabs>
 
 				{ /* Tab Content */ }
 				<div style={ { display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem' } }>
@@ -378,7 +315,7 @@ export function ApplicantDetail( { applicationId } ) {
 											<option key={ option.value } value={ option.value }>{ option.label }</option>
 										) ) }
 									</select>
-									{ statusChanging && <Spinner size="1rem" /> }
+									{ statusChanging && <Spinner size="sm" /> }
 								</div>
 
 								{ /* Meta */ }
