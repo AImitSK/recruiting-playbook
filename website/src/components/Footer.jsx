@@ -26,6 +26,7 @@ export function Footer() {
               <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/docs">Dokumentation</NavLink>
               <NavLink href="/api">API</NavLink>
+              <NavLink href="/changelog">Changelog</NavLink>
             </div>
           </nav>
         </div>
