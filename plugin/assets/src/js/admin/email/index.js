@@ -7,53 +7,19 @@
  */
 
 import { render, useState, useCallback, useRef, useEffect } from '@wordpress/element';
-import { Notice } from '@wordpress/components';
-import { FileText, PenTool } from 'lucide-react';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
+import { Spinner } from '../components/ui/spinner';
 
 import {
 	TemplateList,
 	TemplateEditor,
 	SignatureList,
 	SignatureEditor,
+	AutomationSettings,
 	ErrorBoundary,
 } from './components';
 import { useTemplates, useSignatures, usePlaceholders } from './hooks';
-
-/**
- * Tab-Button Komponente
- *
- * @param {Object}   props          Props
- * @param {boolean}  props.active   Aktiv?
- * @param {Function} props.onClick  Click-Handler
- * @param {Object}   props.icon     Icon-Komponente
- * @param {string}   props.children Label
- * @return {JSX.Element} Tab-Button
- */
-function TabButton( { active, onClick, icon: Icon, children } ) {
-	return (
-		<button
-			type="button"
-			onClick={ onClick }
-			style={ {
-				display: 'flex',
-				alignItems: 'center',
-				gap: '0.5rem',
-				padding: '0.75rem 1.25rem',
-				border: 'none',
-				borderBottom: active ? '2px solid #1d71b8' : '2px solid transparent',
-				backgroundColor: 'transparent',
-				color: active ? '#1d71b8' : '#6b7280',
-				fontWeight: active ? 600 : 400,
-				fontSize: '0.875rem',
-				cursor: 'pointer',
-				transition: 'all 0.15s ease',
-			} }
-		>
-			{ Icon && <Icon style={ { width: '1rem', height: '1rem' } } /> }
-			{ children }
-		</button>
-	);
-}
 
 /**
  * Haupt-App Komponente
@@ -62,23 +28,24 @@ function TabButton( { active, onClick, icon: Icon, children } ) {
  */
 function EmailTemplatesApp() {
 	// Hauptnavigation: Templates oder Signaturen
-	const [ mainTab, setMainTab ] = useState( 'templates' ); // 'templates' | 'signatures'
+	const [ mainTab, setMainTab ] = useState( 'templates' );
 
 	// Template-Views
-	const [ templateView, setTemplateView ] = useState( 'list' ); // 'list' | 'edit' | 'create'
+	const [ templateView, setTemplateView ] = useState( 'list' );
 	const [ selectedTemplate, setSelectedTemplate ] = useState( null );
 
 	// Signatur-Views
-	const [ signatureView, setSignatureView ] = useState( 'list' ); // 'list' | 'edit' | 'create' | 'company'
+	const [ signatureView, setSignatureView ] = useState( 'list' );
 	const [ selectedSignature, setSelectedSignature ] = useState( null );
 
 	const [ notification, setNotification ] = useState( null );
 
-	// Ref für Notification-Timeout (Memory Leak Prevention)
+	// Ref für Notification-Timeout
 	const notificationTimeoutRef = useRef( null );
 
 	const i18n = window.rpEmailData?.i18n || {};
 	const isAdmin = window.rpEmailData?.isAdmin || false;
+	const logoUrl = window.rpEmailData?.logoUrl || '';
 
 	// Template Hooks
 	const {
@@ -124,12 +91,8 @@ function EmailTemplatesApp() {
 
 	/**
 	 * Benachrichtigung anzeigen
-	 *
-	 * @param {string} message Nachricht
-	 * @param {string} type    Typ ('success' | 'error')
 	 */
 	const showNotification = useCallback( ( message, type = 'success' ) => {
-		// Vorheriges Timeout aufräumen
 		if ( notificationTimeoutRef.current ) {
 			clearTimeout( notificationTimeoutRef.current );
 		}
@@ -144,29 +107,16 @@ function EmailTemplatesApp() {
 
 	// ==================== Template Handlers ====================
 
-	/**
-	 * Template auswählen
-	 *
-	 * @param {Object} template Template
-	 */
 	const handleTemplateSelect = useCallback( ( template ) => {
 		setSelectedTemplate( template );
 		setTemplateView( 'edit' );
 	}, [] );
 
-	/**
-	 * Neues Template erstellen
-	 */
 	const handleTemplateCreate = useCallback( () => {
 		setSelectedTemplate( null );
 		setTemplateView( 'create' );
 	}, [] );
 
-	/**
-	 * Template speichern
-	 *
-	 * @param {Object} data Template-Daten
-	 */
 	const handleTemplateSave = useCallback( async ( data ) => {
 		let result;
 
@@ -183,11 +133,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ selectedTemplate, updateTemplate, createTemplate, showNotification, i18n.templateSaved ] );
 
-	/**
-	 * Template löschen
-	 *
-	 * @param {number} id Template-ID
-	 */
 	const handleTemplateDelete = useCallback( async ( id ) => {
 		const success = await deleteTemplate( id );
 
@@ -196,11 +141,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ deleteTemplate, showNotification, i18n.templateDeleted ] );
 
-	/**
-	 * Template duplizieren
-	 *
-	 * @param {number} id Template-ID
-	 */
 	const handleTemplateDuplicate = useCallback( async ( id ) => {
 		const result = await duplicateTemplate( id );
 
@@ -209,11 +149,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ duplicateTemplate, showNotification, i18n.templateDuplicated ] );
 
-	/**
-	 * Template zurücksetzen
-	 *
-	 * @param {number} id Template-ID
-	 */
 	const handleTemplateReset = useCallback( async ( id ) => {
 		const result = await resetTemplate( id );
 
@@ -222,9 +157,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ resetTemplate, showNotification, i18n.templateReset ] );
 
-	/**
-	 * Template-Bearbeitung abbrechen
-	 */
 	const handleTemplateCancel = useCallback( () => {
 		setTemplateView( 'list' );
 		setSelectedTemplate( null );
@@ -232,37 +164,21 @@ function EmailTemplatesApp() {
 
 	// ==================== Signatur Handlers ====================
 
-	/**
-	 * Signatur auswählen
-	 *
-	 * @param {Object} signature Signatur
-	 */
 	const handleSignatureSelect = useCallback( ( signature ) => {
 		setSelectedSignature( signature );
 		setSignatureView( 'edit' );
 	}, [] );
 
-	/**
-	 * Neue Signatur erstellen
-	 */
 	const handleSignatureCreate = useCallback( () => {
 		setSelectedSignature( null );
 		setSignatureView( 'create' );
 	}, [] );
 
-	/**
-	 * Firmen-Signatur bearbeiten
-	 */
 	const handleCompanySignatureEdit = useCallback( () => {
 		setSelectedSignature( companySignature );
 		setSignatureView( 'company' );
 	}, [ companySignature ] );
 
-	/**
-	 * Signatur speichern
-	 *
-	 * @param {Object} data Signatur-Daten
-	 */
 	const handleSignatureSave = useCallback( async ( data ) => {
 		let result;
 
@@ -281,11 +197,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ signatureView, selectedSignature, updateSignature, createSignature, updateCompanySignature, showNotification, i18n.signatureSaved ] );
 
-	/**
-	 * Signatur löschen
-	 *
-	 * @param {number} id Signatur-ID
-	 */
 	const handleSignatureDelete = useCallback( async ( id ) => {
 		const success = await deleteSignature( id );
 
@@ -294,11 +205,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ deleteSignature, showNotification, i18n.signatureDeleted ] );
 
-	/**
-	 * Signatur als Standard setzen
-	 *
-	 * @param {number} id Signatur-ID
-	 */
 	const handleSetDefaultSignature = useCallback( async ( id ) => {
 		const success = await setDefaultSignature( id );
 
@@ -307,9 +213,6 @@ function EmailTemplatesApp() {
 		}
 	}, [ setDefaultSignature, showNotification, i18n.signatureSetDefault ] );
 
-	/**
-	 * Signatur-Bearbeitung abbrechen
-	 */
 	const handleSignatureCancel = useCallback( () => {
 		setSignatureView( 'list' );
 		setSelectedSignature( null );
@@ -317,14 +220,8 @@ function EmailTemplatesApp() {
 
 	// ==================== Render ====================
 
-	/**
-	 * Tab wechseln
-	 *
-	 * @param {string} tab Tab-Name
-	 */
 	const handleTabChange = useCallback( ( tab ) => {
 		setMainTab( tab );
-		// View zurücksetzen beim Tab-Wechsel
 		if ( tab === 'templates' ) {
 			setTemplateView( 'list' );
 			setSelectedTemplate( null );
@@ -334,117 +231,127 @@ function EmailTemplatesApp() {
 		}
 	}, [] );
 
-	return (
-		<div className="rp-email-templates-app">
-			{ notification && (
-				<Notice
-					status={ notification.type }
-					isDismissible={ true }
-					onRemove={ () => setNotification( null ) }
-					className="rp-notification"
-				>
-					{ notification.message }
-				</Notice>
-			) }
-
-			{ /* Tab-Navigation */ }
-			<div
-				className="rp-email-tabs"
-				style={ {
-					display: 'flex',
-					borderBottom: '1px solid #e5e7eb',
-					marginBottom: '1.5rem',
-				} }
-			>
-				<TabButton
-					active={ mainTab === 'templates' }
-					onClick={ () => handleTabChange( 'templates' ) }
-					icon={ FileText }
-				>
-					{ i18n.templates || 'Templates' }
-				</TabButton>
-				<TabButton
-					active={ mainTab === 'signatures' }
-					onClick={ () => handleTabChange( 'signatures' ) }
-					icon={ PenTool }
-				>
-					{ i18n.signatures || 'Signaturen' }
-				</TabButton>
+	// Loading state
+	if ( templatesLoading && signaturesLoading ) {
+		return (
+			<div style={ { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '3rem' } }>
+				<Spinner size="lg" />
 			</div>
+		);
+	}
 
-			{ /* Templates Tab */ }
-			{ mainTab === 'templates' && (
-				<>
-					{ templateView === 'list' && (
-						<TemplateList
-							templates={ templates }
-							loading={ templatesLoading }
-							error={ templatesError }
-							onSelect={ handleTemplateSelect }
-							onDelete={ handleTemplateDelete }
-							onDuplicate={ handleTemplateDuplicate }
-							onReset={ handleTemplateReset }
-							onCreate={ handleTemplateCreate }
-						/>
+	return (
+		<div className="rp-admin" style={ { padding: '20px 0' } }>
+			<div style={ { maxWidth: '1400px' } }>
+				{ /* Header: Logo links, Titel rechts, Unterkante ausgerichtet */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n.pageTitle || 'E-Mail-Vorlagen & Signaturen' }
+					</h1>
+				</div>
 
-					{ ( templateView === 'edit' || templateView === 'create' ) && (
-						<TemplateEditor
-							template={ selectedTemplate }
-							placeholders={ placeholders }
-							previewValues={ previewValues }
-							saving={ templatesSaving }
-							error={ templatesError }
-							onSave={ handleTemplateSave }
-							onCancel={ handleTemplateCancel }
-						/>
-					) }
-				</>
-			) }
+				{ notification && (
+					<Alert
+						variant={ notification.type === 'error' ? 'destructive' : 'default' }
+						style={ {
+							marginBottom: '1rem',
+							backgroundColor: notification.type === 'success' ? '#e6f5ec' : undefined,
+							borderColor: notification.type === 'success' ? '#2fac66' : undefined,
+						} }
+					>
+						<AlertDescription>{ notification.message }</AlertDescription>
+					</Alert>
+				) }
 
-			{ /* Signaturen Tab */ }
-			{ mainTab === 'signatures' && (
-				<>
-					{ signatureView === 'list' && (
-						<SignatureList
-							signatures={ signatures }
-							companySignature={ companySignature }
-							loading={ signaturesLoading }
-							error={ signaturesError }
-							isAdmin={ isAdmin }
-							onSelect={ handleSignatureSelect }
-							onDelete={ handleSignatureDelete }
-							onSetDefault={ handleSetDefaultSignature }
-							onCreate={ handleSignatureCreate }
-							onEditCompany={ handleCompanySignatureEdit }
-						/>
-					) }
+				<Tabs value={ mainTab } onValueChange={ handleTabChange }>
+					<TabsList>
+						<TabsTrigger value="templates">
+							{ i18n.templates || 'Templates' }
+						</TabsTrigger>
+						<TabsTrigger value="signatures">
+							{ i18n.signatures || 'Signaturen' }
+						</TabsTrigger>
+						<TabsTrigger value="automation">
+							{ i18n.automation || 'Automatisierung' }
+						</TabsTrigger>
+					</TabsList>
 
-					{ ( signatureView === 'edit' || signatureView === 'create' ) && (
-						<SignatureEditor
-							signature={ selectedSignature }
-							isCompany={ false }
-							saving={ signaturesSaving }
-							error={ signaturesError }
-							onSave={ handleSignatureSave }
-							onCancel={ handleSignatureCancel }
-							onPreview={ previewSignature }
-						/>
-					) }
+					<TabsContent value="templates">
+						{ templateView === 'list' && (
+							<TemplateList
+								templates={ templates }
+								loading={ templatesLoading }
+								error={ templatesError }
+								onSelect={ handleTemplateSelect }
+								onDelete={ handleTemplateDelete }
+								onDuplicate={ handleTemplateDuplicate }
+								onReset={ handleTemplateReset }
+								onCreate={ handleTemplateCreate }
+							/>
+						) }
 
-					{ signatureView === 'company' && (
-						<SignatureEditor
-							signature={ companySignature }
-							isCompany={ true }
-							saving={ signaturesSaving }
-							error={ signaturesError }
-							onSave={ handleSignatureSave }
-							onCancel={ handleSignatureCancel }
-							onPreview={ previewSignature }
-						/>
-					) }
-				</>
-			) }
+						{ ( templateView === 'edit' || templateView === 'create' ) && (
+							<TemplateEditor
+								template={ selectedTemplate }
+								placeholders={ placeholders }
+								previewValues={ previewValues }
+								saving={ templatesSaving }
+								error={ templatesError }
+								onSave={ handleTemplateSave }
+								onCancel={ handleTemplateCancel }
+							/>
+						) }
+					</TabsContent>
+
+					<TabsContent value="signatures">
+						{ signatureView === 'list' && (
+							<SignatureList
+								signatures={ signatures }
+								companySignature={ companySignature }
+								loading={ signaturesLoading }
+								error={ signaturesError }
+								isAdmin={ isAdmin }
+								onSelect={ handleSignatureSelect }
+								onDelete={ handleSignatureDelete }
+								onSetDefault={ handleSetDefaultSignature }
+								onCreate={ handleSignatureCreate }
+								onEditCompany={ handleCompanySignatureEdit }
+							/>
+						) }
+
+						{ ( signatureView === 'edit' || signatureView === 'create' ) && (
+							<SignatureEditor
+								signature={ selectedSignature }
+								isCompany={ false }
+								saving={ signaturesSaving }
+								error={ signaturesError }
+								onSave={ handleSignatureSave }
+								onCancel={ handleSignatureCancel }
+								onPreview={ previewSignature }
+							/>
+						) }
+
+						{ signatureView === 'company' && (
+							<SignatureEditor
+								signature={ companySignature }
+								isCompany={ true }
+								saving={ signaturesSaving }
+								error={ signaturesError }
+								onSave={ handleSignatureSave }
+								onCancel={ handleSignatureCancel }
+								onPreview={ previewSignature }
+							/>
+						) }
+					</TabsContent>
+
+					<TabsContent value="automation">
+						<AutomationSettings templates={ templates } />
+					</TabsContent>
+				</Tabs>
+			</div>
 		</div>
 	);
 }

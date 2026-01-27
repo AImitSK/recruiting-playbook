@@ -84,7 +84,7 @@ export function ApplicantDetail( { applicationId } ) {
 
 	const config = window.rpApplicant || {};
 	const canSendEmails = config.canSendEmails !== false;
-	const logoUrl = config.logoUrl;
+	const logoUrl = config.logoUrl || '';
 
 	const loadApplication = useCallback( async () => {
 		if ( ! applicationId ) return;
@@ -196,12 +196,17 @@ export function ApplicantDetail( { applicationId } ) {
 			<div style={ { maxWidth: '1400px' } }>
 				{ /* Logo */ }
 				{ logoUrl && (
-					<div style={ { marginBottom: '1.5rem' } }>
+					<div style={ { marginBottom: '1rem' } }>
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					</div>
 				) }
 
-				{ /* Header */ }
+				{ /* Überschrift */ }
+				<h1 style={ { margin: '0 0 1rem 0', fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+					{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
+				</h1>
+
+				{ /* Navigation */ }
 				<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' } }>
 					<a
 						href={ config.listUrl || '#' }
@@ -211,9 +216,7 @@ export function ApplicantDetail( { applicationId } ) {
 						{ __( 'Zurück zur Liste', 'recruiting-playbook' ) }
 					</a>
 
-					<h1 style={ { flex: 1, margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
-					</h1>
+					<div style={ { flex: 1 } } />
 
 					<TalentPoolButton
 						candidateId={ application.candidate_id }

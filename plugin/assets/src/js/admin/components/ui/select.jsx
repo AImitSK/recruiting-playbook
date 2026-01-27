@@ -10,12 +10,13 @@ import { cn } from '../../lib/utils';
 
 const Select = forwardRef( ( { className, children, style, ...props }, ref ) => {
 	return (
-		<div className="rp-select-wrapper" style={ { position: 'relative' } }>
+		<div className="rp-select-wrapper" style={ { position: 'relative', display: 'inline-block', minWidth: style?.width || '200px' } }>
 			<select
 				className={ cn( 'rp-select', className ) }
 				ref={ ref }
 				style={ {
 					display: 'block',
+					width: '100%',
 					height: '40px',
 					borderRadius: '6px',
 					border: '1px solid #e5e7eb',
@@ -26,6 +27,10 @@ const Select = forwardRef( ( { className, children, style, ...props }, ref ) => 
 					color: '#18181b',
 					cursor: 'pointer',
 					outline: 'none',
+					// Native dropdown arrow verstecken
+					WebkitAppearance: 'none',
+					MozAppearance: 'none',
+					appearance: 'none',
 					...style,
 				} }
 				{ ...props }
@@ -44,11 +49,6 @@ const Select = forwardRef( ( { className, children, style, ...props }, ref ) => 
 					pointerEvents: 'none',
 				} }
 			/>
-			<style>{ `
-				.rp-select::-ms-expand {
-					display: none !important;
-				}
-			` }</style>
 		</div>
 	);
 } );

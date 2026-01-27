@@ -640,6 +640,7 @@ final class Plugin {
 					'nonce'   => wp_create_nonce( 'wp_rest' ),
 					'isAdmin' => current_user_can( 'manage_options' ),
 					'userId'  => get_current_user_id(),
+					'logoUrl' => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 					'i18n'    => [
 						// Allgemein.
 						'loading'        => __( 'Laden...', 'recruiting-playbook' ),
@@ -656,6 +657,9 @@ final class Plugin {
 						'errorLoading'   => __( 'Fehler beim Laden', 'recruiting-playbook' ),
 						'errorSaving'    => __( 'Fehler beim Speichern', 'recruiting-playbook' ),
 						'errorDeleting'  => __( 'Fehler beim Löschen', 'recruiting-playbook' ),
+
+						// Page.
+						'pageTitle'  => __( 'E-Mail-Vorlagen & Signaturen', 'recruiting-playbook' ),
 
 						// Tabs.
 						'templates'  => __( 'Templates', 'recruiting-playbook' ),

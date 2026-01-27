@@ -254,26 +254,15 @@ export function DashboardPage() {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1200px' } }>
-				{ logoUrl && (
-					<div style={ { marginBottom: '1.5rem' } }>
-						<img
-							src={ logoUrl }
-							alt="Recruiting Playbook"
-							style={ { width: '150px', height: 'auto' } }
-						/>
-					</div>
-				) }
-
-				<h1
-					style={ {
-						fontSize: '1.5rem',
-						fontWeight: 700,
-						color: '#1f2937',
-						marginBottom: '1.5rem',
-					} }
-				>
-					{ __( 'Dashboard', 'recruiting-playbook' ) }
-				</h1>
+				{ /* Header: Logo links, Titel rechts, Unterkante ausgerichtet */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ __( 'Dashboard', 'recruiting-playbook' ) }
+					</h1>
+				</div>
 
 				{ /* Warnings */ }
 				{ notices.length > 0 && (

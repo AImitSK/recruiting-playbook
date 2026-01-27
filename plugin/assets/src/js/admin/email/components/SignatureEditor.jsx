@@ -6,7 +6,6 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import PropTypes from 'prop-types';
-import { Building2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -15,6 +14,7 @@ import { Label } from '../../components/ui/label';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Spinner } from '../../components/ui/spinner';
 import { RichTextEditor } from '../../components/ui/rich-text-editor';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 
 /**
  * SignatureEditor Komponente
@@ -40,7 +40,7 @@ export function SignatureEditor( {
 } ) {
 	const [ formData, setFormData ] = useState( {
 		name: '',
-		body: '',
+		content: '',
 		is_default: false,
 	} );
 	const [ activeTab, setActiveTab ] = useState( 'edit' );
@@ -56,13 +56,13 @@ export function SignatureEditor( {
 		if ( signature ) {
 			setFormData( {
 				name: signature.name || '',
-				body: signature.body || '',
+				content: signature.content || '',
 				is_default: signature.is_default || false,
 			} );
 		} else {
 			setFormData( {
 				name: '',
-				body: '',
+				content: '',
 				is_default: false,
 			} );
 		}
@@ -90,7 +90,7 @@ export function SignatureEditor( {
 		} );
 
 		// Vorschau zurücksetzen wenn Body geändert
-		if ( field === 'body' ) {
+		if ( field === 'content' ) {
 			setPreviewHtml( '' );
 		}
 	}, [] );
@@ -112,10 +112,10 @@ export function SignatureEditor( {
 			errors.name = `${ i18n.nameTooLong || 'Name zu lang' } (max. ${ MAX_NAME_LENGTH })`;
 		}
 
-		if ( ! formData.body.trim() ) {
-			errors.body = i18n.bodyRequired || 'Signatur-Inhalt ist erforderlich';
-		} else if ( formData.body.length > MAX_BODY_LENGTH ) {
-			errors.body = `${ i18n.bodyTooLong || 'Inhalt zu lang' } (max. ${ MAX_BODY_LENGTH })`;
+		if ( ! formData.content.trim() ) {
+			errors.content = i18n.contentRequired || 'Signatur-Inhalt ist erforderlich';
+		} else if ( formData.content.length > MAX_BODY_LENGTH ) {
+			errors.content = `${ i18n.contentTooLong || 'Inhalt zu lang' } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
 		setValidationErrors( errors );
@@ -133,7 +133,7 @@ export function SignatureEditor( {
 		if ( onSave ) {
 			// Für Firmen-Signatur keinen Namen senden
 			const dataToSave = isCompany
-				? { body: formData.body }
+				? { content: formData.content }
 				: formData;
 			onSave( dataToSave );
 		}
@@ -143,21 +143,21 @@ export function SignatureEditor( {
 	 * Vorschau generieren
 	 */
 	const generatePreview = useCallback( async () => {
-		if ( ! onPreview || ! formData.body ) {
+		if ( ! onPreview || ! formData.content ) {
 			return;
 		}
 
 		setPreviewLoading( true );
 		try {
-			const html = await onPreview( { body: formData.body } );
-			setPreviewHtml( html || formData.body );
+			const html = await onPreview( { content: formData.content } );
+			setPreviewHtml( html || formData.content );
 		} catch ( err ) {
 			console.error( 'Preview error:', err );
-			setPreviewHtml( formData.body );
+			setPreviewHtml( formData.content );
 		} finally {
 			setPreviewLoading( false );
 		}
-	}, [ formData.body, onPreview ] );
+	}, [ formData.content, onPreview ] );
 
 	/**
 	 * Tab wechseln
@@ -171,6 +171,102 @@ export function SignatureEditor( {
 		}
 	}, [ previewHtml, generatePreview ] );
 
+	// Tab-Inhalt rendern
+	const renderEditContent = () => (
+		<div className="rp-signature-editor__form">
+			{ ! isCompany && (
+				<div style={ { marginBottom: '1rem' } }>
+					<Label htmlFor="signature-name">{ i18n.name || 'Name' }</Label>
+					<Input
+						id="signature-name"
+						value={ formData.name }
+						onChange={ ( e ) => updateField( 'name', e.target.value ) }
+						placeholder={ i18n.signatureNamePlaceholder || 'z.B. "Formelle Signatur" oder "Kurz-Signatur"' }
+						style={ validationErrors.name ? { borderColor: '#dc2626' } : {} }
+					/>
+					{ validationErrors.name && (
+						<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+							{ validationErrors.name }
+						</p>
+					) }
+				</div>
+			) }
+
+			{ ! isCompany && (
+				<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' } }>
+					<Switch
+						id="signature-default"
+						checked={ formData.is_default }
+						onCheckedChange={ ( value ) => updateField( 'is_default', value ) }
+					/>
+					<Label htmlFor="signature-default" style={ { marginBottom: 0 } }>
+						{ i18n.setAsDefault || 'Als Standard-Signatur verwenden' }
+					</Label>
+				</div>
+			) }
+
+			<div className="rp-signature-editor__content-row">
+				<Label htmlFor="signature-content">
+					{ isCompany
+						? ( i18n.companySignatureContent || 'Firmen-Signatur Inhalt' )
+						: ( i18n.signatureContent || 'Signatur-Inhalt' )
+					}
+				</Label>
+				<p style={ { color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' } }>
+					{ isCompany
+						? ( i18n.companySignatureHint || 'Die Firmen-Signatur wird verwendet, wenn ein Benutzer keine eigene Signatur hat.' )
+						: ( i18n.signatureHint || 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.' )
+					}
+				</p>
+				<RichTextEditor
+					value={ formData.content }
+					onChange={ ( value ) => updateField( 'content', value ) }
+					placeholder={ i18n.signaturePlaceholder || 'Mit freundlichen Grüßen,\n\nMax Mustermann\nPersonalabteilung\nTel: +49 123 456789' }
+					minHeight="200px"
+					style={ validationErrors.content ? { borderColor: '#dc2626' } : {} }
+				/>
+				{ validationErrors.content && (
+					<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+						{ validationErrors.content }
+					</p>
+				) }
+			</div>
+		</div>
+	);
+
+	const renderPreviewContent = () => (
+		<div className="rp-signature-editor__preview">
+			{ previewLoading ? (
+				<div style={ { display: 'flex', justifyContent: 'center', padding: '2rem' } }>
+					<Spinner />
+				</div>
+			) : (
+				<div
+					className="rp-signature-preview"
+					style={ {
+						padding: '1.5rem',
+						backgroundColor: '#f9fafb',
+						borderRadius: '0.5rem',
+						border: '1px solid #e5e7eb',
+					} }
+				>
+					<p style={ { color: '#6b7280', marginBottom: '1rem', fontStyle: 'italic' } }>
+						{ i18n.signaturePreviewHint || 'So wird Ihre Signatur in E-Mails aussehen:' }
+					</p>
+					<div
+						style={ {
+							padding: '1rem',
+							backgroundColor: '#ffffff',
+							borderRadius: '0.25rem',
+							borderLeft: '3px solid #1d71b8',
+						} }
+						dangerouslySetInnerHTML={ { __html: previewHtml || formData.content } }
+					/>
+				</div>
+			) }
+		</div>
+	);
+
 	return (
 		<div className="rp-signature-editor">
 			{ error && (
@@ -181,139 +277,35 @@ export function SignatureEditor( {
 
 			<Card>
 				<CardHeader>
-					<div
-						style={ {
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-							flexWrap: 'wrap',
-							gap: '1rem',
-						} }
-					>
-						<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-							{ isCompany && <Building2 style={ { width: '1.25rem', height: '1.25rem' } } /> }
-							{ isCompany
-								? ( i18n.editCompanySignature || 'Firmen-Signatur bearbeiten' )
-								: isNew
-									? ( i18n.newSignature || 'Neue Signatur' )
-									: ( i18n.editSignature || 'Signatur bearbeiten' )
-							}
-						</CardTitle>
-						<div
-							className="rp-signature-editor__tabs"
-							style={ { display: 'flex', gap: '0.25rem' } }
-						>
-							<Button
-								variant={ activeTab === 'edit' ? 'default' : 'outline' }
-								size="sm"
-								onClick={ () => handleTabChange( 'edit' ) }
-							>
-								{ i18n.edit || 'Bearbeiten' }
-							</Button>
-							<Button
-								variant={ activeTab === 'preview' ? 'default' : 'outline' }
-								size="sm"
-								onClick={ () => handleTabChange( 'preview' ) }
-							>
-								{ i18n.preview || 'Vorschau' }
-							</Button>
-						</div>
-					</div>
+					<CardTitle>
+						{ isCompany
+							? ( i18n.editCompanySignature || 'Firmen-Signatur bearbeiten' )
+							: isNew
+								? ( i18n.newSignature || 'Neue Signatur' )
+								: ( i18n.editSignature || 'Signatur bearbeiten' )
+						}
+					</CardTitle>
 				</CardHeader>
 
 				<CardContent>
-					{ activeTab === 'edit' ? (
-						<div className="rp-signature-editor__form">
-							{ ! isCompany && (
-								<div style={ { marginBottom: '1rem' } }>
-									<Label htmlFor="signature-name">{ i18n.name || 'Name' }</Label>
-									<Input
-										id="signature-name"
-										value={ formData.name }
-										onChange={ ( e ) => updateField( 'name', e.target.value ) }
-										placeholder={ i18n.signatureNamePlaceholder || 'z.B. "Formelle Signatur" oder "Kurz-Signatur"' }
-										style={ validationErrors.name ? { borderColor: '#dc2626' } : {} }
-									/>
-									{ validationErrors.name && (
-										<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
-											{ validationErrors.name }
-										</p>
-									) }
-								</div>
-							) }
+					<Tabs value={ activeTab } onValueChange={ handleTabChange }>
+						<TabsList style={ { marginBottom: '1.5rem' } }>
+							<TabsTrigger value="edit">
+								{ i18n.edit || 'Bearbeiten' }
+							</TabsTrigger>
+							<TabsTrigger value="preview">
+								{ i18n.preview || 'Vorschau' }
+							</TabsTrigger>
+						</TabsList>
 
-							{ ! isCompany && (
-								<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' } }>
-									<Switch
-										id="signature-default"
-										checked={ formData.is_default }
-										onCheckedChange={ ( value ) => updateField( 'is_default', value ) }
-									/>
-									<Label htmlFor="signature-default" style={ { marginBottom: 0 } }>
-										{ i18n.setAsDefault || 'Als Standard-Signatur verwenden' }
-									</Label>
-								</div>
-							) }
+						<TabsContent value="edit">
+							{ renderEditContent() }
+						</TabsContent>
 
-							<div className="rp-signature-editor__body-row">
-								<Label htmlFor="signature-body">
-									{ isCompany
-										? ( i18n.companySignatureContent || 'Firmen-Signatur Inhalt' )
-										: ( i18n.signatureContent || 'Signatur-Inhalt' )
-									}
-								</Label>
-								<p style={ { color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' } }>
-									{ isCompany
-										? ( i18n.companySignatureHint || 'Die Firmen-Signatur wird verwendet, wenn ein Benutzer keine eigene Signatur hat.' )
-										: ( i18n.signatureHint || 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.' )
-									}
-								</p>
-								<RichTextEditor
-									value={ formData.body }
-									onChange={ ( value ) => updateField( 'body', value ) }
-									placeholder={ i18n.signaturePlaceholder || 'Mit freundlichen Grüßen,\n\nMax Mustermann\nPersonalabteilung\nTel: +49 123 456789' }
-									minHeight="200px"
-									style={ validationErrors.body ? { borderColor: '#dc2626' } : {} }
-								/>
-								{ validationErrors.body && (
-									<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
-										{ validationErrors.body }
-									</p>
-								) }
-							</div>
-						</div>
-					) : (
-						<div className="rp-signature-editor__preview">
-							{ previewLoading ? (
-								<div style={ { display: 'flex', justifyContent: 'center', padding: '2rem' } }>
-									<Spinner />
-								</div>
-							) : (
-								<div
-									className="rp-signature-preview"
-									style={ {
-										padding: '1.5rem',
-										backgroundColor: '#f9fafb',
-										borderRadius: '0.5rem',
-										border: '1px solid #e5e7eb',
-									} }
-								>
-									<p style={ { color: '#6b7280', marginBottom: '1rem', fontStyle: 'italic' } }>
-										{ i18n.signaturePreviewHint || 'So wird Ihre Signatur in E-Mails aussehen:' }
-									</p>
-									<div
-										style={ {
-											padding: '1rem',
-											backgroundColor: '#ffffff',
-											borderRadius: '0.25rem',
-											borderLeft: '3px solid #1d71b8',
-										} }
-										dangerouslySetInnerHTML={ { __html: previewHtml || formData.body } }
-									/>
-								</div>
-							) }
-						</div>
-					) }
+						<TabsContent value="preview">
+							{ renderPreviewContent() }
+						</TabsContent>
+					</Tabs>
 
 					<div
 						className="rp-signature-editor__actions"
@@ -350,7 +342,7 @@ SignatureEditor.propTypes = {
 	signature: PropTypes.shape( {
 		id: PropTypes.number,
 		name: PropTypes.string,
-		body: PropTypes.string,
+		content: PropTypes.string,
 		is_default: PropTypes.bool,
 	} ),
 	isCompany: PropTypes.bool,

@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.5.0';
+	private const SCHEMA_VERSION = '1.5.3';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -25,34 +25,38 @@ class Migrator {
 	 */
 	public function createTables(): void {
 		$current_version = get_option( self::SCHEMA_OPTION, '0' );
+		$needs_migration = version_compare( $current_version, self::SCHEMA_VERSION, '<' );
 
-		// Nur wenn Update nötig.
-		if ( version_compare( $current_version, self::SCHEMA_VERSION, '>=' ) ) {
-			return;
+		// Schema-Migrationen nur wenn nötig.
+		if ( $needs_migration ) {
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+			// Alle Tabellen erstellen/aktualisieren.
+			dbDelta( Schema::getCandidatesTableSql() );
+			dbDelta( Schema::getApplicationsTableSql() );
+			dbDelta( Schema::getDocumentsTableSql() );
+			dbDelta( Schema::getActivityLogTableSql() );
+			dbDelta( Schema::getNotesTableSql() );
+			dbDelta( Schema::getRatingsTableSql() );
+			dbDelta( Schema::getTalentPoolTableSql() );
+			dbDelta( Schema::getEmailTemplatesTableSql() );
+			dbDelta( Schema::getEmailLogTableSql() );
+			dbDelta( Schema::getSignaturesTableSql() );
+
+			// Spezielle Migrationen für bestehende Installationen.
+			$this->runMigrations( $current_version );
+
+			// Version speichern.
+			update_option( self::SCHEMA_OPTION, self::SCHEMA_VERSION );
+
+			// Log erstellen.
+			$this->log( 'Database migrated to version ' . self::SCHEMA_VERSION );
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-		// Alle Tabellen erstellen/aktualisieren.
-		dbDelta( Schema::getCandidatesTableSql() );
-		dbDelta( Schema::getApplicationsTableSql() );
-		dbDelta( Schema::getDocumentsTableSql() );
-		dbDelta( Schema::getActivityLogTableSql() );
-		dbDelta( Schema::getNotesTableSql() );
-		dbDelta( Schema::getRatingsTableSql() );
-		dbDelta( Schema::getTalentPoolTableSql() );
-		dbDelta( Schema::getEmailTemplatesTableSql() );
-		dbDelta( Schema::getEmailLogTableSql() );
-		dbDelta( Schema::getSignaturesTableSql() );
-
-		// Spezielle Migrationen für bestehende Installationen.
-		$this->runMigrations( $current_version );
-
-		// Version speichern.
-		update_option( self::SCHEMA_OPTION, self::SCHEMA_VERSION );
-
-		// Log erstellen.
-		$this->log( 'Database migrated to version ' . self::SCHEMA_VERSION );
+		// IMMER Default-Daten prüfen (auch ohne Schema-Änderung).
+		// Die Seed-Funktionen prüfen selbst ob Daten bereits existieren.
+		$this->seedDefaultEmailTemplates();
+		$this->seedDefaultCompanySignature();
 	}
 
 	/**
@@ -171,24 +175,32 @@ class Migrator {
 
 	/**
 	 * Migration: Standard E-Mail-Templates einfügen
+	 *
+	 * Fügt fehlende System-Templates ein (prüft jeden Slug einzeln).
 	 */
 	private function seedDefaultEmailTemplates(): void {
 		global $wpdb;
 
-		$table = Schema::getTables()['email_templates'];
-		$now   = current_time( 'mysql' );
-
-		// Prüfen ob bereits Templates existieren.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
-
-		if ( $count > 0 ) {
-			return;
-		}
-
+		$table     = Schema::getTables()['email_templates'];
+		$now       = current_time( 'mysql' );
 		$templates = $this->getDefaultTemplates();
+		$inserted  = 0;
 
 		foreach ( $templates as $template ) {
+			// Prüfen ob dieses Template (per Slug) bereits existiert.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$exists = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$table} WHERE slug = %s",
+					$template['slug']
+				)
+			);
+
+			if ( $exists > 0 ) {
+				continue;
+			}
+
+			// Template einfügen.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$wpdb->insert(
 				$table,
@@ -209,9 +221,13 @@ class Migrator {
 				],
 				[ '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s' ]
 			);
+
+			++$inserted;
 		}
 
-		$this->log( 'Seeded ' . count( $templates ) . ' default email templates' );
+		if ( $inserted > 0 ) {
+			$this->log( 'Seeded ' . $inserted . ' missing email templates' );
+		}
 	}
 
 	/**

@@ -66,6 +66,24 @@ class SettingsController extends WP_REST_Controller {
 				'schema' => [ $this, 'get_company_schema' ],
 			]
 		);
+
+		// Auto-Email settings.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/auto-email',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_auto_email' ],
+					'permission_callback' => [ $this, 'update_company_permissions_check' ],
+				],
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'update_auto_email' ],
+					'permission_callback' => [ $this, 'update_company_permissions_check' ],
+				],
+			]
+		);
 	}
 
 	/**
@@ -190,6 +208,52 @@ class SettingsController extends WP_REST_Controller {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get auto-email settings
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response Response object.
+	 */
+	public function get_auto_email( WP_REST_Request $request ) {
+		$settings = get_option( 'rp_auto_email_settings', [] );
+		return rest_ensure_response( [ 'settings' => $settings ] );
+	}
+
+	/**
+	 * Update auto-email settings
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response Response object.
+	 */
+	public function update_auto_email( WP_REST_Request $request ) {
+		$settings = $request->get_param( 'settings' );
+
+		if ( ! is_array( $settings ) ) {
+			$settings = [];
+		}
+
+		// Sanitize each status setting.
+		$sanitized = [];
+		$allowed_statuses = [ 'new', 'rejected', 'withdrawn' ];
+
+		foreach ( $allowed_statuses as $status ) {
+			if ( isset( $settings[ $status ] ) && is_array( $settings[ $status ] ) ) {
+				$sanitized[ $status ] = [
+					'enabled'     => ! empty( $settings[ $status ]['enabled'] ),
+					'template_id' => absint( $settings[ $status ]['template_id'] ?? 0 ),
+					'delay'       => absint( $settings[ $status ]['delay'] ?? 0 ),
+				];
+			}
+		}
+
+		update_option( 'rp_auto_email_settings', $sanitized );
+
+		return rest_ensure_response( [
+			'settings' => $sanitized,
+			'message'  => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+		] );
 	}
 
 	/**

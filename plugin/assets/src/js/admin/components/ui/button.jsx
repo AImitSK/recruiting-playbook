@@ -41,25 +41,71 @@ const Button = forwardRef(
 	( { className, variant, size, asChild = false, style, ...props }, ref ) => {
 		const Comp = asChild ? Slot : 'button';
 
-		// Brand colors for variants
+		// Brand colors for variants - mit Padding!
 		const variantStyles = {
 			default: {
 				backgroundColor: '#1d71b8',
 				color: '#ffffff',
 				border: 'none',
 				borderRadius: '0.375rem',
+				padding: size === 'sm' ? '0.5rem 0.75rem' : size === 'lg' ? '0.75rem 2rem' : size === 'icon' ? '0' : '0.5rem 1rem',
+				height: size === 'sm' ? '36px' : size === 'lg' ? '44px' : size === 'icon' ? '40px' : '40px',
+				minWidth: size === 'icon' ? '40px' : undefined,
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				gap: '0.5rem',
+				fontSize: '0.875rem',
+				fontWeight: 500,
+				cursor: 'pointer',
 			},
 			outline: {
 				backgroundColor: 'transparent',
 				color: '#1d71b8',
 				border: '1px solid #1d71b8',
 				borderRadius: '0.375rem',
+				padding: size === 'sm' ? '0.5rem 0.75rem' : size === 'lg' ? '0.75rem 2rem' : size === 'icon' ? '0' : '0.5rem 1rem',
+				height: size === 'sm' ? '36px' : size === 'lg' ? '44px' : size === 'icon' ? '40px' : '40px',
+				minWidth: size === 'icon' ? '40px' : undefined,
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				gap: '0.5rem',
+				fontSize: '0.875rem',
+				fontWeight: 500,
+				cursor: 'pointer',
 			},
 			ghost: {
 				backgroundColor: 'transparent',
 				color: '#374151',
 				border: 'none',
 				borderRadius: '0.375rem',
+				padding: size === 'sm' ? '0.5rem 0.75rem' : size === 'lg' ? '0.75rem 2rem' : size === 'icon' ? '0' : '0.5rem 1rem',
+				height: size === 'sm' ? '36px' : size === 'lg' ? '44px' : size === 'icon' ? '40px' : '40px',
+				minWidth: size === 'icon' ? '40px' : undefined,
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				gap: '0.5rem',
+				fontSize: '0.875rem',
+				fontWeight: 500,
+				cursor: 'pointer',
+			},
+			destructive: {
+				backgroundColor: '#dc2626',
+				color: '#ffffff',
+				border: 'none',
+				borderRadius: '0.375rem',
+				padding: size === 'sm' ? '0.5rem 0.75rem' : size === 'lg' ? '0.75rem 2rem' : size === 'icon' ? '0' : '0.5rem 1rem',
+				height: size === 'sm' ? '36px' : size === 'lg' ? '44px' : size === 'icon' ? '40px' : '40px',
+				minWidth: size === 'icon' ? '40px' : undefined,
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				gap: '0.5rem',
+				fontSize: '0.875rem',
+				fontWeight: 500,
+				cursor: 'pointer',
 			},
 		};
 
@@ -67,6 +113,7 @@ const Button = forwardRef(
 			default: { backgroundColor: '#36a9e1' },
 			outline: { backgroundColor: '#f0f7fc' },
 			ghost: { backgroundColor: '#f3f4f6' },
+			destructive: { backgroundColor: '#b91c1c' },
 		};
 
 		const baseStyle = variantStyles[ variant ] || variantStyles.default;

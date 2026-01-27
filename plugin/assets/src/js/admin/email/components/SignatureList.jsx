@@ -6,7 +6,7 @@
 
 import { useState, useMemo } from '@wordpress/element';
 import PropTypes from 'prop-types';
-import { Pencil, Trash2, Search, Plus, Star, Building2 } from 'lucide-react';
+import { Pencil, Trash2, Search, Plus, Star } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -164,8 +164,7 @@ export function SignatureList( {
 							className="rp-signature-list__header"
 							style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }
 						>
-							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-								<Building2 style={ { width: '1.25rem', height: '1.25rem' } } />
+							<CardTitle>
 								{ i18n.companySignature || 'Firmen-Signatur' }
 							</CardTitle>
 							<Button variant="outline" onClick={ onEditCompany }>
@@ -178,7 +177,7 @@ export function SignatureList( {
 						{ companySignature ? (
 							<div className="rp-signature-list__company-preview">
 								<p style={ { margin: 0, color: '#6b7280', fontSize: '0.875rem' } }>
-									{ getPreviewText( companySignature.body ) || ( i18n.noContent || 'Kein Inhalt' ) }
+									{ getPreviewText( companySignature.content ) || ( i18n.noContent || 'Kein Inhalt' ) }
 								</p>
 							</div>
 						) : (
@@ -293,7 +292,7 @@ export function SignatureList( {
 												</button>
 											</td>
 											<td style={ { padding: '0.75rem', color: '#6b7280', maxWidth: '300px' } }>
-												{ getPreviewText( signature.body ) }
+												{ getPreviewText( signature.content ) }
 											</td>
 											<td style={ { padding: '0.75rem' } }>{ renderStatusBadge( signature ) }</td>
 											<td style={ { padding: '0.75rem' } }>

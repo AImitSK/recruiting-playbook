@@ -157,23 +157,25 @@ class EmailSettingsPage {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'templates';
 
-		echo '<div class="wrap">';
-		echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates & Signaturen', 'recruiting-playbook' ) . '</h1>';
-		echo '<hr class="wp-header-end">';
+		echo '<div class="wrap rp-email-page">';
 
 		// Erfolgsmeldungen.
 		$this->renderMessages();
 
 		// Auto-E-Mail Tab (legacy PHP) vs. React App.
 		if ( 'auto-email' === $tab && 'list' === $action ) {
-			// Tabs für Auto-E-Mail Seite.
+			// WordPress-Standard-Header für Legacy-Seiten.
+			echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates & Signaturen', 'recruiting-playbook' ) . '</h1>';
+			echo '<hr class="wp-header-end">';
 			$this->renderTabs( $tab );
 			$this->renderAutoEmailSettings();
 		} elseif ( 'new' === $action || 'edit' === $action ) {
-			// Legacy PHP Form für Template-Bearbeitung (falls noch benötigt).
+			// WordPress-Standard-Header für Legacy-Formulare.
+			echo '<h1 class="wp-heading-inline">' . esc_html__( 'E-Mail-Templates & Signaturen', 'recruiting-playbook' ) . '</h1>';
+			echo '<hr class="wp-header-end">';
 			$this->renderForm( $template_id );
 		} else {
-			// React App für Templates & Signaturen.
+			// React App für Templates & Signaturen - keine PHP-Überschrift (React App hat eigene).
 			$this->renderList();
 		}
 

@@ -51,7 +51,8 @@ export function useSignatures() {
 
 			// Nur State setzen wenn noch mounted
 			if ( isMountedRef.current ) {
-				setSignatures( data.items || data || [] );
+				// API gibt { signatures: [...], total: N } zurück
+				setSignatures( data.signatures || data.items || ( Array.isArray( data ) ? data : [] ) );
 			}
 		} catch ( err ) {
 			// AbortError explizit ignorieren
