@@ -1,0 +1,184 @@
+---
+title: Webhooks
+description: Register webhooks to receive real-time notifications for job and application events.
+---
+
+## Overview
+
+Webhooks allow external systems to receive real-time HTTP callbacks when events occur in Recruiting Playbook. Each webhook delivery includes a cryptographic signature for verification.
+
+## Register a webhook
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/webhooks" />
+
+### Request body
+
+```json
+{
+  "name": "My Integration",
+  "url": "https://your-app.com/api/recruiting-webhook",
+  "events": [
+    "application.received",
+    "application.status_changed",
+    "application.hired"
+  ],
+  "secret": "my-webhook-secret-123",
+  "active": true
+}
+```
+
+### Response
+
+Returns the created webhook object with an assigned `id`. Status code: `201 Created`.
+
+## List webhooks
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/webhooks" />
+
+Returns all registered webhooks for the authenticated user.
+
+## Delete a webhook
+
+<EndpointHeader method="DELETE" path="/wp-json/recruiting/v1/webhooks/{id}" />
+
+Permanently removes the webhook. Pending deliveries will be cancelled.
+
+## Available events
+
+### Job events
+
+| Event | Description |
+|-------|-------------|
+| `job.created` | A new job was created |
+| `job.published` | A job was published |
+| `job.updated` | A job was updated |
+| `job.archived` | A job was archived |
+| `job.deleted` | A job was deleted |
+
+### Application events
+
+| Event | Description |
+|-------|-------------|
+| `application.received` | A new application was submitted |
+| `application.status_changed` | An application status was changed |
+| `application.hired` | An applicant was hired |
+| `application.rejected` | An applicant was rejected |
+| `application.exported` | Application data was exported |
+| `application.deleted` | An application was deleted |
+
+## Webhook payload
+
+Every webhook delivery includes the following headers:
+
+```bash
+Content-Type: application/json
+X-Recruiting-Event: application.received
+X-Recruiting-Delivery: whd_abc123456
+X-Recruiting-Signature: sha256=abc123...
+```
+
+### Payload body
+
+```json
+{
+  "event": "application.received",
+  "timestamp": "2025-01-20T14:30:00Z",
+  "delivery_id": "whd_abc123456",
+  "data": {
+    "application": {
+      "id": 456,
+      "job_id": 123,
+      "job_title": "Pflegefachkraft (m/w/d)",
+      "status": "new",
+      "candidate": {
+        "first_name": "Max",
+        "last_name": "Mustermann",
+        "email": "max@example.com"
+      },
+      "created_at": "2025-01-20T14:30:00Z"
+    }
+  }
+}
+```
+
+The `data` object structure varies by event type. Job events include a `job` object, application events include an `application` object.
+
+## Signature validation
+
+Every webhook request is signed using the `secret` you provided during registration. Always validate the signature before processing the payload.
+
+### PHP
+
+```php
+$payload = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_RECRUITING_SIGNATURE'];
+$secret = 'my-webhook-secret-123';
+
+$expected = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+
+if (hash_equals($expected, $signature)) {
+    // Webhook is valid
+    $data = json_decode($payload, true);
+    // Process the event...
+}
+```
+
+### Node.js
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = 'sha256=' +
+    crypto.createHmac('sha256', secret)
+          .update(payload)
+          .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expected),
+    Buffer.from(signature)
+  );
+}
+
+// Express middleware example
+app.post('/webhook', (req, res) => {
+  const payload = JSON.stringify(req.body);
+  const signature = req.headers['x-recruiting-signature'];
+
+  if (!verifyWebhook(payload, signature, process.env.WEBHOOK_SECRET)) {
+    return res.status(401).send('Invalid signature');
+  }
+
+  // Process the event...
+  res.status(200).send('OK');
+});
+```
+
+### Python
+
+```python
+import hmac
+import hashlib
+
+def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
+    expected = 'sha256=' + hmac.new(
+        secret.encode(),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(expected, signature)
+```
+
+## Retry behavior
+
+Failed deliveries (non-2xx response) are retried up to 5 times with exponential backoff:
+
+| Attempt | Delay |
+|---------|-------|
+| 1 | Immediate |
+| 2 | 1 minute |
+| 3 | 5 minutes |
+| 4 | 30 minutes |
+| 5 | 2 hours |
+
+After 5 failed attempts, the webhook is automatically deactivated. Re-activate it in the plugin settings.

@@ -9,18 +9,18 @@ function getHighlighter() {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
       themes: ['github-light'],
-      langs: ['php', 'javascript', 'json', 'bash', 'html', 'xml', 'css'],
+      langs: ['php', 'javascript', 'json', 'bash', 'html', 'xml', 'css', 'python'],
     })
   }
   return highlighterPromise
 }
 
-export async function compileMdx(source) {
+export async function compileMdx(source, extraComponents = {}) {
   const highlighter = await getHighlighter()
 
   const { content } = await compileMDX({
     source,
-    components: mdxComponents(highlighter),
+    components: { ...mdxComponents(highlighter), ...extraComponents },
     options: {
       parseFrontmatter: true,
       mdxOptions: {

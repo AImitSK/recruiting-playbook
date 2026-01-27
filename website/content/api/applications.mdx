@@ -1,0 +1,221 @@
+---
+title: Applications
+description: Endpoints for managing job applications, status updates, notes, ratings, documents, and GDPR exports.
+---
+
+## Overview
+
+The Applications API provides full access to applicant data. Applications follow a defined status flow:
+
+```
+new → screening → interview → offer → hired
+```
+
+Applications can be `rejected` or `withdrawn` from any state.
+
+## List applications
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/applications" />
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `job_id` | int | Filter by job |
+| `status` | string | `new`, `screening`, `interview`, `offer`, `hired`, `rejected` |
+| `per_page` | int | Results per page (default: 20, max: 100) |
+| `page` | int | Page number |
+| `search` | string | Search in name and email |
+| `date_from` | date | Applications from date (ISO 8601) |
+| `date_to` | date | Applications until date |
+| `orderby` | string | `date`, `name`, `status` |
+| `order` | string | `asc`, `desc` |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": 456,
+      "job": {
+        "id": 123,
+        "title": "Pflegefachkraft (m/w/d)"
+      },
+      "status": "screening",
+      "status_history": [
+        {
+          "status": "new",
+          "changed_at": "2025-01-16T09:00:00Z",
+          "changed_by": null
+        },
+        {
+          "status": "screening",
+          "changed_at": "2025-01-17T11:30:00Z",
+          "changed_by": {
+            "id": 5,
+            "name": "Maria Schmidt"
+          }
+        }
+      ],
+      "candidate": {
+        "salutation": "Herr",
+        "first_name": "Max",
+        "last_name": "Mustermann",
+        "email": "max@example.com",
+        "phone": "+49 170 1234567",
+        "address": {
+          "street": "Musterstraße 1",
+          "postal_code": "10115",
+          "city": "Berlin",
+          "country": "DE"
+        }
+      },
+      "documents": [
+        {
+          "id": 789,
+          "type": "cv",
+          "filename": "lebenslauf_mustermann.pdf",
+          "mime_type": "application/pdf",
+          "size": 245678,
+          "url": "https://example.com/wp-json/recruiting/v1/applications/456/documents/789"
+        }
+      ],
+      "cover_letter": "Sehr geehrte Damen und Herren...",
+      "custom_fields": {
+        "earliest_start": "2025-04-01",
+        "salary_expectation": "3500",
+        "drivers_license": true
+      },
+      "rating": 4,
+      "notes": [
+        {
+          "id": 101,
+          "content": "Telefonat geführt, sehr motiviert",
+          "author": {
+            "id": 5,
+            "name": "Maria Schmidt"
+          },
+          "created_at": "2025-01-17T14:00:00Z"
+        }
+      ],
+      "consent": {
+        "privacy_policy": true,
+        "privacy_policy_version": "2025-01",
+        "talent_pool": false,
+        "consented_at": "2025-01-16T08:55:00Z",
+        "ip_address": "192.168.1.1"
+      },
+      "source": "website",
+      "created_at": "2025-01-16T09:00:00Z",
+      "updated_at": "2025-01-17T14:00:00Z"
+    }
+  ],
+  "meta": {
+    "total": 156,
+    "per_page": 20,
+    "current_page": 1,
+    "total_pages": 8
+  }
+}
+```
+
+## Get a single application
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/applications/{id}" />
+
+Returns a single application object with the same structure as the list response.
+
+## Update application status
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/applications/{id}/status" />
+
+### Request body
+
+```json
+{
+  "status": "interview",
+  "note": "Invited to interview on Jan 25th"
+}
+```
+
+### Allowed status values
+
+| Status | Description |
+|--------|-------------|
+| `new` | Newly received |
+| `screening` | Under review |
+| `interview` | Invited to interview |
+| `offer` | Offer extended |
+| `hired` | Hired |
+| `rejected` | Rejected |
+| `withdrawn` | Withdrawn by applicant |
+
+The optional `note` field automatically creates an internal note on the application.
+
+## Add a note
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/applications/{id}/notes" />
+
+### Request body
+
+```json
+{
+  "content": "Second interview scheduled with team lead",
+  "internal": true
+}
+```
+
+When `internal` is `true`, the note is only visible to team members and not included in applicant-facing exports.
+
+## Set rating
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/applications/{id}/rating" />
+
+### Request body
+
+```json
+{
+  "rating": 5,
+  "criteria": {
+    "qualification": 5,
+    "experience": 4,
+    "impression": 5
+  }
+}
+```
+
+The `rating` field is the overall score (1-5). The `criteria` object is optional and allows detailed scoring.
+
+## Download a document
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/applications/{id}/documents/{document_id}" />
+
+Returns the file as a binary download with appropriate `Content-Type` and `Content-Disposition` headers.
+
+## Export application (GDPR)
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/applications/{id}/export" />
+
+Exports all data for an applicant including documents. This endpoint supports GDPR data portability requirements.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `format` | string | `json`, `pdf`, `zip` (default: `json`) |
+
+The `zip` format includes all documents alongside a JSON data file.
+
+## Delete application (GDPR)
+
+<EndpointHeader method="DELETE" path="/wp-json/recruiting/v1/applications/{id}" />
+
+Permanently deletes all applicant data. This action cannot be undone and supports GDPR right-to-erasure requests.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `reason` | string | Deletion reason (for audit log) |
+| `notify` | bool | Notify applicant via email (default: `false`) |

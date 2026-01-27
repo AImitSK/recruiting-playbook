@@ -1,0 +1,127 @@
+---
+title: Reports
+description: Analytics endpoints for recruiting overview and time-to-hire metrics.
+---
+
+## Overview
+
+The Reports API provides aggregated analytics about your recruiting pipeline. Use these endpoints to build dashboards or integrate metrics into your business intelligence tools.
+
+## Recruiting overview
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/reports/overview" />
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `date_from` | date | Start date (ISO 8601) |
+| `date_to` | date | End date (ISO 8601) |
+| `job_id` | int | Filter by job (optional) |
+
+### Response
+
+```json
+{
+  "period": {
+    "from": "2025-01-01",
+    "to": "2025-01-31"
+  },
+  "jobs": {
+    "total": 12,
+    "active": 8,
+    "new_this_period": 3
+  },
+  "applications": {
+    "total": 156,
+    "new_this_period": 45,
+    "by_status": {
+      "new": 12,
+      "screening": 18,
+      "interview": 8,
+      "offer": 3,
+      "hired": 4,
+      "rejected": 110,
+      "withdrawn": 1
+    }
+  },
+  "conversion": {
+    "application_to_screening": 0.72,
+    "screening_to_interview": 0.44,
+    "interview_to_offer": 0.38,
+    "offer_to_hire": 0.80
+  },
+  "avg_time_to_hire_days": 23
+}
+```
+
+### Response fields
+
+| Field | Description |
+|-------|-------------|
+| `period` | The date range for the report |
+| `jobs.total` | Total number of job listings |
+| `jobs.active` | Currently published jobs |
+| `jobs.new_this_period` | Jobs created in the reporting period |
+| `applications.total` | Total applications across all jobs |
+| `applications.new_this_period` | Applications received in the period |
+| `applications.by_status` | Breakdown by current status |
+| `conversion` | Stage-to-stage conversion rates (0-1) |
+| `avg_time_to_hire_days` | Average days from application to hire |
+
+## Time-to-hire
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/reports/time-to-hire" />
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `date_from` | date | Start date (ISO 8601) |
+| `date_to` | date | End date (ISO 8601) |
+| `job_id` | int | Filter by job (optional) |
+
+### Response
+
+```json
+{
+  "overall": {
+    "average_days": 23,
+    "median_days": 19,
+    "min_days": 5,
+    "max_days": 67
+  },
+  "by_stage": {
+    "new_to_screening": 2.3,
+    "screening_to_interview": 5.1,
+    "interview_to_offer": 8.7,
+    "offer_to_hire": 6.9
+  },
+  "by_job": [
+    {
+      "job_id": 123,
+      "job_title": "Pflegefachkraft (m/w/d)",
+      "average_days": 18,
+      "hires": 3
+    }
+  ],
+  "trend": [
+    { "month": "2024-11", "average_days": 28 },
+    { "month": "2024-12", "average_days": 25 },
+    { "month": "2025-01", "average_days": 23 }
+  ]
+}
+```
+
+### Response fields
+
+| Field | Description |
+|-------|-------------|
+| `overall` | Aggregate statistics across all jobs |
+| `overall.average_days` | Mean time from application to hire |
+| `overall.median_days` | Median time (less sensitive to outliers) |
+| `by_stage` | Average days spent in each pipeline stage |
+| `by_job` | Per-job breakdown with hire counts |
+| `trend` | Monthly averages for trend analysis |
+
+The `trend` array returns the last 12 months by default, or the months within the specified date range.

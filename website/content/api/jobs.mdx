@@ -1,0 +1,154 @@
+---
+title: Jobs
+description: Endpoints for listing, creating, updating, and deleting job listings.
+---
+
+## Overview
+
+The Jobs API lets you manage job listings programmatically. Jobs are stored as WordPress custom post types (`job_listing`), giving you full SEO and WPML compatibility.
+
+## List all jobs
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/jobs" />
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `status` | string | `draft`, `publish`, `archived` (default: `publish`) |
+| `per_page` | int | Results per page (default: 10, max: 100) |
+| `page` | int | Page number |
+| `search` | string | Full-text search in title and description |
+| `location` | string | Filter by location |
+| `employment_type` | string | `fulltime`, `parttime`, `minijob`, `temporary` |
+| `orderby` | string | `date`, `title`, `modified` (default: `date`) |
+| `order` | string | `asc`, `desc` (default: `desc`) |
+
+### Response
+
+```json
+{
+  "data": [
+    {
+      "id": 123,
+      "title": "Pflegefachkraft (m/w/d)",
+      "slug": "pflegefachkraft-mwd",
+      "status": "publish",
+      "description": "<p>Wir suchen...</p>",
+      "description_plain": "Wir suchen...",
+      "excerpt": "Wir suchen eine engagierte Pflegefachkraft...",
+      "location": {
+        "city": "Berlin",
+        "postal_code": "10115",
+        "country": "DE",
+        "remote": false
+      },
+      "employment_type": "fulltime",
+      "salary": {
+        "min": 3200,
+        "max": 4000,
+        "currency": "EUR",
+        "period": "month",
+        "display": "3.200 € - 4.000 € / Monat"
+      },
+      "contact": {
+        "name": "Maria Schmidt",
+        "email": "jobs@example.com",
+        "phone": "+49 30 123456"
+      },
+      "application_deadline": "2025-03-20",
+      "start_date": "2025-04-01",
+      "categories": ["Pflege", "Gesundheit"],
+      "tags": ["Examiniert", "Schichtdienst"],
+      "application_count": 12,
+      "created_at": "2025-01-15T10:30:00Z",
+      "updated_at": "2025-01-18T14:20:00Z",
+      "published_at": "2025-01-15T12:00:00Z",
+      "url": "https://example.com/jobs/pflegefachkraft-mwd/",
+      "apply_url": "https://example.com/jobs/pflegefachkraft-mwd/#apply"
+    }
+  ],
+  "meta": {
+    "total": 45,
+    "per_page": 10,
+    "current_page": 1,
+    "total_pages": 5
+  }
+}
+```
+
+## Get a single job
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/jobs/{id}" />
+
+Returns a single job object with the same structure as the list response.
+
+## Create a job
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/jobs" />
+
+### Request body
+
+```json
+{
+  "title": "Pflegefachkraft (m/w/d)",
+  "description": "<p>Ihre Aufgaben...</p>",
+  "status": "draft",
+  "location": {
+    "city": "Berlin",
+    "postal_code": "10115",
+    "country": "DE"
+  },
+  "employment_type": "fulltime",
+  "salary": {
+    "min": 3200,
+    "max": 4000,
+    "currency": "EUR",
+    "period": "month"
+  },
+  "application_deadline": "2025-03-20",
+  "categories": ["Pflege"],
+  "custom_fields": {
+    "department": "Station 3",
+    "required_experience": "2 Jahre"
+  }
+}
+```
+
+### Response
+
+Returns the created job object with the assigned `id`. Status code: `201 Created`.
+
+## Update a job
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/jobs/{id}" />
+
+Send only the fields you want to change. All other fields remain unchanged.
+
+### Request body
+
+```json
+{
+  "status": "publish",
+  "salary": {
+    "min": 3400,
+    "max": 4200
+  }
+}
+```
+
+### Response
+
+Returns the updated job object.
+
+## Delete a job
+
+<EndpointHeader method="DELETE" path="/wp-json/recruiting/v1/jobs/{id}" />
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `force` | bool | `true` = permanently delete, `false` = archive (default) |
+
+By default, jobs are archived rather than deleted. Pass `force=true` to permanently remove a job and all associated data.

@@ -25,6 +25,7 @@ export function Footer() {
               <NavLink href="/pricing">Preise</NavLink>
               <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/docs">Dokumentation</NavLink>
+              <NavLink href="/api">API</NavLink>
             </div>
           </nav>
         </div>
