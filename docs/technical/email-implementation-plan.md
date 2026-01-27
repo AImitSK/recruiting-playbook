@@ -34,24 +34,24 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 
 ---
 
-## Phase 1: Datenbank & Backend-Grundlagen (P0)
+## Phase 1: Datenbank & Backend-Grundlagen (P0) ✅
 
 ### 1.1 Datenbank-Migration
-- [ ] `[M]` Neue Tabelle `rp_signatures` erstellen
+- [x] `[M]` Neue Tabelle `rp_signatures` erstellen
   - Datei: `plugin/src/Database/Schema.php`
   - Migration in `plugin/src/Database/Migrator.php`
-- [ ] `[S]` Migrator um Signatur-Tabelle erweitern
-- [ ] `[S]` Default Firmen-Signatur bei Aktivierung erstellen
+- [x] `[S]` Migrator um Signatur-Tabelle erweitern
+- [x] `[S]` Default Firmen-Signatur bei Aktivierung erstellen
 
 ### 1.2 Firmendaten-Einstellungen erweitern
-- [ ] `[M]` `rp_settings['company']` Schema definieren
+- [x] `[M]` `rp_settings['company']` Schema definieren
   - `name`, `street`, `zip`, `city`, `phone`, `email`, `website`
   - `default_sender_name`, `default_sender_email`
   - Datei: `plugin/src/Admin/Settings.php` (oder neu erstellen)
-- [ ] `[S]` Validierung für Firmendaten
+- [x] `[S]` Validierung für Firmendaten
 
 ### 1.3 Repository Layer
-- [ ] `[M]` `SignatureRepository.php` erstellen
+- [x] `[M]` `SignatureRepository.php` erstellen
   - `find(int $id)`
   - `findByUser(int $user_id)`
   - `findDefaultForUser(int $user_id)`
@@ -63,10 +63,10 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 
 ---
 
-## Phase 2: Services (P0/P1)
+## Phase 2: Services (P0/P1) ✅
 
 ### 2.1 SignatureService erstellen
-- [ ] `[L]` `plugin/src/Services/SignatureService.php`
+- [x] `[L]` `plugin/src/Services/SignatureService.php`
   - `render(int $signature_id): string`
   - `renderCompanyBlock(): string`
   - `renderMinimalSignature(): string`
@@ -74,28 +74,28 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
   - `getOptionsForUser(int $user_id): array`
 
 ### 2.2 PlaceholderService bereinigen (P0)
-- [ ] `[M]` Pseudo-Variablen entfernen aus `PlaceholderService.php`
+- [x] `[M]` Pseudo-Variablen entfernen aus `PlaceholderService.php`
   - Entfernen: `termin_*` (5 Stück)
   - Entfernen: `absender_*` (4 Stück)
   - Entfernen: `kontakt_*` (3 Stück)
   - Entfernen: `start_datum`, `vertragsart`, `arbeitszeit`, `antwort_frist`
   - **17 Variablen total entfernen**
-- [ ] `[S]` `getAvailablePlaceholders()` aktualisieren (nur 16 echte)
-- [ ] `[S]` Preview-Werte für Editor anpassen
+- [x] `[S]` `getAvailablePlaceholders()` aktualisieren (nur 16 echte)
+- [x] `[S]` Preview-Werte für Editor anpassen
 
 ### 2.3 EmailService anpassen (P1)
-- [ ] `[M]` `composeEmail()` erweitern
+- [x] `[M]` `composeEmail()` erweitern
   - Signatur-Parameter hinzufügen
   - Signatur automatisch anhängen
   - Fallback-Kette implementieren
-- [ ] `[S]` Automatische E-Mails: Firmen-Signatur verwenden
+- [x] `[S]` Automatische E-Mails: Firmen-Signatur verwenden
 
 ---
 
-## Phase 3: REST API (P1)
+## Phase 3: REST API (P1) ✅
 
 ### 3.1 Signaturen-Endpoints
-- [ ] `[L]` `plugin/src/Api/SignatureController.php` erstellen
+- [x] `[L]` `plugin/src/Api/SignatureController.php` erstellen
   ```
   GET    /recruiting/v1/signatures
   POST   /recruiting/v1/signatures
@@ -106,41 +106,41 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
   GET    /recruiting/v1/signatures/company
   PUT    /recruiting/v1/signatures/company
   ```
-- [ ] `[S]` Permission Callbacks (User kann nur eigene Signaturen)
-- [ ] `[S]` Firmen-Signatur nur für Admins editierbar
+- [x] `[S]` Permission Callbacks (User kann nur eigene Signaturen)
+- [x] `[S]` Firmen-Signatur nur für Admins editierbar
 
 ### 3.2 Firmendaten-Endpoints
-- [ ] `[M]` Endpoints in `SettingsController.php` hinzufügen
+- [x] `[M]` Endpoints in `SettingsController.php` hinzufügen
   ```
   GET    /recruiting/v1/settings/company
   POST   /recruiting/v1/settings/company
   ```
 
 ### 3.3 E-Mail-Versand anpassen
-- [ ] `[S]` `/emails/send` um `signature_id` Parameter erweitern
-- [ ] `[S]` `/emails/preview` um Signatur-Vorschau erweitern
+- [x] `[S]` `/emails/send` um `signature_id` Parameter erweitern
+- [x] `[S]` `/emails/preview` um Signatur-Vorschau erweitern
 
 ---
 
-## Phase 4: Admin UI - React (P1)
+## Phase 4: Admin UI - React (P1) ✅
 
 ### 4.1 Tab-Struktur für E-Mail-Templates
-- [ ] `[M]` Tabs-Komponente für Template-Seite
+- [x] `[M]` Tabs-Komponente für Template-Seite
   - Tab: Vorlagen (bestehend)
   - Tab: Signaturen (neu)
   - Tab: Automatisierung (neu/umgebaut)
   - Datei: `plugin/assets/src/js/admin/email/index.jsx`
 
 ### 4.2 Signaturen-Tab
-- [ ] `[L]` `SignatureList.jsx` - Liste der User-Signaturen
-- [ ] `[L]` `SignatureEditor.jsx` - Signatur bearbeiten/erstellen
+- [x] `[L]` `SignatureList.jsx` - Liste der User-Signaturen
+- [x] `[L]` `SignatureEditor.jsx` - Signatur bearbeiten/erstellen
   - Grußformel-Feld
   - Signatur-Inhalt (Textarea)
   - Checkbox: Als Standard
   - Checkbox: Firmendaten anhängen
   - Live-Vorschau
-- [ ] `[M]` `CompanySignature.jsx` - Firmen-Signatur (Admin only)
-- [ ] `[S]` API-Hooks: `useSignatures.js`
+- [x] `[M]` `CompanySignature.jsx` - Firmen-Signatur (Admin only)
+- [x] `[S]` API-Hooks: `useSignatures.js`
 
 ### 4.3 Automatisierungs-Tab
 - [ ] `[L]` `AutomationSettings.jsx` umbauen
@@ -151,12 +151,12 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 - [ ] `[S]` Validierung: Nur passende Template-Kategorien anzeigen
 
 ### 4.4 E-Mail-Composer anpassen
-- [ ] `[M]` Signatur-Dropdown hinzufügen
+- [x] `[M]` Signatur-Dropdown hinzufügen
   - User-Signaturen anzeigen
   - Firmen-Signatur Option
   - "Keine Signatur" Option
-- [ ] `[M]` Signatur-Vorschau im Composer
-- [ ] `[S]` Signatur bei Vorschau mit rendern
+- [x] `[M]` Signatur-Vorschau im Composer
+- [x] `[S]` Signatur bei Vorschau mit rendern
 
 ### 4.5 Variablen-Picker bereinigen
 - [ ] `[M]` `PlaceholderPicker.jsx` aktualisieren
@@ -166,75 +166,75 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 
 ---
 
-## Phase 5: Firmendaten-Tab in Einstellungen (P1)
+## Phase 5: Firmendaten-Tab in Einstellungen (P1) ✅
 
 ### 5.1 Settings-Seite erweitern
-- [ ] `[M]` Tab "Firmendaten" hinzufügen
-  - Datei: `plugin/assets/src/js/admin/settings/`
-- [ ] `[L]` `CompanyDataForm.jsx` erstellen
+- [x] `[M]` Tab "Firmendaten" hinzufügen
+  - Datei: `plugin/src/Admin/Settings.php`
+- [x] `[L]` Firmendaten-Formular erstellen
   - Firmenname (Pflicht)
   - Adresse (Straße, PLZ, Stadt)
   - Telefon, Website
   - Kontakt-E-Mail (Pflicht)
   - Standard-Absender (Name + E-Mail)
-- [ ] `[S]` Validierung (E-Mail-Format, Pflichtfelder)
-- [ ] `[S]` Speichern via REST API
+- [x] `[S]` Validierung (E-Mail-Format, Pflichtfelder)
+- [x] `[S]` Speichern via REST API
 
 ---
 
-## Phase 6: Templates migrieren (P2)
+## Phase 6: Templates migrieren (P2) ✅
 
 ### 6.1 Bestehende Templates aktualisieren
-- [ ] `[M]` Eingangsbestätigung - Signatur entfernen
-- [ ] `[M]` Absage - Signatur entfernen
-- [ ] `[M]` Zurückgezogen - neu erstellen (automatisierbar)
+- [x] `[M]` Eingangsbestätigung - Signatur entfernen
+- [x] `[M]` Absage - Signatur entfernen
+- [x] `[M]` Zurückgezogen - neu erstellen (automatisierbar)
 
 ### 6.2 Manuelle Templates mit Lücken erstellen
-- [ ] `[M]` Interview-Einladung - mit `___` Lücken
-- [ ] `[M]` Interview-Erinnerung - mit `___` Lücken
-- [ ] `[M]` Angebot - mit `___` Lücken
-- [ ] `[M]` Zusage/Vertrag - mit `___` Lücken
+- [x] `[M]` Interview-Einladung - mit `___` Lücken
+- [x] `[M]` Interview-Erinnerung - mit `___` Lücken
+- [x] `[M]` Angebot - mit `___` Lücken
+- [x] `[M]` Zusage/Vertrag - mit `___` Lücken
 
 ### 6.3 Talent-Pool Templates
-- [ ] `[M]` Aufnahme in Talent-Pool (automatisierbar)
-- [ ] `[M]` Passende Stelle verfügbar (optional automatisierbar)
+- [x] `[M]` Aufnahme in Talent-Pool (automatisierbar)
+- [x] `[M]` Passende Stelle verfügbar (optional automatisierbar)
 
 ### 6.4 Seed-Daten aktualisieren
-- [ ] `[M]` `Migrator.php` - Default-Templates anpassen
-- [ ] `[S]` Template-Kategorien prüfen/erweitern
+- [x] `[M]` `Migrator.php` - Default-Templates anpassen
+- [x] `[S]` Template-Kategorien prüfen/erweitern
 
 ---
 
-## Phase 7: API-Dokumentation (P2)
+## Phase 7: API-Dokumentation (P2) ✅
 
 ### 7.1 api-specification.md aktualisieren
-- [ ] `[L]` E-Mail-Templates Endpoints dokumentieren
+- [x] `[L]` E-Mail-Templates Endpoints dokumentieren
   ```
   GET/POST/PATCH/DELETE /email-templates
   GET /email-templates/placeholders
   GET /email-templates/categories
   ```
-- [ ] `[L]` Signaturen Endpoints dokumentieren
+- [x] `[L]` Signaturen Endpoints dokumentieren
   ```
   GET/POST/PUT/DELETE /signatures
   GET/PUT /signatures/company
   ```
-- [ ] `[M]` E-Mail-Versand Endpoints dokumentieren
+- [x] `[M]` E-Mail-Versand Endpoints dokumentieren
   ```
   POST /emails/send
   POST /emails/preview
   GET /emails/log
   ```
-- [ ] `[M]` Firmendaten Endpoints dokumentieren
+- [x] `[M]` Firmendaten Endpoints dokumentieren
   ```
   GET/POST /settings/company
   ```
-- [ ] `[S]` Request/Response Beispiele für alle neuen Endpoints
-- [ ] `[S]` Hinweis auf bereinigte Platzhalter-Liste
+- [x] `[S]` Request/Response Beispiele für alle neuen Endpoints
+- [x] `[S]` Hinweis auf bereinigte Platzhalter-Liste
 
 ### 7.2 Hinweis auf Änderungen
-- [ ] `[S]` Breaking Changes dokumentieren (entfernte Variablen)
-- [ ] `[S]` Migration Guide für bestehende Templates
+- [x] `[S]` Breaking Changes dokumentieren (entfernte Variablen)
+- [x] `[S]` Migration Guide für bestehende Templates
 
 ---
 
@@ -325,4 +325,4 @@ Phase 5 (Settings)   Phase 6 (Templates)
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: 27. Januar 2025*

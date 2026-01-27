@@ -752,6 +752,538 @@ GET /wp-json/recruiting/v1/reports/time-to-hire
 
 ---
 
+### E-Mail-Templates
+
+#### Liste aller Templates
+
+```
+GET /wp-json/recruiting/v1/email-templates
+```
+
+**Query-Parameter:**
+
+| Parameter | Typ | Beschreibung |
+|-----------|-----|--------------|
+| `category` | string | Filter nach Kategorie: `application`, `rejection`, `interview`, `offer` |
+| `is_active` | bool | Nur aktive Templates (default: true) |
+| `search` | string | Suche in Name/Betreff |
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "slug": "application-confirmation",
+      "name": "Eingangsbestätigung",
+      "subject": "Ihre Bewerbung bei {firma}: {stelle}",
+      "body_html": "<p>{anrede_formal},</p><p>vielen Dank für Ihre Bewerbung...</p>",
+      "body_text": "{anrede_formal},\n\nvielen Dank für Ihre Bewerbung...",
+      "category": "application",
+      "is_active": true,
+      "is_default": true,
+      "is_system": true,
+      "variables": ["anrede_formal", "vorname", "nachname", "stelle", "firma", "bewerbung_datum", "bewerbung_id"],
+      "created_at": "2025-01-15T10:00:00Z",
+      "updated_at": "2025-01-15T10:00:00Z"
+    }
+  ],
+  "meta": {
+    "total": 9,
+    "categories": ["application", "rejection", "interview", "offer"]
+  }
+}
+```
+
+#### Einzelnes Template abrufen
+
+```
+GET /wp-json/recruiting/v1/email-templates/{id}
+```
+
+#### Neues Template erstellen
+
+```
+POST /wp-json/recruiting/v1/email-templates
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "Absage Initiativbewerbung",
+  "slug": "rejection-initiative",
+  "subject": "Ihre Initiativbewerbung bei {firma}",
+  "body_html": "<p>{anrede_formal},</p><p>vielen Dank für Ihre Initiativbewerbung...</p>",
+  "category": "rejection",
+  "is_active": true
+}
+```
+
+#### Template aktualisieren
+
+```
+PUT /wp-json/recruiting/v1/email-templates/{id}
+```
+
+**Request Body:** Nur die zu ändernden Felder
+
+#### Template löschen
+
+```
+DELETE /wp-json/recruiting/v1/email-templates/{id}
+```
+
+> **Hinweis:** System-Templates (`is_system: true`) können nicht gelöscht werden.
+
+#### Verfügbare Platzhalter abrufen
+
+```
+GET /wp-json/recruiting/v1/email-templates/placeholders
+```
+
+**Response:**
+
+```json
+{
+  "placeholders": {
+    "applicant": [
+      { "key": "anrede", "label": "Anrede (Herr/Frau)", "example": "Herr" },
+      { "key": "anrede_formal", "label": "Formelle Anrede", "example": "Sehr geehrter Herr Mustermann" },
+      { "key": "vorname", "label": "Vorname", "example": "Max" },
+      { "key": "nachname", "label": "Nachname", "example": "Mustermann" },
+      { "key": "email", "label": "E-Mail", "example": "max@example.com" },
+      { "key": "telefon", "label": "Telefon", "example": "+49 170 1234567" }
+    ],
+    "application": [
+      { "key": "bewerbung_datum", "label": "Bewerbungsdatum", "example": "15.01.2025" },
+      { "key": "bewerbung_id", "label": "Referenznummer", "example": "BW-2025-0042" }
+    ],
+    "job": [
+      { "key": "stelle", "label": "Stellentitel", "example": "Pflegefachkraft (m/w/d)" },
+      { "key": "stelle_ort", "label": "Arbeitsort", "example": "Berlin" },
+      { "key": "stelle_url", "label": "Link zur Stelle", "example": "https://example.com/jobs/..." }
+    ],
+    "company": [
+      { "key": "firma", "label": "Firmenname", "example": "Muster GmbH" },
+      { "key": "firma_adresse", "label": "Firmenadresse", "example": "Musterstraße 1, 10115 Berlin" },
+      { "key": "firma_telefon", "label": "Firmentelefon", "example": "+49 30 123456" },
+      { "key": "firma_email", "label": "Firmen-E-Mail", "example": "info@example.com" },
+      { "key": "firma_website", "label": "Website", "example": "www.example.com" }
+    ]
+  },
+  "total": 16
+}
+```
+
+> **Wichtig:** Die API stellt nur 16 echte Platzhalter bereit. Pseudo-Variablen wie `{termin_datum}` oder `{absender_name}` wurden entfernt. Siehe [Breaking Changes](#breaking-changes).
+
+#### Template-Kategorien abrufen
+
+```
+GET /wp-json/recruiting/v1/email-templates/categories
+```
+
+**Response:**
+
+```json
+{
+  "categories": [
+    { "slug": "application", "label": "Bewerbung", "count": 4 },
+    { "slug": "rejection", "label": "Absage", "count": 1 },
+    { "slug": "interview", "label": "Interview", "count": 2 },
+    { "slug": "offer", "label": "Angebot", "count": 2 }
+  ]
+}
+```
+
+---
+
+### E-Mail-Signaturen
+
+#### Liste aller Signaturen
+
+```
+GET /wp-json/recruiting/v1/signatures
+```
+
+Gibt alle Signaturen zurück, die für den aktuellen Benutzer verfügbar sind (eigene + Firmen-Signaturen).
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Meine Signatur",
+      "greeting": "Mit freundlichen Grüßen",
+      "content": "Max Mustermann\nPersonalreferent",
+      "is_default": true,
+      "include_company": true,
+      "user_id": 5,
+      "type": "personal",
+      "created_at": "2025-01-15T10:00:00Z",
+      "updated_at": "2025-01-15T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Firmen-Signatur",
+      "greeting": "Mit freundlichen Grüßen",
+      "content": "Ihr HR Team\nMuster GmbH",
+      "is_default": true,
+      "include_company": true,
+      "user_id": null,
+      "type": "company",
+      "created_at": "2025-01-10T08:00:00Z",
+      "updated_at": "2025-01-10T08:00:00Z"
+    }
+  ]
+}
+```
+
+#### Neue Signatur erstellen
+
+```
+POST /wp-json/recruiting/v1/signatures
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "Formell",
+  "greeting": "Hochachtungsvoll",
+  "content": "Max Mustermann\nHR Manager",
+  "is_default": false,
+  "include_company": true
+}
+```
+
+#### Signatur aktualisieren
+
+```
+PUT /wp-json/recruiting/v1/signatures/{id}
+```
+
+**Request Body:** Nur die zu ändernden Felder
+
+> **Hinweis:** Benutzer können nur eigene Signaturen bearbeiten.
+
+#### Signatur löschen
+
+```
+DELETE /wp-json/recruiting/v1/signatures/{id}
+```
+
+> **Hinweis:** Benutzer können nur eigene Signaturen löschen. Die Firmen-Signatur kann nicht gelöscht werden.
+
+#### Signatur als Standard setzen
+
+```
+POST /wp-json/recruiting/v1/signatures/{id}/default
+```
+
+Setzt die angegebene Signatur als Standard für den aktuellen Benutzer.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Signatur wurde als Standard gesetzt."
+}
+```
+
+#### Firmen-Signatur abrufen
+
+```
+GET /wp-json/recruiting/v1/signatures/company
+```
+
+**Response:**
+
+```json
+{
+  "id": 2,
+  "name": "Firmen-Signatur",
+  "greeting": "Mit freundlichen Grüßen",
+  "content": "Ihr HR Team\nMuster GmbH",
+  "is_default": true,
+  "include_company": true,
+  "rendered_html": "<div class=\"rp-signature\">...</div>"
+}
+```
+
+#### Firmen-Signatur aktualisieren
+
+```
+PUT /wp-json/recruiting/v1/signatures/company
+```
+
+**Request Body:**
+
+```json
+{
+  "greeting": "Mit besten Grüßen",
+  "content": "Ihr Recruiting Team\nMuster GmbH",
+  "include_company": true
+}
+```
+
+> **Berechtigung:** Nur Administratoren können die Firmen-Signatur bearbeiten.
+
+#### Signatur-Vorschau rendern
+
+```
+POST /wp-json/recruiting/v1/signatures/preview
+```
+
+**Request Body:**
+
+```json
+{
+  "greeting": "Mit freundlichen Grüßen",
+  "content": "Max Mustermann\nHR Manager",
+  "include_company": true
+}
+```
+
+**Response:**
+
+```json
+{
+  "html": "<div class=\"rp-signature\" style=\"margin-top: 20px;\">..."
+}
+```
+
+---
+
+### E-Mail-Versand
+
+#### E-Mail senden
+
+```
+POST /wp-json/recruiting/v1/emails/send
+```
+
+**Request Body:**
+
+```json
+{
+  "application_id": 456,
+  "template_id": 1,
+  "signature_id": 5,
+  "subject": "Ihre Bewerbung bei Muster GmbH: Pflegefachkraft (m/w/d)",
+  "body": "<p>Sehr geehrter Herr Mustermann,</p><p>vielen Dank für Ihre Bewerbung...</p>",
+  "attachments": [789, 790]
+}
+```
+
+| Feld | Typ | Pflicht | Beschreibung |
+|------|-----|---------|--------------|
+| `application_id` | int | Ja | Bewerbungs-ID |
+| `template_id` | int | Nein | Template-ID (optional, wenn body angegeben) |
+| `signature_id` | int | Nein | Signatur-ID (null = Firmen-Signatur, 0 = keine) |
+| `subject` | string | Ja | E-Mail-Betreff |
+| `body` | string | Ja | E-Mail-Inhalt (HTML) |
+| `attachments` | array | Nein | Array von Dokument-IDs |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "E-Mail wurde erfolgreich gesendet.",
+  "email_log_id": 1234,
+  "sent_at": "2025-01-20T14:30:00Z"
+}
+```
+
+#### E-Mail-Vorschau
+
+```
+POST /wp-json/recruiting/v1/emails/preview
+```
+
+**Request Body:**
+
+```json
+{
+  "application_id": 456,
+  "template_id": 1,
+  "signature_id": 5
+}
+```
+
+**Response:**
+
+```json
+{
+  "subject": "Ihre Bewerbung bei Muster GmbH: Pflegefachkraft (m/w/d)",
+  "body_html": "<p>Sehr geehrter Herr Mustermann,</p>...<div class=\"rp-signature\">...</div>",
+  "body_text": "Sehr geehrter Herr Mustermann,\n\n...",
+  "recipient": {
+    "name": "Max Mustermann",
+    "email": "max@example.com"
+  },
+  "placeholders_used": ["anrede_formal", "stelle", "firma", "bewerbung_datum"]
+}
+```
+
+#### E-Mail-Log abrufen
+
+```
+GET /wp-json/recruiting/v1/emails/log
+```
+
+**Query-Parameter:**
+
+| Parameter | Typ | Beschreibung |
+|-----------|-----|--------------|
+| `application_id` | int | Filter nach Bewerbung |
+| `per_page` | int | Ergebnisse pro Seite (default: 20) |
+| `page` | int | Seitennummer |
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": 1234,
+      "application_id": 456,
+      "template_id": 1,
+      "template_name": "Eingangsbestätigung",
+      "subject": "Ihre Bewerbung bei Muster GmbH: Pflegefachkraft (m/w/d)",
+      "recipient_email": "max@example.com",
+      "recipient_name": "Max Mustermann",
+      "status": "sent",
+      "sent_by": {
+        "id": 5,
+        "name": "Maria Schmidt"
+      },
+      "sent_at": "2025-01-20T14:30:00Z",
+      "opened_at": null
+    }
+  ],
+  "meta": {
+    "total": 45,
+    "per_page": 20,
+    "current_page": 1
+  }
+}
+```
+
+---
+
+### Firmendaten (Einstellungen)
+
+#### Firmendaten abrufen
+
+```
+GET /wp-json/recruiting/v1/settings/company
+```
+
+**Berechtigung:** `edit_posts` (alle eingeloggten Benutzer mit Bearbeitungsrechten)
+
+**Response:**
+
+```json
+{
+  "company": {
+    "name": "Muster GmbH",
+    "street": "Musterstraße 1",
+    "zip": "10115",
+    "city": "Berlin",
+    "phone": "+49 30 123456",
+    "website": "https://www.example.com",
+    "email": "info@example.com",
+    "sender_name": "HR Team Muster GmbH",
+    "sender_email": "hr@example.com"
+  }
+}
+```
+
+#### Firmendaten aktualisieren
+
+```
+POST /wp-json/recruiting/v1/settings/company
+```
+
+**Berechtigung:** `manage_options` (nur Administratoren)
+
+**Request Body:**
+
+```json
+{
+  "name": "Muster GmbH",
+  "street": "Musterstraße 1",
+  "zip": "10115",
+  "city": "Berlin",
+  "phone": "+49 30 123456",
+  "website": "https://www.example.com",
+  "email": "info@example.com",
+  "sender_name": "HR Team Muster GmbH",
+  "sender_email": "hr@example.com"
+}
+```
+
+| Feld | Typ | Pflicht | Beschreibung |
+|------|-----|---------|--------------|
+| `name` | string | Ja | Firmenname |
+| `street` | string | Nein | Straße und Hausnummer |
+| `zip` | string | Nein | Postleitzahl |
+| `city` | string | Nein | Stadt |
+| `phone` | string | Nein | Telefonnummer |
+| `website` | string | Nein | Website-URL |
+| `email` | string | Ja | Kontakt-E-Mail |
+| `sender_name` | string | Nein | Standard-Absender Name |
+| `sender_email` | string | Nein | Standard-Absender E-Mail |
+
+**Validierung:**
+- `name` ist Pflichtfeld
+- `email` muss gültige E-Mail-Adresse sein
+- `sender_email` muss gültige E-Mail-Adresse sein (wenn angegeben)
+- `website` muss gültige URL sein (wenn angegeben)
+
+---
+
+## Breaking Changes
+
+### Version 1.5.0: E-Mail-Platzhalter bereinigt
+
+Die folgenden 17 Pseudo-Variablen wurden entfernt, da sie nicht automatisch aufgelöst werden können:
+
+**Entfernte Variablen:**
+
+| Gruppe | Entfernte Variablen |
+|--------|---------------------|
+| Interview/Termin | `{termin_datum}`, `{termin_uhrzeit}`, `{termin_ort}`, `{termin_teilnehmer}`, `{termin_dauer}` |
+| Absender | `{absender_name}`, `{absender_email}`, `{absender_telefon}`, `{absender_position}` |
+| Kontakt | `{kontakt_email}`, `{kontakt_telefon}`, `{kontakt_name}` |
+| Angebot | `{start_datum}`, `{vertragsart}`, `{arbeitszeit}`, `{antwort_frist}` |
+
+**Migration bestehender Templates:**
+
+Templates die diese Variablen verwenden, zeigen nun `{variable_name}` als Text statt aufgelöster Werte. Ersetzen Sie diese durch:
+
+1. **Feste Eingaben:** Ersetzen Sie `{termin_datum}` durch `___` als Platzhalter für manuelle Eingabe
+2. **Signaturen:** Absender-Informationen werden jetzt über die Signatur-Funktion verwaltet
+
+**Empfohlene Anpassung:**
+
+```diff
+- <p>Ihr Vorstellungsgespräch findet am {termin_datum} um {termin_uhrzeit} statt.</p>
++ <p>Ihr Vorstellungsgespräch findet am ___ um ___ statt.</p>
+
+- <p>Mit freundlichen Grüßen<br>{absender_name}<br>{firma}</p>
++ <!-- Signatur wird automatisch angehängt -->
+```
+
+---
+
 ## Fehlerbehandlung
 
 ### HTTP Status Codes
@@ -937,6 +1469,16 @@ curl -X PUT \
 ---
 
 ## Änderungsprotokoll
+
+### v1.5.0 (Januar 2025)
+
+- **E-Mail-Templates API** - Vollständige CRUD-Endpoints für Templates
+- **Signaturen API** - Persönliche und Firmen-Signaturen verwalten
+- **E-Mail-Versand API** - E-Mails senden mit Vorschau und Log
+- **Firmendaten API** - Company Settings über REST verwalten
+- **Breaking Change:** 17 Pseudo-Variablen entfernt (siehe [Breaking Changes](#breaking-changes))
+- **Neue Template-Kategorien:** `rejection`, `interview`, `offer`
+- **9 Standard-Templates** mit Signatur-Trennung
 
 ### v1.0 (geplant)
 
