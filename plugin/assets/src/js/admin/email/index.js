@@ -63,7 +63,6 @@ function EmailTemplatesApp() {
 	// Signatur Hooks
 	const {
 		signatures,
-		companySignature,
 		loading: signaturesLoading,
 		error: signaturesError,
 		saving: signaturesSaving,
@@ -71,7 +70,6 @@ function EmailTemplatesApp() {
 		updateSignature,
 		deleteSignature,
 		setDefaultSignature,
-		updateCompanySignature,
 		previewSignature,
 	} = useSignatures();
 
@@ -174,17 +172,10 @@ function EmailTemplatesApp() {
 		setSignatureView( 'create' );
 	}, [] );
 
-	const handleCompanySignatureEdit = useCallback( () => {
-		setSelectedSignature( companySignature );
-		setSignatureView( 'company' );
-	}, [ companySignature ] );
-
 	const handleSignatureSave = useCallback( async ( data ) => {
 		let result;
 
-		if ( signatureView === 'company' ) {
-			result = await updateCompanySignature( data );
-		} else if ( selectedSignature?.id ) {
+		if ( selectedSignature?.id ) {
 			result = await updateSignature( selectedSignature.id, data );
 		} else {
 			result = await createSignature( data );
@@ -195,7 +186,7 @@ function EmailTemplatesApp() {
 			setSignatureView( 'list' );
 			setSelectedSignature( null );
 		}
-	}, [ signatureView, selectedSignature, updateSignature, createSignature, updateCompanySignature, showNotification, i18n.signatureSaved ] );
+	}, [ selectedSignature, updateSignature, createSignature, showNotification, i18n.signatureSaved ] );
 
 	const handleSignatureDelete = useCallback( async ( id ) => {
 		const success = await deleteSignature( id );
@@ -310,34 +301,18 @@ function EmailTemplatesApp() {
 						{ signatureView === 'list' && (
 							<SignatureList
 								signatures={ signatures }
-								companySignature={ companySignature }
 								loading={ signaturesLoading }
 								error={ signaturesError }
-								isAdmin={ isAdmin }
 								onSelect={ handleSignatureSelect }
 								onDelete={ handleSignatureDelete }
 								onSetDefault={ handleSetDefaultSignature }
 								onCreate={ handleSignatureCreate }
-								onEditCompany={ handleCompanySignatureEdit }
 							/>
 						) }
 
 						{ ( signatureView === 'edit' || signatureView === 'create' ) && (
 							<SignatureEditor
 								signature={ selectedSignature }
-								isCompany={ false }
-								saving={ signaturesSaving }
-								error={ signaturesError }
-								onSave={ handleSignatureSave }
-								onCancel={ handleSignatureCancel }
-								onPreview={ previewSignature }
-							/>
-						) }
-
-						{ signatureView === 'company' && (
-							<SignatureEditor
-								signature={ companySignature }
-								isCompany={ true }
 								saving={ signaturesSaving }
 								error={ signaturesError }
 								onSave={ handleSignatureSave }

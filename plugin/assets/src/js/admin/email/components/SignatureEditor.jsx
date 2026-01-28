@@ -21,7 +21,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/ta
  *
  * @param {Object}   props              Props
  * @param {Object}   props.signature    Signatur-Daten (null für neue Signatur)
- * @param {boolean}  props.isCompany    Firmen-Signatur?
  * @param {boolean}  props.saving       Speicher-Status
  * @param {string}   props.error        Fehlermeldung
  * @param {Function} props.onSave       Callback beim Speichern
@@ -31,7 +30,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/ta
  */
 export function SignatureEditor( {
 	signature = null,
-	isCompany = false,
 	saving = false,
 	error = null,
 	onSave,
@@ -106,7 +104,7 @@ export function SignatureEditor( {
 		const MAX_NAME_LENGTH = 100;
 		const MAX_BODY_LENGTH = 10000;
 
-		if ( ! isCompany && ! formData.name.trim() ) {
+		if ( ! formData.name.trim() ) {
 			errors.name = i18n.nameRequired || 'Name ist erforderlich';
 		} else if ( formData.name.length > MAX_NAME_LENGTH ) {
 			errors.name = `${ i18n.nameTooLong || 'Name zu lang' } (max. ${ MAX_NAME_LENGTH })`;
@@ -120,7 +118,7 @@ export function SignatureEditor( {
 
 		setValidationErrors( errors );
 		return Object.keys( errors ).length === 0;
-	}, [ formData, i18n, isCompany ] );
+	}, [ formData, i18n ] );
 
 	/**
 	 * Speichern
@@ -131,13 +129,9 @@ export function SignatureEditor( {
 		}
 
 		if ( onSave ) {
-			// Für Firmen-Signatur keinen Namen senden
-			const dataToSave = isCompany
-				? { content: formData.content }
-				: formData;
-			onSave( dataToSave );
+			onSave( formData );
 		}
-	}, [ formData, validate, onSave, isCompany ] );
+	}, [ formData, validate, onSave ] );
 
 	/**
 	 * Vorschau generieren
@@ -174,49 +168,39 @@ export function SignatureEditor( {
 	// Tab-Inhalt rendern
 	const renderEditContent = () => (
 		<div className="rp-signature-editor__form">
-			{ ! isCompany && (
-				<div style={ { marginBottom: '1rem' } }>
-					<Label htmlFor="signature-name">{ i18n.name || 'Name' }</Label>
-					<Input
-						id="signature-name"
-						value={ formData.name }
-						onChange={ ( e ) => updateField( 'name', e.target.value ) }
-						placeholder={ i18n.signatureNamePlaceholder || 'z.B. "Formelle Signatur" oder "Kurz-Signatur"' }
-						style={ validationErrors.name ? { borderColor: '#dc2626' } : {} }
-					/>
-					{ validationErrors.name && (
-						<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
-							{ validationErrors.name }
-						</p>
-					) }
-				</div>
-			) }
+			<div style={ { marginBottom: '1rem' } }>
+				<Label htmlFor="signature-name">{ i18n.name || 'Name' }</Label>
+				<Input
+					id="signature-name"
+					value={ formData.name }
+					onChange={ ( e ) => updateField( 'name', e.target.value ) }
+					placeholder={ i18n.signatureNamePlaceholder || 'z.B. "Formelle Signatur" oder "Kurz-Signatur"' }
+					style={ validationErrors.name ? { borderColor: '#dc2626' } : {} }
+				/>
+				{ validationErrors.name && (
+					<p style={ { color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' } }>
+						{ validationErrors.name }
+					</p>
+				) }
+			</div>
 
-			{ ! isCompany && (
-				<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' } }>
-					<Switch
-						id="signature-default"
-						checked={ formData.is_default }
-						onCheckedChange={ ( value ) => updateField( 'is_default', value ) }
-					/>
-					<Label htmlFor="signature-default" style={ { marginBottom: 0 } }>
-						{ i18n.setAsDefault || 'Als Standard-Signatur verwenden' }
-					</Label>
-				</div>
-			) }
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' } }>
+				<Switch
+					id="signature-default"
+					checked={ formData.is_default }
+					onCheckedChange={ ( value ) => updateField( 'is_default', value ) }
+				/>
+				<Label htmlFor="signature-default" style={ { marginBottom: 0 } }>
+					{ i18n.setAsDefault || 'Als Standard-Signatur verwenden' }
+				</Label>
+			</div>
 
 			<div className="rp-signature-editor__content-row">
 				<Label htmlFor="signature-content">
-					{ isCompany
-						? ( i18n.companySignatureContent || 'Firmen-Signatur Inhalt' )
-						: ( i18n.signatureContent || 'Signatur-Inhalt' )
-					}
+					{ i18n.signatureContent || 'Signatur-Inhalt' }
 				</Label>
 				<p style={ { color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' } }>
-					{ isCompany
-						? ( i18n.companySignatureHint || 'Die Firmen-Signatur wird verwendet, wenn ein Benutzer keine eigene Signatur hat.' )
-						: ( i18n.signatureHint || 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.' )
-					}
+					{ i18n.signatureHint || 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.' }
 				</p>
 				<RichTextEditor
 					value={ formData.content }
@@ -278,11 +262,9 @@ export function SignatureEditor( {
 			<Card>
 				<CardHeader>
 					<CardTitle>
-						{ isCompany
-							? ( i18n.editCompanySignature || 'Firmen-Signatur bearbeiten' )
-							: isNew
-								? ( i18n.newSignature || 'Neue Signatur' )
-								: ( i18n.editSignature || 'Signatur bearbeiten' )
+						{ isNew
+							? ( i18n.newSignature || 'Neue Signatur' )
+							: ( i18n.editSignature || 'Signatur bearbeiten' )
 						}
 					</CardTitle>
 				</CardHeader>
@@ -345,7 +327,6 @@ SignatureEditor.propTypes = {
 		content: PropTypes.string,
 		is_default: PropTypes.bool,
 	} ),
-	isCompany: PropTypes.bool,
 	saving: PropTypes.bool,
 	error: PropTypes.string,
 	onSave: PropTypes.func.isRequired,

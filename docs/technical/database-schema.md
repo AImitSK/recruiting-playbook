@@ -612,12 +612,10 @@ CREATE TABLE {prefix}rp_webhook_deliveries (
 ```sql
 CREATE TABLE {prefix}rp_signatures (
     id              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-    user_id         bigint(20) unsigned DEFAULT NULL,  -- NULL = Firmen-Signatur
+    user_id         bigint(20) unsigned NOT NULL,      -- Signaturen sind immer user-spezifisch
     name            varchar(100) NOT NULL,
-    greeting        varchar(255) DEFAULT NULL,
-    content         text NOT NULL,
-    is_default      tinyint(1) DEFAULT 0,
-    include_company tinyint(1) DEFAULT 1,
+    content         text NOT NULL,                     -- Signatur-Inhalt (HTML)
+    is_default      tinyint(1) DEFAULT 0,              -- Default für diesen User?
     created_at      datetime DEFAULT CURRENT_TIMESTAMP,
     updated_at      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -625,6 +623,8 @@ CREATE TABLE {prefix}rp_signatures (
     KEY is_default (user_id, is_default)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 ```
+
+> **Hinweis:** Signaturen sind immer user-spezifisch. Es gibt keine "Firmen-Signatur" als Datenbank-Eintrag. Wenn ein User keine Signatur hat, wird automatisch eine professionelle Signatur aus den Firmendaten (`rp_settings['company']`) generiert.
 
 ### Einstellungen in wp_options
 

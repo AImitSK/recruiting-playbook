@@ -15,7 +15,6 @@ import { handleApiError } from '../utils';
  */
 export function useSignatures() {
 	const [ signatures, setSignatures ] = useState( [] );
-	const [ companySignature, setCompanySignature ] = useState( null );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
@@ -69,35 +68,10 @@ export function useSignatures() {
 		}
 	}, [ errorLoadingMsg ] );
 
-	/**
-	 * Firmen-Signatur laden (nur für Admins)
-	 */
-	const fetchCompanySignature = useCallback( async () => {
-		try {
-			const data = await apiFetch( {
-				path: '/recruiting/v1/signatures/company',
-			} );
-
-			if ( isMountedRef.current ) {
-				setCompanySignature( data.signature || data || null );
-			}
-		} catch ( err ) {
-			// 404 bedeutet keine Firmen-Signatur vorhanden
-			if ( err?.code === 'rest_no_route' || err?.data?.status === 404 ) {
-				if ( isMountedRef.current ) {
-					setCompanySignature( null );
-				}
-				return;
-			}
-			console.error( 'Error fetching company signature:', err );
-		}
-	}, [] );
-
 	// Initial laden und Cleanup
 	useEffect( () => {
 		isMountedRef.current = true;
 		fetchSignatures();
-		fetchCompanySignature();
 
 		return () => {
 			isMountedRef.current = false;
@@ -105,7 +79,7 @@ export function useSignatures() {
 				abortControllerRef.current.abort();
 			}
 		};
-	}, [ fetchSignatures, fetchCompanySignature ] );
+	}, [ fetchSignatures ] );
 
 	/**
 	 * Signatur erstellen
@@ -279,46 +253,6 @@ export function useSignatures() {
 	}, [ errorSavingMsg ] );
 
 	/**
-	 * Firmen-Signatur aktualisieren (nur für Admins)
-	 *
-	 * @param {Object} data Signatur-Daten
-	 * @return {Object|null} Aktualisierte Signatur oder null
-	 */
-	const updateCompanySignature = useCallback( async ( data ) => {
-		try {
-			setSaving( true );
-			setError( null );
-
-			const result = await apiFetch( {
-				path: '/recruiting/v1/signatures/company',
-				method: 'POST',
-				data,
-			} );
-
-			if ( ! isMountedRef.current ) {
-				return null;
-			}
-
-			const updatedSignature = result.signature || result;
-			setCompanySignature( updatedSignature );
-
-			return updatedSignature;
-		} catch ( err ) {
-			if ( ! isMountedRef.current ) {
-				return null;
-			}
-			if ( ! handleApiError( err, setError, errorSavingMsg ) ) {
-				console.error( 'Error updating company signature:', err );
-			}
-			return null;
-		} finally {
-			if ( isMountedRef.current ) {
-				setSaving( false );
-			}
-		}
-	}, [ errorSavingMsg ] );
-
-	/**
 	 * Signatur-Vorschau generieren
 	 *
 	 * @param {Object} data Signatur-Daten für Vorschau
@@ -368,17 +302,14 @@ export function useSignatures() {
 
 	return {
 		signatures,
-		companySignature,
 		loading,
 		error,
 		saving,
 		fetchSignatures,
-		fetchCompanySignature,
 		createSignature,
 		updateSignature,
 		deleteSignature,
 		setDefaultSignature,
-		updateCompanySignature,
 		previewSignature,
 		getSignatureOptions,
 		getDefaultSignature,

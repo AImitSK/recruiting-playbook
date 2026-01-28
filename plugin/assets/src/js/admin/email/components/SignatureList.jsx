@@ -28,28 +28,22 @@ import {
  *
  * @param {Object}   props                   Props
  * @param {Array}    props.signatures        Liste der Signaturen
- * @param {Object}   props.companySignature  Firmen-Signatur
  * @param {boolean}  props.loading           Lade-Status
  * @param {string}   props.error             Fehlermeldung
- * @param {boolean}  props.isAdmin           Ist Admin?
  * @param {Function} props.onSelect          Callback bei Auswahl
  * @param {Function} props.onDelete          Callback beim Löschen
  * @param {Function} props.onSetDefault      Callback beim Standard setzen
  * @param {Function} props.onCreate          Callback beim Erstellen
- * @param {Function} props.onEditCompany     Callback beim Bearbeiten der Firmen-Signatur
  * @return {JSX.Element} Komponente
  */
 export function SignatureList( {
 	signatures = [],
-	companySignature = null,
 	loading = false,
 	error = null,
-	isAdmin = false,
 	onSelect,
 	onDelete,
 	onSetDefault,
 	onCreate,
-	onEditCompany,
 } ) {
 	const [ search, setSearch ] = useState( '' );
 	const [ confirmDelete, setConfirmDelete ] = useState( null );
@@ -154,39 +148,6 @@ export function SignatureList( {
 				<Alert variant="destructive" style={ { marginBottom: '1rem' } }>
 					<AlertDescription>{ error }</AlertDescription>
 				</Alert>
-			) }
-
-			{ /* Firmen-Signatur (nur für Admins) */ }
-			{ isAdmin && (
-				<Card style={ { marginBottom: '1.5rem' } }>
-					<CardHeader>
-						<div
-							className="rp-signature-list__header"
-							style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }
-						>
-							<CardTitle>
-								{ i18n.companySignature || 'Firmen-Signatur' }
-							</CardTitle>
-							<Button variant="outline" onClick={ onEditCompany }>
-								<Pencil style={ { width: '1rem', height: '1rem', marginRight: '0.5rem' } } />
-								{ i18n.edit || 'Bearbeiten' }
-							</Button>
-						</div>
-					</CardHeader>
-					<CardContent>
-						{ companySignature ? (
-							<div className="rp-signature-list__company-preview">
-								<p style={ { margin: 0, color: '#6b7280', fontSize: '0.875rem' } }>
-									{ getPreviewText( companySignature.content ) || ( i18n.noContent || 'Kein Inhalt' ) }
-								</p>
-							</div>
-						) : (
-							<p style={ { margin: 0, color: '#6b7280', fontStyle: 'italic' } }>
-								{ i18n.noCompanySignature || 'Keine Firmen-Signatur vorhanden. Klicken Sie auf "Bearbeiten", um eine zu erstellen.' }
-							</p>
-						) }
-					</CardContent>
-				</Card>
 			) }
 
 			{ /* Persönliche Signaturen */ }
@@ -367,16 +328,10 @@ SignatureList.propTypes = {
 			is_default: PropTypes.bool,
 		} )
 	),
-	companySignature: PropTypes.shape( {
-		id: PropTypes.number,
-		body: PropTypes.string,
-	} ),
 	loading: PropTypes.bool,
 	error: PropTypes.string,
-	isAdmin: PropTypes.bool,
 	onSelect: PropTypes.func,
 	onDelete: PropTypes.func,
 	onSetDefault: PropTypes.func,
 	onCreate: PropTypes.func,
-	onEditCompany: PropTypes.func,
 };

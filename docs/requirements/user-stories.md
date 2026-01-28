@@ -696,8 +696,7 @@
 **Akzeptanzkriterien:**
 - [ ] Persönliche Signaturen erstellen/bearbeiten
 - [ ] Eine Signatur als Standard markieren
-- [ ] Firmen-Signatur als Fallback (Admin)
-- [ ] Firmendaten automatisch anhängbar
+- [ ] Auto-generierte Fallback-Signatur aus Firmendaten (wenn keine eigene Signatur)
 - [ ] Vorschau der Signatur
 
 **Priorität:** P1 (Pro)

@@ -902,44 +902,41 @@ GET /wp-json/recruiting/v1/email-templates/categories
 
 ### E-Mail-Signaturen
 
+> **Hinweis:** Signaturen sind immer user-spezifisch. Es gibt keine separate "Firmen-Signatur" als Datenbank-Eintrag. Wenn ein User keine Signatur hat, wird automatisch eine Signatur aus den Firmendaten generiert.
+
 #### Liste aller Signaturen
 
 ```
 GET /wp-json/recruiting/v1/signatures
 ```
 
-Gibt alle Signaturen zurück, die für den aktuellen Benutzer verfügbar sind (eigene + Firmen-Signaturen).
+Gibt alle Signaturen des aktuellen Benutzers zurück.
 
 **Response:**
 
 ```json
 {
-  "data": [
+  "signatures": [
     {
       "id": 1,
       "name": "Meine Signatur",
-      "greeting": "Mit freundlichen Grüßen",
-      "content": "Max Mustermann\nPersonalreferent",
+      "content": "Mit freundlichen Grüßen\n\nMax Mustermann\nPersonalreferent",
       "is_default": true,
-      "include_company": true,
       "user_id": 5,
-      "type": "personal",
       "created_at": "2025-01-15T10:00:00Z",
       "updated_at": "2025-01-15T10:00:00Z"
     },
     {
       "id": 2,
-      "name": "Firmen-Signatur",
-      "greeting": "Mit freundlichen Grüßen",
-      "content": "Ihr HR Team\nMuster GmbH",
-      "is_default": true,
-      "include_company": true,
-      "user_id": null,
-      "type": "company",
+      "name": "Kurz",
+      "content": "Beste Grüße, Max Mustermann",
+      "is_default": false,
+      "user_id": 5,
       "created_at": "2025-01-10T08:00:00Z",
       "updated_at": "2025-01-10T08:00:00Z"
     }
-  ]
+  ],
+  "total": 2
 }
 ```
 
@@ -954,10 +951,8 @@ POST /wp-json/recruiting/v1/signatures
 ```json
 {
   "name": "Formell",
-  "greeting": "Hochachtungsvoll",
-  "content": "Max Mustermann\nHR Manager",
-  "is_default": false,
-  "include_company": true
+  "content": "Mit freundlichen Grüßen\n\nMax Mustermann\nHR Manager",
+  "is_default": false
 }
 ```
 
@@ -977,7 +972,7 @@ PUT /wp-json/recruiting/v1/signatures/{id}
 DELETE /wp-json/recruiting/v1/signatures/{id}
 ```
 
-> **Hinweis:** Benutzer können nur eigene Signaturen löschen. Die Firmen-Signatur kann nicht gelöscht werden.
+> **Hinweis:** Benutzer können nur eigene Signaturen löschen.
 
 #### Signatur als Standard setzen
 
@@ -996,43 +991,25 @@ Setzt die angegebene Signatur als Standard für den aktuellen Benutzer.
 }
 ```
 
-#### Firmen-Signatur abrufen
+#### Signatur-Optionen für Dropdown
 
 ```
-GET /wp-json/recruiting/v1/signatures/company
+GET /wp-json/recruiting/v1/signatures/options
 ```
+
+Gibt eine vereinfachte Liste für Dropdown-Auswahl zurück.
 
 **Response:**
 
 ```json
 {
-  "id": 2,
-  "name": "Firmen-Signatur",
-  "greeting": "Mit freundlichen Grüßen",
-  "content": "Ihr HR Team\nMuster GmbH",
-  "is_default": true,
-  "include_company": true,
-  "rendered_html": "<div class=\"rp-signature\">...</div>"
+  "options": [
+    { "value": 1, "label": "Meine Signatur", "is_default": true },
+    { "value": 2, "label": "Kurz", "is_default": false },
+    { "value": 0, "label": "Keine Signatur", "is_default": false }
+  ]
 }
 ```
-
-#### Firmen-Signatur aktualisieren
-
-```
-PUT /wp-json/recruiting/v1/signatures/company
-```
-
-**Request Body:**
-
-```json
-{
-  "greeting": "Mit besten Grüßen",
-  "content": "Ihr Recruiting Team\nMuster GmbH",
-  "include_company": true
-}
-```
-
-> **Berechtigung:** Nur Administratoren können die Firmen-Signatur bearbeiten.
 
 #### Signatur-Vorschau rendern
 
@@ -1044,9 +1021,7 @@ POST /wp-json/recruiting/v1/signatures/preview
 
 ```json
 {
-  "greeting": "Mit freundlichen Grüßen",
-  "content": "Max Mustermann\nHR Manager",
-  "include_company": true
+  "content": "Mit freundlichen Grüßen\n\nMax Mustermann\nHR Manager"
 }
 ```
 

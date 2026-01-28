@@ -132,15 +132,15 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
   - Datei: `plugin/assets/src/js/admin/email/index.jsx`
 
 ### 4.2 Signaturen-Tab
-- [x] `[L]` `SignatureList.jsx` - Liste der User-Signaturen
+- [x] `[L]` `SignatureList.jsx` - Liste der User-Signaturen (Tabellen-Ansicht)
 - [x] `[L]` `SignatureEditor.jsx` - Signatur bearbeiten/erstellen
-  - Grußformel-Feld
-  - Signatur-Inhalt (Textarea)
+  - Name-Feld
+  - Rich-Text-Editor für Signatur-Inhalt
   - Checkbox: Als Standard
-  - Checkbox: Firmendaten anhängen
-  - Live-Vorschau
-- [x] `[M]` `CompanySignature.jsx` - Firmen-Signatur (Admin only)
+  - Tabs: Bearbeiten / Vorschau
 - [x] `[S]` API-Hooks: `useSignatures.js`
+
+> **Hinweis:** Es gibt keine separate Firmen-Signatur-Komponente mehr. Wenn ein User keine Signatur hat, wird automatisch eine Signatur aus den Firmendaten generiert.
 
 ### 4.3 Automatisierungs-Tab
 - [ ] `[L]` `AutomationSettings.jsx` umbauen

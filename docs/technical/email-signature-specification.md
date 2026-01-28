@@ -7,9 +7,9 @@ Dieses Konzept trennt **Template-Inhalt** von **Signatur**. Templates enthalten 
 ### Prinzipien
 
 1. **Templates = reiner Inhalt** – keine Grußformel, keine Signatur
-2. **Signaturen = wiederverwendbar** – pro User oder als Firmen-Default
+2. **Signaturen = persönlich** – jeder User verwaltet seine eigenen Signaturen
 3. **Auswahl vor Versand** – bei manuellen E-Mails wählt der User seine Signatur
-4. **Fallback-Kette** – User-Signatur → Firmen-Signatur → Minimaler Absender
+4. **Fallback-Kette** – User-Signatur → Auto-generierte Signatur aus Firmendaten
 
 ---
 
@@ -88,12 +88,10 @@ Dieses Konzept trennt **Template-Inhalt** von **Signatur**. Templates enthalten 
 ```sql
 CREATE TABLE {prefix}rp_signatures (
     id              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-    user_id         bigint(20) unsigned DEFAULT NULL,  -- NULL = Firmen-Signatur
+    user_id         bigint(20) unsigned NOT NULL,      -- User-ID (Signaturen sind immer user-spezifisch)
     name            varchar(100) NOT NULL,             -- z.B. "Meine Signatur", "Formal"
-    greeting        varchar(255) DEFAULT NULL,         -- "Mit freundlichen Grüßen"
     content         text NOT NULL,                     -- Signatur-Inhalt (HTML)
     is_default      tinyint(1) DEFAULT 0,              -- Default für diesen User?
-    include_company tinyint(1) DEFAULT 1,              -- Firmendaten anhängen?
     created_at      datetime DEFAULT CURRENT_TIMESTAMP,
     updated_at      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -101,6 +99,8 @@ CREATE TABLE {prefix}rp_signatures (
     KEY is_default (user_id, is_default)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 ```
+
+> **Hinweis:** Signaturen sind immer user-spezifisch. Es gibt keine "Firmen-Signatur" als Datenbank-Eintrag mehr. Wenn ein User keine Signatur hat, wird automatisch eine Signatur aus den Firmendaten generiert.
 
 ### 3. User-Einstellung: Standard-Signatur
 
@@ -120,6 +120,8 @@ $default_sig_id = get_user_meta( $user_id, 'rp_default_signature_id', true );
 
 ### Typ 1: Persönliche Signatur (User-spezifisch)
 
+Jeder User kann eigene Signaturen erstellen und verwalten.
+
 ```
 Mit freundlichen Grüßen
 
@@ -127,59 +129,34 @@ Maria Schmidt
 HR Manager
 Tel: +49 30 12345-67
 E-Mail: m.schmidt@firma.de
-
-──────────────────────────
-Muster GmbH | Musterstr. 1, 12345 Berlin
-www.muster.de
 ```
 
 **Datenbank-Eintrag:**
 ```php
 [
-    'user_id'         => 5,                    // User ID
+    'user_id'         => 5,                    // User ID (Pflichtfeld)
     'name'            => 'Meine Standard-Signatur',
-    'greeting'        => 'Mit freundlichen Grüßen',
-    'content'         => "Maria Schmidt\nHR Manager\nTel: +49 30 12345-67\nE-Mail: m.schmidt@firma.de",
+    'content'         => "Mit freundlichen Grüßen\n\nMaria Schmidt\nHR Manager\nTel: +49 30 12345-67\nE-Mail: m.schmidt@firma.de",
     'is_default'      => 1,
-    'include_company' => 1,                    // Firmendaten werden angehängt
 ]
 ```
 
-### Typ 2: Firmen-Signatur (Fallback)
+### Typ 2: Auto-generierte Signatur (Fallback)
+
+Wenn keine Signatur existiert oder für automatische E-Mails, wird automatisch eine professionelle Signatur aus den Firmendaten generiert:
 
 ```
 Mit freundlichen Grüßen
 
-Ihr HR Team
-Muster GmbH
+Ihr Muster GmbH Team
 
 ──────────────────────────
-Muster GmbH | Musterstr. 1, 12345 Berlin
-Tel: +49 30 12345-0 | jobs@muster.de
-www.muster.de
-```
-
-**Datenbank-Eintrag:**
-```php
-[
-    'user_id'         => null,                 // NULL = Firmen-Signatur
-    'name'            => 'Standard Firmen-Signatur',
-    'greeting'        => 'Mit freundlichen Grüßen',
-    'content'         => "Ihr HR Team\nMuster GmbH",
-    'is_default'      => 1,                    // Firmen-Default
-    'include_company' => 1,
-]
-```
-
-### Typ 3: Minimaler Absender (automatisch generiert)
-
-Wenn keine Signatur existiert, wird automatisch generiert:
-
-```
-Mit freundlichen Grüßen
 Muster GmbH
-jobs@muster.de
+Musterstr. 1, 12345 Berlin
++49 30 12345-0 · jobs@muster.de · www.muster.de
 ```
+
+Diese Signatur wird **nicht** in der Datenbank gespeichert, sondern dynamisch aus den Einstellungen (`rp_settings['company']`) generiert. Dies vereinfacht die Verwaltung und stellt sicher, dass die Firmendaten immer aktuell sind.
 
 ---
 
@@ -191,13 +168,16 @@ Die neuen Funktionen werden in bestehende Seiten als Tabs integriert:
 Recruiting
 ├── E-Mail-Templates
 │   ├── [Tab] Vorlagen        ← bestehend
-│   └── [Tab] Signaturen      ← NEU: persönliche + Firmen-Signatur
+│   ├── [Tab] Signaturen      ← NEU: persönliche Signaturen
+│   └── [Tab] Automatisierung ← NEU: automatische E-Mails
 │
 └── Einstellungen
     ├── [Tab] Allgemein       ← bestehend
     ├── [Tab] Firmendaten     ← NEU: Adresse, Kontakt, Standard-Absender
     └── [Tab] Design          ← bestehend (Branding)
 ```
+
+> **Hinweis:** Firmendaten werden unter Einstellungen gepflegt und dienen als Fallback für die automatisch generierte Signatur.
 
 ---
 
@@ -276,74 +256,32 @@ Recruiting
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  E-Mail-Templates                                                        │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  [Vorlagen]  [Signaturen]                                               │
+│  [Vorlagen]  [Signaturen]  [Automatisierung]                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
 │  Meine Signaturen                                   [+ Neue Signatur]   │
 │                                                                          │
+│  ┌───────────────────────────────────────────────────────────────────────┐
+│  │  Name         │ Vorschau                      │ Status    │ Aktionen ││
+│  ├───────────────┼───────────────────────────────┼───────────┼──────────┤│
+│  │  Standard     │ Mit freundlichen Grüßen,      │ ★ Standard│ ✏️ 🗑️   ││
+│  │               │ Maria Schmidt, HR Manager...  │           │          ││
+│  ├───────────────┼───────────────────────────────┼───────────┼──────────┤│
+│  │  Kurz & knapp │ Beste Grüße, Maria Schmidt    │           │ ☆ ✏️ 🗑️ ││
+│  ├───────────────┼───────────────────────────────┼───────────┼──────────┤│
+│  │  Englisch     │ Best regards, Maria Schmidt...│           │ ☆ ✏️ 🗑️ ││
+│  └───────────────────────────────────────────────────────────────────────┘│
 │                                                                          │
-│  ┌─ Aktive Signatur ────────────────────────────────────────────────────┐│
+│  ┌─ Hinweis ────────────────────────────────────────────────────────────┐│
 │  │                                                                      ││
-│  │  ● Standard-Signatur                              [Bearbeiten] [···] ││
+│  │  ℹ️ Wenn keine Signatur ausgewählt ist, wird automatisch eine        ││
+│  │    Signatur aus den Firmendaten generiert.                           ││
 │  │                                                                      ││
-│  │    Mit freundlichen Grüßen                                           ││
-│  │                                                                      ││
-│  │    Maria Schmidt                                                     ││
-│  │    HR Manager                                                        ││
-│  │    Tel: +49 30 12345-67                                              ││
-│  │    m.schmidt@firma.de                                                ││
+│  │    Firmendaten können unter Einstellungen → Firmendaten gepflegt     ││
+│  │    werden.                                                           ││
 │  │                                                                      ││
 │  └──────────────────────────────────────────────────────────────────────┘│
 │                                                                          │
-│  ┌─ Weitere Signaturen ─────────────────────────────────────────────────┐│
-│  │                                                                      ││
-│  │  ○ Kurz & knapp                                   [Bearbeiten] [···] ││
-│  │    Beste Grüße, Maria Schmidt                                        ││
-│  │                                                                      ││
-│  │  ○ Englisch                                       [Bearbeiten] [···] ││
-│  │    Best regards, Maria Schmidt - HR Manager                          ││
-│  │                                                                      ││
-│  └──────────────────────────────────────────────────────────────────────┘│
-│                                                                          │
-│  ┌─ Firmen-Signatur (Fallback) ─────────────────────────────────────────┐│
-│  │                                                                      ││
-│  │  Wenn keine persönliche Signatur gewählt wird:                       ││
-│  │                                                                      ││
-│  │    Mit freundlichen Grüßen                                           ││
-│  │    Ihr HR Team                                                       ││
-│  │    Muster GmbH                                                       ││
-│  │                                                                      ││
-│  │  [Firmen-Signatur bearbeiten →]  (nur für Admins sichtbar)           ││
-│  │                                                                      ││
-│  └──────────────────────────────────────────────────────────────────────┘│
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### Firmen-Signatur (Admin-Bereich)
-
-Admins sehen zusätzlich einen Bereich zur Bearbeitung der Firmen-Signatur:
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│  ┌─ Firmen-Signatur (Standard für alle) ────────────────────────────────┐│
-│  │                                                          [Bearbeiten]││
-│  │  Diese Signatur wird verwendet, wenn ein Benutzer keine persönliche ││
-│  │  Signatur eingerichtet hat oder bei automatischen E-Mails.          ││
-│  │                                                                      ││
-│  │  ┌────────────────────────────────────────────────────────────────┐ ││
-│  │  │ Mit freundlichen Grüßen                                        │ ││
-│  │  │                                                                │ ││
-│  │  │ Ihr HR Team                                                    │ ││
-│  │  │ Muster GmbH                                                    │ ││
-│  │  │                                                                │ ││
-│  │  │ ──────────────────────────                                     │ ││
-│  │  │ Muster GmbH | Musterstr. 1, 12345 Berlin                       │ ││
-│  │  │ Tel: +49 30 12345-0 | jobs@muster.de                           │ ││
-│  │  │ www.muster.de                                                  │ ││
-│  │  └────────────────────────────────────────────────────────────────┘ ││
-│  │                                                                      ││
-│  └──────────────────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -354,31 +292,14 @@ Admins sehen zusätzlich einen Bereich zur Bearbeitung der Firmen-Signatur:
 │  Signatur bearbeiten                               [Abbrechen] [Speichern]│
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│  Name (intern)                                                           │
+│  Name                                                                    │
 │  ┌────────────────────────────────────────────────────────────────────┐ │
 │  │ Standard-Signatur                                                  │ │
 │  └────────────────────────────────────────────────────────────────────┘ │
 │                                                                          │
-│  Grußformel                                                              │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │ Mit freundlichen Grüßen                      │ [Vorschläge ▼]      │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-│    Vorschläge: Mit freundlichen Grüßen | Beste Grüße | Viele Grüße |    │
-│                Herzliche Grüße | Best regards | Kind regards            │
+│  ☑ Als Standard-Signatur verwenden                                       │
 │                                                                          │
 │  Signatur-Inhalt                                                         │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │ Maria Schmidt                                                      │ │
-│  │ HR Manager                                                         │ │
-│  │ Tel: +49 30 12345-67                                               │ │
-│  │ E-Mail: m.schmidt@firma.de                                         │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-│                                                                          │
-│  Optionen                                                                │
-│  ☑ Als Standard-Signatur verwenden                                       │
-│  ☑ Firmendaten automatisch anhängen                                      │
-│                                                                          │
-│  Vorschau                                                                │
 │  ┌────────────────────────────────────────────────────────────────────┐ │
 │  │ Mit freundlichen Grüßen                                            │ │
 │  │                                                                    │ │
@@ -386,10 +307,21 @@ Admins sehen zusätzlich einen Bereich zur Bearbeitung der Firmen-Signatur:
 │  │ HR Manager                                                         │ │
 │  │ Tel: +49 30 12345-67                                               │ │
 │  │ E-Mail: m.schmidt@firma.de                                         │ │
+│  └────────────────────────────────────────────────────────────────────┘ │
+│  ℹ️ Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.          │
+│                                                                          │
+│  [Bearbeiten]  [Vorschau]                                               │
+│                                                                          │
+│  Vorschau                                                                │
+│  ┌────────────────────────────────────────────────────────────────────┐ │
+│  │ So wird Ihre Signatur in E-Mails aussehen:                         │ │
+│  │ ──────────────────────────────────────────────                     │ │
+│  │ Mit freundlichen Grüßen                                            │ │
 │  │                                                                    │ │
-│  │ ──────────────────────────                                         │ │
-│  │ Muster GmbH | Musterstr. 1, 12345 Berlin                           │ │
-│  │ Tel: +49 30 12345-0 | www.muster.de                                │ │
+│  │ Maria Schmidt                                                      │ │
+│  │ HR Manager                                                         │ │
+│  │ Tel: +49 30 12345-67                                               │ │
+│  │ E-Mail: m.schmidt@firma.de                                         │ │
 │  └────────────────────────────────────────────────────────────────────┘ │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -434,7 +366,6 @@ Im E-Mail-Composer erscheint eine Signatur-Auswahl:
 │  │    ○ Kurz & knapp                                                    ││
 │  │    ○ Englisch                                                        ││
 │  │    ─────────────────────                                             ││
-│  │    ○ Firmen-Signatur                                                 ││
 │  │    ○ Keine Signatur                                                  ││
 │  │                                                                      ││
 │  │  Vorschau:                                                           ││
@@ -444,9 +375,6 @@ Im E-Mail-Composer erscheint eine Signatur-Auswahl:
 │  │  │ Maria Schmidt                                                  │ ││
 │  │  │ HR Manager                                                     │ ││
 │  │  │ Tel: +49 30 12345-67                                           │ ││
-│  │  │                                                                │ ││
-│  │  │ ──────────────────────────                                     │ ││
-│  │  │ Muster GmbH | Musterstr. 1, 12345 Berlin                       │ ││
 │  │  └────────────────────────────────────────────────────────────────┘ ││
 │  │                                                                      ││
 │  └──────────────────────────────────────────────────────────────────────┘│
@@ -576,7 +504,7 @@ class SignatureService {
      * Holt die Standard-Signatur für einen User
      */
     public function getDefaultForUser( int $user_id ): ?array {
-        // 1. User-spezifische Default-Signatur
+        // 1. User-spezifische Default-Signatur aus User-Meta
         $signature_id = get_user_meta( $user_id, 'rp_default_signature_id', true );
         if ( $signature_id ) {
             $signature = $this->repository->find( $signature_id );
@@ -586,13 +514,9 @@ class SignatureService {
         }
 
         // 2. Erste Signatur des Users mit is_default = 1
-        $signature = $this->repository->findDefaultForUser( $user_id );
-        if ( $signature ) {
-            return $signature;
-        }
+        return $this->repository->findDefaultForUser( $user_id );
 
-        // 3. Firmen-Signatur (user_id = NULL, is_default = 1)
-        return $this->repository->findCompanyDefault();
+        // Wenn keine Signatur gefunden: renderMinimalSignature() wird verwendet
     }
 
     /**
@@ -609,17 +533,6 @@ class SignatureService {
                 'name'       => $sig['name'],
                 'type'       => 'personal',
                 'is_default' => (bool) $sig['is_default'],
-            ];
-        }
-
-        // Firmen-Signatur
-        $company_sig = $this->repository->findCompanyDefault();
-        if ( $company_sig ) {
-            $options[] = [
-                'id'         => $company_sig['id'],
-                'name'       => __( 'Firmen-Signatur', 'recruiting-playbook' ),
-                'type'       => 'company',
-                'is_default' => false,
             ];
         }
 
@@ -687,15 +600,14 @@ class EmailService {
 ### Signaturen
 
 ```
-GET    /recruiting/v1/signatures              # Alle Signaturen des Users + Firmen-Signatur
+GET    /recruiting/v1/signatures              # Alle Signaturen des aktuellen Users
 POST   /recruiting/v1/signatures              # Neue Signatur erstellen
 GET    /recruiting/v1/signatures/{id}         # Einzelne Signatur
 PUT    /recruiting/v1/signatures/{id}         # Signatur aktualisieren
 DELETE /recruiting/v1/signatures/{id}         # Signatur löschen
 POST   /recruiting/v1/signatures/{id}/default # Als Standard setzen
-
-GET    /recruiting/v1/signatures/company      # Firmen-Signatur abrufen
-PUT    /recruiting/v1/signatures/company      # Firmen-Signatur speichern (nur Admin)
+GET    /recruiting/v1/signatures/options      # Signatur-Optionen für Dropdown
+POST   /recruiting/v1/signatures/preview      # Signatur-Vorschau rendern
 ```
 
 ### Firmendaten
@@ -704,6 +616,8 @@ PUT    /recruiting/v1/signatures/company      # Firmen-Signatur speichern (nur A
 GET    /recruiting/v1/settings/company        # Firmendaten abrufen
 POST   /recruiting/v1/settings/company        # Firmendaten speichern
 ```
+
+> **Hinweis:** Die Firmen-Signatur wird nicht über einen separaten API-Endpoint verwaltet. Stattdessen wird sie automatisch aus den Firmendaten generiert. Die Firmendaten können über `/settings/company` gepflegt werden.
 
 ---
 
@@ -737,21 +651,23 @@ POST   /recruiting/v1/settings/company        # Firmendaten speichern
                                     ┌─────────┴─────────┐
                                     │                   │
                                     ▼                   ▼
-                              ┌──────────┐       ┌──────────┐
-                              │ Ja:      │       │ Nein:    │
-                              │ User-Sig │       │ Firmen-  │
-                              │ nutzen   │       │ Signatur?│
-                              └──────────┘       └────┬─────┘
-                                                      │
-                                            ┌─────────┴─────────┐
-                                            │                   │
-                                            ▼                   ▼
-                                      ┌──────────┐       ┌──────────┐
-                                      │ Ja:      │       │ Nein:    │
-                                      │ Firmen-  │       │ Minimale │
-                                      │ Signatur │       │ Signatur │
-                                      └──────────┘       └──────────┘
+                              ┌──────────┐       ┌────────────────┐
+                              │ Ja:      │       │ Nein:          │
+                              │ User-Sig │       │ Auto-generiert │
+                              │ nutzen   │       │ aus Firmendaten│
+                              └──────────┘       └────────────────┘
 ```
+
+**Vereinfachte Fallback-Kette:**
+
+1. **Explizit gewählte Signatur** → wird verwendet
+2. **Keine Auswahl** → User-Default-Signatur
+3. **Keine User-Signatur** → Automatisch generiert aus Firmendaten
+
+Die automatisch generierte Signatur enthält:
+- "Mit freundlichen Grüßen"
+- "Ihr {Firmenname} Team"
+- Firmendaten (Adresse, Telefon, E-Mail, Website)
 
 ---
 
@@ -759,10 +675,10 @@ POST   /recruiting/v1/settings/company        # Firmendaten speichern
 
 | E-Mail-Typ | Signatur-Quelle |
 |------------|-----------------|
-| **Automatisch** (Eingangsbestätigung, Absage) | Firmen-Signatur oder Minimal |
+| **Automatisch** (Eingangsbestätigung, Absage) | Auto-generiert aus Firmendaten |
 | **Manuell** (User schreibt/sendet) | User wählt aus Dropdown |
 
-Bei automatischen E-Mails gibt es keinen "User" im klassischen Sinne → immer Firmen-Signatur.
+Bei automatischen E-Mails gibt es keinen "User" im klassischen Sinne → automatisch generierte Signatur aus den Firmendaten-Einstellungen wird verwendet.
 
 ---
 
@@ -1071,7 +987,8 @@ Der bestehende Automatisierungs-Tab wird vereinfacht und zeigt nur die **tatsäc
 │  │                                                                      ││
 │  └─────────────────────────────────────────────────────────────────────┘│
 │                                                                          │
-│  ℹ️ Alle automatischen E-Mails verwenden die Firmen-Signatur.            │
+│  ℹ️ Alle automatischen E-Mails verwenden die auto-generierte Signatur    │
+│    aus den Firmendaten-Einstellungen.                                   │
 │                                                                          │
 │                                                          [Speichern]    │
 │                                                                          │
@@ -1121,7 +1038,7 @@ Der bestehende Automatisierungs-Tab wird vereinfacht und zeigt nur die **tatsäc
 ### Wichtige Hinweise
 
 1. **Keine Interview-/Angebots-Automatisierung** – Diese Templates sind nur Vorlagen für manuelle E-Mails
-2. **Firmen-Signatur** – Alle automatischen E-Mails verwenden die Firmen-Signatur (kein User involviert)
+2. **Auto-generierte Signatur** – Alle automatischen E-Mails verwenden die automatisch generierte Signatur aus den Firmendaten
 3. **Template-Auswahl** – Nur Templates der passenden Kategorie werden im Dropdown angezeigt
 4. **Deaktivierbar** – Jede Automatisierung kann einzeln an/aus geschaltet werden
 
@@ -1149,10 +1066,10 @@ Der bestehende Automatisierungs-Tab wird vereinfacht und zeigt nur die **tatsäc
 
 | Komponente | Änderung |
 |------------|----------|
-| E-Mail-Templates Seite | Tab "Signaturen" hinzufügen |
+| E-Mail-Templates Seite | Tab "Signaturen" hinzufügen (nur persönliche Signaturen) |
 | E-Mail-Templates Seite | Tab "Automatisierung" hinzufügen/umbauen |
-| Einstellungen Seite | Tab "Firmendaten" hinzufügen |
-| E-Mail-Composer | Signatur-Dropdown hinzufügen |
+| Einstellungen Seite | Tab "Firmendaten" hinzufügen (für auto-generierte Signatur) |
+| E-Mail-Composer | Signatur-Dropdown hinzufügen (persönliche Signaturen) |
 | Variablen-Picker | Bereinigte Liste (16 statt 33) |
 
 ---

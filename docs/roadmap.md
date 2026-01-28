@@ -342,7 +342,7 @@ Design & Branding │                   │
 - [ ] Platzhalter (16 echte: {vorname}, {stelle}, {firma}, etc.)
 - [ ] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen
 - [ ] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken)
-- [ ] Signaturen-Verwaltung (pro User + Firmen-Signatur)
+- [ ] Signaturen-Verwaltung (pro User, auto-generierte Fallback-Signatur aus Firmendaten)
 - [ ] Firmendaten-Einstellungen
 - [ ] Manueller Versand aus Backend mit Signatur-Auswahl
 - [ ] E-Mail-Historie pro Bewerber
