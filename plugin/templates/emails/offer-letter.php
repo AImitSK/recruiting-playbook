@@ -133,9 +133,4 @@ $placeholders = $placeholders ?? [];
 <p>
 	<?php esc_html_e( 'Wir freuen uns darauf, Sie bald in unserem Team willkommen zu heißen!', 'recruiting-playbook' ); ?>
 </p>
-
-<p>
-	<?php esc_html_e( 'Mit freundlichen Grüßen', 'recruiting-playbook' ); ?><br>
-	<?php echo esc_html( $placeholders['absender_name'] ?? '' ); ?><br>
-	<?php echo esc_html( $placeholders['firma'] ?? '' ); ?>
-</p>
+<?php // Signatur wird automatisch vom EmailService angehängt. ?>

@@ -96,79 +96,129 @@ class SignatureService {
 	}
 
 	/**
-	 * Firmen-Datenblock rendern
+	 * Firmen-Kontaktdaten-Block rendern (Tel, Web, E-Mail)
 	 *
-	 * @return string HTML-Block mit Firmendaten.
+	 * Wird innerhalb der Signatur verwendet, OHNE Trennlinie.
+	 *
+	 * @return string HTML-Block mit Kontaktdaten.
 	 */
-	public function renderCompanyBlock(): string {
+	public function renderCompanyContactBlock(): string {
 		$company = $this->getCompanyData();
 
 		if ( empty( $company['name'] ) ) {
 			return '';
 		}
 
-		$parts = [];
+		$html = '<div class="rp-signature-contact" style="margin-top: 30px; font-size: 14px; color: #333;">';
 
 		// Firmenname.
-		$parts[] = esc_html( $company['name'] );
+		$html .= '<p style="margin: 0 0 5px 0;"><strong>' . esc_html( $company['name'] ) . '</strong></p>';
 
-		// Adresse zusammenbauen.
-		$address_parts = [];
-		if ( ! empty( $company['street'] ) ) {
-			$address_parts[] = $company['street'];
-		}
-		if ( ! empty( $company['zip'] ) || ! empty( $company['city'] ) ) {
-			$address_parts[] = trim( ( $company['zip'] ?? '' ) . ' ' . ( $company['city'] ?? '' ) );
-		}
-		if ( ! empty( $address_parts ) ) {
-			$parts[] = esc_html( implode( ', ', $address_parts ) );
-		}
-
-		// Kontaktdaten.
+		// Telefon.
 		if ( ! empty( $company['phone'] ) ) {
-			$parts[] = sprintf(
-				'Tel: %s',
-				esc_html( $company['phone'] )
-			);
+			$html .= '<p style="margin: 0 0 2px 0;">Tel.: ' . esc_html( $company['phone'] ) . '</p>';
 		}
 
+		// Website.
 		if ( ! empty( $company['website'] ) ) {
-			$url = $company['website'];
-			$display = preg_replace( '#^https?://#', '', $url );
-			$parts[] = sprintf(
-				'<a href="%s">%s</a>',
-				esc_url( $url ),
-				esc_html( $display )
-			);
+			$html .= '<p style="margin: 0 0 2px 0;">Web: <a href="' . esc_url( $company['website'] ) . '" style="color: #0073aa;">' . esc_url( $company['website'] ) . '</a></p>';
 		}
 
-		// Als HTML-Block formatieren.
-		$html = '<div class="rp-signature-company" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">';
-		$html .= implode( ' | ', $parts );
+		// E-Mail.
+		if ( ! empty( $company['email'] ) ) {
+			$html .= '<p style="margin: 0;">E-Mail: <a href="mailto:' . esc_attr( $company['email'] ) . '" style="color: #0073aa;">' . esc_html( $company['email'] ) . '</a></p>';
+		}
+
 		$html .= '</div>';
 
 		return $html;
 	}
 
 	/**
-	 * Minimale Signatur rendern (letzter Fallback)
+	 * Firmen-Footer mit Trennlinie rendern
 	 *
-	 * Verwendet Firmendaten wenn vorhanden, sonst WordPress Blog-Name.
+	 * Format: _______________________________________________________________
+	 *         {Firmenname} · {Adresse} · {PLZ Ort}
 	 *
-	 * @return string HTML mit minimaler Signatur.
+	 * Wird am Ende JEDER Signatur angehängt.
+	 *
+	 * @return string HTML-Block mit Trennlinie und Firmenadresse.
+	 */
+	public function renderCompanyFooter(): string {
+		$company = $this->getCompanyData();
+
+		if ( empty( $company['name'] ) ) {
+			return '';
+		}
+
+		// Adresszeile zusammenbauen: Firmenname · Straße · PLZ Ort
+		$parts = [];
+		$parts[] = $company['name'];
+
+		if ( ! empty( $company['street'] ) ) {
+			$parts[] = $company['street'];
+		}
+
+		$location = trim( ( $company['zip'] ?? '' ) . ' ' . ( $company['city'] ?? '' ) );
+		if ( ! empty( $location ) ) {
+			$parts[] = $location;
+		}
+
+		$address_line = implode( ' · ', array_map( 'esc_html', $parts ) );
+
+		$html = '<div class="rp-signature-footer" style="margin-top: 30px; font-size: 12px; color: #6b7280;">';
+		$html .= '<p style="margin: 0; border-top: 1px solid #ccc; padding-top: 15px;">' . $address_line . '</p>';
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	/**
+	 * Minimale Signatur rendern (Firmen-Signatur als Fallback)
+	 *
+	 * Wird verwendet wenn KEINE Signatur als Standard gesetzt ist.
+	 * Format:
+	 *   Mit freundlichen Grüßen
+	 *
+	 *   Ihr {Firmenname} Team
+	 *
+	 *   {Firmenname}
+	 *   Tel.: {Telefon}
+	 *   Web: {Website}
+	 *   E-Mail: {E-Mail}
+	 *
+	 *   _______________________________________________________________
+	 *   {Firmenname} · {Adresse} · {PLZ Ort}
+	 *
+	 * @return string HTML mit vollständiger Firmen-Signatur.
 	 */
 	public function renderMinimalSignature(): string {
 		$company = $this->getCompanyData();
 
-		// Absender-Name bestimmen.
-		$sender_name = $company['default_sender_name']
-			?? $company['name']
-			?? get_bloginfo( 'name' );
+		// Firmenname bestimmen.
+		$company_name = $company['name'] ?? get_bloginfo( 'name' );
 
-		$html = '<div class="rp-signature-minimal" style="margin-top: 20px;">';
+		$html = '<div class="rp-signature-minimal" style="margin-top: 35px;">';
+
+		// Grußformel.
 		$html .= '<p style="margin: 0;">' . esc_html__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ) . '</p>';
-		$html .= '<p style="margin: 10px 0 0 0;"><strong>' . esc_html( $sender_name ) . '</strong></p>';
+
+		// "Ihr {Firma} Team".
+		$html .= '<p style="margin: 15px 0 0 0;">';
+		$html .= sprintf(
+			/* translators: %s: Company name */
+			esc_html__( 'Ihr %s Team', 'recruiting-playbook' ),
+			esc_html( $company_name )
+		);
+		$html .= '</p>';
+
 		$html .= '</div>';
+
+		// Kontaktdaten-Block.
+		$html .= $this->renderCompanyContactBlock();
+
+		// Firmen-Footer mit Trennlinie.
+		$html .= $this->renderCompanyFooter();
 
 		return $html;
 	}
@@ -185,8 +235,8 @@ class SignatureService {
 
 		if ( $default_id ) {
 			$signature = $this->getRepository()->find( (int) $default_id );
-			// Prüfen ob Signatur existiert und dem User gehört.
-			if ( $signature && (int) $signature['user_id'] === $user_id ) {
+			// Prüfen ob Signatur existiert, dem User gehört UND als Standard markiert ist.
+			if ( $signature && (int) $signature['user_id'] === $user_id && ! empty( $signature['is_default'] ) ) {
 				return $signature;
 			}
 		}
@@ -308,6 +358,16 @@ class SignatureService {
 	/**
 	 * Signatur-Inhalt rendern
 	 *
+	 * Rendert eine benutzerdefinierte Signatur mit Grußformel, Inhalt
+	 * und anschließend IMMER den Firmen-Footer mit Trennlinie.
+	 *
+	 * Format:
+	 *   [Grußformel]
+	 *   [Signatur-Inhalt]
+	 *
+	 *   _______________________________________________________________
+	 *   {Firmenname} · {Adresse} · {PLZ Ort}
+	 *
 	 * @param array $signature Signatur-Daten.
 	 * @return string HTML.
 	 */
@@ -326,12 +386,10 @@ class SignatureService {
 			$html .= '</div>';
 		}
 
-		// Firmendaten anhängen wenn gewünscht.
-		if ( ! empty( $signature['include_company'] ) ) {
-			$html .= $this->renderCompanyBlock();
-		}
-
 		$html .= '</div>';
+
+		// Firmen-Footer mit Trennlinie wird IMMER angehängt.
+		$html .= $this->renderCompanyFooter();
 
 		return $html;
 	}
@@ -344,6 +402,11 @@ class SignatureService {
 	private function getCompanyData(): array {
 		$settings = get_option( 'rp_settings', [] );
 
+		// E-Mail: Priorität company_email > notification_email > admin_email.
+		$email = $settings['company_email']
+			?? $settings['notification_email']
+			?? get_option( 'admin_email' );
+
 		return [
 			'name'    => $settings['company_name'] ?? get_bloginfo( 'name' ),
 			'street'  => $settings['company_street'] ?? '',
@@ -351,7 +414,7 @@ class SignatureService {
 			'city'    => $settings['company_city'] ?? '',
 			'phone'   => $settings['company_phone'] ?? '',
 			'website' => $settings['company_website'] ?? home_url(),
-			'email'   => $settings['company_email'] ?? get_option( 'admin_email' ),
+			'email'   => $email,
 		];
 	}
 

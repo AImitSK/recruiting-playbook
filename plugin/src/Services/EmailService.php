@@ -194,14 +194,18 @@ class EmailService {
 			'job_url'      => get_permalink( $application['job_id'] ),
 		] );
 
-		// AUSNAHME: Eingangsbestätigung nutzt IMMER Firmen-Signatur (user_id=0).
-		$message = $this->appendSignature( $message, null, 0 );
+		// AUSNAHME: Eingangsbestätigung nutzt IMMER die Firmen-Signatur aus Einstellungen.
+		// Ignoriert benutzerdefinierte Signaturen - es gibt keinen User-Kontext.
+		$message = $this->appendMinimalCompanySignature( $message );
 
 		return $this->send( $to, $subject, $message );
 	}
 
 	/**
 	 * E-Mail an Bewerber senden: Absage
+	 *
+	 * Automatische Absage-E-Mail verwendet die Firmen-Signatur,
+	 * da kein konkreter Absender-User existiert.
 	 *
 	 * @param int $application_id Application ID.
 	 * @return bool
@@ -224,6 +228,9 @@ class EmailService {
 			'application'  => $application,
 			'company_name' => $this->from_name,
 		] );
+
+		// Signatur mit Fallback-Kette: User-Default → Firmen-Default → Minimal.
+		$message = $this->appendSignature( $message );
 
 		return $this->send( $to, $subject, $message );
 	}
@@ -636,23 +643,21 @@ class EmailService {
 					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
+				// Signatur wird via appendSignature() in sendApplicantConfirmation() hinzugefügt.
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
 					<p>%s</p>
 					<p><strong>%s:</strong> %s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Bewerbungseingang bestätigt', 'recruiting-playbook' ),
 					$greeting,
 					__( 'vielen Dank für Ihre Bewerbung! Wir haben Ihre Unterlagen erhalten und werden diese sorgfältig prüfen.', 'recruiting-playbook' ),
 					__( 'Stelle', 'recruiting-playbook' ),
 					esc_html( $app['job_title'] ?? '' ),
 					__( 'Sie erhalten von uns Rückmeldung, sobald wir Ihre Bewerbung geprüft haben.', 'recruiting-playbook' ),
-					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -663,13 +668,13 @@ class EmailService {
 					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
+				// Signatur wird via appendSignature() in sendRejectionEmail() hinzugefügt.
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
 					<p>%s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Ihre Bewerbung', 'recruiting-playbook' ),
 					$greeting,
 					sprintf(
@@ -678,9 +683,7 @@ class EmailService {
 						esc_html( $app['job_title'] ?? '' )
 					),
 					__( 'Nach sorgfältiger Prüfung müssen wir Ihnen leider mitteilen, dass wir uns für andere Kandidaten entschieden haben, deren Profil besser zu unseren aktuellen Anforderungen passt.', 'recruiting-playbook' ),
-					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -815,17 +818,47 @@ class EmailService {
 	}
 
 	/**
-	 * Firmen-Signatur für automatische E-Mails anhängen
+	 * Firmen-Signatur aus Einstellungen anhängen (KEINE Datenbank-Signatur)
 	 *
-	 * Automatische E-Mails (Eingangsbestätigung, Absage etc.) verwenden
-	 * immer die Firmen-Signatur, da kein konkreter Absender-User existiert.
+	 * Verwendet IMMER die automatisch generierte Signatur aus den Plugin-Einstellungen.
+	 * Diese Methode ignoriert benutzerdefinierte Signaturen in der Datenbank.
+	 *
+	 * Verwendung: Eingangsbestätigung (kein User-Kontext, immer gleiche Signatur)
 	 *
 	 * @param string $body_html E-Mail-Body ohne Signatur.
-	 * @return string E-Mail-Body mit Firmen-Signatur.
+	 * @return string E-Mail-Body mit Firmen-Signatur aus Einstellungen.
 	 */
-	private function appendCompanySignature( string $body_html ): string {
-		// null, null = keine explizite Signatur, kein User → Firmen-Signatur.
-		return $this->appendSignature( $body_html, null, null );
+	private function appendMinimalCompanySignature( string $body_html ): string {
+		$signature = $this->getSignatureService()->renderMinimalSignature();
+
+		if ( empty( $signature ) ) {
+			return $body_html;
+		}
+
+		// Signatur innerhalb des Content-Containers einfügen.
+		if ( preg_match( '/<\/div>\s*<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<\/div>)(\s*<div class="footer">)/i',
+				$signature . "\n\t\t$1$2",
+				$body_html,
+				1
+			);
+		}
+
+		if ( preg_match( '/<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<div class="footer">)/i',
+				$signature . "\n\t\t$1",
+				$body_html,
+				1
+			);
+		}
+
+		if ( stripos( $body_html, '</body>' ) !== false ) {
+			return str_ireplace( '</body>', $signature . "\n</body>", $body_html );
+		}
+
+		return $body_html . $signature;
 	}
 
 	/**
