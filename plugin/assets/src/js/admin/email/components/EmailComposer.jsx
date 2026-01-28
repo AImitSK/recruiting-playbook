@@ -7,8 +7,6 @@
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { Calendar } from 'lucide-react';
-import { DateTimePicker, Popover } from '@wordpress/components';
 
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
@@ -59,9 +57,6 @@ export function EmailComposer( {
 		subject: '',
 		body: '',
 	} );
-	const [ scheduleEnabled, setScheduleEnabled ] = useState( false );
-	const [ scheduledAt, setScheduledAt ] = useState( null );
-	const [ showSchedulePicker, setShowSchedulePicker ] = useState( false );
 	const [ activeTab, setActiveTab ] = useState( 'compose' );
 	const [ validationErrors, setValidationErrors ] = useState( {} );
 
@@ -147,7 +142,6 @@ export function EmailComposer( {
 
 		const MAX_SUBJECT_LENGTH = 255;
 		const MAX_BODY_LENGTH = 50000;
-		const MAX_SCHEDULE_DAYS = 365;
 
 		const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
 
@@ -169,26 +163,9 @@ export function EmailComposer( {
 			errors.body = `${ i18n.bodyTooLong || __( 'Inhalt zu lang', 'recruiting-playbook' ) } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
-		if ( scheduleEnabled ) {
-			if ( ! scheduledAt ) {
-				errors.scheduledAt = i18n.scheduleRequired || __( 'Sendezeitpunkt ist erforderlich', 'recruiting-playbook' );
-			} else {
-				const scheduleDate = new Date( scheduledAt );
-				const now = new Date();
-				const maxDate = new Date();
-				maxDate.setDate( maxDate.getDate() + MAX_SCHEDULE_DAYS );
-
-				if ( scheduleDate <= now ) {
-					errors.scheduledAt = i18n.schedulePastError || __( 'Sendezeitpunkt muss in der Zukunft liegen', 'recruiting-playbook' );
-				} else if ( scheduleDate > maxDate ) {
-					errors.scheduledAt = `${ i18n.scheduleTooFar || __( 'Sendezeitpunkt zu weit in der Zukunft', 'recruiting-playbook' ) } (max. ${ MAX_SCHEDULE_DAYS } Tage)`;
-				}
-			}
-		}
-
 		setValidationErrors( errors );
 		return Object.keys( errors ).length === 0;
-	}, [ formData, scheduleEnabled, scheduledAt, i18n ] );
+	}, [ formData, i18n ] );
 
 	/**
 	 * E-Mail senden
@@ -204,6 +181,7 @@ export function EmailComposer( {
 			body: formData.body,
 			template_id: selectedTemplate || null,
 			application_id: applicationId,
+			send_immediately: true,
 		};
 
 		// Nur signature_id senden wenn explizit gewählt (sonst nutzt Backend Firmen-Signatur)
@@ -211,31 +189,10 @@ export function EmailComposer( {
 			emailData.signature_id = parseInt( selectedSignature, 10 );
 		}
 
-		if ( scheduleEnabled && scheduledAt ) {
-			emailData.scheduled_at = scheduledAt;
-		}
-
 		if ( onSend ) {
 			onSend( emailData );
 		}
-	}, [ formData, selectedTemplate, selectedSignature, applicationId, scheduleEnabled, scheduledAt, validate, onSend ] );
-
-	/**
-	 * Sendezeitpunkt formatieren
-	 *
-	 * @param {string} date ISO-Datum
-	 * @return {string} Formatiertes Datum
-	 */
-	const formatScheduledDate = ( date ) => {
-		if ( ! date ) {
-			return '';
-		}
-
-		return new Date( date ).toLocaleString( 'de-DE', {
-			dateStyle: 'medium',
-			timeStyle: 'short',
-		} );
-	};
+	}, [ formData, selectedTemplate, selectedSignature, applicationId, validate, onSend ] );
 
 	return (
 		<div className="rp-email-composer">
@@ -358,56 +315,6 @@ export function EmailComposer( {
 										</p>
 									) }
 								</div>
-
-								{ /* Zeitversetzt senden */ }
-								<div style={ { display: 'flex', alignItems: 'center', gap: '0.75rem', paddingTop: '0.5rem' } }>
-									<Switch
-										id="schedule"
-										checked={ scheduleEnabled }
-										onCheckedChange={ setScheduleEnabled }
-									/>
-									<Label htmlFor="schedule" style={ { marginBottom: 0, cursor: 'pointer' } }>
-										{ i18n.scheduleEmail || __( 'E-Mail zeitversetzt senden', 'recruiting-playbook' ) }
-									</Label>
-								</div>
-
-								{ scheduleEnabled && (
-									<div style={ { marginLeft: '3rem' } }>
-										<Button
-											variant="outline"
-											onClick={ () => setShowSchedulePicker( ! showSchedulePicker ) }
-											style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }
-										>
-											<Calendar style={ { width: '1rem', height: '1rem' } } />
-											{ scheduledAt
-												? formatScheduledDate( scheduledAt )
-												: ( i18n.selectDateTime || __( 'Zeitpunkt wählen', 'recruiting-playbook' ) )
-											}
-										</Button>
-
-										{ showSchedulePicker && (
-											<Popover
-												onClose={ () => setShowSchedulePicker( false ) }
-												placement="bottom-start"
-											>
-												<DateTimePicker
-													currentDate={ scheduledAt }
-													onChange={ ( date ) => {
-														setScheduledAt( date );
-														setShowSchedulePicker( false );
-													} }
-													is12Hour={ false }
-												/>
-											</Popover>
-										) }
-
-										{ validationErrors.scheduledAt && (
-											<p style={ { color: '#d63638', fontSize: '0.75rem', marginTop: '0.5rem' } }>
-												{ validationErrors.scheduledAt }
-											</p>
-										) }
-									</div>
-								) }
 							</div>
 
 							{ /* Sidebar mit Platzhaltern */ }
@@ -432,8 +339,6 @@ export function EmailComposer( {
 									<Spinner size="sm" style={ { marginRight: '0.5rem' } } />
 									{ i18n.sending || __( 'Senden...', 'recruiting-playbook' ) }
 								</>
-							) : scheduleEnabled ? (
-								i18n.scheduleEmail || __( 'Planen', 'recruiting-playbook' )
 							) : (
 								i18n.send || __( 'Senden', 'recruiting-playbook' )
 							) }
