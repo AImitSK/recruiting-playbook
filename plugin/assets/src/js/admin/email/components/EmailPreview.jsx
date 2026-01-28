@@ -10,8 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 
 // DOMPurify-Konfiguration: Sichere Tags für E-Mail-Vorschau
 const DOMPURIFY_CONFIG = {
-	ALLOWED_TAGS: [ 'p', 'br', 'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li', 'div', 'span' ],
-	ALLOWED_ATTR: [ 'href', 'target', 'rel', 'style' ],
+	ALLOWED_TAGS: [
+		'p', 'br', 'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li', 'div', 'span',
+		'table', 'thead', 'tbody', 'tr', 'td', 'th', // Tabellen
+		'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // Überschriften
+	],
+	ALLOWED_ATTR: [ 'href', 'target', 'rel', 'style', 'colspan', 'rowspan' ],
 };
 
 /**
@@ -156,14 +160,52 @@ export function EmailPreview( { subject = '', body = '', recipient = '' } ) {
 
 					<div className="rp-email-preview__body">
 						{ body ? (
-							<div
-								className="rp-email-preview__content"
-								style={ {
-									lineHeight: 1.6,
-									color: '#374151',
-								} }
-								dangerouslySetInnerHTML={ { __html: prepareBody( body ) } }
-							/>
+							<>
+								<div
+									className="rp-email-preview__content"
+									style={ {
+										lineHeight: 1.6,
+										color: '#374151',
+									} }
+									dangerouslySetInnerHTML={ { __html: prepareBody( body ) } }
+								/>
+								<style>{ `
+									.rp-email-preview__content ul,
+									.rp-email-preview__content ol {
+										margin: 0.75rem 0;
+										padding-left: 1.75rem;
+									}
+									.rp-email-preview__content ul {
+										list-style-type: disc;
+									}
+									.rp-email-preview__content ol {
+										list-style-type: decimal;
+									}
+									.rp-email-preview__content li {
+										margin-bottom: 0.25rem;
+										display: list-item;
+									}
+									.rp-email-preview__content table {
+										border-collapse: collapse;
+										margin: 0.75rem 0;
+										border: none;
+									}
+									.rp-email-preview__content td,
+									.rp-email-preview__content th {
+										padding: 0.25rem 1rem 0.25rem 0;
+										border: none;
+										text-align: left;
+										vertical-align: top;
+									}
+									.rp-email-preview__content a {
+										color: #1d71b8;
+										text-decoration: underline;
+									}
+									.rp-email-preview__content p {
+										margin: 0 0 0.75rem 0;
+									}
+								` }</style>
+							</>
 						) : (
 							<p
 								className="rp-email-preview__placeholder"
