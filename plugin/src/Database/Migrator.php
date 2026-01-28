@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.5.3';
+	private const SCHEMA_VERSION = '1.5.4';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -84,6 +84,11 @@ class Migrator {
 		// Migration 1.5.0: Signaturen-Tabelle + Default Firmen-Signatur.
 		if ( version_compare( $from_version, '1.5.0', '<' ) ) {
 			$this->seedDefaultCompanySignature();
+		}
+
+		// Migration 1.5.4: System-Templates mit is_system=0 korrigieren.
+		if ( version_compare( $from_version, '1.5.4', '<' ) ) {
+			$this->migrateFixSystemTemplatesFlag();
 		}
 	}
 
@@ -170,6 +175,43 @@ class Migrator {
 			$wpdb->query( "ALTER TABLE {$table} ADD INDEX deleted_at (deleted_at)" );
 
 			$this->log( 'Added deleted_at column to applications table' );
+		}
+	}
+
+	/**
+	 * Migration: System-Templates Flag korrigieren
+	 *
+	 * Setzt is_system=1 für alle Templates mit bekannten System-Slugs.
+	 */
+	private function migrateFixSystemTemplatesFlag(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['email_templates'];
+
+		$system_slugs = [
+			'application-confirmation',
+			'rejection-standard',
+			'application-withdrawn',
+			'talent-pool-added',
+			'interview-invitation',
+			'interview-reminder',
+			'offer-letter',
+			'contract-sent',
+			'talent-pool-matching-job',
+		];
+
+		$placeholders = implode( ', ', array_fill( 0, count( $system_slugs ), '%s' ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$table} SET is_system = 1 WHERE slug IN ({$placeholders}) AND is_system = 0",
+				...$system_slugs
+			)
+		);
+
+		if ( $updated > 0 ) {
+			$this->log( 'Fixed is_system flag for ' . $updated . ' templates' );
 		}
 	}
 

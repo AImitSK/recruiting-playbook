@@ -440,7 +440,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_template_reset_failed',
-				__( 'Template konnte nicht zurückgesetzt werden. Nur System-Templates können zurückgesetzt werden.', 'recruiting-playbook' ),
+				__( 'Template konnte nicht zurückgesetzt werden. Für dieses Template existiert kein Standard-Inhalt.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
