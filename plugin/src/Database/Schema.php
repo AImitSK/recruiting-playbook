@@ -26,16 +26,17 @@ class Schema {
 		global $wpdb;
 
 		return [
-			'candidates'      => $wpdb->prefix . 'rp_candidates',
-			'applications'    => $wpdb->prefix . 'rp_applications',
-			'documents'       => $wpdb->prefix . 'rp_documents',
-			'activity_log'    => $wpdb->prefix . 'rp_activity_log',
-			'notes'           => $wpdb->prefix . 'rp_notes',
-			'ratings'         => $wpdb->prefix . 'rp_ratings',
-			'talent_pool'     => $wpdb->prefix . 'rp_talent_pool',
-			'email_templates' => $wpdb->prefix . 'rp_email_templates',
-			'email_log'       => $wpdb->prefix . 'rp_email_log',
-			'signatures'      => $wpdb->prefix . 'rp_signatures',
+			'candidates'       => $wpdb->prefix . 'rp_candidates',
+			'applications'     => $wpdb->prefix . 'rp_applications',
+			'documents'        => $wpdb->prefix . 'rp_documents',
+			'activity_log'     => $wpdb->prefix . 'rp_activity_log',
+			'notes'            => $wpdb->prefix . 'rp_notes',
+			'ratings'          => $wpdb->prefix . 'rp_ratings',
+			'talent_pool'      => $wpdb->prefix . 'rp_talent_pool',
+			'email_templates'  => $wpdb->prefix . 'rp_email_templates',
+			'email_log'        => $wpdb->prefix . 'rp_email_log',
+			'signatures'       => $wpdb->prefix . 'rp_signatures',
+			'job_assignments'  => $wpdb->prefix . 'rp_user_job_assignments',
 		];
 	}
 
@@ -364,6 +365,33 @@ class Schema {
 			PRIMARY KEY (id),
 			KEY user_id (user_id),
 			KEY is_default (user_id, is_default)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_user_job_assignments
+	 *
+	 * Speichert Zuweisungen von Benutzern zu Stellen.
+	 * Ermöglicht Recruitern nur ihre zugewiesenen Bewerbungen zu sehen.
+	 *
+	 * @return string
+	 */
+	public static function getJobAssignmentsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['job_assignments'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			user_id bigint(20) unsigned NOT NULL,
+			job_id bigint(20) unsigned NOT NULL,
+			assigned_by bigint(20) unsigned NOT NULL,
+			assigned_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_job (user_id, job_id),
+			KEY user_id (user_id),
+			KEY job_id (job_id),
+			KEY assigned_by (assigned_by)
 		) {$charset};";
 	}
 }

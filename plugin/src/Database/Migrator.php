@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.5.4';
+	private const SCHEMA_VERSION = '1.6.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -42,6 +42,7 @@ class Migrator {
 			dbDelta( Schema::getEmailTemplatesTableSql() );
 			dbDelta( Schema::getEmailLogTableSql() );
 			dbDelta( Schema::getSignaturesTableSql() );
+			dbDelta( Schema::getJobAssignmentsTableSql() );
 
 			// Spezielle Migrationen für bestehende Installationen.
 			$this->runMigrations( $current_version );

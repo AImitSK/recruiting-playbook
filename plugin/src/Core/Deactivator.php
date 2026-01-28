@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Core;
 
+use RecruitingPlaybook\Core\RoleManager;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -27,7 +29,10 @@ class Deactivator {
 		// Geplante Tasks entfernen.
 		self::clearScheduledTasks();
 
-		// Capabilities entfernen.
+		// Custom Rollen und Capabilities entfernen.
+		RoleManager::unregister();
+
+		// Legacy Capabilities entfernen (für alte Installationen).
 		self::removeCapabilities();
 	}
 
@@ -95,6 +100,9 @@ class Deactivator {
 			'rp_delete_email_templates',
 			'rp_send_emails',
 			'rp_view_email_log',
+			// Pro-Features: Rollen-Verwaltung.
+			'rp_manage_roles',
+			'rp_assign_jobs',
 			// Legacy: rp_manage_email_templates (vor CRUD-Granularität).
 			'rp_manage_email_templates',
 			// Legacy Capabilities (ohne Präfix - für Migration).
