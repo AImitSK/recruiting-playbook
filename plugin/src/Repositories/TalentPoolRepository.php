@@ -471,6 +471,8 @@ class TalentPoolRepository {
 	 * @return array
 	 */
 	private function enrichEntry( array $entry ): array {
+		global $wpdb;
+
 		// User-Daten laden.
 		$user = get_userdata( (int) $entry['added_by'] );
 
@@ -479,6 +481,20 @@ class TalentPoolRepository {
 			'name'   => $user->display_name,
 			'avatar' => get_avatar_url( $user->ID, [ 'size' => 32 ] ),
 		] : null;
+
+		// Application-ID laden (neueste Bewerbung des Kandidaten).
+		$applications_table = Schema::getTables()['applications'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$application_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$applications_table}
+				WHERE candidate_id = %d AND deleted_at IS NULL
+				ORDER BY created_at DESC
+				LIMIT 1",
+				$entry['candidate_id']
+			)
+		);
+		$entry['application_id'] = $application_id ? (int) $application_id : null;
 
 		// Tags als Array.
 		$entry['tags_array'] = $entry['tags']

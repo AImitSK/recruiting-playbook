@@ -37,6 +37,14 @@ class Menu {
 	private Settings $settings;
 
 	/**
+	 * Constructor - Filter für Menü-Highlighting registrieren
+	 */
+	public function __construct() {
+		// parent_file Filter - setzt auch $submenu_file.
+		add_filter( 'parent_file', [ $this, 'filterParentFile' ] );
+	}
+
+	/**
 	 * Menü registrieren
 	 */
 	public function register(): void {
@@ -128,9 +136,9 @@ class Menu {
 			[ $this, 'renderLicense' ]
 		);
 
-		// Bewerbung-Detailansicht (versteckt).
+		// Bewerbung-Detailansicht (unter Parent registriert für Menü-Highlighting).
 		add_submenu_page(
-			'', // Versteckt (leerer String für PHP 8.1+ Kompatibilität).
+			'recruiting-playbook',
 			__( 'Bewerbung', 'recruiting-playbook' ),
 			__( 'Bewerbung', 'recruiting-playbook' ),
 			'manage_options',
@@ -138,15 +146,55 @@ class Menu {
 			[ $this, 'renderApplicationDetail' ]
 		);
 
-		// Bulk-E-Mail-Seite (versteckt, Pro-Feature).
+		// Bulk-E-Mail-Seite (unter Parent registriert für Menü-Highlighting).
 		add_submenu_page(
-			'',
+			'recruiting-playbook',
 			__( 'Massen-E-Mail', 'recruiting-playbook' ),
 			__( 'Massen-E-Mail', 'recruiting-playbook' ),
 			'manage_options',
 			'rp-bulk-email',
 			[ $this, 'renderBulkEmail' ]
 		);
+
+		// Versteckte Seiten aus Menü entfernen (aber Routing bleibt erhalten).
+		add_action( 'admin_head', [ $this, 'hideSubmenuPages' ] );
+	}
+
+	/**
+	 * Versteckte Submenu-Seiten aus der Navigation entfernen
+	 */
+	public function hideSubmenuPages(): void {
+		remove_submenu_page( 'recruiting-playbook', 'rp-application-detail' );
+		remove_submenu_page( 'recruiting-playbook', 'rp-bulk-email' );
+	}
+
+	/**
+	 * Parent-File Filter für versteckte Unterseiten
+	 *
+	 * Setzt auch $submenu_file innerhalb des Filters (wichtig!).
+	 *
+	 * @param string $parent_file Aktuelles Parent-File.
+	 * @return string Korrigiertes Parent-File.
+	 */
+	public function filterParentFile( $parent_file ) {
+		global $submenu_file;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		// Bewerbung-Detail → Recruiting-Menü, Bewerbungen-Submenu.
+		if ( 'rp-application-detail' === $current_page ) {
+			$submenu_file = 'rp-applications';
+			return 'recruiting-playbook';
+		}
+
+		// Bulk-E-Mail → Recruiting-Menü, Bewerbungen-Submenu.
+		if ( 'rp-bulk-email' === $current_page ) {
+			$submenu_file = 'rp-applications';
+			return 'recruiting-playbook';
+		}
+
+		return $parent_file;
 	}
 
 	/**

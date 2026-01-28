@@ -23,25 +23,6 @@ import { KanbanCard } from './KanbanCard';
 import { useApplications } from './hooks/useApplications';
 
 /**
- * Debounce-Funktion für verzögerte Ausführung
- *
- * @param {Function} func     Funktion zum Ausführen
- * @param {number}   wait     Verzögerung in ms
- * @return {Function} Debounced Funktion
- */
-function debounce( func, wait ) {
-	let timeout;
-	return function executedFunction( ...args ) {
-		const later = () => {
-			clearTimeout( timeout );
-			func( ...args );
-		};
-		clearTimeout( timeout );
-		timeout = setTimeout( later, wait );
-	};
-}
-
-/**
  * Benutzerdefinierte Kollisionserkennung
  * Prüft zuerst Pointer-Position, dann Rechteck-Überschneidung
  */
@@ -56,7 +37,7 @@ function customCollisionDetection( args ) {
 	return rectIntersection( args );
 }
 
-export function KanbanBoard() {
+export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger = 0 } ) {
 	const {
 		applications,
 		loading,
@@ -67,8 +48,6 @@ export function KanbanBoard() {
 		refetch,
 	} = useApplications();
 
-	const [ jobFilter, setJobFilter ] = useState( '' );
-	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ activeId, setActiveId ] = useState( null );
 
 	// Ref für Live-Region (Screen Reader Ankündigungen)
@@ -103,44 +82,12 @@ export function KanbanBoard() {
 		}
 	}, [] );
 
-	// Debounced Search Handler (300ms Verzögerung für bessere Performance)
-	const debouncedSetSearchTerm = useMemo(
-		() => debounce( ( value ) => setSearchTerm( value ), 300 ),
-		[]
-	);
-
-	// Filter aus Toolbar synchronisieren
+	// Refresh trigger from parent
 	useEffect( () => {
-		const jobSelect = document.getElementById( 'rp-kanban-job-filter' );
-		const searchInput = document.getElementById( 'rp-kanban-search' );
-		const refreshBtn = document.getElementById( 'rp-kanban-refresh' );
-
-		const handleJobChange = ( e ) => setJobFilter( e.target.value );
-		const handleSearch = ( e ) => debouncedSetSearchTerm( e.target.value );
-		const handleRefresh = () => refetch();
-
-		if ( jobSelect ) {
-			jobSelect.addEventListener( 'change', handleJobChange );
+		if ( refreshTrigger > 0 ) {
+			refetch();
 		}
-		if ( searchInput ) {
-			searchInput.addEventListener( 'input', handleSearch );
-		}
-		if ( refreshBtn ) {
-			refreshBtn.addEventListener( 'click', handleRefresh );
-		}
-
-		return () => {
-			if ( jobSelect ) {
-				jobSelect.removeEventListener( 'change', handleJobChange );
-			}
-			if ( searchInput ) {
-				searchInput.removeEventListener( 'input', handleSearch );
-			}
-			if ( refreshBtn ) {
-				refreshBtn.removeEventListener( 'click', handleRefresh );
-			}
-		};
-	}, [ refetch, debouncedSetSearchTerm ] );
+	}, [ refreshTrigger, refetch ] );
 
 	// Gefilterte Bewerbungen
 	const filteredApplications = applications.filter( ( app ) => {

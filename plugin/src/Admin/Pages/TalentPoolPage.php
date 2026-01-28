@@ -40,30 +40,14 @@ class TalentPoolPage {
 			);
 		}
 
-		// React-Komponenten.
-		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/index.js';
-		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/index.asset.php';
-
-		if ( file_exists( $js_file ) && file_exists( $asset_file ) ) {
-			$assets = include $asset_file;
-
-			wp_enqueue_script(
-				'rp-talent-pool',
-				RP_PLUGIN_URL . 'assets/dist/js/index.js',
-				$assets['dependencies'] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
-				$assets['version'] ?? RP_VERSION,
-				true
-			);
-
-			wp_set_script_translations( 'rp-talent-pool', 'recruiting-playbook' );
-
-			// Konfiguration für React.
-			wp_localize_script(
-				'rp-talent-pool',
-				'rpTalentPool',
+		// Konfiguration für React (Script rp-admin wird bereits von Plugin.php geladen).
+		wp_localize_script(
+			'rp-admin',
+			'rpTalentPool',
 				[
 					'apiUrl'            => rest_url( 'recruiting/v1/' ),
 					'nonce'             => wp_create_nonce( 'wp_rest' ),
+					'logoUrl'           => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 					'applicationsUrl'   => admin_url( 'admin.php?page=rp-applications' ),
 					'applicationUrl'    => admin_url( 'admin.php?page=rp-application-detail&id=' ),
 					'i18n'              => [
@@ -108,7 +92,6 @@ class TalentPoolPage {
 					],
 				]
 			);
-		}
 	}
 
 	/**
@@ -125,14 +108,10 @@ class TalentPoolPage {
 		$this->enqueue_assets();
 
 		?>
-		<div class="wrap rp-talent-pool-wrap">
-			<div id="rp-talent-pool-root">
-				<div class="rp-talent-pool rp-talent-pool--loading">
-					<div class="rp-talent-pool__loading">
-						<span class="spinner is-active"></span>
-						<?php esc_html_e( 'Lade Talent-Pool...', 'recruiting-playbook' ); ?>
-					</div>
-				</div>
+		<div id="rp-talent-pool-root">
+			<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
+				<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
+				<?php esc_html_e( 'Lade Talent-Pool...', 'recruiting-playbook' ); ?>
 			</div>
 		</div>
 		<?php

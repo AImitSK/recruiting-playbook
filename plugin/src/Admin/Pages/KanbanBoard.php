@@ -41,27 +41,12 @@ class KanbanBoard {
 		// Assets laden.
 		$this->enqueue_assets();
 
-		echo '<div class="wrap rp-kanban-wrap">';
-		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Kanban-Board', 'recruiting-playbook' ) . '</h1>';
-
-		// Link zur Listen-Ansicht.
-		echo '<a href="' . esc_url( admin_url( 'admin.php?page=rp-applications' ) ) . '" class="page-title-action">';
-		echo esc_html__( 'Listen-Ansicht', 'recruiting-playbook' );
-		echo '</a>';
-
-		echo '<hr class="wp-header-end">';
-
-		// Filter-Toolbar.
-		$this->render_toolbar();
-
-		// React-Mount-Point.
-		echo '<div id="rp-kanban-root" class="rp-kanban-container">';
-		echo '<div class="rp-kanban-loading">';
-		echo '<span class="spinner is-active"></span> ';
+		// React-Mount-Point (React übernimmt das gesamte Layout).
+		echo '<div id="rp-kanban-root">';
+		echo '<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">';
+		echo '<span class="spinner is-active" style="float: none; margin-right: 10px;"></span> ';
 		echo esc_html__( 'Lade Kanban-Board...', 'recruiting-playbook' );
 		echo '</div>';
-		echo '</div>';
-
 		echo '</div>';
 	}
 
@@ -82,49 +67,6 @@ class KanbanBoard {
 		}
 
 		echo '</div>';
-	}
-
-	/**
-	 * Filter-Toolbar rendern
-	 */
-	private function render_toolbar(): void {
-		$jobs = get_posts(
-			[
-				'post_type'      => 'job_listing',
-				'posts_per_page' => -1,
-				'post_status'    => 'publish',
-				'orderby'        => 'title',
-				'order'          => 'ASC',
-			]
-		);
-
-		?>
-		<div class="rp-kanban-toolbar" id="rp-kanban-toolbar">
-			<div class="rp-kanban-toolbar-left">
-				<select id="rp-kanban-job-filter" class="rp-select">
-					<option value=""><?php esc_html_e( 'Alle Stellen', 'recruiting-playbook' ); ?></option>
-					<?php foreach ( $jobs as $job ) : ?>
-						<option value="<?php echo esc_attr( $job->ID ); ?>">
-							<?php echo esc_html( $job->post_title ); ?>
-						</option>
-					<?php endforeach; ?>
-				</select>
-
-				<input
-					type="search"
-					id="rp-kanban-search"
-					class="rp-search-input"
-					placeholder="<?php esc_attr_e( 'Bewerber suchen...', 'recruiting-playbook' ); ?>"
-				/>
-			</div>
-
-			<div class="rp-kanban-toolbar-right">
-				<button type="button" id="rp-kanban-refresh" class="button" title="<?php esc_attr_e( 'Aktualisieren', 'recruiting-playbook' ); ?>">
-					<span class="dashicons dashicons-update"></span>
-				</button>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
@@ -155,10 +97,39 @@ class KanbanBoard {
 				'nonce'     => wp_create_nonce( 'wp_rest' ),
 				'adminUrl'  => admin_url(),
 				'detailUrl' => admin_url( 'admin.php?page=rp-application-detail&id=' ),
+				'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'jobs'      => $this->get_jobs(),
 				'statuses'  => $this->get_statuses(),
 				'i18n'      => $this->get_i18n_strings(),
 			]
 		);
+	}
+
+	/**
+	 * Jobs für Filter
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function get_jobs(): array {
+		$posts = get_posts(
+			[
+				'post_type'      => 'job_listing',
+				'posts_per_page' => -1,
+				'post_status'    => 'publish',
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			]
+		);
+
+		$jobs = [];
+		foreach ( $posts as $post ) {
+			$jobs[] = [
+				'id'    => $post->ID,
+				'title' => $post->post_title,
+			];
+		}
+
+		return $jobs;
 	}
 
 	/**

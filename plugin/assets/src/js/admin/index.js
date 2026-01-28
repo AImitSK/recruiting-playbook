@@ -7,7 +7,7 @@
  */
 
 import { createRoot } from '@wordpress/element';
-import { KanbanBoard } from './kanban/KanbanBoard';
+import { KanbanPage } from './kanban/KanbanPage';
 import { ApplicantDetail } from './applicant/ApplicantDetail';
 import { TalentPoolList } from './talent-pool/TalentPoolList';
 import { LicensePage } from './license/LicensePage';
@@ -22,7 +22,7 @@ function initKanban() {
 
 	if ( container ) {
 		const root = createRoot( container );
-		root.render( <KanbanBoard /> );
+		root.render( <KanbanPage /> );
 	}
 }
 
