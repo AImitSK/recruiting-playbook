@@ -74,6 +74,42 @@ class AutoEmailService {
 
 		// Hook für Status-Änderungen.
 		add_action( 'rp_application_status_changed', [ $this, 'handleStatusChange' ], 10, 3 );
+
+		// Hook für verzögerten E-Mail-Versand (Action Scheduler Callback).
+		add_action( 'rp_send_auto_email', [ $this, 'processScheduledEmail' ], 10, 3 );
+	}
+
+	/**
+	 * Verzögerte E-Mail verarbeiten (Action Scheduler Callback)
+	 *
+	 * @param int    $template_id    Template-ID.
+	 * @param int    $application_id Bewerbungs-ID.
+	 * @param string $trigger        Auslöser.
+	 */
+	public function processScheduledEmail( int $template_id, int $application_id, string $trigger = 'scheduled' ): void {
+
+		if ( ! $template_id || ! $application_id ) {
+			return;
+		}
+
+		// E-Mail senden.
+		$result = $this->email_service->sendWithTemplate(
+			$template_id,
+			$application_id,
+			[ '_trigger' => $trigger ],
+			false // Direkt senden, nicht erneut in Queue.
+		);
+
+		// Status aus Trigger extrahieren für Log.
+		$status = str_replace( 'status_change_', '', $trigger );
+
+		// Log.
+		$this->logAutoEmail(
+			$application_id,
+			$status,
+			$result ? 'sent' : 'failed',
+			$template_id
+		);
 	}
 
 	/**
