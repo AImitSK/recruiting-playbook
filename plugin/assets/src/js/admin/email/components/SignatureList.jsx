@@ -252,8 +252,22 @@ export function SignatureList( {
 													{ signature.name }
 												</button>
 											</td>
-											<td style={ { padding: '0.75rem', color: '#6b7280', maxWidth: '300px' } }>
-												{ getPreviewText( signature.content ) }
+											<td
+												style={ {
+													padding: '0.75rem',
+													color: '#6b7280',
+													maxWidth: '300px',
+												} }
+											>
+												<div
+													style={ {
+														overflow: 'hidden',
+														textOverflow: 'ellipsis',
+														whiteSpace: 'nowrap',
+													} }
+												>
+													{ getPreviewText( signature.content ) }
+												</div>
 											</td>
 											<td style={ { padding: '0.75rem' } }>{ renderStatusBadge( signature ) }</td>
 											<td style={ { padding: '0.75rem' } }>
