@@ -80,7 +80,7 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
   - Entfernen: `kontakt_*` (3 Stück)
   - Entfernen: `start_datum`, `vertragsart`, `arbeitszeit`, `antwort_frist`
   - **17 Variablen total entfernen**
-- [x] `[S]` `getAvailablePlaceholders()` aktualisieren (nur 16 echte)
+- [x] `[S]` `getAvailablePlaceholders()` aktualisieren (nur 17 echte)
 - [x] `[S]` Preview-Werte für Editor anpassen
 
 ### 2.3 EmailService anpassen (P1)

@@ -848,36 +848,37 @@ GET /wp-json/recruiting/v1/email-templates/placeholders
 ```json
 {
   "placeholders": {
-    "applicant": [
-      { "key": "anrede", "label": "Anrede (Herr/Frau)", "example": "Herr" },
+    "candidate": [
+      { "key": "anrede", "label": "Anrede", "example": "Herr" },
       { "key": "anrede_formal", "label": "Formelle Anrede", "example": "Sehr geehrter Herr Mustermann" },
       { "key": "vorname", "label": "Vorname", "example": "Max" },
       { "key": "nachname", "label": "Nachname", "example": "Mustermann" },
+      { "key": "name", "label": "Vollständiger Name", "example": "Max Mustermann" },
       { "key": "email", "label": "E-Mail", "example": "max@example.com" },
       { "key": "telefon", "label": "Telefon", "example": "+49 170 1234567" }
     ],
     "application": [
+      { "key": "bewerbung_id", "label": "Bewerbungs-ID", "example": "#2025-0042" },
       { "key": "bewerbung_datum", "label": "Bewerbungsdatum", "example": "15.01.2025" },
-      { "key": "bewerbung_id", "label": "Referenznummer", "example": "BW-2025-0042" }
+      { "key": "bewerbung_status", "label": "Bewerbungsstatus", "example": "In Prüfung" }
     ],
     "job": [
       { "key": "stelle", "label": "Stellentitel", "example": "Pflegefachkraft (m/w/d)" },
       { "key": "stelle_ort", "label": "Arbeitsort", "example": "Berlin" },
+      { "key": "stelle_typ", "label": "Beschäftigungsart", "example": "Vollzeit" },
       { "key": "stelle_url", "label": "Link zur Stelle", "example": "https://example.com/jobs/..." }
     ],
     "company": [
       { "key": "firma", "label": "Firmenname", "example": "Muster GmbH" },
       { "key": "firma_adresse", "label": "Firmenadresse", "example": "Musterstraße 1, 10115 Berlin" },
-      { "key": "firma_telefon", "label": "Firmentelefon", "example": "+49 30 123456" },
-      { "key": "firma_email", "label": "Firmen-E-Mail", "example": "info@example.com" },
-      { "key": "firma_website", "label": "Website", "example": "www.example.com" }
+      { "key": "firma_website", "label": "Website", "example": "https://example.com" }
     ]
   },
-  "total": 16
+  "total": 17
 }
 ```
 
-> **Wichtig:** Die API stellt nur 16 echte Platzhalter bereit. Pseudo-Variablen wie `{termin_datum}` oder `{absender_name}` wurden entfernt. Siehe [Breaking Changes](#breaking-changes).
+> **Wichtig:** Die API stellt nur 17 echte Platzhalter bereit (7 Kandidat, 3 Bewerbung, 4 Stelle, 3 Firma). Pseudo-Variablen wie `{termin_datum}` oder `{absender_name}` wurden entfernt. Siehe [Breaking Changes](#breaking-changes).
 
 #### Template-Kategorien abrufen
 

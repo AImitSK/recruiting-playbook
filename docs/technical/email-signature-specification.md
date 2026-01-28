@@ -58,28 +58,29 @@ Dieses Konzept trennt **Template-Inhalt** von **Signatur**. Templates enthalten 
 
 ### 1. Firmendaten (Plugin-Einstellungen)
 
-**Option:** `rp_settings['company']`
+**Option:** `rp_settings` (flache Struktur)
 
 ```php
-'company' => [
-    // Pflichtfelder
-    'name'          => 'Muster GmbH',           // Firmenname
-    'email'         => 'jobs@muster.de',        // Allgemeine Kontakt-E-Mail
+// Firmendaten (Pflichtfelder)
+'company_name'          => 'Muster GmbH',           // Firmenname
+'company_email'         => 'jobs@muster.de',        // Allgemeine Kontakt-E-Mail
 
-    // Optionale Felder
-    'street'        => 'Musterstraße 1',        // Straße + Hausnummer
-    'zip'           => '12345',                 // PLZ
-    'city'          => 'Berlin',                // Stadt
-    'country'       => 'Deutschland',           // Land (optional)
-    'phone'         => '+49 30 12345-0',        // Telefon Zentrale
-    'website'       => 'https://muster.de',     // Website
-    'logo_id'       => 123,                     // Attachment ID für Logo
+// Firmendaten (Optionale Felder)
+'company_street'        => 'Musterstraße 1',        // Straße + Hausnummer
+'company_zip'           => '12345',                 // PLZ
+'company_city'          => 'Berlin',                // Stadt
+'company_phone'         => '+49 30 12345-0',        // Telefon Zentrale
+'company_website'       => 'https://muster.de',     // Website
 
-    // Standard-Absender für automatische E-Mails
-    'default_sender_name'  => 'HR Team',        // Absendername
-    'default_sender_email' => 'jobs@muster.de', // Absender E-Mail (From:)
-]
+// Standard-Absender für E-Mails
+'sender_name'           => 'HR Team',               // Absendername
+'sender_email'          => 'jobs@muster.de',        // Absender E-Mail (From:)
+
+// Pro-Feature: E-Mail-Branding
+'hide_email_branding'   => false,                   // Copyright-Zeile in E-Mails verstecken
 ```
+
+> **Hinweis:** Die Firmendaten werden direkt auf Root-Level in `rp_settings` gespeichert (flache Struktur), nicht verschachtelt unter `company`.
 
 ### 2. Signaturen-Tabelle
 
@@ -88,10 +89,12 @@ Dieses Konzept trennt **Template-Inhalt** von **Signatur**. Templates enthalten 
 ```sql
 CREATE TABLE {prefix}rp_signatures (
     id              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-    user_id         bigint(20) unsigned NOT NULL,      -- User-ID (Signaturen sind immer user-spezifisch)
+    user_id         bigint(20) unsigned NULL,          -- NULL = Firmen-Signatur, sonst User-ID
     name            varchar(100) NOT NULL,             -- z.B. "Meine Signatur", "Formal"
+    greeting        varchar(255) DEFAULT NULL,         -- Grußformel (optional)
     content         text NOT NULL,                     -- Signatur-Inhalt (HTML)
-    is_default      tinyint(1) DEFAULT 0,              -- Default für diesen User?
+    include_company tinyint(1) DEFAULT 1,              -- Firmen-Kontaktblock anhängen?
+    is_default      tinyint(1) DEFAULT 0,              -- Default für diesen User/Firma?
     created_at      datetime DEFAULT CURRENT_TIMESTAMP,
     updated_at      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -100,7 +103,19 @@ CREATE TABLE {prefix}rp_signatures (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 ```
 
-> **Hinweis:** Signaturen sind immer user-spezifisch. Es gibt keine "Firmen-Signatur" als Datenbank-Eintrag mehr. Wenn ein User keine Signatur hat, wird automatisch eine Signatur aus den Firmendaten generiert.
+> **Signatur-Typen und Fallback-Kette:**
+>
+> | Typ | `user_id` | Beschreibung | Verwaltung |
+> |-----|-----------|--------------|------------|
+> | **User-Signatur** | `= User-ID` | Persönliche Signatur | Jeder User für sich |
+> | **Firmen-Signatur** | `= NULL` | Optionale Firmen-Signatur in DB | Nur Admins |
+> | **Auto-generiert** | - | Fallback aus Plugin-Einstellungen | Automatisch |
+>
+> **Fallback-Kette beim E-Mail-Versand:**
+> 1. Explizit gewählte Signatur (per ID)
+> 2. User-Default-Signatur (falls vorhanden)
+> 3. Firmen-Signatur aus DB (falls vorhanden, `user_id = NULL`)
+> 4. Auto-generierte Minimal-Signatur aus Firmendaten (`rp_settings`)
 
 ### 3. User-Einstellung: Standard-Signatur
 
@@ -741,7 +756,7 @@ Nach dieser Änderung werden folgende Platzhalter **entfernt**:
 | **Stelle** | `{stelle}`, `{stelle_ort}`, `{stelle_typ}`, `{stelle_url}` |
 | **Firma** | `{firma}`, `{firma_website}` |
 
-**Ergebnis: 16 echte Platzhalter statt 33 (davon 9 Pseudo + 8 fragliche)**
+**Ergebnis: 17 echte Platzhalter statt 33 (7 Kandidat, 3 Bewerbung, 4 Stelle, 3 Firma)**
 
 ---
 
