@@ -456,55 +456,18 @@ export function ApplicationsPage() {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1400px' } }>
-				{ /* Header */ }
-				{ logoUrl && (
-					<div style={ { marginBottom: '1.5rem' } }>
+				{ /* Header: Logo links, Titel rechts */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
 						<img
 							src={ logoUrl }
 							alt="Recruiting Playbook"
 							style={ { width: '150px', height: 'auto' } }
 						/>
-					</div>
-				) }
-
-				<div
-					style={ {
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'space-between',
-						marginBottom: '1.5rem',
-					} }
-				>
-					<h1
-						style={ {
-							fontSize: '1.5rem',
-							fontWeight: 700,
-							color: '#1f2937',
-							margin: 0,
-						} }
-					>
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
 						{ __( 'Bewerbungen', 'recruiting-playbook' ) }
 					</h1>
-
-					<a
-						href={ `${ adminUrl }admin.php?page=rp-export` }
-						style={ {
-							display: 'inline-flex',
-							alignItems: 'center',
-							gap: '0.5rem',
-							padding: '0.5rem 1rem',
-							backgroundColor: '#fff',
-							color: '#1d71b8',
-							border: '1px solid #1d71b8',
-							borderRadius: '0.375rem',
-							fontSize: '0.875rem',
-							fontWeight: 500,
-							textDecoration: 'none',
-						} }
-					>
-						<Download style={ { width: '1rem', height: '1rem' } } />
-						{ __( 'Exportieren', 'recruiting-playbook' ) }
-					</a>
 				</div>
 
 				<Card>
@@ -620,6 +583,30 @@ export function ApplicationsPage() {
 								</option>
 							) ) }
 						</select>
+
+						{ /* Spacer */ }
+						<div style={ { flexGrow: 1 } } />
+
+						{ /* Export Button */ }
+						<a
+							href={ `${ adminUrl }admin.php?page=rp-export` }
+							style={ {
+								display: 'inline-flex',
+								alignItems: 'center',
+								gap: '0.5rem',
+								padding: '0.5rem 1rem',
+								backgroundColor: '#fff',
+								color: '#1d71b8',
+								border: '1px solid #1d71b8',
+								borderRadius: '0.375rem',
+								fontSize: '0.875rem',
+								fontWeight: 500,
+								textDecoration: 'none',
+							} }
+						>
+							<Download style={ { width: '1rem', height: '1rem' } } />
+							{ __( 'Exportieren', 'recruiting-playbook' ) }
+						</a>
 					</div>
 
 					{ /* Table */ }
