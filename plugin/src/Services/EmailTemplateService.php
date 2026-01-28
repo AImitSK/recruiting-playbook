@@ -596,7 +596,7 @@ class EmailTemplateService {
 <p>Wir freuen uns auf eine mögliche zukünftige Zusammenarbeit!</p>',
 			],
 
-			// === MANUELLE TEMPLATES (mit ___ Lücken) ===
+			// === MANUELLE TEMPLATES (mit ____ Lücken) ===
 			'interview-invitation'     => [
 				'subject'   => __( 'Einladung zum Vorstellungsgespräch: {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
@@ -607,19 +607,19 @@ class EmailTemplateService {
 <table style="border-collapse: collapse; margin: 16px 0;">
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Datum:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Uhrzeit:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Ort:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Gesprächspartner:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 </table>
 
@@ -634,7 +634,7 @@ class EmailTemplateService {
 <p>Wir freuen uns auf das Gespräch mit Ihnen!</p>',
 			],
 			'interview-reminder'       => [
-				'subject'   => __( 'Erinnerung: Ihr Vorstellungsgespräch am ___', 'recruiting-playbook' ),
+				'subject'   => __( 'Erinnerung: Ihr Vorstellungsgespräch am ____', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
 <p>wir möchten Sie an Ihr bevorstehendes Vorstellungsgespräch für die Position <strong>{stelle}</strong> erinnern.</p>
@@ -643,15 +643,15 @@ class EmailTemplateService {
 <table style="border-collapse: collapse; margin: 16px 0;">
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Datum:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Uhrzeit:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
 <td style="padding: 8px 16px 8px 0;"><strong>Ort:</strong></td>
-<td style="padding: 8px 0;">___</td>
+<td style="padding: 8px 0;">____</td>
 </tr>
 </table>
 
@@ -674,14 +674,14 @@ class EmailTemplateService {
 <p><strong>Eckdaten des Angebots:</strong></p>
 <ul>
 <li>Position: {stelle}</li>
-<li>Startdatum: ___</li>
-<li>Vertragsart: ___</li>
-<li>Arbeitszeit: ___</li>
+<li>Startdatum: ____</li>
+<li>Vertragsart: ____</li>
+<li>Arbeitszeit: ____</li>
 </ul>
 
 <p>Die detaillierten Vertragsunterlagen erhalten Sie in Kürze per Post oder als separaten Anhang.</p>
 
-<p>Bitte teilen Sie uns Ihre Entscheidung bis zum <strong>___</strong> mit.</p>
+<p>Bitte teilen Sie uns Ihre Entscheidung bis zum <strong>____</strong> mit.</p>
 
 <p>Für Rückfragen stehen wir Ihnen selbstverständlich gerne zur Verfügung.</p>',
 			],
@@ -694,14 +694,14 @@ class EmailTemplateService {
 <p><strong>Die Unterlagen umfassen:</strong></p>
 <ul>
 <li>Arbeitsvertrag (2 Exemplare)</li>
-<li>___</li>
+<li>____</li>
 </ul>
 
 <p><strong>Nächste Schritte:</strong></p>
 <ol>
 <li>Bitte prüfen Sie die Unterlagen sorgfältig</li>
 <li>Unterschreiben Sie beide Vertragsexemplare</li>
-<li>Senden Sie ein unterschriebenes Exemplar bis zum <strong>___</strong> an uns zurück</li>
+<li>Senden Sie ein unterschriebenes Exemplar bis zum <strong>____</strong> an uns zurück</li>
 </ol>
 
 <p>Sollten Sie Fragen zu den Unterlagen haben, stehen wir Ihnen gerne zur Verfügung.</p>
