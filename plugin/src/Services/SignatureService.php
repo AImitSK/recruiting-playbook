@@ -151,68 +151,24 @@ class SignatureService {
 	}
 
 	/**
-	 * Automatische Firmen-Signatur rendern (Fallback)
+	 * Minimale Signatur rendern (letzter Fallback)
 	 *
-	 * Wird verwendet wenn keine persönliche Signatur vorhanden ist.
-	 * Generiert eine professionelle Signatur aus den Firmeneinstellungen.
+	 * Verwendet Firmendaten wenn vorhanden, sonst WordPress Blog-Name.
 	 *
-	 * @return string HTML mit Firmen-Signatur.
+	 * @return string HTML mit minimaler Signatur.
 	 */
 	public function renderMinimalSignature(): string {
 		$company = $this->getCompanyData();
 
-		$html = '<div class="rp-signature" style="margin-top: 20px;">';
+		// Absender-Name bestimmen.
+		$sender_name = $company['default_sender_name']
+			?? $company['name']
+			?? get_bloginfo( 'name' );
 
-		// Grußformel.
-		$html .= '<div style="margin: 0 0 10px 0;">' . esc_html__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ) . '</div>';
-
-		// Firmenname als Team.
-		$company_name = $company['name'] ?? get_bloginfo( 'name' );
-		$html .= '<div style="margin: 0 0 15px 0;"><strong>';
-		$html .= sprintf(
-			/* translators: %s: Company name */
-			esc_html__( 'Ihr %s Team', 'recruiting-playbook' ),
-			esc_html( $company_name )
-		);
-		$html .= '</strong></div>';
-
-		// Firmenblock mit Kontaktdaten.
-		$html .= '<div class="rp-signature-company" style="padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">';
-
-		// Firmenname fett.
-		$html .= '<div style="margin-bottom: 5px;"><strong>' . esc_html( $company_name ) . '</strong></div>';
-
-		// Adresse.
-		$address_parts = [];
-		if ( ! empty( $company['street'] ) ) {
-			$address_parts[] = $company['street'];
-		}
-		if ( ! empty( $company['zip'] ) || ! empty( $company['city'] ) ) {
-			$address_parts[] = trim( ( $company['zip'] ?? '' ) . ' ' . ( $company['city'] ?? '' ) );
-		}
-		if ( ! empty( $address_parts ) ) {
-			$html .= '<div style="margin-bottom: 10px;">' . esc_html( implode( ', ', $address_parts ) ) . '</div>';
-		}
-
-		// Kontaktdaten als Zeile.
-		$contact_parts = [];
-		if ( ! empty( $company['phone'] ) ) {
-			$contact_parts[] = esc_html( $company['phone'] );
-		}
-		if ( ! empty( $company['email'] ) ) {
-			$contact_parts[] = '<a href="mailto:' . esc_attr( $company['email'] ) . '" style="color: #6b7280;">' . esc_html( $company['email'] ) . '</a>';
-		}
-		if ( ! empty( $company['website'] ) ) {
-			$url     = $company['website'];
-			$display = preg_replace( '#^https?://#', '', $url );
-			$contact_parts[] = '<a href="' . esc_url( $url ) . '" style="color: #6b7280;">' . esc_html( $display ) . '</a>';
-		}
-		if ( ! empty( $contact_parts ) ) {
-			$html .= '<div>' . implode( ' · ', $contact_parts ) . '</div>';
-		}
-
-		$html .= '</div>'; // .rp-signature-company
-		$html .= '</div>'; // .rp-signature
+		$html = '<div class="rp-signature-minimal" style="margin-top: 20px;">';
+		$html .= '<p style="margin: 0;">' . esc_html__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ) . '</p>';
+		$html .= '<p style="margin: 10px 0 0 0;"><strong>' . esc_html( $sender_name ) . '</strong></p>';
+		$html .= '</div>';
 
 		return $html;
 	}
@@ -383,20 +339,12 @@ class SignatureService {
 	/**
 	 * Firmendaten aus Plugin-Einstellungen laden
 	 *
-	 * @return array Firmendaten (normalisiert zu name, street, zip, city, phone, website, email).
+	 * @return array Firmendaten.
 	 */
 	private function getCompanyData(): array {
 		$settings = get_option( 'rp_settings', [] );
 
-		return [
-			'name'    => $settings['company_name'] ?? get_bloginfo( 'name' ),
-			'street'  => $settings['company_street'] ?? '',
-			'zip'     => $settings['company_zip'] ?? '',
-			'city'    => $settings['company_city'] ?? '',
-			'phone'   => $settings['company_phone'] ?? '',
-			'website' => $settings['company_website'] ?? home_url(),
-			'email'   => $settings['company_email'] ?? get_option( 'admin_email' ),
-		];
+		return $settings['company'] ?? [];
 	}
 
 	/**
