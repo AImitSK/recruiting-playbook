@@ -324,104 +324,95 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Details */ }
 						{ activeTab === 'details' && (
 							<>
-								{ /* Kandidaten-Details */ }
+								{ /* Kandidaten-Details - Tabellen-Style */ }
 								<Card>
-									<CardHeader>
+									<CardHeader style={ { paddingBottom: 0 } }>
 										<CardTitle>{ __( 'Kandidaten-Details', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
-									<CardContent>
-										<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
-											{ application.salutation && (
-												<div>
-													<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-														{ __( 'Anrede', 'recruiting-playbook' ) }
-													</div>
-													<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-														{ application.salutation }
-													</div>
-												</div>
-											) }
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Vorname', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.first_name || '-' }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Nachname', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.last_name || '-' }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'E-Mail', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.email ? (
-														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
-															{ application.email }
-														</a>
-													) : '-' }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Telefon', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.phone ? (
-														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
-															{ application.phone }
-														</a>
-													) : '-' }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Stelle', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.job_title || '-' }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Beworben am', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ formatDate( application.created_at ) }
-												</div>
-											</div>
-											<div>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' } }>
-													{ __( 'Quelle', 'recruiting-playbook' ) }
-												</div>
-												<div style={ { fontSize: '0.875rem', color: '#1f2937' } }>
-													{ application.source || 'Website' }
-												</div>
-											</div>
-										</div>
+									<CardContent style={ { padding: 0 } }>
+										<table style={ { width: '100%', borderCollapse: 'collapse' } }>
+											<tbody>
+												{ application.salutation && (
+													<tr>
+														<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', width: '140px', borderBottom: '1px solid #f3f4f6' } }>
+															{ __( 'Anrede', 'recruiting-playbook' ) }
+														</td>
+														<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+															{ application.salutation }
+														</td>
+													</tr>
+												) }
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', width: '140px', borderBottom: '1px solid #f3f4f6' } }>
+														{ __( 'Name', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', fontWeight: 500, borderBottom: '1px solid #f3f4f6' } }>
+														{ application.first_name } { application.last_name }
+													</td>
+												</tr>
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ __( 'E-Mail', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ application.email ? (
+															<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
+																{ application.email }
+															</a>
+														) : '-' }
+													</td>
+												</tr>
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ __( 'Telefon', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ application.phone ? (
+															<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
+																{ application.phone }
+															</a>
+														) : '-' }
+													</td>
+												</tr>
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ __( 'Stelle', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ application.job_title || '-' }
+													</td>
+												</tr>
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ __( 'Beworben am', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
+														{ formatDate( application.created_at ) }
+													</td>
+												</tr>
+												<tr>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
+														{ __( 'Quelle', 'recruiting-playbook' ) }
+													</td>
+													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem' } }>
+														{ application.source || 'Website' }
+													</td>
+												</tr>
+											</tbody>
+										</table>
 
 										{ /* Anschreiben */ }
 										{ application.cover_letter && (
-											<div style={ { marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
-												<div style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' } }>
+											<div style={ { padding: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
+												<div style={ { fontSize: '0.875rem', fontWeight: 500, color: '#1f2937', marginBottom: '0.75rem' } }>
 													{ __( 'Anschreiben', 'recruiting-playbook' ) }
 												</div>
 												<div
 													style={ {
 														fontSize: '0.875rem',
-														color: '#1f2937',
+														color: '#374151',
 														lineHeight: 1.6,
 														whiteSpace: 'pre-wrap',
-														padding: '1rem',
-														backgroundColor: '#f9fafb',
-														borderRadius: '0.375rem',
 													} }
 													dangerouslySetInnerHTML={ { __html: application.cover_letter } }
 												/>
