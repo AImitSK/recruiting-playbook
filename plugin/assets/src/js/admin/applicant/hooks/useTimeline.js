@@ -65,8 +65,10 @@ export function useTimeline( applicationId, filter = 'all' ) {
 				const types = getTypesFromFilter( filter );
 				let path = `/recruiting/v1/applications/${ applicationId }/timeline?page=${ pageNum }&per_page=20`;
 
+				// WordPress REST API erwartet Array-Syntax: types[]=value1&types[]=value2
 				if ( types.length > 0 ) {
-					path += `&types=${ encodeURIComponent( JSON.stringify( types ) ) }`;
+					const typesParam = types.map( ( t ) => `types[]=${ encodeURIComponent( t ) }` ).join( '&' );
+					path += `&${ typesParam }`;
 				}
 
 				const response = await apiFetch( {
