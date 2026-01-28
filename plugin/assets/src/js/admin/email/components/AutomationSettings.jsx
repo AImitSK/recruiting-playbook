@@ -207,12 +207,6 @@ export function AutomationSettings( { templates = [] } ) {
 						</tbody>
 					</table>
 
-					<div style={ { marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f7fc', borderRadius: '6px', border: '1px solid #d0e7f7' } }>
-						<p style={ { margin: 0, fontSize: '0.875rem', color: '#1d71b8' } }>
-							<strong>{ i18n.tip || 'Tipp' }:</strong> { i18n.delayTip || 'Eine Verzögerung gibt Ihnen Zeit, versehentliche Status-Änderungen zu korrigieren, bevor die E-Mail versendet wird.' }
-						</p>
-					</div>
-
 					<div style={ { marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'flex-end' } }>
 						<Button onClick={ handleSave } disabled={ saving }>
 							{ saving ? (
