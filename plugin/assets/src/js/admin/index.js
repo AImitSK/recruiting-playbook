@@ -13,6 +13,7 @@ import { TalentPoolList } from './talent-pool/TalentPoolList';
 import { LicensePage } from './license/LicensePage';
 import { DashboardPage } from './dashboard/DashboardPage';
 import { ApplicationsPage } from './applications/ApplicationsPage';
+import { SettingsPage } from './settings/SettingsPage';
 
 /**
  * Initialisiert das Kanban-Board
@@ -91,6 +92,18 @@ function initApplications() {
 }
 
 /**
+ * Initialisiert die Einstellungen-Seite
+ */
+function initSettings() {
+	const container = document.getElementById( 'rp-settings-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <SettingsPage /> );
+	}
+}
+
+/**
  * Initialisiert alle Admin-Komponenten
  */
 function initAdmin() {
@@ -100,6 +113,7 @@ function initAdmin() {
 	initApplicantDetail();
 	initTalentPool();
 	initLicense();
+	initSettings();
 }
 
 // DOMContentLoaded könnte bereits gefeuert haben wenn Script im Footer lädt

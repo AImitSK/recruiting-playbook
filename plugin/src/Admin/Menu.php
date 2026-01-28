@@ -106,7 +106,7 @@ class Menu {
 			[ $this, 'renderTalentPool' ]
 		);
 
-		// Einstellungen.
+		// Einstellungen (Export ist jetzt als Tab integriert).
 		add_submenu_page(
 			'recruiting-playbook',
 			__( 'Einstellungen', 'recruiting-playbook' ),
@@ -114,16 +114,6 @@ class Menu {
 			'manage_options',
 			'rp-settings',
 			[ $this, 'renderSettings' ]
-		);
-
-		// Export.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Export', 'recruiting-playbook' ),
-			__( 'Export', 'recruiting-playbook' ),
-			'manage_options',
-			'rp-export',
-			[ $this, 'renderExport' ]
 		);
 
 		// Lizenz.
@@ -450,7 +440,10 @@ class Menu {
 	 */
 	private function handleBackupDownload(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten geprüft.
-		if ( ! isset( $_GET['page'] ) || 'rp-export' !== $_GET['page'] ) {
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		// Export ist jetzt in Settings integriert (früher rp-export).
+		if ( ! in_array( $page, [ 'rp-export', 'rp-settings' ], true ) ) {
 			return;
 		}
 
@@ -472,48 +465,6 @@ class Menu {
 		$exporter->download();
 		// exit wird in download() aufgerufen.
 	}
-
-	/**
-	 * Export-Seite rendern
-	 */
-	public function renderExport(): void {
-		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Daten exportieren', 'recruiting-playbook' ); ?></h1>
-
-			<div class="card" style="max-width: 600px; padding: 20px;">
-				<h2><?php esc_html_e( 'Vollständiger Backup', 'recruiting-playbook' ); ?></h2>
-				<p>
-					<?php esc_html_e( 'Exportiert alle Plugin-Daten als JSON-Datei:', 'recruiting-playbook' ); ?>
-				</p>
-				<ul style="list-style: disc; margin-left: 20px;">
-					<li><?php esc_html_e( 'Einstellungen', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Stellen (inkl. Meta-Daten)', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Taxonomien (Kategorien, Standorte, etc.)', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Kandidaten', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Bewerbungen', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Dokument-Metadaten', 'recruiting-playbook' ); ?></li>
-					<li><?php esc_html_e( 'Aktivitäts-Log (letzte 1000 Einträge)', 'recruiting-playbook' ); ?></li>
-				</ul>
-
-				<div class="notice notice-warning inline" style="margin: 15px 0;">
-					<p>
-						<strong><?php esc_html_e( 'Hinweis:', 'recruiting-playbook' ); ?></strong>
-						<?php esc_html_e( 'Hochgeladene Dokumente (PDFs etc.) werden aus Datenschutzgründen nicht exportiert.', 'recruiting-playbook' ); ?>
-					</p>
-				</div>
-
-				<form method="post">
-					<?php wp_nonce_field( 'rp_download_backup' ); ?>
-					<button type="submit" name="download_backup" class="button button-primary">
-						<?php esc_html_e( 'Backup herunterladen', 'recruiting-playbook' ); ?>
-					</button>
-				</form>
-			</div>
-		</div>
-		<?php
-	}
-
 	/**
 	 * Einstellungen rendern
 	 */

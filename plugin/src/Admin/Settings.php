@@ -368,22 +368,144 @@ class Settings {
 			delete_transient( 'rp_flush_rewrite_rules' );
 		}
 
-		$settings = get_option( self::OPTION_NAME, $this->getDefaults() );
+		// Assets laden.
+		$this->enqueueAssets();
+
+		// React-Mount-Point.
 		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Recruiting Playbook Einstellungen', 'recruiting-playbook' ); ?></h1>
-
-			<?php $this->renderSmtpNotice(); ?>
-
-			<form method="post" action="options.php">
-				<?php
-				settings_fields( 'rp_settings_group' );
-				do_settings_sections( 'rp-settings' );
-				submit_button();
-				?>
-			</form>
+		<div id="rp-settings-root">
+			<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
+				<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
+				<?php esc_html_e( 'Lade Einstellungen...', 'recruiting-playbook' ); ?>
+			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Assets laden
+	 */
+	private function enqueueAssets(): void {
+		// Pro-Status prüfen.
+		$is_pro = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+
+		// Konfiguration für React.
+		wp_localize_script(
+			'rp-admin',
+			'rpSettingsData',
+			[
+				'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'homeUrl'   => home_url(),
+				'exportUrl' => admin_url( 'admin.php?page=rp-settings' ),
+				'nonce'     => wp_create_nonce( 'rp_download_backup' ),
+				'pages'     => $this->getPages(),
+				'isPro'     => $is_pro,
+				'i18n'      => $this->getI18nStrings(),
+			]
+		);
+	}
+
+	/**
+	 * Seiten für Dropdown laden
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function getPages(): array {
+		$posts = get_pages( [
+			'post_status' => 'publish',
+			'sort_column' => 'post_title',
+			'sort_order'  => 'ASC',
+		] );
+
+		$pages = [];
+		foreach ( $posts as $page ) {
+			$pages[] = [
+				'id'    => $page->ID,
+				'title' => $page->post_title,
+			];
+		}
+
+		return $pages;
+	}
+
+	/**
+	 * I18n-Strings für JavaScript
+	 *
+	 * @return array<string, string>
+	 */
+	private function getI18nStrings(): array {
+		return [
+			'pageTitle'             => __( 'Einstellungen', 'recruiting-playbook' ),
+			'tabGeneral'            => __( 'Allgemein', 'recruiting-playbook' ),
+			'tabCompany'            => __( 'Firmendaten', 'recruiting-playbook' ),
+			'tabExport'             => __( 'Export', 'recruiting-playbook' ),
+
+			// General Settings.
+			'notifications'         => __( 'Benachrichtigungen', 'recruiting-playbook' ),
+			'notificationsDesc'     => __( 'E-Mail-Benachrichtigungen für neue Bewerbungen', 'recruiting-playbook' ),
+			'notificationEmail'     => __( 'Benachrichtigungs-E-Mail', 'recruiting-playbook' ),
+			'notificationEmailDesc' => __( 'E-Mail-Adresse für neue Bewerbungen.', 'recruiting-playbook' ),
+			'privacyPage'           => __( 'Datenschutz-Seite', 'recruiting-playbook' ),
+			'privacyPageDesc'       => __( 'Seite mit Datenschutzerklärung für das Bewerbungsformular.', 'recruiting-playbook' ),
+			'selectPage'            => __( '— Seite auswählen —', 'recruiting-playbook' ),
+			'jobListings'           => __( 'Stellenanzeigen', 'recruiting-playbook' ),
+			'jobListingsDesc'       => __( 'Einstellungen für Stellenanzeigen und die Karriereseite', 'recruiting-playbook' ),
+			'jobsPerPage'           => __( 'Stellen pro Seite', 'recruiting-playbook' ),
+			'urlSlug'               => __( 'URL-Slug', 'recruiting-playbook' ),
+			'urlSlugDesc'           => __( 'URL-Pfad für die Stellenübersicht.', 'recruiting-playbook' ),
+			'googleForJobs'         => __( 'Google for Jobs Schema', 'recruiting-playbook' ),
+			'googleForJobsDesc'     => __( 'JSON-LD Schema für bessere Sichtbarkeit in Google', 'recruiting-playbook' ),
+
+			// Company Settings.
+			'companyData'           => __( 'Firmendaten', 'recruiting-playbook' ),
+			'companyDataDesc'       => __( 'Diese Daten werden in E-Mail-Signaturen und im Google for Jobs Schema verwendet.', 'recruiting-playbook' ),
+			'companyName'           => __( 'Firmenname', 'recruiting-playbook' ),
+			'companyNameDesc'       => __( 'Wird im Schema, E-Mails und auf der Karriereseite angezeigt.', 'recruiting-playbook' ),
+			'street'                => __( 'Straße & Hausnummer', 'recruiting-playbook' ),
+			'zip'                   => __( 'PLZ', 'recruiting-playbook' ),
+			'city'                  => __( 'Stadt', 'recruiting-playbook' ),
+			'phone'                 => __( 'Telefon', 'recruiting-playbook' ),
+			'website'               => __( 'Website', 'recruiting-playbook' ),
+			'contactEmail'          => __( 'Kontakt-E-Mail', 'recruiting-playbook' ),
+			'contactEmailDesc'      => __( 'Allgemeine Kontakt-E-Mail der Firma (für E-Mail-Signaturen).', 'recruiting-playbook' ),
+			'defaultSender'         => __( 'Standard-Absender', 'recruiting-playbook' ),
+			'defaultSenderDesc'     => __( 'Standard-Absenderdaten für automatische und manuelle E-Mails.', 'recruiting-playbook' ),
+			'senderName'            => __( 'Absender-Name', 'recruiting-playbook' ),
+			'senderNameDesc'        => __( 'Name, der als Absender in E-Mails angezeigt wird.', 'recruiting-playbook' ),
+			'senderEmail'           => __( 'Absender-E-Mail', 'recruiting-playbook' ),
+			'senderEmailDesc'       => __( 'E-Mail-Adresse, von der E-Mails gesendet werden.', 'recruiting-playbook' ),
+			'hrDepartment'          => __( 'Personalabteilung', 'recruiting-playbook' ),
+
+			// Export Settings.
+			'fullBackup'            => __( 'Vollständiger Backup', 'recruiting-playbook' ),
+			'fullBackupDesc'        => __( 'Exportiert alle Plugin-Daten als JSON-Datei', 'recruiting-playbook' ),
+			'exportIncludes'        => __( 'Der Export enthält:', 'recruiting-playbook' ),
+			'settingsExport'        => __( 'Einstellungen', 'recruiting-playbook' ),
+			'jobsExport'            => __( 'Stellen (inkl. Meta-Daten)', 'recruiting-playbook' ),
+			'taxonomiesExport'      => __( 'Taxonomien (Kategorien, Standorte, etc.)', 'recruiting-playbook' ),
+			'candidatesExport'      => __( 'Kandidaten', 'recruiting-playbook' ),
+			'applicationsExport'    => __( 'Bewerbungen', 'recruiting-playbook' ),
+			'documentsExport'       => __( 'Dokument-Metadaten', 'recruiting-playbook' ),
+			'activityLogExport'     => __( 'Aktivitäts-Log (letzte 1000 Einträge)', 'recruiting-playbook' ),
+			'note'                  => __( 'Hinweis:', 'recruiting-playbook' ),
+			'documentsNotIncluded'  => __( 'Hochgeladene Dokumente (PDFs etc.) werden aus Datenschutzgründen nicht exportiert.', 'recruiting-playbook' ),
+			'downloadBackup'        => __( 'Backup herunterladen', 'recruiting-playbook' ),
+			'downloadStarted'       => __( 'Download wurde gestartet.', 'recruiting-playbook' ),
+			'preparing'             => __( 'Wird vorbereitet...', 'recruiting-playbook' ),
+
+			// Pro Settings.
+			'proSettings'           => __( 'Pro-Einstellungen', 'recruiting-playbook' ),
+			'proSettingsDesc'       => __( 'Erweiterte Einstellungen für Pro-Nutzer.', 'recruiting-playbook' ),
+			'whiteLabel'            => __( 'White-Label E-Mails', 'recruiting-playbook' ),
+			'whiteLabelDesc'        => __( '"Versand über Recruiting Playbook"-Hinweis in E-Mails ausblenden', 'recruiting-playbook' ),
+
+			// Common.
+			'saveSettings'          => __( 'Einstellungen speichern', 'recruiting-playbook' ),
+			'saving'                => __( 'Speichern...', 'recruiting-playbook' ),
+			'settingsSaved'         => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+			'errorLoading'          => __( 'Fehler beim Laden der Einstellungen', 'recruiting-playbook' ),
+			'errorSaving'           => __( 'Fehler beim Speichern', 'recruiting-playbook' ),
+		];
 	}
 
 	/**
