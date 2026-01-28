@@ -316,23 +316,24 @@ Design & Branding │                   │
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### M2.1: Kanban-Board (React)
+### M2.1: Kanban-Board (React) ✅
 
-- [ ] React Kanban-Komponente
-- [ ] Drag & Drop (Status-Änderung)
-- [ ] Spalten: Neu → Screening → Interview → Angebot → Eingestellt/Abgelehnt
-- [ ] Quick-Actions (E-Mail, Notiz, Ablehnen)
-- [ ] Filter & Suche
-- [ ] Keyboard Navigation
-- [ ] Optimistic Updates
+- [x] React Kanban-Komponente (@dnd-kit)
+- [x] Drag & Drop (Status-Änderung)
+- [x] Spalten: Neu → Screening → Interview → Angebot → Eingestellt/Abgelehnt
+- [x] Quick-Actions (Klick → Detail-Seite mit E-Mail, Notiz, Status)
+- [x] Filter & Suche
+- [x] Keyboard Navigation (Pfeiltasten, Leertaste)
+- [x] Optimistic Updates
+- [x] Screen Reader Support (ARIA Live-Region)
 
-### M2.2: Erweitertes Bewerbermanagement
+### M2.2: Erweitertes Bewerbermanagement ✅
 
-- [ ] Notizen-System pro Bewerber
-- [ ] Bewertungen (Sterne)
-- [ ] Activity Log (Statusänderungen, E-Mails)
-- [ ] Bewerber-Timeline
-- [ ] Talent-Pool (Interessenten für später, 24 Monate)
+- [x] Notizen-System pro Bewerber (NoteEditor, NotesPanel, NoteService)
+- [x] Bewertungen (Sterne) (RatingStars, RatingService)
+- [x] Activity Log (Statusänderungen, E-Mails) (ActivityService, ActivityController)
+- [x] Bewerber-Timeline (Timeline.jsx, TimelineItem.jsx)
+- [x] Talent-Pool (TalentPoolPage, TalentPoolService, 24 Monate Aufbewahrung)
 
 ### M2.3: E-Mail-System (Pro) ✅
 
@@ -475,10 +476,12 @@ Design & Branding │                   │
 | Deliverable | Status |
 |-------------|--------|
 | Pro-Version verkaufsfertig | ⬜ |
-| Kanban-Board funktioniert | ⬜ |
-| E-Mail-Templates | ⬜ |
+| Kanban-Board funktioniert | ✅ |
+| E-Mail-Templates | ✅ |
+| Bewerbermanagement (Notizen, Ratings, Timeline) | ✅ |
+| Talent-Pool | ✅ |
 | Design & Branding Admin-Seite | ⬜ |
-| Action Scheduler integriert | ⬜ |
+| Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
 | Lizenz-System mit klarer Definition | ⬜ |
