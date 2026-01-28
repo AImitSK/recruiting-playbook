@@ -250,86 +250,72 @@ export function ApplicantDetail( { applicationId } ) {
 				<div style={ { display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem' } }>
 					{ /* Main Content */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
-						{ /* Kandidaten-Info Card - immer sichtbar */ }
+						{ /* Kandidaten-Info Card - kompakt */ }
 						<Card>
-							<CardContent style={ { padding: '1.5rem' } }>
-								<div style={ { display: 'flex', gap: '1rem', marginBottom: '1.5rem' } }>
+							<CardContent style={ { padding: '1rem 1.5rem' } }>
+								<div style={ { display: 'flex', gap: '1rem', alignItems: 'center' } }>
+									{ /* Avatar */ }
 									<div
 										style={ {
-											width: '64px',
-											height: '64px',
+											width: '56px',
+											height: '56px',
 											borderRadius: '50%',
 											backgroundColor: '#1d71b8',
 											color: '#fff',
 											display: 'flex',
 											alignItems: 'center',
 											justifyContent: 'center',
-											fontSize: '1.5rem',
+											fontSize: '1.25rem',
 											fontWeight: 500,
 											flexShrink: 0,
 										} }
 									>
 										{ getInitials( application.first_name, application.last_name ) }
 									</div>
-									<div style={ { flex: 1 } }>
-										<h2 style={ { margin: '0 0 0.5rem 0', fontSize: '1.25rem', fontWeight: 600, color: '#1f2937' } }>
+
+									{ /* Name und Meta */ }
+									<div style={ { flex: 1, minWidth: 0 } }>
+										<h2 style={ { margin: '0 0 0.25rem 0', fontSize: '1.125rem', fontWeight: 600, color: '#1f2937' } }>
 											{ application.first_name } { application.last_name }
 										</h2>
-										<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1rem' } }>
-											{ application.email && (
-												<a href={ `mailto:${ application.email }` } style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }>
-													<Mail style={ { width: '1rem', height: '1rem' } } />
-													{ application.email }
-												</a>
+										<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1rem', color: '#6b7280', fontSize: '0.8125rem' } }>
+											{ application.job_title && (
+												<span style={ { display: 'inline-flex', alignItems: 'center', gap: '0.375rem' } }>
+													<Briefcase style={ { width: '0.875rem', height: '0.875rem' } } />
+													{ application.job_title }
+												</span>
 											) }
-											{ application.phone && (
-												<a href={ `tel:${ application.phone }` } style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }>
-													<Phone style={ { width: '1rem', height: '1rem' } } />
-													{ application.phone }
-												</a>
-											) }
+											<span style={ { display: 'inline-flex', alignItems: 'center', gap: '0.375rem' } }>
+												<Calendar style={ { width: '0.875rem', height: '0.875rem' } } />
+												{ __( 'Beworben am', 'recruiting-playbook' ) }: { formatDate( application.created_at ) }
+											</span>
 										</div>
 									</div>
-								</div>
 
-								{ /* Status */ }
-								<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 0', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb', marginBottom: '1rem' } }>
-									<label htmlFor="rp-status-select" style={ { fontWeight: 600, color: '#1f2937' } }>
-										{ __( 'Status', 'recruiting-playbook' ) }:
-									</label>
-									<select
-										id="rp-status-select"
-										value={ application.status }
-										onChange={ ( e ) => handleStatusChange( e.target.value ) }
-										disabled={ statusChanging }
-										style={ {
-											padding: '0.5rem 2rem 0.5rem 0.75rem',
-											border: `2px solid ${ currentStatus?.color || '#e5e7eb' }`,
-											borderRadius: '0.375rem',
-											fontSize: '0.875rem',
-											backgroundColor: '#fff',
-											cursor: statusChanging ? 'not-allowed' : 'pointer',
-											minWidth: '180px',
-										} }
-									>
-										{ STATUS_OPTIONS.map( ( option ) => (
-											<option key={ option.value } value={ option.value }>{ option.label }</option>
-										) ) }
-									</select>
-									{ statusChanging && <Spinner size="sm" /> }
-								</div>
-
-								{ /* Meta */ }
-								<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1.5rem' } }>
-									{ application.job_title && (
-										<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
-											<Briefcase style={ { width: '1rem', height: '1rem' } } />
-											<span>{ application.job_title }</span>
-										</div>
-									) }
-									<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
-										<Calendar style={ { width: '1rem', height: '1rem' } } />
-										<span>{ __( 'Beworben am', 'recruiting-playbook' ) }: { formatDate( application.created_at ) }</span>
+									{ /* Status rechts */ }
+									<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 } }>
+										<select
+											id="rp-status-select"
+											value={ application.status }
+											onChange={ ( e ) => handleStatusChange( e.target.value ) }
+											disabled={ statusChanging }
+											style={ {
+												padding: '0.5rem 2rem 0.5rem 0.75rem',
+												border: `2px solid ${ currentStatus?.color || '#e5e7eb' }`,
+												borderRadius: '0.375rem',
+												fontSize: '0.875rem',
+												backgroundColor: currentStatus?.bg || '#fff',
+												color: currentStatus?.color || '#1f2937',
+												fontWeight: 500,
+												cursor: statusChanging ? 'not-allowed' : 'pointer',
+												minWidth: '160px',
+											} }
+										>
+											{ STATUS_OPTIONS.map( ( option ) => (
+												<option key={ option.value } value={ option.value }>{ option.label }</option>
+											) ) }
+										</select>
+										{ statusChanging && <Spinner size="sm" /> }
 									</div>
 								</div>
 							</CardContent>
