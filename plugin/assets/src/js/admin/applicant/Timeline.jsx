@@ -161,7 +161,7 @@ function TimelineItem( { item } ) {
 	);
 }
 
-export function Timeline( { applicationId, compact = false } ) {
+export function Timeline( { applicationId, compact = false, showHeader = true, maxItems = 0 } ) {
 	const [ filter, setFilter ] = useState( 'all' );
 	const {
 		items,
@@ -172,7 +172,9 @@ export function Timeline( { applicationId, compact = false } ) {
 		refresh,
 	} = useTimeline( applicationId, filter );
 
-	const groupedItems = groupByDate( items );
+	// Apply maxItems limit if set
+	const limitedItems = maxItems > 0 ? items.slice( 0, maxItems ) : items;
+	const groupedItems = groupByDate( limitedItems );
 
 	if ( loading && items.length === 0 ) {
 		return (
@@ -186,7 +188,7 @@ export function Timeline( { applicationId, compact = false } ) {
 	return (
 		<div>
 			{ /* Header */ }
-			{ ! compact && (
+			{ showHeader && ! compact && (
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
 					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' } }>
 						{ __( 'Verlauf', 'recruiting-playbook' ) }
@@ -274,7 +276,7 @@ export function Timeline( { applicationId, compact = false } ) {
 								</div>
 							) }
 							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-								{ dateItems.slice( 0, compact ? 5 : undefined ).map( ( item ) => (
+								{ dateItems.map( ( item ) => (
 									<TimelineItem key={ item.id } item={ item } />
 								) ) }
 							</div>

@@ -317,7 +317,7 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 /**
  * Notes Panel Component
  */
-export function NotesPanel( { applicationId } ) {
+export function NotesPanel( { applicationId, showHeader = true } ) {
 	const [ showNewNote, setShowNewNote ] = useState( false );
 	const {
 		notes,
@@ -351,31 +351,42 @@ export function NotesPanel( { applicationId } ) {
 	return (
 		<div>
 			{ /* Header */ }
-			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
-				<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-					{ __( 'Notizen', 'recruiting-playbook' ) }
-					{ notes.length > 0 && (
-						<span
-							style={ {
-								backgroundColor: '#e5e7eb',
-								color: '#6b7280',
-								padding: '0.125rem 0.5rem',
-								borderRadius: '9999px',
-								fontSize: '0.75rem',
-								fontWeight: 500,
-							} }
-						>
-							{ notes.length }
-						</span>
+			{ showHeader ? (
+				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
+					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+						{ __( 'Notizen', 'recruiting-playbook' ) }
+						{ notes.length > 0 && (
+							<span
+								style={ {
+									backgroundColor: '#e5e7eb',
+									color: '#6b7280',
+									padding: '0.125rem 0.5rem',
+									borderRadius: '9999px',
+									fontSize: '0.75rem',
+									fontWeight: 500,
+								} }
+							>
+								{ notes.length }
+							</span>
+						) }
+					</h3>
+					{ ! showNewNote && (
+						<Button size="sm" onClick={ () => setShowNewNote( true ) }>
+							<Plus style={ { width: '1rem', height: '1rem' } } />
+							{ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
+						</Button>
 					) }
-				</h3>
-				{ ! showNewNote && (
-					<Button size="sm" onClick={ () => setShowNewNote( true ) }>
-						<Plus style={ { width: '1rem', height: '1rem' } } />
-						{ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
-					</Button>
-				) }
-			</div>
+				</div>
+			) : (
+				! showNewNote && (
+					<div style={ { display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' } }>
+						<Button size="sm" onClick={ () => setShowNewNote( true ) }>
+							<Plus style={ { width: '1rem', height: '1rem' } } />
+							{ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
+						</Button>
+					</div>
+				)
+			) }
 
 			{ /* Error */ }
 			{ error && (

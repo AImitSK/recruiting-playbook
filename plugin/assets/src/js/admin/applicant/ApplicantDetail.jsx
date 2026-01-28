@@ -85,6 +85,9 @@ export function ApplicantDetail( { applicationId } ) {
 	const [ error, setError ] = useState( null );
 	const [ statusChanging, setStatusChanging ] = useState( false );
 	const [ activeTab, setActiveTab ] = useState( 'details' );
+	const [ notesCount, setNotesCount ] = useState( 0 );
+	const [ timelineCount, setTimelineCount ] = useState( 0 );
+	const [ emailsCount, setEmailsCount ] = useState( 0 );
 
 	const config = window.rpApplicant || {};
 	const canSendEmails = config.canSendEmails !== false;
@@ -124,6 +127,33 @@ export function ApplicantDetail( { applicationId } ) {
 	useEffect( () => {
 		loadApplication();
 	}, [ loadApplication ] );
+
+	// Fetch tab counts
+	useEffect( () => {
+		if ( ! applicationId ) return;
+
+		// Fetch notes count (returns array directly)
+		apiFetch( { path: `/recruiting/v1/applications/${ applicationId }/notes` } )
+			.then( ( data ) => {
+				setNotesCount( Array.isArray( data ) ? data.length : 0 );
+			} )
+			.catch( () => {} );
+
+		// Fetch timeline count
+		apiFetch( { path: `/recruiting/v1/applications/${ applicationId }/timeline?per_page=1`, parse: false } )
+			.then( ( response ) => {
+				const total = parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 );
+				setTimelineCount( total );
+			} )
+			.catch( () => {} );
+
+		// Fetch emails count
+		apiFetch( { path: `/recruiting/v1/applications/${ applicationId }/emails?per_page=1` } )
+			.then( ( data ) => {
+				setEmailsCount( data.total || 0 );
+			} )
+			.catch( () => {} );
+	}, [ applicationId ] );
 
 	const handleStatusChange = async ( newStatus ) => {
 		if ( ! application || statusChanging ) return;
@@ -236,14 +266,14 @@ export function ApplicantDetail( { applicationId } ) {
 						<TabsTrigger value="documents" count={ documentsCount }>
 							{ __( 'Dokumente', 'recruiting-playbook' ) }
 						</TabsTrigger>
-						<TabsTrigger value="notes">
+						<TabsTrigger value="notes" count={ notesCount }>
 							{ __( 'Notizen', 'recruiting-playbook' ) }
 						</TabsTrigger>
-						<TabsTrigger value="timeline">
+						<TabsTrigger value="timeline" count={ timelineCount }>
 							{ __( 'Verlauf', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ canSendEmails && (
-							<TabsTrigger value="email">
+							<TabsTrigger value="email" count={ emailsCount }>
 								{ __( 'E-Mail', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
@@ -488,8 +518,11 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Notizen */ }
 						{ activeTab === 'notes' && (
 							<Card>
-								<CardContent style={ { padding: '1.5rem' } }>
-									<NotesPanel applicationId={ applicationId } />
+								<CardHeader>
+									<CardTitle>{ __( 'Notizen', 'recruiting-playbook' ) }</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<NotesPanel applicationId={ applicationId } showHeader={ false } />
 								</CardContent>
 							</Card>
 						) }
@@ -497,8 +530,11 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Timeline */ }
 						{ activeTab === 'timeline' && (
 							<Card>
-								<CardContent style={ { padding: '1.5rem' } }>
-									<Timeline applicationId={ applicationId } />
+								<CardHeader>
+									<CardTitle>{ __( 'Verlauf', 'recruiting-playbook' ) }</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<Timeline applicationId={ applicationId } showHeader={ false } />
 								</CardContent>
 							</Card>
 						) }
@@ -506,7 +542,10 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: E-Mail */ }
 						{ activeTab === 'email' && canSendEmails && (
 							<Card>
-								<CardContent style={ { padding: '1.5rem' } }>
+								<CardHeader>
+									<CardTitle>{ __( 'E-Mail', 'recruiting-playbook' ) }</CardTitle>
+								</CardHeader>
+								<CardContent>
 									<EmailTab
 										applicationId={ applicationId }
 										recipient={ {
@@ -529,7 +568,7 @@ export function ApplicantDetail( { applicationId } ) {
 								</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<Timeline applicationId={ applicationId } compact />
+								<Timeline applicationId={ applicationId } compact maxItems={ 10 } />
 							</CardContent>
 						</Card>
 					</div>
