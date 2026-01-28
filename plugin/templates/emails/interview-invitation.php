@@ -4,21 +4,13 @@
  *
  * Wird an Bewerber gesendet, um sie zu einem Vorstellungsgespräch einzuladen.
  *
- * Verfügbare Platzhalter:
- * - {vorname}         : Vorname des Bewerbers
- * - {nachname}        : Nachname des Bewerbers
- * - {anrede}          : Informelle Anrede
- * - {anrede_formal}   : Formelle Anrede
- * - {stelle}          : Stellenbezeichnung
- * - {firma}           : Firmenname
- * - {termin_datum}    : Datum des Termins
- * - {termin_uhrzeit}  : Uhrzeit des Termins
- * - {termin_ort}      : Ort des Termins / Meeting-Link
- * - {termin_typ}      : Art des Termins (vor Ort, Video, Telefon)
- * - {ansprechpartner} : Name des Ansprechpartners
- * - {kontakt_email}   : Kontakt-E-Mail
- * - {kontakt_telefon} : Kontakttelefon
- * - {absender_name}   : Name des Absenders
+ * Verfügbare Platzhalter (werden automatisch ersetzt):
+ * - {anrede_formal}  : Formelle Anrede (z.B. "Sehr geehrter Herr Mustermann")
+ * - {stelle}         : Stellenbezeichnung
+ * - {firma}          : Firmenname
+ *
+ * Manuelle Felder (mit ____ markiert, vom User auszufüllen):
+ * - Datum, Uhrzeit, Ort, Ansprechpartner
  *
  * @package RecruitingPlaybook
  */
@@ -51,53 +43,38 @@ $placeholders = $placeholders ?? [];
 				<?php esc_html_e( 'Termindetails', 'recruiting-playbook' ); ?>
 			</p>
 			<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="font-size: 15px;">
-				<?php if ( ! empty( $placeholders['termin_datum'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #6c757d; vertical-align: top;">
 						<strong><?php esc_html_e( 'Datum:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #333;">
-						<?php echo esc_html( $placeholders['termin_datum'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
-				<?php if ( ! empty( $placeholders['termin_uhrzeit'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #6c757d; vertical-align: top;">
 						<strong><?php esc_html_e( 'Uhrzeit:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #333;">
-						<?php echo esc_html( $placeholders['termin_uhrzeit'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
-				<?php if ( ! empty( $placeholders['termin_ort'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #6c757d; vertical-align: top;">
 						<strong><?php esc_html_e( 'Ort:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #333;">
-						<?php
-						// Prüfen ob es ein Link ist (für Video-Meetings).
-						if ( filter_var( $placeholders['termin_ort'], FILTER_VALIDATE_URL ) ) {
-							echo '<a href="' . esc_url( $placeholders['termin_ort'] ) . '" style="color: #0073aa;">' . esc_html__( 'Zum Meeting beitreten', 'recruiting-playbook' ) . '</a>';
-						} else {
-							echo esc_html( $placeholders['termin_ort'] );
-						}
-						?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
-				<?php if ( ! empty( $placeholders['ansprechpartner'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #6c757d; vertical-align: top;">
 						<strong><?php esc_html_e( 'Ansprechpartner:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #333;">
-						<?php echo esc_html( $placeholders['ansprechpartner'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
 			</table>
 		</td>
 	</tr>
@@ -114,27 +91,6 @@ $placeholders = $placeholders ?? [];
 	<li style="margin-bottom: 8px;"><?php esc_html_e( 'Gültigen Personalausweis oder Reisepass', 'recruiting-playbook' ); ?></li>
 	<li style="margin-bottom: 8px;"><?php esc_html_e( 'Aktuelle Zeugnisse (falls noch nicht eingereicht)', 'recruiting-playbook' ); ?></li>
 	<li style="margin-bottom: 8px;"><?php esc_html_e( 'Gegebenenfalls Arbeitsproben oder Portfolio', 'recruiting-playbook' ); ?></li>
-</ul>
-
-<p>
-	<?php esc_html_e( 'Bei Fragen erreichen Sie uns unter:', 'recruiting-playbook' ); ?>
-</p>
-
-<ul style="margin: 15px 0; padding-left: 20px;">
-	<?php if ( ! empty( $placeholders['kontakt_telefon'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?>
-			<?php echo esc_html( $placeholders['kontakt_telefon'] ); ?>
-		</li>
-	<?php endif; ?>
-	<?php if ( ! empty( $placeholders['kontakt_email'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?>
-			<a href="mailto:<?php echo esc_attr( $placeholders['kontakt_email'] ); ?>" style="color: #0073aa; text-decoration: none;">
-				<?php echo esc_html( $placeholders['kontakt_email'] ); ?>
-			</a>
-		</li>
-	<?php endif; ?>
 </ul>
 
 <p>

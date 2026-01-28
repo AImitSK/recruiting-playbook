@@ -4,14 +4,10 @@
  *
  * Wird an Bewerber gesendet, um ihnen eine Absage mitzuteilen.
  *
- * Verfügbare Platzhalter:
- * - {vorname}        : Vorname des Bewerbers
- * - {nachname}       : Nachname des Bewerbers
- * - {anrede}         : Informelle Anrede
- * - {anrede_formal}  : Formelle Anrede
+ * Verfügbare Platzhalter (werden automatisch ersetzt):
+ * - {anrede_formal}  : Formelle Anrede (z.B. "Sehr geehrter Herr Mustermann")
  * - {stelle}         : Stellenbezeichnung
  * - {firma}          : Firmenname
- * - {absender_name}  : Name des Absenders
  *
  * @package RecruitingPlaybook
  */

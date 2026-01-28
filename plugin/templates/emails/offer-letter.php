@@ -4,20 +4,13 @@
  *
  * Wird an Bewerber gesendet, um ihnen ein Stellenangebot zu unterbreiten.
  *
- * Verfügbare Platzhalter:
- * - {vorname}        : Vorname des Bewerbers
- * - {nachname}       : Nachname des Bewerbers
- * - {anrede}         : Informelle Anrede
- * - {anrede_formal}  : Formelle Anrede
+ * Verfügbare Platzhalter (werden automatisch ersetzt):
+ * - {anrede_formal}  : Formelle Anrede (z.B. "Sehr geehrter Herr Mustermann")
  * - {stelle}         : Stellenbezeichnung
  * - {firma}          : Firmenname
- * - {start_datum}    : Geplantes Startdatum
- * - {vertragsart}    : Vertragsart (unbefristet, befristet, etc.)
- * - {arbeitszeit}    : Arbeitszeit (Vollzeit, Teilzeit, etc.)
- * - {antwort_frist}  : Frist für Rückmeldung
- * - {absender_name}  : Name des Absenders
- * - {kontakt_email}  : Kontakt-E-Mail
- * - {kontakt_telefon}: Kontakttelefon
+ *
+ * Manuelle Felder (mit ____ markiert, vom User auszufüllen):
+ * - Startdatum, Vertragsart, Arbeitszeit, Antwortfrist
  *
  * @package RecruitingPlaybook
  */
@@ -58,36 +51,30 @@ $placeholders = $placeholders ?? [];
 						<?php echo esc_html( $placeholders['stelle'] ?? '' ); ?>
 					</td>
 				</tr>
-				<?php if ( ! empty( $placeholders['start_datum'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #155724; vertical-align: top;">
 						<strong><?php esc_html_e( 'Startdatum:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #155724;">
-						<?php echo esc_html( $placeholders['start_datum'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
-				<?php if ( ! empty( $placeholders['vertragsart'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #155724; vertical-align: top;">
 						<strong><?php esc_html_e( 'Vertragsart:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #155724;">
-						<?php echo esc_html( $placeholders['vertragsart'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
-				<?php if ( ! empty( $placeholders['arbeitszeit'] ) ) : ?>
 				<tr>
 					<td style="padding: 8px 20px 8px 0; color: #155724; vertical-align: top;">
 						<strong><?php esc_html_e( 'Arbeitszeit:', 'recruiting-playbook' ); ?></strong>
 					</td>
 					<td style="padding: 8px 0; color: #155724;">
-						<?php echo esc_html( $placeholders['arbeitszeit'] ); ?>
+						____
 					</td>
 				</tr>
-				<?php endif; ?>
 			</table>
 		</td>
 	</tr>
@@ -97,38 +84,19 @@ $placeholders = $placeholders ?? [];
 	<?php esc_html_e( 'Die detaillierten Vertragsunterlagen erhalten Sie in Kürze per Post oder als separaten Anhang.', 'recruiting-playbook' ); ?>
 </p>
 
-<?php if ( ! empty( $placeholders['antwort_frist'] ) ) : ?>
 <p>
 	<?php
 	printf(
-		/* translators: %s: Response deadline */
+		/* translators: %s: Response deadline placeholder */
 		esc_html__( 'Bitte teilen Sie uns Ihre Entscheidung bis zum %s mit.', 'recruiting-playbook' ),
-		'<strong>' . esc_html( $placeholders['antwort_frist'] ) . '</strong>'
+		'<strong>____</strong>'
 	);
 	?>
 </p>
-<?php endif; ?>
 
 <p>
-	<?php esc_html_e( 'Für Rückfragen stehen wir Ihnen selbstverständlich gerne zur Verfügung:', 'recruiting-playbook' ); ?>
+	<?php esc_html_e( 'Für Rückfragen stehen wir Ihnen selbstverständlich gerne zur Verfügung.', 'recruiting-playbook' ); ?>
 </p>
-
-<ul style="margin: 15px 0; padding-left: 20px;">
-	<?php if ( ! empty( $placeholders['kontakt_telefon'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?>
-			<?php echo esc_html( $placeholders['kontakt_telefon'] ); ?>
-		</li>
-	<?php endif; ?>
-	<?php if ( ! empty( $placeholders['kontakt_email'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?>
-			<a href="mailto:<?php echo esc_attr( $placeholders['kontakt_email'] ); ?>" style="color: #0073aa; text-decoration: none;">
-				<?php echo esc_html( $placeholders['kontakt_email'] ); ?>
-			</a>
-		</li>
-	<?php endif; ?>
-</ul>
 
 <p>
 	<?php esc_html_e( 'Wir freuen uns darauf, Sie bald in unserem Team willkommen zu heißen!', 'recruiting-playbook' ); ?>

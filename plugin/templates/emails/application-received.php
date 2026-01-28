@@ -4,23 +4,19 @@
  *
  * Wird automatisch an Bewerber gesendet, wenn eine neue Bewerbung eingeht.
  *
- * Verfügbare Platzhalter:
- * - {vorname}        : Vorname des Bewerbers
- * - {nachname}       : Nachname des Bewerbers
- * - {anrede}         : Informelle Anrede (z.B. "Herr Müller")
- * - {anrede_formal}  : Formelle Anrede (z.B. "Sehr geehrter Herr Müller")
- * - {stelle}         : Stellenbezeichnung
- * - {firma}          : Firmenname
- * - {kontakt_email}  : Kontakt-E-Mail
- * - {kontakt_telefon}: Kontakttelefon
- * - {bewerbungsdatum}: Datum der Bewerbung
+ * Verfügbare Platzhalter (werden automatisch ersetzt):
+ * - {anrede_formal}    : Formelle Anrede (z.B. "Sehr geehrter Herr Müller")
+ * - {stelle}           : Stellenbezeichnung
+ * - {firma}            : Firmenname
+ * - {bewerbung_datum}  : Datum der Bewerbung
+ *
+ * Kontaktdaten werden automatisch aus der Signatur übernommen.
  *
  * @package RecruitingPlaybook
  */
 
 defined( 'ABSPATH' ) || exit;
 
-// Diese Variablen werden vom EmailService übergeben.
 $placeholders = $placeholders ?? [];
 ?>
 <p><?php echo esc_html( $placeholders['anrede_formal'] ?? __( 'Sehr geehrte Bewerberin, sehr geehrter Bewerber', 'recruiting-playbook' ) ); ?>,</p>
@@ -54,7 +50,7 @@ $placeholders = $placeholders ?? [];
 				</tr>
 				<tr>
 					<td style="padding: 5px 15px 5px 0; color: #6c757d;"><?php esc_html_e( 'Eingangsdatum:', 'recruiting-playbook' ); ?></td>
-					<td style="padding: 5px 0; color: #333;"><?php echo esc_html( $placeholders['bewerbungsdatum'] ?? '' ); ?></td>
+					<td style="padding: 5px 0; color: #333;"><?php echo esc_html( $placeholders['bewerbung_datum'] ?? date_i18n( get_option( 'date_format' ) ) ); ?></td>
 				</tr>
 			</table>
 		</td>
@@ -62,23 +58,6 @@ $placeholders = $placeholders ?? [];
 </table>
 
 <p>
-	<?php esc_html_e( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung:', 'recruiting-playbook' ); ?>
+	<?php esc_html_e( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' ); ?>
 </p>
-
-<ul style="margin: 15px 0; padding-left: 20px;">
-	<?php if ( ! empty( $placeholders['kontakt_email'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?>
-			<a href="mailto:<?php echo esc_attr( $placeholders['kontakt_email'] ); ?>" style="color: #0073aa; text-decoration: none;">
-				<?php echo esc_html( $placeholders['kontakt_email'] ); ?>
-			</a>
-		</li>
-	<?php endif; ?>
-	<?php if ( ! empty( $placeholders['kontakt_telefon'] ) ) : ?>
-		<li style="margin-bottom: 5px;">
-			<?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?>
-			<?php echo esc_html( $placeholders['kontakt_telefon'] ); ?>
-		</li>
-	<?php endif; ?>
-</ul>
-<?php // Signatur wird automatisch vom EmailService angehängt. ?>
+<?php // Signatur mit Kontaktdaten wird automatisch vom EmailService angehängt. ?>
