@@ -7,7 +7,7 @@
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { Calendar, PenTool } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { DateTimePicker, Popover } from '@wordpress/components';
 
 import { Button } from '../../components/ui/button';
@@ -203,9 +203,13 @@ export function EmailComposer( {
 			subject: formData.subject,
 			body: formData.body,
 			template_id: selectedTemplate || null,
-			signature_id: selectedSignature ? parseInt( selectedSignature, 10 ) : null,
 			application_id: applicationId,
 		};
+
+		// Nur signature_id senden wenn explizit gewählt (sonst nutzt Backend Firmen-Signatur)
+		if ( selectedSignature ) {
+			emailData.signature_id = parseInt( selectedSignature, 10 );
+		}
 
 		if ( scheduleEnabled && scheduledAt ) {
 			emailData.scheduled_at = scheduledAt;
@@ -287,8 +291,7 @@ export function EmailComposer( {
 
 									{ /* Signatur */ }
 									<div>
-										<Label htmlFor="signature" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
-											<PenTool style={ { width: '0.875rem', height: '0.875rem' } } />
+										<Label htmlFor="signature">
 											{ i18n.signature || __( 'Signatur', 'recruiting-playbook' ) }
 										</Label>
 										<Select
@@ -296,7 +299,7 @@ export function EmailComposer( {
 											value={ selectedSignature }
 											onChange={ ( e ) => setSelectedSignature( e.target.value ) }
 										>
-											<option value="">{ i18n.noSignature || __( '-- Keine Signatur --', 'recruiting-playbook' ) }</option>
+											<option value="">{ i18n.companySignature || __( 'Firmen-Signatur (Standard)', 'recruiting-playbook' ) }</option>
 											{ signatures.map( ( s ) => (
 												<option key={ s.id } value={ String( s.id ) }>
 													{ s.name }{ s.is_default ? ` (${ i18n.default || 'Standard' })` : '' }

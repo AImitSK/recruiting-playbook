@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { Plus } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { EmailComposer, EmailHistory } from '../email/components';
-import { useTemplates, useEmailHistory, usePlaceholders } from '../email/hooks';
+import { useTemplates, useEmailHistory, usePlaceholders, useSignatures } from '../email/hooks';
 
 /**
  * EmailTab Komponente
@@ -27,6 +27,7 @@ export function EmailTab( { applicationId, recipient = {} } ) {
 
 	// Hooks
 	const { templates, loading: templatesLoading } = useTemplates();
+	const { signatures, loading: signaturesLoading } = useSignatures();
 	const {
 		emails,
 		loading: emailsLoading,
@@ -93,7 +94,7 @@ export function EmailTab( { applicationId, recipient = {} } ) {
 	}, [ cancelEmail, showNotification, i18n.emailCancelled ] );
 
 	// Loading
-	const isLoading = templatesLoading || emailsLoading || placeholdersLoading;
+	const isLoading = templatesLoading || signaturesLoading || emailsLoading || placeholdersLoading;
 
 	if ( isLoading && view === 'history' && emails.length === 0 ) {
 		return (
@@ -140,6 +141,7 @@ export function EmailTab( { applicationId, recipient = {} } ) {
 			) : (
 				<EmailComposer
 					templates={ templates }
+					signatures={ signatures }
 					placeholders={ placeholders }
 					previewValues={ previewValues }
 					recipient={ recipient }
