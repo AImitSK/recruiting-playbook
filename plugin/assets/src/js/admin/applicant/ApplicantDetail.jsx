@@ -194,17 +194,15 @@ export function ApplicantDetail( { applicationId } ) {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1400px' } }>
-				{ /* Logo */ }
-				{ logoUrl && (
-					<div style={ { marginBottom: '1rem' } }>
+				{ /* Header: Logo links, Titel rechts */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
-					</div>
-				) }
-
-				{ /* Überschrift */ }
-				<h1 style={ { margin: '0 0 1rem 0', fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-					{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
-				</h1>
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
+					</h1>
+				</div>
 
 				{ /* Navigation */ }
 				<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' } }>
