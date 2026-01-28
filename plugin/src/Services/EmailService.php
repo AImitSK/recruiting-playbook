@@ -195,7 +195,8 @@ class EmailService {
 		] );
 
 		// Firmen-Signatur anhängen (automatische E-Mail ohne spezifischen Absender).
-		$message = $this->appendSignature( $message, null, null );
+		// user_id = 0 bedeutet explizit "kein User", nutzt nur Firmen-Fallback.
+		$message = $this->appendSignature( $message, null, 0 );
 
 		return $this->send( $to, $subject, $message );
 	}
@@ -225,7 +226,7 @@ class EmailService {
 			'company_name' => $this->from_name,
 		] );
 
-		// Firmen-Signatur anhängen (automatische E-Mail ohne spezifischen Absender).
+		// Signatur des eingeloggten Users anhängen (HR-Mitarbeiter löst Absage aus).
 		$message = $this->appendSignature( $message, null, null );
 
 		return $this->send( $to, $subject, $message );
@@ -759,17 +760,21 @@ class EmailService {
 	 *
 	 * Verwendet die Fallback-Kette:
 	 * 1. Explizit angegebene Signatur (wenn $signature_id gesetzt)
-	 * 2. User-Default-Signatur (für aktuellen User)
-	 * 3. Firmen-Signatur
-	 * 4. Minimale Signatur
+	 * 2. User-Default-Signatur (wenn $user_id > 0)
+	 * 3. Firmen-Signatur (aus DB)
+	 * 4. Auto-generierte Signatur aus Firmendaten
 	 *
 	 * @param string   $body_html     E-Mail-Body ohne Signatur.
 	 * @param int|null $signature_id  Signatur-ID (null = automatisch).
-	 * @param int|null $user_id       User-ID für Fallback (null = aktueller User).
+	 * @param int|null $user_id       User-ID für Fallback:
+	 *                                - null = aktueller User (für manuelle E-Mails)
+	 *                                - 0 = kein User, nur Firmen-Signatur (für automatische E-Mails)
+	 *                                - >0 = spezifischer User.
 	 * @return string E-Mail-Body mit Signatur.
 	 */
 	private function appendSignature( string $body_html, ?int $signature_id = null, ?int $user_id = null ): string {
 		// User-ID für Fallback bestimmen.
+		// null = aktueller User, 0 = explizit kein User (automatische E-Mails).
 		if ( null === $user_id ) {
 			$user_id = get_current_user_id() ?: null;
 		}
@@ -821,8 +826,8 @@ class EmailService {
 	 * @return string E-Mail-Body mit Firmen-Signatur.
 	 */
 	private function appendCompanySignature( string $body_html ): string {
-		// null, null = keine explizite Signatur, kein User → Firmen-Signatur.
-		return $this->appendSignature( $body_html, null, null );
+		// null, 0 = keine explizite Signatur, explizit kein User → nur Firmen-Signatur.
+		return $this->appendSignature( $body_html, null, 0 );
 	}
 
 	/**
