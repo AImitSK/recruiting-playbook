@@ -210,7 +210,10 @@ class LicenseManager {
 			return $this->license_data;
 		}
 
-		$this->license_data = get_option( self::OPTION_KEY, null );
+		$data = get_option( self::OPTION_KEY, null );
+
+		// get_option gibt false zurück wenn Option nicht existiert oder ungültig ist.
+		$this->license_data = is_array( $data ) ? $data : null;
 
 		return $this->license_data;
 	}

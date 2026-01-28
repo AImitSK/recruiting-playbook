@@ -97,7 +97,7 @@ class SignatureController extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_company_signature' ],
 					'permission_callback' => [ $this, 'admin_permissions_check' ],
-					'args'                => $this->get_create_item_args(),
+					'args'                => $this->get_company_signature_args(),
 				],
 			]
 		);
@@ -423,7 +423,7 @@ class SignatureController extends WP_REST_Controller {
 	public function create_company_signature( $request ) {
 		$data = [
 			'user_id'         => null, // Firmen-Signatur hat keine User-ID.
-			'name'            => $request->get_param( 'name' ),
+			'name'            => $request->get_param( 'name' ) ?: __( 'Firmen-Signatur', 'recruiting-playbook' ),
 			'greeting'        => $request->get_param( 'greeting' ),
 			'content'         => $request->get_param( 'content' ),
 			'is_default'      => $request->get_param( 'is_default' ) ?? false,
@@ -718,6 +718,44 @@ class SignatureController extends WP_REST_Controller {
 				'description'       => __( 'Signatur-Name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			],
+			'greeting'        => [
+				'description'       => __( 'Grußformel', 'recruiting-playbook' ),
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+			],
+			'content'         => [
+				'description'       => __( 'Signatur-Inhalt', 'recruiting-playbook' ),
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'wp_kses_post',
+			],
+			'is_default'      => [
+				'description' => __( 'Als Standard setzen', 'recruiting-playbook' ),
+				'type'        => 'boolean',
+				'default'     => false,
+			],
+			'include_company' => [
+				'description' => __( 'Firmendaten anhängen', 'recruiting-playbook' ),
+				'type'        => 'boolean',
+				'default'     => true,
+			],
+		];
+	}
+
+	/**
+	 * Argumente für Firmen-Signatur (name optional)
+	 *
+	 * @return array
+	 */
+	private function get_company_signature_args(): array {
+		return [
+			'name'            => [
+				'description'       => __( 'Signatur-Name', 'recruiting-playbook' ),
+				'type'              => 'string',
+				'required'          => false,
+				'default'           => __( 'Firmen-Signatur', 'recruiting-playbook' ),
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'greeting'        => [

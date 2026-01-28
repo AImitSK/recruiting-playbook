@@ -252,27 +252,30 @@ class Settings {
 			]
 		);
 
-		// Sektion: E-Mail.
-		add_settings_section(
-			'rp_email_section',
-			__( 'E-Mail-Einstellungen', 'recruiting-playbook' ),
-			[ $this, 'renderEmailSection' ],
-			'rp-settings'
-		);
+		// Sektion: Pro-Features (nur wenn Pro-Lizenz vorhanden).
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_branding' ) ) {
+			add_settings_section(
+				'rp_pro_section',
+				__( 'Pro-Einstellungen', 'recruiting-playbook' ),
+				[ $this, 'renderProSection' ],
+				'rp-settings'
+			);
 
-		// Feld: Automatische Absage-E-Mails.
-		add_settings_field(
-			'auto_rejection_email',
-			__( 'Automatische Absagen', 'recruiting-playbook' ),
-			[ $this, 'renderCheckboxField' ],
-			'rp-settings',
-			'rp_email_section',
-			[
-				'label_for'   => 'auto_rejection_email',
-				'label'       => __( 'Automatische Absage-E-Mail bei Status "Abgelehnt"', 'recruiting-playbook' ),
-				'description' => __( 'Bewerber erhalten automatisch eine E-Mail, wenn ihr Status auf "Abgelehnt" geändert wird.', 'recruiting-playbook' ),
-			]
-		);
+			// Feld: E-Mail-Branding ausblenden.
+			add_settings_field(
+				'hide_email_branding',
+				__( 'White-Label E-Mails', 'recruiting-playbook' ),
+				[ $this, 'renderCheckboxField' ],
+				'rp-settings',
+				'rp_pro_section',
+				[
+					'label_for'   => 'hide_email_branding',
+					'label'       => __( '"Versand über Recruiting Playbook"-Hinweis in E-Mails ausblenden', 'recruiting-playbook' ),
+					'description' => __( 'Entfernt den Branding-Hinweis aus dem Footer aller E-Mails.', 'recruiting-playbook' ),
+				]
+			);
+		}
+
 	}
 
 	/**
@@ -304,8 +307,8 @@ class Settings {
 			'jobs_slug'            => 'jobs',
 			'enable_schema'        => true,
 
-			// E-Mail.
-			'auto_rejection_email' => false,
+			// Pro-Features.
+			'hide_email_branding'  => false,
 		];
 	}
 
@@ -343,8 +346,8 @@ class Settings {
 		$output['jobs_slug']     = sanitize_title( $input['jobs_slug'] ?? 'jobs' );
 		$output['enable_schema'] = ! empty( $input['enable_schema'] );
 
-		// E-Mail.
-		$output['auto_rejection_email'] = ! empty( $input['auto_rejection_email'] );
+		// Pro-Features.
+		$output['hide_email_branding'] = ! empty( $input['hide_email_branding'] );
 
 		// Slug-Änderung erfordert Rewrite-Flush.
 		$old_settings = get_option( self::OPTION_NAME, [] );
@@ -426,13 +429,6 @@ class Settings {
 	}
 
 	/**
-	 * E-Mail Sektion
-	 */
-	public function renderEmailSection(): void {
-		echo '<p>' . esc_html__( 'Einstellungen für E-Mail-Benachrichtigungen.', 'recruiting-playbook' ) . '</p>';
-	}
-
-	/**
 	 * Firmendaten Sektion
 	 */
 	public function renderCompanySection(): void {
@@ -444,6 +440,13 @@ class Settings {
 	 */
 	public function renderSenderSection(): void {
 		echo '<p>' . esc_html__( 'Standard-Absenderdaten für automatische und manuelle E-Mails.', 'recruiting-playbook' ) . '</p>';
+	}
+
+	/**
+	 * Pro-Features Sektion
+	 */
+	public function renderProSection(): void {
+		echo '<p>' . esc_html__( 'Erweiterte Einstellungen für Pro-Nutzer.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**

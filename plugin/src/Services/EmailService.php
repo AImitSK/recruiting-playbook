@@ -204,13 +204,6 @@ class EmailService {
 	 * @return bool
 	 */
 	public function sendRejectionEmail( int $application_id ): bool {
-		$settings = get_option( 'rp_settings', [] );
-
-		// Prüfen ob automatische Absage-E-Mails aktiviert sind
-		if ( empty( $settings['auto_rejection_email'] ) ) {
-			return false;
-		}
-
 		$application = $this->getApplicationData( $application_id );
 		if ( ! $application ) {
 			return false;
@@ -590,11 +583,15 @@ class EmailService {
 		$company = $data['company_name'] ?? '';
 
 		$styles = '
-			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }
-			.container { max-width: 600px; margin: 0 auto; padding: 20px; }
-			.header { border-bottom: 2px solid #2271b1; padding-bottom: 20px; margin-bottom: 20px; }
-			.footer { border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; }
-			.btn { display: inline-block; padding: 12px 24px; background: #2271b1; color: #fff; text-decoration: none; border-radius: 4px; }
+			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+			.container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: left; }
+			.header { border-bottom: 2px solid #2271b1; padding-bottom: 20px; margin-bottom: 20px; text-align: left; }
+			.content { padding: 20px 0; text-align: left; }
+			.footer { padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; text-align: left; }
+			a { color: #2271b1; }
+			.btn { display: inline-block; padding: 12px 24px; background: #2271b1; color: #fff !important; text-decoration: none; border-radius: 4px; }
+			table { border-collapse: collapse; }
+			td { padding: 8px; }
 		';
 
 		switch ( $template ) {
@@ -688,33 +685,48 @@ class EmailService {
 				$content = '';
 		}
 
+		// Branding-Hinweis (Pro-User können es abschalten).
+		$settings      = get_option( 'rp_settings', [] );
+		$hide_branding = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$footer_html   = '';
+
+		if ( ! $hide_branding ) {
+			$footer_html = sprintf(
+				'<p>%s</p>',
+				sprintf(
+					/* translators: %s: Link to Recruiting Playbook website */
+					__( 'Versand über %s', 'recruiting-playbook' ),
+					'<a href="https://recruiting-playbook.de" style="color: #6b7280; text-decoration: underline;">Recruiting Playbook</a>'
+				)
+			);
+		}
+
 		return sprintf(
 			'<!DOCTYPE html>
-			<html>
-			<head>
-				<meta charset="UTF-8">
-				<style>%s</style>
-			</head>
-			<body>
-				<div class="container">
-					<div class="header">
-						<strong>%s</strong>
-					</div>
-					%s
-					<div class="footer">
-						<p>%s</p>
-					</div>
-				</div>
-			</body>
-			</html>',
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>%s</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<strong>%s</strong>
+		</div>
+		<div class="content">
+			%s
+		</div>
+		<div class="footer">
+			%s
+		</div>
+	</div>
+</body>
+</html>',
 			$styles,
 			esc_html( $company ),
 			$content,
-			sprintf(
-				/* translators: %s: Company name */
-				__( 'Diese E-Mail wurde automatisch von %s versendet.', 'recruiting-playbook' ),
-				esc_html( $company )
-			)
+			$footer_html
 		);
 	}
 
@@ -769,6 +781,33 @@ class EmailService {
 			return $body_html;
 		}
 
+		// Signatur innerhalb des Content-Containers einfügen (vor dem schließenden </div> des Content).
+		// Suche nach </div> vor dem Footer und füge Signatur davor ein.
+		if ( preg_match( '/<\/div>\s*<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<\/div>)(\s*<div class="footer">)/i',
+				$signature . "\n\t\t$1$2",
+				$body_html,
+				1
+			);
+		}
+
+		// Alternative: Vor dem Footer-Div einfügen.
+		if ( preg_match( '/<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<div class="footer">)/i',
+				$signature . "\n\t\t$1",
+				$body_html,
+				1
+			);
+		}
+
+		// Fallback: Vor </body> einfügen.
+		if ( stripos( $body_html, '</body>' ) !== false ) {
+			return str_ireplace( '</body>', $signature . "\n</body>", $body_html );
+		}
+
+		// Letzter Fallback: Am Ende anhängen.
 		return $body_html . $signature;
 	}
 

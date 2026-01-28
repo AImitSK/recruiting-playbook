@@ -483,11 +483,6 @@ class ApplicationService {
 			[ 'status' => $status ]
 		);
 
-		// E-Mails bei bestimmten Status-Änderungen
-		if ( ApplicationStatus::REJECTED === $status ) {
-			$this->email_service->sendRejectionEmail( $id );
-		}
-
 		// Hook für Auto-E-Mail und andere Erweiterungen.
 		// Parameter: $application_id, $old_status, $new_status (chronologische Reihenfolge).
 		do_action( 'rp_application_status_changed', $id, $old_status, $status );

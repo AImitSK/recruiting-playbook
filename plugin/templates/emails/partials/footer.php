@@ -36,44 +36,31 @@ if ( ! empty( $settings['company_email'] ) ) {
 }
 ?>
 <!-- Footer -->
+<?php
+$settings            = get_option( 'rp_settings', [] );
+$hide_branding       = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+$recruiting_url      = 'https://recruiting-playbook.de';
+?>
+<?php if ( ! $hide_branding || ! empty( $unsubscribe_url ) ) : ?>
 <tr>
-	<td style="background-color: #f8f9fa; padding: 30px 40px; text-align: center; border-top: 1px solid #e9ecef; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+	<td style="background-color: #f8f9fa; padding: 30px 40px; text-align: left; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-		<!-- Firmenname -->
-		<p style="margin: 0 0 15px 0; padding: 0; color: #6c757d; font-size: 14px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-			<?php echo esc_html( $company ); ?>
-		</p>
-
-		<?php if ( ! empty( $contact_info ) ) : ?>
-			<!-- Kontaktinformationen -->
-			<p style="margin: 0 0 15px 0; color: #6c757d; font-size: 13px; line-height: 1.5;">
-				<?php echo esc_html( implode( ' | ', $contact_info ) ); ?>
+		<?php if ( ! $hide_branding ) : ?>
+			<!-- Versand-Hinweis mit Link -->
+			<p style="margin: 0; color: #adb5bd; font-size: 11px; line-height: 1.4;">
+				<?php
+				printf(
+					/* translators: %s: Link to Recruiting Playbook website */
+					esc_html__( 'Versand über %s', 'recruiting-playbook' ),
+					'<a href="' . esc_url( $recruiting_url ) . '" style="color: #adb5bd; text-decoration: underline;">Recruiting Playbook</a>'
+				);
+				?>
 			</p>
 		<?php endif; ?>
-
-		<?php if ( ! empty( $footer_text ) ) : ?>
-			<!-- Zusätzlicher Footer-Text -->
-			<p style="margin: 0 0 15px 0; color: #6c757d; font-size: 13px; line-height: 1.5;">
-				<?php echo esc_html( $footer_text ); ?>
-			</p>
-		<?php endif; ?>
-
-		<!-- Rechtlicher Hinweis -->
-		<p style="margin: 20px 0 0 0; color: #adb5bd; font-size: 11px; line-height: 1.4;">
-			<?php
-			printf(
-				/* translators: %s: Company name */
-				esc_html__( 'Diese E-Mail wurde automatisch von %s versendet.', 'recruiting-playbook' ),
-				esc_html( $company )
-			);
-			?>
-			<br>
-			<?php esc_html_e( 'Bitte antworten Sie nicht auf diese E-Mail.', 'recruiting-playbook' ); ?>
-		</p>
 
 		<?php if ( ! empty( $unsubscribe_url ) ) : ?>
 			<!-- Abmelde-Link -->
-			<p style="margin: 15px 0 0 0;">
+			<p style="margin: <?php echo $hide_branding ? '0' : '10px 0 0 0'; ?>;">
 				<a
 					href="<?php echo esc_url( $unsubscribe_url ); ?>"
 					style="color: #6c757d; font-size: 11px; text-decoration: underline;"
@@ -85,4 +72,5 @@ if ( ! empty( $settings['company_email'] ) ) {
 
 	</td>
 </tr>
+<?php endif; ?>
 <!-- /Footer -->

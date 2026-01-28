@@ -413,17 +413,34 @@ class EmailTemplateService {
 		$settings     = get_option( 'rp_settings', [] );
 		$company_name = $settings['company_name'] ?? get_bloginfo( 'name' );
 
+		// Pro-Feature: Branding ausblenden.
+		$hide_branding   = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$recruiting_url  = 'https://recruiting-playbook.de';
+
 		$styles = '
 			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
 			.container { max-width: 600px; margin: 0 auto; padding: 20px; }
 			.header { border-bottom: 2px solid #2271b1; padding-bottom: 20px; margin-bottom: 20px; }
 			.content { padding: 20px 0; }
-			.footer { border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; }
+			.footer { padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; }
 			a { color: #2271b1; }
 			.btn { display: inline-block; padding: 12px 24px; background: #2271b1; color: #fff !important; text-decoration: none; border-radius: 4px; }
 			table { border-collapse: collapse; }
 			td { padding: 8px; }
 		';
+
+		// Footer-Inhalt erstellen (nur Branding-Zeile wenn sichtbar).
+		$footer_content = '';
+		if ( ! $hide_branding ) {
+			$footer_content = sprintf(
+				'<p style="margin: 0; color: #adb5bd; font-size: 11px;">%s</p>',
+				sprintf(
+					/* translators: %s: Link to Recruiting Playbook website */
+					esc_html__( 'Versand über %s', 'recruiting-playbook' ),
+					'<a href="' . esc_url( $recruiting_url ) . '" style="color: #adb5bd; text-decoration: underline;">Recruiting Playbook</a>'
+				)
+			);
+		}
 
 		return sprintf(
 			'<!DOCTYPE html>
@@ -442,7 +459,7 @@ class EmailTemplateService {
 			%s
 		</div>
 		<div class="footer">
-			<p>%s</p>
+			%s
 		</div>
 	</div>
 </body>
@@ -450,11 +467,7 @@ class EmailTemplateService {
 			$styles,
 			esc_html( $company_name ),
 			$content,
-			sprintf(
-				/* translators: %s: Company name */
-				esc_html__( 'Diese E-Mail wurde von %s versendet.', 'recruiting-playbook' ),
-				esc_html( $company_name )
-			)
+			$footer_content
 		);
 	}
 
