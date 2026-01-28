@@ -194,6 +194,9 @@ class EmailService {
 			'job_url'      => get_permalink( $application['job_id'] ),
 		] );
 
+		// Firmen-Signatur anhängen (automatische E-Mail ohne spezifischen Absender).
+		$message = $this->appendSignature( $message, null, null );
+
 		return $this->send( $to, $subject, $message );
 	}
 
@@ -221,6 +224,9 @@ class EmailService {
 			'application'  => $application,
 			'company_name' => $this->from_name,
 		] );
+
+		// Firmen-Signatur anhängen (automatische E-Mail ohne spezifischen Absender).
+		$message = $this->appendSignature( $message, null, null );
 
 		return $this->send( $to, $subject, $message );
 	}
@@ -639,17 +645,14 @@ class EmailService {
 					<p>%s</p>
 					<p><strong>%s:</strong> %s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Bewerbungseingang bestätigt', 'recruiting-playbook' ),
 					$greeting,
 					__( 'vielen Dank für Ihre Bewerbung! Wir haben Ihre Unterlagen erhalten und werden diese sorgfältig prüfen.', 'recruiting-playbook' ),
 					__( 'Stelle', 'recruiting-playbook' ),
 					esc_html( $app['job_title'] ?? '' ),
 					__( 'Sie erhalten von uns Rückmeldung, sobald wir Ihre Bewerbung geprüft haben.', 'recruiting-playbook' ),
-					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -665,8 +668,7 @@ class EmailService {
 					<p>%s,</p>
 					<p>%s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Ihre Bewerbung', 'recruiting-playbook' ),
 					$greeting,
 					sprintf(
@@ -675,9 +677,7 @@ class EmailService {
 						esc_html( $app['job_title'] ?? '' )
 					),
 					__( 'Nach sorgfältiger Prüfung müssen wir Ihnen leider mitteilen, dass wir uns für andere Kandidaten entschieden haben, deren Profil besser zu unseren aktuellen Anforderungen passt.', 'recruiting-playbook' ),
-					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' )
 				);
 				break;
 
