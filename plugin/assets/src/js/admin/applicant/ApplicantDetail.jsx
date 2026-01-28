@@ -21,6 +21,7 @@ import {
 	MessageSquare,
 	Clock,
 	Users,
+	Copy,
 } from 'lucide-react';
 import {
 	Card,
@@ -71,6 +72,9 @@ function formatDate( dateString ) {
 	} );
 }
 
+function copyToClipboard( text ) {
+	navigator.clipboard.writeText( text );
+}
 
 /**
  * Bewerber-Detailseite Komponente
@@ -324,86 +328,78 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Details */ }
 						{ activeTab === 'details' && (
 							<>
-								{ /* Kandidaten-Details - Tabellen-Style */ }
+								{ /* Kandidaten-Details - 2-spaltig */ }
 								<Card>
 									<CardHeader style={ { paddingBottom: 0 } }>
 										<CardTitle>{ __( 'Kandidaten-Details', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
-									<CardContent style={ { padding: 0 } }>
-										<table style={ { width: '100%', borderCollapse: 'collapse' } }>
-											<tbody>
-												{ application.salutation && (
-													<tr>
-														<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', width: '140px', borderBottom: '1px solid #f3f4f6' } }>
-															{ __( 'Anrede', 'recruiting-playbook' ) }
-														</td>
-														<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-															{ application.salutation }
-														</td>
-													</tr>
-												) }
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', width: '140px', borderBottom: '1px solid #f3f4f6' } }>
-														{ __( 'Name', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', fontWeight: 500, borderBottom: '1px solid #f3f4f6' } }>
-														{ application.first_name } { application.last_name }
-													</td>
-												</tr>
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ __( 'E-Mail', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ application.email ? (
-															<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
-																{ application.email }
-															</a>
-														) : '-' }
-													</td>
-												</tr>
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ __( 'Telefon', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ application.phone ? (
-															<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', textDecoration: 'none' } }>
-																{ application.phone }
-															</a>
-														) : '-' }
-													</td>
-												</tr>
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ __( 'Stelle', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ application.job_title || '-' }
-													</td>
-												</tr>
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ __( 'Beworben am', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem', borderBottom: '1px solid #f3f4f6' } }>
-														{ formatDate( application.created_at ) }
-													</td>
-												</tr>
-												<tr>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
-														{ __( 'Quelle', 'recruiting-playbook' ) }
-													</td>
-													<td style={ { padding: '0.75rem 1.5rem', color: '#1f2937', fontSize: '0.875rem' } }>
-														{ application.source || 'Website' }
-													</td>
-												</tr>
-											</tbody>
-										</table>
+									<CardContent style={ { padding: '1rem 1.5rem' } }>
+										<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
+											{ /* Zeile 1 */ }
+											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
+												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
+											</div>
+											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Anrede', 'recruiting-playbook' ) }</span>
+												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.salutation || '-' }</span>
+											</div>
+											{ /* Zeile 2 */ }
+											<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'E-Mail', 'recruiting-playbook' ) }</span>
+												{ application.email ? (
+													<>
+														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.email }</a>
+														<button
+															type="button"
+															onClick={ () => copyToClipboard( application.email ) }
+															title={ __( 'Kopieren', 'recruiting-playbook' ) }
+															style={ { marginLeft: '0.5rem', padding: '0.25rem', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', borderRadius: '0.25rem' } }
+															onMouseEnter={ ( e ) => e.currentTarget.style.color = '#6b7280' }
+															onMouseLeave={ ( e ) => e.currentTarget.style.color = '#9ca3af' }
+														>
+															<Copy style={ { width: '0.875rem', height: '0.875rem' } } />
+														</button>
+													</>
+												) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
+											</div>
+											<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Telefon', 'recruiting-playbook' ) }</span>
+												{ application.phone ? (
+													<>
+														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.phone }</a>
+														<button
+															type="button"
+															onClick={ () => copyToClipboard( application.phone ) }
+															title={ __( 'Kopieren', 'recruiting-playbook' ) }
+															style={ { marginLeft: '0.5rem', padding: '0.25rem', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', borderRadius: '0.25rem' } }
+															onMouseEnter={ ( e ) => e.currentTarget.style.color = '#6b7280' }
+															onMouseLeave={ ( e ) => e.currentTarget.style.color = '#9ca3af' }
+														>
+															<Copy style={ { width: '0.875rem', height: '0.875rem' } } />
+														</button>
+													</>
+												) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
+											</div>
+											{ /* Zeile 3 */ }
+											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Stelle', 'recruiting-playbook' ) }</span>
+												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.job_title || '-' }</span>
+											</div>
+											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Beworben am', 'recruiting-playbook' ) }</span>
+												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ formatDate( application.created_at ) }</span>
+											</div>
+											{ /* Zeile 4 */ }
+											<div style={ { display: 'flex', padding: '0.5rem 0' } }>
+												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Quelle', 'recruiting-playbook' ) }</span>
+												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.source || 'Website' }</span>
+											</div>
+										</div>
 
 										{ /* Anschreiben */ }
 										{ application.cover_letter && (
-											<div style={ { padding: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
+											<div style={ { marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
 												<div style={ { fontSize: '0.875rem', fontWeight: 500, color: '#1f2937', marginBottom: '0.75rem' } }>
 													{ __( 'Anschreiben', 'recruiting-playbook' ) }
 												</div>
