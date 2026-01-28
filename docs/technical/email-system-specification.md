@@ -5,19 +5,20 @@
 
 ---
 
-> ⚠️ **WICHTIG: Konzept-Aktualisierung (Januar 2025)**
+> ✅ **IMPLEMENTIERT (Januar 2025)**
 >
-> Diese Spezifikation wird durch folgende Dokumente ergänzt/überschrieben:
+> Diese Spezifikation wurde durch folgende Dokumente erweitert und umgesetzt:
 >
-> **→ [email-signature-specification.md](email-signature-specification.md)**
+> **→ [email-signature-specification.md](email-signature-specification.md)** (aktuelle Signatur-Spezifikation)
+> **→ [email-implementation-plan.md](email-implementation-plan.md)** (Implementierungsstatus)
 >
-> Wesentliche Änderungen:
-> - **Templates enthalten keine Signatur mehr** – Signatur wird separat verwaltet
-> - **Platzhalter bereinigt** – 17 Pseudo-Variablen entfernt (termin_*, absender_*, kontakt_*, etc.)
-> - **Neue Tab-Struktur**: E-Mail-Templates → [Vorlagen] [Signaturen] [Automatisierung]
-> - **Firmendaten-Tab** unter Einstellungen
-> - **Nur 3 automatisierbare E-Mails**: Eingangsbestätigung, Absage, Zurückgezogen
-> - **Manuelle Templates mit Lücken** (`___`) statt Pseudo-Variablen
+> **Umgesetzte Änderungen:**
+> - ✅ **Templates enthalten keine Signatur mehr** – Signatur wird separat verwaltet
+> - ✅ **Platzhalter bereinigt** – nur 17 echte Platzhalter (7 Kandidat, 3 Bewerbung, 4 Stelle, 3 Firma)
+> - ✅ **Neue Tab-Struktur**: E-Mail-Templates → [Vorlagen] [Signaturen] [Automatisierung]
+> - ✅ **Firmendaten-Tab** unter Einstellungen (React + shadcn/ui)
+> - ✅ **Nur 3 automatisierbare E-Mails**: Eingangsbestätigung, Absage, Zurückgezogen
+> - ✅ **Manuelle Templates mit Lücken** (`___`) statt Pseudo-Variablen
 
 ---
 

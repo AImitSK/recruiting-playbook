@@ -334,19 +334,19 @@ Design & Branding │                   │
 - [ ] Bewerber-Timeline
 - [ ] Talent-Pool (Interessenten für später, 24 Monate)
 
-### M2.3: E-Mail-System (Pro)
+### M2.3: E-Mail-System (Pro) ✅
 
-> Siehe [email-signature-specification.md](technical/email-signature-specification.md) für aktualisiertes Konzept
+> Siehe [email-signature-specification.md](technical/email-signature-specification.md) und [email-implementation-plan.md](technical/email-implementation-plan.md)
 
-- [ ] Template-Editor (WYSIWYG)
-- [ ] Platzhalter (16 echte: {vorname}, {stelle}, {firma}, etc.)
-- [ ] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen
-- [ ] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken)
-- [ ] Signaturen-Verwaltung (pro User, auto-generierte Fallback-Signatur aus Firmendaten)
-- [ ] Firmendaten-Einstellungen
-- [ ] Manueller Versand aus Backend mit Signatur-Auswahl
-- [ ] E-Mail-Historie pro Bewerber
-- [ ] **Queued Delivery via Action Scheduler**
+- [x] Template-Editor (WYSIWYG mit TipTap)
+- [x] Platzhalter (17 echte: {vorname}, {nachname}, {stelle}, {firma}, etc.)
+- [x] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen
+- [x] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken `___`)
+- [x] Signaturen-Verwaltung (pro User, auto-generierte Fallback-Signatur aus Firmendaten)
+- [x] Firmendaten-Einstellungen (React + shadcn/ui)
+- [x] Manueller Versand aus Backend mit Signatur-Auswahl
+- [x] E-Mail-Historie pro Bewerber
+- [x] **Queued Delivery via Action Scheduler**
 
 ### M2.4: Benutzerrollen
 
@@ -667,4 +667,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: 28. Januar 2025*

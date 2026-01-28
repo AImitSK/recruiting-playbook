@@ -722,6 +722,13 @@ CREATE TABLE {prefix}rp_email_log (
         'notify_on_application' => true,
         'notify_on_status_change' => false,
     ],
+
+    // PRO: E-Mail-Einstellungen
+    'email' => [
+        'sender_name'          => 'HR Team',        // Standard-Absender Name
+        'sender_email'         => 'hr@example.com', // Standard-Absender E-Mail
+        'hide_email_branding'  => false,            // Copyright-Zeile in E-Mails verstecken
+    ],
     'api' => [
         'enabled' => true,
         'rate_limit_free' => 100,
@@ -1653,4 +1660,4 @@ function rp_export_candidate_data($candidate_id) {
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: 28. Januar 2025*

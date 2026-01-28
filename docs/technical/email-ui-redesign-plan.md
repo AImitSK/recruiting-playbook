@@ -1,6 +1,10 @@
 # E-Mail UI Redesign Plan
 
-## Aktuelle Probleme (basierend auf Screenshots)
+> **Status:** ✅ ABGESCHLOSSEN (Januar 2025)
+>
+> Alle UI-Verbesserungen wurden implementiert. Die E-Mail-Komponenten verwenden nun shadcn/ui Design-Standards.
+
+## Aktuelle Probleme (basierend auf Screenshots) - BEHOBEN
 
 ### 1. E-Mail-Verlauf Tabelle (tabelle.JPG)
 
@@ -408,17 +412,17 @@ const designTokens = {
 
 ## Akzeptanzkriterien
 
-- [ ] E-Mail-Verlauf Tabelle entspricht shadcn/ui Dashboard-Design
-- [ ] Keine doppelten Überschriften
-- [ ] Alle Spalten-Header vollständig sichtbar
-- [ ] Row-Hover-Effekte funktionieren
-- [ ] Email Composer hat klares, strukturiertes Layout
-- [ ] Platzhalter-Dropdown überlappt nichts
-- [ ] Platzhalter-Sidebar ist kompakt (max 32px pro Item)
-- [ ] Platzhalter sind nach Kategorien gruppiert
-- [ ] WYSIWYG Editor ist gut gestylt
-- [ ] Responsive auf verschiedenen Bildschirmgrößen
-- [ ] Konsistente Abstände und Farben
+- [x] E-Mail-Verlauf Tabelle entspricht shadcn/ui Dashboard-Design
+- [x] Keine doppelten Überschriften
+- [x] Alle Spalten-Header vollständig sichtbar
+- [x] Row-Hover-Effekte funktionieren
+- [x] Email Composer hat klares, strukturiertes Layout
+- [x] Platzhalter-Dropdown überlappt nichts
+- [x] Platzhalter-Sidebar ist kompakt (28px pro Item)
+- [x] Platzhalter sind nach Kategorien gruppiert (Kandidat, Bewerbung, Stelle, Firma)
+- [x] WYSIWYG Editor ist gut gestylt
+- [x] Responsive auf verschiedenen Bildschirmgrößen
+- [x] Konsistente Abstände und Farben
 
 ---
 

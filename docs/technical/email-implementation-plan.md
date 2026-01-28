@@ -143,12 +143,12 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 > **Hinweis:** Es gibt keine separate Firmen-Signatur-Komponente mehr. Wenn ein User keine Signatur hat, wird automatisch eine Signatur aus den Firmendaten generiert.
 
 ### 4.3 Automatisierungs-Tab
-- [ ] `[L]` `AutomationSettings.jsx` umbauen
+- [x] `[L]` `AutomationSettings.jsx` umbauen
   - Nur 3 automatisierbare: Eingangsbestätigung, Absage, Zurückgezogen
   - Toggle pro Automatisierung
   - Template-Auswahl pro Automatisierung
-  - Talent-Pool Automatisierungen (Aufnahme, Passende Stelle)
-- [ ] `[S]` Validierung: Nur passende Template-Kategorien anzeigen
+  - Verzögerungsoptionen (Sofort bis 24 Stunden)
+- [x] `[S]` Validierung: Nur passende Template-Kategorien anzeigen
 
 ### 4.4 E-Mail-Composer anpassen
 - [x] `[M]` Signatur-Dropdown hinzufügen
@@ -159,10 +159,11 @@ Dieser Plan beschreibt die Implementierung des überarbeiteten E-Mail-Systems mi
 - [x] `[S]` Signatur bei Vorschau mit rendern
 
 ### 4.5 Variablen-Picker bereinigen
-- [ ] `[M]` `PlaceholderPicker.jsx` aktualisieren
-  - Nur 16 echte Variablen anzeigen
-  - Gruppen: Bewerber, Bewerbung, Stelle, Firma
+- [x] `[M]` `PlaceholderPicker.jsx` aktualisiert
+  - Nur 17 echte Variablen anzeigen (7 Kandidat, 3 Bewerbung, 4 Stelle, 3 Firma)
+  - Gruppen: Kandidat, Bewerbung, Stelle, Firma
   - Entfernte Gruppen: Absender, Interview, Angebot, Kontakt
+  - Daten werden dynamisch von `PlaceholderService::getPlaceholdersByGroup()` geladen
 
 ---
 
@@ -325,4 +326,4 @@ Phase 5 (Settings)   Phase 6 (Templates)
 
 ---
 
-*Letzte Aktualisierung: 27. Januar 2025*
+*Letzte Aktualisierung: 28. Januar 2025*
