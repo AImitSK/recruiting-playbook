@@ -13,6 +13,7 @@ namespace RecruitingPlaybook\Admin\Pages;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Constants\ApplicationStatus;
+use RecruitingPlaybook\Services\CapabilityService;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -195,6 +196,20 @@ class ApplicationList extends \WP_List_Table {
 			$values[]     = $search;
 			$values[]     = $search;
 			$values[]     = $search;
+		}
+
+		// Zugewiesene Stellen (Rollen-basiert).
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$capability_service = new CapabilityService();
+			$assigned_job_ids   = $capability_service->getAssignedJobIds( get_current_user_id() );
+
+			if ( empty( $assigned_job_ids ) ) {
+				$conditions[] = '1=0'; // Keine Zuweisungen → keine Ergebnisse.
+			} else {
+				$placeholders = implode( ',', array_fill( 0, count( $assigned_job_ids ), '%d' ) );
+				$conditions[] = "a.job_id IN ({$placeholders})";
+				$values       = array_merge( $values, array_map( 'intval', $assigned_job_ids ) );
+			}
 		}
 
 		// Datum von.

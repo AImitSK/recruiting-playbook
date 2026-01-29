@@ -13,6 +13,7 @@ namespace RecruitingPlaybook\Api;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\ApplicationService;
+use RecruitingPlaybook\Services\CapabilityService;
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\GdprService;
@@ -427,6 +428,12 @@ class ApplicationController extends WP_REST_Controller {
 			'order'    => $request->get_param( 'order' ) ?: 'desc',
 			'context'  => $context,
 		];
+
+		// Rollen-basierter Filter: Nicht-Admins sehen nur zugewiesene Stellen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$capability_service        = new CapabilityService();
+			$args['assigned_job_ids']  = $capability_service->getAssignedJobIds( get_current_user_id() );
+		}
 
 		// Kanban-Kontext: Spezielle Methode mit Dokumentenanzahl.
 		if ( 'kanban' === $context ) {

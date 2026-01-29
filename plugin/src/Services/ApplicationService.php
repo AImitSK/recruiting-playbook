@@ -174,6 +174,13 @@ class ApplicationService {
 		$where = [ '1=1' ];
 		$values = [];
 
+		// Filter: Zugewiesene Stellen (Rollen-basiert).
+		if ( ! empty( $args['assigned_job_ids'] ) && is_array( $args['assigned_job_ids'] ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $args['assigned_job_ids'] ), '%d' ) );
+			$where[]      = "a.job_id IN ({$placeholders})";
+			$values       = array_merge( $values, array_map( 'intval', $args['assigned_job_ids'] ) );
+		}
+
 		// Filter: Job ID
 		if ( ! empty( $args['job_id'] ) ) {
 			$where[] = 'a.job_id = %d';
@@ -292,6 +299,13 @@ class ApplicationService {
 
 		$where  = [ '1=1', 'a.deleted_at IS NULL' ];
 		$values = [];
+
+		// Filter: Zugewiesene Stellen (Rollen-basiert).
+		if ( ! empty( $args['assigned_job_ids'] ) && is_array( $args['assigned_job_ids'] ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $args['assigned_job_ids'] ), '%d' ) );
+			$where[]      = "a.job_id IN ({$placeholders})";
+			$values       = array_merge( $values, array_map( 'intval', $args['assigned_job_ids'] ) );
+		}
 
 		// Filter: Job ID.
 		if ( ! empty( $args['job_id'] ) ) {

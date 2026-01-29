@@ -59,7 +59,7 @@ class Menu {
 		add_menu_page(
 			__( 'Recruiting Playbook', 'recruiting-playbook' ),
 			__( 'Recruiting', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_manage_recruiting',
 			'recruiting-playbook',
 			[ $this, 'renderDashboard' ],
 			'dashicons-groups',
@@ -71,7 +71,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Dashboard', 'recruiting-playbook' ),
 			__( 'Dashboard', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_manage_recruiting',
 			'recruiting-playbook',
 			[ $this, 'renderDashboard' ]
 		);
@@ -81,7 +81,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Bewerbungen', 'recruiting-playbook' ),
 			__( 'Bewerbungen', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_view_applications',
 			'rp-applications',
 			[ $this, 'renderApplications' ]
 		);
@@ -91,7 +91,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Kanban-Board', 'recruiting-playbook' ),
 			$this->getKanbanMenuLabel(),
-			'manage_options',
+			'rp_view_applications',
 			'rp-kanban',
 			[ $this, 'renderKanban' ]
 		);
@@ -101,7 +101,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Talent-Pool', 'recruiting-playbook' ),
 			$this->getTalentPoolMenuLabel(),
-			'manage_options',
+			'rp_manage_talent_pool',
 			'rp-talent-pool',
 			[ $this, 'renderTalentPool' ]
 		);
@@ -131,7 +131,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Bewerbung', 'recruiting-playbook' ),
 			__( 'Bewerbung', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_view_applications',
 			'rp-application-detail',
 			[ $this, 'renderApplicationDetail' ]
 		);
@@ -141,7 +141,7 @@ class Menu {
 			'recruiting-playbook',
 			__( 'Massen-E-Mail', 'recruiting-playbook' ),
 			__( 'Massen-E-Mail', 'recruiting-playbook' ),
-			'manage_options',
+			'rp_send_emails',
 			'rp-bulk-email',
 			[ $this, 'renderBulkEmail' ]
 		);
@@ -210,7 +210,7 @@ class Menu {
 		}
 
 		// Berechtigung prüfen.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_edit_applications' ) ) {
 			return;
 		}
 
@@ -307,7 +307,7 @@ class Menu {
 		}
 
 		// Berechtigung prüfen.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'rp_edit_applications' ) ) {
 			return;
 		}
 
