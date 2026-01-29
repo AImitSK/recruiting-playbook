@@ -246,7 +246,7 @@ export function ReportingPage() {
 							{ /* Bewerbungen im Zeitverlauf */ }
 							<TrendChart
 								title={ i18n.applicationsOverTime || 'Bewerbungen im Zeitverlauf' }
-								data={ trends?.timeline || [] }
+								data={ trends?.data || [] }
 								series={ [
 									{ key: 'total', name: 'Bewerbungen', color: '#1d71b8' },
 								] }
@@ -275,7 +275,7 @@ export function ReportingPage() {
 						>
 							<TrendChart
 								title={ i18n.applicationsOverTime || 'Bewerbungen im Zeitverlauf' }
-								data={ trends?.timeline || [] }
+								data={ trends?.data || [] }
 								series={ [
 									{ key: 'total', name: 'Gesamt', color: '#1d71b8' },
 									{ key: 'new', name: 'Neu', color: '#2fac66' },

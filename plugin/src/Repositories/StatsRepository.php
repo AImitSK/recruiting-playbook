@@ -293,10 +293,11 @@ class StatsRepository {
 
 		$table = $this->tables['applications'];
 
+		// Use %% to escape % signs for wpdb->prepare().
 		$date_format = match ( $group_by ) {
-			'week'  => '%Y-%u',
-			'month' => '%Y-%m',
-			default => '%Y-%m-%d',
+			'week'  => '%%Y-%%u',
+			'month' => '%%Y-%%m',
+			default => '%%Y-%%m-%%d',
 		};
 
 		$where = 'deleted_at IS NULL';

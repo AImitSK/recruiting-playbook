@@ -300,7 +300,8 @@ class StatsService {
 				$item = [ 'date' => $row['date'] ];
 
 				if ( in_array( 'applications', $metrics, true ) ) {
-					$item['applications'] = (int) $row['total'];
+					$item['total'] = (int) $row['total'];
+					$item['new'] = (int) ( $row['new_count'] ?? 0 );
 				}
 				if ( in_array( 'hires', $metrics, true ) ) {
 					$item['hires'] = (int) $row['hired'];
