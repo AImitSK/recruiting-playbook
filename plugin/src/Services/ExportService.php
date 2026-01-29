@@ -44,9 +44,9 @@ class ExportService {
 	 * Bewerbungen exportieren (Streaming)
 	 *
 	 * @param array $args Filter-Argumente.
-	 * @return void|WP_Error
+	 * @return WP_Error|null WP_Error bei Fehler, bei Erfolg wird exit aufgerufen.
 	 */
-	public function exportApplications( array $args ): void|WP_Error {
+	public function exportApplications( array $args ) {
 		// Pro-Feature Check.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
 			return new WP_Error(
@@ -105,9 +105,9 @@ class ExportService {
 	 * Statistik-Report exportieren
 	 *
 	 * @param array $args Filter-Argumente.
-	 * @return void|WP_Error
+	 * @return WP_Error|null WP_Error bei Fehler, bei Erfolg wird exit aufgerufen.
 	 */
-	public function exportStats( array $args ): void|WP_Error {
+	public function exportStats( array $args ) {
 		// Pro-Feature Check.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
 			return new WP_Error(

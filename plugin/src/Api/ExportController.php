@@ -120,9 +120,9 @@ class ExportController extends WP_REST_Controller {
 	 * Bewerbungen exportieren
 	 *
 	 * @param WP_REST_Request $request Request-Objekt.
-	 * @return void|WP_Error
+	 * @return WP_Error|null Null bei Erfolg (sendet Datei direkt), WP_Error bei Fehler.
 	 */
-	public function export_applications( WP_REST_Request $request ): void|WP_Error {
+	public function export_applications( WP_REST_Request $request ) {
 		$args = [
 			'date_from' => $request->get_param( 'date_from' ),
 			'date_to'   => $request->get_param( 'date_to' ),
@@ -137,16 +137,17 @@ class ExportController extends WP_REST_Controller {
 			return $result;
 		}
 
-		// Export sendet direkt die Datei, keine Response nötig.
+		// Export sendet direkt die Datei und beendet mit exit.
+		return null;
 	}
 
 	/**
 	 * Statistik-Report exportieren
 	 *
 	 * @param WP_REST_Request $request Request-Objekt.
-	 * @return void|WP_Error
+	 * @return WP_Error|null Null bei Erfolg (sendet Datei direkt), WP_Error bei Fehler.
 	 */
-	public function export_stats( WP_REST_Request $request ): void|WP_Error {
+	public function export_stats( WP_REST_Request $request ) {
 		$args = [
 			'period' => $request->get_param( 'period' ),
 		];
@@ -157,7 +158,8 @@ class ExportController extends WP_REST_Controller {
 			return $result;
 		}
 
-		// Export sendet direkt die Datei, keine Response nötig.
+		// Export sendet direkt die Datei und beendet mit exit.
+		return null;
 	}
 
 	/**
