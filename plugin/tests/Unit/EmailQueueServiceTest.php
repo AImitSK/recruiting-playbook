@@ -40,6 +40,14 @@ class EmailQueueServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		// Globales $wpdb Mock.
+		global $wpdb;
+		$wpdb = Mockery::mock( 'wpdb' );
+		$wpdb->prefix = 'wp_';
+		$wpdb->shouldReceive( 'prepare' )->andReturnUsing( function( $query, ...$args ) {
+			return vsprintf( str_replace( [ '%d', '%s', '%f' ], [ '%d', "'%s'", '%f' ], $query ), $args );
+		} );
+
 		$this->logRepository = Mockery::mock( EmailLogRepository::class );
 		$this->service = new EmailQueueService( $this->logRepository );
 

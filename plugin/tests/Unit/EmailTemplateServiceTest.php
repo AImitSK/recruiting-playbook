@@ -68,6 +68,12 @@ class EmailTemplateServiceTest extends TestCase {
 		Functions\when( 'wp_strip_all_tags' )->alias( function( $string ) {
 			return strip_tags( $string );
 		} );
+		Functions\when( 'wp_kses_post' )->returnArg();
+		Functions\when( 'esc_url' )->returnArg();
+		Functions\when( 'site_url' )->justReturn( 'https://test.de' );
+		Functions\when( 'admin_url' )->alias( function( $path = '' ) {
+			return 'https://test.de/wp-admin/' . $path;
+		} );
 	}
 
 	/**

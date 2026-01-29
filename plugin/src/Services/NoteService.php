@@ -31,9 +31,11 @@ class NoteService {
 
 	/**
 	 * Constructor
+	 *
+	 * @param NoteRepository|null $repository Repository-Instanz (für Tests).
 	 */
-	public function __construct() {
-		$this->repository = new NoteRepository();
+	public function __construct( ?NoteRepository $repository = null ) {
+		$this->repository = $repository ?? new NoteRepository();
 	}
 
 	/**

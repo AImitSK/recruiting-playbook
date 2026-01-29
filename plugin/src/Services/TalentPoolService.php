@@ -37,9 +37,11 @@ class TalentPoolService {
 
 	/**
 	 * Constructor
+	 *
+	 * @param TalentPoolRepository|null $repository Repository-Instanz (für Tests).
 	 */
-	public function __construct() {
-		$this->repository = new TalentPoolRepository();
+	public function __construct( ?TalentPoolRepository $repository = null ) {
+		$this->repository = $repository ?? new TalentPoolRepository();
 	}
 
 	/**

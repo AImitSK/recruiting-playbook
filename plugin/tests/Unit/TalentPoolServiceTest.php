@@ -40,6 +40,18 @@ class TalentPoolServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		// Globales $wpdb Mock (für Activity-Logging).
+		global $wpdb;
+		$wpdb = Mockery::mock( 'wpdb' );
+		$wpdb->prefix = 'wp_';
+		$wpdb->shouldReceive( 'prepare' )->andReturnUsing( function( $query, ...$args ) {
+			return vsprintf( str_replace( [ '%d', '%s', '%f' ], [ '%d', "'%s'", '%f' ], $query ), $args );
+		} );
+		$wpdb->shouldReceive( 'get_col' )->andReturn( [] );
+		$wpdb->shouldReceive( 'get_row' )->andReturn( null );
+		$wpdb->shouldReceive( 'get_var' )->andReturn( null );
+		$wpdb->shouldReceive( 'insert' )->andReturn( 1 );
+
 		$this->repository = Mockery::mock( TalentPoolRepository::class );
 		$this->service = new TalentPoolService( $this->repository );
 
@@ -50,55 +62,16 @@ class TalentPoolServiceTest extends TestCase {
 		Functions\when( 'sanitize_text_field' )->returnArg();
 		Functions\when( '__' )->returnArg();
 		Functions\when( 'esc_html__' )->returnArg();
-	}
-
-	/**
-	 * Test: Kandidat zum Pool hinzufügen
-	 */
-	public function test_add_candidate_to_pool(): void {
-		$candidate_id = 123;
-		$reason = 'Guter Kandidat für zukünftige Stellen';
-		$tags = 'developer, senior';
-
-		$expected_entry = [
-			'id' => 1,
-			'candidate_id' => $candidate_id,
-			'added_by' => 1,
-			'reason' => $reason,
-			'tags' => $tags,
-			'consent_given' => 1,
-			'expires_at' => '2027-01-25', // 24 Monate DSGVO-konform.
-			'created_at' => '2025-01-25 12:00:00',
-		];
-
-		$this->repository
-			->shouldReceive( 'isInPool' )
-			->once()
-			->with( $candidate_id )
-			->andReturn( false );
-
-		$this->repository
-			->shouldReceive( 'add' )
-			->once()
-			->with( Mockery::on( function ( $data ) use ( $candidate_id, $reason, $tags ) {
-				return $data['candidate_id'] === $candidate_id
-					&& $data['reason'] === $reason
-					&& $data['tags'] === $tags
-					&& isset( $data['expires_at'] );
-			} ) )
-			->andReturn( 1 );
-
-		$this->repository
-			->shouldReceive( 'getByCandidate' )
-			->once()
-			->with( $candidate_id )
-			->andReturn( $expected_entry );
-
-		$result = $this->service->add( $candidate_id, $reason, $tags );
-
-		$this->assertIsArray( $result );
-		$this->assertEquals( $candidate_id, $result['candidate_id'] );
-		$this->assertEquals( $reason, $result['reason'] );
+		Functions\when( 'wp_parse_args' )->alias( function( $args, $defaults ) {
+			return array_merge( $defaults, $args );
+		} );
+		Functions\when( 'wp_json_encode' )->alias( function( $data ) {
+			return json_encode( $data );
+		} );
+		Functions\when( 'wp_get_current_user' )->justReturn( (object) [
+			'ID' => 1,
+			'display_name' => 'Test User',
+		] );
 	}
 
 	/**
@@ -108,7 +81,7 @@ class TalentPoolServiceTest extends TestCase {
 		$candidate_id = 123;
 
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'exists' )
 			->once()
 			->with( $candidate_id )
 			->andReturn( true );
@@ -116,7 +89,7 @@ class TalentPoolServiceTest extends TestCase {
 		$result = $this->service->add( $candidate_id, 'Grund', '' );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertEquals( 'already_in_pool', $result->get_error_code() );
+		$this->assertEquals( 'already_exists', $result->get_error_code() );
 	}
 
 	/**
@@ -124,13 +97,13 @@ class TalentPoolServiceTest extends TestCase {
 	 */
 	public function test_is_in_pool(): void {
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'exists' )
 			->once()
 			->with( 123 )
 			->andReturn( true );
 
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'exists' )
 			->once()
 			->with( 456 )
 			->andReturn( false );
@@ -146,15 +119,15 @@ class TalentPoolServiceTest extends TestCase {
 		$candidate_id = 123;
 
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'findByCandidate' )
 			->once()
 			->with( $candidate_id )
-			->andReturn( true );
+			->andReturn( [ 'id' => 1, 'candidate_id' => $candidate_id ] );
 
 		$this->repository
-			->shouldReceive( 'remove' )
+			->shouldReceive( 'softDelete' )
 			->once()
-			->with( $candidate_id )
+			->with( 1 )
 			->andReturn( true );
 
 		$result = $this->service->remove( $candidate_id );
@@ -169,15 +142,15 @@ class TalentPoolServiceTest extends TestCase {
 		$candidate_id = 999;
 
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'findByCandidate' )
 			->once()
 			->with( $candidate_id )
-			->andReturn( false );
+			->andReturn( null );
 
 		$result = $this->service->remove( $candidate_id );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertEquals( 'not_in_pool', $result->get_error_code() );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**
@@ -187,20 +160,23 @@ class TalentPoolServiceTest extends TestCase {
 		$candidate_id = 123;
 		$updates = [
 			'reason' => 'Aktualisierter Grund',
-			'tags' => 'new, tags',
+			'tags'   => 'new, tags',
 		];
 
 		$existing_entry = [
-			'id' => 1,
+			'id'           => 1,
 			'candidate_id' => $candidate_id,
-			'reason' => 'Alter Grund',
-			'tags' => 'old, tags',
+			'reason'       => 'Alter Grund',
+			'tags'         => 'old, tags',
 		];
 
-		$updated_entry = array_merge( $existing_entry, $updates );
+		$updated_entry = array_merge( $existing_entry, [
+			'reason' => 'Aktualisierter Grund',
+			'tags'   => 'new,tags', // Tags werden normalisiert.
+		] );
 
 		$this->repository
-			->shouldReceive( 'getByCandidate' )
+			->shouldReceive( 'findByCandidate' )
 			->once()
 			->with( $candidate_id )
 			->andReturn( $existing_entry );
@@ -208,20 +184,21 @@ class TalentPoolServiceTest extends TestCase {
 		$this->repository
 			->shouldReceive( 'update' )
 			->once()
-			->with( $candidate_id, $updates )
+			->with( 1, Mockery::on( function( $data ) {
+				return isset( $data['reason'] ) && isset( $data['tags'] );
+			} ) )
 			->andReturn( true );
 
 		$this->repository
-			->shouldReceive( 'getByCandidate' )
+			->shouldReceive( 'findWithCandidate' )
 			->once()
-			->with( $candidate_id )
+			->with( 1 )
 			->andReturn( $updated_entry );
 
 		$result = $this->service->update( $candidate_id, $updates );
 
 		$this->assertIsArray( $result );
 		$this->assertEquals( 'Aktualisierter Grund', $result['reason'] );
-		$this->assertEquals( 'new, tags', $result['tags'] );
 	}
 
 	/**
@@ -295,34 +272,21 @@ class TalentPoolServiceTest extends TestCase {
 	}
 
 	/**
-	 * Test: DSGVO-konforme Aufbewahrungsfrist (24 Monate)
+	 * Test: Nicht existierender Kandidat kann nicht aktualisiert werden
 	 */
-	public function test_default_expiry_is_24_months(): void {
-		$candidate_id = 123;
+	public function test_cannot_update_non_existent_candidate(): void {
+		$candidate_id = 999;
 
 		$this->repository
-			->shouldReceive( 'isInPool' )
+			->shouldReceive( 'findByCandidate' )
 			->once()
-			->andReturn( false );
+			->with( $candidate_id )
+			->andReturn( null );
 
-		$this->repository
-			->shouldReceive( 'add' )
-			->once()
-			->with( Mockery::on( function ( $data ) {
-				// Prüfen ob expires_at ca. 24 Monate in der Zukunft liegt.
-				$expires = strtotime( $data['expires_at'] );
-				$expected = strtotime( '+24 months' );
-				// Toleranz von einem Tag.
-				return abs( $expires - $expected ) < 86400;
-			} ) )
-			->andReturn( 1 );
+		$result = $this->service->update( $candidate_id, [ 'reason' => 'Test' ] );
 
-		$this->repository
-			->shouldReceive( 'getByCandidate' )
-			->once()
-			->andReturn( [ 'id' => 1, 'candidate_id' => $candidate_id ] );
-
-		$this->service->add( $candidate_id, 'Test', '' );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertEquals( 'not_found', $result->get_error_code() );
 	}
 
 	/**

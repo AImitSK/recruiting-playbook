@@ -31,9 +31,11 @@ class RatingService {
 
 	/**
 	 * Constructor
+	 *
+	 * @param RatingRepository|null $repository Repository-Instanz (für Tests).
 	 */
-	public function __construct() {
-		$this->repository = new RatingRepository();
+	public function __construct( ?RatingRepository $repository = null ) {
+		$this->repository = $repository ?? new RatingRepository();
 	}
 
 	/**
