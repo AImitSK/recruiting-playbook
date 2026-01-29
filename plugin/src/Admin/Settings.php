@@ -13,6 +13,7 @@ namespace RecruitingPlaybook\Admin;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\EmailService;
+use RecruitingPlaybook\Core\RoleManager;
 
 /**
  * Settings-Seite im Admin
@@ -390,18 +391,26 @@ class Settings {
 		$is_pro = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
 
 		// Konfiguration für React.
+		$data = [
+			'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			'homeUrl'   => home_url(),
+			'exportUrl' => admin_url( 'admin.php?page=rp-settings' ),
+			'nonce'     => wp_create_nonce( 'rp_download_backup' ),
+			'pages'     => $this->getPages(),
+			'isPro'     => $is_pro,
+			'i18n'      => $this->getI18nStrings(),
+		];
+
+		// Pro-Feature: Benutzerrollen-Daten für React-UI.
+		if ( $is_pro ) {
+			$data['recruitingUsers'] = $this->getRecruitingUsers();
+			$data['jobListings']     = $this->getJobListings();
+		}
+
 		wp_localize_script(
 			'rp-admin',
 			'rpSettingsData',
-			[
-				'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-				'homeUrl'   => home_url(),
-				'exportUrl' => admin_url( 'admin.php?page=rp-settings' ),
-				'nonce'     => wp_create_nonce( 'rp_download_backup' ),
-				'pages'     => $this->getPages(),
-				'isPro'     => $is_pro,
-				'i18n'      => $this->getI18nStrings(),
-			]
+			$data
 		);
 	}
 
@@ -787,5 +796,58 @@ class Settings {
 			<p class="description"><?php echo esc_html( $args['description'] ); ?></p>
 			<?php
 		endif;
+	}
+
+	/**
+	 * Recruiting-User für Stellen-Zuweisung laden
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function getRecruitingUsers(): array {
+		$users = RoleManager::getRecruitingUsers();
+		$result = [];
+
+		foreach ( $users as $user ) {
+			$role_label = 'Recruiter';
+			if ( in_array( 'rp_hiring_manager', (array) $user->roles, true ) ) {
+				$role_label = 'Hiring Manager';
+			} elseif ( in_array( 'administrator', (array) $user->roles, true ) ) {
+				$role_label = 'Administrator';
+			}
+
+			$result[] = [
+				'id'   => $user->ID,
+				'name' => $user->display_name,
+				'role' => $role_label,
+			];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Alle Job-Listings für Stellen-Zuweisung laden
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function getJobListings(): array {
+		$posts = get_posts( [
+			'post_type'      => 'job_listing',
+			'posts_per_page' => -1,
+			'post_status'    => [ 'publish', 'draft' ],
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		] );
+
+		$jobs = [];
+		foreach ( $posts as $post ) {
+			$jobs[] = [
+				'id'     => $post->ID,
+				'title'  => $post->post_title,
+				'status' => $post->post_status,
+			];
+		}
+
+		return $jobs;
 	}
 }

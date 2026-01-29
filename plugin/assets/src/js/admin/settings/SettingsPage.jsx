@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import { Spinner } from '../components/ui/spinner';
 
-import { GeneralSettings, CompanySettings, ExportSettings } from './components';
+import { GeneralSettings, CompanySettings, ExportSettings, RolesSettings } from './components';
 import { useSettings } from './hooks';
 
 /**
@@ -130,6 +130,11 @@ export function SettingsPage() {
 						<TabsTrigger value="export">
 							{ i18n.tabExport || __( 'Export', 'recruiting-playbook' ) }
 						</TabsTrigger>
+						{ config.isPro && (
+							<TabsTrigger value="roles">
+								{ __( 'Benutzerrollen', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
 					</TabsList>
 
 					<TabsContent value="general">
@@ -156,6 +161,12 @@ export function SettingsPage() {
 					<TabsContent value="export">
 						<ExportSettings />
 					</TabsContent>
+
+					{ config.isPro && (
+						<TabsContent value="roles">
+							<RolesSettings />
+						</TabsContent>
+					) }
 				</Tabs>
 			</div>
 		</div>
