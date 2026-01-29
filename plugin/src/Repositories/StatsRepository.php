@@ -136,7 +136,7 @@ class StatsRepository {
 		$params[] = $limit;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
 					p.ID as id,
@@ -153,6 +153,8 @@ class StatsRepository {
 			),
 			ARRAY_A
 		);
+
+		return $results ?? [];
 	}
 
 	/**
@@ -182,7 +184,7 @@ class StatsRepository {
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare(
 					"SELECT
@@ -207,6 +209,8 @@ class StatsRepository {
 				ORDER BY updated_at DESC",
 			ARRAY_A
 		);
+
+		return $results ?? [];
 	}
 
 	/**
@@ -310,7 +314,7 @@ class StatsRepository {
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare(
 					"SELECT
@@ -337,6 +341,8 @@ class StatsRepository {
 				ORDER BY date ASC",
 			ARRAY_A
 		);
+
+		return $results ?? [];
 	}
 
 	/**
@@ -537,7 +543,7 @@ class StatsRepository {
 		$table = $this->tables['activity_log'];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
 					action,
@@ -553,6 +559,8 @@ class StatsRepository {
 			),
 			ARRAY_A
 		);
+
+		return $results ?? [];
 	}
 
 	/**
@@ -598,7 +606,7 @@ class StatsRepository {
 		$params[] = $offset;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
+		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
 					a.id,
@@ -623,6 +631,8 @@ class StatsRepository {
 			),
 			ARRAY_A
 		);
+
+		return $results ?? [];
 	}
 
 	/**
