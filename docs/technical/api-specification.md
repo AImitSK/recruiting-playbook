@@ -1406,7 +1406,7 @@ GET /wp-json/recruiting/v1/job-assignments/job/{job_id}
       "name": "Anna Müller",
       "email": "anna@example.com",
       "role": "recruiter",
-      "avatar_url": "https://example.com/avatar.jpg",
+      "avatar": "https://example.com/avatar.jpg",
       "assigned_at": "2025-01-28T12:00:00",
       "assigned_by": 1
     }

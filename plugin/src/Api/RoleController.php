@@ -183,12 +183,20 @@ class RoleController extends WP_REST_Controller {
 	public function get_capabilities( $request ): WP_REST_Response {
 		$raw_groups = RoleManager::getCapabilityGroups();
 
-		// Assoziative Capabilities in sequentielle Arrays umwandeln (JSON-kompatibel).
+		// Capabilities mit Keys und Labels zurückgeben.
 		$groups = [];
 		foreach ( $raw_groups as $group ) {
+			$capabilities = [];
+			foreach ( $group['capabilities'] as $cap => $cap_label ) {
+				$capabilities[] = [
+					'key'   => $cap,
+					'label' => $cap_label,
+				];
+			}
+
 			$groups[] = [
 				'label'        => $group['label'],
-				'capabilities' => array_keys( $group['capabilities'] ),
+				'capabilities' => $capabilities,
 			];
 		}
 

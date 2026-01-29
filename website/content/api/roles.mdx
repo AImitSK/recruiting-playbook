@@ -88,51 +88,53 @@ Returns the available capabilities organized by functional group. Use this to bu
 
 ### Response
 
+Each capability includes a `key` (used in API calls) and a localized `label` for display.
+
 ```json
 {
   "groups": [
     {
       "label": "Bewerbungen",
       "capabilities": [
-        "rp_view_applications",
-        "rp_edit_applications",
-        "rp_delete_applications"
+        { "key": "rp_view_applications", "label": "Bewerbungen anzeigen" },
+        { "key": "rp_edit_applications", "label": "Bewerbungen bearbeiten" },
+        { "key": "rp_delete_applications", "label": "Bewerbungen löschen" }
       ]
     },
     {
       "label": "Notizen",
       "capabilities": [
-        "rp_view_notes",
-        "rp_create_notes",
-        "rp_edit_own_notes",
-        "rp_edit_others_notes",
-        "rp_delete_notes"
+        { "key": "rp_view_notes", "label": "Notizen anzeigen" },
+        { "key": "rp_create_notes", "label": "Notizen erstellen" },
+        { "key": "rp_edit_own_notes", "label": "Eigene Notizen bearbeiten" },
+        { "key": "rp_edit_others_notes", "label": "Fremde Notizen bearbeiten" },
+        { "key": "rp_delete_notes", "label": "Notizen löschen" }
       ]
     },
     {
       "label": "Bewertungen & Talent-Pool",
       "capabilities": [
-        "rp_rate_applications",
-        "rp_manage_talent_pool",
-        "rp_view_activity_log"
+        { "key": "rp_rate_applications", "label": "Bewerbungen bewerten" },
+        { "key": "rp_manage_talent_pool", "label": "Talent-Pool verwalten" },
+        { "key": "rp_view_activity_log", "label": "Aktivitätslog einsehen" }
       ]
     },
     {
       "label": "E-Mail-System",
       "capabilities": [
-        "rp_read_email_templates",
-        "rp_create_email_templates",
-        "rp_edit_email_templates",
-        "rp_delete_email_templates",
-        "rp_send_emails",
-        "rp_view_email_log"
+        { "key": "rp_read_email_templates", "label": "Templates anzeigen" },
+        { "key": "rp_create_email_templates", "label": "Templates erstellen" },
+        { "key": "rp_edit_email_templates", "label": "Templates bearbeiten" },
+        { "key": "rp_delete_email_templates", "label": "Templates löschen" },
+        { "key": "rp_send_emails", "label": "E-Mails senden" },
+        { "key": "rp_view_email_log", "label": "E-Mail-Historie einsehen" }
       ]
     },
     {
       "label": "Administration",
       "capabilities": [
-        "rp_manage_roles",
-        "rp_assign_jobs"
+        { "key": "rp_manage_roles", "label": "Rollen verwalten" },
+        { "key": "rp_assign_jobs", "label": "Stellen zuweisen" }
       ]
     }
   ]

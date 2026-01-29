@@ -17,32 +17,6 @@ import { useRoles } from '../hooks/useRoles';
 import { Shield, AlertCircle, Check } from 'lucide-react';
 
 /**
- * Capability-Labels (Deutsch)
- */
-const CAPABILITY_LABELS = {
-	rp_manage_recruiting: 'Recruiting verwalten',
-	rp_view_applications: 'Bewerbungen anzeigen',
-	rp_edit_applications: 'Bewerbungen bearbeiten',
-	rp_delete_applications: 'Bewerbungen löschen',
-	rp_view_notes: 'Notizen lesen',
-	rp_create_notes: 'Notizen erstellen',
-	rp_edit_own_notes: 'Eigene Notizen bearbeiten',
-	rp_edit_others_notes: 'Fremde Notizen bearbeiten',
-	rp_delete_notes: 'Notizen löschen',
-	rp_rate_applications: 'Bewerbungen bewerten',
-	rp_manage_talent_pool: 'Talent-Pool verwalten',
-	rp_view_email_templates: 'E-Mail-Templates lesen',
-	rp_create_email_templates: 'E-Mail-Templates erstellen',
-	rp_edit_email_templates: 'E-Mail-Templates bearbeiten',
-	rp_send_emails: 'E-Mails senden',
-	rp_view_email_log: 'E-Mail-Log einsehen',
-	rp_view_activity: 'Aktivitäten einsehen',
-	rp_export_data: 'Daten exportieren',
-	rp_manage_roles: 'Rollen verwalten',
-	rp_assign_jobs: 'Stellen zuweisen',
-};
-
-/**
  * RolesList Component
  *
  * @return {JSX.Element} Component
@@ -182,14 +156,14 @@ export function RolesList() {
 							<tbody>
 								{ group.capabilities.map( ( cap, index ) => (
 									<tr
-										key={ cap }
+										key={ cap.key }
 										style={ {
 											borderBottom: '1px solid #f3f4f6',
 											backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
 										} }
 									>
 										<td style={ { padding: '0.75rem 1rem', color: '#4b5563' } }>
-											{ CAPABILITY_LABELS[ cap ] || cap }
+											{ cap.label || cap.key }
 										</td>
 										{ /* Admin: Immer aktiv */ }
 										<td style={ { textAlign: 'center', padding: '0.75rem 1rem' } }>
@@ -198,13 +172,13 @@ export function RolesList() {
 										{ /* Editierbare Rollen */ }
 										{ editableRoles.map( ( role ) => (
 											<td key={ role.slug } style={ { textAlign: 'center', padding: '0.75rem 1rem' } }>
-												{ adminOnlyCaps.includes( cap ) ? (
+												{ adminOnlyCaps.includes( cap.key ) ? (
 													<span style={ { color: '#d1d5db', fontSize: '0.875rem' } }>—</span>
 												) : (
 													<div style={ { display: 'flex', justifyContent: 'center' } }>
 														<Switch
-															checked={ getCapValue( role, cap ) }
-															onCheckedChange={ ( value ) => handleToggle( role.slug, cap, value ) }
+															checked={ getCapValue( role, cap.key ) }
+															onCheckedChange={ ( value ) => handleToggle( role.slug, cap.key, value ) }
 															disabled={ saving }
 														/>
 													</div>
