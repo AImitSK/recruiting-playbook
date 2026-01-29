@@ -61,13 +61,28 @@ class StatsService {
 		$date_range = $this->getDateRange( $period );
 		$previous_range = $this->getPreviousPeriod( $date_range, $period );
 
+		$top_jobs = $this->repository->getTopJobsByApplications( 5, $date_range );
+
+		// Conversion-Rate zu Jobs hinzufügen.
+		$total_apps = array_sum( array_column( $top_jobs, 'applications' ) );
+		$top_jobs = array_map(
+			function ( $job ) use ( $total_apps ) {
+				$job['views'] = null; // Kein View-Tracking implementiert.
+				$job['conversion_rate'] = $total_apps > 0
+					? round( ( $job['applications'] / $total_apps ) * 100, 1 )
+					: 0;
+				return $job;
+			},
+			$top_jobs
+		);
+
 		$data = [
 			'applications'    => $this->getApplicationSummary( $date_range, $previous_range ),
 			'jobs'            => $this->getJobSummary(),
 			'quick_stats'     => $this->getQuickStats(),
 			'time_to_hire'    => $this->getTimeToHireSummary( $date_range ),
 			'conversion_rate' => $this->getConversionSummary( $date_range ),
-			'top_jobs'        => $this->repository->getTopJobsByApplications( 5, $date_range ),
+			'top_jobs'        => $top_jobs,
 			'period'          => $period,
 			'generated_at'    => current_time( 'c' ),
 		];
