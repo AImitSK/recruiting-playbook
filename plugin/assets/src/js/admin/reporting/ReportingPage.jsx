@@ -114,40 +114,20 @@ export function ReportingPage() {
 					style={ {
 						display: 'flex',
 						justifyContent: 'space-between',
-						alignItems: 'flex-end',
+						alignItems: 'center',
 						marginBottom: '1.5rem',
 					} }
 				>
-					<div style={ { display: 'flex', alignItems: 'flex-end', gap: '1.5rem' } }>
-						{ logoUrl && (
-							<img
-								src={ logoUrl }
-								alt="Recruiting Playbook"
-								style={ { width: '150px', height: 'auto' } }
-							/>
-						) }
-						<div>
-							<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-								{ i18n.pageTitle || 'Berichte & Statistiken' }
-							</h1>
-							<p style={ { margin: 0, color: '#6b7280', marginTop: '0.25rem' } }>
-								{ i18n.pageDescription || 'Übersicht über Bewerbungen und Recruiting-Kennzahlen' }
-							</p>
-						</div>
-					</div>
-
-					{ /* Controls */ }
-					<div style={ { display: 'flex', gap: '0.75rem' } }>
-						<DateRangePicker value={ period } onChange={ setPeriod } />
-						<ExportButton
-							onExportApplications={ exportApplications }
-							onExportStats={ exportStats }
-							period={ period }
-							loading={ exportLoading }
-							disabled={ ! canExport && ! isPro }
-							upgradeUrl={ upgradeUrl }
+					{ logoUrl && (
+						<img
+							src={ logoUrl }
+							alt="Recruiting Playbook"
+							style={ { width: '150px', height: 'auto' } }
 						/>
-					</div>
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n.pageTitle || 'Berichte & Statistiken' }
+					</h1>
 				</div>
 
 				{ /* Error State */ }
@@ -175,63 +155,84 @@ export function ReportingPage() {
 					} }
 				>
 					<StatsCard
-						title={ i18n.applications || 'Bewerbungen (gesamt / neu)' }
+						title="Bewerbungen"
 						value={ `${ overview?.applications?.total || 0 } / ${ overview?.applications?.new || 0 }` }
+						tooltip="Gesamt / Neue Bewerbungen im gewählten Zeitraum"
 						loading={ overviewLoading }
-						valueColor="#1d71b8"
 						icon={ <Users style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title={ i18n.activeJobs || 'Aktive Stellen' }
+						title="Aktive Stellen"
 						value={ overview?.jobs?.active || 0 }
+						tooltip="Anzahl der veröffentlichten Stellenanzeigen"
 						loading={ overviewLoading }
-						valueColor="#1d71b8"
 						icon={ <Briefcase style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title={ i18n.hired || 'Eingestellt' }
+						title="Eingestellt"
 						value={ overview?.applications?.hired || 0 }
+						tooltip="Erfolgreich eingestellte Bewerber im Zeitraum"
 						loading={ overviewLoading }
-						valueColor="#22c55e"
 						icon={ <TrendingUp style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title={ i18n.avgTimeToHire || 'Ø Time-to-Hire' }
+						title="Ø Time-to-Hire"
 						value={ overview?.time_to_hire?.average_days || '-' }
-						suffix={ i18n.days || 'Tage' }
+						suffix="Tage"
+						tooltip="Durchschnittliche Tage von Bewerbung bis Einstellung"
 						loading={ overviewLoading }
-						valueColor="#f59e0b"
 						icon={ <Clock style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title={ i18n.conversionRate || 'Conversion-Rate' }
+						title="Conversion-Rate"
 						value={ overview?.conversion_rate?.rate?.toFixed( 1 ) || '-' }
 						suffix="%"
+						tooltip="Verhältnis von Stellenaufrufen zu Bewerbungen"
 						loading={ overviewLoading }
-						valueColor="#8b5cf6"
 						icon={ <BarChart3 style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 				</div>
 
 				{ /* Tabs für Detailansichten */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
-					<TabsList>
-						<TabsTrigger value="overview">
-							{ i18n.tabOverview || 'Übersicht' }
-						</TabsTrigger>
-						<TabsTrigger value="trends">
-							{ i18n.tabTrends || 'Trends' }
-						</TabsTrigger>
-						<TabsTrigger value="jobs">
-							{ i18n.tabJobs || 'Stellen' }
-						</TabsTrigger>
-						<TabsTrigger value="conversion">
-							{ i18n.conversionFunnel || 'Conversion' }
-							{ ! isPro && ! canViewAdvanced && (
-								<Lock style={ { width: '0.75rem', height: '0.75rem', marginLeft: '0.25rem' } } />
-							) }
-						</TabsTrigger>
-					</TabsList>
+					<div
+						style={ {
+							display: 'flex',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+						} }
+					>
+						<TabsList>
+							<TabsTrigger value="overview">
+								{ i18n.tabOverview || 'Übersicht' }
+							</TabsTrigger>
+							<TabsTrigger value="trends">
+								{ i18n.tabTrends || 'Trends' }
+							</TabsTrigger>
+							<TabsTrigger value="jobs">
+								{ i18n.tabJobs || 'Stellen' }
+							</TabsTrigger>
+							<TabsTrigger value="conversion">
+								{ i18n.conversionFunnel || 'Conversion' }
+								{ ! isPro && ! canViewAdvanced && (
+									<Lock style={ { width: '0.75rem', height: '0.75rem', marginLeft: '0.25rem' } } />
+								) }
+							</TabsTrigger>
+						</TabsList>
+
+						{ /* Controls */ }
+						<div style={ { display: 'flex', gap: '0.75rem' } }>
+							<DateRangePicker value={ period } onChange={ setPeriod } />
+							<ExportButton
+								onExportApplications={ exportApplications }
+								onExportStats={ exportStats }
+								period={ period }
+								loading={ exportLoading }
+								disabled={ ! canExport && ! isPro }
+								upgradeUrl={ upgradeUrl }
+							/>
+						</div>
+					</div>
 
 					{ /* Übersicht Tab */ }
 					<TabsContent value="overview" style={ { marginTop: '1rem' } }>

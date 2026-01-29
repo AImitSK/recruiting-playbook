@@ -6,7 +6,8 @@
  * @package RecruitingPlaybook
  */
 
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { useState } from '@wordpress/element';
+import { TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import {
 	Card,
 	CardContent,
@@ -20,9 +21,9 @@ import {
  * @param {string} props.title Titel der Karte
  * @param {string|number} props.value Hauptwert
  * @param {string} props.description Beschreibungstext
+ * @param {string} props.tooltip Tooltip-Text für Info-Icon
  * @param {number} props.change Änderung in Prozent (optional)
  * @param {string} props.changeLabel Label für Änderung (optional)
- * @param {string} props.valueColor Farbe des Werts
  * @param {React.ReactNode} props.icon Icon (optional)
  * @param {string} props.suffix Suffix für den Wert (z.B. "Tage", "%")
  * @param {boolean} props.loading Ladezustand
@@ -31,13 +32,15 @@ export function StatsCard( {
 	title,
 	value,
 	description,
+	tooltip,
 	change,
 	changeLabel,
-	valueColor = '#1f2937',
 	icon,
 	suffix = '',
 	loading = false,
 } ) {
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
 	const renderTrendIcon = () => {
 		if ( change === undefined || change === null ) {
 			return null;
@@ -129,15 +132,58 @@ export function StatsCard( {
 					alignItems: 'center',
 				} }
 			>
-				<span
-					style={ {
-						fontSize: '0.875rem',
-						fontWeight: 500,
-						color: '#6b7280',
-					} }
-				>
-					{ title }
-				</span>
+				<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+					<span
+						style={ {
+							fontSize: '0.875rem',
+							fontWeight: 500,
+							color: '#6b7280',
+						} }
+					>
+						{ title }
+					</span>
+					{ tooltip && (
+						<div
+							style={ { position: 'relative', display: 'inline-flex' } }
+							onMouseEnter={ () => setShowTooltip( true ) }
+							onMouseLeave={ () => setShowTooltip( false ) }
+						>
+							<Info
+								style={ {
+									width: '0.875rem',
+									height: '0.875rem',
+									color: '#9ca3af',
+									cursor: 'help',
+								} }
+							/>
+							{ showTooltip && (
+								<div
+									role="tooltip"
+									style={ {
+										position: 'absolute',
+										zIndex: 50,
+										bottom: '100%',
+										left: '50%',
+										transform: 'translateX(-50%)',
+										marginBottom: '0.5rem',
+										padding: '0.5rem 0.75rem',
+										backgroundColor: '#18181b',
+										color: '#fafafa',
+										fontSize: '0.75rem',
+										lineHeight: '1.4',
+										borderRadius: '0.375rem',
+										boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+										maxWidth: '200px',
+										whiteSpace: 'normal',
+										textAlign: 'center',
+									} }
+								>
+									{ tooltip }
+								</div>
+							) }
+						</div>
+					) }
+				</div>
 				{ icon && (
 					<span style={ { color: '#9ca3af' } }>
 						{ icon }
@@ -156,7 +202,7 @@ export function StatsCard( {
 						style={ {
 							fontSize: '2rem',
 							fontWeight: 700,
-							color: valueColor,
+							color: '#1d71b8',
 							lineHeight: 1.2,
 						} }
 					>
