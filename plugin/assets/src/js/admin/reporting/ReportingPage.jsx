@@ -175,17 +175,10 @@ export function ReportingPage() {
 					} }
 				>
 					<StatsCard
-						title={ i18n.totalApplications || 'Bewerbungen gesamt' }
-						value={ overview?.applications?.total || 0 }
+						title={ i18n.applications || 'Bewerbungen (gesamt / neu)' }
+						value={ `${ overview?.applications?.total || 0 } / ${ overview?.applications?.new || 0 }` }
 						loading={ overviewLoading }
 						valueColor="#1d71b8"
-						icon={ <Users style={ { width: '1.25rem', height: '1.25rem' } } /> }
-					/>
-					<StatsCard
-						title={ i18n.newApplications || 'Neue Bewerbungen' }
-						value={ overview?.applications?.new || 0 }
-						loading={ overviewLoading }
-						valueColor="#2fac66"
 						icon={ <Users style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
