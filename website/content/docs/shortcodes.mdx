@@ -1,0 +1,122 @@
+---
+title: Shortcodes
+description: Alle verfuegbaren Shortcodes mit Attributen und Beispielen.
+---
+
+Recruiting Playbook stellt drei Shortcodes bereit, mit denen Sie Stellenanzeigen und Bewerbungsformulare in jede WordPress-Seite einbinden koennen.
+
+## rp_jobs
+
+Zeigt eine Liste der Stellenanzeigen an.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `limit` | Anzahl der angezeigten Stellen | `10` |
+| `category` | Filter nach Kategorie-Slug | - |
+| `location` | Filter nach Standort-Slug | - |
+| `type` | Filter nach Beschaeftigungsart | - |
+| `orderby` | Sortierung (`date`, `title`, `rand`) | `date` |
+| `order` | Reihenfolge: `ASC` oder `DESC` | `DESC` |
+| `columns` | Spalten im Grid (1-4) | `1` |
+| `show_excerpt` | Auszug anzeigen | `true` |
+
+### Beispiele
+
+**Einfache Stellenliste (5 neueste):**
+
+```html
+[rp_jobs limit="5"]
+```
+
+**Gefiltert nach Kategorie, 2-spaltig:**
+
+```html
+[rp_jobs limit="5" category="it" columns="2"]
+```
+
+**Pflege-Stellen in Berlin:**
+
+```html
+[rp_jobs category="pflege" location="berlin" columns="2"]
+```
+
+**Zufaellige Reihenfolge:**
+
+```html
+[rp_jobs limit="3" orderby="rand"]
+```
+
+## rp_job_search
+
+Zeigt ein Suchformular mit Filtern und Ergebnisliste. Ideal fuer die Karriereseite.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `show_search` | Suchfeld anzeigen | `true` |
+| `show_category` | Kategorie-Filter anzeigen | `true` |
+| `show_location` | Standort-Filter anzeigen | `true` |
+| `show_type` | Beschaeftigungsart-Filter anzeigen | `true` |
+| `limit` | Stellen pro Seite | `10` |
+| `columns` | Spalten im Grid | `1` |
+
+### Beispiele
+
+**Vollstaendige Jobsuche:**
+
+```html
+[rp_job_search limit="10" columns="2"]
+```
+
+**Ohne Beschaeftigungsart-Filter:**
+
+```html
+[rp_job_search show_type="false" limit="20"]
+```
+
+**Nur Suchfeld, keine Dropdowns:**
+
+```html
+[rp_job_search show_category="false" show_location="false" show_type="false"]
+```
+
+## rp_application_form
+
+Zeigt das Bewerbungsformular an. Wird normalerweise automatisch auf der Stellendetail-Seite eingebunden, kann aber auch manuell auf beliebigen Seiten platziert werden.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `job_id` | ID der Stelle | automatisch |
+| `title` | Ueberschrift des Formulars | `Jetzt bewerben` |
+| `show_job_title` | Stellentitel ueber dem Formular anzeigen | `true` |
+
+### Beispiele
+
+**Standard (auf Stellendetail-Seite):**
+
+```html
+[rp_application_form]
+```
+
+**Fuer eine bestimmte Stelle:**
+
+```html
+[rp_application_form job_id="123" title="Ihre Bewerbung"]
+```
+
+<Callout type="info">
+Wenn Sie `job_id` nicht angeben, versucht das Plugin automatisch die aktuelle Stelle zu erkennen. Auf einer Nicht-Stellen-Seite ist die Angabe der `job_id` erforderlich.
+</Callout>
+
+## Shortcodes im Block-Editor
+
+Im WordPress Block-Editor (Gutenberg) koennen Sie Shortcodes ueber den **Shortcode-Block** einfuegen:
+
+1. Neuen Block hinzufuegen
+2. Nach "Shortcode" suchen
+3. Shortcode einfuegen, z.B. `[rp_job_search]`

@@ -1226,6 +1226,228 @@ POST /wp-json/recruiting/v1/settings/company
 
 ---
 
+### Benutzerrollen (Pro)
+
+#### Alle Rollen abrufen
+
+```
+GET /wp-json/recruiting/v1/roles
+```
+
+**Berechtigung:** `rp_manage_roles` oder `manage_options`
+
+**Response:**
+
+```json
+{
+  "roles": [
+    {
+      "slug": "rp_recruiter",
+      "name": "Recruiter",
+      "capabilities": {
+        "rp_view_applications": true,
+        "rp_edit_applications": true,
+        "rp_delete_applications": false,
+        "rp_manage_roles": false,
+        "rp_assign_jobs": false
+      },
+      "user_count": 3
+    }
+  ]
+}
+```
+
+#### Capability-Gruppen abrufen
+
+```
+GET /wp-json/recruiting/v1/roles/capabilities
+```
+
+**Berechtigung:** `rp_manage_roles` oder `manage_options`
+
+Gibt die verfügbaren Capabilities gruppiert nach Funktionsbereich zurück.
+
+**Response:**
+
+```json
+{
+  "groups": [
+    {
+      "label": "Bewerbungen",
+      "capabilities": [
+        "rp_view_applications",
+        "rp_edit_applications",
+        "rp_delete_applications"
+      ]
+    }
+  ]
+}
+```
+
+#### Rolle aktualisieren
+
+```
+PUT /wp-json/recruiting/v1/roles/{slug}
+```
+
+**Berechtigung:** `manage_options` (nur Administratoren)
+
+Nur Custom Rollen (`rp_recruiter`, `rp_hiring_manager`) können bearbeitet werden. Admin-only Capabilities (`rp_manage_roles`, `rp_assign_jobs`) werden immer auf `false` gesetzt.
+
+**Request Body:**
+
+```json
+{
+  "capabilities": {
+    "rp_view_applications": true,
+    "rp_edit_applications": true,
+    "rp_delete_applications": false,
+    "rp_send_emails": true
+  }
+}
+```
+
+**Response:** Aktualisiertes Rollen-Objekt mit `slug`, `name` und `capabilities`.
+
+---
+
+### Stellen-Zuweisungen (Pro)
+
+#### Zuweisung erstellen
+
+```
+POST /wp-json/recruiting/v1/job-assignments
+```
+
+**Berechtigung:** `rp_assign_jobs` oder `manage_options`
+
+**Request Body:**
+
+```json
+{
+  "user_id": 5,
+  "job_id": 123
+}
+```
+
+**Response (201):**
+
+```json
+{
+  "success": true,
+  "assignment": {
+    "id": 42,
+    "user_id": 5,
+    "job_id": 123,
+    "assigned_by": 1,
+    "assigned_at": "2025-01-28T12:00:00"
+  }
+}
+```
+
+#### Zuweisung entfernen
+
+```
+DELETE /wp-json/recruiting/v1/job-assignments
+```
+
+**Berechtigung:** `rp_assign_jobs` oder `manage_options`
+
+**Request Body:**
+
+```json
+{
+  "user_id": 5,
+  "job_id": 123
+}
+```
+
+#### Zugewiesene Jobs eines Users abrufen
+
+```
+GET /wp-json/recruiting/v1/job-assignments/user/{user_id}
+```
+
+**Berechtigung:** `rp_assign_jobs` oder `manage_options`
+
+**Response:**
+
+```json
+{
+  "user_id": 5,
+  "jobs": [
+    {
+      "id": 123,
+      "title": "Pflegefachkraft (m/w/d)",
+      "status": "publish",
+      "assigned_at": "2025-01-28T12:00:00"
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Zugewiesene User eines Jobs abrufen
+
+```
+GET /wp-json/recruiting/v1/job-assignments/job/{job_id}
+```
+
+**Berechtigung:** `rp_assign_jobs` oder `manage_options`
+
+**Response:**
+
+```json
+{
+  "job_id": 123,
+  "users": [
+    {
+      "id": 5,
+      "name": "Anna Müller",
+      "email": "anna@example.com",
+      "role": "recruiter",
+      "avatar_url": "https://example.com/avatar.jpg",
+      "assigned_at": "2025-01-28T12:00:00",
+      "assigned_by": 1
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Bulk-Zuweisung
+
+```
+POST /wp-json/recruiting/v1/job-assignments/bulk
+```
+
+**Berechtigung:** `rp_assign_jobs` oder `manage_options`
+
+**Request Body:**
+
+```json
+{
+  "user_id": 5,
+  "job_ids": [123, 456, 789]
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "assigned_count": 3,
+  "assignments": [
+    { "job_id": 123, "assigned": true, "error": null },
+    { "job_id": 456, "assigned": true, "error": null },
+    { "job_id": 789, "assigned": true, "error": null }
+  ]
+}
+```
+
+---
+
 ## Breaking Changes
 
 ### Version 1.5.0: E-Mail-Platzhalter bereinigt
@@ -1445,6 +1667,14 @@ curl -X PUT \
 ---
 
 ## Änderungsprotokoll
+
+### v2.0.0 (Januar 2026)
+
+- **Benutzerrollen API (Pro)** - Rollen und Capabilities verwalten (`GET/PUT /roles`)
+- **Stellen-Zuweisungen API (Pro)** - User zu Jobs zuweisen (`/job-assignments`)
+- **Bulk-Zuweisung** - Mehrere Stellen einem User zuweisen (`POST /job-assignments/bulk`)
+- **Capability-Gruppen** - Gruppierte Capabilities für Admin-UI (`GET /roles/capabilities`)
+- **Feature-Gate** - Alle neuen Endpoints erfordern Pro-Lizenz (`user_roles`)
 
 ### v1.5.0 (Januar 2025)
 

@@ -1,0 +1,201 @@
+---
+title: Errors & Rate Limiting
+description: HTTP status codes, error response format, error codes, rate limits, and API versioning.
+---
+
+## HTTP Status Codes
+
+| Code | Meaning |
+|------|---------|
+| `200` | Success |
+| `201` | Resource created |
+| `204` | Success, no content |
+| `400` | Bad request |
+| `401` | Not authenticated |
+| `403` | Forbidden (insufficient permissions) |
+| `404` | Not found |
+| `422` | Validation error |
+| `429` | Rate limit exceeded |
+| `500` | Internal server error |
+
+## Error response format
+
+All error responses follow a consistent format:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "The request contains invalid data",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email address"
+      },
+      {
+        "field": "salary.min",
+        "message": "Must be a positive number"
+      }
+    ]
+  }
+}
+```
+
+The `details` array is only present for validation errors and lists each invalid field with a human-readable message.
+
+## Error codes
+
+| Code | Description |
+|------|-------------|
+| `authentication_required` | No API key or credentials provided |
+| `invalid_api_key` | The API key is invalid or expired |
+| `insufficient_permissions` | The key lacks permission for this action |
+| `resource_not_found` | The requested resource does not exist |
+| `validation_error` | One or more fields failed validation |
+| `rate_limit_exceeded` | Too many requests, try again later |
+| `internal_error` | Unexpected server error |
+
+## Rate Limiting
+
+API requests are rate-limited per authentication credential:
+
+| Tier | Limit |
+|------|-------|
+| Free | 100 requests / hour |
+| Pro | 1,000 requests / hour |
+| Enterprise | 10,000 requests / hour |
+
+### Rate limit headers
+
+Every response includes rate limit information:
+
+```bash
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 950
+X-RateLimit-Reset: 1705760400
+```
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+When the limit is exceeded, the API returns `429 Too Many Requests`. Wait until the reset timestamp before retrying.
+
+## Versioning
+
+The API is versioned via the URL path:
+
+```bash
+/wp-json/recruiting/v1/...   # Current version
+/wp-json/recruiting/v2/...   # Future version
+```
+
+Breaking changes will always result in a new version number. Previous versions are supported for at least 12 months after a new version is released.
+
+### What counts as a breaking change
+
+- Removing an endpoint or field
+- Changing the type of an existing field
+- Changing required parameters
+- Altering authentication behavior
+
+### Non-breaking changes (no version bump)
+
+- Adding new optional fields to responses
+- Adding new optional query parameters
+- Adding new endpoints
+- Adding new webhook events
+
+## SDK examples
+
+### PHP
+
+```php
+use RecruitingPlaybook\Client;
+
+$client = new Client([
+    'base_url' => 'https://your-site.com',
+    'api_key'  => 'rp_live_abc123...'
+]);
+
+// List published jobs
+$jobs = $client->jobs()->list(['status' => 'publish']);
+
+// Get a single application
+$application = $client->applications()->get(456);
+
+// Update status
+$client->applications()->updateStatus(456, 'interview', [
+    'note' => 'Invited to interview'
+]);
+```
+
+### JavaScript / Node.js
+
+```javascript
+import { RecruitingClient } from 'recruiting-playbook';
+
+const client = new RecruitingClient({
+  baseUrl: 'https://your-site.com',
+  apiKey: 'rp_live_abc123...'
+});
+
+// List published jobs
+const jobs = await client.jobs.list({ status: 'publish' });
+
+// Create a webhook
+const webhook = await client.webhooks.create({
+  url: 'https://your-app.com/webhook',
+  events: ['application.received'],
+  secret: 'my-secret'
+});
+```
+
+### Python
+
+```python
+from recruiting_playbook import Client
+
+client = Client(
+    base_url="https://your-site.com",
+    api_key="rp_live_abc123..."
+)
+
+# List applications for a job
+applications = client.applications.list(job_id=123)
+
+# Export for GDPR
+export = client.applications.export(456, format="zip")
+```
+
+### cURL
+
+```bash
+# List all jobs
+curl -X GET \
+  "https://your-site.com/wp-json/recruiting/v1/jobs" \
+  -H "X-Recruiting-API-Key: rp_live_abc123..."
+
+# Create a job
+curl -X POST \
+  "https://your-site.com/wp-json/recruiting/v1/jobs" \
+  -H "X-Recruiting-API-Key: rp_live_abc123..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Pflegefachkraft (m/w/d)",
+    "status": "draft",
+    "employment_type": "fulltime"
+  }'
+
+# Update application status
+curl -X PUT \
+  "https://your-site.com/wp-json/recruiting/v1/applications/456/status" \
+  -H "X-Recruiting-API-Key: rp_live_abc123..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "hired",
+    "note": "Contract signed"
+  }'
+```

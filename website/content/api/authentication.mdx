@@ -1,0 +1,85 @@
+---
+title: Authentication
+description: Learn how to authenticate with the Recruiting Playbook REST API using WordPress Application Passwords or dedicated API keys.
+---
+
+## Base URL
+
+All API endpoints are available under:
+
+```bash
+https://your-site.com/wp-json/recruiting/v1/
+```
+
+## Option 1: WordPress Application Passwords
+
+Since WordPress 5.6, Application Passwords are built in. This is the simplest way to authenticate.
+
+Navigate to **Users → Profile → Application Passwords** in your WordPress admin to generate a password.
+
+```bash
+curl -X GET \
+  https://your-site.com/wp-json/recruiting/v1/jobs \
+  -u "username:xxxx xxxx xxxx xxxx xxxx xxxx"
+```
+
+Application Passwords use HTTP Basic Auth. The password is space-separated and provided when created.
+
+## Option 2: API Key (Pro)
+
+Pro users can generate dedicated API keys in the plugin settings. Keys offer granular permission control and are ideal for server-to-server integrations.
+
+### Header-based authentication
+
+```bash
+curl -X GET \
+  https://your-site.com/wp-json/recruiting/v1/jobs \
+  -H "X-Recruiting-API-Key: rp_live_abc123..."
+```
+
+### Query parameter authentication
+
+```bash
+curl -X GET \
+  "https://your-site.com/wp-json/recruiting/v1/jobs?api_key=rp_live_abc123..."
+```
+
+Header-based authentication is recommended for production use. Query parameters may be logged by proxies and web servers.
+
+## API Key Management (Pro)
+
+Generate and manage API keys under **Plugin Settings → API** in the WordPress admin.
+
+Each API key supports fine-grained permissions:
+
+| Permission | Description |
+|------------|-------------|
+| Read Jobs | List and retrieve job listings |
+| Write Jobs | Create, update, and delete jobs |
+| Read Applications | List and retrieve applications |
+| Write Applications | Update status, add notes, manage ratings |
+| Settings | Access plugin configuration |
+
+### Key prefixes
+
+| Prefix | Environment |
+|--------|-------------|
+| `rp_live_` | Production key |
+| `rp_test_` | Test/staging key |
+
+Test keys work identically to live keys but are visually distinguished in the admin UI for easier management.
+
+## Required Permissions
+
+Different endpoints require different permission levels:
+
+| Endpoint | Required Permission |
+|----------|-------------------|
+| `GET /jobs` | Read Jobs |
+| `POST /jobs` | Write Jobs |
+| `GET /applications` | Read Applications |
+| `PUT /applications/{id}/status` | Write Applications |
+| `POST /webhooks` | Settings |
+| `GET /reports/*` | Read Applications |
+
+Requests without sufficient permissions return a `403 Forbidden` response.

@@ -1,0 +1,129 @@
+---
+title: FAQ & Troubleshooting
+description: Haeufig gestellte Fragen und Problemloesungen fuer Recruiting Playbook.
+---
+
+## Haeufige Fragen
+
+### E-Mails kommen nicht an
+
+**Loesung:** SMTP-Plugin installieren und konfigurieren.
+
+Das Plugin nutzt die Standard-WordPress-Mail-Funktion (`wp_mail()`). Ohne SMTP-Konfiguration landen E-Mails oft im Spam oder werden gar nicht zugestellt.
+
+Empfohlene Plugins:
+- [WP Mail SMTP](https://wordpress.org/plugins/wp-mail-smtp/)
+- [Post SMTP](https://wordpress.org/plugins/post-smtp/)
+- [FluentSMTP](https://wordpress.org/plugins/fluent-smtp/)
+
+Mehr Details unter [E-Mail-Konfiguration](/docs/email).
+
+### Bewerbungsformular wird nicht angezeigt
+
+**Moegliche Ursachen:**
+
+1. JavaScript-Fehler auf der Seite (Browser-Konsole pruefen)
+2. Konflikt mit anderen Plugins
+3. Theme-Inkompatibilitaet
+
+**Loesung:**
+- Andere Plugins temporaer deaktivieren und testen
+- Standard-Theme (z.B. Twenty Twenty-Four) aktivieren und pruefen
+- Browser-Konsole auf Fehlermeldungen pruefen (F12)
+
+### Dateien werden nicht hochgeladen
+
+**Pruefen Sie folgende Punkte:**
+
+1. **Upload-Verzeichnis beschreibbar** - `wp-content/uploads/recruiting-playbook/` muss Schreibrechte haben
+2. **PHP Upload-Limits** - `upload_max_filesize` und `post_max_size` in der PHP-Konfiguration
+3. **Erlaubte Dateitypen** - Standard: PDF, DOC, DOCX, JPG, PNG
+
+Die erlaubten Dateitypen koennen per Filter angepasst werden:
+
+```php
+add_filter( 'rp_allowed_file_types', function( $types ) {
+    $types[] = 'odt'; // OpenDocument hinzufuegen
+    return $types;
+} );
+```
+
+### Google for Jobs zeigt Stelle nicht an
+
+**Pruefen Sie:**
+
+1. Schema-Validierung unter **Recruiting** &rarr; **Werkzeuge**
+2. Alle Pflichtfelder ausgefuellt (Titel, Beschreibung, Standort, Beschaeftigungsart)
+3. Stelle ist veroeffentlicht (nicht als Entwurf)
+4. Mit dem [Google Rich Results Test](https://search.google.com/test/rich-results) pruefen
+
+<Callout type="info">
+Google indexiert neue strukturierte Daten nicht sofort. Es kann einige Tage dauern, bis Ihre Stelle in Google for Jobs erscheint.
+</Callout>
+
+### Plugin laesst sich nicht aktivieren
+
+**Moegliche Ursachen:**
+
+- PHP-Version aelter als 8.0
+- WordPress-Version aelter als 6.0
+- Fehlende PHP-Erweiterungen
+
+**Loesung:** Pruefen Sie Ihre Server-Konfiguration. Das Plugin zeigt eine spezifische Fehlermeldung an, wenn Anforderungen nicht erfuellt sind.
+
+### Shortcodes werden als Text angezeigt
+
+**Moegliche Ursachen:**
+
+- Plugin ist deaktiviert
+- Shortcode ist falsch geschrieben (Tippfehler)
+- Seite verwendet den Classic Editor ohne Shortcode-Unterstuetzung
+
+**Loesung:** Stellen Sie sicher, dass das Plugin aktiv ist und der Shortcode korrekt geschrieben wurde (z.B. `[rp_jobs]`, nicht `[rp-jobs]`).
+
+## Troubleshooting
+
+### Debug-Modus aktivieren
+
+Wenn Sie technische Probleme haben, aktivieren Sie den WordPress-Debug-Modus in `wp-config.php`:
+
+```php
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
+```
+
+Fehler werden dann in `wp-content/debug.log` protokolliert.
+
+<Callout type="warning">
+Deaktivieren Sie den Debug-Modus auf Produktivseiten. Debug-Ausgaben koennen sensible Informationen enthalten.
+</Callout>
+
+### Integritaets-Check
+
+Unter **Recruiting** &rarr; **Werkzeuge** &rarr; **Integritaets-Check** koennen Sie die Plugin-Installation pruefen:
+
+- Datenbank-Tabellen vorhanden und korrekt
+- Verwaiste Datensaetze
+- Upload-Verzeichnis-Berechtigungen
+- Plugin-Dateien vollstaendig
+
+### Backup-Export
+
+Sichern Sie regelmaessig Ihre Daten unter **Recruiting** &rarr; **Werkzeuge** &rarr; **Backup-Export**:
+
+- Alle Stellenanzeigen
+- Alle Bewerbungen (optional anonymisiert)
+- Plugin-Einstellungen
+
+Das Backup wird als JSON-Datei heruntergeladen.
+
+## Support
+
+Bei weiteren Problemen:
+
+1. Plugin-Version notieren
+2. WordPress- und PHP-Version notieren
+3. Fehlermeldung kopieren (falls vorhanden)
+4. Schritte zur Reproduktion beschreiben
+
+Erstellen Sie ein Issue auf [GitHub](https://github.com/AImitSK/recruiting-playbook/issues).

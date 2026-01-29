@@ -1,0 +1,222 @@
+---
+title: Roles
+description: Endpoints for managing user roles and capabilities. Configure permissions for recruiters and hiring managers.
+---
+
+## Overview
+
+The Roles API allows administrators to manage custom recruiting roles and their capabilities. Two custom roles are available: **Recruiter** and **Hiring Manager**, each with configurable permissions.
+
+All endpoints in this section require a **Pro license** and are gated behind the `user_roles` feature flag.
+
+## List all roles
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/roles" />
+
+Returns all recruiting roles with their current capability configuration and user counts.
+
+**Permission:** `rp_manage_roles` or `manage_options`
+
+### Response
+
+```json
+{
+  "roles": [
+    {
+      "slug": "rp_recruiter",
+      "name": "Recruiter",
+      "capabilities": {
+        "rp_view_applications": true,
+        "rp_edit_applications": true,
+        "rp_delete_applications": false,
+        "rp_view_notes": true,
+        "rp_create_notes": true,
+        "rp_edit_own_notes": true,
+        "rp_edit_others_notes": false,
+        "rp_delete_notes": false,
+        "rp_rate_applications": true,
+        "rp_manage_talent_pool": true,
+        "rp_view_activity_log": true,
+        "rp_read_email_templates": true,
+        "rp_create_email_templates": false,
+        "rp_edit_email_templates": true,
+        "rp_delete_email_templates": false,
+        "rp_send_emails": true,
+        "rp_view_email_log": true,
+        "rp_manage_roles": false,
+        "rp_assign_jobs": false
+      },
+      "user_count": 3
+    },
+    {
+      "slug": "rp_hiring_manager",
+      "name": "Hiring Manager",
+      "capabilities": {
+        "rp_view_applications": true,
+        "rp_edit_applications": false,
+        "rp_delete_applications": false,
+        "rp_view_notes": true,
+        "rp_create_notes": true,
+        "rp_edit_own_notes": true,
+        "rp_edit_others_notes": false,
+        "rp_delete_notes": false,
+        "rp_rate_applications": true,
+        "rp_manage_talent_pool": false,
+        "rp_view_activity_log": true,
+        "rp_read_email_templates": true,
+        "rp_create_email_templates": false,
+        "rp_edit_email_templates": false,
+        "rp_delete_email_templates": false,
+        "rp_send_emails": false,
+        "rp_view_email_log": false,
+        "rp_manage_roles": false,
+        "rp_assign_jobs": false
+      },
+      "user_count": 2
+    }
+  ]
+}
+```
+
+## Get capability groups
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/roles/capabilities" />
+
+Returns the available capabilities organized by functional group. Use this to build a capability matrix UI.
+
+**Permission:** `rp_manage_roles` or `manage_options`
+
+### Response
+
+```json
+{
+  "groups": [
+    {
+      "label": "Bewerbungen",
+      "capabilities": [
+        "rp_view_applications",
+        "rp_edit_applications",
+        "rp_delete_applications"
+      ]
+    },
+    {
+      "label": "Notizen",
+      "capabilities": [
+        "rp_view_notes",
+        "rp_create_notes",
+        "rp_edit_own_notes",
+        "rp_edit_others_notes",
+        "rp_delete_notes"
+      ]
+    },
+    {
+      "label": "Bewertungen & Talent-Pool",
+      "capabilities": [
+        "rp_rate_applications",
+        "rp_manage_talent_pool",
+        "rp_view_activity_log"
+      ]
+    },
+    {
+      "label": "E-Mail-System",
+      "capabilities": [
+        "rp_read_email_templates",
+        "rp_create_email_templates",
+        "rp_edit_email_templates",
+        "rp_delete_email_templates",
+        "rp_send_emails",
+        "rp_view_email_log"
+      ]
+    },
+    {
+      "label": "Administration",
+      "capabilities": [
+        "rp_manage_roles",
+        "rp_assign_jobs"
+      ]
+    }
+  ]
+}
+```
+
+## Update role capabilities
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/roles/{slug}" />
+
+Updates the capabilities for a custom recruiting role. Only the two custom roles (`rp_recruiter` and `rp_hiring_manager`) can be modified.
+
+**Permission:** `manage_options` (administrators only)
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `slug` | string | Role slug: `rp_recruiter` or `rp_hiring_manager` |
+
+### Request body
+
+```json
+{
+  "capabilities": {
+    "rp_view_applications": true,
+    "rp_edit_applications": true,
+    "rp_delete_applications": false,
+    "rp_view_notes": true,
+    "rp_create_notes": true,
+    "rp_send_emails": true
+  }
+}
+```
+
+Only known `rp_*` capabilities are accepted. Unknown keys are silently ignored. Admin-only capabilities (`rp_manage_roles`, `rp_assign_jobs`) are always forced to `false` for custom roles.
+
+### Response
+
+```json
+{
+  "slug": "rp_recruiter",
+  "name": "Recruiter",
+  "capabilities": {
+    "rp_view_applications": true,
+    "rp_edit_applications": true,
+    "rp_delete_applications": false,
+    "rp_view_notes": true,
+    "rp_create_notes": true,
+    "rp_send_emails": true,
+    "rp_manage_roles": false,
+    "rp_assign_jobs": false
+  }
+}
+```
+
+### Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `invalid_role` | 400 | Only custom recruiting roles can be edited |
+| `not_found` | 404 | Role does not exist |
+
+## Capability reference
+
+| Capability | Description |
+|------------|-------------|
+| `rp_manage_recruiting` | Access recruiting dashboard (auto-granted when `rp_view_applications` is active) |
+| `rp_view_applications` | View applications |
+| `rp_edit_applications` | Edit application data and change status |
+| `rp_delete_applications` | Delete applications |
+| `rp_view_notes` | View notes on applications |
+| `rp_create_notes` | Create new notes |
+| `rp_edit_own_notes` | Edit own notes |
+| `rp_edit_others_notes` | Edit notes by other users |
+| `rp_delete_notes` | Delete notes |
+| `rp_rate_applications` | Rate applications |
+| `rp_manage_talent_pool` | Manage talent pool |
+| `rp_view_activity_log` | View activity log |
+| `rp_read_email_templates` | View email templates |
+| `rp_create_email_templates` | Create email templates |
+| `rp_edit_email_templates` | Edit email templates |
+| `rp_delete_email_templates` | Delete email templates |
+| `rp_send_emails` | Send emails to applicants |
+| `rp_view_email_log` | View email history |
+| `rp_manage_roles` | Manage roles and capabilities (admin only) |
+| `rp_assign_jobs` | Assign users to job listings (admin only) |

@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  images: {
-    unoptimized: true
-  }
+  async redirects() {
+    return [
+      {
+        source: '/impressum',
+        destination: '/legal/imprint',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

@@ -1,0 +1,231 @@
+---
+title: Job Assignments
+description: Endpoints for assigning users to specific job listings. Control which recruiters and hiring managers can access which positions.
+---
+
+## Overview
+
+The Job Assignments API lets administrators assign recruiting team members to specific job listings. Users with custom roles (`rp_recruiter`, `rp_hiring_manager`) only see applications for their assigned jobs. Administrators always have access to all jobs.
+
+All endpoints in this section require a **Pro license** and are gated behind the `user_roles` feature flag.
+
+## Create an assignment
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/job-assignments" />
+
+Assigns a user to a job listing.
+
+**Permission:** `rp_assign_jobs` or `manage_options`
+
+### Request body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `user_id` | int | Yes | WordPress user ID |
+| `job_id` | int | Yes | Job listing post ID |
+
+```json
+{
+  "user_id": 5,
+  "job_id": 123
+}
+```
+
+### Response (201 Created)
+
+```json
+{
+  "success": true,
+  "assignment": {
+    "id": 42,
+    "user_id": 5,
+    "job_id": 123,
+    "assigned_by": 1,
+    "assigned_at": "2025-01-28T12:00:00"
+  }
+}
+```
+
+### Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `invalid_user` | 400 | User does not exist |
+| `invalid_job` | 400 | Post is not a `job_listing` |
+| `already_assigned` | 400 | User is already assigned to this job |
+
+## Remove an assignment
+
+<EndpointHeader method="DELETE" path="/wp-json/recruiting/v1/job-assignments" />
+
+Removes a user's assignment from a job listing.
+
+**Permission:** `rp_assign_jobs` or `manage_options`
+
+### Request body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `user_id` | int | Yes | WordPress user ID |
+| `job_id` | int | Yes | Job listing post ID |
+
+```json
+{
+  "user_id": 5,
+  "job_id": 123
+}
+```
+
+### Response
+
+```json
+{
+  "success": true
+}
+```
+
+### Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `not_found` | 404 | Assignment does not exist |
+
+## Get assignments for a user
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/job-assignments/user/{user_id}" />
+
+Returns all job listings assigned to a specific user.
+
+**Permission:** `rp_assign_jobs` or `manage_options`
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `user_id` | int | WordPress user ID |
+
+### Response
+
+```json
+{
+  "user_id": 5,
+  "jobs": [
+    {
+      "id": 123,
+      "title": "Pflegefachkraft (m/w/d)",
+      "status": "publish",
+      "assigned_at": "2025-01-28T12:00:00"
+    },
+    {
+      "id": 456,
+      "title": "UX Designer (m/w/d)",
+      "status": "publish",
+      "assigned_at": "2025-01-28T13:00:00"
+    }
+  ],
+  "count": 2
+}
+```
+
+## Get assignments for a job
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/job-assignments/job/{job_id}" />
+
+Returns all users assigned to a specific job listing.
+
+**Permission:** `rp_assign_jobs` or `manage_options`
+
+### Path parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `job_id` | int | Job listing post ID |
+
+### Response
+
+```json
+{
+  "job_id": 123,
+  "users": [
+    {
+      "id": 5,
+      "name": "Anna Müller",
+      "email": "anna@example.com",
+      "role": "recruiter",
+      "avatar_url": "https://example.com/avatar.jpg",
+      "assigned_at": "2025-01-28T12:00:00",
+      "assigned_by": 1
+    },
+    {
+      "id": 10,
+      "name": "Thomas Schmidt",
+      "email": "thomas@example.com",
+      "role": "hiring_manager",
+      "avatar_url": "https://example.com/avatar2.jpg",
+      "assigned_at": "2025-01-28T13:00:00",
+      "assigned_by": 1
+    }
+  ],
+  "count": 2
+}
+```
+
+## Bulk assign jobs
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/job-assignments/bulk" />
+
+Assigns multiple job listings to a single user in one request.
+
+**Permission:** `rp_assign_jobs` or `manage_options`
+
+### Request body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `user_id` | int | Yes | WordPress user ID |
+| `job_ids` | array | Yes | List of job listing post IDs |
+
+```json
+{
+  "user_id": 5,
+  "job_ids": [123, 456, 789]
+}
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "assigned_count": 3,
+  "assignments": [
+    {
+      "job_id": 123,
+      "assigned": true,
+      "error": null
+    },
+    {
+      "job_id": 456,
+      "assigned": true,
+      "error": null
+    },
+    {
+      "job_id": 789,
+      "assigned": true,
+      "error": null
+    }
+  ]
+}
+```
+
+If a job is already assigned, its entry will show `"assigned": false` with an error message, but other assignments in the batch will still proceed.
+
+## How assignments affect access
+
+When a user with a custom recruiting role (`rp_recruiter` or `rp_hiring_manager`) requests applications via the API or views the admin dashboard:
+
+- **Applications list**: Only applications for assigned jobs are returned
+- **Kanban board**: Only shows applications for assigned jobs
+- **Application detail**: Access is denied for applications belonging to unassigned jobs
+
+Administrators (`manage_options`) always have unrestricted access regardless of assignments.

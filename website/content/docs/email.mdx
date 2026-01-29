@@ -1,0 +1,97 @@
+---
+title: E-Mail-Konfiguration
+description: SMTP einrichten fuer zuverlaessigen E-Mail-Versand bei Bewerbungen.
+---
+
+## Warum SMTP?
+
+WordPress nutzt standardmaessig die PHP-Funktion `mail()` zum Versenden von E-Mails. Das fuehrt haeufig zu Problemen:
+
+- E-Mails landen im **Spam-Ordner**
+- Keine Authentifizierung (SPF/DKIM fehlen)
+- **Unzuverlaessige Zustellung** - E-Mails kommen gar nicht an
+- Keine Zustellberichte
+
+<Callout type="warning" title="Fuer ein Recruiting-Tool kritisch">
+Verpasste Bewerbungsbestaetigungen oder Interview-Einladungen koennen qualifizierte Bewerber kosten. Konfigurieren Sie SMTP vor dem Go-Live.
+</Callout>
+
+## SMTP-Plugin installieren
+
+Recruiting Playbook zeigt eine Warnung im Dashboard, wenn kein SMTP konfiguriert ist. Wir empfehlen eines dieser Plugins:
+
+| Plugin | Installations | Besonderheit |
+|--------|--------------|-------------|
+| [WP Mail SMTP](https://wordpress.org/plugins/wp-mail-smtp/) | 2+ Mio. | Marktfuehrer, viele Provider |
+| [FluentSMTP](https://wordpress.org/plugins/fluent-smtp/) | 300k+ | Kostenlos, gute UI |
+| [Post SMTP](https://wordpress.org/plugins/post-smtp/) | 400k+ | Open Source, E-Mail-Log |
+
+## Empfohlene E-Mail-Provider
+
+| Provider | Kostenloses Kontingent | Besonderheit |
+|----------|----------------------|-------------|
+| SendGrid | 100 E-Mails/Tag | Zuverlaessig, gute API |
+| Mailgun | 5.000/Monat | Entwicklerfreundlich |
+| Amazon SES | Guenstig bei Volumen | AWS-Integration |
+| SMTP2GO | 1.000/Monat | Einfache Einrichtung |
+
+## Einrichtung im Plugin
+
+### Schritt 1: SMTP-Plugin installieren
+
+WordPress Admin &rarr; Plugins &rarr; Installieren &rarr; nach "WP Mail SMTP" suchen &rarr; Installieren &rarr; Aktivieren.
+
+### Schritt 2: SMTP konfigurieren
+
+Folgen Sie dem Setup-Wizard des SMTP-Plugins:
+- SMTP-Server und Port eingeben
+- Authentifizierung konfigurieren
+- Absender-E-Mail festlegen
+
+### Schritt 3: Test-E-Mail senden
+
+Unter **Recruiting** &rarr; **Einstellungen** &rarr; **E-Mail** koennen Sie eine Test-E-Mail senden, um die Konfiguration zu pruefen.
+
+<Callout type="tip" title="SPF und DKIM">
+Konfigurieren Sie SPF- und DKIM-Records in Ihren DNS-Einstellungen. Die meisten SMTP-Provider liefern die noetigen Eintraege in ihrer Dokumentation.
+</Callout>
+
+## E-Mail-Einstellungen im Plugin
+
+Unter **Recruiting** &rarr; **Einstellungen** &rarr; **E-Mail** koennen Sie folgende Optionen konfigurieren:
+
+| Einstellung | Beschreibung |
+|------------|-------------|
+| Absendername | Name des E-Mail-Absenders |
+| Absender-E-Mail | E-Mail-Adresse des Absenders |
+| Benachrichtigungs-E-Mail | Adresse fuer eingehende Bewerbungen |
+| SMTP-Status | Zeigt an, ob SMTP konfiguriert ist |
+
+## E-Mail-Benachrichtigungen
+
+Das Plugin versendet folgende E-Mails automatisch:
+
+### An Bewerber
+
+- **Eingangsbestaetigung** - Direkt nach Absenden der Bewerbung
+- **Absage** - Wenn der Status auf "Abgelehnt" gesetzt wird (optional)
+- **Interview-Einladung** - Wenn der Status auf "Interview" gesetzt wird (optional)
+
+### An Administratoren
+
+- **Neue Bewerbung** - Bei jeder neuen Bewerbung
+- **Tagesuebersicht** - Zusammenfassung neuer Bewerbungen (Pro)
+
+## E-Mail-Empfaenger anpassen
+
+Sie koennen die Empfaenger von Benachrichtigungen per Filter anpassen:
+
+```php
+add_filter( 'rp_notification_recipients', function( $recipients, $application ) {
+    // Abteilungsleiter hinzufuegen
+    $recipients[] = 'hr-leitung@example.com';
+    return $recipients;
+}, 10, 2 );
+```
+
+Weitere Hooks finden Sie unter [Hooks & Filter](/docs/hooks).

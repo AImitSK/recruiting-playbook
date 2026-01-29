@@ -1,0 +1,106 @@
+---
+title: Spam-Schutz
+description: Mehrschichtiger Spam-Schutz fuer das Bewerbungsformular - Honeypot, Time-Check, Rate Limiting und Captcha.
+---
+
+## Uebersicht
+
+Das Plugin schuetzt Bewerbungsformulare mit einer **vierschichtigen Pipeline**. Jede Schicht filtert einen Teil der Spam-Anfragen heraus, bevor die naechste greift.
+
+| Schicht | Methode | Verfuegbarkeit | Standard |
+|---------|---------|----------------|----------|
+| 1 | Honeypot | FREE | Immer aktiv |
+| 2 | Time-Check | FREE | Immer aktiv |
+| 3 | Rate Limiting | FREE | Immer aktiv |
+| 4 | Turnstile / hCaptcha | FREE | Optional |
+
+Die ersten drei Schichten laufen automatisch und unsichtbar. Schicht 4 (Captcha) ist optional und wird ueber die Einstellungen aktiviert.
+
+## Schicht 1: Honeypot
+
+Ein unsichtbares Formularfeld, das nur von Bots ausgefuellt wird. Echte Besucher sehen das Feld nicht (via CSS und `aria-hidden`). Wenn das Feld einen Wert enthaelt, wird die Anfrage still abgelehnt.
+
+- **Effektivitaet**: Blockiert ca. 70% der einfachen Bots
+- **Auswirkung auf Nutzer**: Keine - komplett unsichtbar
+- **Konfiguration**: Keine noetig, immer aktiv
+
+## Schicht 2: Time-Check
+
+Prueft, ob das Formular zu schnell abgeschickt wurde. Bots fuellen Formulare in Millisekunden aus, echte Bewerber brauchen mindestens einige Sekunden.
+
+- **Mindestzeit**: 3 Sekunden
+- **Maximale Gueltigkeit**: 24 Stunden (danach muss die Seite neu geladen werden)
+- **Effektivitaet**: Blockiert ca. 20% zusaetzliche Bots
+- **Konfiguration**: Keine noetig, immer aktiv
+
+Der Zeitstempel wird verschluesselt im Formular gespeichert und kann nicht manipuliert werden.
+
+## Schicht 3: Rate Limiting
+
+Begrenzt die Anzahl der Bewerbungen pro IP-Adresse.
+
+| Limit | Standard | Konfigurierbar |
+|-------|----------|----------------|
+| Pro Stunde | 5 Bewerbungen | Ja (Einstellungen) |
+| Pro Tag | 20 Bewerbungen | Ja (Einstellungen) |
+
+<Callout type="tip" title="DSGVO-konform">
+IP-Adressen werden nur als SHA-256-Hash mit Salt gespeichert. Die rohe IP-Adresse wird zu keinem Zeitpunkt in der Datenbank abgelegt.
+</Callout>
+
+Das Rate Limiting erkennt die Client-IP auch hinter Proxies und CDNs (Cloudflare, Nginx). Die Limits lassen sich im Admin unter **Einstellungen &rarr; Recruiting &rarr; Spam-Schutz** anpassen.
+
+## Schicht 4: Captcha (Optional)
+
+Fuer zusaetzlichen Schutz unterstuetzt das Plugin zwei DSGVO-freundliche Captcha-Anbieter:
+
+### Cloudflare Turnstile (empfohlen)
+
+- Kostenlos
+- Unsichtbar fuer die meisten Besucher (kein Raetsel loesen)
+- DSGVO-freundlicher als Google reCAPTCHA
+- Setup: [Cloudflare Dashboard](https://dash.cloudflare.com/?to=/:account/turnstile) &rarr; Site Key und Secret Key generieren
+
+### hCaptcha
+
+- Kostenloser Plan verfuegbar
+- DSGVO-konform (EU-Rechenzentren)
+- Setup: [hcaptcha.com](https://www.hcaptcha.com/) &rarr; Site Key und Secret Key generieren
+
+### Einrichtung
+
+1. WordPress Admin &rarr; **Einstellungen** &rarr; **Recruiting** &rarr; **Spam-Schutz**
+2. Captcha-Anbieter auswaehlen (Turnstile oder hCaptcha)
+3. Site Key und Secret Key eintragen
+4. Speichern
+
+Das Captcha-Widget erscheint automatisch im Bewerbungsformular.
+
+<Callout type="warning" title="Fail-Open-Strategie">
+Wenn der Captcha-Dienst nicht erreichbar ist (z.B. Cloudflare-Ausfall), laesst das Plugin Bewerbungen trotzdem durch. So werden echte Bewerber nicht blockiert. Die anderen drei Schichten bleiben als Schutz aktiv.
+</Callout>
+
+## Spam-Statistiken
+
+Im Admin-Dashboard zeigt ein Widget die Spam-Statistiken der letzten 7 Tage:
+
+- Honeypot blockiert
+- Rate Limit blockiert
+- Captcha blockiert
+- Erfolgreiche Bewerbungen
+
+## Datenschutzerklaerung
+
+Das Plugin stellt automatisch einen Textbaustein fuer die Datenschutzerklaerung bereit (unter WordPress &rarr; Einstellungen &rarr; Datenschutz). Der Text wird je nach aktiviertem Captcha-Anbieter angepasst und enthaelt die noetigen Hinweise zu:
+
+- Technischen Pruefungen (Honeypot, Zeitstempel)
+- Rate Limiting (anonymisierte IP)
+- Cloudflare Turnstile bzw. hCaptcha (wenn aktiviert)
+
+## Empfehlung
+
+| Szenario | Empfohlene Konfiguration |
+|----------|--------------------------|
+| Kleine Webseite, wenig Traffic | Standard (Honeypot + Time-Check + Rate Limiting) |
+| Mittelgrosse Webseite | Standard + Cloudflare Turnstile |
+| Haeufige Spam-Probleme | Standard + Turnstile + niedrigere Rate Limits |

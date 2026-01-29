@@ -1,0 +1,230 @@
+---
+title: Conversion Tracking
+description: DataLayer Events, Google Tag Manager, Google Ads, Meta Pixel und Server-Side Tracking fuer Recruiting-Conversions.
+---
+
+## Uebersicht
+
+Das Plugin trackt den gesamten Bewerbungsfunnel ueber DataLayer Events, die mit Google Tag Manager (GTM) oder anderen Tag-Management-Systemen verarbeitet werden koennen.
+
+| Feature | FREE | Pro |
+|---------|------|-----|
+| DataLayer Events (GTM) | Ja | Ja |
+| Google Ads Conversion ID | - | Ja |
+| Custom JavaScript Events | - | Ja |
+| PHP Hooks (Server-Side) | - | Ja |
+| Tracking-Einstellungen Tab | - | Ja |
+
+## DataLayer Events
+
+Das Plugin pusht automatisch drei Events in den `dataLayer`:
+
+### `rp_job_viewed`
+
+Wird ausgeloest, wenn ein Besucher eine Stellenanzeige oeffnet.
+
+```javascript
+{
+    'event': 'rp_job_viewed',
+    'rp_job_id': 123,
+    'rp_job_title': 'Software Developer (m/w/d)',
+    'rp_job_category': 'IT & Development',
+    'rp_job_location': 'Berlin',
+    'rp_employment_type': 'Vollzeit'
+}
+```
+
+### `rp_application_started`
+
+Wird ausgeloest, wenn der Besucher das Bewerbungsformular oeffnet.
+
+```javascript
+{
+    'event': 'rp_application_started',
+    'rp_job_id': 123,
+    'rp_job_title': 'Software Developer (m/w/d)'
+}
+```
+
+### `rp_application_submitted`
+
+**Hauptkonversion** - wird ausgeloest, wenn eine Bewerbung erfolgreich abgeschickt wurde.
+
+```javascript
+{
+    'event': 'rp_application_submitted',
+    'rp_job_id': 123,
+    'rp_job_title': 'Software Developer (m/w/d)',
+    'rp_job_category': 'IT & Development',
+    'rp_job_location': 'Berlin',
+    'rp_application_id': 456
+}
+```
+
+<Callout type="tip" title="Funnel-Tracking">
+Die drei Events bilden einen Bewerbungsfunnel: Job gesehen &rarr; Formular geoeffnet &rarr; Bewerbung abgeschickt. So koennen Sie Abbruchstellen identifizieren und optimieren.
+</Callout>
+
+## Google Tag Manager Setup
+
+### 1. Trigger erstellen
+
+In GTM einen **Custom Event Trigger** anlegen:
+
+1. Triggers &rarr; Neu &rarr; Trigger-Konfiguration
+2. Trigger-Typ: **Benutzerdefiniertes Ereignis**
+3. Ereignisname: `rp_application_submitted`
+
+### 2. DataLayer-Variablen anlegen
+
+| Variable Name | DataLayer Variable |
+|---------------|-------------------|
+| RP - Job ID | `rp_job_id` |
+| RP - Job Title | `rp_job_title` |
+| RP - Job Category | `rp_job_category` |
+| RP - Job Location | `rp_job_location` |
+| RP - Application ID | `rp_application_id` |
+
+### 3. Tags konfigurieren
+
+#### Google Analytics 4
+
+1. Tags &rarr; Neu &rarr; GA4-Ereignis
+2. Ereignisname: `generate_lead`
+3. Parameter: `job_id`, `job_title`, `job_category`
+4. Trigger: `rp_application_submitted`
+
+#### Google Ads Conversion
+
+1. Tags &rarr; Neu &rarr; Google Ads-Conversion-Tracking
+2. Conversion-ID und Label eintragen
+3. Trigger: `rp_application_submitted`
+
+#### Meta (Facebook) Pixel
+
+1. Tags &rarr; Neu &rarr; Benutzerdefiniertes HTML
+2. Code:
+
+```html
+<script>
+  fbq('track', 'Lead', {
+    content_name: '{{RP - Job Title}}',
+    content_category: '{{RP - Job Category}}'
+  });
+</script>
+```
+
+3. Trigger: `rp_application_submitted`
+
+#### LinkedIn Insight Tag
+
+1. Tags &rarr; Neu &rarr; Benutzerdefiniertes HTML
+2. Code:
+
+```html
+<script>
+  window.lintrk('track', { conversion_id: YOUR_CONVERSION_ID });
+</script>
+```
+
+3. Trigger: `rp_application_submitted`
+
+## Pro: Erweiterte Features
+
+### Direkte Google Ads Integration
+
+Ohne GTM: Im Admin unter **Einstellungen &rarr; Recruiting &rarr; Tracking** direkt die Google Ads Conversion-ID (`AW-XXXXXXXXX`) und das Conversion Label eintragen. Das Plugin feuert den Conversion-Tag automatisch.
+
+### Custom JavaScript Events
+
+Zusaetzlich zu DataLayer-Events werden DOM Custom Events gefeuert:
+
+```javascript
+document.addEventListener('rp:application:submitted', function(e) {
+    console.log('Bewerbung:', e.detail);
+    // e.detail: job_id, job_title, application_id, ...
+});
+
+document.addEventListener('rp:job:viewed', function(e) {
+    console.log('Job angesehen:', e.detail);
+});
+```
+
+### PHP Hooks (Server-Side Tracking)
+
+Fuer DSGVO-konforme Server-Side-Implementierungen:
+
+```php
+add_action('rp_application_submitted', function($application_id, $data) {
+    $job = get_post($data['job_id']);
+
+    wp_remote_post('https://your-tracking-endpoint.com/conversion', [
+        'body' => [
+            'event'     => 'application',
+            'job_id'    => $data['job_id'],
+            'job_title' => $job->post_title,
+            'timestamp' => time(),
+        ]
+    ]);
+}, 10, 2);
+```
+
+### Tracking-Einstellungen (Pro)
+
+| Einstellung | Beschreibung |
+|-------------|--------------|
+| Google Ads Conversion ID | Format: `AW-XXXXXXXXX` |
+| Google Ads Conversion Label | Aus Google Ads kopieren |
+| Conversion Value | Optionaler Wert pro Bewerbung |
+| Custom Tracking Code | Eigener JavaScript-Code |
+| Server-Side Tracking | Aktiviert PHP Hooks |
+
+## Best Practices
+
+### Consent Management
+
+Tracking darf nur mit Nutzer-Einwilligung erfolgen. Empfohlene Consent-Plugins:
+
+- Complianz
+- Borlabs Cookie
+- CookieYes
+
+Die DataLayer-Events werden immer gepusht, aber GTM-Tags feuern erst, wenn der Consent Mode dies erlaubt.
+
+### Conversion Value berechnen
+
+Fuer Google Ads empfehlen wir:
+
+> Durchschnittliche Recruiting-Kosten / Bewerbungen pro Einstellung = Wert pro Bewerbung
+
+Beispiel: Bei 50 Bewerbungen pro Einstellung und 5.000 EUR Recruiting-Kosten = 100 EUR pro Bewerbung.
+
+### UTM-Parameter
+
+Nutzen Sie UTM-Parameter in Ihren Job-Links:
+
+```
+https://example.com/jobs/developer/?utm_source=linkedin&utm_medium=social&utm_campaign=dev-hiring-q1
+```
+
+## Debugging
+
+### DataLayer pruefen
+
+1. Chrome DevTools oeffnen (F12)
+2. Console-Tab
+3. `dataLayer` eingeben - zeigt alle gepushten Events
+
+### GTM Preview Mode
+
+In GTM auf "In Vorschau ansehen" klicken. Das Debug-Panel zeigt alle gefeuerten Tags und Trigger.
+
+### Plugin Debug Mode
+
+In `wp-config.php`:
+
+```php
+define('RP_DEBUG_TRACKING', true);
+```
+
+Gibt alle Tracking-Events in der Browser-Console aus.
