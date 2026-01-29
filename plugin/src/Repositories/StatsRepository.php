@@ -155,7 +155,18 @@ class StatsRepository {
 			ARRAY_A
 		);
 
-		return $results ?? [];
+		// Typen konvertieren für Frontend.
+		return array_map(
+			function ( $job ) {
+				return [
+					'id'           => (int) $job['id'],
+					'title'        => $job['title'],
+					'status'       => $job['status'],
+					'applications' => (int) $job['applications'],
+				];
+			},
+			$results ?? []
+		);
 	}
 
 	/**
