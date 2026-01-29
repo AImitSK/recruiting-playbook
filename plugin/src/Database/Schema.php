@@ -37,6 +37,7 @@ class Schema {
 			'email_log'        => $wpdb->prefix . 'rp_email_log',
 			'signatures'       => $wpdb->prefix . 'rp_signatures',
 			'job_assignments'  => $wpdb->prefix . 'rp_user_job_assignments',
+			'stats_cache'      => $wpdb->prefix . 'rp_stats_cache',
 		];
 	}
 
@@ -392,6 +393,30 @@ class Schema {
 			KEY user_id (user_id),
 			KEY job_id (job_id),
 			KEY assigned_by (assigned_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_stats_cache
+	 *
+	 * Caching-Tabelle für berechnete Statistiken.
+	 *
+	 * @return string
+	 */
+	public static function getStatsCacheTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['stats_cache'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			cache_key varchar(100) NOT NULL,
+			cache_value longtext NOT NULL,
+			expires_at datetime NOT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY cache_key (cache_key),
+			KEY expires_at (expires_at)
 		) {$charset};";
 	}
 }

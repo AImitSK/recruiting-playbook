@@ -34,6 +34,7 @@ use RecruitingPlaybook\Api\SettingsController;
 use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Api\RoleController;
 use RecruitingPlaybook\Api\JobAssignmentController;
+use RecruitingPlaybook\Api\StatsController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -384,6 +385,10 @@ final class Plugin {
 
 		$job_assignment_controller = new JobAssignmentController();
 		$job_assignment_controller->register_routes();
+
+		// Stats Controller (Reporting & Dashboard).
+		$stats_controller = new StatsController();
+		$stats_controller->register_routes();
 	}
 
 	/**

@@ -35,6 +35,8 @@ class FeatureFlags {
 			'api_access'                   => false,
 			'webhooks'                     => false,
 			'reporting'                    => 'basic',
+			'advanced_reporting'           => false,  // Time-to-Hire, Conversion, Trends.
+			'csv_export'                   => false,
 			'design_settings'              => false,
 			'ai_job_generation'            => false,
 			'ai_text_improvement'          => false,
@@ -55,6 +57,8 @@ class FeatureFlags {
 			'api_access'                   => true,
 			'webhooks'                     => true,
 			'reporting'                    => 'full',
+			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
+			'csv_export'                   => true,
 			'design_settings'              => true,
 			'ai_job_generation'            => false,
 			'ai_text_improvement'          => false,
@@ -75,6 +79,8 @@ class FeatureFlags {
 			'api_access'                   => false,
 			'webhooks'                     => false,
 			'reporting'                    => 'basic',
+			'advanced_reporting'           => false,
+			'csv_export'                   => false,
 			'design_settings'              => false,
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,
@@ -95,6 +101,8 @@ class FeatureFlags {
 			'api_access'                   => true,
 			'webhooks'                     => true,
 			'reporting'                    => 'full',
+			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
+			'csv_export'                   => true,
 			'design_settings'              => true,
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,

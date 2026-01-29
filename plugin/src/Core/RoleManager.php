@@ -129,6 +129,9 @@ class RoleManager {
 				'rp_edit_email_templates',
 				'rp_send_emails',
 				'rp_view_email_log',
+				'rp_view_stats',
+				'rp_view_advanced_stats',
+				'rp_export_data',
 			];
 			foreach ( $editor_caps as $cap ) {
 				$editor->add_cap( $cap );
@@ -172,6 +175,13 @@ class RoleManager {
 			// Rollen-Verwaltung (nur Admin).
 			'rp_manage_roles',
 			'rp_assign_jobs',
+
+			// Reporting & Dashboard.
+			'rp_view_stats',
+			'rp_view_advanced_stats',
+			'rp_export_data',
+			'rp_view_system_status',
+			'rp_run_cleanup',
 		];
 	}
 
@@ -225,6 +235,11 @@ class RoleManager {
 				'rp_view_email_log'         => true,
 				'rp_manage_roles'           => false,
 				'rp_assign_jobs'            => false,
+				'rp_view_stats'             => true,
+				'rp_view_advanced_stats'    => true,
+				'rp_export_data'            => true,
+				'rp_view_system_status'     => false,
+				'rp_run_cleanup'            => false,
 			],
 			'rp_hiring_manager'  => [
 				'rp_view_applications'      => true,
@@ -246,6 +261,11 @@ class RoleManager {
 				'rp_view_email_log'         => false,
 				'rp_manage_roles'           => false,
 				'rp_assign_jobs'            => false,
+				'rp_view_stats'             => true,
+				'rp_view_advanced_stats'    => false,
+				'rp_export_data'            => false,
+				'rp_view_system_status'     => false,
+				'rp_run_cleanup'            => false,
 			],
 		];
 	}
@@ -299,6 +319,16 @@ class RoleManager {
 				'capabilities' => [
 					'rp_manage_roles' => __( 'Rollen verwalten', 'recruiting-playbook' ),
 					'rp_assign_jobs'  => __( 'Stellen zuweisen', 'recruiting-playbook' ),
+				],
+			],
+			'reporting'    => [
+				'label'        => __( 'Reporting & Dashboard', 'recruiting-playbook' ),
+				'capabilities' => [
+					'rp_view_stats'          => __( 'Statistiken anzeigen', 'recruiting-playbook' ),
+					'rp_view_advanced_stats' => __( 'Erweiterte Statistiken anzeigen', 'recruiting-playbook' ),
+					'rp_export_data'         => __( 'Daten exportieren', 'recruiting-playbook' ),
+					'rp_view_system_status'  => __( 'Systemstatus anzeigen', 'recruiting-playbook' ),
+					'rp_run_cleanup'         => __( 'Bereinigung ausführen', 'recruiting-playbook' ),
 				],
 			],
 		];
