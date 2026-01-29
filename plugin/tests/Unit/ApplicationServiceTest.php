@@ -33,6 +33,32 @@ class ApplicationServiceTest extends TestCase {
 		Functions\when( 'current_time' )->justReturn( '2025-01-21 12:00:00' );
 		Functions\when( 'get_current_user_id' )->justReturn( 1 );
 		Functions\when( 'do_action' )->justReturn( null );
+		Functions\when( 'wp_upload_dir' )->justReturn( [
+			'basedir' => '/tmp/wp-uploads',
+			'baseurl' => 'http://localhost/wp-content/uploads',
+		] );
+		Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+			return match ( $key ) {
+				'rp_settings' => [
+					'notification_email' => 'test@example.com',
+					'company_name'       => 'Test GmbH',
+				],
+				'admin_email' => 'admin@example.com',
+				default       => $default,
+			};
+		} );
+		Functions\when( 'get_bloginfo' )->justReturn( 'Test Blog' );
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		// wp_get_current_user für Activity-Log.
+		$mock_user = Mockery::mock( 'WP_User' );
+		$mock_user->ID = 1;
+		$mock_user->display_name = 'Test User';
+		Functions\when( 'wp_get_current_user' )->justReturn( $mock_user );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+		Functions\when( 'sanitize_text_field' )->returnArg();
+		Functions\when( 'wp_unslash' )->returnArg();
 
 		$this->service = new ApplicationService();
 	}
@@ -97,6 +123,9 @@ class ApplicationServiceTest extends TestCase {
 
 		// Mock: Activity Log.
 		$wpdb->shouldReceive( 'insert' )->once()->andReturn( true );
+
+		// Mock: EmailService.getApplicationData (sendApplicationReceived + sendApplicantConfirmation).
+		$wpdb->shouldReceive( 'get_row' )->twice()->andReturn( null );
 
 		$data = [
 			'job_id'          => 1,
@@ -325,5 +354,210 @@ class ApplicationServiceTest extends TestCase {
 		$result = $this->service->list( [ 'status' => 'new' ] );
 
 		$this->assertIsArray( $result );
+	}
+
+	// =========================================================================
+	// Role-Based Filtering (assigned_job_ids)
+	// =========================================================================
+
+	/**
+	 * Test: list() filtert nach zugewiesenen Stellen
+	 *
+	 * Verifiziert, dass der assigned_job_ids-Parameter korrekt als
+	 * IN-Clause in die SQL-Query aufgenommen wird.
+	 */
+	public function test_list_filters_by_assigned_job_ids(): void {
+		global $wpdb;
+
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		$capturedQueries = [];
+
+		// get_var (COUNT-Query) — Query capturen.
+		$wpdb->shouldReceive( 'get_var' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return 1;
+			} );
+
+		// get_results (SELECT-Query) — Query capturen.
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return [
+					[
+						'id'         => 1,
+						'job_id'     => 10,
+						'status'     => 'new',
+						'first_name' => 'Max',
+						'last_name'  => 'Mustermann',
+						'email'      => 'test@example.com',
+						'phone'      => '',
+						'salutation' => 'Herr',
+					],
+				];
+			} );
+
+		$result = $this->service->list( [
+			'assigned_job_ids' => [ 10, 20 ],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertCount( 1, $result['data'] );
+
+		// Beide SQL-Queries (COUNT + SELECT) müssen die IN-Clause enthalten.
+		$this->assertCount( 2, $capturedQueries );
+		foreach ( $capturedQueries as $sql ) {
+			$this->assertStringContainsString( 'a.job_id IN', $sql );
+		}
+	}
+
+	/**
+	 * Test: list() ohne assigned_job_ids filtert nicht nach Stellen
+	 */
+	public function test_list_without_assigned_job_ids_does_not_filter(): void {
+		global $wpdb;
+
+		$capturedQueries = [];
+
+		$wpdb->shouldReceive( 'get_var' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return 0;
+			} );
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return [];
+			} );
+
+		$result = $this->service->list();
+
+		$this->assertIsArray( $result );
+		$this->assertEmpty( $result['data'] );
+
+		// Keine IN-Clause in den Queries.
+		foreach ( $capturedQueries as $sql ) {
+			$this->assertStringNotContainsString( 'a.job_id IN', $sql );
+		}
+	}
+
+	/**
+	 * Test: list() mit leerem assigned_job_ids-Array filtert nicht
+	 */
+	public function test_list_with_empty_assigned_job_ids_does_not_filter(): void {
+		global $wpdb;
+
+		$capturedQueries = [];
+
+		$wpdb->shouldReceive( 'get_var' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return 0;
+			} );
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return [];
+			} );
+
+		$result = $this->service->list( [
+			'assigned_job_ids' => [],
+		] );
+
+		$this->assertIsArray( $result );
+
+		// Leeres Array → keine IN-Clause.
+		foreach ( $capturedQueries as $sql ) {
+			$this->assertStringNotContainsString( 'a.job_id IN', $sql );
+		}
+	}
+
+	/**
+	 * Test: listForKanban() filtert nach zugewiesenen Stellen
+	 */
+	public function test_list_for_kanban_filters_by_assigned_job_ids(): void {
+		global $wpdb;
+
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		$capturedQuery = null;
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQuery ) {
+				$capturedQuery = $sql;
+				return [
+					[
+						'id'              => 1,
+						'job_id'          => 10,
+						'status'          => 'new',
+						'kanban_position' => 0,
+						'created_at'      => '2025-01-21 12:00:00',
+						'first_name'      => 'Max',
+						'last_name'       => 'Mustermann',
+						'email'           => 'test@example.com',
+						'documents_count' => 2,
+					],
+				];
+			} );
+
+		$result = $this->service->listForKanban( [
+			'assigned_job_ids' => [ 10, 20, 30 ],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'items', $result );
+		$this->assertCount( 1, $result['items'] );
+
+		// Query muss IN-Clause mit 3 Job-IDs enthalten.
+		$this->assertNotNull( $capturedQuery );
+		$this->assertStringContainsString( 'a.job_id IN', $capturedQuery );
+	}
+
+	/**
+	 * Test: list() kombiniert assigned_job_ids mit job_id-Filter
+	 */
+	public function test_list_combines_assigned_job_ids_with_job_filter(): void {
+		global $wpdb;
+
+		$capturedQueries = [];
+
+		$wpdb->shouldReceive( 'get_var' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return 0;
+			} );
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQueries ) {
+				$capturedQueries[] = $sql;
+				return [];
+			} );
+
+		$result = $this->service->list( [
+			'assigned_job_ids' => [ 10, 20 ],
+			'job_id'           => 10,
+		] );
+
+		$this->assertIsArray( $result );
+
+		// Beide Filter müssen in der Query sein.
+		foreach ( $capturedQueries as $sql ) {
+			$this->assertStringContainsString( 'a.job_id IN', $sql );
+			$this->assertStringContainsString( 'a.job_id =', $sql );
+		}
 	}
 }

@@ -1527,10 +1527,37 @@ Templates die diese Variablen verwenden, zeigen nun `{variable_name}` als Text s
 | `authentication_required` | API-Key fehlt |
 | `invalid_api_key` | Ungültiger API-Key |
 | `insufficient_permissions` | Keine Berechtigung für diese Aktion |
+| `rest_forbidden` | Feature-Gate nicht erfüllt (z.B. Pro-Lizenz erforderlich) |
 | `resource_not_found` | Ressource nicht gefunden |
 | `validation_error` | Validierungsfehler |
 | `rate_limit_exceeded` | Zu viele Anfragen |
 | `internal_error` | Server-Fehler |
+| `invalid_role` | Nur Custom Recruiting-Rollen können bearbeitet werden |
+| `invalid_user` | Benutzer nicht gefunden |
+| `invalid_job` | Post ist kein `job_listing` |
+| `already_assigned` | Benutzer ist bereits dieser Stelle zugewiesen |
+| `not_found` | Zuweisung/Rolle nicht gefunden |
+
+### Feature-Gate (Pro-Endpoints)
+
+Bestimmte Endpoints erfordern eine aktive Pro-Lizenz. Ohne gültige Lizenz liefern diese Endpoints:
+
+```json
+{
+  "code": "rest_forbidden",
+  "message": "Diese Funktion erfordert eine Pro-Lizenz.",
+  "data": {
+    "status": 403
+  }
+}
+```
+
+**Betroffene Endpoints:**
+- `/roles` und `/roles/capabilities` — Benutzerrollen-Verwaltung
+- `/roles/{slug}` — Capability-Konfiguration
+- `/job-assignments/*` — Stellen-Zuweisungen
+
+Die Feature-Gate-Prüfung erfolgt über die interne Funktion `rp_can('user_roles')`.
 
 ---
 

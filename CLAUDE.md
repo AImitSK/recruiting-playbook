@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Sprache
+
+Die gesamte Kommunikation mit dem Benutzer erfolgt auf **Deutsch**. Code, Variablennamen und technische Bezeichner bleiben auf Englisch.
+
 ## Project Overview
 
 **Recruiting Playbook** is a WordPress plugin specification for professional job listing and applicant management with AI-powered candidate analysis. This repository contains comprehensive documentation and specifications - the actual plugin code is ready to be developed.

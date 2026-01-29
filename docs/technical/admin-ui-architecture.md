@@ -461,6 +461,49 @@ function KanbanPage() {
 
 ---
 
+## Server-Side Data Injection
+
+PHP übergibt Konfiguration und Daten an React via `wp_localize_script`. Jede Admin-Seite hat ein eigenes globales Objekt.
+
+### `rpSettingsData` (Settings-Seite)
+
+Verfügbar unter `window.rpSettingsData`. Wird von `Settings::enqueueAssets()` injiziert.
+
+| Feld | Typ | Beschreibung |
+|------|-----|-------------|
+| `logoUrl` | `string` | URL zum Plugin-Logo |
+| `homeUrl` | `string` | WordPress `home_url()` |
+| `exportUrl` | `string` | URL für Backup-Export |
+| `nonce` | `string` | WP-Nonce für Download-Aktionen |
+| `pages` | `array` | Alle publizierten Seiten (`{id, title}`) |
+| `isPro` | `bool` | Pro-Lizenz aktiv? |
+| `i18n` | `object` | Lokalisierte UI-Strings |
+| `recruitingUsers` | `array` | **Pro:** Benutzer mit Recruiting-Rollen (`{id, name, role}`) |
+| `jobListings` | `array` | **Pro:** Alle Job-Listings (`{id, title, status}`) |
+
+Die Felder `recruitingUsers` und `jobListings` sind nur verfügbar wenn `isPro === true`. Sie werden für die Rollen- und Stellen-Zuweisungs-UI benötigt.
+
+**Zugriff in React:**
+
+```jsx
+// Gesamte Konfiguration
+const config = window.rpSettingsData || {};
+
+// Einzelne Werte
+const i18n = window.rpSettingsData?.i18n || {};
+const isPro = window.rpSettingsData?.isPro || false;
+```
+
+### Weitere Data-Objekte
+
+| Objekt | Script | Seite |
+|--------|--------|-------|
+| `rpKanban` | `rp-kanban` | Kanban-Board |
+| `rpEmailData` | `rp-admin-email` | E-Mail-System |
+| `rpData` | `rp-frontend` | Frontend (öffentlich) |
+
+---
+
 ## Best Practices
 
 ### DO
