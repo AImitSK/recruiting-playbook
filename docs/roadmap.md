@@ -349,13 +349,13 @@ Design & Branding │                   │
 - [x] E-Mail-Historie pro Bewerber
 - [x] **Queued Delivery via Action Scheduler**
 
-### M2.4: Benutzerrollen
+### M2.4: Benutzerrollen ✅
 
-- [ ] Custom Capabilities
-- [ ] Rolle: Administrator (alles)
-- [ ] Rolle: Recruiter (Bewerbungen verwalten)
-- [ ] Rolle: Hiring Manager (nur Lesen, Kommentieren)
-- [ ] Stellen-Zuweisung pro User
+- [x] Custom Capabilities
+- [x] Rolle: Administrator (alles)
+- [x] Rolle: Recruiter (Bewerbungen verwalten)
+- [x] Rolle: Hiring Manager (nur Lesen, Kommentieren)
+- [x] Stellen-Zuweisung pro User
 
 ### M2.5: Reporting & Dashboard
 
