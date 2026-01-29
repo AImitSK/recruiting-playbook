@@ -141,6 +141,7 @@ class StatsRepository {
 				"SELECT
 					p.ID as id,
 					p.post_title as title,
+					p.post_status as status,
 					COUNT(a.id) as applications
 				FROM {$posts_table} p
 				LEFT JOIN {$apps_table} a ON p.ID = a.job_id AND {$where_apps}
