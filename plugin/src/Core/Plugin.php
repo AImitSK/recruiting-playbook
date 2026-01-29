@@ -32,6 +32,8 @@ use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Api\SignatureController;
 use RecruitingPlaybook\Api\SettingsController;
 use RecruitingPlaybook\Api\LicenseController;
+use RecruitingPlaybook\Api\RoleController;
+use RecruitingPlaybook\Api\JobAssignmentController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -375,6 +377,13 @@ final class Plugin {
 		// License Controller.
 		$license_controller = new LicenseController();
 		$license_controller->register_routes();
+
+		// User Roles Controllers (Pro-Feature).
+		$role_controller = new RoleController();
+		$role_controller->register_routes();
+
+		$job_assignment_controller = new JobAssignmentController();
+		$job_assignment_controller->register_routes();
 	}
 
 	/**
