@@ -35,8 +35,11 @@ export function useRoles() {
 			] );
 
 			if ( isMountedRef.current ) {
-				setRoles( rolesData.roles || [] );
-				setCapabilityGroups( capsData.groups || [] );
+				const rolesArr = rolesData?.roles;
+				setRoles( Array.isArray( rolesArr ) ? rolesArr : [] );
+
+				const groupsArr = capsData?.groups;
+				setCapabilityGroups( Array.isArray( groupsArr ) ? groupsArr : [] );
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
@@ -136,12 +139,12 @@ export function useJobAssignments() {
 			setError( null );
 
 			const config = window.rpSettingsData || {};
-			const recruitingUsers = config.recruitingUsers || [];
-			const jobListings = config.jobListings || [];
+			const rawUsers = config.recruitingUsers;
+			const rawJobs = config.jobListings;
 
 			if ( isMountedRef.current ) {
-				setUsers( recruitingUsers );
-				setAllJobs( jobListings );
+				setUsers( Array.isArray( rawUsers ) ? rawUsers : [] );
+				setAllJobs( Array.isArray( rawJobs ) ? rawJobs : [] );
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
@@ -177,7 +180,8 @@ export function useJobAssignments() {
 			} );
 
 			if ( isMountedRef.current ) {
-				setAssignedJobs( data.jobs || [] );
+				const jobs = data?.jobs;
+				setAssignedJobs( Array.isArray( jobs ) ? jobs : [] );
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
