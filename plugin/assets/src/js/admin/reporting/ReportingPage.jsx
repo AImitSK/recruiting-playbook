@@ -39,6 +39,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
  */
 export function ReportingPage() {
 	const [ period, setPeriod ] = useState( '30days' );
+	const [ activeTab, setActiveTab ] = useState( 'overview' );
 
 	// Daten aus window laden
 	const data = window.rpReportingData || {};
@@ -220,7 +221,7 @@ export function ReportingPage() {
 				</div>
 
 				{ /* Tabs für Detailansichten */ }
-				<Tabs defaultValue="overview">
+				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<TabsList>
 						<TabsTrigger value="overview">
 							{ i18n.tabOverview || 'Übersicht' }
