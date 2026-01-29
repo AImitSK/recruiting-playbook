@@ -155,6 +155,12 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_trends' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
+					'period' => [
+						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'type'        => 'string',
+						'default'     => '30days',
+						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
+					],
 					'metrics' => [
 						'description' => __( 'Metriken für Trend', 'recruiting-playbook' ),
 						'type'        => 'array',
@@ -190,6 +196,12 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_time_to_hire' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
+					'period' => [
+						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'type'        => 'string',
+						'default'     => '90days',
+						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
+					],
 					'date_from' => [
 						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
@@ -217,6 +229,12 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_conversion' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
+					'period' => [
+						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'type'        => 'string',
+						'default'     => '30days',
+						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
+					],
 					'date_from' => [
 						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
@@ -296,10 +314,14 @@ class StatsController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_trends( WP_REST_Request $request ): WP_REST_Response {
+		// Period zu date_from/date_to konvertieren.
+		$period = $request->get_param( 'period' );
+		$date_range = $period ? $this->service->getDateRange( $period ) : [];
+
 		$args = [
 			'metrics'     => $request->get_param( 'metrics' ),
-			'date_from'   => $request->get_param( 'date_from' ),
-			'date_to'     => $request->get_param( 'date_to' ),
+			'date_from'   => $request->get_param( 'date_from' ) ?? ( $date_range['from'] ?? null ),
+			'date_to'     => $request->get_param( 'date_to' ) ?? ( $date_range['to'] ?? null ),
 			'granularity' => $request->get_param( 'granularity' ),
 		];
 
@@ -320,7 +342,8 @@ class StatsController extends WP_REST_Controller {
 			return $this->requireProFeature( 'time_to_hire', __( 'Time-to-Hire Statistiken', 'recruiting-playbook' ) );
 		}
 
-		$overview = $this->service->getOverview( '90days' );
+		$period = $request->get_param( 'period' ) ?? '90days';
+		$overview = $this->service->getOverview( $period );
 		$avg_days = $overview['time_to_hire']['average_days'] ?? 10;
 
 		// Trend-Daten generieren (letzte 12 Wochen).
@@ -353,7 +376,8 @@ class StatsController extends WP_REST_Controller {
 			return $this->requireProFeature( 'conversion_stats', __( 'Conversion-Statistiken', 'recruiting-playbook' ) );
 		}
 
-		$overview = $this->service->getOverview( '30days' );
+		$period = $request->get_param( 'period' ) ?? '30days';
+		$overview = $this->service->getOverview( $period );
 		$applications = $overview['applications'];
 
 		// Funnel basierend auf Bewerbungs-Status (Pipeline-Sicht).
