@@ -18,6 +18,7 @@ use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
 use RecruitingPlaybook\Admin\Pages\DashboardPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\LicensePage;
+use RecruitingPlaybook\Admin\Pages\ReportingPage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Services\GdprService;
 use RecruitingPlaybook\Services\DocumentService;
@@ -104,6 +105,16 @@ class Menu {
 			'rp_manage_talent_pool',
 			'rp-talent-pool',
 			[ $this, 'renderTalentPool' ]
+		);
+
+		// Reporting & Dashboard.
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Berichte', 'recruiting-playbook' ),
+			$this->getReportingMenuLabel(),
+			'rp_view_stats',
+			'rp-reporting',
+			[ $this, 'renderReporting' ]
 		);
 
 		// Einstellungen (Export ist jetzt als Tab integriert).
@@ -534,6 +545,30 @@ class Menu {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * Reporting-Menü-Label mit Lock-Icon für Free-User (Pro-Features)
+	 *
+	 * @return string Menü-Label.
+	 */
+	private function getReportingMenuLabel(): string {
+		$label = __( 'Berichte', 'recruiting-playbook' );
+
+		// Lock-Icon für Free-User (erweiterte Features).
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_reporting' ) ) {
+			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
+		}
+
+		return $label;
+	}
+
+	/**
+	 * Reporting-Seite rendern
+	 */
+	public function renderReporting(): void {
+		$reporting_page = new ReportingPage();
+		$reporting_page->render();
 	}
 
 	/**

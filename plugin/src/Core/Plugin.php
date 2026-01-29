@@ -35,6 +35,8 @@ use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Api\RoleController;
 use RecruitingPlaybook\Api\JobAssignmentController;
 use RecruitingPlaybook\Api\StatsController;
+use RecruitingPlaybook\Api\ExportController;
+use RecruitingPlaybook\Api\SystemStatusController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -389,6 +391,14 @@ final class Plugin {
 		// Stats Controller (Reporting & Dashboard).
 		$stats_controller = new StatsController();
 		$stats_controller->register_routes();
+
+		// Export Controller (CSV-Export - Pro-Feature).
+		$export_controller = new ExportController();
+		$export_controller->register_routes();
+
+		// System Status Controller (Admin Only).
+		$system_status_controller = new SystemStatusController();
+		$system_status_controller->register_routes();
 	}
 
 	/**

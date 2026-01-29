@@ -14,6 +14,7 @@ import { LicensePage } from './license/LicensePage';
 import { DashboardPage } from './dashboard/DashboardPage';
 import { ApplicationsPage } from './applications/ApplicationsPage';
 import { SettingsPage } from './settings/SettingsPage';
+import { ReportingPage } from './reporting/ReportingPage';
 
 /**
  * Initialisiert das Kanban-Board
@@ -104,6 +105,18 @@ function initSettings() {
 }
 
 /**
+ * Initialisiert die Reporting-Seite
+ */
+function initReporting() {
+	const container = document.getElementById( 'rp-reporting-root' );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <ReportingPage /> );
+	}
+}
+
+/**
  * Initialisiert alle Admin-Komponenten
  */
 function initAdmin() {
@@ -114,6 +127,7 @@ function initAdmin() {
 	initTalentPool();
 	initLicense();
 	initSettings();
+	initReporting();
 }
 
 // DOMContentLoaded könnte bereits gefeuert haben wenn Script im Footer lädt
