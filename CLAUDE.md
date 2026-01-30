@@ -30,8 +30,8 @@ This repository uses VS Code Dev Containers for a consistent development environ
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| WordPress | http://localhost:8080 | admin / admin |
-| WP Admin | http://localhost:8080/wp-admin | admin / admin |
+| WordPress | http://localhost:8082 | admin / admin |
+| WP Admin | http://localhost:8082/wp-admin | admin / admin |
 | phpMyAdmin | http://localhost:8081 | wordpress / wordpress |
 | MailHog | http://localhost:8025 | - |
 
