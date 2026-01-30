@@ -82,16 +82,19 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
+# Wrangler CLI für Cloudflare Workers (KI-Matching API)
+RUN npm install -g wrangler
+
 # Arbeitsverzeichnis
 WORKDIR /var/www/html
 
 # Apache als www-data User starten (für Berechtigungen)
 RUN chown -R www-data:www-data /var/www/html
 
-# VS Code Server Verzeichnis für www-data User erstellen
+# VS Code / Cursor Server und Config-Verzeichnisse für www-data User erstellen
 # Das Home-Verzeichnis von www-data ist /var/www
-RUN mkdir -p /var/www/.vscode-server /var/www/.vscode-server-insiders \
-    && chown -R www-data:www-data /var/www/.vscode-server /var/www/.vscode-server-insiders
+RUN mkdir -p /var/www/.vscode-server /var/www/.vscode-server-insiders /var/www/.cursor-server /var/www/.config /var/www/.npm \
+    && chown -R www-data:www-data /var/www/.vscode-server /var/www/.vscode-server-insiders /var/www/.cursor-server /var/www/.config /var/www/.npm
 
 # Port 80 für Apache
 EXPOSE 80
