@@ -84,64 +84,68 @@ export default function FieldListItem( {
 	return (
 		<li
 			ref={ setNodeRef }
-			style={ style }
-			className={ `
-				rp-field-list-item
-				flex items-center gap-3 p-3 rounded-lg border cursor-pointer
-				transition-colors duration-150
-				${ isSelected
-		? 'border-blue-500 bg-blue-50'
-		: 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-}
-				${ isDragging ? 'shadow-lg z-10' : '' }
-			` }
+			style={ {
+				...style,
+				display: 'flex',
+				alignItems: 'center',
+				gap: '0.75rem',
+				padding: '0.75rem',
+				borderRadius: '0.5rem',
+				border: isSelected ? '1px solid #3b82f6' : '1px solid #e5e7eb',
+				cursor: 'pointer',
+				transition: 'all 0.15s',
+				backgroundColor: isSelected ? '#eff6ff' : '#fff',
+				boxShadow: isDragging ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
+				zIndex: isDragging ? 10 : 'auto',
+			} }
 			onClick={ onSelect }
 		>
 			{ /* Drag Handle */ }
 			<button
-				className="rp-field-list-item__handle cursor-grab text-gray-400 hover:text-gray-600 p-1"
+				className="rp-field-list-item__handle"
+				style={ { cursor: 'grab', color: '#9ca3af', padding: '0.25rem', background: 'none', border: 'none' } }
 				{ ...attributes }
 				{ ...listeners }
 			>
-				<GripVertical className="h-4 w-4" />
+				<GripVertical style={ { height: '1rem', width: '1rem' } } />
 			</button>
 
 			{ /* Field Icon */ }
-			<div className="rp-field-list-item__icon flex-shrink-0">
-				<IconComponent className="h-4 w-4 text-gray-500" />
+			<div className="rp-field-list-item__icon" style={ { flexShrink: 0 } }>
+				<IconComponent style={ { height: '1rem', width: '1rem', color: '#6b7280' } } />
 			</div>
 
 			{ /* Field Info */ }
-			<div className="rp-field-list-item__info flex-1 min-w-0">
-				<div className="flex items-center gap-2">
-					<span className="font-medium text-sm truncate">
+			<div className="rp-field-list-item__info" style={ { flex: 1, minWidth: 0 } }>
+				<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+					<span style={ { fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
 						{ field.label }
 					</span>
 					{ isSystem && (
-						<Lock className="h-3 w-3 text-gray-400 flex-shrink-0" />
+						<Lock style={ { height: '0.75rem', width: '0.75rem', color: '#9ca3af', flexShrink: 0 } } />
 					) }
 				</div>
-				<div className="text-xs text-gray-500 truncate">
+				<div style={ { fontSize: '0.75rem', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>
 					{ field.field_key }
 				</div>
 			</div>
 
 			{ /* Field Badges */ }
-			<div className="rp-field-list-item__badges flex items-center gap-2 flex-shrink-0">
+			<div className="rp-field-list-item__badges" style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 } }>
 				{ field.is_required && (
-					<Badge variant="secondary" className="text-xs">
+					<Badge variant="secondary" style={ { fontSize: '0.75rem' } }>
 						{ i18n?.required || __( 'Pflicht', 'recruiting-playbook' ) }
 					</Badge>
 				) }
 				{ field.is_enabled ? (
-					<Eye className="h-4 w-4 text-green-500" title={ i18n?.enabled || __( 'Aktiviert', 'recruiting-playbook' ) } />
+					<Eye style={ { height: '1rem', width: '1rem', color: '#22c55e' } } title={ i18n?.enabled || __( 'Aktiviert', 'recruiting-playbook' ) } />
 				) : (
-					<EyeOff className="h-4 w-4 text-gray-400" title={ i18n?.disabled || __( 'Deaktiviert', 'recruiting-playbook' ) } />
+					<EyeOff style={ { height: '1rem', width: '1rem', color: '#9ca3af' } } title={ i18n?.disabled || __( 'Deaktiviert', 'recruiting-playbook' ) } />
 				) }
 			</div>
 
 			{ /* Field Type Badge */ }
-			<Badge variant="outline" className="text-xs flex-shrink-0 capitalize">
+			<Badge variant="outline" style={ { fontSize: '0.75rem', flexShrink: 0, textTransform: 'capitalize' } }>
 				{ field.type }
 			</Badge>
 		</li>

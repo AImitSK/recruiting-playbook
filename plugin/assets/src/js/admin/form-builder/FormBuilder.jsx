@@ -65,12 +65,12 @@ export default function FormBuilder() {
 			<div className="rp-form-builder__no-access">
 				<Card>
 					<CardContent className="pt-6">
-						<div className="flex flex-col items-center gap-4 py-8 text-center">
-							<Lock className="h-12 w-12 text-gray-400" />
-							<h2 className="text-xl font-semibold">
+						<div style={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem 0', textAlign: 'center' } }>
+							<Lock style={ { height: '3rem', width: '3rem', color: '#9ca3af' } } />
+							<h2 style={ { fontSize: '1.25rem', fontWeight: 600, margin: 0 } }>
 								{ i18n?.noPermission || __( 'Keine Berechtigung', 'recruiting-playbook' ) }
 							</h2>
-							<p className="text-gray-600">
+							<p style={ { color: '#4b5563', margin: 0 } }>
 								{ i18n?.noPermissionText || __( 'Sie haben keine Berechtigung, den Formular-Builder zu verwenden.', 'recruiting-playbook' ) }
 							</p>
 						</div>
@@ -197,8 +197,8 @@ export default function FormBuilder() {
 				</TabsList>
 
 				<TabsContent value="fields" className="mt-0">
-					<div className="rp-form-builder__content grid grid-cols-1 lg:grid-cols-3 gap-6">
-						<div className="lg:col-span-2">
+					<div className="rp-form-builder__content rp-grid rp-grid-cols-1 lg:rp-grid-cols-3 rp-gap-6">
+						<div className="lg:rp-col-span-2">
 							<FieldList
 								systemFields={ systemFields }
 								customFields={ customFields }
@@ -211,7 +211,7 @@ export default function FormBuilder() {
 								i18n={ i18n }
 							/>
 						</div>
-						<div className="lg:col-span-1">
+						<div className="lg:rp-col-span-1">
 							{ selectedField ? (
 								<FieldEditor
 									field={ selectedField }
@@ -243,12 +243,12 @@ export default function FormBuilder() {
 					{ ! isPro ? (
 						<Card>
 							<CardContent className="pt-6">
-								<div className="flex flex-col items-center gap-4 py-8 text-center">
-									<Lock className="h-12 w-12 text-gray-400" />
-									<h2 className="text-xl font-semibold">
+								<div style={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem 0', textAlign: 'center' } }>
+									<Lock style={ { height: '3rem', width: '3rem', color: '#9ca3af' } } />
+									<h2 style={ { fontSize: '1.25rem', fontWeight: 600, margin: 0 } }>
 										{ i18n?.multipleTemplatesPro || __( 'Mehrere Templates (Pro)', 'recruiting-playbook' ) }
 									</h2>
-									<p className="text-gray-600 max-w-md">
+									<p style={ { color: '#4b5563', maxWidth: '28rem', margin: 0 } }>
 										{ i18n?.templatesProText || __( 'Mit Pro können Sie mehrere Formular-Templates erstellen und verschiedenen Stellen zuweisen.', 'recruiting-playbook' ) }
 									</p>
 									<Button onClick={ () => window.location.href = upgradeUrl }>

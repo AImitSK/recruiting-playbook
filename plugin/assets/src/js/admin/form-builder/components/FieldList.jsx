@@ -89,7 +89,7 @@ export default function FieldList( {
 	if ( isLoading ) {
 		return (
 			<Card>
-				<CardContent className="flex items-center justify-center py-12">
+				<CardContent style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 0' } }>
 					<Spinner />
 				</CardContent>
 			</Card>
@@ -97,22 +97,22 @@ export default function FieldList( {
 	}
 
 	return (
-		<div className="rp-field-list space-y-6">
+		<div className="rp-field-list" style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 			{ /* System Fields */ }
 			<Card>
-				<CardHeader className="pb-3">
-					<div className="flex items-center justify-between">
-						<CardTitle className="text-lg">
+				<CardHeader style={ { paddingBottom: '0.75rem' } }>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+						<CardTitle style={ { fontSize: '1.125rem' } }>
 							{ i18n?.systemFields || __( 'System-Felder', 'recruiting-playbook' ) }
 						</CardTitle>
-						<span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+						<span style={ { fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' } }>
 							{ systemFields.length } { __( 'Felder', 'recruiting-playbook' ) }
 						</span>
 					</div>
 				</CardHeader>
-				<CardContent className="pt-0">
+				<CardContent style={ { paddingTop: 0 } }>
 					{ systemFields.length === 0 ? (
-						<p className="text-gray-500 text-sm py-4 text-center">
+						<p style={ { color: '#6b7280', fontSize: '0.875rem', padding: '1rem 0', textAlign: 'center', margin: 0 } }>
 							{ i18n?.noSystemFields || __( 'Keine System-Felder vorhanden', 'recruiting-playbook' ) }
 						</p>
 					) : (
@@ -125,7 +125,7 @@ export default function FieldList( {
 								items={ allFieldIds }
 								strategy={ verticalListSortingStrategy }
 							>
-								<ul className="space-y-2">
+								<ul style={ { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 									{ systemFields.map( ( field ) => (
 										<FieldListItem
 											key={ field.id }
@@ -145,14 +145,14 @@ export default function FieldList( {
 
 			{ /* Custom Fields */ }
 			<Card>
-				<CardHeader className="pb-3">
-					<div className="flex items-center justify-between">
-						<CardTitle className="text-lg flex items-center gap-2">
+				<CardHeader style={ { paddingBottom: '0.75rem' } }>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+						<CardTitle style={ { fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 							{ i18n?.customFields || __( 'Eigene Felder', 'recruiting-playbook' ) }
-							{ ! isPro && <Lock className="h-4 w-4 text-gray-400" /> }
+							{ ! isPro && <Lock style={ { height: '1rem', width: '1rem', color: '#9ca3af' } } /> }
 						</CardTitle>
-						<div className="flex items-center gap-2">
-							<span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+						<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+							<span style={ { fontSize: '0.75rem', color: '#6b7280', backgroundColor: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '0.25rem' } }>
 								{ customFields.length } { __( 'Felder', 'recruiting-playbook' ) }
 							</span>
 							{ isPro && (
@@ -161,28 +161,28 @@ export default function FieldList( {
 									onClick={ onAddField }
 									disabled={ isSaving }
 								>
-									<Plus className="h-4 w-4 mr-1" />
+									<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 									{ i18n?.addField || __( 'Feld hinzufügen', 'recruiting-playbook' ) }
 								</Button>
 							) }
 						</div>
 					</div>
 				</CardHeader>
-				<CardContent className="pt-0">
+				<CardContent style={ { paddingTop: 0 } }>
 					{ ! isPro ? (
-						<div className="text-center py-8 text-gray-500">
-							<Lock className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-							<p className="text-sm">
+						<div style={ { textAlign: 'center', padding: '2rem 0', color: '#6b7280' } }>
+							<Lock style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#9ca3af' } } />
+							<p style={ { fontSize: '0.875rem', margin: 0 } }>
 								{ i18n?.customFieldsPro || __( 'Custom Fields sind ein Pro-Feature', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					) : customFields.length === 0 ? (
-						<div className="text-center py-8">
-							<p className="text-gray-500 text-sm mb-4">
+						<div style={ { textAlign: 'center', padding: '2rem 0' } }>
+							<p style={ { color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' } }>
 								{ i18n?.noCustomFields || __( 'Noch keine eigenen Felder erstellt', 'recruiting-playbook' ) }
 							</p>
 							<Button variant="outline" onClick={ onAddField }>
-								<Plus className="h-4 w-4 mr-1" />
+								<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 								{ i18n?.addFirstField || __( 'Erstes Feld erstellen', 'recruiting-playbook' ) }
 							</Button>
 						</div>
@@ -196,7 +196,7 @@ export default function FieldList( {
 								items={ allFieldIds }
 								strategy={ verticalListSortingStrategy }
 							>
-								<ul className="space-y-2">
+								<ul style={ { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 									{ customFields.map( ( field ) => (
 										<FieldListItem
 											key={ field.id }
@@ -215,9 +215,9 @@ export default function FieldList( {
 			</Card>
 
 			{ isSaving && (
-				<div className="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg px-4 py-2 flex items-center gap-2">
+				<div style={ { position: 'fixed', bottom: '1rem', right: '1rem', backgroundColor: '#fff', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', borderRadius: '0.5rem', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 					<Spinner size="small" />
-					<span className="text-sm">
+					<span style={ { fontSize: '0.875rem' } }>
 						{ i18n?.saving || __( 'Speichern...', 'recruiting-playbook' ) }
 					</span>
 				</div>

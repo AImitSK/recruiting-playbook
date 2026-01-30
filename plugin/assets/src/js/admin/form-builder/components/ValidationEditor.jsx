@@ -41,11 +41,11 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 	const showDateRules = [ 'date' ].includes( fieldType );
 
 	return (
-		<div className="rp-validation-editor space-y-4">
+		<div className="rp-validation-editor" style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 			{ /* Min/Max Length for text fields */ }
 			{ showMinMax && (
-				<div className="grid grid-cols-2 gap-4">
-					<div className="space-y-2">
+				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_length">
 							{ i18n?.minLength || __( 'Minimale Länge', 'recruiting-playbook' ) }
 						</Label>
@@ -59,7 +59,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 						/>
 					</div>
 
-					<div className="space-y-2">
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_length">
 							{ i18n?.maxLength || __( 'Maximale Länge', 'recruiting-playbook' ) }
 						</Label>
@@ -77,8 +77,8 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 			{ /* Min/Max Value for number fields */ }
 			{ showMinMaxValue && (
-				<div className="grid grid-cols-2 gap-4">
-					<div className="space-y-2">
+				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_value">
 							{ i18n?.minValue || __( 'Minimalwert', 'recruiting-playbook' ) }
 						</Label>
@@ -91,7 +91,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 						/>
 					</div>
 
-					<div className="space-y-2">
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_value">
 							{ i18n?.maxValue || __( 'Maximalwert', 'recruiting-playbook' ) }
 						</Label>
@@ -108,7 +108,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 			{ /* Pattern for text/phone */ }
 			{ showPattern && (
-				<div className="space-y-2">
+				<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 					<Label htmlFor="pattern">
 						{ i18n?.pattern || __( 'Regex-Pattern', 'recruiting-playbook' ) }
 					</Label>
@@ -118,7 +118,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 						onChange={ ( e ) => updateRule( 'pattern', e.target.value ) }
 						placeholder="^[A-Z][a-z]+$"
 					/>
-					<p className="text-xs text-gray-500">
+					<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 						{ i18n?.patternHelp || __( 'Regulärer Ausdruck für die Validierung (z.B. ^[0-9]+$ für nur Zahlen)', 'recruiting-playbook' ) }
 					</p>
 				</div>
@@ -126,8 +126,8 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 			{ /* Date rules */ }
 			{ showDateRules && (
-				<div className="grid grid-cols-2 gap-4">
-					<div className="space-y-2">
+				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_date">
 							{ i18n?.minDate || __( 'Frühestes Datum', 'recruiting-playbook' ) }
 						</Label>
@@ -139,7 +139,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 						/>
 					</div>
 
-					<div className="space-y-2">
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_date">
 							{ i18n?.maxDate || __( 'Spätestes Datum', 'recruiting-playbook' ) }
 						</Label>
@@ -156,7 +156,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 			{ /* File rules */ }
 			{ showFileRules && (
 				<>
-					<div className="space-y-2">
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="allowed_types">
 							{ i18n?.allowedTypes || __( 'Erlaubte Dateitypen', 'recruiting-playbook' ) }
 						</Label>
@@ -166,13 +166,13 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 							onChange={ ( e ) => updateRule( 'allowed_types', e.target.value ) }
 							placeholder=".pdf,.doc,.docx"
 						/>
-						<p className="text-xs text-gray-500">
+						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 							{ i18n?.allowedTypesHelp || __( 'Kommagetrennte Liste von Dateiendungen', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-2">
+					<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="max_file_size">
 								{ i18n?.maxFileSize || __( 'Max. Dateigröße (MB)', 'recruiting-playbook' ) }
 							</Label>
@@ -186,7 +186,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 							/>
 						</div>
 
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="max_files">
 								{ i18n?.maxFiles || __( 'Max. Anzahl Dateien', 'recruiting-playbook' ) }
 							</Label>
@@ -204,7 +204,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 			) }
 
 			{ /* Custom error message */ }
-			<div className="space-y-2">
+			<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 				<Label htmlFor="custom_error">
 					{ i18n?.customError || __( 'Eigene Fehlermeldung', 'recruiting-playbook' ) }
 				</Label>
@@ -218,7 +218,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 			</div>
 
 			{ /* Help text */ }
-			<p className="text-xs text-gray-500 pt-2 border-t">
+			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0, paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
 				{ i18n?.validationHelp || __( 'Validierungsregeln werden beim Absenden des Formulars geprüft. Leer lassen für keine Einschränkung.', 'recruiting-playbook' ) }
 			</p>
 		</div>

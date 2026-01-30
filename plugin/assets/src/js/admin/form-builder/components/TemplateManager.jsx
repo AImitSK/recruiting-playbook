@@ -131,7 +131,7 @@ export default function TemplateManager( {
 	if ( isLoading ) {
 		return (
 			<Card>
-				<CardContent className="flex items-center justify-center py-12">
+				<CardContent style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 0' } }>
 					<Spinner />
 				</CardContent>
 			</Card>
@@ -139,19 +139,19 @@ export default function TemplateManager( {
 	}
 
 	return (
-		<div className="rp-template-manager space-y-6">
+		<div className="rp-template-manager" style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 			{ /* Header with create button */ }
-			<div className="flex items-center justify-between">
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 				<div>
-					<h2 className="text-lg font-semibold">
+					<h2 style={ { fontSize: '1.125rem', fontWeight: 600, margin: '0 0 0.25rem 0' } }>
 						{ i18n?.templates || __( 'Formular-Templates', 'recruiting-playbook' ) }
 					</h2>
-					<p className="text-sm text-gray-600">
+					<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
 						{ i18n?.templatesDescription || __( 'Erstellen Sie verschiedene Formular-Konfigurationen für unterschiedliche Stellen', 'recruiting-playbook' ) }
 					</p>
 				</div>
 				<Button onClick={ () => setShowCreateForm( true ) } disabled={ showCreateForm }>
-					<Plus className="h-4 w-4 mr-1" />
+					<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 					{ i18n?.createTemplate || __( 'Template erstellen', 'recruiting-playbook' ) }
 				</Button>
 			</div>
@@ -164,8 +164,8 @@ export default function TemplateManager( {
 							{ i18n?.newTemplate || __( 'Neues Template', 'recruiting-playbook' ) }
 						</CardTitle>
 					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="space-y-2">
+					<CardContent style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="new_name">
 								{ i18n?.templateName || __( 'Name', 'recruiting-playbook' ) }
 							</Label>
@@ -177,7 +177,7 @@ export default function TemplateManager( {
 							/>
 						</div>
 
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="new_description">
 								{ i18n?.templateDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
 							</Label>
@@ -190,27 +190,27 @@ export default function TemplateManager( {
 							/>
 						</div>
 
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label>{ i18n?.selectFields || __( 'Felder auswählen', 'recruiting-playbook' ) }</Label>
-							<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-white rounded border">
+							<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', maxHeight: '10rem', overflowY: 'auto', padding: '0.5rem', backgroundColor: '#fff', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
 								{ fields.map( ( field ) => (
 									<label
 										key={ field.id }
-										className="flex items-center gap-2 cursor-pointer text-sm"
+										style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' } }
 									>
 										<input
 											type="checkbox"
 											checked={ newTemplate.field_ids.includes( field.id ) }
 											onChange={ () => toggleFieldInTemplate( field.id, newTemplate, setNewTemplate ) }
-											className="h-4 w-4"
+											style={ { height: '1rem', width: '1rem' } }
 										/>
-										<span className="truncate">{ field.label }</span>
+										<span style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>{ field.label }</span>
 									</label>
 								) ) }
 							</div>
 						</div>
 
-						<div className="flex justify-end gap-2 pt-2">
+						<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', paddingTop: '0.5rem' } }>
 							<Button
 								variant="outline"
 								onClick={ () => {
@@ -221,7 +221,7 @@ export default function TemplateManager( {
 								{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
 							</Button>
 							<Button onClick={ handleCreate } disabled={ ! newTemplate.name || isSaving }>
-								{ isSaving ? <Spinner size="small" /> : <Check className="h-4 w-4 mr-1" /> }
+								{ isSaving ? <Spinner size="small" /> : <Check style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } /> }
 								{ i18n?.create || __( 'Erstellen', 'recruiting-playbook' ) }
 							</Button>
 						</div>
@@ -232,22 +232,22 @@ export default function TemplateManager( {
 			{ /* Templates List */ }
 			{ templates.length === 0 && ! showCreateForm ? (
 				<Card>
-					<CardContent className="py-12 text-center">
-						<FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-						<h3 className="text-lg font-medium mb-2">
+					<CardContent style={ { padding: '3rem 0', textAlign: 'center' } }>
+						<FileText style={ { height: '3rem', width: '3rem', margin: '0 auto 1rem', color: '#9ca3af' } } />
+						<h3 style={ { fontSize: '1.125rem', fontWeight: 500, marginBottom: '0.5rem' } }>
 							{ i18n?.noTemplates || __( 'Keine Templates vorhanden', 'recruiting-playbook' ) }
 						</h3>
-						<p className="text-gray-600 mb-4">
+						<p style={ { color: '#4b5563', marginBottom: '1rem' } }>
 							{ i18n?.noTemplatesDescription || __( 'Erstellen Sie Ihr erstes Template, um verschiedene Formular-Konfigurationen zu speichern.', 'recruiting-playbook' ) }
 						</p>
 						<Button onClick={ () => setShowCreateForm( true ) }>
-							<Plus className="h-4 w-4 mr-1" />
+							<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 							{ i18n?.createFirstTemplate || __( 'Erstes Template erstellen', 'recruiting-playbook' ) }
 						</Button>
 					</CardContent>
 				</Card>
 			) : (
-				<div className="grid gap-4">
+				<div style={ { display: 'grid', gap: '1rem' } }>
 					{ templates.map( ( template ) => {
 						const isEditing = editingTemplate?.id === template.id;
 						const isDeleting = confirmDelete === template.id;
@@ -258,8 +258,8 @@ export default function TemplateManager( {
 								<CardContent className="p-4">
 									{ isEditing ? (
 										// Edit mode
-										<div className="space-y-4">
-											<div className="space-y-2">
+										<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
+											<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 												<Label>{ i18n?.templateName || __( 'Name', 'recruiting-playbook' ) }</Label>
 												<Input
 													value={ editingTemplate.name }
@@ -269,7 +269,7 @@ export default function TemplateManager( {
 												/>
 											</div>
 
-											<div className="space-y-2">
+											<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 												<Label>{ i18n?.templateDescription || __( 'Beschreibung', 'recruiting-playbook' ) }</Label>
 												<Textarea
 													value={ editingTemplate.description || '' }
@@ -280,13 +280,13 @@ export default function TemplateManager( {
 												/>
 											</div>
 
-											<div className="space-y-2">
+											<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 												<Label>{ i18n?.selectFields || __( 'Felder', 'recruiting-playbook' ) }</Label>
-												<div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded border">
+												<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', maxHeight: '10rem', overflowY: 'auto', padding: '0.5rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
 													{ fields.map( ( field ) => (
 														<label
 															key={ field.id }
-															className="flex items-center gap-2 cursor-pointer text-sm"
+															style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' } }
 														>
 															<input
 																type="checkbox"
@@ -294,49 +294,49 @@ export default function TemplateManager( {
 																onChange={ () =>
 																	toggleFieldInTemplate( field.id, editingTemplate, setEditingTemplate )
 																}
-																className="h-4 w-4"
+																style={ { height: '1rem', width: '1rem' } }
 															/>
-															<span className="truncate">{ field.label }</span>
+															<span style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }>{ field.label }</span>
 														</label>
 													) ) }
 												</div>
 											</div>
 
-											<div className="flex justify-end gap-2">
+											<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' } }>
 												<Button variant="outline" onClick={ () => setEditingTemplate( null ) }>
 													{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
 												</Button>
 												<Button onClick={ handleUpdate } disabled={ isSaving }>
-													{ isSaving ? <Spinner size="small" /> : <Check className="h-4 w-4 mr-1" /> }
+													{ isSaving ? <Spinner size="small" /> : <Check style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } /> }
 													{ i18n?.save || __( 'Speichern', 'recruiting-playbook' ) }
 												</Button>
 											</div>
 										</div>
 									) : (
 										// View mode
-										<div className="flex items-center justify-between">
-											<div className="flex-1">
-												<div className="flex items-center gap-2">
-													<h3 className="font-medium">{ template.name }</h3>
+										<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+											<div style={ { flex: 1 } }>
+												<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+													<h3 style={ { fontWeight: 500, margin: 0 } }>{ template.name }</h3>
 													{ isDefault && (
-														<Badge className="bg-blue-100 text-blue-700">
-															<Star className="h-3 w-3 mr-1" />
+														<Badge style={ { backgroundColor: '#dbeafe', color: '#1d4ed8' } }>
+															<Star style={ { height: '0.75rem', width: '0.75rem', marginRight: '0.25rem' } } />
 															{ i18n?.default || __( 'Standard', 'recruiting-playbook' ) }
 														</Badge>
 													) }
 												</div>
 												{ template.description && (
-													<p className="text-sm text-gray-600 mt-1">{ template.description }</p>
+													<p style={ { fontSize: '0.875rem', color: '#4b5563', marginTop: '0.25rem' } }>{ template.description }</p>
 												) }
-												<p className="text-xs text-gray-500 mt-2">
+												<p style={ { fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' } }>
 													{ ( template.field_ids || [] ).length } { i18n?.fields || __( 'Felder', 'recruiting-playbook' ) }
 												</p>
 											</div>
 
-											<div className="flex items-center gap-2">
+											<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 												{ isDeleting ? (
 													<>
-														<span className="text-sm text-red-600 mr-2">
+														<span style={ { fontSize: '0.875rem', color: '#dc2626', marginRight: '0.5rem' } }>
 															{ i18n?.confirmDelete || __( 'Wirklich löschen?', 'recruiting-playbook' ) }
 														</span>
 														<Button
@@ -365,7 +365,7 @@ export default function TemplateManager( {
 																disabled={ isSaving }
 																title={ i18n?.setAsDefault || __( 'Als Standard setzen', 'recruiting-playbook' ) }
 															>
-																<Star className="h-4 w-4" />
+																<Star style={ { height: '1rem', width: '1rem' } } />
 															</Button>
 														) }
 														<Button
@@ -375,7 +375,7 @@ export default function TemplateManager( {
 															disabled={ isSaving }
 															title={ i18n?.duplicate || __( 'Duplizieren', 'recruiting-playbook' ) }
 														>
-															<Copy className="h-4 w-4" />
+															<Copy style={ { height: '1rem', width: '1rem' } } />
 														</Button>
 														<Button
 															variant="outline"
@@ -383,17 +383,17 @@ export default function TemplateManager( {
 															onClick={ () => setEditingTemplate( template ) }
 															title={ i18n?.edit || __( 'Bearbeiten', 'recruiting-playbook' ) }
 														>
-															<Edit2 className="h-4 w-4" />
+															<Edit2 style={ { height: '1rem', width: '1rem' } } />
 														</Button>
 														{ ! isDefault && (
 															<Button
 																variant="ghost"
 																size="sm"
 																onClick={ () => setConfirmDelete( template.id ) }
-																className="text-red-500 hover:text-red-700 hover:bg-red-50"
+																style={ { color: '#ef4444' } }
 																title={ i18n?.delete || __( 'Löschen', 'recruiting-playbook' ) }
 															>
-																<Trash2 className="h-4 w-4" />
+																<Trash2 style={ { height: '1rem', width: '1rem' } } />
 															</Button>
 														) }
 													</>
@@ -409,7 +409,7 @@ export default function TemplateManager( {
 			) }
 
 			{ /* Help text */ }
-			<p className="text-xs text-gray-500">
+			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 				{ i18n?.templateTip || __( 'Templates ermöglichen verschiedene Formular-Konfigurationen für unterschiedliche Stellen. Das Standard-Template wird für neue Stellen verwendet.', 'recruiting-playbook' ) }
 			</p>
 		</div>

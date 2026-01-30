@@ -174,20 +174,20 @@ export default function FieldEditor( {
 	return (
 		<Card className="rp-field-editor">
 			<CardHeader className="pb-3">
-				<div className="flex items-center justify-between">
-					<CardTitle className="text-lg flex items-center gap-2">
+				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+					<CardTitle style={ { fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						{ i18n?.editField || __( 'Feld bearbeiten', 'recruiting-playbook' ) }
-						{ field.is_system && <Lock className="h-4 w-4 text-gray-400" /> }
+						{ field.is_system && <Lock style={ { height: '1rem', width: '1rem', color: '#9ca3af' } } /> }
 					</CardTitle>
-					<div className="flex items-center gap-2">
+					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						{ hasChanges && (
-							<span className="text-xs text-amber-600">
+							<span style={ { fontSize: '0.75rem', color: '#d97706' } }>
 								{ i18n?.unsavedChanges || __( 'Ungespeichert', 'recruiting-playbook' ) }
 							</span>
 						) }
 						{ isSaving && <Spinner size="small" /> }
 						<Button variant="ghost" size="sm" onClick={ onClose }>
-							<X className="h-4 w-4" />
+							<X style={ { height: '1rem', width: '1rem' } } />
 						</Button>
 					</div>
 				</div>
@@ -202,7 +202,7 @@ export default function FieldEditor( {
 				) }
 
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
-					<TabsList className="mb-4 w-full grid grid-cols-3">
+					<TabsList style={ { marginBottom: '1rem', width: '100%', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' } }>
 						<TabsTrigger value="general">
 							{ i18n?.general || __( 'Allgemein', 'recruiting-playbook' ) }
 						</TabsTrigger>
@@ -212,16 +212,16 @@ export default function FieldEditor( {
 							</TabsTrigger>
 						) }
 						{ hasConditional && (
-							<TabsTrigger value="conditional" className="flex items-center gap-1">
+							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
 								{ i18n?.conditional || __( 'Bedingt', 'recruiting-playbook' ) }
-								{ ! isPro && <Lock className="h-3 w-3" /> }
+								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem' } } /> }
 							</TabsTrigger>
 						) }
 					</TabsList>
 
-					<TabsContent value="general" className="space-y-4">
+					<TabsContent value="general" style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 						{ /* Field Key */ }
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="field_key">
 								{ i18n?.fieldKey || __( 'Feldschlüssel', 'recruiting-playbook' ) }
 							</Label>
@@ -234,13 +234,13 @@ export default function FieldEditor( {
 								placeholder="field_name"
 								disabled={ field.is_system }
 							/>
-							<p className="text-xs text-gray-500">
+							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (nur Kleinbuchstaben, Zahlen, Unterstriche)', 'recruiting-playbook' ) }
 							</p>
 						</div>
 
 						{ /* Label */ }
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="label">
 								{ i18n?.fieldLabel || __( 'Label', 'recruiting-playbook' ) }
 							</Label>
@@ -254,7 +254,7 @@ export default function FieldEditor( {
 
 						{ /* Placeholder (for input fields) */ }
 						{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( field.type ) && (
-							<div className="space-y-2">
+							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 								<Label htmlFor="placeholder">
 									{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
 								</Label>
@@ -268,7 +268,7 @@ export default function FieldEditor( {
 						) }
 
 						{ /* Description */ }
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="description">
 								{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
 							</Label>
@@ -282,7 +282,7 @@ export default function FieldEditor( {
 						</div>
 
 						{ /* Width */ }
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ localField.settings?.width || 'full' }
@@ -311,25 +311,25 @@ export default function FieldEditor( {
 						) }
 
 						{ /* Required & Enabled toggles */ }
-						<div className="flex items-center justify-between pt-4 border-t">
-							<div className="flex items-center gap-3">
+						<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
+							<div style={ { display: 'flex', alignItems: 'center', gap: '0.75rem' } }>
 								<Switch
 									id="is_required"
 									checked={ localField.is_required }
 									onCheckedChange={ ( checked ) => updateLocalField( { is_required: checked } ) }
 								/>
-								<Label htmlFor="is_required" className="cursor-pointer">
+								<Label htmlFor="is_required" style={ { cursor: 'pointer' } }>
 									{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }
 								</Label>
 							</div>
 
-							<div className="flex items-center gap-3">
+							<div style={ { display: 'flex', alignItems: 'center', gap: '0.75rem' } }>
 								<Switch
 									id="is_enabled"
 									checked={ localField.is_enabled }
 									onCheckedChange={ ( checked ) => updateLocalField( { is_enabled: checked } ) }
 								/>
-								<Label htmlFor="is_enabled" className="cursor-pointer">
+								<Label htmlFor="is_enabled" style={ { cursor: 'pointer' } }>
 									{ i18n?.fieldEnabled || __( 'Aktiviert', 'recruiting-playbook' ) }
 								</Label>
 							</div>
@@ -357,9 +357,9 @@ export default function FieldEditor( {
 									i18n={ i18n }
 								/>
 							) : (
-								<div className="text-center py-8">
-									<Lock className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-									<p className="text-sm text-gray-600">
+								<div style={ { textAlign: 'center', padding: '2rem 0' } }>
+									<Lock style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#9ca3af' } } />
+									<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
 										{ i18n?.conditionalLogicPro || __( 'Bedingte Logik ist ein Pro-Feature', 'recruiting-playbook' ) }
 									</p>
 								</div>
@@ -369,12 +369,12 @@ export default function FieldEditor( {
 				</Tabs>
 
 				{ /* Actions */ }
-				<div className="flex items-center justify-between pt-4 mt-4 border-t">
+				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', marginTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
 					{ ! field.is_system ? (
 						<>
 							{ confirmDelete ? (
-								<div className="flex items-center gap-2">
-									<span className="text-sm text-red-600">
+								<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+									<span style={ { fontSize: '0.875rem', color: '#dc2626' } }>
 										{ i18n?.confirmDelete || __( 'Wirklich löschen?', 'recruiting-playbook' ) }
 									</span>
 									<Button
@@ -398,15 +398,15 @@ export default function FieldEditor( {
 									variant="ghost"
 									size="sm"
 									onClick={ () => setConfirmDelete( true ) }
-									className="text-red-600 hover:text-red-700 hover:bg-red-50"
+									style={ { color: '#dc2626' } }
 								>
-									<Trash2 className="h-4 w-4 mr-1" />
+									<Trash2 style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 									{ i18n?.delete || __( 'Löschen', 'recruiting-playbook' ) }
 								</Button>
 							) }
 						</>
 					) : (
-						<span className="text-xs text-gray-500">
+						<span style={ { fontSize: '0.75rem', color: '#6b7280' } }>
 							{ i18n?.systemFieldWarning || __( 'System-Felder können nicht gelöscht werden', 'recruiting-playbook' ) }
 						</span>
 					) }

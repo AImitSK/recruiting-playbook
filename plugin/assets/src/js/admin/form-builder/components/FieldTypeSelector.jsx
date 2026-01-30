@@ -125,17 +125,17 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 	};
 
 	return (
-		<div className="rp-field-type-selector fixed inset-0 z-50 flex items-center justify-center">
+		<div className="rp-field-type-selector" style={ { position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' } }>
 			{ /* Backdrop */ }
 			<div
-				className="absolute inset-0 bg-black/50"
+				style={ { position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)' } }
 				onClick={ onClose }
 			/>
 
 			{ /* Modal */ }
-			<Card className="relative z-10 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-				<CardHeader className="border-b">
-					<div className="flex items-center justify-between">
+			<Card style={ { position: 'relative', zIndex: 10, width: '100%', maxWidth: '42rem', maxHeight: '80vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' } }>
+				<CardHeader style={ { borderBottom: '1px solid #e5e7eb' } }>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 						<div>
 							<CardTitle>
 								{ i18n?.selectFieldType || __( 'Feldtyp wählen', 'recruiting-playbook' ) }
@@ -145,38 +145,38 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 							</CardDescription>
 						</div>
 						<Button variant="ghost" size="sm" onClick={ onClose }>
-							<X className="h-4 w-4" />
+							<X style={ { height: '1rem', width: '1rem' } } />
 						</Button>
 					</div>
 
 					{ /* Search */ }
-					<div className="relative mt-4">
-						<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+					<div style={ { position: 'relative', marginTop: '1rem' } }>
+						<Search style={ { position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', height: '1rem', width: '1rem', color: '#9ca3af' } } />
 						<Input
 							value={ searchQuery }
 							onChange={ ( e ) => setSearchQuery( e.target.value ) }
 							placeholder={ i18n?.searchFieldTypes || __( 'Feldtyp suchen...', 'recruiting-playbook' ) }
-							className="pl-10"
+							style={ { paddingLeft: '2.5rem' } }
 						/>
 					</div>
 				</CardHeader>
 
-				<CardContent className="overflow-y-auto p-6">
+				<CardContent style={ { overflowY: 'auto', padding: '1.5rem' } }>
 					{ filteredTypes.length === 0 ? (
-						<div className="text-center py-8 text-gray-500">
-							<p>{ i18n?.noFieldTypesFound || __( 'Keine Feldtypen gefunden', 'recruiting-playbook' ) }</p>
+						<div style={ { textAlign: 'center', padding: '2rem 0', color: '#6b7280' } }>
+							<p style={ { margin: 0 } }>{ i18n?.noFieldTypesFound || __( 'Keine Feldtypen gefunden', 'recruiting-playbook' ) }</p>
 						</div>
 					) : (
-						<div className="space-y-6">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 							{ filteredTypes.map( ( [ category, types ] ) => (
 								<div key={ category }>
-									<h3 className="text-sm font-medium text-gray-500 mb-3">
+									<h3 style={ { fontSize: '0.875rem', fontWeight: 500, color: '#6b7280', marginBottom: '0.75rem' } }>
 										{ i18n?.[ `category${ category.charAt( 0 ).toUpperCase() + category.slice( 1 ) }` ] ||
 											CATEGORIES[ category ]?.label ||
 											category }
 									</h3>
 
-									<div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+									<div style={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' } }>
 										{ types.map( ( type ) => {
 											const IconComponent = fieldTypeIcons[ type.key ] || Type;
 											const isProType = requiresPro( type.key );
@@ -184,27 +184,33 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 											return (
 												<button
 													key={ type.key }
-													className={ `
-														flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all
-														${ isProType
-		? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
-		: 'border-gray-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer'
-}
-													` }
+													style={ {
+														display: 'flex',
+														flexDirection: 'column',
+														alignItems: 'center',
+														gap: '0.5rem',
+														padding: '1rem',
+														borderRadius: '0.5rem',
+														border: '2px solid #e5e7eb',
+														transition: 'all 0.15s',
+														backgroundColor: isProType ? '#f9fafb' : '#fff',
+														cursor: isProType ? 'not-allowed' : 'pointer',
+														opacity: isProType ? 0.6 : 1,
+													} }
 													onClick={ () => ! isProType && onSelect( type.key ) }
 													disabled={ isProType }
 												>
-													<div className="relative">
-														<IconComponent className="h-6 w-6 text-gray-700" />
+													<div style={ { position: 'relative' } }>
+														<IconComponent style={ { height: '1.5rem', width: '1.5rem', color: '#374151' } } />
 														{ isProType && (
-															<Lock className="absolute -top-1 -right-1 h-3 w-3 text-amber-500" />
+															<Lock style={ { position: 'absolute', top: '-0.25rem', right: '-0.25rem', height: '0.75rem', width: '0.75rem', color: '#f59e0b' } } />
 														) }
 													</div>
-													<span className="text-sm font-medium text-center">
+													<span style={ { fontSize: '0.875rem', fontWeight: 500, textAlign: 'center' } }>
 														{ type.label }
 													</span>
 													{ isProType && (
-														<Badge variant="outline" className="text-xs">
+														<Badge variant="outline" style={ { fontSize: '0.75rem' } }>
 															Pro
 														</Badge>
 													) }
@@ -219,9 +225,9 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 				</CardContent>
 
 				{ /* Footer */ }
-				<div className="border-t p-4 bg-gray-50">
-					<div className="flex items-center justify-between">
-						<p className="text-xs text-gray-500">
+				<div style={ { borderTop: '1px solid #e5e7eb', padding: '1rem', backgroundColor: '#f9fafb' } }>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 							{ Object.keys( fieldTypes ).length } { i18n?.fieldTypesAvailable || __( 'Feldtypen verfügbar', 'recruiting-playbook' ) }
 						</p>
 						<Button variant="outline" onClick={ onClose }>

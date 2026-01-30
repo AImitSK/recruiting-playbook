@@ -64,11 +64,11 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 		return (
 			<div className={ `rp-field-preview rp-field-preview--heading ${ widthClass }` }>
-				<HeadingTag className="font-semibold text-lg">
+				<HeadingTag style={ { fontWeight: 600, fontSize: '1.125rem', margin: 0 } }>
 					{ field.label }
 				</HeadingTag>
 				{ field.description && (
-					<p className="text-sm text-gray-600 mt-1">{ field.description }</p>
+					<p style={ { fontSize: '0.875rem', color: '#4b5563', marginTop: '0.25rem' } }>{ field.description }</p>
 				) }
 			</div>
 		);
@@ -76,10 +76,10 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 	// Field label with required indicator
 	const renderLabel = () => (
-		<Label className="flex items-center gap-2">
+		<Label style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 			{ field.label }
 			{ field.is_required && (
-				<Badge variant="destructive" className="text-xs px-1 py-0">
+				<Badge variant="destructive" style={ { fontSize: '0.75rem', padding: '0 0.25rem' } }>
 					*
 				</Badge>
 			) }
@@ -149,15 +149,15 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 			case 'radio':
 				return (
-					<div className={ `space-y-2 ${ field.settings?.layout === 'inline' ? 'flex flex-wrap gap-4' : '' }` }>
+					<div style={ field.settings?.layout === 'inline' ? { display: 'flex', flexWrap: 'wrap', gap: '1rem' } : { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						{ options.map( ( opt, idx ) => (
-							<label key={ idx } className="flex items-center gap-2 cursor-not-allowed opacity-70">
+							<label key={ idx } style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'not-allowed', opacity: 0.7 } }>
 								<input
 									type="radio"
 									name={ field.field_key }
 									value={ opt.value || opt.label }
 									disabled
-									className="h-4 w-4"
+									style={ { height: '1rem', width: '1rem' } }
 								/>
 								<span>{ opt.label }</span>
 							</label>
@@ -169,14 +169,14 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 				// Single checkbox vs multi
 				if ( field.settings?.mode === 'multi' && options.length > 0 ) {
 					return (
-						<div className={ `space-y-2 ${ field.settings?.layout === 'inline' ? 'flex flex-wrap gap-4' : '' }` }>
+						<div style={ field.settings?.layout === 'inline' ? { display: 'flex', flexWrap: 'wrap', gap: '1rem' } : { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							{ options.map( ( opt, idx ) => (
-								<label key={ idx } className="flex items-center gap-2 cursor-not-allowed opacity-70">
+								<label key={ idx } style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'not-allowed', opacity: 0.7 } }>
 									<input
 										type="checkbox"
 										value={ opt.value || opt.label }
 										disabled
-										className="h-4 w-4"
+										style={ { height: '1rem', width: '1rem' } }
 									/>
 									<span>{ opt.label }</span>
 								</label>
@@ -185,26 +185,26 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 					);
 				}
 				return (
-					<label className="flex items-center gap-2 cursor-not-allowed opacity-70">
-						<input type="checkbox" disabled className="h-4 w-4" />
+					<label style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'not-allowed', opacity: 0.7 } }>
+						<input type="checkbox" disabled style={ { height: '1rem', width: '1rem' } } />
 						<span>{ field.settings?.checkbox_label || field.label }</span>
 					</label>
 				);
 
 			case 'file':
 				return (
-					<div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
-						<Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-						<p className="text-sm text-gray-600">
+					<div style={ { border: '2px dashed #d1d5db', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center', backgroundColor: '#f9fafb' } }>
+						<Upload style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#9ca3af' } } />
+						<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
 							{ __( 'Dateien hierher ziehen oder klicken zum Auswählen', 'recruiting-playbook' ) }
 						</p>
 						{ field.validation?.allowed_types && (
-							<p className="text-xs text-gray-500 mt-1">
+							<p style={ { fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' } }>
 								{ __( 'Erlaubte Typen:', 'recruiting-playbook' ) } { field.validation.allowed_types }
 							</p>
 						) }
 						{ field.validation?.max_file_size && (
-							<p className="text-xs text-gray-500">
+							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 								{ __( 'Max. Größe:', 'recruiting-playbook' ) } { field.validation.max_file_size } MB
 							</p>
 						) }
@@ -222,14 +222,14 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	};
 
 	return (
-		<div className={ `rp-field-preview rp-field-preview--${ field.type } ${ widthClass } space-y-2` }>
+		<div className={ `rp-field-preview rp-field-preview--${ field.type } ${ widthClass }` } style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 			{ /* Don't show label for checkbox single mode */ }
 			{ ! ( field.type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
 
 			{ renderInput() }
 
 			{ field.description && (
-				<p className="text-xs text-gray-500">{ field.description }</p>
+				<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>{ field.description }</p>
 			) }
 		</div>
 	);

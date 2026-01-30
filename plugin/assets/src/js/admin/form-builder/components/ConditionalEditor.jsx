@@ -50,7 +50,7 @@ function ConditionRow( { condition, allFields, onChange, onRemove, i18n } ) {
 	const needsValue = selectedOperator?.needsValue ?? true;
 
 	return (
-		<div className="flex items-center gap-2 p-3 bg-gray-50 rounded border border-gray-200">
+		<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
 			{ /* Field selector */ }
 			<Select
 				value={ condition.field || '' }
@@ -102,7 +102,7 @@ function ConditionRow( { condition, allFields, onChange, onRemove, i18n } ) {
 				onClick={ onRemove }
 				className="text-red-500 hover:text-red-700 hover:bg-red-50"
 			>
-				<Trash2 className="h-4 w-4" />
+				<Trash2 style={ { height: '1rem', width: '1rem' } } />
 			</Button>
 		</div>
 	);
@@ -178,14 +178,14 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 	const sourceFields = allFields.filter( ( f ) => f.type !== 'heading' && f.type !== 'file' );
 
 	return (
-		<div className="rp-conditional-editor space-y-4">
+		<div className="rp-conditional-editor" style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 			{ /* Enable toggle */ }
-			<div className="flex items-center justify-between">
-				<div className="space-y-1">
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+				<div style={ { display: 'flex', flexDirection: 'column', gap: '0.25rem' } }>
 					<Label htmlFor="conditional_enabled">
 						{ i18n?.conditionalEnable || __( 'Bedingte Anzeige aktivieren', 'recruiting-playbook' ) }
 					</Label>
-					<p className="text-xs text-gray-500">
+					<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 						{ i18n?.conditionalHelp || __( 'Dieses Feld nur anzeigen, wenn bestimmte Bedingungen erfüllt sind', 'recruiting-playbook' ) }
 					</p>
 				</div>
@@ -200,7 +200,7 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 				<>
 					{ /* Logic selector (AND/OR) */ }
 					{ conditions.length > 1 && (
-						<div className="flex items-center gap-2">
+						<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 							<Label>{ i18n?.showWhen || __( 'Anzeigen wenn', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ logic }
@@ -218,7 +218,7 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 									</SelectItem>
 								</SelectContent>
 							</Select>
-							<span className="text-sm text-gray-600">
+							<span style={ { fontSize: '0.875rem', color: '#4b5563' } }>
 								{ logic === 'and'
 									? ( i18n?.conditionsMatch || __( 'Bedingungen zutreffen', 'recruiting-playbook' ) )
 									: ( i18n?.conditionMatches || __( 'Bedingung zutrifft', 'recruiting-playbook' ) )
@@ -228,11 +228,11 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 					) }
 
 					{ /* Conditions list */ }
-					<div className="space-y-2">
+					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						{ conditions.map( ( condition, index ) => (
 							<div key={ index }>
 								{ index > 0 && (
-									<div className="text-center text-xs text-gray-500 py-1">
+									<div style={ { textAlign: 'center', fontSize: '0.75rem', color: '#6b7280', padding: '0.25rem 0' } }>
 										{ logic === 'and'
 											? ( i18n?.conditionAnd || __( 'UND', 'recruiting-playbook' ) )
 											: ( i18n?.conditionOr || __( 'ODER', 'recruiting-playbook' ) )
@@ -256,19 +256,19 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 						size="sm"
 						onClick={ handleAddCondition }
 					>
-						<Plus className="h-4 w-4 mr-1" />
+						<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 						{ i18n?.addCondition || __( 'Bedingung hinzufügen', 'recruiting-playbook' ) }
 					</Button>
 
 					{ /* Help text */ }
-					<p className="text-xs text-gray-500 pt-2 border-t">
+					<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0, paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
 						{ i18n?.conditionalTip || __( 'Mit bedingter Anzeige können Sie Felder basierend auf anderen Feldwerten ein- oder ausblenden.', 'recruiting-playbook' ) }
 					</p>
 				</>
 			) }
 
 			{ allFields.length === 0 && isEnabled && (
-				<div className="text-center py-4 text-gray-500 text-sm border-2 border-dashed rounded">
+				<div style={ { textAlign: 'center', padding: '1rem 0', color: '#6b7280', fontSize: '0.875rem', border: '2px dashed #e5e7eb', borderRadius: '0.25rem' } }>
 					{ i18n?.noFieldsForConditional || __( 'Keine anderen Felder vorhanden, die als Bedingung verwendet werden können.', 'recruiting-playbook' ) }
 				</div>
 			) }

@@ -53,18 +53,25 @@ function OptionItem( { option, index, onChange, onRemove, i18n } ) {
 	return (
 		<div
 			ref={ setNodeRef }
-			style={ style }
-			className={ `
-				flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200
-				${ isDragging ? 'shadow-lg z-10' : '' }
-			` }
+			style={ {
+				...style,
+				display: 'flex',
+				alignItems: 'center',
+				gap: '0.5rem',
+				padding: '0.5rem',
+				backgroundColor: '#f9fafb',
+				borderRadius: '0.25rem',
+				border: '1px solid #e5e7eb',
+				boxShadow: isDragging ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
+				zIndex: isDragging ? 10 : 'auto',
+			} }
 		>
 			<button
-				className="cursor-grab text-gray-400 hover:text-gray-600 p-1"
+				style={ { cursor: 'grab', color: '#9ca3af', padding: '0.25rem', background: 'none', border: 'none' } }
 				{ ...attributes }
 				{ ...listeners }
 			>
-				<GripVertical className="h-4 w-4" />
+				<GripVertical style={ { height: '1rem', width: '1rem' } } />
 			</button>
 
 			<Input
@@ -85,9 +92,9 @@ function OptionItem( { option, index, onChange, onRemove, i18n } ) {
 				variant="ghost"
 				size="sm"
 				onClick={ () => onRemove( index ) }
-				className="text-red-500 hover:text-red-700 hover:bg-red-50"
+				style={ { color: '#ef4444' } }
 			>
-				<Trash2 className="h-4 w-4" />
+				<Trash2 style={ { height: '1rem', width: '1rem' } } />
 			</Button>
 		</div>
 	);
@@ -162,17 +169,17 @@ export default function OptionsEditor( { options = [], onChange, fieldType, i18n
 	};
 
 	return (
-		<div className="rp-options-editor space-y-3">
-			<div className="flex items-center justify-between">
+		<div className="rp-options-editor" style={ { display: 'flex', flexDirection: 'column', gap: '0.75rem' } }>
+			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 				<Label>{ i18n?.options || __( 'Optionen', 'recruiting-playbook' ) }</Label>
 				<Button variant="outline" size="sm" onClick={ handleAdd }>
-					<Plus className="h-4 w-4 mr-1" />
+					<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
 					{ i18n?.addOption || __( 'Option hinzufügen', 'recruiting-playbook' ) }
 				</Button>
 			</div>
 
 			{ optionsWithIds.length === 0 ? (
-				<div className="text-center py-4 text-gray-500 text-sm border-2 border-dashed rounded">
+				<div style={ { textAlign: 'center', padding: '1rem 0', color: '#6b7280', fontSize: '0.875rem', border: '2px dashed #e5e7eb', borderRadius: '0.25rem' } }>
 					{ i18n?.noOptions || __( 'Noch keine Optionen. Fügen Sie mindestens eine hinzu.', 'recruiting-playbook' ) }
 				</div>
 			) : (
@@ -185,7 +192,7 @@ export default function OptionsEditor( { options = [], onChange, fieldType, i18n
 						items={ optionsWithIds.map( ( o ) => o.id ) }
 						strategy={ verticalListSortingStrategy }
 					>
-						<div className="space-y-2">
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							{ optionsWithIds.map( ( option, index ) => (
 								<OptionItem
 									key={ option.id }
@@ -201,7 +208,7 @@ export default function OptionsEditor( { options = [], onChange, fieldType, i18n
 				</DndContext>
 			) }
 
-			<p className="text-xs text-gray-500">
+			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
 				{ i18n?.optionsHelp || __( 'Ziehen Sie Optionen zum Sortieren. Der Wert wird gespeichert, die Bezeichnung wird angezeigt.', 'recruiting-playbook' ) }
 			</p>
 		</div>
