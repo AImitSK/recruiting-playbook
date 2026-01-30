@@ -20,7 +20,7 @@ services:
       - ..:/workspace:cached
 
     ports:
-      - "8080:80"
+      - "8082:80"  # Port 8080 ist oft von IDEs belegt
     environment:
       WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: wordpress
