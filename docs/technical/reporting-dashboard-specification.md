@@ -2380,4 +2380,48 @@ LIMIT %d;
 
 ---
 
-*Letzte Aktualisierung: 29. Januar 2025*
+## 13. Implementierungshinweise
+
+### Umgesetzte Features (Januar 2025)
+
+| Feature | Status | Hinweis |
+|---------|--------|---------|
+| Stats-Dashboard (React-Seite) | ✅ | Vollständig implementiert |
+| Bewerbungen pro Stelle | ✅ | JobStatsTable Komponente |
+| Bewerbungen pro Zeitraum | ✅ | TrendChart mit Periodenauswahl |
+| Time-to-Hire | ✅ | TimeToHireService |
+| CSV-Export | ✅ | Bewerbungen & Statistiken |
+| Systemstatus-Widget | ✅ | SystemStatus Komponente |
+| Conversion-Rate | ❌ | **Entfernt** - View-Tracking nicht implementiert |
+
+### Änderungen zur Spezifikation
+
+1. **Conversion-Rate entfernt**: Die `tracking.js` Datei pusht Events nur an `window.dataLayer` für Google Tag Manager. Es gibt keine Server-seitige Speicherung von Job-Views in der `rp_activity_log` Tabelle. Die Spalten "Aufrufe" und "Conversion" wurden aus der JobStatsTable entfernt.
+
+2. **ConversionFunnel**: Der Conversion-Tab im Reporting zeigt simulierte Daten basierend auf Bewerbungsstatus statt echten View-Daten.
+
+### Zukünftige Erweiterung: View-Tracking
+
+Um echte Conversion-Daten zu ermöglichen, müsste implementiert werden:
+
+```php
+// Beispiel: REST-Endpoint für View-Tracking
+register_rest_route( 'recruiting/v1', '/track/view', [
+    'methods'  => 'POST',
+    'callback' => [ $this, 'track_job_view' ],
+    'permission_callback' => '__return_true',
+]);
+
+// Activity Log Eintrag
+$this->activity_service->log( [
+    'action'      => 'job_viewed',
+    'object_type' => 'job',
+    'object_id'   => $job_id,
+    'ip_hash'     => wp_hash( $_SERVER['REMOTE_ADDR'] ),
+    'created_at'  => current_time( 'mysql' ),
+] );
+```
+
+---
+
+*Letzte Aktualisierung: 30. Januar 2025*

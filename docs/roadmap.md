@@ -357,15 +357,15 @@ Design & Branding │                   │
 - [x] Rolle: Hiring Manager (nur Lesen, Kommentieren)
 - [x] Stellen-Zuweisung pro User
 
-### M2.5: Reporting & Dashboard
+### M2.5: Reporting & Dashboard ✅
 
-- [ ] Dashboard-Widget
-- [ ] Bewerbungen pro Stelle
-- [ ] Bewerbungen pro Zeitraum
-- [ ] Time-to-Hire Berechnung
-- [ ] Conversion-Rate (Besucher → Bewerbung)
-- [ ] CSV-Export
-- [ ] **Systemstatus-Widget (Integritäts-Check)**
+- [x] **Stats-Dashboard** (React-Seite mit Übersichtskarten)
+- [x] Bewerbungen pro Stelle (JobStatsTable)
+- [x] Bewerbungen pro Zeitraum (TrendChart mit Periodenauswahl)
+- [x] Time-to-Hire Berechnung (TimeToHireService)
+- [x] CSV-Export (Bewerbungen & Statistiken)
+- [x] **Systemstatus-Widget (Integritäts-Check)**
+- [ ] ~~Conversion-Rate (Besucher → Bewerbung)~~ - View-Tracking nicht implementiert, entfernt
 
 ### M2.6: Erweiterte Formulare
 
@@ -480,6 +480,8 @@ Design & Branding │                   │
 | E-Mail-Templates | ✅ |
 | Bewerbermanagement (Notizen, Ratings, Timeline) | ✅ |
 | Talent-Pool | ✅ |
+| Reporting & Dashboard | ✅ |
+| Benutzerrollen & Stellen-Zuweisung | ✅ |
 | Design & Branding Admin-Seite | ⬜ |
 | Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
@@ -670,4 +672,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: 28. Januar 2025*
+*Letzte Aktualisierung: 30. Januar 2025*

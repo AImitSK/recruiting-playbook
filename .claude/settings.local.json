@@ -48,7 +48,8 @@
       "Bash(powershell -Command \"docker ps 2>&1\")",
       "Bash(powershell -Command:*)",
       "Bash(git pull:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(composer test:*)"
     ]
   }
 }
