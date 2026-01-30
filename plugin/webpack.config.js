@@ -16,6 +16,8 @@ module.exports = {
 		admin: path.resolve( __dirname, 'assets/src/js/admin/index.js' ),
 		// E-Mail-Templates App (separate Seite)
 		'admin-email': path.resolve( __dirname, 'assets/src/js/admin/email/index.js' ),
+		// Form Builder App (separate Seite)
+		'admin-form-builder': path.resolve( __dirname, 'assets/src/js/admin/form-builder/index.js' ),
 	},
 	output: {
 		...defaultConfig.output,

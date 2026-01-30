@@ -1,0 +1,197 @@
+/**
+ * Form Builder Admin Styles
+ *
+ * @package RecruitingPlaybook
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Form Builder Container */
+.rp-form-builder {
+	@apply max-w-7xl mx-auto;
+}
+
+.rp-form-builder__header {
+	@apply mb-6;
+}
+
+.rp-form-builder__header h1 {
+	@apply text-2xl font-bold text-gray-900;
+}
+
+.rp-form-builder__description {
+	@apply text-gray-600 mt-2;
+}
+
+/* Field List */
+.rp-field-list {
+	@apply space-y-6;
+}
+
+.rp-field-list-item {
+	@apply transition-all duration-150;
+}
+
+.rp-field-list-item:hover {
+	@apply shadow-sm;
+}
+
+.rp-field-list-item--dragging {
+	@apply shadow-lg z-50;
+}
+
+.rp-field-list-item__handle {
+	@apply cursor-grab active:cursor-grabbing;
+}
+
+.rp-field-list-item__info {
+	@apply min-w-0;
+}
+
+/* Field Editor */
+.rp-field-editor {
+	@apply sticky top-4;
+}
+
+/* Options Editor */
+.rp-options-editor {
+	@apply border-t pt-4 mt-4;
+}
+
+/* Conditional Editor */
+.rp-conditional-editor {
+	@apply space-y-4;
+}
+
+/* Form Preview */
+.rp-form-preview__container {
+	@apply transition-all duration-300;
+}
+
+.rp-form-preview__form {
+	@apply bg-white rounded-lg p-6 shadow-sm;
+}
+
+.rp-form-preview__fields {
+	@apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.rp-field-preview {
+	@apply space-y-2;
+}
+
+.rp-field-preview--heading {
+	@apply col-span-full;
+}
+
+/* Field Type Selector Modal */
+.rp-field-type-selector {
+	@apply fixed inset-0 z-50;
+}
+
+/* Template Manager */
+.rp-template-manager {
+	@apply space-y-6;
+}
+
+/* Animation for saving state */
+@keyframes pulse-save {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
+	}
+}
+
+.rp-saving {
+	animation: pulse-save 1s ease-in-out infinite;
+}
+
+/* Drag & Drop indicators */
+.sortable-ghost {
+	@apply opacity-50 bg-blue-50 border-blue-300;
+}
+
+.sortable-chosen {
+	@apply shadow-lg;
+}
+
+/* Badge customization */
+.rp-form-builder .badge-required {
+	@apply bg-red-100 text-red-700 text-xs;
+}
+
+.rp-form-builder .badge-system {
+	@apply bg-gray-100 text-gray-600 text-xs;
+}
+
+.rp-form-builder .badge-pro {
+	@apply bg-amber-100 text-amber-700 text-xs;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+	.rp-form-builder__content {
+		@apply grid-cols-1;
+	}
+
+	.rp-field-editor {
+		@apply relative top-0;
+	}
+}
+
+/* Dark mode support (if WordPress theme uses it) */
+@media (prefers-color-scheme: dark) {
+	.rp-admin.rp-form-builder {
+		/* Add dark mode styles if needed */
+	}
+}
+
+/* Print styles - hide form builder in print */
+@media print {
+	.rp-form-builder {
+		display: none !important;
+	}
+}
+
+/* Animations */
+.rp-form-builder [x-cloak] {
+	display: none !important;
+}
+
+/* Transition utilities */
+.rp-transition-field {
+	@apply transition-all duration-200 ease-in-out;
+}
+
+/* Focus states for accessibility */
+.rp-form-builder button:focus-visible,
+.rp-form-builder input:focus-visible,
+.rp-form-builder select:focus-visible,
+.rp-form-builder textarea:focus-visible {
+	@apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Scrollbar styling for lists */
+.rp-field-list ul::-webkit-scrollbar,
+.rp-options-editor::-webkit-scrollbar {
+	width: 6px;
+}
+
+.rp-field-list ul::-webkit-scrollbar-track,
+.rp-options-editor::-webkit-scrollbar-track {
+	@apply bg-gray-100 rounded;
+}
+
+.rp-field-list ul::-webkit-scrollbar-thumb,
+.rp-options-editor::-webkit-scrollbar-thumb {
+	@apply bg-gray-300 rounded;
+}
+
+.rp-field-list ul::-webkit-scrollbar-thumb:hover,
+.rp-options-editor::-webkit-scrollbar-thumb:hover {
+	@apply bg-gray-400;
+}

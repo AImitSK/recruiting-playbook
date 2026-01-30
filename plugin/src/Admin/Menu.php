@@ -16,6 +16,7 @@ use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
 use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
 use RecruitingPlaybook\Admin\Pages\DashboardPage;
+use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\LicensePage;
 use RecruitingPlaybook\Admin\Pages\ReportingPage;
@@ -115,6 +116,16 @@ class Menu {
 			'rp_view_stats',
 			'rp-reporting',
 			[ $this, 'renderReporting' ]
+		);
+
+		// Formular-Builder (Pro-Feature).
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Formular-Builder', 'recruiting-playbook' ),
+			$this->getFormBuilderMenuLabel(),
+			'rp_manage_forms',
+			'rp-form-builder',
+			[ $this, 'renderFormBuilder' ]
 		);
 
 		// Einstellungen (Export ist jetzt als Tab integriert).
@@ -564,11 +575,36 @@ class Menu {
 	}
 
 	/**
+	 * Form Builder Menü-Label mit Lock-Icon für Free-User
+	 *
+	 * @return string Menü-Label.
+	 */
+	private function getFormBuilderMenuLabel(): string {
+		$label = __( 'Formular-Builder', 'recruiting-playbook' );
+
+		// Lock-Icon für Free-User (Custom Fields sind Pro-Feature).
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
+			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
+		}
+
+		return $label;
+	}
+
+	/**
 	 * Reporting-Seite rendern
 	 */
 	public function renderReporting(): void {
 		$reporting_page = new ReportingPage();
 		$reporting_page->render();
+	}
+
+	/**
+	 * Form Builder-Seite rendern
+	 */
+	public function renderFormBuilder(): void {
+		$form_builder_page = new FormBuilderPage();
+		$form_builder_page->enqueue_assets();
+		$form_builder_page->render();
 	}
 
 	/**
