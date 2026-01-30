@@ -1695,6 +1695,15 @@ curl -X PUT \
 
 ## Änderungsprotokoll
 
+### v2.1.0 (Januar 2026)
+
+- **Custom Fields API (Pro)** - Benutzerdefinierte Formularfelder verwalten (`/field-definitions`)
+- **Form Templates API (Pro)** - Formular-Templates erstellen und verwalten (`/form-templates`)
+- **Conditional Logic** - Bedingte Logik für dynamische Formulare
+- **Multi-File-Upload** - Mehrere Dateien pro Feld hochladen
+- **Job-spezifische Felder** - Formulare pro Stelle anpassen (`GET /jobs/{id}/fields`)
+- **Feature-Gate** - Erfordert Pro-Lizenz (`custom_fields`)
+
 ### v2.0.0 (Januar 2026)
 
 - **Benutzerrollen API (Pro)** - Rollen und Capabilities verwalten (`GET/PUT /roles`)
