@@ -37,6 +37,7 @@ import { RatingDetailed } from './RatingStars';
 import { Timeline } from './Timeline';
 import { TalentPoolButton } from './TalentPoolButton';
 import { EmailTab } from './EmailTab';
+import { CustomFieldsPanel } from './CustomFieldsPanel';
 
 /**
  * Status-Konfiguration mit Farben
@@ -446,6 +447,11 @@ export function ApplicantDetail( { applicationId } ) {
 										) }
 									</CardContent>
 								</Card>
+
+								{ /* Custom Fields (Pro) */ }
+								{ application.custom_fields && application.custom_fields.length > 0 && (
+									<CustomFieldsPanel customFields={ application.custom_fields } />
+								) }
 
 								{ /* Bewertung */ }
 								<Card>

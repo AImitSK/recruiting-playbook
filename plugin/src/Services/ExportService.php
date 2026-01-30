@@ -32,12 +32,31 @@ class ExportService {
 	private StatsRepository $repository;
 
 	/**
+	 * Custom Fields Service
+	 *
+	 * @var CustomFieldsService|null
+	 */
+	private ?CustomFieldsService $custom_fields_service = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @param StatsRepository|null $repository Repository-Instanz (für Tests).
 	 */
 	public function __construct( ?StatsRepository $repository = null ) {
 		$this->repository = $repository ?? new StatsRepository();
+	}
+
+	/**
+	 * CustomFieldsService lazy-loading
+	 *
+	 * @return CustomFieldsService
+	 */
+	private function getCustomFieldsService(): CustomFieldsService {
+		if ( null === $this->custom_fields_service ) {
+			$this->custom_fields_service = new CustomFieldsService();
+		}
+		return $this->custom_fields_service;
 	}
 
 	/**
@@ -70,9 +89,22 @@ class ExportService {
 		// BOM für Excel UTF-8 Kompatibilität.
 		fwrite( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
-		// Header-Zeile.
+		// Header-Zeile (Standard-Spalten).
 		$columns = $this->getExportColumns( $args['columns'] ?? [] );
-		fputcsv( $output, array_values( $columns ), ';' );
+
+		// Custom Fields Header ermitteln (Pro-Feature).
+		$custom_field_headers = [];
+		$include_custom_fields = function_exists( 'rp_can' ) && rp_can( 'custom_fields' );
+		if ( $include_custom_fields ) {
+			$custom_field_headers = $this->getCustomFieldHeaders( $args['job_id'] ?? null );
+		}
+
+		// Header-Zeile schreiben.
+		$header_row = array_values( $columns );
+		if ( ! empty( $custom_field_headers ) ) {
+			$header_row = array_merge( $header_row, array_values( $custom_field_headers ) );
+		}
+		fputcsv( $output, $header_row, ';' );
 
 		// Daten in Batches exportieren.
 		$offset = 0;
@@ -85,6 +117,17 @@ class ExportService {
 
 			foreach ( $applications as $app ) {
 				$row = $this->formatRow( $app, array_keys( $columns ) );
+
+				// Custom Fields hinzufügen.
+				if ( $include_custom_fields && ! empty( $custom_field_headers ) ) {
+					$custom_values = $this->getCustomFieldValues(
+						(int) ( $app['id'] ?? 0 ),
+						(int) ( $app['job_id'] ?? 0 ),
+						array_keys( $custom_field_headers )
+					);
+					$row = array_merge( $row, $custom_values );
+				}
+
 				fputcsv( $output, $row, ';' );
 			}
 
@@ -303,67 +346,172 @@ class ExportService {
 	}
 
 	/**
+	 * Custom Field Headers ermitteln
+	 *
+	 * @param int|null $job_id Optional: Filter nach Job-ID.
+	 * @return array<string, string> Field-Key => Label.
+	 */
+	private function getCustomFieldHeaders( ?int $job_id = null ): array {
+		$field_service = new FieldDefinitionService();
+
+		// Felder für spezifischen Job oder alle aktiven Felder.
+		if ( $job_id ) {
+			$fields = $field_service->getFieldsForJob( $job_id );
+		} else {
+			$fields = $field_service->getActiveFields();
+		}
+
+		$headers = [];
+
+		foreach ( $fields as $field ) {
+			// System-Felder und Headings überspringen.
+			if ( $field->isSystem() || 'heading' === $field->getType() ) {
+				continue;
+			}
+
+			// Nur aktivierte Felder.
+			if ( ! $field->isEnabled() ) {
+				continue;
+			}
+
+			$headers[ $field->getFieldKey() ] = $field->getLabel();
+		}
+
+		return $headers;
+	}
+
+	/**
+	 * Custom Field Werte für Export abrufen
+	 *
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param int   $job_id         Job-ID.
+	 * @param array $field_keys     Feld-Keys in der gewünschten Reihenfolge.
+	 * @return array Werte in der Reihenfolge der Field-Keys.
+	 */
+	private function getCustomFieldValues( int $application_id, int $job_id, array $field_keys ): array {
+		if ( $application_id <= 0 || $job_id <= 0 ) {
+			return array_fill( 0, count( $field_keys ), '' );
+		}
+
+		$export_values = $this->getCustomFieldsService()->getExportValues( $application_id, $job_id );
+
+		// Werte in der richtigen Reihenfolge zurückgeben.
+		$result = [];
+		foreach ( $field_keys as $key ) {
+			// Label-basiert oder Key-basiert suchen.
+			$value = '';
+			foreach ( $export_values as $label => $val ) {
+				// Versuche exakte Key-Übereinstimmung oder Label-Übereinstimmung.
+				if ( $label === $key || $this->normalizeKey( $label ) === $this->normalizeKey( $key ) ) {
+					$value = $val;
+					break;
+				}
+			}
+			$result[] = $value;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Key normalisieren für Vergleich
+	 *
+	 * @param string $key Key oder Label.
+	 * @return string
+	 */
+	private function normalizeKey( string $key ): string {
+		return strtolower( str_replace( [ ' ', '-', '_' ], '', $key ) );
+	}
+
+	/**
 	 * Verfügbare Spalten abrufen
 	 *
 	 * @return array
 	 */
 	public function getAvailableColumns(): array {
-		return [
+		$standard_columns = [
 			[
 				'key'      => 'id',
 				'label'    => __( 'ID', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'candidate_name',
 				'label'    => __( 'Name', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'email',
 				'label'    => __( 'E-Mail', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'phone',
 				'label'    => __( 'Telefon', 'recruiting-playbook' ),
 				'default'  => false,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'job_title',
 				'label'    => __( 'Stelle', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'status',
 				'label'    => __( 'Status', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'source',
 				'label'    => __( 'Quelle', 'recruiting-playbook' ),
 				'default'  => false,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'created_at',
 				'label'    => __( 'Bewerbungsdatum', 'recruiting-playbook' ),
 				'default'  => true,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'updated_at',
 				'label'    => __( 'Letzte Änderung', 'recruiting-playbook' ),
 				'default'  => false,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'hired_at',
 				'label'    => __( 'Einstellungsdatum', 'recruiting-playbook' ),
 				'default'  => false,
+				'group'    => 'standard',
 			],
 			[
 				'key'      => 'time_in_process',
 				'label'    => __( 'Tage im Prozess', 'recruiting-playbook' ),
 				'default'  => false,
+				'group'    => 'standard',
 			],
 		];
+
+		// Custom Fields als verfügbare Spalten hinzufügen (Pro-Feature).
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+			$custom_field_headers = $this->getCustomFieldHeaders();
+
+			foreach ( $custom_field_headers as $key => $label ) {
+				$standard_columns[] = [
+					'key'     => 'custom_' . $key,
+					'label'   => $label,
+					'default' => false,
+					'group'   => 'custom',
+				];
+			}
+		}
+
+		return $standard_columns;
 	}
 }

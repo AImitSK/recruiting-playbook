@@ -91,7 +91,66 @@ class FieldDefinitionService {
 		$job_fields = $this->repository->findByJob( $job_id );
 
 		// Felder zusammenführen.
-		return $this->mergeFields( $system_fields, $template_fields, $job_fields );
+		$merged = $this->mergeFields( $system_fields, $template_fields, $job_fields );
+
+		// Job-spezifische Custom Fields Konfiguration anwenden (aus Meta Box).
+		$merged = $this->applyJobCustomFieldsConfig( $job_id, $merged );
+
+		return $merged;
+	}
+
+	/**
+	 * Job-spezifische Custom Fields Konfiguration anwenden
+	 *
+	 * @param int                  $job_id Job ID.
+	 * @param array<FieldDefinition> $fields Felder.
+	 * @return array<FieldDefinition>
+	 */
+	private function applyJobCustomFieldsConfig( int $job_id, array $fields ): array {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			return $fields;
+		}
+
+		// Meta-Box Konfiguration prüfen.
+		$override = get_post_meta( $job_id, '_rp_custom_fields_override', true );
+
+		if ( ! $override ) {
+			return $fields; // Standard-Konfiguration verwenden.
+		}
+
+		$config = get_post_meta( $job_id, '_rp_custom_fields_config', true );
+
+		if ( ! $config ) {
+			return $fields;
+		}
+
+		$config_array = json_decode( $config, true );
+
+		if ( ! is_array( $config_array ) ) {
+			return $fields;
+		}
+
+		// Felder filtern basierend auf Konfiguration.
+		foreach ( $fields as $field ) {
+			$field_key = $field->getFieldKey();
+
+			// System-Felder nicht ändern.
+			if ( $field->isSystem() ) {
+				continue;
+			}
+
+			// Wenn Feld in Konfiguration vorhanden, Status übernehmen.
+			if ( isset( $config_array[ $field_key ] ) ) {
+				// Wir müssen die enabled-Property ändern.
+				// Da FieldDefinition immutable ist, erstellen wir ein neues mit geklonten Daten.
+				$reflection = new \ReflectionProperty( $field, 'is_enabled' );
+				$reflection->setAccessible( true );
+				$reflection->setValue( $field, (bool) $config_array[ $field_key ] );
+			}
+		}
+
+		return $fields;
 	}
 
 	/**

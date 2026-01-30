@@ -342,6 +342,13 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'integer',
 				'required'    => false,
 			],
+			// Custom Fields (Pro)
+			'custom_fields'    => [
+				'description' => __( 'Custom Field Werte (Pro-Feature)', 'recruiting-playbook' ),
+				'type'        => 'object',
+				'required'    => false,
+				'default'     => [],
+			],
 		];
 	}
 
@@ -375,6 +382,15 @@ class ApplicationController extends WP_REST_Controller {
 		// Dateien verarbeiten
 		$files = $request->get_file_params();
 
+		// Custom Fields extrahieren (alle Dateien die mit custom_ beginnen).
+		$custom_files = [];
+		foreach ( $files as $key => $file ) {
+			if ( str_starts_with( $key, 'custom_' ) ) {
+				$custom_files[ $key ] = $file;
+				unset( $files[ $key ] );
+			}
+		}
+
 		// Bewerbung erstellen
 		$result = $this->application_service->create( [
 			'job_id'          => $request->get_param( 'job_id' ),
@@ -388,6 +404,8 @@ class ApplicationController extends WP_REST_Controller {
 			'ip_address'      => $this->get_client_ip(),
 			'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
 			'files'           => $files,
+			'custom_fields'   => $request->get_param( 'custom_fields' ) ?: [],
+			'custom_files'    => $custom_files,
 		] );
 
 		if ( is_wp_error( $result ) ) {

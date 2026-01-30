@@ -17,6 +17,7 @@ use RecruitingPlaybook\Taxonomies\JobLocation;
 use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
+use RecruitingPlaybook\Admin\MetaBoxes\JobCustomFieldsMeta;
 use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
 use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
 use RecruitingPlaybook\Frontend\JobSchema;
@@ -273,6 +274,11 @@ final class Plugin {
 		$job_meta = new JobMeta();
 		add_action( 'add_meta_boxes', [ $job_meta, 'register' ] );
 		add_action( 'save_post_job_listing', [ $job_meta, 'save' ], 10, 2 );
+
+		// Custom Fields Meta Box (Pro-Feature).
+		$custom_fields_meta = new JobCustomFieldsMeta();
+		add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
+		add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
 
 		// Aktivierungs-Redirect (Setup-Wizard).
 		add_action( 'admin_init', [ $this, 'activationRedirect' ] );

@@ -22,6 +22,7 @@ namespace RecruitingPlaybook\Frontend;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\SpamProtection;
+use RecruitingPlaybook\Services\FormRenderService;
 
 /**
  * Shortcode-Handler
@@ -29,9 +30,17 @@ use RecruitingPlaybook\Services\SpamProtection;
  * Verfügbare Shortcodes:
  * - [rp_jobs] - Stellenliste
  * - [rp_job_search] - Stellensuche mit Filtern
- * - [rp_application_form] - Bewerbungsformular
+ * - [rp_application_form] - Bewerbungsformular (statisch, 3 Schritte)
+ * - [rp_custom_application_form] - Bewerbungsformular mit Custom Fields (Pro)
  */
 class Shortcodes {
+
+	/**
+	 * FormRenderService
+	 *
+	 * @var FormRenderService|null
+	 */
+	private ?FormRenderService $form_render_service = null;
 
 	/**
 	 * Shortcodes registrieren
@@ -40,6 +49,19 @@ class Shortcodes {
 		add_shortcode( 'rp_jobs', [ $this, 'renderJobList' ] );
 		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
+		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
+	}
+
+	/**
+	 * FormRenderService lazy laden
+	 *
+	 * @return FormRenderService
+	 */
+	private function getFormRenderService(): FormRenderService {
+		if ( null === $this->form_render_service ) {
+			$this->form_render_service = new FormRenderService();
+		}
+		return $this->form_render_service;
 	}
 
 	/**
@@ -655,6 +677,188 @@ class Shortcodes {
 		</div>
 		<?php
 
+		return ob_get_clean();
+	}
+
+	/**
+	 * Custom Application Form mit dynamischen Feldern rendern (Pro)
+	 *
+	 * Attribute:
+	 * - job_id: ID der Stelle (required oder aktueller Job)
+	 * - title: Überschrift (default: "Jetzt bewerben")
+	 * - show_job_title: Job-Titel anzeigen (true/false)
+	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderCustomApplicationForm( $atts ): string {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			// Fallback auf Standard-Formular.
+			return $this->renderApplicationForm( $atts );
+		}
+
+		$atts = shortcode_atts(
+			[
+				'job_id'         => 0,
+				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
+				'show_job_title' => 'true',
+				'show_progress'  => 'true',
+			],
+			$atts,
+			'rp_custom_application_form'
+		);
+
+		$job_id = absint( $atts['job_id'] );
+
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
+		if ( ! $job_id && is_singular( 'job_listing' ) ) {
+			$job_id = get_the_ID();
+		}
+
+		// Validieren.
+		if ( ! $job_id ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
+					' . esc_html__( 'Fehler: Keine Stelle angegeben. Bitte job_id Attribut setzen.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		$job = get_post( $job_id );
+		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
+					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		// Assets laden.
+		$this->enqueueCustomFieldsAssets();
+
+		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
+		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
+
+		ob_start();
+		?>
+		<div class="rp-plugin">
+			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( $job_id ); ?>" data-rp-custom-application-form>
+				<?php if ( ! empty( $atts['title'] ) ) : ?>
+					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php echo esc_html( $atts['title'] ); ?></h2>
+				<?php endif; ?>
+
+				<?php if ( $show_job_title ) : ?>
+					<p class="rp-text-gray-600 rp-mb-6">
+						<?php
+						printf(
+							/* translators: %s: Job title */
+							esc_html__( 'Bewerbung für: %s', 'recruiting-playbook' ),
+							'<strong>' . esc_html( $job->post_title ) . '</strong>'
+						);
+						?>
+					</p>
+				<?php endif; ?>
+
+				<?php echo $this->getCustomFormHtml( $job_id, $show_progress ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Custom Form HTML mit dynamischen Feldern generieren
+	 *
+	 * @param int  $job_id        Job ID.
+	 * @param bool $show_progress Fortschrittsanzeige anzeigen.
+	 * @return string HTML.
+	 */
+	private function getCustomFormHtml( int $job_id, bool $show_progress = true ): string {
+		$form_service = $this->getFormRenderService();
+
+		ob_start();
+		?>
+		<div x-data="rpCustomFieldsForm()" x-cloak>
+			<!-- Erfolgs-Meldung -->
+			<template x-if="submitted">
+				<div class="rp-text-center rp-py-12">
+					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
+					<p class="rp-text-gray-600"><?php esc_html_e( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ); ?></p>
+				</div>
+			</template>
+
+			<!-- Formular -->
+			<template x-if="!submitted">
+				<div>
+					<!-- Fehler-Meldung -->
+					<div x-show="error" x-cloak class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-mb-6">
+						<p class="rp-text-error rp-text-sm" x-text="error"></p>
+					</div>
+
+					<?php if ( $show_progress ) : ?>
+					<!-- Fortschrittsanzeige (Multi-Step) -->
+					<div x-show="totalSteps > 1" class="rp-mb-8">
+						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
+							<span><?php esc_html_e( 'Schritt', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'von', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span x-text="progress + '%'"></span>
+						</div>
+						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
+							<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
+						</div>
+					</div>
+					<?php endif; ?>
+
+					<form @submit.prevent="submit">
+						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+						<input type="hidden" name="job_id" :value="formData.job_id">
+
+						<!-- Dynamische Felder -->
+						<?php echo $form_service->renderForm( $job_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+						<!-- Navigation -->
+						<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">
+							<button
+								type="button"
+								x-show="step > 1"
+								@click="prevStep"
+								class="wp-element-button is-style-outline"
+							>
+								<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
+							</button>
+							<div x-show="step === 1 || totalSteps === 1"></div>
+
+							<button
+								x-show="step < totalSteps && totalSteps > 1"
+								type="button"
+								@click="nextStep"
+								class="wp-element-button"
+							>
+								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+							</button>
+
+							<button
+								x-show="step === totalSteps || totalSteps === 1"
+								type="submit"
+								:disabled="loading"
+								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
+							>
+								<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
+								<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</template>
+		</div>
+		<?php
 		return ob_get_clean();
 	}
 
