@@ -333,7 +333,11 @@ class CustomFieldFileService {
 		}
 
 		// MIME-Typ validieren (tatsächlicher Inhalt).
-		$finfo     = finfo_open( FILEINFO_MIME_TYPE );
+		$finfo = finfo_open( FILEINFO_MIME_TYPE );
+		if ( false === $finfo ) {
+			// Fallback wenn fileinfo nicht verfügbar: nur Extension prüfen.
+			return true;
+		}
 		$mime_type = finfo_file( $finfo, $file['tmp_name'] );
 		finfo_close( $finfo );
 
@@ -402,9 +406,14 @@ class CustomFieldFileService {
 		@chmod( $destination, 0640 );
 
 		// MIME-Typ ermitteln.
-		$finfo     = finfo_open( FILEINFO_MIME_TYPE );
-		$mime_type = finfo_file( $finfo, $destination );
-		finfo_close( $finfo );
+		$finfo = finfo_open( FILEINFO_MIME_TYPE );
+		if ( false === $finfo ) {
+			// Fallback: Extension als MIME-Typ verwenden.
+			$mime_type = mime_content_type( $destination ) ?: 'application/octet-stream';
+		} else {
+			$mime_type = finfo_file( $finfo, $destination );
+			finfo_close( $finfo );
+		}
 
 		// In DB speichern.
 		$table = $wpdb->prefix . 'rp_documents';
