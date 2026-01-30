@@ -44,6 +44,7 @@ use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Database\Migrator;
+use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Licensing\LicenseManager;
 use RecruitingPlaybook\Traits\Singleton;
 
@@ -112,6 +113,14 @@ final class Plugin {
 	private function maybeUpgradeDatabase(): void {
 		$migrator = new Migrator();
 		$migrator->createTables();
+
+		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+			if ( CustomFieldsMigration::needsMigration() ) {
+				// Migration im Hintergrund ausführen.
+				add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
+			}
+		}
 	}
 
 	/**
