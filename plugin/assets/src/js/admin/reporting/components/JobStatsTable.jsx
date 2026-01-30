@@ -6,7 +6,7 @@
  * @package RecruitingPlaybook
  */
 
-import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import {
 	Card,
 	CardContent,
@@ -22,7 +22,7 @@ import { Badge } from '../../components/ui/badge';
  * @param {Object} props Component props
  * @param {string} props.title Titel
  * @param {string} props.description Beschreibung
- * @param {Array} props.jobs Job-Daten [{id, title, applications, views, conversion_rate}]
+ * @param {Array} props.jobs Job-Daten [{id, title, applications, status}]
  * @param {boolean} props.loading Ladezustand
  * @param {number} props.limit Maximale Anzahl anzuzeigender Jobs
  */
@@ -126,28 +126,6 @@ export function JobStatsTable( {
 									<th
 										style={ {
 											padding: '0.75rem 1rem',
-											textAlign: 'right',
-											fontWeight: 500,
-											color: '#6b7280',
-											borderBottom: '1px solid #e5e7eb',
-										} }
-									>
-										Aufrufe
-									</th>
-									<th
-										style={ {
-											padding: '0.75rem 1rem',
-											textAlign: 'right',
-											fontWeight: 500,
-											color: '#6b7280',
-											borderBottom: '1px solid #e5e7eb',
-										} }
-									>
-										Conversion
-									</th>
-									<th
-										style={ {
-											padding: '0.75rem 1rem',
 											textAlign: 'center',
 											fontWeight: 500,
 											color: '#6b7280',
@@ -210,63 +188,6 @@ export function JobStatsTable( {
 											} }
 										>
 											{ job.applications?.toLocaleString( 'de-DE' ) || 0 }
-										</td>
-										<td
-											style={ {
-												padding: '0.75rem 1rem',
-												textAlign: 'right',
-												borderBottom: '1px solid #e5e7eb',
-												color: '#374151',
-											} }
-										>
-											{ job.views?.toLocaleString( 'de-DE' ) || '-' }
-										</td>
-										<td
-											style={ {
-												padding: '0.75rem 1rem',
-												textAlign: 'right',
-												borderBottom: '1px solid #e5e7eb',
-											} }
-										>
-											{ job.conversion_rate !== undefined ? (
-												<div
-													style={ {
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'flex-end',
-														gap: '0.25rem',
-													} }
-												>
-													{ job.conversion_rate > 5 ? (
-														<TrendingUp
-															style={ {
-																width: '0.875rem',
-																height: '0.875rem',
-																color: '#22c55e',
-															} }
-														/>
-													) : job.conversion_rate < 2 ? (
-														<TrendingDown
-															style={ {
-																width: '0.875rem',
-																height: '0.875rem',
-																color: '#ef4444',
-															} }
-														/>
-													) : null }
-													<span
-														style={ {
-															color: job.conversion_rate > 5 ? '#22c55e' :
-																job.conversion_rate < 2 ? '#ef4444' : '#374151',
-															fontWeight: 500,
-														} }
-													>
-														{ job.conversion_rate.toFixed( 1 ) }%
-													</span>
-												</div>
-											) : (
-												<span style={ { color: '#9ca3af' } }>-</span>
-											) }
 										</td>
 										<td
 											style={ {

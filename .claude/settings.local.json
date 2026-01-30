@@ -39,7 +39,16 @@
       "Bash(npm install:*)",
       "Bash(composer phpcs:*)",
       "Bash(vendor/bin/phpcs:*)",
-      "Bash(npm run build:2-admin-css:*)"
+      "Bash(npm run build:2-admin-css:*)",
+      "Bash(vendor/bin/phpunit:*)",
+      "Bash(ls -la \"C:\\\\Users\\\\StefanKühne\\\\Desktop\\\\Projekte\\\\recruiting-playbook\\\\plugin\\\\src\\\\Repositories\"\" 2>&1 || echo \"Directory may not exist \")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\StefanKühne\\\\Desktop\\\\Projekte\\\\recruiting-playbook\\\\plugin && vendor\\\\bin\\\\phpunit --filter=RoleManagerTest\")",
+      "Bash(cmd /c \"where php\")",
+      "Bash(cmd /c \"docker ps\")",
+      "Bash(powershell -Command \"docker ps 2>&1\")",
+      "Bash(powershell -Command:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)"
     ]
   }
 }
