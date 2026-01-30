@@ -52,8 +52,8 @@ class FormBuilderPage {
 
 		// Templates laden.
 		$template_service = new FormTemplateService();
-		$templates        = $template_service->getAllTemplates();
-		$default_template = $template_service->getDefaultTemplate();
+		$templates        = $template_service->getAll();
+		$default_template = $template_service->getDefault();
 
 		// Localize data for React component.
 		wp_localize_script(
