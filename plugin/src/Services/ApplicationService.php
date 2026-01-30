@@ -35,11 +35,30 @@ class ApplicationService {
 	private EmailService $email_service;
 
 	/**
+	 * Custom Fields Service
+	 *
+	 * @var CustomFieldsService|null
+	 */
+	private ?CustomFieldsService $custom_fields_service = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->document_service = new DocumentService();
 		$this->email_service    = new EmailService();
+	}
+
+	/**
+	 * Custom Fields Service lazy-loading
+	 *
+	 * @return CustomFieldsService
+	 */
+	private function getCustomFieldsService(): CustomFieldsService {
+		if ( null === $this->custom_fields_service ) {
+			$this->custom_fields_service = new CustomFieldsService();
+		}
+		return $this->custom_fields_service;
 	}
 
 	/**
@@ -100,6 +119,20 @@ class ApplicationService {
 			}
 		}
 
+		// 3b. Custom Fields verarbeiten (Pro-Feature).
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) && ! empty( $data['custom_fields'] ) ) {
+			$custom_fields_result = $this->processCustomFields(
+				(int) $data['job_id'],
+				$application_id,
+				$data['custom_fields'],
+				$data['custom_files'] ?? []
+			);
+
+			if ( is_wp_error( $custom_fields_result ) ) {
+				$this->logActivity( $application_id, 'custom_fields_error', $custom_fields_result->get_error_message() );
+			}
+		}
+
 		// 4. Activity Log
 		$this->logActivity( $application_id, 'application_received', 'Neue Bewerbung eingegangen' );
 
@@ -148,6 +181,12 @@ class ApplicationService {
 
 		// Dokumente laden
 		$application['documents'] = $this->document_service->getByApplication( $id );
+
+		// Custom Fields laden (Pro-Feature).
+		$application['custom_fields'] = [];
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+			$application['custom_fields'] = $this->getCustomFields( $id, (int) $application['job_id'] );
+		}
 
 		// Talent-Pool Status laden (Pro-Feature).
 		$application['in_talent_pool'] = false;
@@ -621,6 +660,49 @@ class ApplicationService {
 			],
 			[ '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
 		);
+	}
+
+	/**
+	 * Custom Fields verarbeiten und speichern
+	 *
+	 * @param int   $job_id         Job-ID.
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param array $data           Custom Field Daten.
+	 * @param array $files          Custom Field Dateien.
+	 * @return array|WP_Error Verarbeitete Custom Fields oder Fehler.
+	 */
+	private function processCustomFields( int $job_id, int $application_id, array $data, array $files = [] ): array|WP_Error {
+		$service = $this->getCustomFieldsService();
+
+		// Verarbeiten.
+		$result = $service->processCustomFields( $job_id, $application_id, $data, $files );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		// Speichern.
+		$saved = $service->saveCustomFields( $application_id, $result );
+
+		if ( ! $saved ) {
+			return new WP_Error(
+				'save_failed',
+				__( 'Custom Fields konnten nicht gespeichert werden.', 'recruiting-playbook' )
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Custom Fields einer Bewerbung abrufen
+	 *
+	 * @param int $application_id Bewerbungs-ID.
+	 * @param int $job_id         Job-ID.
+	 * @return array
+	 */
+	public function getCustomFields( int $application_id, int $job_id ): array {
+		return $this->getCustomFieldsService()->getFormattedCustomFields( $application_id, $job_id );
 	}
 
 	/**
