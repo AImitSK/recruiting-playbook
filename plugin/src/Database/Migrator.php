@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.8.0';
+	private const SCHEMA_VERSION = '1.8.1';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**

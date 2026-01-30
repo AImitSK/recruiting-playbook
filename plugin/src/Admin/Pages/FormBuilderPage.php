@@ -34,12 +34,14 @@ class FormBuilderPage {
 
 		foreach ( $registry->getAll() as $type_key => $field_type ) {
 			$field_types[ $type_key ] = [
-				'key'            => $type_key,
-				'label'          => $field_type->getLabel(),
-				'icon'           => $field_type->getIcon(),
-				'category'       => $field_type->getCategory(),
-				'defaultConfig'  => $field_type->getDefaultConfig(),
-				'settingsSchema' => $field_type->getSettingsSchema(),
+				'key'              => $type_key,
+				'label'            => $field_type->getLabel(),
+				'icon'             => $field_type->getIcon(),
+				'group'            => $field_type->getGroup(),
+				'defaultSettings'  => $field_type->getDefaultSettings(),
+				'validationRules'  => $field_type->getAvailableValidationRules(),
+				'supportsOptions'  => $field_type->supportsOptions(),
+				'isFileUpload'     => $field_type->isFileUpload(),
 			];
 		}
 
