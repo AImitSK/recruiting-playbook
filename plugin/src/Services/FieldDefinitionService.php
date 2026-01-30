@@ -212,11 +212,16 @@ class FieldDefinitionService {
 		if ( isset( $data['type'] ) && ! isset( $data['field_type'] ) ) {
 			$data['field_type'] = $data['type'];
 		}
+		unset( $data['type'] ); // Remove original API field.
 
 		// Map 'is_enabled' to 'is_active' for API compatibility.
 		if ( isset( $data['is_enabled'] ) && ! isset( $data['is_active'] ) ) {
 			$data['is_active'] = $data['is_enabled'] ? 1 : 0;
 		}
+		unset( $data['is_enabled'] ); // Remove original API field.
+
+		// Remove ID if sent (auto-generated).
+		unset( $data['id'] );
 
 		// Validierung.
 		$validation = $this->validateFieldData( $data );
@@ -286,11 +291,16 @@ class FieldDefinitionService {
 		if ( isset( $data['type'] ) && ! isset( $data['field_type'] ) ) {
 			$data['field_type'] = $data['type'];
 		}
+		unset( $data['type'] ); // Remove original API field.
 
 		// Map 'is_enabled' to 'is_active' for API compatibility.
 		if ( isset( $data['is_enabled'] ) && ! isset( $data['is_active'] ) ) {
 			$data['is_active'] = $data['is_enabled'] ? 1 : 0;
 		}
+		unset( $data['is_enabled'] ); // Remove original API field.
+
+		// Remove ID from update data (cannot be changed).
+		unset( $data['id'] );
 
 		// System-Felder: field_key und field_type dürfen nicht geändert werden.
 		if ( $existing->isSystem() ) {

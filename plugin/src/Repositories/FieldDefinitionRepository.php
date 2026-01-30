@@ -237,6 +237,32 @@ class FieldDefinitionRepository {
 	}
 
 	/**
+	 * Erlaubte Spalten für die Datenbank
+	 *
+	 * @var array<string>
+	 */
+	private const ALLOWED_COLUMNS = [
+		'template_id',
+		'job_id',
+		'field_key',
+		'field_type',
+		'label',
+		'placeholder',
+		'description',
+		'options',
+		'validation',
+		'conditional',
+		'settings',
+		'position',
+		'is_required',
+		'is_system',
+		'is_active',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
+	/**
 	 * Feld-Definition erstellen
 	 *
 	 * @param array $data Feld-Daten.
@@ -264,6 +290,9 @@ class FieldDefinitionRepository {
 				$data[ $json_field ] = wp_json_encode( $data[ $json_field ] );
 			}
 		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->insert(
@@ -297,6 +326,9 @@ class FieldDefinitionRepository {
 				$data[ $json_field ] = wp_json_encode( $data[ $json_field ] );
 			}
 		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
@@ -491,5 +523,15 @@ class FieldDefinitionRepository {
 		}
 
 		return $formats;
+	}
+
+	/**
+	 * Nur erlaubte Spalten durchlassen
+	 *
+	 * @param array $data Daten.
+	 * @return array Gefilterte Daten.
+	 */
+	private function filterAllowedColumns( array $data ): array {
+		return array_intersect_key( $data, array_flip( self::ALLOWED_COLUMNS ) );
 	}
 }
