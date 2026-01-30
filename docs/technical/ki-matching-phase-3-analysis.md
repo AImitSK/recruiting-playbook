@@ -275,7 +275,7 @@ Antworte NUR mit dem JSON, ohne Erklärungen davor oder danach.`;
 
 ```typescript
 import { Hono } from 'hono';
-import { Env } from '../index';
+import type { Env } from '../types';
 import { ClaudeService, JobData, MatchResult } from '../services/claude';
 import { UsageService } from '../services/usage';
 
