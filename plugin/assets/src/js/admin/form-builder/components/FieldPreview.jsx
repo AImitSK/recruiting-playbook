@@ -11,13 +11,7 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Label } from '../../components/ui/label';
 import { Badge } from '../../components/ui/badge';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../components/ui/select';
+import { Select, SelectOption } from '../../components/ui/select';
 import { Upload } from 'lucide-react';
 
 /**
@@ -133,17 +127,15 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 			case 'select':
 				return (
-					<Select disabled>
-						<SelectTrigger>
-							<SelectValue placeholder={ field.placeholder || __( 'Bitte wählen...', 'recruiting-playbook' ) } />
-						</SelectTrigger>
-						<SelectContent>
-							{ options.map( ( opt, idx ) => (
-								<SelectItem key={ idx } value={ opt.value || opt.label }>
-									{ opt.label }
-								</SelectItem>
-							) ) }
-						</SelectContent>
+					<Select disabled defaultValue="">
+						<SelectOption value="">
+							{ field.placeholder || __( 'Bitte wählen...', 'recruiting-playbook' ) }
+						</SelectOption>
+						{ options.map( ( opt, idx ) => (
+							<SelectOption key={ idx } value={ opt.value || opt.label }>
+								{ opt.label }
+							</SelectOption>
+						) ) }
 					</Select>
 				);
 

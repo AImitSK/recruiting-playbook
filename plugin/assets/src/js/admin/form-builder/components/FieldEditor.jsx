@@ -16,13 +16,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../components/ui/select';
+import { Select, SelectOption } from '../../components/ui/select';
 import { Spinner } from '../../components/ui/spinner';
 import { X, Trash2, Lock, AlertCircle } from 'lucide-react';
 import OptionsEditor from './OptionsEditor';
@@ -286,17 +280,12 @@ export default function FieldEditor( {
 							<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ localField.settings?.width || 'full' }
-								onValueChange={ ( value ) => updateSettings( 'width', value ) }
+								onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
 							>
-								<SelectTrigger>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="third">{ i18n?.widthThird || __( 'Ein Drittel', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="two-thirds">{ i18n?.widthTwoThirds || __( 'Zwei Drittel', 'recruiting-playbook' ) }</SelectItem>
-								</SelectContent>
+								<SelectOption value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="third">{ i18n?.widthThird || __( 'Ein Drittel', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="two-thirds">{ i18n?.widthTwoThirds || __( 'Zwei Drittel', 'recruiting-playbook' ) }</SelectOption>
 							</Select>
 						</div>
 
