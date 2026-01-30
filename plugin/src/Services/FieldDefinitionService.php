@@ -178,6 +178,30 @@ class FieldDefinitionService {
 	}
 
 	/**
+	 * Alle Felder laden (System + Custom)
+	 *
+	 * @param bool $active_only Nur aktive Felder.
+	 * @return array<FieldDefinition>
+	 */
+	public function getAllFields( bool $active_only = false ): array {
+		return $this->repository->findAll( [
+			'template_id'    => null,
+			'job_id'         => null,
+			'include_system' => true,
+			'active_only'    => $active_only,
+		] );
+	}
+
+	/**
+	 * Nur aktive Felder laden (für Formulare)
+	 *
+	 * @return array<FieldDefinition>
+	 */
+	public function getActiveFields(): array {
+		return $this->getAllFields( true );
+	}
+
+	/**
 	 * Feld-Definition erstellen
 	 *
 	 * @param array $data Feld-Daten.
