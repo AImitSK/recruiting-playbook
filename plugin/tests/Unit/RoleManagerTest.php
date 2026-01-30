@@ -30,12 +30,12 @@ class RoleManagerTest extends TestCase {
 	}
 
 	/**
-	 * Test: getAllCapabilities gibt alle 20 Capabilities zurück
+	 * Test: getAllCapabilities gibt alle Capabilities zurück
 	 */
 	public function test_get_all_capabilities_returns_expected_count(): void {
 		$caps = RoleManager::getAllCapabilities();
 
-		$this->assertCount( 20, $caps );
+		$this->assertCount( 25, $caps );
 		$this->assertIsArray( $caps );
 	}
 
@@ -178,12 +178,12 @@ class RoleManagerTest extends TestCase {
 	}
 
 	/**
-	 * Test: getCapabilityGroups gibt 5 Gruppen zurück
+	 * Test: getCapabilityGroups gibt 6 Gruppen zurück
 	 */
-	public function test_get_capability_groups_returns_five_groups(): void {
+	public function test_get_capability_groups_returns_six_groups(): void {
 		$groups = RoleManager::getCapabilityGroups();
 
-		$this->assertCount( 5, $groups );
+		$this->assertCount( 6, $groups );
 	}
 
 	/**

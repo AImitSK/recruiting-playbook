@@ -46,6 +46,11 @@ class TimeToHireServiceTest extends TestCase {
 		// WordPress-Funktionen mocken.
 		Functions\when( '__' )->returnArg();
 		Functions\when( 'current_time' )->justReturn( '2025-01-25 12:00:00' );
+		Functions\when( 'get_post' )->justReturn( (object) [
+			'ID' => 1,
+			'post_title' => 'Test Job',
+			'post_status' => 'publish',
+		] );
 	}
 
 	/**
@@ -60,6 +65,7 @@ class TimeToHireServiceTest extends TestCase {
 					'id' => 1,
 					'created_at' => '2025-01-01 10:00:00',
 					'hired_at' => '2025-01-15 10:00:00',
+					'days_to_hire' => 14,
 					'job_id' => 1,
 					'job_title' => 'Developer',
 				],
@@ -67,10 +73,16 @@ class TimeToHireServiceTest extends TestCase {
 					'id' => 2,
 					'created_at' => '2025-01-05 10:00:00',
 					'hired_at' => '2025-01-20 10:00:00',
+					'days_to_hire' => 15,
 					'job_id' => 1,
 					'job_title' => 'Developer',
 				],
 			] );
+
+		// Mock for stage transitions (called for each hired application).
+		$this->repository
+			->shouldReceive( 'getStatusTransitions' )
+			->andReturn( [] );
 
 		$result = $this->service->calculate( [ 'from' => '2025-01-01', 'to' => '2025-01-31' ] );
 
@@ -91,18 +103,24 @@ class TimeToHireServiceTest extends TestCase {
 				[
 					'id' => 1,
 					'created_at' => '2025-01-01 00:00:00',
-					'hired_at' => '2025-01-11 00:00:00', // 10 Tage
+					'hired_at' => '2025-01-11 00:00:00',
+					'days_to_hire' => 10, // Pre-calculated by repository.
 					'job_id' => 1,
 					'job_title' => 'Job A',
 				],
 				[
 					'id' => 2,
 					'created_at' => '2025-01-01 00:00:00',
-					'hired_at' => '2025-01-21 00:00:00', // 20 Tage
+					'hired_at' => '2025-01-21 00:00:00',
+					'days_to_hire' => 20, // Pre-calculated by repository.
 					'job_id' => 1,
 					'job_title' => 'Job A',
 				],
 			] );
+
+		$this->repository
+			->shouldReceive( 'getStatusTransitions' )
+			->andReturn( [] );
 
 		$result = $this->service->calculate( [ 'from' => '2025-01-01', 'to' => '2025-01-31' ] );
 
@@ -110,7 +128,7 @@ class TimeToHireServiceTest extends TestCase {
 		$this->assertEquals( 15, $result['overall']['average_days'] );
 		$this->assertEquals( 10, $result['overall']['min_days'] );
 		$this->assertEquals( 20, $result['overall']['max_days'] );
-		$this->assertEquals( 2, $result['overall']['hired_count'] );
+		$this->assertEquals( 2, $result['overall']['total_hires'] );
 	}
 
 	/**
@@ -141,6 +159,7 @@ class TimeToHireServiceTest extends TestCase {
 					'id' => 1,
 					'created_at' => '2025-01-01 00:00:00',
 					'hired_at' => '2025-01-11 00:00:00',
+					'days_to_hire' => 10,
 					'job_id' => 1,
 					'job_title' => 'Developer',
 				],
@@ -148,6 +167,7 @@ class TimeToHireServiceTest extends TestCase {
 					'id' => 2,
 					'created_at' => '2025-01-01 00:00:00',
 					'hired_at' => '2025-01-06 00:00:00',
+					'days_to_hire' => 5,
 					'job_id' => 2,
 					'job_title' => 'Designer',
 				],
@@ -155,26 +175,31 @@ class TimeToHireServiceTest extends TestCase {
 					'id' => 3,
 					'created_at' => '2025-01-01 00:00:00',
 					'hired_at' => '2025-01-16 00:00:00',
+					'days_to_hire' => 15,
 					'job_id' => 1,
 					'job_title' => 'Developer',
 				],
 			] );
 
+		$this->repository
+			->shouldReceive( 'getStatusTransitions' )
+			->andReturn( [] );
+
 		$result = $this->service->calculate( [ 'from' => '2025-01-01', 'to' => '2025-01-31' ] );
 
 		$this->assertCount( 2, $result['by_job'] );
 
-		// Developer: (10 + 15) / 2 = 12.5 Tage.
+		// Developer: (10 + 15) / 2 = 12.5 -> rounded to 13.
 		$developer_stats = $this->findJobStats( $result['by_job'], 1 );
 		$this->assertNotNull( $developer_stats );
-		$this->assertEquals( 12.5, $developer_stats['average_days'] );
-		$this->assertEquals( 2, $developer_stats['hired_count'] );
+		$this->assertEquals( 13, $developer_stats['average_days'] ); // Rounded.
+		$this->assertEquals( 2, $developer_stats['hires'] );
 
 		// Designer: 5 Tage.
 		$designer_stats = $this->findJobStats( $result['by_job'], 2 );
 		$this->assertNotNull( $designer_stats );
 		$this->assertEquals( 5, $designer_stats['average_days'] );
-		$this->assertEquals( 1, $designer_stats['hired_count'] );
+		$this->assertEquals( 1, $designer_stats['hires'] );
 	}
 
 	/**
