@@ -11,6 +11,7 @@ module.exports = {
         './src/**/*.php',
         './assets/src/js/**/*.js',
         './assets/src/js/**/*.jsx',
+        './assets/src/css/**/*.css',
     ],
 
     theme: {
