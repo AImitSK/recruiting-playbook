@@ -119,42 +119,30 @@ $license_key = generate_license_key( $tier, $license_secret );
 // Validierung testen.
 $is_valid = validate_license_key( $license_key, $license_secret );
 
-// Ausgabe.
-echo PHP_EOL;
-echo '========================================' . PHP_EOL;
-echo '  Recruiting Playbook Lizenzschlüssel' . PHP_EOL;
-echo '========================================' . PHP_EOL;
-echo PHP_EOL;
-echo 'Tier: ' . $tier . PHP_EOL;
-echo PHP_EOL;
-echo 'Lizenzschlüssel:' . PHP_EOL;
-echo $license_key . PHP_EOL;
-echo PHP_EOL;
-echo 'Validierung: ' . ( $is_valid ? 'OK' : 'FEHLER' ) . PHP_EOL;
-echo PHP_EOL;
+// JSON-Ausgabe erstellen.
+$output = array(
+	'success'     => $is_valid,
+	'tier'        => $tier,
+	'license_key' => $license_key,
+	'valid'       => $is_valid,
+	'created_at'  => date( 'c' ),
+);
 
 // Optional: Mehrere Schlüssel generieren.
-if ( isset( $argv[2] ) ) {
-	if ( ! is_numeric( $argv[2] ) ) {
-		echo 'WARNUNG: Ungültige Anzahl "' . $argv[2] . '" - muss eine Zahl sein.' . PHP_EOL;
-		echo PHP_EOL;
-	} else {
-		$requested = (int) $argv[2];
-		$count     = max( 1, min( $requested, 100 ) ); // Min 1, Max 100.
+if ( isset( $argv[2] ) && is_numeric( $argv[2] ) ) {
+	$requested       = (int) $argv[2];
+	$count           = max( 1, min( $requested, 100 ) ); // Min 1, Max 100.
+	$additional_keys = array();
 
-		if ( $requested > 100 ) {
-			echo 'HINWEIS: Maximal 100 Schlüssel erlaubt, generiere ' . $count . '.' . PHP_EOL;
-		}
-
-		echo 'Weitere Schlüssel (' . $count . '):' . PHP_EOL;
-		echo '----------------------------------------' . PHP_EOL;
-
-		for ( $i = 0; $i < $count; $i++ ) {
-			echo generate_license_key( $tier, $license_secret ) . PHP_EOL;
-		}
-
-		echo PHP_EOL;
+	for ( $i = 0; $i < $count; $i++ ) {
+		$additional_keys[] = generate_license_key( $tier, $license_secret );
 	}
+
+	$output['additional_keys'] = $additional_keys;
+	$output['total_count']     = $count + 1;
 }
+
+// JSON ausgeben.
+echo json_encode( $output, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) . PHP_EOL;
 
 exit( 0 );
