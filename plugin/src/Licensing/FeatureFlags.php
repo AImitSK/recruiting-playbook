@@ -32,6 +32,7 @@ class FeatureFlags {
 			'application_status'           => 'basic',
 			'user_roles'                   => false,
 			'email_templates'              => false,
+			'custom_fields'                => false,   // Formular-Builder, Custom Fields.
 			'api_access'                   => false,
 			'webhooks'                     => false,
 			'reporting'                    => 'basic',
@@ -54,6 +55,7 @@ class FeatureFlags {
 			'application_status'           => 'full',
 			'user_roles'                   => true,
 			'email_templates'              => true,
+			'custom_fields'                => true,   // Formular-Builder, Custom Fields.
 			'api_access'                   => true,
 			'webhooks'                     => true,
 			'reporting'                    => 'full',
@@ -76,6 +78,7 @@ class FeatureFlags {
 			'application_status'           => 'basic',
 			'user_roles'                   => false,
 			'email_templates'              => false,
+			'custom_fields'                => false,   // Formular-Builder, Custom Fields.
 			'api_access'                   => false,
 			'webhooks'                     => false,
 			'reporting'                    => 'basic',
@@ -98,6 +101,7 @@ class FeatureFlags {
 			'application_status'           => 'full',
 			'user_roles'                   => true,
 			'email_templates'              => true,
+			'custom_fields'                => true,   // Formular-Builder, Custom Fields.
 			'api_access'                   => true,
 			'webhooks'                     => true,
 			'reporting'                    => 'full',
