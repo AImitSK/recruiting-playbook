@@ -37,6 +37,8 @@ use RecruitingPlaybook\Api\JobAssignmentController;
 use RecruitingPlaybook\Api\StatsController;
 use RecruitingPlaybook\Api\ExportController;
 use RecruitingPlaybook\Api\SystemStatusController;
+use RecruitingPlaybook\Api\FieldDefinitionController;
+use RecruitingPlaybook\Api\FormTemplateController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -399,6 +401,13 @@ final class Plugin {
 		// System Status Controller (Admin Only).
 		$system_status_controller = new SystemStatusController();
 		$system_status_controller->register_routes();
+
+		// Custom Fields Builder Controllers (Pro-Feature).
+		$field_definition_controller = new FieldDefinitionController();
+		$field_definition_controller->register_routes();
+
+		$form_template_controller = new FormTemplateController();
+		$form_template_controller->register_routes();
 	}
 
 	/**

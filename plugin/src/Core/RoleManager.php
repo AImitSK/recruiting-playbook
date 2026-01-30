@@ -182,6 +182,9 @@ class RoleManager {
 			'rp_export_data',
 			'rp_view_system_status',
 			'rp_run_cleanup',
+
+			// Custom Fields & Forms (Pro-Feature).
+			'rp_manage_forms',
 		];
 	}
 
@@ -240,6 +243,7 @@ class RoleManager {
 				'rp_export_data'            => true,
 				'rp_view_system_status'     => false,
 				'rp_run_cleanup'            => false,
+				'rp_manage_forms'           => false,
 			],
 			'rp_hiring_manager'  => [
 				'rp_view_applications'      => true,
@@ -266,6 +270,7 @@ class RoleManager {
 				'rp_export_data'            => false,
 				'rp_view_system_status'     => false,
 				'rp_run_cleanup'            => false,
+				'rp_manage_forms'           => false,
 			],
 		];
 	}
@@ -329,6 +334,12 @@ class RoleManager {
 					'rp_export_data'         => __( 'Daten exportieren', 'recruiting-playbook' ),
 					'rp_view_system_status'  => __( 'Systemstatus anzeigen', 'recruiting-playbook' ),
 					'rp_run_cleanup'         => __( 'Bereinigung ausführen', 'recruiting-playbook' ),
+				],
+			],
+			'forms'        => [
+				'label'        => __( 'Formular-Builder', 'recruiting-playbook' ),
+				'capabilities' => [
+					'rp_manage_forms' => __( 'Formular-Felder & Vorlagen verwalten', 'recruiting-playbook' ),
 				],
 			],
 		];
