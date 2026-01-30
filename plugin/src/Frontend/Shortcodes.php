@@ -991,6 +991,112 @@ class Shortcodes {
 	}
 
 	/**
+	 * Custom Fields Form Assets laden
+	 *
+	 * Lädt CSS und JS für dynamische Formulare mit Custom Fields.
+	 */
+	public function enqueueCustomFieldsAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Custom Fields CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-custom-fields', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-custom-fields',
+				RP_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Tracking JS.
+		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-tracking',
+				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				[],
+				RP_VERSION,
+				true
+			);
+		}
+
+		// Custom Fields Form JS.
+		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
+		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-custom-fields-form',
+				RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
+				[ 'rp-tracking' ],
+				RP_VERSION . '-' . filemtime( $form_file ),
+				true
+			);
+
+			// Lokalisierung.
+			wp_localize_script(
+				'rp-custom-fields-form',
+				'rpForm',
+				[
+					'apiUrl' => rest_url( 'recruiting/v1/' ),
+					'nonce'  => wp_create_nonce( 'wp_rest' ),
+					'i18n'   => [
+						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
+						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
+						'invalidUrl'      => __( 'Bitte geben Sie eine gültige URL ein', 'recruiting-playbook' ),
+						'invalidPhone'    => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
+						'invalidNumber'   => __( 'Bitte geben Sie eine gültige Zahl ein', 'recruiting-playbook' ),
+						'invalidDate'     => __( 'Bitte geben Sie ein gültiges Datum ein', 'recruiting-playbook' ),
+						'minLength'       => __( 'Mindestens {min} Zeichen erforderlich', 'recruiting-playbook' ),
+						'maxLength'       => __( 'Maximal {max} Zeichen erlaubt', 'recruiting-playbook' ),
+						'numberMin'       => __( 'Mindestwert: {min}', 'recruiting-playbook' ),
+						'numberMax'       => __( 'Maximalwert: {max}', 'recruiting-playbook' ),
+						'dateMin'         => __( 'Datum muss nach {date} liegen', 'recruiting-playbook' ),
+						'dateMax'         => __( 'Datum muss vor {date} liegen', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. {size} MB)', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Dateityp nicht erlaubt', 'recruiting-playbook' ),
+						'fileRequired'    => __( 'Bitte laden Sie eine Datei hoch', 'recruiting-playbook' ),
+						'maxFilesReached' => __( 'Maximal {max} Dateien erlaubt', 'recruiting-playbook' ),
+						'minSelections'   => __( 'Bitte wählen Sie mindestens {min} Optionen', 'recruiting-playbook' ),
+						'maxSelections'   => __( 'Bitte wählen Sie maximal {max} Optionen', 'recruiting-playbook' ),
+						'patternMismatch' => __( 'Das Format ist ungültig', 'recruiting-playbook' ),
+						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js.
+		$alpine_deps = [ 'rp-tracking' ];
+		if ( wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+			$alpine_deps[] = 'rp-custom-fields-form';
+		}
+
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+			wp_enqueue_script(
+				'rp-alpine',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				$alpine_deps,
+				'3.14.3',
+				true
+			);
+
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+						return str_replace( ' src', ' defer src', $tag );
+					}
+					return $tag;
+				},
+				10,
+				2
+			);
+		}
+	}
+
+	/**
 	 * Form-Assets laden (Alpine.js + Application Form JS)
 	 */
 	private function enqueueFormAssets(): void {
