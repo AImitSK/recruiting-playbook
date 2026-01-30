@@ -105,10 +105,18 @@ class FormBuilderPage {
 			true
 		);
 
+		// Load admin.css first for Tailwind utilities and CSS variables.
+		wp_enqueue_style(
+			'rp-admin',
+			RP_PLUGIN_URL . 'assets/dist/css/admin.css',
+			[ 'wp-components' ],
+			$asset['version']
+		);
+
 		wp_enqueue_style(
 			'rp-admin-form-builder',
 			RP_PLUGIN_URL . 'assets/dist/css/admin-form-builder.css',
-			[ 'wp-components' ],
+			[ 'rp-admin' ],
 			$asset['version']
 		);
 	}
