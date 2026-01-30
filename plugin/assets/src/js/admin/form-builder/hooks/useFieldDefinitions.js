@@ -39,7 +39,8 @@ export function useFieldDefinitions() {
 				method: 'GET',
 			} );
 
-			setFields( response || [] );
+			// API returns { fields: [...] }
+			setFields( response?.fields || response || [] );
 		} catch ( err ) {
 			setError( err.message || 'Failed to load fields' );
 			console.error( 'Failed to fetch fields:', err );

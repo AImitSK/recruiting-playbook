@@ -36,10 +36,12 @@ export function useFormTemplates() {
 				method: 'GET',
 			} );
 
-			setTemplates( response || [] );
+			// API returns { templates: [...] }
+			const templateList = response?.templates || response || [];
+			setTemplates( templateList );
 
 			// Find default template
-			const defaultTpl = response?.find( ( t ) => t.is_default );
+			const defaultTpl = templateList.find?.( ( t ) => t.is_default );
 			setDefaultTemplateState( defaultTpl || null );
 		} catch ( err ) {
 			setError( err.message || 'Failed to load templates' );

@@ -56,6 +56,7 @@ class FormBuilderPage {
 		$default_template = $template_service->getDefault();
 
 		// Localize data for React component.
+		// Use array_values() to ensure numeric-indexed arrays for JavaScript.
 		wp_localize_script(
 			'rp-admin-form-builder',
 			'rpFormBuilderData',
@@ -63,9 +64,9 @@ class FormBuilderPage {
 				'isPro'           => $is_pro,
 				'canManage'       => $can_manage,
 				'fieldTypes'      => $field_types,
-				'currentFields'   => array_map( fn( $f ) => $f->toArray(), $current_fields ),
-				'systemFields'    => array_map( fn( $f ) => $f->toArray(), $system_fields ),
-				'templates'       => array_map( fn( $t ) => $t->toArray(), $templates ),
+				'currentFields'   => array_values( array_map( fn( $f ) => $f->toArray(), $current_fields ) ),
+				'systemFields'    => array_values( array_map( fn( $f ) => $f->toArray(), $system_fields ) ),
+				'templates'       => array_values( array_map( fn( $t ) => $t->toArray(), $templates ) ),
 				'defaultTemplate' => $default_template ? $default_template->toArray() : null,
 				'restNamespace'   => 'recruiting/v1',
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
