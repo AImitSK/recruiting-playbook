@@ -1,0 +1,193 @@
+---
+title: Custom Fields Builder
+description: Erstellen Sie individuelle Bewerbungsformulare mit benutzerdefinierten Feldern und bedingter Logik.
+---
+
+<Callout type="info" title="Pro Feature">
+Der Custom Fields Builder ist ein Pro-Feature. Mit der Pro-Lizenz koennen Sie beliebig viele benutzerdefinierte Felder erstellen.
+</Callout>
+
+## Uebersicht
+
+Mit dem Custom Fields Builder koennen Sie:
+
+- **Benutzerdefinierte Felder** zu Bewerbungsformularen hinzufuegen
+- **12 verschiedene Feldtypen** nutzen (Text, Select, Checkbox, Datum, etc.)
+- **Bedingte Logik** fuer dynamische Formulare einrichten
+- **Mehrere Dateien** pro Upload-Feld erlauben
+- **Formulare pro Stelle** individuell anpassen
+
+## Form Builder oeffnen
+
+Navigieren Sie zu **Recruiting** &rarr; **Form Builder** im WordPress-Admin.
+
+Der Form Builder besteht aus drei Bereichen:
+
+| Bereich | Funktion |
+|---------|----------|
+| **Feldliste** (links) | Alle Felder per Drag & Drop sortieren |
+| **Feld-Editor** (mitte) | Ausgewaehltes Feld konfigurieren |
+| **Vorschau** (rechts) | Live-Vorschau des Formulars |
+
+## Verfuegbare Feldtypen
+
+### Eingabefelder
+
+| Typ | Beschreibung | Beispiel |
+|-----|--------------|----------|
+| Text | Einzeiliges Textfeld | Name, Titel |
+| Textarea | Mehrzeiliges Textfeld | Anschreiben |
+| E-Mail | E-Mail mit Validierung | Kontakt-E-Mail |
+| Telefon | Telefonnummer | Rueckrufnummer |
+| Zahl | Numerische Eingabe | Gehaltsvorstellung |
+| URL | Webadresse | LinkedIn-Profil |
+| Datum | Datumsauswahl | Verfuegbar ab |
+
+### Auswahlfelder
+
+| Typ | Beschreibung | Beispiel |
+|-----|--------------|----------|
+| Dropdown | Einzelauswahl aus Liste | Berufsfeld |
+| Radio | Einzelauswahl (sichtbar) | Ja/Nein Fragen |
+| Checkbox | Mehrfachauswahl | Sprachkenntnisse |
+
+### Spezialfelder
+
+| Typ | Beschreibung | Beispiel |
+|-----|--------------|----------|
+| Datei-Upload | Dokumente hochladen | Zeugnisse |
+| Ueberschrift | Abschnitt-Trenner | Abschnitte gliedern |
+
+## Neues Feld erstellen
+
+1. Klicken Sie auf **+ Feld hinzufuegen**
+2. Waehlen Sie den gewuenschten Feldtyp
+3. Vergeben Sie einen eindeutigen **Feld-Schluessel** (z.B. `salary_expectation`)
+4. Tragen Sie das **Label** ein (z.B. "Gehaltsvorstellung")
+5. Konfigurieren Sie optionale Einstellungen:
+   - Platzhalter-Text
+   - Hilfetext unter dem Feld
+   - Pflichtfeld aktivieren
+
+## Validierung konfigurieren
+
+Jeder Feldtyp hat spezifische Validierungsoptionen:
+
+### Text/Textarea
+- Mindestlaenge
+- Maximallaenge
+- Regex-Pattern
+
+### Zahlenfeld
+- Minimalwert
+- Maximalwert
+
+### Datei-Upload
+- Erlaubte Dateitypen (PDF, DOC, etc.)
+- Maximale Dateigroesse
+- Maximale Anzahl Dateien
+
+## Bedingte Logik (Conditional Logic)
+
+Mit bedingter Logik koennen Felder dynamisch ein- oder ausgeblendet werden.
+
+### Beispiel: "Sonstiges"-Feld
+
+Sie moechten ein Textfeld nur anzeigen, wenn im Dropdown "Sonstiges" gewaehlt wurde:
+
+1. Waehlen Sie das Textfeld
+2. Aktivieren Sie **Bedingte Logik**
+3. Konfigurieren Sie:
+   - Aktion: **Anzeigen**
+   - Wenn Feld: **source** (das Dropdown)
+   - Operator: **Ist gleich**
+   - Wert: **other**
+
+### Verfuegbare Operatoren
+
+| Operator | Beschreibung |
+|----------|--------------|
+| Ist gleich | Exakte Uebereinstimmung |
+| Ist nicht gleich | Keine Uebereinstimmung |
+| Enthaelt | Text kommt vor |
+| Groesser als | Numerischer Vergleich |
+| Kleiner als | Numerischer Vergleich |
+| Ist leer | Feld ist leer |
+| Ist nicht leer | Feld hat Wert |
+
+### Mehrere Bedingungen
+
+Sie koennen mehrere Bedingungen kombinieren:
+
+- **UND**: Alle Bedingungen muessen erfuellt sein
+- **ODER**: Eine Bedingung muss erfuellt sein
+
+## Formulare pro Stelle
+
+Sie koennen fuer jede Stelle festlegen, welche Custom Fields angezeigt werden:
+
+1. Oeffnen Sie eine Stellenanzeige im Editor
+2. In der Seitenleiste finden Sie **Bewerbungsformular**
+3. Aktivieren Sie **Felder fuer diese Stelle anpassen**
+4. Waehlen Sie die gewuenschten Felder aus
+
+<Callout type="tip" title="Standard-Formular">
+Wenn Sie nichts anpassen, werden die global konfigurierten Felder verwendet.
+</Callout>
+
+## Custom Fields in der Bewerberansicht
+
+Die eingegebenen Custom Field Werte werden automatisch angezeigt:
+
+- **Bewerberdetails**: Eigener Bereich "Custom Fields"
+- **CSV-Export**: Alle Custom Fields als zusaetzliche Spalten
+- **API**: `custom_fields` Array in der Bewerber-Response
+
+## Multi-File-Upload
+
+File-Felder unterstuetzen optional mehrere Dateien:
+
+1. Waehlen Sie ein File-Feld
+2. Unter Einstellungen aktivieren Sie **Mehrfachauswahl**
+3. Legen Sie die **maximale Anzahl** fest
+
+<Callout type="warning" title="Dateitypen beschraenken">
+Erlauben Sie nur sichere Dateitypen wie PDF, DOC, DOCX. Vermeiden Sie ausfuehrbare Formate.
+</Callout>
+
+## System-Felder
+
+Folgende Felder sind vorinstalliert und koennen nicht geloescht werden:
+
+| Feld | Typ | Pflicht |
+|------|-----|---------|
+| Vorname | Text | Ja |
+| Nachname | Text | Ja |
+| E-Mail | E-Mail | Ja |
+| Telefon | Telefon | Nein |
+| Anschreiben | Textarea | Nein |
+| Lebenslauf | Datei | Ja |
+| Datenschutz | Checkbox | Ja |
+
+Sie koennen diese Felder aber konfigurieren (z.B. Pflichtfeld aendern oder Label anpassen).
+
+## Shortcode
+
+Verwenden Sie den Shortcode fuer erweiterte Formulare:
+
+```
+[rp_custom_application_form job_id="123"]
+```
+
+Parameter:
+- `job_id` - ID der Stelle (optional, verwendet aktuelle Stelle)
+
+Bei Free-Version faellt der Shortcode automatisch auf das Standard-Formular zurueck.
+
+## Best Practices
+
+1. **Weniger ist mehr**: Fragen Sie nur, was wirklich noetig ist
+2. **Pflichtfelder sparsam nutzen**: Zu viele Pflichtfelder schrecken ab
+3. **Hilfetext verwenden**: Erklaeren Sie, was erwartet wird
+4. **Logische Reihenfolge**: Gruppieren Sie zusammengehoerige Felder
+5. **Mobile testen**: Pruefen Sie das Formular auf dem Smartphone
