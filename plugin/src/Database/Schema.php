@@ -26,18 +26,20 @@ class Schema {
 		global $wpdb;
 
 		return [
-			'candidates'       => $wpdb->prefix . 'rp_candidates',
-			'applications'     => $wpdb->prefix . 'rp_applications',
-			'documents'        => $wpdb->prefix . 'rp_documents',
-			'activity_log'     => $wpdb->prefix . 'rp_activity_log',
-			'notes'            => $wpdb->prefix . 'rp_notes',
-			'ratings'          => $wpdb->prefix . 'rp_ratings',
-			'talent_pool'      => $wpdb->prefix . 'rp_talent_pool',
-			'email_templates'  => $wpdb->prefix . 'rp_email_templates',
-			'email_log'        => $wpdb->prefix . 'rp_email_log',
-			'signatures'       => $wpdb->prefix . 'rp_signatures',
-			'job_assignments'  => $wpdb->prefix . 'rp_user_job_assignments',
-			'stats_cache'      => $wpdb->prefix . 'rp_stats_cache',
+			'candidates'        => $wpdb->prefix . 'rp_candidates',
+			'applications'      => $wpdb->prefix . 'rp_applications',
+			'documents'         => $wpdb->prefix . 'rp_documents',
+			'activity_log'      => $wpdb->prefix . 'rp_activity_log',
+			'notes'             => $wpdb->prefix . 'rp_notes',
+			'ratings'           => $wpdb->prefix . 'rp_ratings',
+			'talent_pool'       => $wpdb->prefix . 'rp_talent_pool',
+			'email_templates'   => $wpdb->prefix . 'rp_email_templates',
+			'email_log'         => $wpdb->prefix . 'rp_email_log',
+			'signatures'        => $wpdb->prefix . 'rp_signatures',
+			'job_assignments'   => $wpdb->prefix . 'rp_user_job_assignments',
+			'stats_cache'       => $wpdb->prefix . 'rp_stats_cache',
+			'field_definitions' => $wpdb->prefix . 'rp_field_definitions',
+			'form_templates'    => $wpdb->prefix . 'rp_form_templates',
 		];
 	}
 
@@ -417,6 +419,82 @@ class Schema {
 			PRIMARY KEY (id),
 			UNIQUE KEY cache_key (cache_key),
 			KEY expires_at (expires_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_field_definitions
+	 *
+	 * Speichert benutzerdefinierte Feld-Definitionen für Bewerbungsformulare.
+	 * Pro-Feature: Custom Fields Builder.
+	 *
+	 * @return string
+	 */
+	public static function getFieldDefinitionsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['field_definitions'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			template_id bigint(20) unsigned DEFAULT NULL,
+			job_id bigint(20) unsigned DEFAULT NULL,
+			field_key varchar(100) NOT NULL,
+			field_type varchar(50) NOT NULL,
+			label varchar(255) NOT NULL,
+			placeholder varchar(255) DEFAULT NULL,
+			description text DEFAULT NULL,
+			options longtext DEFAULT NULL,
+			validation longtext DEFAULT NULL,
+			conditional longtext DEFAULT NULL,
+			settings longtext DEFAULT NULL,
+			position int(11) NOT NULL DEFAULT 0,
+			is_required tinyint(1) DEFAULT 0,
+			is_system tinyint(1) DEFAULT 0,
+			is_active tinyint(1) DEFAULT 1,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY field_key_template (field_key, template_id),
+			UNIQUE KEY field_key_job (field_key, job_id),
+			KEY template_id (template_id),
+			KEY job_id (job_id),
+			KEY field_type (field_type),
+			KEY position (position),
+			KEY is_active (is_active),
+			KEY is_system (is_system),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_form_templates
+	 *
+	 * Speichert Formular-Templates für wiederverwendbare Feld-Konfigurationen.
+	 * Pro-Feature: Custom Fields Builder.
+	 *
+	 * @return string
+	 */
+	public static function getFormTemplatesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['form_templates'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(255) NOT NULL,
+			description text DEFAULT NULL,
+			is_default tinyint(1) DEFAULT 0,
+			settings longtext DEFAULT NULL,
+			created_by bigint(20) unsigned NOT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY is_default (is_default),
+			KEY created_by (created_by),
+			KEY deleted_at (deleted_at)
 		) {$charset};";
 	}
 }

@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.7.0';
+	private const SCHEMA_VERSION = '1.8.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -44,6 +44,8 @@ class Migrator {
 			dbDelta( Schema::getSignaturesTableSql() );
 			dbDelta( Schema::getJobAssignmentsTableSql() );
 			dbDelta( Schema::getStatsCacheTableSql() );
+			dbDelta( Schema::getFieldDefinitionsTableSql() );
+			dbDelta( Schema::getFormTemplatesTableSql() );
 
 			// Spezielle Migrationen für bestehende Installationen.
 			$this->runMigrations( $current_version );
@@ -59,6 +61,7 @@ class Migrator {
 		// Die Seed-Funktionen prüfen selbst ob Daten bereits existieren.
 		$this->seedDefaultEmailTemplates();
 		$this->seedDefaultCompanySignature();
+		$this->seedSystemFields();
 	}
 
 	/**
@@ -91,6 +94,11 @@ class Migrator {
 		// Migration 1.5.4: System-Templates mit is_system=0 korrigieren.
 		if ( version_compare( $from_version, '1.5.4', '<' ) ) {
 			$this->migrateFixSystemTemplatesFlag();
+		}
+
+		// Migration 1.8.0: Custom Fields Builder Tabellen + System-Felder.
+		if ( version_compare( $from_version, '1.8.0', '<' ) ) {
+			$this->seedSystemFields();
 		}
 	}
 
@@ -322,6 +330,139 @@ class Migrator {
 		);
 
 		$this->log( 'Created default company signature' );
+	}
+
+	/**
+	 * Migration: Standard System-Felder für Bewerbungsformulare erstellen
+	 *
+	 * System-Felder können nicht gelöscht werden und bilden das Basis-Formular.
+	 */
+	private function seedSystemFields(): void {
+		global $wpdb;
+
+		$table    = Schema::getTables()['field_definitions'];
+		$now      = current_time( 'mysql' );
+		$inserted = 0;
+
+		$system_fields = [
+			[
+				'field_key'   => 'first_name',
+				'field_type'  => 'text',
+				'label'       => __( 'Vorname', 'recruiting-playbook' ),
+				'placeholder' => __( 'Max', 'recruiting-playbook' ),
+				'is_required' => 1,
+				'is_system'   => 1,
+				'position'    => 1,
+				'validation'  => wp_json_encode( [ 'min_length' => 2, 'max_length' => 100 ] ),
+				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'given-name' ] ),
+			],
+			[
+				'field_key'   => 'last_name',
+				'field_type'  => 'text',
+				'label'       => __( 'Nachname', 'recruiting-playbook' ),
+				'placeholder' => __( 'Mustermann', 'recruiting-playbook' ),
+				'is_required' => 1,
+				'is_system'   => 1,
+				'position'    => 2,
+				'validation'  => wp_json_encode( [ 'min_length' => 2, 'max_length' => 100 ] ),
+				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'family-name' ] ),
+			],
+			[
+				'field_key'   => 'email',
+				'field_type'  => 'email',
+				'label'       => __( 'E-Mail', 'recruiting-playbook' ),
+				'placeholder' => __( 'max.mustermann@beispiel.de', 'recruiting-playbook' ),
+				'is_required' => 1,
+				'is_system'   => 1,
+				'position'    => 3,
+				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'email' ] ),
+			],
+			[
+				'field_key'   => 'phone',
+				'field_type'  => 'phone',
+				'label'       => __( 'Telefon', 'recruiting-playbook' ),
+				'placeholder' => __( '+49 123 456789', 'recruiting-playbook' ),
+				'is_required' => 0,
+				'is_system'   => 1,
+				'position'    => 4,
+				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'tel' ] ),
+			],
+			[
+				'field_key'   => 'message',
+				'field_type'  => 'textarea',
+				'label'       => __( 'Anschreiben', 'recruiting-playbook' ),
+				'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
+				'description' => __( 'Optional: Schreiben Sie uns, warum Sie sich für diese Stelle interessieren.', 'recruiting-playbook' ),
+				'is_required' => 0,
+				'is_system'   => 1,
+				'position'    => 5,
+				'validation'  => wp_json_encode( [ 'max_length' => 5000 ] ),
+				'settings'    => wp_json_encode( [ 'rows' => 6 ] ),
+			],
+			[
+				'field_key'   => 'resume',
+				'field_type'  => 'file',
+				'label'       => __( 'Lebenslauf', 'recruiting-playbook' ),
+				'description' => __( 'Erlaubte Formate: PDF, DOC, DOCX (max. 10 MB)', 'recruiting-playbook' ),
+				'is_required' => 1,
+				'is_system'   => 1,
+				'position'    => 6,
+				'validation'  => wp_json_encode( [
+					'allowed_extensions' => [ 'pdf', 'doc', 'docx' ],
+					'max_file_size'      => 10485760,
+				] ),
+				'settings'    => wp_json_encode( [ 'accept' => '.pdf,.doc,.docx', 'drag_drop' => true ] ),
+			],
+			[
+				'field_key'   => 'privacy_consent',
+				'field_type'  => 'checkbox',
+				'label'       => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+				'is_required' => 1,
+				'is_system'   => 1,
+				'position'    => 100,
+				'options'     => wp_json_encode( [
+					'choices' => [
+						[
+							'value' => '1',
+							'label' => __( 'Ich habe die Datenschutzerklärung gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+						],
+					],
+				] ),
+			],
+		];
+
+		foreach ( $system_fields as $field ) {
+			// Prüfen ob Feld bereits existiert (per field_key für globale System-Felder).
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$exists = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$table} WHERE field_key = %s AND template_id IS NULL AND job_id IS NULL",
+					$field['field_key']
+				)
+			);
+
+			if ( $exists > 0 ) {
+				continue;
+			}
+
+			// Feld einfügen.
+			$data = array_merge(
+				$field,
+				[
+					'is_active'  => 1,
+					'created_at' => $now,
+					'updated_at' => $now,
+				]
+			);
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$wpdb->insert( $table, $data );
+			++$inserted;
+		}
+
+		if ( $inserted > 0 ) {
+			$this->log( 'Seeded ' . $inserted . ' system fields for custom fields builder' );
+		}
 	}
 
 	/**
