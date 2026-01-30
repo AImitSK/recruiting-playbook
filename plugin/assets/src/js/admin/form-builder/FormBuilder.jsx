@@ -139,16 +139,20 @@ export default function FormBuilder() {
 		setSelectedField( null );
 	};
 
+	const logoUrl = config.logoUrl || '';
+
 	return (
-		<div className="rp-form-builder">
-			<div className="rp-form-builder__header">
-				<h1 className="wp-heading-inline">
-					{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
-				</h1>
-				<p className="rp-form-builder__description text-gray-600 mt-2">
-					{ i18n?.pageDescription || __( 'Bewerbungsformular-Felder und Templates verwalten', 'recruiting-playbook' ) }
-				</p>
-			</div>
+		<div className="rp-admin" style={ { padding: '20px 0' } }>
+			<div style={ { maxWidth: '900px' } }>
+				{ /* Header: Logo links, Titel rechts */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
+					</h1>
+				</div>
 
 			{ ! isPro && (
 				<Alert className="mb-4 border-amber-200 bg-amber-50">
@@ -287,6 +291,7 @@ export default function FormBuilder() {
 					i18n={ i18n }
 				/>
 			) }
+			</div>
 		</div>
 	);
 }

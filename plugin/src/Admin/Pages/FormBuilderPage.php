@@ -71,12 +71,13 @@ class FormBuilderPage {
 				'restNamespace'   => 'recruiting/v1',
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
 				'upgradeUrl'      => admin_url( 'admin.php?page=rp-license' ),
+				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]
 		);
 
 		?>
-		<div class="wrap rp-admin rp-form-builder">
+		<div class="wrap">
 			<div id="rp-form-builder-root"></div>
 		</div>
 		<?php
