@@ -388,7 +388,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ): WP_REST_Response|WP_Error {
-		$result = $this->service->createField( $request->get_params() );
+		$result = $this->service->create( $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -405,7 +405,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function update_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->updateField( $id, $request->get_params() );
+		$result = $this->service->update( $id, $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -422,7 +422,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->deleteField( $id );
+		$result = $this->service->delete( $id );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

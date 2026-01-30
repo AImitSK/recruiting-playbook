@@ -208,6 +208,16 @@ class FieldDefinitionService {
 	 * @return FieldDefinition|WP_Error
 	 */
 	public function create( array $data ): FieldDefinition|WP_Error {
+		// Map 'type' to 'field_type' for API compatibility.
+		if ( isset( $data['type'] ) && ! isset( $data['field_type'] ) ) {
+			$data['field_type'] = $data['type'];
+		}
+
+		// Map 'is_enabled' to 'is_active' for API compatibility.
+		if ( isset( $data['is_enabled'] ) && ! isset( $data['is_active'] ) ) {
+			$data['is_active'] = $data['is_enabled'] ? 1 : 0;
+		}
+
 		// Validierung.
 		$validation = $this->validateFieldData( $data );
 		if ( is_wp_error( $validation ) ) {
@@ -270,6 +280,16 @@ class FieldDefinitionService {
 				__( 'Feld nicht gefunden.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
+		}
+
+		// Map 'type' to 'field_type' for API compatibility.
+		if ( isset( $data['type'] ) && ! isset( $data['field_type'] ) ) {
+			$data['field_type'] = $data['type'];
+		}
+
+		// Map 'is_enabled' to 'is_active' for API compatibility.
+		if ( isset( $data['is_enabled'] ) && ! isset( $data['is_active'] ) ) {
+			$data['is_active'] = $data['is_enabled'] ? 1 : 0;
 		}
 
 		// System-Felder: field_key und field_type dürfen nicht geändert werden.

@@ -326,7 +326,7 @@ class FormTemplateController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ): WP_REST_Response|WP_Error {
-		$result = $this->service->createTemplate( $request->get_params() );
+		$result = $this->service->create( $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -343,7 +343,7 @@ class FormTemplateController extends WP_REST_Controller {
 	 */
 	public function update_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->updateTemplate( $id, $request->get_params() );
+		$result = $this->service->update( $id, $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -360,7 +360,7 @@ class FormTemplateController extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->deleteTemplate( $id );
+		$result = $this->service->delete( $id );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -377,9 +377,9 @@ class FormTemplateController extends WP_REST_Controller {
 	 */
 	public function duplicate_template( $request ): WP_REST_Response|WP_Error {
 		$id       = (int) $request->get_param( 'id' );
-		$new_name = $request->get_param( 'name' );
+		$new_name = $request->get_param( 'name' ) ?? '';
 
-		$result = $this->service->duplicateTemplate( $id, $new_name );
+		$result = $this->service->duplicate( $id, $new_name );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
