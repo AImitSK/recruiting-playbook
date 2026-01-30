@@ -114,6 +114,14 @@ final class Plugin {
 		$migrator = new Migrator();
 		$migrator->createTables();
 
+		// Capabilities bei Version-Updates aktualisieren.
+		$stored_version = get_option( 'rp_version', '0.0.0' );
+		if ( version_compare( $stored_version, RP_VERSION, '<' ) ) {
+			// Neue Capabilities zuweisen (z.B. rp_manage_forms).
+			RoleManager::assignCapabilities();
+			update_option( 'rp_version', RP_VERSION );
+		}
+
 		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
 		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
 			if ( CustomFieldsMigration::needsMigration() ) {
