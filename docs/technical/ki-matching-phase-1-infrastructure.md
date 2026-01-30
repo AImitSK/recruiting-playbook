@@ -70,6 +70,8 @@ wrangler login
 recruiting-playbook-api/
 ├── src/
 │   ├── index.ts              # Haupt-Entry-Point
+│   ├── types/
+│   │   └── index.ts          # TypeScript Types (Env, License, etc.)
 │   ├── routes/
 │   │   ├── analysis.ts       # /v1/analysis/* Endpoints
 │   │   ├── license.ts        # /v1/license/* Endpoints
@@ -78,11 +80,9 @@ recruiting-playbook-api/
 │   │   ├── presidio.ts       # Presidio Service Client
 │   │   ├── claude.ts         # Claude API Client
 │   │   └── license.ts        # Lizenz-Validierung
-│   ├── middleware/
-│   │   ├── auth.ts           # Lizenz-Key Validierung
-│   │   └── rateLimit.ts      # Rate Limiting
-│   └── types/
-│       └── index.ts          # TypeScript Types
+│   └── middleware/
+│       ├── auth.ts           # Lizenz-Key Validierung (createMiddleware)
+│       └── rateLimit.ts      # Rate Limiting
 ├── wrangler.toml             # Cloudflare Konfiguration
 ├── package.json
 └── tsconfig.json
@@ -210,7 +210,58 @@ wrangler d1 execute recruiting-playbook --file=./schema.sql
 
 ---
 
-## 5. Haupt-Entry-Point
+## 5. Types Definition
+
+### src/types/index.ts
+
+```typescript
+/**
+ * License Objekt aus der Datenbank
+ */
+export interface License {
+  id: number;
+  license_key: string;
+  tier: 'FREE' | 'PRO' | 'AI_ADDON' | 'BUNDLE';
+  domain: string;
+  activated_at: number;
+  expires_at: number | null;
+  is_active: number;
+  created_at: number;
+  updated_at: number;
+}
+
+/**
+ * Cloudflare Bindings (Datenbanken, Storage, Secrets)
+ */
+export interface Bindings {
+  DB: D1Database;
+  CACHE: KVNamespace;
+  STORAGE: R2Bucket;
+  CLAUDE_API_KEY: string;
+  LICENSE_SECRET: string;
+  PRESIDIO_URL: string;
+  PRESIDIO_API_KEY: string;
+}
+
+/**
+ * Context Variables (von Middleware gesetzt)
+ */
+export interface Variables {
+  license: License;
+}
+
+/**
+ * Kombinierter Env-Type für Hono
+ */
+export type Env = {
+  Bindings: Bindings;
+  Variables: Variables;
+};
+```
+
+---
+
+## 6. Haupt-Entry-Point
 
 ### src/index.ts
 
@@ -223,19 +274,9 @@ import { analysisRoutes } from './routes/analysis';
 import { licenseRoutes } from './routes/license';
 import { usageRoutes } from './routes/usage';
 import { authMiddleware } from './middleware/auth';
+import type { Env } from './types';
 
-// Types für Cloudflare Bindings
-export interface Env {
-  DB: D1Database;
-  CACHE: KVNamespace;
-  STORAGE: R2Bucket;
-  CLAUDE_API_KEY: string;
-  LICENSE_SECRET: string;
-  PRESIDIO_URL: string;
-  PRESIDIO_API_KEY: string;
-}
-
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<Env>();
 
 // Middleware
 app.use('*', logger());
@@ -275,15 +316,20 @@ export default app;
 
 ---
 
-## 6. Auth Middleware
+## 7. Auth Middleware
 
 ### src/middleware/auth.ts
 
 ```typescript
-import { Context, Next } from 'hono';
-import { Env } from '../index';
+import { createMiddleware } from 'hono/factory';
+import type { Env, License } from '../types';
 
-export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+/**
+ * Auth Middleware - prüft Lizenz-Key und setzt License in Context
+ *
+ * Verwendet createMiddleware für volle Type-Sicherheit bei c.set()/c.get()
+ */
+export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   const licenseKey = c.req.header('X-License-Key');
 
   if (!licenseKey) {
@@ -297,7 +343,7 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
   const license = await c.env.DB
     .prepare('SELECT * FROM licenses WHERE license_key = ? AND is_active = 1')
     .bind(licenseKey)
-    .first();
+    .first<License>();
 
   if (!license) {
     return c.json({
@@ -307,7 +353,7 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
   }
 
   // Tier prüfen: AI_ADDON oder BUNDLE erforderlich
-  if (!['AI_ADDON', 'BUNDLE'].includes(license.tier as string)) {
+  if (!['AI_ADDON', 'BUNDLE'].includes(license.tier)) {
     return c.json({
       error: 'feature_not_available',
       message: 'AI features require AI_ADDON or BUNDLE license'
@@ -322,21 +368,20 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
     }, 403);
   }
 
-  // Lizenz-Info in Context speichern
+  // Lizenz-Info in Context speichern (type-safe durch Variables-Definition)
   c.set('license', license);
 
   await next();
-}
+});
 ```
 
 ---
 
-## 7. Usage Tracking
+## 8. Usage Tracking
 
 ### src/services/usage.ts
 
 ```typescript
-import { Env } from '../index';
 
 export class UsageService {
   constructor(private db: D1Database) {}
@@ -410,7 +455,7 @@ export class UsageService {
 
 ---
 
-## 8. Deployment
+## 9. Deployment
 
 ### Secrets setzen
 
@@ -439,7 +484,7 @@ wrangler deploy
 
 ---
 
-## 9. Custom Domain (Optional)
+## 10. Custom Domain (Optional)
 
 ```bash
 # Domain hinzufügen
