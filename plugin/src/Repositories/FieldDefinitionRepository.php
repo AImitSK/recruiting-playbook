@@ -291,6 +291,13 @@ class FieldDefinitionRepository {
 			}
 		}
 
+		// Boolean-Werte in Integer umwandeln.
+		foreach ( [ 'is_required', 'is_system', 'is_active' ] as $bool_field ) {
+			if ( isset( $data[ $bool_field ] ) ) {
+				$data[ $bool_field ] = $data[ $bool_field ] ? 1 : 0;
+			}
+		}
+
 		// Nur erlaubte Spalten durchlassen.
 		$data = $this->filterAllowedColumns( $data );
 
@@ -327,8 +334,21 @@ class FieldDefinitionRepository {
 			}
 		}
 
+		// Boolean-Werte in Integer umwandeln.
+		foreach ( [ 'is_required', 'is_system', 'is_active' ] as $bool_field ) {
+			if ( isset( $data[ $bool_field ] ) ) {
+				$data[ $bool_field ] = $data[ $bool_field ] ? 1 : 0;
+			}
+		}
+
 		// Nur erlaubte Spalten durchlassen.
 		$data = $this->filterAllowedColumns( $data );
+
+		// Wenn keine Daten zum Aktualisieren übrig sind, abbrechen.
+		if ( empty( $data ) || ( count( $data ) === 1 && isset( $data['updated_at'] ) ) ) {
+			// Nur updated_at - nichts zu aktualisieren, aber kein Fehler.
+			return $this->find( $id );
+		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
@@ -510,14 +530,16 @@ class FieldDefinitionRepository {
 	private function getFormats( array $data ): array {
 		$formats = [];
 
-		foreach ( $data as $value ) {
-			if ( is_int( $value ) ) {
+		foreach ( $data as $key => $value ) {
+			// Boolean-Werte als Integer behandeln.
+			if ( is_bool( $value ) ) {
+				$formats[] = '%d';
+			} elseif ( is_int( $value ) ) {
 				$formats[] = '%d';
 			} elseif ( is_float( $value ) ) {
 				$formats[] = '%f';
-			} elseif ( is_null( $value ) ) {
-				$formats[] = null;
 			} else {
+				// Strings und null als String behandeln.
 				$formats[] = '%s';
 			}
 		}

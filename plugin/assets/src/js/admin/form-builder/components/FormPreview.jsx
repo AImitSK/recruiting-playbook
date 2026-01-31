@@ -224,7 +224,7 @@ export default function FormPreview( {
 							) }
 
 							{ /* Field grid */ }
-							<div className="rp-form-preview__fields" style={ { display: 'grid', gap: '1rem' } }>
+							<div className="rp-form-preview__fields" style={ { display: 'grid', gridTemplateColumns: viewMode === 'mobile' ? '1fr' : 'repeat(2, 1fr)', gap: '1rem' } }>
 								{ currentFields.length === 0 ? (
 									<div style={ { textAlign: 'center', padding: '2rem 0', color: '#9ca3af' } }>
 										<p style={ { margin: 0, fontSize: '0.875rem' } }>

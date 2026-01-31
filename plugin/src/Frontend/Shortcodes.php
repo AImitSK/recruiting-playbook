@@ -779,8 +779,12 @@ class Shortcodes {
 	private function getCustomFormHtml( int $job_id, bool $show_progress = true ): string {
 		$form_service = $this->getFormRenderService();
 
+		// Konfiguration für rpCustomFieldsForm vorbereiten.
+		$config = $form_service->getCustomFieldsConfig( $job_id );
+
 		ob_start();
 		?>
+		<script>window.rpCustomFieldsConfig = <?php echo wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE ); ?>;</script>
 		<div x-data="rpCustomFieldsForm()" x-cloak>
 			<!-- Erfolgs-Meldung -->
 			<template x-if="submitted">
@@ -820,8 +824,8 @@ class Shortcodes {
 
 						<input type="hidden" name="job_id" :value="formData.job_id">
 
-						<!-- Dynamische Felder -->
-						<?php echo $form_service->renderForm( $job_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<!-- Dynamische Felder (nur Steps, ohne Wrapper) -->
+						<?php echo $form_service->render( $job_id, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 						<!-- Navigation -->
 						<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">

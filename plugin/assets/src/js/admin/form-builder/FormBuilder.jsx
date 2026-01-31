@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { Spinner } from '../components/ui/spinner';
-import { Lock, AlertCircle, CheckCircle2, Layers, ListChecks, Eye } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 import FieldList from './components/FieldList';
 import FieldEditor from './components/FieldEditor';
@@ -278,17 +278,14 @@ export default function FormBuilder() {
 				{ /* Main Tabs */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<TabsList className="mb-4">
-						<TabsTrigger value="form" className="flex items-center gap-2">
-							<Layers className="h-4 w-4" />
+						<TabsTrigger value="form">
 							{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
 						</TabsTrigger>
-						<TabsTrigger value="fields" className="flex items-center gap-2">
-							<ListChecks className="h-4 w-4" />
+						<TabsTrigger value="fields">
 							{ i18n?.tabFields || __( 'Felder', 'recruiting-playbook' ) }
 							{ ! isPro && <Lock className="ml-1 h-3 w-3" /> }
 						</TabsTrigger>
-						<TabsTrigger value="preview" className="flex items-center gap-2">
-							<Eye className="h-4 w-4" />
+						<TabsTrigger value="preview">
 							{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
 						</TabsTrigger>
 					</TabsList>

@@ -299,12 +299,9 @@ class Migrator {
 		$now   = current_time( 'mysql' );
 
 		// Prüfen ob bereits eine Firmen-Signatur existiert (user_id = NULL).
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL",
-				[]
-			)
+			"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL"
 		);
 
 		if ( $exists > 0 ) {

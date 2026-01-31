@@ -15,27 +15,27 @@ import { Select, SelectOption } from '../../components/ui/select';
 import { Upload } from 'lucide-react';
 
 /**
- * Get width class based on field settings
+ * Get width style based on field settings
  *
  * @param {string} width Width setting
  * @param {string} viewMode Current view mode
- * @return {string} CSS class
+ * @return {Object} CSS style object
  */
-function getWidthClass( width, viewMode ) {
+function getWidthStyle( width, viewMode ) {
 	// On mobile, all fields are full width
 	if ( viewMode === 'mobile' ) {
-		return 'col-span-full';
+		return { gridColumn: 'span 2 / span 2' };
 	}
 
 	switch ( width ) {
 		case 'half':
-			return 'col-span-1';
+			return { gridColumn: 'span 1 / span 1' };
 		case 'third':
-			return viewMode === 'tablet' ? 'col-span-1' : 'col-span-1';
+			return { gridColumn: 'span 1 / span 1' };
 		case 'two-thirds':
-			return 'col-span-2';
+			return { gridColumn: 'span 2 / span 2' };
 		default:
-			return 'col-span-full';
+			return { gridColumn: 'span 2 / span 2' };
 	}
 }
 
@@ -49,7 +49,7 @@ function getWidthClass( width, viewMode ) {
  */
 export default function FieldPreview( { field, fieldType, viewMode = 'desktop' } ) {
 	const width = field.settings?.width || 'full';
-	const widthClass = getWidthClass( width, viewMode );
+	const widthStyle = getWidthStyle( width, viewMode );
 
 	// Render heading differently
 	if ( field.type === 'heading' ) {
@@ -57,7 +57,10 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 		const HeadingTag = level;
 
 		return (
-			<div className={ `rp-field-preview rp-field-preview--heading ${ widthClass }` }>
+			<div
+				className="rp-field-preview rp-field-preview--heading"
+				style={ { ...widthStyle } }
+			>
 				<HeadingTag style={ { fontWeight: 600, fontSize: '1.125rem', margin: 0 } }>
 					{ field.label }
 				</HeadingTag>
@@ -214,7 +217,10 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	};
 
 	return (
-		<div className={ `rp-field-preview rp-field-preview--${ field.type } ${ widthClass }` } style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+		<div
+			className={ `rp-field-preview rp-field-preview--${ field.type }` }
+			style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', ...widthStyle } }
+		>
 			{ /* Don't show label for checkbox single mode */ }
 			{ ! ( field.type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
 
