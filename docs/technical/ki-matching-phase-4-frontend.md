@@ -90,72 +90,183 @@ function rp_has_cv_matching(): bool {
 
 ---
 
-## 2. Match-Button in der Stellen-Card
+## 2. Shortcode: [rp_ai_job_match]
 
-### templates/partials/job-card.php
+Der KI-Match Button wird über einen Shortcode eingebunden. Dies ermöglicht:
+- **Theme-Unabhängigkeit**: Funktioniert mit Avada, Elementor, etc.
+- **Flexibilität**: Kann überall platziert werden
+- **Konsistenz**: Einheitliche Implementierung
+
+### 2.1 Shortcode-Attribute
+
+| Attribut | Default | Beschreibung |
+|----------|---------|--------------|
+| `job_id` | Auto | Job-ID (automatisch auf Single-Job-Seiten) |
+| `title` | "Passe ich zu diesem Job?" | Button-Text |
+| `style` | primary | `primary`, `outline`, `secondary` |
+| `size` | normal | `small`, `large` |
+| `class` | - | Zusätzliche CSS-Klassen |
+
+### 2.2 Verwendung
+
+**Automatisch auf Single-Job-Seiten:**
+```
+[rp_ai_job_match]
+```
+
+**Mit spezifischer Job-ID:**
+```
+[rp_ai_job_match job_id="123"]
+```
+
+**Mit Outline-Style (volle Breite):**
+```
+[rp_ai_job_match style="outline" class="rp-w-full"]
+```
+
+### 2.3 Integration in Templates
+
+**templates/archive-job_listing.php** (Job-Liste):
+```php
+<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+    <div class="rp-relative rp-z-20" @click.stop>
+        <?php
+        echo do_shortcode(
+            sprintf(
+                '[rp_ai_job_match job_id="%d" title="%s" style="outline"]',
+                get_the_ID(),
+                esc_attr__( 'Passe ich zu diesem Job?', 'recruiting-playbook' )
+            )
+        );
+        ?>
+    </div>
+<?php endif; ?>
+```
+
+**templates/single-job_listing.php** (Einzelstelle):
+```php
+<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+    <div class="rp-mt-4">
+        <?php echo do_shortcode( '[rp_ai_job_match style="outline" class="rp-w-full"]' ); ?>
+    </div>
+<?php endif; ?>
+```
+
+### 2.4 Shortcode-Implementierung
+
+**src/Frontend/Shortcodes.php:**
 
 ```php
-<?php
 /**
- * Job Card Template
+ * KI-Job-Match Button rendern
  *
- * @var WP_Post $job
+ * Shortcode: [rp_ai_job_match]
  */
+public function renderAiJobMatch( $atts ): string {
+    // Feature-Check
+    if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+        return $this->renderUpgradePrompt(
+            'ai_cv_matching',
+            __( 'KI-Job-Match', 'recruiting-playbook' ),
+            'AI_ADDON'
+        );
+    }
 
-$job_id = $job->ID;
-$title = get_the_title($job);
-$location = get_post_meta($job_id, '_rp_location', true);
-$employment_type = get_post_meta($job_id, '_rp_employment_type', true);
-$permalink = get_permalink($job);
-?>
+    $atts = shortcode_atts(
+        [
+            'job_id'  => 0,
+            'title'   => __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
+            'display' => 'button',
+            'style'   => '',        // primary (default), secondary, outline
+            'size'    => '',        // small, large
+            'class'   => '',
+        ],
+        $atts,
+        'rp_ai_job_match'
+    );
 
-<article class="rp-job-card" data-job-id="<?php echo esc_attr($job_id); ?>">
-    <div class="rp-job-card__content">
-        <h3 class="rp-job-card__title">
-            <a href="<?php echo esc_url($permalink); ?>">
-                <?php echo esc_html($title); ?>
-            </a>
-        </h3>
+    $job_id = absint( $atts['job_id'] );
 
-        <div class="rp-job-card__meta">
-            <?php if ($location) : ?>
-                <span class="rp-job-card__location">
-                    <svg><!-- Location Icon --></svg>
-                    <?php echo esc_html($location); ?>
-                </span>
-            <?php endif; ?>
+    // Wenn keine job_id, versuche aktuelle Stelle zu verwenden
+    if ( ! $job_id && is_singular( 'job_listing' ) ) {
+        $job_id = get_the_ID();
+    }
 
-            <?php if ($employment_type) : ?>
-                <span class="rp-job-card__type">
-                    <svg><!-- Clock Icon --></svg>
-                    <?php echo esc_html($employment_type); ?>
-                </span>
-            <?php endif; ?>
-        </div>
+    // Validieren
+    if ( ! $job_id ) {
+        return '<!-- KI-Match: Keine Job-ID -->';
+    }
+
+    $job = get_post( $job_id );
+    if ( ! $job || 'job_listing' !== $job->post_type ) {
+        return '<!-- KI-Match: Job nicht gefunden -->';
+    }
+
+    // Assets laden
+    $this->enqueueMatchModalAssets();
+
+    // Modal im Footer registrieren (nur einmal)
+    $this->registerMatchModal();
+
+    // Button-Klassen: wp-element-button für Theme-Farben
+    $btn_classes = [ 'wp-element-button' ];
+
+    if ( 'outline' === $atts['style'] ) {
+        $btn_classes[] = 'is-style-outline';
+    }
+
+    if ( ! empty( $atts['class'] ) ) {
+        $btn_classes[] = esc_attr( $atts['class'] );
+    }
+
+    $btn_class_string = implode( ' ', $btn_classes );
+    $button_text = esc_html( $atts['title'] );
+
+    ob_start();
+    ?>
+    <div class="rp-plugin rp-ai-job-match" x-data>
+        <button
+            type="button"
+            class="<?php echo esc_attr( $btn_class_string ); ?>"
+            @click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
+        >
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span><?php echo $button_text; ?></span>
+            </span>
+        </button>
     </div>
+    <?php
 
-    <div class="rp-job-card__actions">
-        <a href="<?php echo esc_url($permalink); ?>" class="rp-btn rp-btn--secondary">
-            <?php esc_html_e('Mehr erfahren', 'recruiting-playbook'); ?>
-        </a>
+    return ob_get_clean();
+}
+```
 
-        <?php if (rp_has_cv_matching()) : ?>
-            <button
-                type="button"
-                class="rp-btn rp-btn--primary rp-match-button"
-                data-job-id="<?php echo esc_attr($job_id); ?>"
-                data-job-title="<?php echo esc_attr($title); ?>"
-                @click="$dispatch('open-match-modal', {
-                    jobId: <?php echo esc_attr($job_id); ?>,
-                    jobTitle: '<?php echo esc_js($title); ?>'
-                })"
-            >
-                <svg class="rp-icon" aria-hidden="true"><!-- Robot Icon --></svg>
-                <?php esc_html_e('Bin ich ein Match?', 'recruiting-playbook'); ?>
-            </button>
-        <?php endif; ?>
-    </div>
-</article>
+### 2.5 Modal-Registrierung
+
+Das Modal-Template wird einmalig im Footer eingefügt:
+
+```php
+private function registerMatchModal(): void {
+    if ( $this->match_modal_registered ) {
+        return;
+    }
+
+    $this->match_modal_registered = true;
+
+    add_action(
+        'wp_footer',
+        function () {
+            $template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+            if ( file_exists( $template ) ) {
+                include $template;
+            }
+        },
+        20
+    );
+}
 ```
 
 ---
@@ -957,7 +1068,8 @@ class Assets {
 
 Nach Abschluss habt ihr:
 
-- ✅ Match-Button in der Stellen-Card
+- ✅ **Shortcode `[rp_ai_job_match]`** für theme-unabhängige Integration
+- ✅ Match-Button in Job-Liste und Einzelstellen-Seite
 - ✅ Upload-Modal mit Drag & Drop
 - ✅ Async Verarbeitung mit Progress-Anzeige
 - ✅ Ergebnis-Darstellung mit Score und Kategorie
@@ -985,4 +1097,4 @@ Bewerber → Upload → Anonymisierung → Claude → Score → Bewerber
 ---
 
 *Erstellt: Januar 2025*
-*Aktualisiert: Januar 2026* (Freemius Auth, Feature Flags)
+*Aktualisiert: Januar 2026* (Freemius Auth, Feature Flags, Shortcode [rp_ai_job_match])
