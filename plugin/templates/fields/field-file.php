@@ -43,9 +43,15 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 			if (typeof this.files !== 'undefined' && this.files !== null) {
 				// Check for resume/lebenslauf field
 				if (this._fieldKey === 'resume' || this._fieldKey === 'lebenslauf') {
+					// Combine resume and documents into _files array
+					const existingFiles = [];
 					if (this.files.resume) {
-						this._files = [this.files.resume];
+						existingFiles.push(this.files.resume);
 					}
+					if (this.files.documents && this.files.documents.length > 0) {
+						existingFiles.push(...this.files.documents);
+					}
+					this._files = existingFiles;
 				} else if (this.files.documents) {
 					this._files = this.files.documents;
 				}
@@ -55,7 +61,9 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 		syncToParent() {
 			if (typeof this.files !== 'undefined' && this.files !== null) {
 				if (this._fieldKey === 'resume' || this._fieldKey === 'lebenslauf') {
+					// First file goes to resume, rest go to documents
 					this.files.resume = this._files.length > 0 ? this._files[0] : null;
+					this.files.documents = this._files.length > 1 ? this._files.slice(1) : [];
 				} else {
 					this.files.documents = this._files;
 				}
