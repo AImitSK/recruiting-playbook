@@ -27,7 +27,10 @@ class Settings(BaseSettings):
         "PERSON",
         "EMAIL_ADDRESS",
         "PHONE_NUMBER",
-        "LOCATION",
+        "LOCATION",           # Ortsnamen (SpaCy NER)
+        "DE_ADDRESS_FULL",    # Deutsche PLZ + Stadtname (Custom, hohe Konfidenz)
+        "DE_PLZ",             # Deutsche PLZ allein (Custom, niedrige Konfidenz + Kontext)
+        "DE_STREET_ADDRESS",  # Deutsche Straßenadressen (Custom)
         "DATE_TIME",
         "IBAN_CODE",
         "CREDIT_CARD",
@@ -37,7 +40,7 @@ class Settings(BaseSettings):
 
     # Entities die NICHT anonymisiert werden (beruflich relevant)
     entities_to_keep: List[str] = [
-        "ORGANIZATION",  # Firmennahmen behalten
+        "ORGANIZATION",  # Firmennamen behalten (z.B. "KRH Psychiatrie GmbH")
         "NRP",           # Nationalitäten behalten (kann relevant sein)
     ]
 

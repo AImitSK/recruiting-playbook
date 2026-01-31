@@ -63,8 +63,7 @@ export interface Bindings {
   DB: D1Database;
   CACHE: KVNamespace;
   STORAGE: R2Bucket;
-  CLAUDE_API_KEY: string;
-  AI_GATEWAY_URL?: string; // Optional: Cloudflare AI Gateway für Monitoring
+  OPENROUTER_API_KEY: string; // OpenRouter API Key (https://openrouter.ai)
   ENVIRONMENT: string;
   FREEMIUS_PRODUCT_ID: string;
   FREEMIUS_DEV_ID: string;

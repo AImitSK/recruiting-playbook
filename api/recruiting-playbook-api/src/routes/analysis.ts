@@ -258,7 +258,7 @@ async function processFullAnalysis(
     const anonymized = await presidio.anonymize(fileBuffer, filename, 'text');
 
     // 2. Claude Analyse
-    const claude = new ClaudeService(env.CLAUDE_API_KEY, env.AI_GATEWAY_URL);
+    const claude = new ClaudeService(env.OPENROUTER_API_KEY);
     let result: MatchResult;
 
     if (anonymized.type === 'text' && anonymized.anonymizedText) {
@@ -322,7 +322,7 @@ async function processAnalysis(
       .run();
 
     // Claude Analyse
-    const claude = new ClaudeService(env.CLAUDE_API_KEY, env.AI_GATEWAY_URL);
+    const claude = new ClaudeService(env.OPENROUTER_API_KEY);
     let result: MatchResult;
 
     if (request.anonymizedText) {

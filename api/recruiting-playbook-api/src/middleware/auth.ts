@@ -10,8 +10,34 @@ import type { Env, ValidatedLicense } from '../types';
  * - X-Freemius-Timestamp: ISO Timestamp für Signatur
  * - X-Freemius-Signature: SHA256(secret_key + '|' + timestamp)
  * - X-Site-Url: WordPress Site URL
+ *
+ * Development Mode:
+ * - ENVIRONMENT=development erlaubt Test-Requests mit X-Test-Mode: true
+ * - Simuliert eine gültige AI-Addon Lizenz für lokales Testing
  */
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
+  // Development Mode: Erlaube Test-Requests ohne echte Freemius-Lizenz
+  if (c.env.ENVIRONMENT === 'development') {
+    const testMode = c.req.header('X-Test-Mode');
+
+    if (testMode === 'true') {
+      // Simulierte Test-Lizenz für Development
+      const testLicense: ValidatedLicense = {
+        installId: 'test-install-123',
+        licenseId: 'test-license-456',
+        planName: 'ai_addon',
+        siteUrl: c.req.header('X-Site-Url') || 'http://localhost:8082',
+        isActive: true,
+        expiresAt: null, // Lifetime für Tests
+      };
+
+      c.set('license', testLicense);
+      console.log('[Auth] Development mode: Using test license');
+      await next();
+      return;
+    }
+  }
+
   const installId = c.req.header('X-Freemius-Install-Id');
   const timestamp = c.req.header('X-Freemius-Timestamp');
   const signature = c.req.header('X-Freemius-Signature');

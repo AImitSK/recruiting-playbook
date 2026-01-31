@@ -1,4 +1,6 @@
-from presidio_image_redactor import ImageRedactorEngine
+from presidio_image_redactor import ImageRedactorEngine, ImageAnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, Pattern, PatternRecognizer
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from PIL import Image
 import pytesseract
 from typing import List, Optional
@@ -12,6 +14,50 @@ logger = logging.getLogger(__name__)
 # Singleton Pattern für Lazy Loading
 _image_anonymizer_instance: Optional["ImageAnonymizer"] = None
 _image_anonymizer_lock = threading.Lock()
+
+
+def create_german_address_recognizers() -> List[PatternRecognizer]:
+    """
+    Erstellt Custom Recognizers für deutsche Adressen.
+    Diese fangen Adressen ab, die SpaCy's NER nicht erkennt.
+    """
+    recognizers = []
+
+    # 1. Deutsche Postleitzahl (PLZ) - 5-stellig
+    plz_pattern = Pattern(
+        name="german_plz",
+        regex=r"\b\d{5}\b",
+        score=0.7,
+    )
+    plz_recognizer = PatternRecognizer(
+        supported_entity="DE_PLZ",
+        patterns=[plz_pattern],
+        supported_language="de",
+    )
+    recognizers.append(plz_recognizer)
+
+    # 2. Deutsche Straßennamen mit Hausnummer
+    # Matches: "Musterstraße 11", "Hauptstr. 5a", "Am Markt 3"
+    street_patterns = [
+        Pattern(
+            name="german_street_full",
+            regex=r"\b[A-ZÄÖÜ][a-zäöüß]+(?:straße|strasse|str\.|weg|platz|gasse|allee|ring|damm|ufer|chaussee)\s*\d+\s*[a-zA-Z]?\b",
+            score=0.85,
+        ),
+        Pattern(
+            name="german_street_prefix",
+            regex=r"\b(?:Am|An der|Auf der|Im|In der|Zur|Zum)\s+[A-ZÄÖÜ][a-zäöüß]+\s*\d+\s*[a-zA-Z]?\b",
+            score=0.8,
+        ),
+    ]
+    street_recognizer = PatternRecognizer(
+        supported_entity="DE_STREET_ADDRESS",
+        patterns=street_patterns,
+        supported_language="de",
+    )
+    recognizers.append(street_recognizer)
+
+    return recognizers
 
 
 def get_image_anonymizer() -> "ImageAnonymizer":
@@ -35,7 +81,33 @@ class ImageAnonymizer:
     """
 
     def __init__(self):
-        self.redactor = ImageRedactorEngine()
+        # NLP Engine mit konfigurierten SpaCy-Modellen (md statt lg)
+        configuration = {
+            "nlp_engine_name": "spacy",
+            "models": [
+                {"lang_code": "de", "model_name": settings.spacy_model_de},
+                {"lang_code": "en", "model_name": settings.spacy_model_en},
+            ],
+        }
+        provider = NlpEngineProvider(nlp_configuration=configuration)
+        nlp_engine = provider.create_engine()
+
+        # Analyzer mit konfigurierter NLP Engine
+        analyzer = AnalyzerEngine(
+            nlp_engine=nlp_engine,
+            supported_languages=settings.supported_languages,
+        )
+
+        # Custom Recognizers für deutsche Adressen hinzufügen
+        for recognizer in create_german_address_recognizers():
+            analyzer.registry.add_recognizer(recognizer)
+            logger.info(f"ImageAnonymizer: Added custom recognizer: {recognizer.supported_entities}")
+
+        # ImageAnalyzerEngine mit custom Analyzer erstellen
+        image_analyzer = ImageAnalyzerEngine(analyzer_engine=analyzer)
+
+        # Image Redactor mit custom ImageAnalyzerEngine
+        self.redactor = ImageRedactorEngine(image_analyzer_engine=image_analyzer)
 
     def anonymize(
         self,

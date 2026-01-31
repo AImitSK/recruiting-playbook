@@ -1,7 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-// Modell-Konstante für einfache Aktualisierung
-const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+// OpenRouter Konfiguration
+// Wichtig: OHNE /v1 - das Anthropic SDK fügt /v1/messages automatisch hinzu
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api';
+
+// Modell-Konstante (OpenRouter Model ID)
+// Siehe: https://openrouter.ai/models
+const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5'; // $1/$5 pro MTok, 200K Context
 
 export interface MatchResult {
   score: number; // 0-100
@@ -25,18 +30,18 @@ export interface JobData {
 
 export class ClaudeService {
   private client: Anthropic;
+  private model: string;
 
   /**
-   * @param apiKey - Anthropic API Key
-   * @param aiGatewayUrl - Optional: Cloudflare AI Gateway URL für Monitoring
-   *                       Format: https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/anthropic
+   * @param apiKey - OpenRouter API Key
+   * @param model - Optional: Modell überschreiben (default: claude-haiku-4.5)
    */
-  constructor(apiKey: string, aiGatewayUrl?: string) {
+  constructor(apiKey: string, model?: string) {
     this.client = new Anthropic({
       apiKey,
-      // Optional: AI Gateway für Caching, Rate Limiting, Analytics
-      ...(aiGatewayUrl && { baseURL: aiGatewayUrl }),
+      baseURL: OPENROUTER_BASE_URL,
     });
+    this.model = model || DEFAULT_MODEL;
   }
 
   /**
@@ -46,7 +51,7 @@ export class ClaudeService {
     const prompt = this.buildPrompt(anonymizedCV, jobData);
 
     const response = await this.client.messages.create({
-      model: CLAUDE_MODEL,
+      model: this.model,
       max_tokens: 1024,
       messages: [
         {
@@ -76,7 +81,7 @@ export class ClaudeService {
     const prompt = this.buildPrompt('', jobData, true);
 
     const response = await this.client.messages.create({
-      model: CLAUDE_MODEL,
+      model: this.model,
       max_tokens: 1024,
       messages: [
         {

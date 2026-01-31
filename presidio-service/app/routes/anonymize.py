@@ -138,20 +138,28 @@ async def process_image(content: bytes, output_format: str, language: str):
     from PIL import Image
 
     image_anonymizer = get_image_anonymizer()
+    text_anonymizer = get_anonymizer()
 
     img = Image.open(io.BytesIO(content))
-    anonymized = image_anonymizer.anonymize(img, language)
 
     if output_format == "text":
-        text = image_anonymizer.extract_text(anonymized)
+        # Besserer Ansatz für Text-Output:
+        # 1. OCR auf Original-Bild (bessere Qualität)
+        # 2. Text-Anonymisierung mit allen Custom Recognizers
+        raw_text = image_anonymizer.extract_text(img, language)
+        anonymized_text = text_anonymizer.anonymize(raw_text, language)
+
         return JSONResponse({
             "type": "text",
             "original_type": "image",
-            "anonymized_text": text,
+            "anonymized_text": anonymized_text,
+            "pii_found": text_anonymizer.last_pii_count,
         })
 
     else:
-        # Anonymisiertes Bild zurückgeben
+        # Bild-Output: Visuelles Schwärzen
+        anonymized = image_anonymizer.anonymize(img, language)
+
         img_bytes = io.BytesIO()
         anonymized.save(img_bytes, format="PNG")
 
