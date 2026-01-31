@@ -432,12 +432,13 @@ class FormConfigService {
 	/**
 	 * Verfügbare Felder für den Builder laden
 	 *
-	 * Lädt alle System-Felder mit ihren vollständigen Definitionen.
+	 * Lädt alle Felder (System + Custom) mit ihren vollständigen Definitionen.
 	 *
 	 * @return array
 	 */
 	public function getAvailableFields(): array {
-		$fields = $this->field_repository->findSystemFields();
+		// Load ALL fields (system + custom), not just system fields
+		$fields = $this->field_repository->findAll();
 
 		return array_map(
 			function ( $field ) {
