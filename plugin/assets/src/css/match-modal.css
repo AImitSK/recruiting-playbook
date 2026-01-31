@@ -307,8 +307,8 @@ body.rp-modal-open {
 }
 
 .rp-match-trigger-btn--outline {
-    @apply rp-bg-transparent rp-text-primary rp-border-2 rp-border-primary;
-    @apply hover:rp-bg-primary hover:rp-text-white;
+    @apply rp-bg-transparent rp-text-primary rp-border rp-border-primary;
+    @apply hover:rp-bg-primary hover:rp-text-white hover:rp-shadow-none;
 }
 
 .rp-match-trigger-btn--small {

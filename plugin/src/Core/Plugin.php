@@ -637,16 +637,8 @@ final class Plugin {
 				$alpine_deps[] = 'rp-match-modal';
 			}
 
-			// Modal-Template im Footer einbinden.
-			add_action(
-				'wp_footer',
-				function () {
-					$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
-					if ( file_exists( $template ) ) {
-						include $template;
-					}
-				}
-			);
+			// Modal-Template wird durch den Shortcode [rp_ai_job_match] eingebunden.
+			// Siehe Shortcodes::registerMatchModal().
 		}
 
 		// Alpine.js (lokal gebundelt) - muss NACH Komponenten-Scripts geladen werden.

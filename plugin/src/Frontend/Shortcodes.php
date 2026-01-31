@@ -1213,6 +1213,8 @@ class Shortcodes {
 				'job_id'  => 0,
 				'title'   => __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
 				'display' => 'button',
+				'style'   => '',        // primary (default), secondary, outline.
+				'size'    => '',        // small, large.
 				'class'   => '',
 			],
 			$atts,
@@ -1252,20 +1254,36 @@ class Shortcodes {
 
 		$job_title   = esc_attr( $job->post_title );
 		$button_text = esc_html( $atts['title'] );
-		$extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
+
+		// Button-Klassen: wp-element-button für Theme-Farben.
+		$btn_classes = [ 'wp-element-button' ];
+
+		// Style-Variante (outline verwendet WordPress is-style-outline).
+		if ( 'outline' === $atts['style'] ) {
+			$btn_classes[] = 'is-style-outline';
+		}
+
+		// Extra-Klassen vom User.
+		if ( ! empty( $atts['class'] ) ) {
+			$btn_classes[] = esc_attr( $atts['class'] );
+		}
+
+		$btn_class_string = implode( ' ', $btn_classes );
 
 		ob_start();
 		?>
-		<div class="rp-plugin rp-ai-job-match">
+		<div class="rp-plugin rp-ai-job-match" x-data>
 			<button
 				type="button"
-				class="rp-match-trigger-btn<?php echo $extra_class; ?>"
+				class="<?php echo esc_attr( $btn_class_string ); ?>"
 				@click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
 			>
-				<svg class="rp-match-trigger-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-				</svg>
-				<span><?php echo $button_text; ?></span>
+				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+					<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+					<span><?php echo $button_text; ?></span>
+				</span>
 			</button>
 		</div>
 		<?php
