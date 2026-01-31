@@ -23,26 +23,6 @@ import OptionsEditor from './OptionsEditor';
 import ValidationEditor from './ValidationEditor';
 import ConditionalEditor from './ConditionalEditor';
 
-/**
- * Debounce helper
- *
- * @param {Function} func     Function to debounce
- * @param {number}   wait     Wait time in ms
- * @return {Function} Debounced function
- */
-function useDebounce( value, delay ) {
-	const [ debouncedValue, setDebouncedValue ] = useState( value );
-
-	useEffect( () => {
-		const handler = setTimeout( () => {
-			setDebouncedValue( value );
-		}, delay );
-
-		return () => clearTimeout( handler );
-	}, [ value, delay ] );
-
-	return debouncedValue;
-}
 
 /**
  * FieldEditor component
@@ -86,16 +66,6 @@ export default function FieldEditor( {
 		const changed = JSON.stringify( localField ) !== JSON.stringify( field );
 		setHasChanges( changed );
 	}, [ localField, field ] );
-
-	// Debounced field value for auto-save
-	const debouncedField = useDebounce( localField, 1000 );
-
-	// Auto-save on debounced changes
-	useEffect( () => {
-		if ( hasChanges && debouncedField.id === field.id ) {
-			handleSave();
-		}
-	}, [ debouncedField ] );
 
 	// Update local field value
 	const updateLocalField = useCallback( ( updates ) => {
@@ -206,9 +176,9 @@ export default function FieldEditor( {
 							</TabsTrigger>
 						) }
 						{ hasConditional && (
-							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
+							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' } }>
 								{ i18n?.conditional || __( 'Bedingt', 'recruiting-playbook' ) }
-								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem' } } /> }
+								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem', flexShrink: 0 } } /> }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -229,7 +199,7 @@ export default function FieldEditor( {
 								disabled={ field.is_system }
 							/>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (nur Kleinbuchstaben, Zahlen, Unterstriche)', 'recruiting-playbook' ) }
+								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (keine Sonderzeichen)', 'recruiting-playbook' ) }
 							</p>
 						</div>
 

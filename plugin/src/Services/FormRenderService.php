@@ -2,7 +2,7 @@
 /**
  * Form Render Service
  *
- * Rendert Bewerbungsformulare mit dynamischen Feldern.
+ * Rendert Bewerbungsformulare basierend auf der Step-Konfiguration.
  *
  * @package RecruitingPlaybook\Services
  */
@@ -14,7 +14,8 @@ namespace RecruitingPlaybook\Services;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Models\FieldDefinition;
-use RecruitingPlaybook\FieldTypes\FieldTypeRegistry;
+use RecruitingPlaybook\Repositories\FieldDefinitionRepository;
+use RecruitingPlaybook\Services\SpamProtection;
 
 /**
  * Service zum Rendern von Formularen
@@ -22,95 +23,195 @@ use RecruitingPlaybook\FieldTypes\FieldTypeRegistry;
 class FormRenderService {
 
 	/**
-	 * FieldDefinitionService
+	 * FormConfigService
 	 *
-	 * @var FieldDefinitionService
+	 * @var FormConfigService
 	 */
-	private FieldDefinitionService $field_service;
+	private FormConfigService $config_service;
 
 	/**
-	 * FormTemplateService
+	 * FieldDefinitionRepository
 	 *
-	 * @var FormTemplateService
+	 * @var FieldDefinitionRepository
 	 */
-	private FormTemplateService $template_service;
-
-	/**
-	 * ConditionalScriptGenerator
-	 *
-	 * @var ConditionalScriptGenerator
-	 */
-	private ConditionalScriptGenerator $conditional_generator;
+	private FieldDefinitionRepository $field_repository;
 
 	/**
 	 * Konstruktor
 	 *
-	 * @param FieldDefinitionService|null     $field_service         Optional: Field-Service.
-	 * @param FormTemplateService|null        $template_service      Optional: Template-Service.
-	 * @param ConditionalScriptGenerator|null $conditional_generator Optional: Conditional-Generator.
+	 * @param FormConfigService|null         $config_service   Optional: Config-Service.
+	 * @param FieldDefinitionRepository|null $field_repository Optional: Field-Repository.
 	 */
 	public function __construct(
-		?FieldDefinitionService $field_service = null,
-		?FormTemplateService $template_service = null,
-		?ConditionalScriptGenerator $conditional_generator = null
+		?FormConfigService $config_service = null,
+		?FieldDefinitionRepository $field_repository = null
 	) {
-		$this->field_service         = $field_service ?? new FieldDefinitionService();
-		$this->template_service      = $template_service ?? new FormTemplateService();
-		$this->conditional_generator = $conditional_generator ?? new ConditionalScriptGenerator();
+		$this->config_service   = $config_service ?? new FormConfigService();
+		$this->field_repository = $field_repository ?? new FieldDefinitionRepository();
 	}
 
 	/**
-	 * Formular für Job rendern
+	 * Vollständiges Formular rendern
 	 *
-	 * @param int   $job_id       Job-ID.
-	 * @param array $initial_data Initiale Formulardaten.
+	 * Lädt die Published-Konfiguration und rendert ein Step-basiertes Formular.
+	 *
+	 * @param int $job_id Job-ID.
 	 * @return string HTML des Formulars.
 	 */
-	public function renderForm( int $job_id, array $initial_data = [] ): string {
-		$fields = $this->field_service->getFieldsForJob( $job_id );
+	public function render( int $job_id ): string {
+		$config = $this->config_service->getPublished();
 
-		if ( empty( $fields ) ) {
-			$fields = $this->field_service->getActiveFields();
+		if ( empty( $config['steps'] ) ) {
+			return $this->renderFallbackForm( $job_id );
 		}
 
-		// Nur aktivierte Felder.
-		$fields = array_filter( $fields, fn( $f ) => $f->isEnabled() );
+		// Feld-Definitionen laden.
+		$field_definitions = $this->loadFieldDefinitions();
 
-		// Nach Sortierung ordnen.
-		usort( $fields, fn( $a, $b ) => $a->getSortOrder() <=> $b->getSortOrder() );
+		// Alpine.js Daten vorbereiten.
+		$alpine_data = $this->prepareAlpineData( $config, $field_definitions, $job_id );
 
-		return $this->renderFields( $fields, $job_id, $initial_data );
+		$output = '';
+
+		// Alpine.js Konfiguration ausgeben.
+		$output .= sprintf(
+			'<script>window.rpFormConfig = %s;</script>',
+			wp_json_encode( $alpine_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE )
+		);
+
+		// Alpine.js Container mit applicationForm Komponente.
+		$output .= '<div x-data="applicationForm" x-cloak>';
+
+		// Erfolgs-Meldung.
+		$output .= $this->renderSuccessMessage();
+
+		// Formular-Template (nur wenn nicht submitted).
+		$output .= '<template x-if="!submitted"><div>';
+
+		// Fehler-Meldung.
+		$output .= $this->renderErrorMessage();
+
+		// Fortschrittsanzeige.
+		$output .= $this->renderProgressBar( count( $config['steps'] ) );
+
+		// Formular-Start mit Spam-Schutz.
+		$output .= '<form @submit.prevent="submit">';
+		$output .= SpamProtection::getHoneypotField();
+		$output .= SpamProtection::getTimestampField();
+
+		// Steps rendern.
+		foreach ( $config['steps'] as $index => $step ) {
+			$output .= $this->renderStep( $step, $index, $field_definitions, $config );
+		}
+
+		// Navigation.
+		$output .= $this->renderNavigation( count( $config['steps'] ) );
+
+		$output .= '</form>';
+		$output .= '</div></template>';
+		$output .= '</div>';
+
+		return $output;
 	}
 
 	/**
-	 * Felder rendern
+	 * Erfolgs-Meldung rendern
 	 *
-	 * @param FieldDefinition[] $fields       Felddefinitionen.
-	 * @param int               $job_id       Job-ID.
-	 * @param array             $initial_data Initiale Daten.
-	 * @return string HTML der Felder.
+	 * @return string HTML.
 	 */
-	public function renderFields( array $fields, int $job_id, array $initial_data = [] ): string {
-		$output = '';
+	private function renderSuccessMessage(): string {
+		return '<template x-if="submitted">
+			<div class="rp-text-center rp-py-12">
+				<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+				</svg>
+				<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2">' . esc_html__( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ) . '</h3>
+				<p class="rp-text-gray-600">' . esc_html__( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ) . '</p>
+			</div>
+		</template>';
+	}
 
-		// Conditional Logic CSS.
-		$output .= $this->conditional_generator->generateHiddenStyles();
+	/**
+	 * Fehler-Meldung rendern
+	 *
+	 * @return string HTML.
+	 */
+	private function renderErrorMessage(): string {
+		return '<div x-show="error" x-cloak class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-mb-6">
+			<p class="rp-text-error rp-text-sm" x-text="error"></p>
+		</div>';
+	}
 
-		// Alpine.js Komponente und Konfiguration.
-		$output .= $this->renderAlpineConfig( $fields, $job_id, $initial_data );
+	/**
+	 * Fortschrittsanzeige rendern
+	 *
+	 * @param int $total_steps Anzahl der Steps.
+	 * @return string HTML.
+	 */
+	private function renderProgressBar( int $total_steps ): string {
+		return '<div class="rp-mb-8">
+			<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
+				<span>' . esc_html__( 'Schritt', 'recruiting-playbook' ) . ' <span x-text="step"></span> ' . esc_html__( 'von', 'recruiting-playbook' ) . ' <span x-text="totalSteps"></span></span>
+				<span x-text="progress + \'%\'"></span>
+			</div>
+			<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
+				<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="\'width: \' + progress + \'%\'"></div>
+			</div>
+		</div>';
+	}
 
-		// Formular-Container.
-		$output .= '<div class="rp-form rp-custom-fields-form" x-data="rpCustomFieldsForm()" x-cloak>';
+	/**
+	 * Einzelnen Step rendern
+	 *
+	 * @param array $step              Step-Konfiguration.
+	 * @param int   $index             Step-Index (0-basiert).
+	 * @param array $field_definitions Feld-Definitionen.
+	 * @param array $config            Gesamte Formular-Konfiguration.
+	 * @return string HTML.
+	 */
+	private function renderStep( array $step, int $index, array $field_definitions, array $config ): string {
+		$step_num = $index + 1;
 
-		// Felder-Grid.
-		$output .= '<div class="rp-form__fields rp-grid rp-grid-cols-1 md:rp-grid-cols-2 rp-gap-4">';
+		$output = sprintf(
+			'<div x-show="step === %d" x-transition>',
+			$step_num
+		);
 
-		foreach ( $fields as $field ) {
-			$output .= $this->renderField( $field, $initial_data );
+		// Step-Titel.
+		if ( ! empty( $step['title'] ) ) {
+			$output .= sprintf(
+				'<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6">%s</h3>',
+				esc_html( $step['title'] )
+			);
 		}
 
-		$output .= '</div>'; // .rp-form__fields
-		$output .= '</div>'; // .rp-form
+		// Felder-Grid.
+		$output .= '<div class="rp-space-y-4">';
+
+		// Felder des Steps rendern.
+		if ( ! empty( $step['fields'] ) ) {
+			foreach ( $step['fields'] as $field_config ) {
+				if ( empty( $field_config['is_visible'] ) ) {
+					continue;
+				}
+
+				$field_key = $field_config['field_key'] ?? '';
+
+				if ( ! isset( $field_definitions[ $field_key ] ) ) {
+					continue;
+				}
+
+				$field_def = $field_definitions[ $field_key ];
+
+				// Override required aus Step-Config.
+				$is_required = $field_config['is_required'] ?? $field_def['is_required'] ?? false;
+
+				$output .= $this->renderField( $field_def, $field_key, $is_required );
+			}
+		}
+
+		$output .= '</div>'; // .rp-space-y-4
+		$output .= '</div>'; // step div
 
 		return $output;
 	}
@@ -118,41 +219,92 @@ class FormRenderService {
 	/**
 	 * Einzelnes Feld rendern
 	 *
-	 * @param FieldDefinition $field        Felddefinition.
-	 * @param array           $initial_data Initiale Daten.
-	 * @return string HTML des Feldes.
+	 * @param array  $field_def   Feld-Definition.
+	 * @param string $field_key   Feld-Schlüssel.
+	 * @param bool   $is_required Pflichtfeld.
+	 * @return string HTML.
 	 */
-	public function renderField( FieldDefinition $field, array $initial_data = [] ): string {
-		$registry  = FieldTypeRegistry::getInstance();
-		$fieldType = $registry->get( $field->getType() );
+	private function renderField( array $field_def, string $field_key, bool $is_required ): string {
+		$field_type = $field_def['field_type'] ?? 'text';
+		$settings   = $field_def['settings'] ?? [];
+		$width      = $settings['width'] ?? 'full';
 
-		if ( ! $fieldType ) {
-			return '';
+		// Width-Klasse.
+		$width_class = match ( $width ) {
+			'half'       => 'md:rp-col-span-1',
+			'third'      => 'md:rp-col-span-1',
+			'two-thirds' => 'md:rp-col-span-2',
+			default      => 'rp-col-span-full',
+		};
+
+		// Template-Datei laden.
+		$template_path = $this->getFieldTemplatePath( $field_type );
+
+		if ( ! file_exists( $template_path ) ) {
+			$template_path = $this->getFieldTemplatePath( 'text' );
 		}
 
-		// Field wrapper.
-		$wrapper_classes = $this->getFieldWrapperClasses( $field );
-		$x_show          = $this->conditional_generator->generateXShow( $field );
-		$x_show_attr     = $x_show ? sprintf( ' x-show="%s"', esc_attr( $x_show ) ) : '';
+		// Template-Variablen.
+		$label       = $field_def['label'] ?? ucfirst( $field_key );
+		$placeholder = $field_def['placeholder'] ?? '';
+		$description = $field_def['description'] ?? '';
+		$validation  = $field_def['validation'] ?? [];
+		$options     = $field_def['options'] ?? [];
 
-		$output = sprintf(
-			'<div class="%s" data-field-key="%s"%s>',
-			esc_attr( implode( ' ', $wrapper_classes ) ),
-			esc_attr( $field->getFieldKey() ),
-			$x_show_attr
+		// x-model Binding.
+		$x_model = sprintf( 'formData.%s', $field_key );
+
+		ob_start();
+
+		// Field-Wrapper.
+		printf(
+			'<div class="rp-form-field rp-form-field--%s %s" data-field="%s">',
+			esc_attr( $field_type ),
+			esc_attr( $width_class ),
+			esc_attr( $field_key )
 		);
 
-		// Template laden.
-		$template_file = $this->getFieldTemplate( $field->getType() );
+		// Template einbinden.
+		include $template_path;
 
-		if ( file_exists( $template_file ) ) {
-			ob_start();
-			$this->includeFieldTemplate( $template_file, $field, $initial_data );
-			$output .= ob_get_clean();
-		} else {
-			// Fallback: Standard-Rendering.
-			$output .= $this->renderFieldDefault( $field, $initial_data );
-		}
+		echo '</div>';
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Navigation rendern (Zurück / Weiter / Absenden)
+	 *
+	 * @param int $total_steps Anzahl der Steps.
+	 * @return string HTML.
+	 */
+	private function renderNavigation( int $total_steps ): string {
+		$output = '<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">';
+
+		// Zurück-Button (nicht auf Step 1).
+		$output .= sprintf(
+			'<button type="button" x-show="step > 1" @click="prevStep" class="wp-element-button is-style-outline">%s</button>',
+			esc_html__( 'Zurück', 'recruiting-playbook' )
+		);
+
+		// Spacer für Step 1.
+		$output .= '<div x-show="step === 1"></div>';
+
+		// Weiter-Button (nicht auf letztem Step).
+		$output .= sprintf(
+			'<button type="button" x-show="step < totalSteps" @click="nextStep" class="wp-element-button">%s</button>',
+			esc_html__( 'Weiter', 'recruiting-playbook' )
+		);
+
+		// Absenden-Button (nur auf letztem Step).
+		$output .= sprintf(
+			'<button type="submit" x-show="step === totalSteps" :disabled="loading" class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed">
+				<span x-show="!loading">%s</span>
+				<span x-show="loading">%s</span>
+			</button>',
+			esc_html__( 'Bewerbung absenden', 'recruiting-playbook' ),
+			esc_html__( 'Wird gesendet...', 'recruiting-playbook' )
+		);
 
 		$output .= '</div>';
 
@@ -160,77 +312,129 @@ class FormRenderService {
 	}
 
 	/**
-	 * Field Template einbinden
+	 * Alpine.js Daten vorbereiten
 	 *
-	 * @param string          $template_file Pfad zum Template.
-	 * @param FieldDefinition $field         Felddefinition.
-	 * @param array           $initial_data  Initiale Daten.
+	 * @param array $config            Formular-Konfiguration.
+	 * @param array $field_definitions Feld-Definitionen.
+	 * @param int   $job_id            Job-ID.
+	 * @return array Alpine.js Daten.
 	 */
-	private function includeFieldTemplate( string $template_file, FieldDefinition $field, array $initial_data ): void {
-		// Variablen für Template bereitstellen.
-		$field_key   = $field->getFieldKey();
-		$field_type  = $field->getType();
-		$label       = $field->getLabel();
-		$placeholder = $field->getPlaceholder();
-		$description = $field->getDescription();
-		$is_required = $field->isRequired();
-		$settings    = $field->getSettings() ?? [];
-		$validation  = $field->getValidation() ?? [];
-		$value       = $initial_data[ $field_key ] ?? '';
+	private function prepareAlpineData( array $config, array $field_definitions, int $job_id ): array {
+		$form_data        = [ 'job_id' => $job_id ];
+		$validation_rules = [];
 
-		// x-model für Alpine.js.
-		$x_model = sprintf( 'formData.%s', $field_key );
+		// Alle sichtbaren Felder aus den Steps extrahieren.
+		foreach ( $config['steps'] as $step ) {
+			if ( empty( $step['fields'] ) ) {
+				continue;
+			}
 
-		// Include Template.
-		include $template_file;
+			foreach ( $step['fields'] as $field_config ) {
+				if ( empty( $field_config['is_visible'] ) ) {
+					continue;
+				}
+
+				$field_key = $field_config['field_key'] ?? '';
+
+				if ( ! isset( $field_definitions[ $field_key ] ) ) {
+					continue;
+				}
+
+				$field_def = $field_definitions[ $field_key ];
+
+				// Default-Wert.
+				$form_data[ $field_key ] = $this->getDefaultValue( $field_def );
+
+				// Validierungsregeln.
+				$rules = [];
+
+				if ( ! empty( $field_config['is_required'] ) ) {
+					$rules['required'] = true;
+				}
+
+				$validation = $field_def['validation'] ?? [];
+
+				if ( ! empty( $validation['min_length'] ) ) {
+					$rules['minLength'] = (int) $validation['min_length'];
+				}
+				if ( ! empty( $validation['max_length'] ) ) {
+					$rules['maxLength'] = (int) $validation['max_length'];
+				}
+
+				// Feldtyp-spezifische Regeln.
+				$field_type = $field_def['field_type'] ?? 'text';
+				if ( $field_type === 'email' ) {
+					$rules['email'] = true;
+				}
+				if ( $field_type === 'phone' ) {
+					$rules['phone'] = true;
+				}
+
+				if ( ! empty( $rules ) ) {
+					$validation_rules[ $field_key ] = $rules;
+				}
+			}
+		}
+
+		return [
+			'steps'      => count( $config['steps'] ),
+			'formData'   => $form_data,
+			'validation' => $validation_rules,
+			'i18n'       => $this->getI18nStrings(),
+		];
 	}
 
 	/**
-	 * Standard-Feldrendering (Fallback)
+	 * Feld-Definitionen als Key-Value-Array laden
 	 *
-	 * @param FieldDefinition $field        Felddefinition.
-	 * @param array           $initial_data Initiale Daten.
-	 * @return string HTML.
+	 * @return array<string, array>
 	 */
-	private function renderFieldDefault( FieldDefinition $field, array $initial_data ): string {
-		$field_key   = $field->getFieldKey();
-		$label       = $field->getLabel();
-		$is_required = $field->isRequired();
-		$value       = $initial_data[ $field_key ] ?? '';
+	private function loadFieldDefinitions(): array {
+		$fields = $this->field_repository->findSystemFields();
+		$result = [];
 
-		$output = '';
+		foreach ( $fields as $field ) {
+			$result[ $field->getFieldKey() ] = [
+				'field_key'   => $field->getFieldKey(),
+				'field_type'  => $field->getFieldType(),
+				'label'       => $field->getLabel(),
+				'placeholder' => $field->getPlaceholder(),
+				'description' => $field->getDescription(),
+				'is_required' => $field->isRequired(),
+				'is_system'   => $field->isSystem(),
+				'settings'    => $field->getSettings(),
+				'validation'  => $field->getValidation(),
+				'options'     => $field->getOptions(),
+			];
+		}
 
-		// Label.
-		$output .= sprintf(
-			'<label class="rp-label" for="rp-field-%s">%s%s</label>',
-			esc_attr( $field_key ),
-			esc_html( $label ),
-			$is_required ? ' <span class="rp-text-error">*</span>' : ''
-		);
-
-		// Input.
-		$output .= sprintf(
-			'<input type="text" id="rp-field-%1$s" name="%1$s" x-model="formData.%1$s" class="rp-input" :class="errors.%1$s ? \'rp-input-error\' : \'\'"%2$s>',
-			esc_attr( $field_key ),
-			$is_required ? ' required' : ''
-		);
-
-		// Error.
-		$output .= sprintf(
-			'<p x-show="errors.%1$s" x-text="errors.%1$s" class="rp-error-text"></p>',
-			esc_attr( $field_key )
-		);
-
-		return $output;
+		return $result;
 	}
 
 	/**
-	 * Template-Pfad für Feldtyp ermitteln
+	 * Standard-Wert für Feldtyp ermitteln
+	 *
+	 * @param array $field_def Feld-Definition.
+	 * @return mixed Standard-Wert.
+	 */
+	private function getDefaultValue( array $field_def ): mixed {
+		$field_type = $field_def['field_type'] ?? 'text';
+
+		return match ( $field_type ) {
+			'checkbox' => false,
+			'file'     => [],
+			'number'   => null,
+			default    => '',
+		};
+	}
+
+	/**
+	 * Pfad zur Feld-Template-Datei
 	 *
 	 * @param string $field_type Feldtyp.
-	 * @return string Pfad zum Template.
+	 * @return string Template-Pfad.
 	 */
-	private function getFieldTemplate( string $field_type ): string {
+	private function getFieldTemplatePath( string $field_type ): string {
 		// Theme kann Templates überschreiben.
 		$theme_template = get_stylesheet_directory() . '/recruiting-playbook/fields/field-' . $field_type . '.php';
 
@@ -238,156 +442,7 @@ class FormRenderService {
 			return $theme_template;
 		}
 
-		// Plugin-Template.
 		return RP_PLUGIN_DIR . 'templates/fields/field-' . $field_type . '.php';
-	}
-
-	/**
-	 * Wrapper-Klassen für Feld ermitteln
-	 *
-	 * @param FieldDefinition $field Felddefinition.
-	 * @return string[] CSS-Klassen.
-	 */
-	private function getFieldWrapperClasses( FieldDefinition $field ): array {
-		$classes = [
-			'rp-form__field',
-			'rp-form__field--' . $field->getType(),
-		];
-
-		// Breite.
-		$settings = $field->getSettings() ?? [];
-		$width    = $settings['width'] ?? 'full';
-
-		switch ( $width ) {
-			case 'half':
-				$classes[] = 'md:rp-col-span-1';
-				break;
-			case 'third':
-				$classes[] = 'md:rp-col-span-1';
-				break;
-			case 'two-thirds':
-				$classes[] = 'md:rp-col-span-2';
-				break;
-			default:
-				$classes[] = 'rp-col-span-full';
-		}
-
-		// Pflichtfeld.
-		if ( $field->isRequired() ) {
-			$classes[] = 'rp-form__field--required';
-		}
-
-		// System-Feld.
-		if ( $field->isSystem() ) {
-			$classes[] = 'rp-form__field--system';
-		}
-
-		return $classes;
-	}
-
-	/**
-	 * Alpine.js Konfiguration rendern
-	 *
-	 * @param FieldDefinition[] $fields       Felder.
-	 * @param int               $job_id       Job-ID.
-	 * @param array             $initial_data Initiale Daten.
-	 * @return string Script-Tag.
-	 */
-	private function renderAlpineConfig( array $fields, int $job_id, array $initial_data ): string {
-		// FormData-Objekt aufbauen.
-		$form_data = [ 'job_id' => $job_id ];
-
-		foreach ( $fields as $field ) {
-			$key              = $field->getFieldKey();
-			$form_data[ $key ] = $initial_data[ $key ] ?? $this->getDefaultValue( $field );
-		}
-
-		// Validierungsregeln sammeln.
-		$validation_rules = [];
-		foreach ( $fields as $field ) {
-			$rules = [];
-
-			if ( $field->isRequired() ) {
-				$rules['required'] = true;
-			}
-
-			$validation = $field->getValidation() ?? [];
-
-			if ( ! empty( $validation['min_length'] ) ) {
-				$rules['minLength'] = (int) $validation['min_length'];
-			}
-			if ( ! empty( $validation['max_length'] ) ) {
-				$rules['maxLength'] = (int) $validation['max_length'];
-			}
-			if ( ! empty( $validation['pattern'] ) ) {
-				$rules['pattern'] = $validation['pattern'];
-			}
-			if ( ! empty( $validation['min_value'] ) ) {
-				$rules['min'] = (float) $validation['min_value'];
-			}
-			if ( ! empty( $validation['max_value'] ) ) {
-				$rules['max'] = (float) $validation['max_value'];
-			}
-
-			// Feldtyp-spezifische Regeln.
-			switch ( $field->getType() ) {
-				case 'email':
-					$rules['email'] = true;
-					break;
-				case 'url':
-					$rules['url'] = true;
-					break;
-				case 'phone':
-					$rules['phone'] = true;
-					break;
-			}
-
-			if ( ! empty( $rules ) ) {
-				$validation_rules[ $field->getFieldKey() ] = $rules;
-			}
-		}
-
-		// Conditional Config.
-		$conditional_config = $this->conditional_generator->generateConfig( $fields );
-
-		// Config-Objekt.
-		$config = [
-			'formData'    => $form_data,
-			'validation'  => $validation_rules,
-			'conditional' => $conditional_config,
-			'i18n'        => $this->getI18n(),
-		];
-
-		$json = wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT );
-
-		return sprintf(
-			'<script>window.rpCustomFieldsConfig = %s;</script>',
-			$json
-		);
-	}
-
-	/**
-	 * Standard-Wert für Feld ermitteln
-	 *
-	 * @param FieldDefinition $field Felddefinition.
-	 * @return mixed Standard-Wert.
-	 */
-	private function getDefaultValue( FieldDefinition $field ): mixed {
-		$settings = $field->getSettings() ?? [];
-
-		// Expliziter Default-Wert.
-		if ( isset( $settings['default_value'] ) ) {
-			return $settings['default_value'];
-		}
-
-		// Typ-basierter Default.
-		return match ( $field->getType() ) {
-			'checkbox' => ( $settings['mode'] ?? 'single' ) === 'multi' ? [] : false,
-			'file'     => [],
-			'number'   => null,
-			'select', 'radio' => '',
-			default    => '',
-		};
 	}
 
 	/**
@@ -395,89 +450,28 @@ class FormRenderService {
 	 *
 	 * @return array<string, string>
 	 */
-	private function getI18n(): array {
+	private function getI18nStrings(): array {
 		return [
-			'required'           => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-			'invalidEmail'       => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-			'invalidUrl'         => __( 'Bitte geben Sie eine gültige URL ein', 'recruiting-playbook' ),
-			'invalidPhone'       => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
-			'minLength'          => __( 'Mindestens %d Zeichen erforderlich', 'recruiting-playbook' ),
-			'maxLength'          => __( 'Maximal %d Zeichen erlaubt', 'recruiting-playbook' ),
-			'minValue'           => __( 'Der Wert muss mindestens %s sein', 'recruiting-playbook' ),
-			'maxValue'           => __( 'Der Wert darf höchstens %s sein', 'recruiting-playbook' ),
-			'patternMismatch'    => __( 'Das Format ist ungültig', 'recruiting-playbook' ),
-			'fileTooLarge'       => __( 'Die Datei ist zu groß (max. %d MB)', 'recruiting-playbook' ),
-			'invalidFileType'    => __( 'Dieser Dateityp ist nicht erlaubt', 'recruiting-playbook' ),
-			'maxFilesExceeded'   => __( 'Maximal %d Dateien erlaubt', 'recruiting-playbook' ),
-			'selectOption'       => __( 'Bitte wählen...', 'recruiting-playbook' ),
-			'otherOptionLabel'   => __( 'Sonstiges', 'recruiting-playbook' ),
-			'dragDropText'       => __( 'Datei hierher ziehen oder klicken', 'recruiting-playbook' ),
-			'removeFile'         => __( 'Datei entfernen', 'recruiting-playbook' ),
+			'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
+			'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
+			'invalidPhone'    => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
+			'minLength'       => __( 'Mindestens %d Zeichen erforderlich', 'recruiting-playbook' ),
+			'maxLength'       => __( 'Maximal %d Zeichen erlaubt', 'recruiting-playbook' ),
+			'fileTooLarge'    => __( 'Die Datei ist zu groß (max. %d MB)', 'recruiting-playbook' ),
+			'invalidFileType' => __( 'Dieser Dateityp ist nicht erlaubt', 'recruiting-playbook' ),
 		];
 	}
 
 	/**
-	 * Felder-HTML für bestimmten Step rendern
+	 * Fallback-Formular rendern (wenn keine Konfiguration vorhanden)
 	 *
-	 * @param FieldDefinition[] $fields       Alle Felder.
-	 * @param int               $step         Schritt-Nummer (1-basiert).
-	 * @param array             $initial_data Initiale Daten.
+	 * @param int $job_id Job-ID.
 	 * @return string HTML.
 	 */
-	public function renderFieldsForStep( array $fields, int $step, array $initial_data = [] ): string {
-		// Felder nach Step gruppieren (basierend auf settings.step oder Position).
-		$step_fields = array_filter( $fields, function ( $field ) use ( $step ) {
-			$settings   = $field->getSettings() ?? [];
-			$field_step = $settings['step'] ?? 1;
-			return (int) $field_step === $step;
-		} );
-
-		$output = '';
-		foreach ( $step_fields as $field ) {
-			$output .= $this->renderField( $field, $initial_data );
-		}
-
-		return $output;
-	}
-
-	/**
-	 * Formular-HTML für Wizard rendern (Multi-Step)
-	 *
-	 * @param int   $job_id       Job-ID.
-	 * @param int   $total_steps  Anzahl Steps.
-	 * @param array $initial_data Initiale Daten.
-	 * @return string HTML.
-	 */
-	public function renderWizardForm( int $job_id, int $total_steps = 3, array $initial_data = [] ): string {
-		$fields = $this->field_service->getFieldsForJob( $job_id );
-
-		if ( empty( $fields ) ) {
-			$fields = $this->field_service->getActiveFields();
-		}
-
-		$fields = array_filter( $fields, fn( $f ) => $f->isEnabled() );
-		usort( $fields, fn( $a, $b ) => $a->getSortOrder() <=> $b->getSortOrder() );
-
-		$output = '';
-
-		// Config.
-		$output .= $this->renderAlpineConfig( $fields, $job_id, $initial_data );
-		$output .= $this->conditional_generator->generateHiddenStyles();
-
-		// Wizard Container.
-		$output .= '<div class="rp-wizard" x-data="rpWizardForm()">';
-
-		for ( $step = 1; $step <= $total_steps; $step++ ) {
-			$output .= sprintf(
-				'<div class="rp-wizard__step" x-show="step === %d" x-transition>',
-				$step
-			);
-			$output .= $this->renderFieldsForStep( $fields, $step, $initial_data );
-			$output .= '</div>';
-		}
-
-		$output .= '</div>';
-
-		return $output;
+	private function renderFallbackForm( int $job_id ): string {
+		return sprintf(
+			'<div class="rp-form-error">%s</div>',
+			esc_html__( 'Formular konnte nicht geladen werden. Bitte kontaktieren Sie den Administrator.', 'recruiting-playbook' )
+		);
 	}
 }

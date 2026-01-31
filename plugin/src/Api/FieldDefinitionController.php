@@ -515,7 +515,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		return [
 			'id'          => $field->getId(),
 			'field_key'   => $field->getFieldKey(),
-			'type'        => $field->getType(),
+			'type'        => $field->getFieldType(),
 			'label'       => $field->getLabel(),
 			'placeholder' => $field->getPlaceholder(),
 			'description' => $field->getDescription(),

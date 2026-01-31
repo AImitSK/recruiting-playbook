@@ -425,7 +425,7 @@ class FormTemplateController extends WP_REST_Controller {
 			'name'        => $template->getName(),
 			'description' => $template->getDescription(),
 			'is_default'  => $template->isDefault(),
-			'field_count' => $template->getFieldCount(),
+			'field_count' => count( $template->getFields() ),
 			'usage_count' => $this->repository->getUsageCount( $template->getId() ),
 			'created_by'  => $template->getCreator(),
 			'created_at'  => $template->getCreatedAt(),
@@ -438,7 +438,7 @@ class FormTemplateController extends WP_REST_Controller {
 				fn( $f ) => [
 					'id'          => $f->getId(),
 					'field_key'   => $f->getFieldKey(),
-					'type'        => $f->getType(),
+					'type'        => $f->getFieldType(),
 					'label'       => $f->getLabel(),
 					'placeholder' => $f->getPlaceholder(),
 					'description' => $f->getDescription(),

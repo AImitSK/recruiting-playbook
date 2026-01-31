@@ -40,6 +40,7 @@ use RecruitingPlaybook\Api\ExportController;
 use RecruitingPlaybook\Api\SystemStatusController;
 use RecruitingPlaybook\Api\FieldDefinitionController;
 use RecruitingPlaybook\Api\FormTemplateController;
+use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -431,6 +432,9 @@ final class Plugin {
 
 		$form_template_controller = new FormTemplateController();
 		$form_template_controller->register_routes();
+
+		$form_config_controller = new FormConfigController();
+		$form_config_controller->register_routes();
 	}
 
 	/**

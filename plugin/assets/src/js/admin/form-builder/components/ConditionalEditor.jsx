@@ -44,55 +44,58 @@ function ConditionRow( { condition, allFields, onChange, onRemove, i18n } ) {
 	const needsValue = selectedOperator?.needsValue ?? true;
 
 	return (
-		<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
-			{ /* Field selector */ }
-			<Select
-				value={ condition.field || '' }
-				onChange={ ( e ) => onChange( { ...condition, field: e.target.value } ) }
-				style={ { width: '150px' } }
-			>
-				<SelectOption value="">
-					{ i18n?.selectField || __( 'Feld wählen', 'recruiting-playbook' ) }
-				</SelectOption>
-				{ allFields.map( ( field ) => (
-					<SelectOption key={ field.id } value={ field.field_key }>
-						{ field.label }
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
+			{ /* Row 1: Field + Operator + Delete */ }
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+				{ /* Field selector */ }
+				<Select
+					value={ condition.field || '' }
+					onChange={ ( e ) => onChange( { ...condition, field: e.target.value } ) }
+					style={ { flex: 1 } }
+				>
+					<SelectOption value="">
+						{ i18n?.selectField || __( 'Feld wählen', 'recruiting-playbook' ) }
 					</SelectOption>
-				) ) }
-			</Select>
+					{ allFields.map( ( field ) => (
+						<SelectOption key={ field.id } value={ field.field_key }>
+							{ field.label }
+						</SelectOption>
+					) ) }
+				</Select>
 
-			{ /* Operator selector */ }
-			<Select
-				value={ condition.operator || 'equals' }
-				onChange={ ( e ) => onChange( { ...condition, operator: e.target.value } ) }
-				style={ { width: '150px' } }
-			>
-				{ OPERATORS.map( ( op ) => (
-					<SelectOption key={ op.value } value={ op.value }>
-						{ i18n?.[ `op${ op.value.charAt( 0 ).toUpperCase() + op.value.slice( 1 ).replace( /_/g, '' ) }` ] || op.label }
-					</SelectOption>
-				) ) }
-			</Select>
+				{ /* Operator selector */ }
+				<Select
+					value={ condition.operator || 'equals' }
+					onChange={ ( e ) => onChange( { ...condition, operator: e.target.value } ) }
+					style={ { flex: 1 } }
+				>
+					{ OPERATORS.map( ( op ) => (
+						<SelectOption key={ op.value } value={ op.value }>
+							{ i18n?.[ `op${ op.value.charAt( 0 ).toUpperCase() + op.value.slice( 1 ).replace( /_/g, '' ) }` ] || op.label }
+						</SelectOption>
+					) ) }
+				</Select>
 
-			{ /* Value input */ }
+				{ /* Remove button */ }
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={ onRemove }
+					style={ { color: '#ef4444', flexShrink: 0 } }
+				>
+					<Trash2 style={ { height: '1rem', width: '1rem' } } />
+				</Button>
+			</div>
+
+			{ /* Row 2: Value input (full width) */ }
 			{ needsValue && (
 				<Input
 					value={ condition.value || '' }
 					onChange={ ( e ) => onChange( { ...condition, value: e.target.value } ) }
-					placeholder={ i18n?.value || __( 'Wert', 'recruiting-playbook' ) }
-					style={ { flex: 1 } }
+					placeholder={ i18n?.value || __( 'Wert eingeben...', 'recruiting-playbook' ) }
+					style={ { width: '100%' } }
 				/>
 			) }
-
-			{ /* Remove button */ }
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={ onRemove }
-				style={ { color: '#ef4444' } }
-			>
-				<Trash2 style={ { height: '1rem', width: '1rem' } } />
-			</Button>
 		</div>
 	);
 }
