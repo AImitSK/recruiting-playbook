@@ -33,6 +33,7 @@ use RecruitingPlaybook\Services\FormRenderService;
  * - [rp_application_form] - Bewerbungsformular (statisch, 3 Schritte)
  * - [rp_custom_application_form] - Bewerbungsformular mit Custom Fields (Pro)
  * - [rp_ai_job_match] - KI-Matching für einzelne Stelle (AI-Addon)
+ * - [rp_ai_job_finder] - KI-Job-Finder für alle Stellen (AI-Addon)
  */
 class Shortcodes {
 
@@ -51,6 +52,13 @@ class Shortcodes {
 	private bool $match_modal_registered = false;
 
 	/**
+	 * Flag ob Job-Finder bereits für Footer registriert wurde
+	 *
+	 * @var bool
+	 */
+	private bool $job_finder_registered = false;
+
+	/**
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
@@ -61,6 +69,9 @@ class Shortcodes {
 
 		// KI-Matching Shortcode (AI-Addon Feature).
 		add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
+
+		// KI-Job-Finder Shortcode (AI-Addon Feature).
+		add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
 	}
 
 	/**
@@ -1313,6 +1324,188 @@ class Shortcodes {
 			},
 			20
 		);
+	}
+
+	/**
+	 * KI-Job-Finder rendern (Mode B - Alle Stellen)
+	 *
+	 * Shortcode: [rp_ai_job_finder]
+	 *
+	 * Attribute:
+	 * - title: Überschrift (default: "Finde deinen Traumjob")
+	 * - subtitle: Untertitel
+	 * - limit: Max. Anzahl Matches (1-10, default: 5)
+	 * - class: Zusätzliche CSS-Klassen
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderAiJobFinder( $atts ): string {
+		// Feature-Check.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return $this->renderUpgradePrompt(
+				'ai_cv_matching',
+				__( 'KI-Job-Finder', 'recruiting-playbook' ),
+				'AI_ADDON'
+			);
+		}
+
+		$atts = shortcode_atts(
+			[
+				'title'    => __( 'Finde deinen Traumjob', 'recruiting-playbook' ),
+				'subtitle' => __( 'Lade deinen Lebenslauf hoch und entdecke passende Stellen.', 'recruiting-playbook' ),
+				'limit'    => 5,
+				'class'    => '',
+			],
+			$atts,
+			'rp_ai_job_finder'
+		);
+
+		// Aktive Jobs zählen.
+		$job_count = wp_count_posts( 'job_listing' )->publish ?? 0;
+
+		if ( 0 === $job_count ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
+					' . esc_html__( 'Aktuell sind keine offenen Stellen verfügbar.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		// Assets laden.
+		$this->enqueueJobFinderAssets();
+
+		// Job-Finder Container im Footer registrieren.
+		$this->registerJobFinder();
+
+		$limit       = max( 1, min( 10, absint( $atts['limit'] ) ) );
+		$extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
+
+		ob_start();
+		?>
+		<div class="rp-plugin rp-job-finder<?php echo $extra_class; ?>"
+			x-data="rpJobFinder({
+				limit: <?php echo esc_attr( $limit ); ?>,
+				jobCount: <?php echo esc_attr( $job_count ); ?>
+			})"
+		>
+			<!-- Header -->
+			<div class="rp-job-finder__header">
+				<?php if ( ! empty( $atts['title'] ) ) : ?>
+					<h2 class="rp-job-finder__title"><?php echo esc_html( $atts['title'] ); ?></h2>
+				<?php endif; ?>
+				<?php if ( ! empty( $atts['subtitle'] ) ) : ?>
+					<p class="rp-job-finder__subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
+				<?php endif; ?>
+				<p class="rp-job-finder__job-count">
+					<?php
+					printf(
+						/* translators: %d: Number of available jobs */
+						esc_html( _n( '%d offene Stelle', '%d offene Stellen', $job_count, 'recruiting-playbook' ) ),
+						esc_html( $job_count )
+					);
+					?>
+				</p>
+			</div>
+
+			<!-- Content Container - Template wird per JS geladen -->
+			<div id="rp-job-finder-content"></div>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Job-Finder Template im Footer registrieren
+	 *
+	 * Lädt das Template einmalig im Footer.
+	 */
+	private function registerJobFinder(): void {
+		if ( $this->job_finder_registered ) {
+			return;
+		}
+
+		$this->job_finder_registered = true;
+
+		add_action(
+			'wp_footer',
+			function () {
+				$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
+				if ( file_exists( $template ) ) {
+					include $template;
+				}
+			},
+			20
+		);
+	}
+
+	/**
+	 * Job-Finder Assets laden
+	 *
+	 * Lädt CSS und JS für den KI-Job-Finder.
+	 */
+	private function enqueueJobFinderAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Job-Finder CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-job-finder', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-job-finder',
+				RP_PLUGIN_URL . 'assets/dist/css/job-finder.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Job-Finder JS - muss VOR Alpine.js geladen werden.
+		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/job-finder.js';
+		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-job-finder',
+				RP_PLUGIN_URL . 'assets/src/js/components/job-finder.js',
+				[],
+				RP_VERSION,
+				true
+			);
+
+			// Konfiguration für den Job-Finder.
+			wp_localize_script(
+				'rp-job-finder',
+				'rpJobFinderConfig',
+				[
+					'endpoints' => [
+						'analyze' => rest_url( 'recruiting/v1/match/job-finder' ),
+						'status'  => rest_url( 'recruiting/v1/match/status' ),
+					],
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'i18n'      => [
+						'uploading'       => __( 'Lebenslauf wird hochgeladen...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
+						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
+						'noMatches'       => __( 'Leider wurden keine passenden Stellen gefunden.', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+						'matchHigh'       => __( 'Sehr gut geeignet', 'recruiting-playbook' ),
+						'matchMedium'     => __( 'Gut geeignet', 'recruiting-playbook' ),
+						'matchLow'        => __( 'Bedingt geeignet', 'recruiting-playbook' ),
+						'viewJob'         => __( 'Stelle ansehen', 'recruiting-playbook' ),
+						'applyNow'        => __( 'Jetzt bewerben', 'recruiting-playbook' ),
+						'matchedSkills'   => __( 'Passende Skills', 'recruiting-playbook' ),
+						'missingSkills'   => __( 'Fehlende Skills', 'recruiting-playbook' ),
+						'tryAgain'        => __( 'Erneut versuchen', 'recruiting-playbook' ),
+						'newSearch'       => __( 'Neue Suche', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js laden.
+		$this->enqueueAlpine( [ 'rp-job-finder' ] );
 	}
 
 	/**
