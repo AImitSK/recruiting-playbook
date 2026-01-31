@@ -1,0 +1,231 @@
+/**
+ * KI-Job-Finder Styles
+ *
+ * Basiert auf match-modal.css, erweitert um Ergebnis-Liste
+ */
+
+/* ===== CONTAINER ===== */
+.rp-job-finder {
+    @apply rp-bg-white rp-rounded-xl rp-shadow-lg rp-border rp-border-gray-200;
+    @apply rp-p-6 sm:rp-p-8 md:rp-p-10;
+    @apply rp-max-w-3xl rp-mx-auto;
+}
+
+/* ===== HEADER ===== */
+.rp-job-finder__header {
+    @apply rp-text-center rp-mb-8;
+}
+
+.rp-job-finder__title {
+    @apply rp-text-2xl sm:rp-text-3xl rp-font-bold rp-text-gray-900 rp-mb-2;
+}
+
+.rp-job-finder__subtitle {
+    @apply rp-text-gray-600 rp-text-base;
+}
+
+.rp-job-finder__job-count {
+    @apply rp-text-sm rp-text-gray-500 rp-mt-2;
+}
+
+/* ===== UPLOAD ZONE (wiederverwendet von match-modal) ===== */
+.rp-job-finder .rp-match-upload-zone {
+    @apply rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-xl;
+    @apply rp-p-8 rp-text-center rp-cursor-pointer;
+    @apply rp-transition-all rp-duration-200;
+}
+
+.rp-job-finder .rp-match-upload-zone:hover,
+.rp-job-finder .rp-match-upload-zone--dragging {
+    @apply rp-border-primary rp-bg-primary/5;
+}
+
+/* ===== INFO BOX ===== */
+.rp-job-finder .rp-match-info-box {
+    @apply rp-bg-blue-50 rp-border rp-border-blue-200 rp-rounded-lg;
+    @apply rp-p-4 rp-flex rp-gap-3;
+}
+
+.rp-job-finder .rp-match-info-box svg {
+    @apply rp-w-5 rp-h-5 rp-text-blue-500 rp-flex-shrink-0 rp-mt-0.5;
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.rp-job-finder__submit {
+    @apply rp-w-full rp-mt-6 rp-py-3 rp-px-6;
+    @apply rp-bg-primary rp-text-white rp-font-semibold rp-rounded-lg;
+    @apply rp-transition-all rp-duration-200;
+    @apply hover:rp-bg-primary-hover;
+    @apply disabled:rp-opacity-50 disabled:rp-cursor-not-allowed;
+}
+
+/* ===== PROCESSING ===== */
+.rp-job-finder__processing {
+    @apply rp-text-center rp-py-12;
+}
+
+.rp-job-finder__spinner {
+    @apply rp-w-12 rp-h-12 rp-mx-auto rp-mb-4;
+    @apply rp-border-4 rp-border-gray-200 rp-border-t-primary rp-rounded-full;
+    animation: rp-spin 1s linear infinite;
+}
+
+@keyframes rp-spin {
+    to { transform: rotate(360deg); }
+}
+
+.rp-job-finder__progress {
+    @apply rp-w-full rp-max-w-xs rp-mx-auto rp-mt-4;
+    @apply rp-bg-gray-200 rp-rounded-full rp-h-2 rp-overflow-hidden;
+}
+
+.rp-job-finder__progress-bar {
+    @apply rp-bg-primary rp-h-full rp-transition-all rp-duration-500;
+}
+
+/* ===== RESULTS ===== */
+.rp-job-finder-results {
+    @apply rp-mt-6;
+}
+
+.rp-job-finder-results__header {
+    @apply rp-flex rp-items-center rp-justify-between rp-mb-6;
+}
+
+.rp-job-finder-results__title {
+    @apply rp-text-xl rp-font-semibold rp-text-gray-900;
+}
+
+.rp-job-finder-results__count {
+    @apply rp-text-sm rp-text-gray-500;
+}
+
+/* ===== PROFILE CARD ===== */
+.rp-job-finder-profile {
+    @apply rp-bg-gray-50 rp-rounded-lg rp-p-4 rp-mb-6;
+}
+
+.rp-job-finder-profile__title {
+    @apply rp-font-semibold rp-text-gray-900 rp-mb-3;
+}
+
+.rp-job-finder-profile__skills {
+    @apply rp-flex rp-flex-wrap rp-gap-2;
+}
+
+.rp-job-finder-profile__skill {
+    @apply rp-px-3 rp-py-1 rp-bg-white rp-border rp-border-gray-200;
+    @apply rp-rounded-full rp-text-sm rp-text-gray-700;
+}
+
+/* ===== MATCH CARDS ===== */
+.rp-job-finder-matches {
+    @apply rp-space-y-4;
+}
+
+.rp-job-finder-match {
+    @apply rp-border rp-border-gray-200 rp-rounded-xl rp-p-5;
+    @apply rp-transition-all rp-duration-200;
+    @apply hover:rp-shadow-md;
+}
+
+.rp-job-finder-match--high {
+    @apply rp-border-l-4 rp-border-l-green-500;
+}
+
+.rp-job-finder-match--medium {
+    @apply rp-border-l-4 rp-border-l-yellow-500;
+}
+
+.rp-job-finder-match--low {
+    @apply rp-border-l-4 rp-border-l-gray-400;
+}
+
+.rp-job-finder-match__header {
+    @apply rp-flex rp-items-start rp-justify-between rp-gap-4;
+}
+
+.rp-job-finder-match__title {
+    @apply rp-font-semibold rp-text-lg rp-text-gray-900;
+}
+
+.rp-job-finder-match__category {
+    @apply rp-text-sm rp-text-gray-500;
+}
+
+.rp-job-finder-match__score {
+    @apply rp-text-2xl rp-font-bold;
+}
+
+.rp-job-finder-match__message {
+    @apply rp-text-gray-600 rp-text-sm rp-mt-2;
+}
+
+/* ===== SKILLS BADGES ===== */
+.rp-job-finder-match__skills {
+    @apply rp-mt-4 rp-flex rp-flex-wrap rp-gap-2;
+}
+
+.rp-job-finder-match__skill {
+    @apply rp-px-2.5 rp-py-1 rp-text-xs rp-rounded-full;
+}
+
+.rp-job-finder-match__skill--matched {
+    @apply rp-bg-green-50 rp-text-green-700;
+}
+
+.rp-job-finder-match__skill--missing {
+    @apply rp-bg-gray-100 rp-text-gray-500 rp-line-through;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.rp-job-finder-match__actions {
+    @apply rp-mt-4 rp-flex rp-flex-wrap rp-gap-3;
+}
+
+.rp-job-finder-match__btn {
+    @apply rp-px-4 rp-py-2 rp-text-sm rp-font-medium rp-rounded-lg;
+    @apply rp-transition-colors rp-duration-200;
+}
+
+.rp-job-finder-match__btn--primary {
+    @apply rp-bg-primary rp-text-white hover:rp-bg-primary-hover;
+}
+
+.rp-job-finder-match__btn--secondary {
+    @apply rp-bg-white rp-border rp-border-gray-300 rp-text-gray-700;
+    @apply hover:rp-bg-gray-50;
+}
+
+/* ===== NO MATCHES ===== */
+.rp-job-finder__no-matches {
+    @apply rp-text-center rp-py-12;
+}
+
+.rp-job-finder__no-matches-icon {
+    @apply rp-w-16 rp-h-16 rp-mx-auto rp-text-gray-300 rp-mb-4;
+}
+
+.rp-job-finder__no-matches-text {
+    @apply rp-text-gray-600 rp-mb-4;
+}
+
+/* ===== ERROR ===== */
+.rp-job-finder__error {
+    @apply rp-bg-red-50 rp-border rp-border-red-200 rp-rounded-lg;
+    @apply rp-p-4 rp-text-center;
+}
+
+.rp-job-finder__error-text {
+    @apply rp-text-red-600 rp-font-medium;
+}
+
+/* ===== RESET BUTTON ===== */
+.rp-job-finder__reset {
+    @apply rp-text-center rp-mt-8;
+}
+
+/* ===== COLOR UTILITIES ===== */
+.rp-text-success { @apply rp-text-green-600; }
+.rp-text-warning { @apply rp-text-yellow-600; }
+.rp-text-error { @apply rp-text-red-600; }
