@@ -32,6 +32,7 @@ use RecruitingPlaybook\Services\FormRenderService;
  * - [rp_job_search] - Stellensuche mit Filtern
  * - [rp_application_form] - Bewerbungsformular (statisch, 3 Schritte)
  * - [rp_custom_application_form] - Bewerbungsformular mit Custom Fields (Pro)
+ * - [rp_ai_job_match] - KI-Matching für einzelne Stelle (AI-Addon)
  */
 class Shortcodes {
 
@@ -43,6 +44,13 @@ class Shortcodes {
 	private ?FormRenderService $form_render_service = null;
 
 	/**
+	 * Flag ob Match-Modal bereits für Footer registriert wurde
+	 *
+	 * @var bool
+	 */
+	private bool $match_modal_registered = false;
+
+	/**
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
@@ -50,6 +58,9 @@ class Shortcodes {
 		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
+
+		// KI-Matching Shortcode (AI-Addon Feature).
+		add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
 	}
 
 	/**
@@ -1171,6 +1182,248 @@ class Shortcodes {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * KI-Job-Match rendern (Mode A - Einzelstelle)
+	 *
+	 * Shortcode: [rp_ai_job_match]
+	 *
+	 * Attribute:
+	 * - job_id: ID der Stelle (default: aktuelle Stelle)
+	 * - title: Button-Text (default: "Passe ich zu diesem Job?")
+	 * - display: Darstellung - "button" (default), "inline", "modal"
+	 * - class: Zusätzliche CSS-Klassen für den Button
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderAiJobMatch( $atts ): string {
+		// Feature-Check.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return $this->renderUpgradePrompt(
+				'ai_cv_matching',
+				__( 'KI-Job-Match', 'recruiting-playbook' ),
+				'AI_ADDON'
+			);
+		}
+
+		$atts = shortcode_atts(
+			[
+				'job_id'  => 0,
+				'title'   => __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
+				'display' => 'button',
+				'class'   => '',
+			],
+			$atts,
+			'rp_ai_job_match'
+		);
+
+		$job_id = absint( $atts['job_id'] );
+
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
+		if ( ! $job_id && is_singular( 'job_listing' ) ) {
+			$job_id = get_the_ID();
+		}
+
+		// Validieren.
+		if ( ! $job_id ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
+					' . esc_html__( 'Hinweis: Keine Stelle angegeben. Bitte job_id Attribut setzen oder auf einer Stellenseite verwenden.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		$job = get_post( $job_id );
+		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error rp-text-sm">
+					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		// Assets laden.
+		$this->enqueueMatchModalAssets();
+
+		// Modal im Footer registrieren (nur einmal).
+		$this->registerMatchModal();
+
+		$job_title   = esc_attr( $job->post_title );
+		$button_text = esc_html( $atts['title'] );
+		$extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
+
+		ob_start();
+		?>
+		<div class="rp-plugin rp-ai-job-match">
+			<button
+				type="button"
+				class="rp-match-trigger-btn<?php echo $extra_class; ?>"
+				@click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
+			>
+				<svg class="rp-match-trigger-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+				</svg>
+				<span><?php echo $button_text; ?></span>
+			</button>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Match-Modal im Footer registrieren
+	 *
+	 * Fügt das Modal-Template einmalig im Footer ein.
+	 */
+	private function registerMatchModal(): void {
+		if ( $this->match_modal_registered ) {
+			return;
+		}
+
+		$this->match_modal_registered = true;
+
+		add_action(
+			'wp_footer',
+			function () {
+				$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+				if ( file_exists( $template ) ) {
+					include $template;
+				}
+			},
+			20
+		);
+	}
+
+	/**
+	 * Match-Modal Assets laden
+	 *
+	 * Lädt CSS und JS für das KI-Matching Modal.
+	 */
+	private function enqueueMatchModalAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Match-Modal CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-match-modal', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-match-modal',
+				RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Match-Modal JS - muss VOR Alpine.js geladen werden.
+		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-match-modal',
+				RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+				[],
+				RP_VERSION,
+				true
+			);
+
+			// Konfiguration für das Match-Modal.
+			wp_localize_script(
+				'rp-match-modal',
+				'rpMatchConfig',
+				[
+					'endpoints' => [
+						'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
+						'status'  => rest_url( 'recruiting/v1/match/status' ),
+					],
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'i18n'      => [
+						'uploading'       => __( 'Dokument wird hochgeladen...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
+						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
+						'resultHigh'      => __( 'Gute Übereinstimmung', 'recruiting-playbook' ),
+						'resultMedium'    => __( 'Teilweise passend', 'recruiting-playbook' ),
+						'resultLow'       => __( 'Eher nicht passend', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js laden.
+		$this->enqueueAlpine( [ 'rp-match-modal' ] );
+	}
+
+	/**
+	 * Alpine.js laden mit optionalen Abhängigkeiten
+	 *
+	 * @param array $additional_deps Zusätzliche Script-Abhängigkeiten.
+	 */
+	private function enqueueAlpine( array $additional_deps = [] ): void {
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+
+		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+			wp_enqueue_script(
+				'rp-alpine',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				$additional_deps,
+				'3.14.3',
+				true
+			);
+
+			// Defer-Attribut hinzufügen.
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+						return str_replace( ' src', ' defer src', $tag );
+					}
+					return $tag;
+				},
+				10,
+				2
+			);
+		}
+	}
+
+	/**
+	 * Upgrade-Prompt für nicht verfügbare Features
+	 *
+	 * @param string $feature       Feature-Name.
+	 * @param string $feature_name  Anzeige-Name.
+	 * @param string $required_tier Benötigter Tier.
+	 * @return string HTML.
+	 */
+	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
+		$tier_labels = [
+			'PRO'      => 'Pro',
+			'AI_ADDON' => 'AI Addon',
+			'BUNDLE'   => 'Pro + AI Bundle',
+		];
+
+		$label = $tier_labels[ $required_tier ] ?? $required_tier;
+
+		return '<div class="rp-plugin">
+			<div class="rp-bg-gray-50 rp-rounded-lg rp-p-6 rp-text-center">
+				<svg class="rp-w-12 rp-h-12 rp-mx-auto rp-text-gray-400 rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+				<h3 class="rp-font-semibold rp-text-gray-900 rp-mb-2">' .
+				esc_html( $feature_name ) . '</h3>
+				<p class="rp-text-gray-600 rp-mb-4">' .
+				sprintf(
+					/* translators: %s: Required tier name */
+					esc_html__( 'Dieses Feature ist Teil von %s.', 'recruiting-playbook' ),
+					'<strong>' . esc_html( $label ) . '</strong>'
+				) . '</p>
+				<a href="' . esc_url( admin_url( 'admin.php?page=recruiting-playbook-license' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
+				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
+			</div>
+		</div>';
 	}
 
 	/**

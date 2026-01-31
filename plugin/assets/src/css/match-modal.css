@@ -285,3 +285,49 @@ body.rp-modal-open {
 .rp-match-file-label:hover {
     @apply rp-bg-gray-50;
 }
+
+/* ===== Trigger Button (Shortcode) ===== */
+.rp-match-trigger-btn {
+    @apply rp-inline-flex rp-items-center rp-gap-2 rp-px-5 rp-py-3;
+    @apply rp-font-semibold rp-text-white rp-bg-primary;
+    @apply rp-rounded-lg rp-border-0 rp-cursor-pointer;
+    @apply rp-transition-all rp-duration-200;
+    @apply hover:rp-bg-primary-hover hover:rp-shadow-md;
+    @apply focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-primary focus:rp-ring-offset-2;
+}
+
+.rp-match-trigger-btn__icon {
+    @apply rp-w-5 rp-h-5 rp-flex-shrink-0;
+}
+
+/* Button Varianten */
+.rp-match-trigger-btn--secondary {
+    @apply rp-bg-white rp-text-gray-700 rp-border rp-border-gray-300;
+    @apply hover:rp-bg-gray-50 hover:rp-border-gray-400;
+}
+
+.rp-match-trigger-btn--outline {
+    @apply rp-bg-transparent rp-text-primary rp-border-2 rp-border-primary;
+    @apply hover:rp-bg-primary hover:rp-text-white;
+}
+
+.rp-match-trigger-btn--small {
+    @apply rp-px-3 rp-py-2 rp-text-sm;
+}
+
+.rp-match-trigger-btn--small .rp-match-trigger-btn__icon {
+    @apply rp-w-4 rp-h-4;
+}
+
+.rp-match-trigger-btn--large {
+    @apply rp-px-6 rp-py-4 rp-text-lg;
+}
+
+.rp-match-trigger-btn--large .rp-match-trigger-btn__icon {
+    @apply rp-w-6 rp-h-6;
+}
+
+/* Full Width */
+.rp-match-trigger-btn--full {
+    @apply rp-w-full rp-justify-center;
+}
