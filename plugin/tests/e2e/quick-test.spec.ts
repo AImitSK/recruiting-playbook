@@ -15,8 +15,8 @@ test.describe('Quick Test - Jobs Page', () => {
         // Prüfe Seitentitel
         await expect(page).toHaveTitle(/Recruiting Playbook Dev/i);
 
-        // Prüfe ob Job angezeigt wird
-        await expect(page.getByText('Senior PHP Developer')).toBeVisible();
+        // Prüfe ob Job angezeigt wird (use first() to avoid strict mode violation)
+        await expect(page.getByText('Senior PHP Developer').first()).toBeVisible();
 
         // Prüfe ob Karriere-Header existiert
         await expect(page.getByText(/Karriere bei/i)).toBeVisible();
