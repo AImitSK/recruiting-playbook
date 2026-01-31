@@ -5,7 +5,11 @@
  * Mode B des KI-Matching Features.
  */
 
-const jobFinderComponent = () => ({
+const rpJobFinderComponent = (options = {}) => ({
+    // ===== CONFIG =====
+    limit: options.limit || 5,
+    jobCount: options.jobCount || 0,
+
     // ===== STATE =====
     file: null,
     fileName: '',
@@ -25,7 +29,7 @@ const jobFinderComponent = () => ({
 
     // ===== INIT =====
     init() {
-        console.log('[RP] Job-Finder Component initialized');
+        console.log('[RP] Job-Finder Component initialized', { limit: this.limit, jobCount: this.jobCount });
     },
 
     // ===== FILE HANDLING =====
@@ -110,7 +114,7 @@ const jobFinderComponent = () => ({
         try {
             const formData = new FormData();
             formData.append('file', this.file);
-            formData.append('limit', this.config.maxMatches || 5);
+            formData.append('limit', this.limit);
 
             const response = await fetch(this.config.endpoints.analyze, {
                 method: 'POST',
@@ -274,8 +278,8 @@ const jobFinderComponent = () => ({
 // Registrierung
 function registerJobFinderComponent() {
     if (typeof Alpine !== 'undefined' && Alpine.data) {
-        console.log('[RP] Registering jobFinder component');
-        Alpine.data('jobFinder', jobFinderComponent);
+        console.log('[RP] Registering rpJobFinder component');
+        Alpine.data('rpJobFinder', rpJobFinderComponent);
     }
 }
 

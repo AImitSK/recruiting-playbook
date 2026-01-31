@@ -5,8 +5,11 @@
  * Template für den KI-Job-Finder (Mode B).
  * Ermöglicht Multi-Job-Matching gegen alle aktiven Stellen.
  *
- * @var array  $atts         Shortcode Attribute
+ * Verfügbare Variablen (vom Shortcode gesetzt):
+ *
+ * @var array  $atts         Shortcode Attribute (title, subtitle, limit, class)
  * @var int    $job_count    Anzahl aktiver Jobs
+ * @var int    $limit        Max. Anzahl Matches
  * @var bool   $show_profile Profil anzeigen
  * @var bool   $show_skills  Skills anzeigen
  *
@@ -14,35 +17,35 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+$extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
 ?>
 
-<div class="rp-plugin">
-    <div class="rp-job-finder" x-data="jobFinder" x-cloak>
-
-        <!-- Header -->
-        <div class="rp-job-finder__header">
-            <h2 class="rp-job-finder__title">
-                <?php echo esc_html( $atts['title'] ); ?>
-            </h2>
-            <p class="rp-job-finder__subtitle">
-                <?php echo esc_html( $atts['subtitle'] ); ?>
-            </p>
-            <p class="rp-job-finder__job-count">
-                <?php
-                printf(
-                    esc_html(
-                        _n(
-                            '%d offene Stelle wird analysiert',
-                            '%d offene Stellen werden analysiert',
-                            $job_count,
-                            'recruiting-playbook'
-                        )
-                    ),
-                    $job_count
-                );
-                ?>
-            </p>
-        </div>
+<div class="rp-plugin rp-job-finder<?php echo $extra_class; ?>"
+    x-data="rpJobFinder({
+        limit: <?php echo esc_attr( $limit ); ?>,
+        jobCount: <?php echo esc_attr( $job_count ); ?>
+    })"
+    x-cloak
+>
+    <!-- Header -->
+    <div class="rp-job-finder__header">
+        <?php if ( ! empty( $atts['title'] ) ) : ?>
+            <h2 class="rp-job-finder__title"><?php echo esc_html( $atts['title'] ); ?></h2>
+        <?php endif; ?>
+        <?php if ( ! empty( $atts['subtitle'] ) ) : ?>
+            <p class="rp-job-finder__subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
+        <?php endif; ?>
+        <p class="rp-job-finder__job-count">
+            <?php
+            printf(
+                /* translators: %d: Number of available jobs */
+                esc_html( _n( '%d offene Stelle', '%d offene Stellen', $job_count, 'recruiting-playbook' ) ),
+                esc_html( $job_count )
+            );
+            ?>
+        </p>
+    </div>
 
         <!-- ===== STATUS: IDLE (Upload) ===== -->
         <template x-if="status === 'idle'">

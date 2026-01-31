@@ -51,12 +51,6 @@ class Shortcodes {
 	 */
 	private bool $match_modal_registered = false;
 
-	/**
-	 * Flag ob Job-Finder bereits für Footer registriert wurde
-	 *
-	 * @var bool
-	 */
-	private bool $job_finder_registered = false;
 
 	/**
 	 * Shortcodes registrieren
@@ -1375,69 +1369,19 @@ class Shortcodes {
 		// Assets laden.
 		$this->enqueueJobFinderAssets();
 
-		// Job-Finder Container im Footer registrieren.
-		$this->registerJobFinder();
-
-		$limit       = max( 1, min( 10, absint( $atts['limit'] ) ) );
-		$extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
+		$limit        = max( 1, min( 10, absint( $atts['limit'] ) ) );
+		$show_profile = true;
+		$show_skills  = true;
 
 		ob_start();
-		?>
-		<div class="rp-plugin rp-job-finder<?php echo $extra_class; ?>"
-			x-data="rpJobFinder({
-				limit: <?php echo esc_attr( $limit ); ?>,
-				jobCount: <?php echo esc_attr( $job_count ); ?>
-			})"
-		>
-			<!-- Header -->
-			<div class="rp-job-finder__header">
-				<?php if ( ! empty( $atts['title'] ) ) : ?>
-					<h2 class="rp-job-finder__title"><?php echo esc_html( $atts['title'] ); ?></h2>
-				<?php endif; ?>
-				<?php if ( ! empty( $atts['subtitle'] ) ) : ?>
-					<p class="rp-job-finder__subtitle"><?php echo esc_html( $atts['subtitle'] ); ?></p>
-				<?php endif; ?>
-				<p class="rp-job-finder__job-count">
-					<?php
-					printf(
-						/* translators: %d: Number of available jobs */
-						esc_html( _n( '%d offene Stelle', '%d offene Stellen', $job_count, 'recruiting-playbook' ) ),
-						esc_html( $job_count )
-					);
-					?>
-				</p>
-			</div>
 
-			<!-- Content Container - Template wird per JS geladen -->
-			<div id="rp-job-finder-content"></div>
-		</div>
-		<?php
-
-		return ob_get_clean();
-	}
-
-	/**
-	 * Job-Finder Template im Footer registrieren
-	 *
-	 * Lädt das Template einmalig im Footer.
-	 */
-	private function registerJobFinder(): void {
-		if ( $this->job_finder_registered ) {
-			return;
+		// Template direkt einbinden mit Variablen.
+		$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
+		if ( file_exists( $template ) ) {
+			include $template;
 		}
 
-		$this->job_finder_registered = true;
-
-		add_action(
-			'wp_footer',
-			function () {
-				$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
-				if ( file_exists( $template ) ) {
-					include $template;
-				}
-			},
-			20
-		);
+		return ob_get_clean();
 	}
 
 	/**
