@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
 import { analysisRoutes } from './routes/analysis';
+import { jobFinderRoutes } from './routes/job-finder';
 import { usageRoutes } from './routes/usage';
 import { webhookRoutes } from './routes/webhooks';
 import { authMiddleware } from './middleware/auth';
@@ -38,6 +39,7 @@ const v1 = new Hono<Env>();
 v1.use('*', authMiddleware);
 
 v1.route('/analysis', analysisRoutes);
+v1.route('/analysis/job-finder', jobFinderRoutes);
 v1.route('/usage', usageRoutes);
 
 app.route('/v1', v1);

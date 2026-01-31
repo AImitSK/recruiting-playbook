@@ -87,6 +87,28 @@ class MatchController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// POST /match/job-finder - Multi-Job-Matching (Mode B)
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/job-finder',
+			[
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'analyze_job_finder' ],
+				'permission_callback' => '__return_true',
+				'args'                => [
+					'limit' => [
+						'default'           => 5,
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+						'validate_callback' => function ( $value ) {
+							return $value >= 1 && $value <= 10;
+						},
+						'description'       => __( 'Anzahl der Top-Matches (1-10)', 'recruiting-playbook' ),
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -224,6 +246,207 @@ class MatchController extends WP_REST_Controller {
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		return new WP_REST_Response( $body );
+	}
+
+	/**
+	 * POST /match/job-finder - Multi-Job-Matching (Mode B)
+	 *
+	 * Analysiert einen Lebenslauf gegen ALLE aktiven Stellen.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function analyze_job_finder( WP_REST_Request $request ) {
+		// Feature-Check.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return new WP_Error(
+				'feature_not_available',
+				__( 'KI-Matching ist nicht verfügbar.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// File prüfen.
+		$files = $request->get_file_params();
+		if ( empty( $files['file'] ) ) {
+			return new WP_Error(
+				'no_file',
+				__( 'Keine Datei hochgeladen.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$file = $files['file'];
+
+		// File-Validierung.
+		$validation = $this->validate_file( $file );
+		if ( is_wp_error( $validation ) ) {
+			return $validation;
+		}
+
+		// ALLE aktiven Jobs laden.
+		$jobs = $this->get_all_active_jobs();
+		if ( empty( $jobs ) ) {
+			return new WP_Error(
+				'no_jobs',
+				__( 'Keine aktiven Stellen vorhanden.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		// Limit aus Request.
+		$limit = $request->get_param( 'limit' ) ?: 5;
+
+		// An Worker senden.
+		$result = $this->send_to_job_finder_api( $file, $jobs, $limit );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return rest_ensure_response( $result );
+	}
+
+	/**
+	 * Alle aktiven Jobs laden
+	 *
+	 * @return array Array mit Job-Daten.
+	 */
+	private function get_all_active_jobs(): array {
+		// Cache prüfen (5 Minuten).
+		$cache_key = 'rp_active_jobs_for_matching';
+		$cached    = get_transient( $cache_key );
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$posts = get_posts(
+			[
+				'post_type'      => 'job_listing',
+				'post_status'    => 'publish',
+				'posts_per_page' => 100, // Max 100 Jobs.
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+			]
+		);
+
+		$jobs = [];
+		foreach ( $posts as $post ) {
+			$requirements = get_post_meta( $post->ID, '_rp_requirements', true ) ?: [];
+			$nice_to_have = get_post_meta( $post->ID, '_rp_nice_to_have', true ) ?: [];
+
+			$jobs[] = [
+				'id'           => $post->ID,
+				'title'        => $post->post_title,
+				'url'          => get_permalink( $post->ID ),
+				'applyUrl'     => get_permalink( $post->ID ) . '#apply',
+				'description'  => wp_strip_all_tags( $post->post_content ),
+				'requirements' => is_array( $requirements ) ? $requirements : [ $requirements ],
+				'niceToHave'   => is_array( $nice_to_have ) ? $nice_to_have : [],
+			];
+		}
+
+		// Cache setzen.
+		set_transient( $cache_key, $jobs, 5 * MINUTE_IN_SECONDS );
+
+		return $jobs;
+	}
+
+	/**
+	 * An Job-Finder API senden
+	 *
+	 * @param array $file  Datei-Array.
+	 * @param array $jobs  Array mit Job-Daten.
+	 * @param int   $limit Anzahl Top-Matches.
+	 * @return array|WP_Error
+	 */
+	private function send_to_job_finder_api( array $file, array $jobs, int $limit ) {
+		$api_url = self::API_BASE_URL . '/analysis/job-finder';
+
+		// Multipart-Body erstellen.
+		$boundary = wp_generate_password( 24, false );
+		$body     = $this->build_multipart_body_job_finder( $boundary, $file, $jobs, $limit );
+
+		// Auth-Header.
+		$auth_headers = $this->get_freemius_auth_headers();
+		if ( is_wp_error( $auth_headers ) ) {
+			return $auth_headers;
+		}
+
+		$headers = array_merge(
+			$auth_headers,
+			[ 'Content-Type' => 'multipart/form-data; boundary=' . $boundary ]
+		);
+
+		$response = wp_remote_post(
+			$api_url,
+			[
+				'timeout' => 30,
+				'headers' => $headers,
+				'body'    => $body,
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error(
+				'api_error',
+				__( 'Analyse-Service nicht erreichbar.', 'recruiting-playbook' ),
+				[ 'status' => 503 ]
+			);
+		}
+
+		$status_code   = wp_remote_retrieve_response_code( $response );
+		$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( $status_code >= 400 ) {
+			return new WP_Error(
+				$response_body['code'] ?? 'api_error',
+				$response_body['message'] ?? __( 'API-Fehler', 'recruiting-playbook' ),
+				[ 'status' => $status_code ]
+			);
+		}
+
+		return $response_body;
+	}
+
+	/**
+	 * Multipart-Body für Job-Finder erstellen
+	 *
+	 * @param string $boundary Boundary-String.
+	 * @param array  $file     Datei-Array.
+	 * @param array  $jobs     Jobs-Array.
+	 * @param int    $limit    Limit.
+	 * @return string Multipart-Body.
+	 */
+	private function build_multipart_body_job_finder(
+		string $boundary,
+		array $file,
+		array $jobs,
+		int $limit
+	): string {
+		$body = '';
+
+		// Datei.
+		$body .= "--{$boundary}\r\n";
+		$body .= "Content-Disposition: form-data; name=\"file\"; filename=\"{$file['name']}\"\r\n";
+		$body .= "Content-Type: {$file['type']}\r\n\r\n";
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$body .= file_get_contents( $file['tmp_name'] ) . "\r\n";
+
+		// Jobs als JSON.
+		$body .= "--{$boundary}\r\n";
+		$body .= "Content-Disposition: form-data; name=\"jobs\"\r\n";
+		$body .= "Content-Type: application/json\r\n\r\n";
+		$body .= wp_json_encode( $jobs ) . "\r\n";
+
+		// Limit.
+		$body .= "--{$boundary}\r\n";
+		$body .= "Content-Disposition: form-data; name=\"limit\"\r\n\r\n";
+		$body .= $limit . "\r\n";
+
+		$body .= "--{$boundary}--\r\n";
+
+		return $body;
 	}
 
 	/**

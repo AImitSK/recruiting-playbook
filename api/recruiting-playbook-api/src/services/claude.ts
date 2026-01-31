@@ -28,6 +28,48 @@ export interface JobData {
   employmentType?: string;
 }
 
+/**
+ * Job-Daten für Job-Finder (Mode B) mit ID und URLs
+ */
+export interface JobFinderJobData {
+  id: number;
+  title: string;
+  url: string;
+  applyUrl: string;
+  description: string;
+  requirements: string[];
+  niceToHave: string[];
+}
+
+/**
+ * Einzelnes Match-Ergebnis für Job-Finder
+ */
+export interface JobFinderMatch {
+  jobId: number;
+  jobTitle: string;
+  jobUrl: string;
+  applyUrl: string;
+  score: number;
+  category: 'high' | 'medium' | 'low';
+  message: string;
+  matchedSkills: string[];
+  missingSkills: string[];
+}
+
+/**
+ * Gesamtergebnis für Job-Finder (Mode B)
+ */
+export interface JobFinderResult {
+  mode: 'job-finder';
+  profile: {
+    extractedSkills: string[];
+    experienceYears: number | null;
+    education: string | null;
+  };
+  matches: JobFinderMatch[];
+  totalJobsAnalyzed: number;
+}
+
 export class ClaudeService {
   private client: Anthropic;
   private model: string;
@@ -110,6 +152,119 @@ export class ClaudeService {
     }
 
     return this.parseResponse(content.text);
+  }
+
+  /**
+   * Multi-Job-Analyse durchführen (Mode B: Job-Finder)
+   *
+   * Analysiert einen CV gegen mehrere Jobs und gibt die besten Matches zurück.
+   */
+  async analyzeJobFinder(
+    cvText: string,
+    jobs: JobFinderJobData[],
+    limit: number
+  ): Promise<JobFinderResult> {
+    const systemPrompt = `Du bist ein KI-Recruiting-Assistent. Deine Aufgabe ist es, einen anonymisierten Lebenslauf gegen mehrere Stellenanzeigen zu analysieren und die besten Matches zu finden.
+
+WICHTIG:
+- Analysiere den Lebenslauf objektiv
+- Vergleiche die extrahierten Qualifikationen mit JEDER Stelle
+- Bewerte jede Stelle mit einem Score von 0-100
+- Kategorisiere: high (>=70), medium (40-69), low (<40)
+- Gib für jede Stelle spezifische Gründe an
+- Sortiere nach Score (absteigend)
+- Gib nur die Top-${limit} besten Matches zurück
+
+EXTRAKTIONS-SCHRITTE:
+1. Extrahiere aus dem CV: Fähigkeiten, Erfahrungsjahre, Ausbildung
+2. Für jede Stelle: Vergleiche Anforderungen mit CV-Profil
+3. Score: Pflichtanforderungen (70%) + Nice-to-have (20%) + Branchenerfahrung (10%)
+
+ANTWORT-FORMAT (JSON):
+{
+  "profile": {
+    "extractedSkills": ["Skill 1", "Skill 2"],
+    "experienceYears": 5,
+    "education": "Ausbildung/Studium"
+  },
+  "matches": [
+    {
+      "jobId": 123,
+      "score": 85,
+      "category": "high",
+      "message": "Kurze Erklärung warum dieses Match passt",
+      "matchedSkills": ["Skill A", "Skill B"],
+      "missingSkills": ["Skill C"]
+    }
+  ],
+  "totalJobsAnalyzed": ${jobs.length}
+}`;
+
+    const jobsText = jobs
+      .map(
+        (job) => `
+---
+ID: ${job.id}
+Titel: ${job.title}
+Beschreibung: ${job.description?.substring(0, 500) || 'Keine Beschreibung'}
+Anforderungen: ${(job.requirements || []).join(', ') || 'Keine angegeben'}
+Nice-to-have: ${(job.niceToHave || []).join(', ') || 'Keine angegeben'}
+---`
+      )
+      .join('\n');
+
+    const userPrompt = `ANONYMISIERTER LEBENSLAUF:
+${cvText}
+
+VERFÜGBARE STELLEN (${jobs.length} Stellen):
+${jobsText}
+
+Analysiere den Lebenslauf und finde die ${limit} besten Matches.
+Antworte NUR mit validem JSON im angegebenen Format.`;
+
+    // Claude API aufrufen
+    const response = await this.client.messages.create({
+      model: this.model,
+      max_tokens: 2048, // Mehr Tokens für Multi-Job-Response
+      system: systemPrompt,
+      messages: [
+        {
+          role: 'user',
+          content: userPrompt,
+        },
+      ],
+    });
+
+    // Response extrahieren
+    const content = response.content[0];
+    if (content.type !== 'text') {
+      throw new Error('Unexpected response type');
+    }
+
+    // JSON parsen (mit Markdown-Block-Handling)
+    let jsonStr = content.text.trim();
+    const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      jsonStr = jsonMatch[1].trim();
+    }
+
+    const result = JSON.parse(jsonStr);
+
+    // Job-URLs hinzufügen
+    result.matches = result.matches.map((match: { jobId: number }) => {
+      const job = jobs.find((j) => j.id === match.jobId);
+      return {
+        ...match,
+        jobTitle: job?.title || 'Unbekannt',
+        jobUrl: job?.url || '#',
+        applyUrl: job?.applyUrl || '#',
+      };
+    });
+
+    result.mode = 'job-finder';
+    result.totalJobsAnalyzed = jobs.length;
+
+    return result as JobFinderResult;
   }
 
   /**
