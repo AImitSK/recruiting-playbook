@@ -64,6 +64,7 @@ export interface Bindings {
   CACHE: KVNamespace;
   STORAGE: R2Bucket;
   CLAUDE_API_KEY: string;
+  AI_GATEWAY_URL?: string; // Optional: Cloudflare AI Gateway für Monitoring
   ENVIRONMENT: string;
   FREEMIUS_PRODUCT_ID: string;
   FREEMIUS_DEV_ID: string;
@@ -71,7 +72,7 @@ export interface Bindings {
   FREEMIUS_DEV_SECRET_KEY: string;
   FREEMIUS_WEBHOOK_SECRET: string;
   PRESIDIO_URL: string;
-  PRESIDIO_API_KEY: string;
+  PRESIDIO_API_KEY?: string; // Optional wenn Presidio ohne Auth läuft
 }
 
 /**
