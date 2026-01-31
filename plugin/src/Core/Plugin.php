@@ -40,6 +40,7 @@ use RecruitingPlaybook\Api\ExportController;
 use RecruitingPlaybook\Api\SystemStatusController;
 use RecruitingPlaybook\Api\FieldDefinitionController;
 use RecruitingPlaybook\Api\FormTemplateController;
+use RecruitingPlaybook\Api\MatchController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -431,6 +432,10 @@ final class Plugin {
 
 		$form_template_controller = new FormTemplateController();
 		$form_template_controller->register_routes();
+
+		// Match Controller (KI-Matching - AI-Addon Feature).
+		$match_controller = new MatchController();
+		$match_controller->register_routes();
 	}
 
 	/**
@@ -536,6 +541,68 @@ final class Plugin {
 
 				$alpine_deps[] = 'rp-application-form';
 			}
+		}
+
+		// Match-Modal JS & CSS (AI-Addon Feature) - nur auf Einzelseiten.
+		if ( is_singular( 'job_listing' ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
+			// CSS.
+			$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+			if ( file_exists( $match_css_file ) ) {
+				wp_enqueue_style(
+					'rp-match-modal',
+					RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+					[ 'rp-frontend' ],
+					RP_VERSION . '-' . filemtime( $match_css_file )
+				);
+			}
+
+			// JS (muss vor Alpine.js laden).
+			$match_js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+			if ( file_exists( $match_js_file ) ) {
+				wp_enqueue_script(
+					'rp-match-modal',
+					RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+					[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
+					RP_VERSION,
+					true
+				);
+
+				// Lokalisierung.
+				wp_localize_script(
+					'rp-match-modal',
+					'rpMatchConfig',
+					[
+						'endpoints' => [
+							'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
+							'status'  => rest_url( 'recruiting/v1/match/status' ),
+						],
+						'nonce'     => wp_create_nonce( 'wp_rest' ),
+						'i18n'      => [
+							'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
+							'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
+							'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+							'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+							'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+							'resultLow'       => __( 'Eher nicht passend', 'recruiting-playbook' ),
+							'resultMedium'    => __( 'Teilweise passend', 'recruiting-playbook' ),
+							'resultHigh'      => __( 'Gute Übereinstimmung', 'recruiting-playbook' ),
+						],
+					]
+				);
+
+				$alpine_deps[] = 'rp-match-modal';
+			}
+
+			// Modal-Template im Footer einbinden.
+			add_action(
+				'wp_footer',
+				function () {
+					$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+					if ( file_exists( $template ) ) {
+						include $template;
+					}
+				}
+			);
 		}
 
 		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
