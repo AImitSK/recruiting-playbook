@@ -1,0 +1,12 @@
+services:
+  presidio:
+    build: .
+    ports:
+      - "8000:8080"
+    environment:
+      - API_KEY=${PRESIDIO_API_KEY:-}
+      - DEBUG=true
+      - PORT=8080
+    volumes:
+      - ./app:/app/app  # Hot reload bei Entwicklung
+    restart: unless-stopped

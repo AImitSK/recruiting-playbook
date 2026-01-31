@@ -32,7 +32,7 @@
 	"vars": {
 		"ENVIRONMENT": "production",
 		"FREEMIUS_PRODUCT_ID": "23533",
-		"PRESIDIO_URL": "https://presidio.recruiting-playbook.com"
+		"PRESIDIO_URL": "https://presidio-service-619907607663.europe-west3.run.app"
 	}
 	/**
 	 * Smart Placement
