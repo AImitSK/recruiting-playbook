@@ -63,6 +63,15 @@ function rp_has_ai(): bool {
 }
 
 /**
+ * Prüft ob CV-Matching verfügbar ist
+ *
+ * @return bool True wenn ai_cv_matching Feature aktiv (AI_ADDON oder BUNDLE).
+ */
+function rp_has_cv_matching(): bool {
+	return rp_can( 'ai_cv_matching' ) === true;
+}
+
+/**
  * Gibt Upgrade-URL zurück
  *
  * @param string|null $tier Optional: Spezifischer Tier für Deep-Link.

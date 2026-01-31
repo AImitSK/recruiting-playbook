@@ -88,6 +88,7 @@ class FeatureFlags {
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,
 			'ai_templates'                 => true,
+			'ai_cv_matching'               => true,    // KI-Matching für Lebensläufe.
 			'custom_branding'              => false,
 			'priority_support'             => true,
 		),
@@ -111,6 +112,7 @@ class FeatureFlags {
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,
 			'ai_templates'                 => true,
+			'ai_cv_matching'               => true,   // KI-Matching für Lebensläufe.
 			'custom_branding'              => true,
 			'priority_support'             => true,
 		),

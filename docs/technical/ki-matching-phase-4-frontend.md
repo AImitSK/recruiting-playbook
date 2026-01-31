@@ -57,30 +57,34 @@ Integration ins WordPress Plugin:
 
 Das Matching-Feature ist nur für AI_ADDON und BUNDLE verfügbar.
 
-### src/Licensing/FeatureFlags.php (erweitern)
+### src/Licensing/FeatureFlags.php
+
+✅ **Bereits implementiert** - Feature Flag `ai_cv_matching` wurde hinzugefügt:
 
 ```php
-// In der FEATURES-Konstante hinzufügen:
-
 'AI_ADDON' => [
     // ... bestehende Features ...
-    'ai_cv_matching' => true,  // NEU
+    'ai_cv_matching' => true,    // KI-Matching für Lebensläufe
 ],
 
 'BUNDLE' => [
     // ... bestehende Features ...
-    'ai_cv_matching' => true,  // NEU
+    'ai_cv_matching' => true,    // KI-Matching für Lebensläufe
 ],
 ```
 
-### Helper-Funktion
+### src/Licensing/helpers.php
+
+✅ **Bereits implementiert** - Helper-Funktion wurde hinzugefügt:
 
 ```php
 /**
  * Prüft ob CV-Matching verfügbar ist
+ *
+ * @return bool True wenn ai_cv_matching Feature aktiv (AI_ADDON oder BUNDLE).
  */
 function rp_has_cv_matching(): bool {
-    return rp_can('ai_cv_matching') === true;
+    return rp_can( 'ai_cv_matching' ) === true;
 }
 ```
 
@@ -677,16 +681,11 @@ class MatchController {
 
         $job_data = $this->get_job_data($job);
 
-        // Lizenz-Key abrufen
-        $license_manager = \RecruitingPlaybook\Licensing\LicenseManager::get_instance();
-        $license = $license_manager->get_license();
+        // Freemius Auth Headers erstellen
+        $auth_headers = $this->get_freemius_auth_headers();
 
-        if (!$license || empty($license['key'])) {
-            return new WP_Error(
-                'no_license',
-                __('Keine aktive Lizenz.', 'recruiting-playbook'),
-                ['status' => 403]
-            );
+        if (is_wp_error($auth_headers)) {
+            return $auth_headers;
         }
 
         // Request an externe API
@@ -695,10 +694,9 @@ class MatchController {
 
         $response = wp_remote_post(self::API_BASE_URL . '/analysis/upload', [
             'timeout' => 30,
-            'headers' => [
-                'X-License-Key' => $license['key'],
+            'headers' => array_merge($auth_headers, [
                 'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
-            ],
+            ]),
             'body' => $body,
         ]);
 
@@ -728,20 +726,17 @@ class MatchController {
      * GET /match/status/{id}
      */
     public function get_status(WP_REST_Request $request): WP_REST_Response|WP_Error {
-        $job_id = $request->get_param('id');
+        $analysis_id = $request->get_param('id');
 
-        $license_manager = \RecruitingPlaybook\Licensing\LicenseManager::get_instance();
-        $license = $license_manager->get_license();
+        $auth_headers = $this->get_freemius_auth_headers();
 
-        if (!$license || empty($license['key'])) {
-            return new WP_Error('no_license', 'Keine aktive Lizenz.', ['status' => 403]);
+        if (is_wp_error($auth_headers)) {
+            return $auth_headers;
         }
 
-        $response = wp_remote_get(self::API_BASE_URL . '/analysis/' . $job_id, [
+        $response = wp_remote_get(self::API_BASE_URL . '/analysis/' . $analysis_id, [
             'timeout' => 10,
-            'headers' => [
-                'X-License-Key' => $license['key'],
-            ],
+            'headers' => $auth_headers,
         ]);
 
         if (is_wp_error($response)) {
@@ -750,6 +745,53 @@ class MatchController {
 
         $body = json_decode(wp_remote_retrieve_body($response), true);
         return new WP_REST_Response($body);
+    }
+
+    /**
+     * Freemius Auth Headers erstellen
+     *
+     * Die API verwendet Freemius-basierte Authentifizierung:
+     * - X-Freemius-Install-Id: Installation ID
+     * - X-Freemius-Timestamp: ISO Timestamp
+     * - X-Freemius-Signature: HMAC-SHA256(secret_key + '|' + timestamp)
+     * - X-Site-Url: WordPress Site URL
+     *
+     * @return array|WP_Error Auth-Headers oder Fehler
+     */
+    private function get_freemius_auth_headers(): array|WP_Error {
+        // Freemius SDK prüfen
+        if (!function_exists('rp_fs')) {
+            return new WP_Error(
+                'freemius_not_available',
+                __('Freemius SDK nicht verfügbar.', 'recruiting-playbook'),
+                ['status' => 500]
+            );
+        }
+
+        $fs = rp_fs();
+
+        // Installation ID holen
+        $install_id = $fs->get_site()->id ?? null;
+        $secret_key = $fs->get_site()->secret_key ?? null;
+
+        if (!$install_id || !$secret_key) {
+            return new WP_Error(
+                'no_freemius_install',
+                __('Keine gültige Freemius-Installation gefunden.', 'recruiting-playbook'),
+                ['status' => 403]
+            );
+        }
+
+        // Timestamp und Signatur erstellen
+        $timestamp = gmdate('c'); // ISO 8601 Format
+        $signature = hash('sha256', $secret_key . '|' . $timestamp);
+
+        return [
+            'X-Freemius-Install-Id' => (string) $install_id,
+            'X-Freemius-Timestamp'  => $timestamp,
+            'X-Freemius-Signature'  => $signature,
+            'X-Site-Url'            => site_url(),
+        ];
     }
 
     /**
@@ -943,3 +985,4 @@ Bewerber → Upload → Anonymisierung → Claude → Score → Bewerber
 ---
 
 *Erstellt: Januar 2025*
+*Aktualisiert: Januar 2026* (Freemius Auth, Feature Flags)
