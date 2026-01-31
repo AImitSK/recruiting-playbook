@@ -11,6 +11,26 @@ Integration der Claude API für die Matching-Analyse:
 
 ---
 
+## Versionen & Abhängigkeiten (Stand: Januar 2026)
+
+| Komponente | Version | Hinweis |
+|------------|---------|---------|
+| `@anthropic-ai/sdk` | 0.71.2 | Anthropic TypeScript SDK |
+| Claude Modell | `claude-haiku-4-5-20251001` | Schnellstes 4.5 Modell |
+| Hono | 4.11.x | Web Framework für Workers |
+
+### Modell-Auswahl
+
+| Modell | API ID | Preis (Input/Output) | Empfehlung |
+|--------|--------|----------------------|------------|
+| **Haiku 4.5** | `claude-haiku-4-5-20251001` | $1 / $5 pro MTok | ✅ Für CV-Matching |
+| Sonnet 4.5 | `claude-sonnet-4-5-20250929` | $3 / $15 pro MTok | Komplexere Analysen |
+| Opus 4.5 | `claude-opus-4-5-20251101` | $5 / $25 pro MTok | Premium-Features |
+
+> **Hinweis:** Für Produktion spezifische Model-IDs verwenden (nicht Aliase wie `claude-haiku-4-5`), um konsistentes Verhalten zu gewährleisten.
+
+---
+
 ## Architektur
 
 ```
@@ -23,7 +43,7 @@ Integration der Claude API für die Matching-Analyse:
 │        │                                                             │
 │        ▼                                                             │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ │
-│  │  Prompt Builder │───▶│   Claude Haiku  │───▶│ Response Parser │ │
+│  │  Prompt Builder │───▶│ Claude Haiku 4.5│───▶│ Response Parser │ │
 │  │                 │    │                 │    │                 │ │
 │  │  • CV Text      │    │  • Analyse      │    │  • Score        │ │
 │  │  • Job-Daten    │    │  • Vergleich    │    │  • Kategorie    │ │
@@ -44,12 +64,38 @@ Integration der Claude API für die Matching-Analyse:
 
 ---
 
-## 1. Claude Client (Cloudflare Worker)
+## 1. Dependencies installieren
+
+```bash
+cd api/recruiting-playbook-api
+npm install @anthropic-ai/sdk@0.71.2
+```
+
+### Optional: Cloudflare AI Gateway
+
+AI Gateway bietet Monitoring, Caching und Rate Limiting für API-Aufrufe:
+
+1. **AI Gateway erstellen:** Cloudflare Dashboard → AI → Gateway → Create
+2. **Gateway URL kopieren:** `https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/anthropic`
+3. **Als Secret speichern:** `wrangler secret put AI_GATEWAY_URL`
+
+Vorteile:
+- 📊 Request Analytics & Logging
+- 💾 Response Caching (Kosten sparen)
+- 🚦 Rate Limiting
+- ⏱️ Latenz-Monitoring
+
+---
+
+## 2. Claude Client (Cloudflare Worker)
 
 ### src/services/claude.ts
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
+
+// Modell-Konstante für einfache Aktualisierung
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 
 export interface MatchResult {
   score: number;           // 0-100
@@ -74,8 +120,17 @@ export interface JobData {
 export class ClaudeService {
   private client: Anthropic;
 
-  constructor(apiKey: string) {
-    this.client = new Anthropic({ apiKey });
+  /**
+   * @param apiKey - Anthropic API Key
+   * @param aiGatewayUrl - Optional: Cloudflare AI Gateway URL für Monitoring
+   *                       Format: https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/anthropic
+   */
+  constructor(apiKey: string, aiGatewayUrl?: string) {
+    this.client = new Anthropic({
+      apiKey,
+      // Optional: AI Gateway für Caching, Rate Limiting, Analytics
+      ...(aiGatewayUrl && { baseURL: aiGatewayUrl }),
+    });
   }
 
   /**
@@ -89,7 +144,7 @@ export class ClaudeService {
     const prompt = this.buildPrompt(anonymizedCV, jobData);
 
     const response = await this.client.messages.create({
-      model: 'claude-3-haiku-20240307',
+      model: CLAUDE_MODEL,
       max_tokens: 1024,
       messages: [
         {
@@ -120,7 +175,7 @@ export class ClaudeService {
     const prompt = this.buildPrompt('', jobData, true);
 
     const response = await this.client.messages.create({
-      model: 'claude-3-haiku-20240307',
+      model: CLAUDE_MODEL,
       max_tokens: 1024,
       messages: [
         {
@@ -269,7 +324,7 @@ Antworte NUR mit dem JSON, ohne Erklärungen davor oder danach.`;
 
 ---
 
-## 2. Analysis Route (Cloudflare Worker)
+## 3. Analysis Route (Cloudflare Worker)
 
 ### src/routes/analysis.ts
 
@@ -412,7 +467,7 @@ async function processAnalysis(
       .run();
 
     // Claude Service initialisieren
-    const claude = new ClaudeService(env.CLAUDE_API_KEY);
+    const claude = new ClaudeService(env.CLAUDE_API_KEY, env.AI_GATEWAY_URL);
 
     let result: MatchResult;
 
@@ -469,7 +524,7 @@ async function processAnalysis(
 
 ---
 
-## 3. Vollständiger Flow mit Presidio
+## 4. Vollständiger Flow mit Presidio
 
 ### src/services/presidio.ts
 
@@ -548,7 +603,7 @@ export class PresidioService {
 
 ---
 
-## 4. Kombinierter Endpoint mit Upload
+## 5. Kombinierter Endpoint mit Upload
 
 ### src/routes/analysis.ts (erweitert)
 
@@ -651,7 +706,7 @@ async function processFullAnalysis(
     const anonymized = await presidio.anonymize(fileBuffer, filename, 'text');
 
     // 2. Claude Analyse
-    const claude = new ClaudeService(env.CLAUDE_API_KEY);
+    const claude = new ClaudeService(env.CLAUDE_API_KEY, env.AI_GATEWAY_URL);
     let result: MatchResult;
 
     if (anonymized.type === 'text' && anonymized.anonymizedText) {
@@ -692,7 +747,33 @@ async function processFullAnalysis(
 
 ---
 
-## 5. API-Dokumentation
+## 6. Secrets konfigurieren
+
+```bash
+cd api/recruiting-playbook-api
+
+# Claude API Key (erforderlich)
+wrangler secret put CLAUDE_API_KEY
+# → Anthropic API Key eingeben
+
+# AI Gateway URL (optional, für Monitoring)
+wrangler secret put AI_GATEWAY_URL
+# → https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/anthropic
+```
+
+### Environment Types (src/types.ts erweitern)
+
+```typescript
+export interface Bindings {
+  // ... bestehende Bindings
+  CLAUDE_API_KEY: string;
+  AI_GATEWAY_URL?: string;  // Optional
+}
+```
+
+---
+
+## 7. API-Dokumentation
 
 ### Endpoints
 
@@ -705,7 +786,7 @@ async function processFullAnalysis(
 ### Request: /v1/analysis/upload
 
 ```bash
-curl -X POST https://api.recruiting-playbook.de/v1/analysis/upload \
+curl -X POST https://api.recruiting-playbook.com/v1/analysis/upload \
   -H "X-License-Key: RP-AI-XXXX-XXXX-XXXX-XXXX-XXXX" \
   -F "file=@lebenslauf.pdf" \
   -F 'jobData={"title":"Pflegefachkraft","description":"...","requirements":["Examen","3 Jahre Erfahrung"]}'
@@ -741,11 +822,12 @@ curl -X POST https://api.recruiting-playbook.de/v1/analysis/upload \
 
 Nach Abschluss habt ihr:
 
-- ✅ Claude API Integration mit Haiku
+- ✅ Claude API Integration mit Haiku 4.5 (`claude-haiku-4-5-20251001`)
 - ✅ Prompt Engineering für Match-Score
-- ✅ Text- und Bild-Analyse
+- ✅ Text- und Bild-Analyse (Vision)
 - ✅ Async Verarbeitung mit Polling
 - ✅ Vollständiger Upload→Anonymisierung→Analyse Flow
+- ✅ Optional: Cloudflare AI Gateway für Monitoring
 
 ---
 
