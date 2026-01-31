@@ -191,15 +191,10 @@ class FormRenderService {
 			);
 		}
 
-		// Zusammenfassung im Finale-Step anzeigen.
-		if ( $is_finale ) {
-			$output .= $this->renderSummary( $config, $field_definitions );
-		}
-
 		// Felder-Grid mit 2 Spalten für Breiten-Klassen.
 		$output .= '<div class="rp-grid rp-grid-cols-1 md:rp-grid-cols-2 rp-gap-4">';
 
-		// Felder des Steps rendern.
+		// Reguläre Felder des Steps rendern.
 		if ( ! empty( $step['fields'] ) ) {
 			foreach ( $step['fields'] as $field_config ) {
 				if ( empty( $field_config['is_visible'] ) ) {
@@ -221,10 +216,314 @@ class FormRenderService {
 			}
 		}
 
-		$output .= '</div>'; // .rp-space-y-4
+		$output .= '</div>'; // Grid Ende
+
+		// System-Felder des Steps rendern (file_upload, summary, privacy_consent).
+		if ( ! empty( $step['system_fields'] ) ) {
+			foreach ( $step['system_fields'] as $system_field ) {
+				$output .= $this->renderSystemField( $system_field, $config, $field_definitions );
+			}
+		}
+
 		$output .= '</div>'; // step div
 
 		return $output;
+	}
+
+	/**
+	 * System-Feld rendern
+	 *
+	 * System-Felder sind file_upload, summary und privacy_consent.
+	 *
+	 * @param array $system_field      System-Feld-Konfiguration.
+	 * @param array $config            Gesamte Formular-Konfiguration.
+	 * @param array $field_definitions Feld-Definitionen.
+	 * @return string HTML.
+	 */
+	private function renderSystemField( array $system_field, array $config, array $field_definitions ): string {
+		$field_key = $system_field['field_key'] ?? '';
+		$type      = $system_field['type'] ?? $field_key;
+		$settings  = $system_field['settings'] ?? [];
+
+		return match ( $type ) {
+			'file_upload'     => $this->renderFileUploadSystemField( $settings ),
+			'summary'         => $this->renderSummarySystemField( $settings, $config, $field_definitions ),
+			'privacy_consent' => $this->renderPrivacyConsentSystemField( $settings ),
+			default           => '',
+		};
+	}
+
+	/**
+	 * File-Upload System-Feld rendern
+	 *
+	 * @param array $settings System-Feld-Einstellungen.
+	 * @return string HTML.
+	 */
+	private function renderFileUploadSystemField( array $settings ): string {
+		$label         = $settings['label'] ?? __( 'Dokumente hochladen', 'recruiting-playbook' );
+		$help_text     = $settings['help_text'] ?? '';
+		$allowed_types = $settings['allowed_types'] ?? [ 'pdf', 'doc', 'docx' ];
+		$max_file_size = $settings['max_file_size'] ?? 10;
+		$max_files     = $settings['max_files'] ?? 5;
+
+		// Allowed types als Accept-String formatieren.
+		$accept = '.' . implode( ',.', $allowed_types );
+
+		ob_start();
+		?>
+		<div class="rp-system-field rp-system-field--file-upload rp-mt-6">
+			<label class="rp-label">
+				<?php echo esc_html( $label ); ?>
+			</label>
+
+			<?php if ( $help_text ) : ?>
+				<p class="rp-text-sm rp-text-gray-600 rp-mb-3"><?php echo esc_html( $help_text ); ?></p>
+			<?php endif; ?>
+
+			<div
+				x-data="{
+					files: [],
+					dragging: false,
+					error: null,
+					maxFiles: <?php echo esc_attr( $max_files ); ?>,
+					maxSize: <?php echo esc_attr( $max_file_size ); ?> * 1024 * 1024,
+					allowedTypes: <?php echo wp_json_encode( $allowed_types ); ?>,
+
+					init() {
+						// Sync mit Parent-Formular.
+						if (typeof $data.files !== 'undefined' && $data.files.documents) {
+							this.files = [...$data.files.documents];
+						}
+					},
+
+					syncToParent() {
+						if (typeof $data.files !== 'undefined') {
+							$data.files.documents = [...this.files];
+						}
+					},
+
+					handleSelect(event) {
+						this.addFiles(event.target.files);
+						event.target.value = '';
+					},
+
+					handleDrop(event) {
+						this.dragging = false;
+						this.addFiles(event.dataTransfer.files);
+					},
+
+					isValidType(file) {
+						const ext = file.name.split('.').pop().toLowerCase();
+						return this.allowedTypes.includes(ext);
+					},
+
+					addFiles(fileList) {
+						this.error = null;
+
+						for (const file of fileList) {
+							if (this.files.length >= this.maxFiles) {
+								this.error = '<?php echo esc_js( sprintf( __( 'Maximal %d Dateien erlaubt', 'recruiting-playbook' ), $max_files ) ); ?>';
+								break;
+							}
+
+							if (!this.isValidType(file)) {
+								this.error = '<?php echo esc_js( sprintf( __( 'Ungültiger Dateityp. Erlaubt: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ) ); ?>';
+								continue;
+							}
+
+							if (file.size > this.maxSize) {
+								this.error = '<?php echo esc_js( sprintf( __( 'Datei zu groß (max. %d MB)', 'recruiting-playbook' ), $max_file_size ) ); ?>';
+								continue;
+							}
+
+							this.files.push(file);
+						}
+
+						this.syncToParent();
+					},
+
+					removeFile(index) {
+						this.files.splice(index, 1);
+						this.syncToParent();
+					},
+
+					formatSize(bytes) {
+						if (bytes < 1024) return bytes + ' B';
+						if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+						return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+					}
+				}"
+				class="rp-file-upload"
+			>
+				<!-- Dropzone -->
+				<div
+					@dragover.prevent="dragging = true"
+					@dragleave.prevent="dragging = false"
+					@drop.prevent="handleDrop($event)"
+					:class="{ 'rp-border-primary rp-bg-primary-light': dragging, 'rp-border-success rp-bg-success-light': files.length > 0 }"
+					class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
+				>
+					<template x-if="files.length === 0">
+						<div>
+							<svg class="rp-w-10 rp-h-10 rp-text-gray-400 rp-mx-auto rp-mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+							</svg>
+							<p class="rp-text-gray-600 rp-mb-2">
+								<?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?>
+							</p>
+							<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
+								<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
+								<input
+									type="file"
+									@change="handleSelect($event)"
+									accept="<?php echo esc_attr( $accept ); ?>"
+									multiple
+									class="rp-hidden"
+								>
+							</label>
+							<p class="rp-text-xs rp-text-gray-400 rp-mt-2">
+								<?php
+								printf(
+									/* translators: 1: allowed types, 2: max file size */
+									esc_html__( '%1$s (max. %2$d MB pro Datei)', 'recruiting-playbook' ),
+									esc_html( strtoupper( implode( ', ', $allowed_types ) ) ),
+									esc_html( $max_file_size )
+								);
+								?>
+								<br>
+								<?php
+								printf(
+									/* translators: %d: max number of files */
+									esc_html__( 'Maximal %d Dateien', 'recruiting-playbook' ),
+									esc_html( $max_files )
+								);
+								?>
+							</p>
+						</div>
+					</template>
+
+					<!-- Hochgeladene Dateien -->
+					<template x-if="files.length > 0">
+						<div class="rp-space-y-2">
+							<template x-for="(file, index) in files" :key="index">
+								<div class="rp-flex rp-items-center rp-justify-between rp-bg-white rp-rounded rp-px-3 rp-py-2 rp-border rp-border-gray-200">
+									<div class="rp-flex rp-items-center rp-gap-3">
+										<svg class="rp-w-5 rp-h-5 rp-text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+										</svg>
+										<div class="rp-text-left">
+											<p class="rp-text-sm rp-font-medium rp-text-gray-900" x-text="file.name"></p>
+											<p class="rp-text-xs rp-text-gray-500" x-text="formatSize(file.size)"></p>
+										</div>
+									</div>
+									<button
+										type="button"
+										@click="removeFile(index)"
+										class="rp-p-1 rp-text-error hover:rp-bg-error-light rp-rounded"
+										title="<?php esc_attr_e( 'Datei entfernen', 'recruiting-playbook' ); ?>"
+									>
+										<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+										</svg>
+									</button>
+								</div>
+							</template>
+
+							<label class="rp-inline-block rp-text-sm rp-text-primary hover:rp-text-primary-hover rp-cursor-pointer rp-mt-2">
+								+ <?php esc_html_e( 'Weitere Datei hinzufügen', 'recruiting-playbook' ); ?>
+								<input
+									type="file"
+									@change="handleSelect($event)"
+									accept="<?php echo esc_attr( $accept ); ?>"
+									class="rp-hidden"
+								>
+							</label>
+						</div>
+					</template>
+				</div>
+
+				<!-- Fehler -->
+				<p x-show="error" x-text="error" class="rp-error-text rp-mt-2"></p>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Summary System-Feld rendern
+	 *
+	 * @param array $settings          System-Feld-Einstellungen.
+	 * @param array $config            Formular-Konfiguration.
+	 * @param array $field_definitions Feld-Definitionen.
+	 * @return string HTML.
+	 */
+	private function renderSummarySystemField( array $settings, array $config, array $field_definitions ): string {
+		$label            = $settings['label'] ?? __( 'Zusammenfassung', 'recruiting-playbook' );
+		$show_header      = $settings['show_header'] ?? true;
+		$show_step_titles = $settings['show_step_titles'] ?? true;
+		$show_edit_buttons = $settings['show_edit_buttons'] ?? true;
+		$help_text        = $settings['help_text'] ?? '';
+
+		return $this->renderSummary( $config, $field_definitions, $label, $show_header, $show_step_titles, $show_edit_buttons, $help_text );
+	}
+
+	/**
+	 * Privacy Consent System-Feld rendern
+	 *
+	 * @param array $settings System-Feld-Einstellungen.
+	 * @return string HTML.
+	 */
+	private function renderPrivacyConsentSystemField( array $settings ): string {
+		$consent_text      = $settings['consent_text'] ?? __( 'Ich habe die {privacy_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' );
+		$privacy_link_text = $settings['privacy_link_text'] ?? __( 'Datenschutzerklärung', 'recruiting-playbook' );
+		$privacy_url       = $settings['privacy_url'] ?? get_privacy_policy_url();
+		$error_message     = $settings['error_message'] ?? __( 'Sie müssen der Datenschutzerklärung zustimmen.', 'recruiting-playbook' );
+		$help_text         = $settings['help_text'] ?? '';
+
+		// SECURITY FIX: Text vor und nach dem Platzhalter separat escapen.
+		// Damit wird XSS verhindert, während der sichere Link eingefügt wird.
+		$link = sprintf(
+			'<a href="%s" target="_blank" rel="noopener noreferrer" class="rp-text-primary hover:rp-underline">%s</a>',
+			esc_url( $privacy_url ),
+			esc_html( $privacy_link_text )
+		);
+
+		// Text in Teile aufteilen und jeden Teil escapen.
+		$parts = explode( '{privacy_link}', $consent_text, 2 );
+		if ( count( $parts ) === 2 ) {
+			$consent_html = esc_html( $parts[0] ) . $link . esc_html( $parts[1] );
+		} else {
+			// Kein Platzhalter vorhanden - gesamten Text escapen.
+			$consent_html = esc_html( $consent_text );
+		}
+
+		ob_start();
+		?>
+		<div class="rp-system-field rp-system-field--privacy-consent rp-mt-6">
+			<label class="rp-flex rp-items-start rp-gap-3 rp-cursor-pointer">
+				<input
+					type="checkbox"
+					x-model="formData.privacy_consent"
+					class="rp-mt-1 rp-h-4 rp-w-4 rp-text-primary rp-border-gray-300 rp-rounded focus:rp-ring-primary"
+					required
+				>
+				<span class="rp-text-sm rp-text-gray-700">
+					<?php echo wp_kses_post( $consent_html ); ?>
+					<span class="rp-text-error">*</span>
+				</span>
+			</label>
+
+			<?php if ( $help_text ) : ?>
+				<p class="rp-text-xs rp-text-gray-500 rp-mt-2 rp-ml-7"><?php echo esc_html( $help_text ); ?></p>
+			<?php endif; ?>
+
+			<p x-show="errors.privacy_consent" class="rp-error-text rp-mt-2 rp-ml-7">
+				<?php echo esc_html( $error_message ); ?>
+			</p>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -286,16 +585,42 @@ class FormRenderService {
 	/**
 	 * Zusammenfassung der Eingaben rendern
 	 *
-	 * @param array $config            Formular-Konfiguration.
-	 * @param array $field_definitions Feld-Definitionen.
+	 * @param array  $config             Formular-Konfiguration.
+	 * @param array  $field_definitions  Feld-Definitionen.
+	 * @param string $label              Überschrift.
+	 * @param bool   $show_header        Überschrift anzeigen.
+	 * @param bool   $show_step_titles   Schritt-Titel anzeigen.
+	 * @param bool   $show_edit_buttons  Bearbeiten-Buttons anzeigen.
+	 * @param string $help_text          Hilfetext.
 	 * @return string HTML.
 	 */
-	private function renderSummary( array $config, array $field_definitions ): string {
+	private function renderSummary(
+		array $config,
+		array $field_definitions,
+		string $label = '',
+		bool $show_header = true,
+		bool $show_step_titles = true,
+		bool $show_edit_buttons = true,
+		string $help_text = ''
+	): string {
+		$label = $label ?: __( 'Ihre Angaben', 'recruiting-playbook' );
+
 		$output = '<div class="rp-summary rp-bg-gray-50 rp-rounded-lg rp-p-4 rp-mb-6">';
-		$output .= sprintf(
-			'<h4 class="rp-font-medium rp-text-gray-900 rp-mb-4">%s</h4>',
-			esc_html__( 'Ihre Angaben', 'recruiting-playbook' )
-		);
+
+		if ( $show_header ) {
+			$output .= sprintf(
+				'<h4 class="rp-font-medium rp-text-gray-900 rp-mb-4">%s</h4>',
+				esc_html( $label )
+			);
+		}
+
+		if ( $help_text ) {
+			$output .= sprintf(
+				'<p class="rp-text-sm rp-text-gray-600 rp-mb-4">%s</p>',
+				esc_html( $help_text )
+			);
+		}
+
 		$output .= '<dl class="rp-space-y-2 rp-text-sm">';
 
 		// Alle Felder durchgehen (außer finale Felder wie privacy_consent).
@@ -355,6 +680,13 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderSummaryItem( string $label, string $field_key, bool $is_optional = false ): string {
+		// SECURITY FIX: Field Key validieren um JavaScript Injection zu verhindern.
+		// Nur alphanumerische Zeichen und Unterstriche erlauben.
+		if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $field_key ) ) {
+			// Bei ungültigem Feld-Key leeren String zurückgeben.
+			return '';
+		}
+
 		$x_show = $is_optional ? sprintf( ' x-show="formData.%s"', esc_attr( $field_key ) ) : '';
 
 		return sprintf(
@@ -503,11 +835,47 @@ class FormRenderService {
 					$validation_rules[ $field_key ] = $rules;
 				}
 			}
+
+			// System-Felder verarbeiten.
+			if ( ! empty( $step['system_fields'] ) ) {
+				foreach ( $step['system_fields'] as $system_field ) {
+					$field_key = $system_field['field_key'] ?? '';
+
+					switch ( $field_key ) {
+						case 'privacy_consent':
+							$form_data['privacy_consent']        = false;
+							$validation_rules['privacy_consent'] = [ 'required' => true ];
+							break;
+						// file_upload wird über files-Objekt gehandhabt (unten).
+					}
+				}
+			}
+		}
+
+		// Files-Objekt für Datei-Uploads initialisieren.
+		$has_file_upload = false;
+		foreach ( $config['steps'] as $step ) {
+			if ( ! empty( $step['system_fields'] ) ) {
+				foreach ( $step['system_fields'] as $sf ) {
+					if ( ( $sf['field_key'] ?? '' ) === 'file_upload' ) {
+						$has_file_upload = true;
+						break 2;
+					}
+				}
+			}
+		}
+
+		$files = [];
+		if ( $has_file_upload ) {
+			$files = [
+				'documents' => [],
+			];
 		}
 
 		return [
 			'steps'      => count( $config['steps'] ),
 			'formData'   => $form_data,
+			'files'      => $files,
 			'validation' => $validation_rules,
 			'i18n'       => $this->getI18nStrings(),
 		];
@@ -566,6 +934,13 @@ class FormRenderService {
 	 * @return string Template-Pfad.
 	 */
 	private function getFieldTemplatePath( string $field_type ): string {
+		// SECURITY FIX: Path Traversal verhindern.
+		// Nur alphanumerische Zeichen und Unterstriche erlauben.
+		if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $field_type ) ) {
+			// Bei ungültigem Feldtyp auf 'text' zurückfallen.
+			$field_type = 'text';
+		}
+
 		// Theme kann Templates überschreiben.
 		$theme_template = get_stylesheet_directory() . '/recruiting-playbook/fields/field-' . $field_type . '.php';
 

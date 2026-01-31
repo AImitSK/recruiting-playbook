@@ -386,28 +386,43 @@ export function useFormConfig() {
 	/**
 	 * Remove a field from a step
 	 *
+	 * Prevents removal of non-removable fields (first_name, last_name, email, privacy_consent).
+	 *
 	 * @param {string} stepId   Step ID
 	 * @param {string} fieldKey Field key to remove
+	 * @return {boolean} Success status
 	 */
 	const removeFieldFromStep = useCallback(
 		( stepId, fieldKey ) => {
+			// Find the field to check if it's removable
+			const step = draft?.steps?.find( ( s ) => s.id === stepId );
+			const field = step?.fields?.find( ( f ) => f.field_key === fieldKey );
+
+			// Block removal of non-removable fields
+			if ( field && field.is_removable === false ) {
+				setError( 'Dieses Pflichtfeld kann nicht entfernt werden' );
+				return false;
+			}
+
 			updateDraft( ( prev ) => ( {
 				...prev,
-				steps: prev?.steps?.map( ( step ) => {
-					if ( step.id !== stepId ) {
-						return step;
+				steps: prev?.steps?.map( ( s ) => {
+					if ( s.id !== stepId ) {
+						return s;
 					}
 
 					return {
-						...step,
-						fields: step.fields?.filter(
+						...s,
+						fields: s.fields?.filter(
 							( f ) => f.field_key !== fieldKey
 						),
 					};
 				} ),
 			} ) );
+
+			return true;
 		},
-		[ updateDraft ]
+		[ draft, updateDraft ]
 	);
 
 	/**
@@ -432,6 +447,50 @@ export function useFormConfig() {
 							field.field_key === fieldKey
 								? { ...field, ...updates }
 								: field
+						),
+					};
+				} ),
+			} ) );
+		},
+		[ updateDraft ]
+	);
+
+	/**
+	 * Update a system field within a step
+	 *
+	 * System fields (file_upload, summary, privacy_consent) have their own
+	 * settings that can be configured.
+	 *
+	 * @param {string} stepId   Step ID
+	 * @param {string} fieldKey System field key to update
+	 * @param {Object} updates  Settings updates
+	 */
+	const updateSystemFieldInStep = useCallback(
+		( stepId, fieldKey, updates ) => {
+			updateDraft( ( prev ) => ( {
+				...prev,
+				steps: prev?.steps?.map( ( step ) => {
+					if ( step.id !== stepId ) {
+						return step;
+					}
+
+					// Ensure system_fields exists and is an array
+					if ( ! step.system_fields || ! Array.isArray( step.system_fields ) ) {
+						return step;
+					}
+
+					return {
+						...step,
+						system_fields: step.system_fields.map( ( systemField ) =>
+							systemField.field_key === fieldKey
+								? {
+										...systemField,
+										settings: {
+											...( systemField.settings || {} ),
+											...updates,
+										},
+								  }
+								: systemField
 						),
 					};
 				} ),
@@ -628,6 +687,7 @@ export function useFormConfig() {
 		addFieldToStep,
 		removeFieldFromStep,
 		updateFieldInStep,
+		updateSystemFieldInStep,
 		moveFieldBetweenSteps,
 		reorderFieldsInStep,
 

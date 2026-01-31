@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.9.0';
+	private const SCHEMA_VERSION = '2.0.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -107,6 +107,11 @@ class Migrator {
 		if ( version_compare( $from_version, '1.9.0', '<' ) ) {
 			$this->seedDefaultFormConfig();
 		}
+
+		// Migration 2.0.0: email_hash für bestehende Kandidaten berechnen.
+		if ( version_compare( $from_version, '2.0.0', '<' ) ) {
+			$this->migrateEmailHash();
+		}
 	}
 
 	/**
@@ -192,6 +197,27 @@ class Migrator {
 			$wpdb->query( "ALTER TABLE {$table} ADD INDEX deleted_at (deleted_at)" );
 
 			$this->log( 'Added deleted_at column to applications table' );
+		}
+	}
+
+	/**
+	 * Migration: email_hash für bestehende Kandidaten berechnen
+	 *
+	 * Setzt email_hash = SHA256(LOWER(TRIM(email))) für alle Kandidaten ohne email_hash.
+	 */
+	private function migrateEmailHash(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['candidates'];
+
+		// Alle Kandidaten ohne email_hash aktualisieren.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$updated = $wpdb->query(
+			"UPDATE {$table} SET email_hash = SHA2(LOWER(TRIM(email)), 256) WHERE email_hash IS NULL OR email_hash = ''"
+		);
+
+		if ( $updated > 0 ) {
+			$this->log( 'Migrated email_hash for ' . $updated . ' candidates' );
 		}
 	}
 

@@ -57,6 +57,7 @@ class Schema {
 		return "CREATE TABLE {$table} (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			email varchar(255) NOT NULL,
+			email_hash varchar(64) NOT NULL DEFAULT '',
 			salutation varchar(20) DEFAULT '',
 			first_name varchar(100) DEFAULT '',
 			last_name varchar(100) DEFAULT '',
@@ -100,6 +101,7 @@ class Schema {
 			source_url varchar(500) DEFAULT '',
 			consent_privacy tinyint(1) DEFAULT 0,
 			consent_privacy_at datetime DEFAULT NULL,
+			consent_privacy_version varchar(20) DEFAULT '',
 			consent_ip varchar(45) DEFAULT '',
 			ip_address varchar(45) DEFAULT '',
 			user_agent varchar(500) DEFAULT '',

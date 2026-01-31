@@ -104,7 +104,7 @@ class FormConfigControllerTest extends TestCase {
 	 */
 	public function test_register_routes_registers_all_routes(): void {
 		Functions\expect( 'register_rest_route' )
-			->times( 4 )
+			->times( 5 )  // 4 + active-fields endpoint
 			->andReturn( true );
 
 		$this->controller->register_routes();
@@ -318,5 +318,74 @@ class FormConfigControllerTest extends TestCase {
 		$data = $response->get_data();
 		$this->assertArrayHasKey( 'config', $data );
 		$this->assertEquals( 2, $data['version'] );
+	}
+
+	/**
+	 * Test: get_active_fields gibt aktive Felder zurück
+	 */
+	public function test_get_active_fields_returns_field_list(): void {
+		$activeFields = [
+			'fields'        => [
+				[ 'field_key' => 'first_name', 'field_type' => 'text', 'label' => 'Vorname', 'is_required' => true ],
+				[ 'field_key' => 'email', 'field_type' => 'email', 'label' => 'E-Mail', 'is_required' => true ],
+			],
+			'system_fields' => [
+				[ 'field_key' => 'file_upload', 'type' => 'file_upload', 'label' => 'Dokumente' ],
+				[ 'field_key' => 'privacy_consent', 'type' => 'privacy_consent', 'label' => 'Datenschutz' ],
+			],
+		];
+
+		$service = Mockery::mock( FormConfigService::class );
+		$service->shouldReceive( 'getActiveFields' )
+			->once()
+			->andReturn( $activeFields );
+
+		$reflection = new \ReflectionClass( $this->controller );
+		$property   = $reflection->getProperty( 'service' );
+		$property->setAccessible( true );
+		$property->setValue( $this->controller, $service );
+
+		$request = Mockery::mock( WP_REST_Request::class );
+
+		$response = $this->controller->get_active_fields( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$this->assertArrayHasKey( 'fields', $data );
+		$this->assertArrayHasKey( 'system_fields', $data );
+		$this->assertCount( 2, $data['fields'] );
+		$this->assertCount( 2, $data['system_fields'] );
+		$this->assertEquals( 'first_name', $data['fields'][0]['field_key'] );
+	}
+
+	/**
+	 * Test: get_active_fields gibt leere Arrays zurück wenn keine Config
+	 */
+	public function test_get_active_fields_returns_empty_when_no_config(): void {
+		$service = Mockery::mock( FormConfigService::class );
+		$service->shouldReceive( 'getActiveFields' )
+			->once()
+			->andReturn( [
+				'fields'        => [],
+				'system_fields' => [],
+			] );
+
+		$reflection = new \ReflectionClass( $this->controller );
+		$property   = $reflection->getProperty( 'service' );
+		$property->setAccessible( true );
+		$property->setValue( $this->controller, $service );
+
+		$request = Mockery::mock( WP_REST_Request::class );
+
+		$response = $this->controller->get_active_fields( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+
+		$this->assertArrayHasKey( 'fields', $data );
+		$this->assertArrayHasKey( 'system_fields', $data );
+		$this->assertEmpty( $data['fields'] );
+		$this->assertEmpty( $data['system_fields'] );
 	}
 }

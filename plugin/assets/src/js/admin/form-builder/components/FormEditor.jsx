@@ -39,11 +39,23 @@ import {
 	Edit2,
 	X,
 	Check,
+	Lock,
+	FileText,
+	Upload,
+	ListChecks,
+	Shield,
+	Settings,
 } from 'lucide-react';
 import { Input } from '../../components/ui/input';
+import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
+import SummarySettings from './SystemFieldSettings/SummarySettings';
+import PrivacyConsentSettings from './SystemFieldSettings/PrivacyConsentSettings';
 
 /**
  * SortableFieldItem - Draggable field within a step
+ *
+ * Shows Lock icon for non-removable fields (required fields like first_name, last_name, email)
+ * and Delete button only for removable fields.
  */
 function SortableFieldItem( {
 	fieldConfig,
@@ -77,6 +89,9 @@ function SortableFieldItem( {
 	const label = fieldDef?.label || fieldConfig.field_key;
 	const fieldType = fieldDef?.field_type || 'text';
 
+	// Check if field is removable (default to true for backwards compatibility)
+	const isRemovable = fieldConfig.is_removable !== false;
+
 	return (
 		<div
 			ref={ setNodeRef }
@@ -86,14 +101,15 @@ function SortableFieldItem( {
 				alignItems: 'center',
 				justifyContent: 'space-between',
 				padding: '0.5rem 0.75rem',
-				backgroundColor: isDragging ? '#dbeafe' : '#f9fafb',
+				backgroundColor: isDragging ? '#dbeafe' : ( isRemovable ? '#f9fafb' : '#fef3c7' ),
 				borderRadius: '0.375rem',
-				border: isDragging ? '1px solid #3b82f6' : '1px solid #e5e7eb',
+				border: isDragging ? '1px solid #3b82f6' : ( isRemovable ? '1px solid #e5e7eb' : '1px solid #fcd34d' ),
 			} }
 		>
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 				<button
 					type="button"
+					aria-label={ __( 'Feld per Drag & Drop verschieben', 'recruiting-playbook' ) }
 					style={ {
 						cursor: 'grab',
 						color: '#9ca3af',
@@ -108,6 +124,15 @@ function SortableFieldItem( {
 				>
 					<GripVertical style={ { height: '1rem', width: '1rem' } } />
 				</button>
+
+				{ /* Lock icon for non-removable fields */ }
+				{ ! isRemovable && (
+					<Lock
+						style={ { height: '0.875rem', width: '0.875rem', color: '#d97706', flexShrink: 0 } }
+						title={ __( 'Pflichtfeld - kann nicht entfernt werden', 'recruiting-playbook' ) }
+					/>
+				) }
+
 				<span style={ { fontWeight: 500 } }>{ label }</span>
 				<Badge variant="outline" style={ { fontSize: '0.75rem' } }>
 					{ fieldType }
@@ -127,13 +152,107 @@ function SortableFieldItem( {
 				>
 					{ fieldConfig.is_required ? '*' : 'opt' }
 				</Button>
+
+				{ /* Delete button only for removable fields */ }
+				{ isRemovable ? (
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={ () => onRemove( stepId, fieldConfig.field_key ) }
+						style={ { color: '#ef4444' } }
+						title={ __( 'Feld entfernen', 'recruiting-playbook' ) }
+					>
+						<X style={ { height: '1rem', width: '1rem' } } />
+					</Button>
+				) : (
+					<div
+						style={ { width: '2rem', height: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' } }
+						title={ __( 'Dieses Feld kann nicht entfernt werden', 'recruiting-playbook' ) }
+					>
+						{ /* Placeholder to maintain alignment */ }
+					</div>
+				) }
+			</div>
+		</div>
+	);
+}
+
+/**
+ * Icon mapping for system field types
+ */
+const systemFieldIcons = {
+	file_upload: Upload,
+	summary: ListChecks,
+	privacy_consent: Shield,
+};
+
+/**
+ * Label mapping for system field types
+ */
+const systemFieldLabels = {
+	file_upload: __( 'Datei-Upload', 'recruiting-playbook' ),
+	summary: __( 'Zusammenfassung', 'recruiting-playbook' ),
+	privacy_consent: __( 'Datenschutz-Zustimmung', 'recruiting-playbook' ),
+};
+
+/**
+ * SystemFieldCard - Non-draggable system field within a step
+ *
+ * System fields are hardcoded (file_upload, summary, privacy_consent) and cannot be
+ * moved or deleted. They only have a settings button.
+ */
+function SystemFieldCard( {
+	systemField,
+	stepId,
+	onOpenSettings,
+} ) {
+	const IconComponent = systemFieldIcons[ systemField.field_key ] || FileText;
+	const label = systemField.settings?.label || systemFieldLabels[ systemField.field_key ] || systemField.field_key;
+
+	return (
+		<div
+			style={ {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'space-between',
+				padding: '0.5rem 0.75rem',
+				backgroundColor: '#f0fdf4',
+				borderRadius: '0.375rem',
+				border: '1px solid #86efac',
+			} }
+		>
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+				{ /* Static icon instead of drag handle */ }
+				<div
+					style={ {
+						color: '#22c55e',
+						padding: '0.25rem',
+						display: 'flex',
+						alignItems: 'center',
+					} }
+				>
+					<IconComponent style={ { height: '1rem', width: '1rem' } } />
+				</div>
+
+				<span style={ { fontWeight: 500 } }>{ label }</span>
+
+				<Badge
+					variant="outline"
+					style={ { fontSize: '0.75rem', backgroundColor: '#dcfce7', borderColor: '#86efac', color: '#166534' } }
+				>
+					{ __( 'System', 'recruiting-playbook' ) }
+				</Badge>
+			</div>
+
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
+				{ /* Settings button */ }
 				<Button
 					variant="ghost"
 					size="sm"
-					onClick={ () => onRemove( stepId, fieldConfig.field_key ) }
-					style={ { color: '#ef4444' } }
+					onClick={ () => onOpenSettings && onOpenSettings( stepId, systemField ) }
+					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
 				>
-					<X style={ { height: '1rem', width: '1rem' } } />
+					<Settings style={ { height: '1rem', width: '1rem' } } />
 				</Button>
 			</div>
 		</div>
@@ -163,6 +282,7 @@ function SortableStep( {
 	setShowAddFieldFor,
 	unusedFields,
 	getFieldDefinition,
+	onOpenSystemFieldSettings,
 	sensors,
 	onFieldDragEnd,
 } ) {
@@ -193,6 +313,8 @@ function SortableStep( {
 	const stepFields = step.fields || [];
 	const visibleFields = stepFields.filter( ( f ) => f.is_visible );
 	const fieldIds = visibleFields.map( ( f ) => `${ step.id }:${ f.field_key }` );
+	const systemFields = step.system_fields || [];
+	const totalFieldCount = visibleFields.length + systemFields.length;
 
 	return (
 		<Card
@@ -207,6 +329,7 @@ function SortableStep( {
 						{ ! isFinale && (
 							<button
 								type="button"
+								aria-label={ __( 'Schritt per Drag & Drop verschieben', 'recruiting-playbook' ) }
 								style={ {
 									cursor: 'grab',
 									color: '#9ca3af',
@@ -287,9 +410,9 @@ function SortableStep( {
 					</div>
 
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
-						{ /* Field count */ }
+						{ /* Field count (including system fields) */ }
 						<Badge variant="secondary" style={ { marginRight: '0.5rem' } }>
-							{ visibleFields.length } { __( 'Felder', 'recruiting-playbook' ) }
+							{ totalFieldCount } { __( 'Felder', 'recruiting-playbook' ) }
 						</Badge>
 
 						{ /* Delete button (only for deletable steps) */ }
@@ -360,6 +483,23 @@ function SortableStep( {
 						</SortableContext>
 					</DndContext>
 
+					{ /* System fields (non-draggable) */ }
+					{ systemFields.length > 0 && (
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' } }>
+							<div style={ { fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.25rem' } }>
+								{ __( 'System-Felder', 'recruiting-playbook' ) }
+							</div>
+							{ systemFields.map( ( systemField ) => (
+								<SystemFieldCard
+									key={ systemField.field_key }
+									systemField={ systemField }
+									stepId={ step.id }
+									onOpenSettings={ onOpenSystemFieldSettings }
+								/>
+							) ) }
+						</div>
+					) }
+
 					{ /* Add field button */ }
 					<div style={ { marginTop: '0.75rem' } }>
 						{ showAddFieldFor === step.id ? (
@@ -423,13 +563,14 @@ function SortableStep( {
  * @param {Function} props.removeStep            Remove step handler
  * @param {Function} props.reorderSteps          Reorder steps handler
  * @param {Function} props.addFieldToStep        Add field to step handler
- * @param {Function} props.removeFieldFromStep   Remove field from step handler
- * @param {Function} props.updateFieldInStep     Update field in step handler
- * @param {Function} props.moveFieldBetweenSteps Move field between steps handler
- * @param {Function} props.reorderFieldsInStep   Reorder fields in step handler
- * @param {Function} props.getUnusedFields       Get unused fields handler
- * @param {Function} props.getFieldDefinition    Get field definition handler
- * @param {Object}   props.i18n                  Translations
+ * @param {Function} props.removeFieldFromStep     Remove field from step handler
+ * @param {Function} props.updateFieldInStep       Update field in step handler
+ * @param {Function} props.updateSystemFieldInStep Update system field in step handler
+ * @param {Function} props.moveFieldBetweenSteps   Move field between steps handler
+ * @param {Function} props.reorderFieldsInStep     Reorder fields in step handler
+ * @param {Function} props.getUnusedFields         Get unused fields handler
+ * @param {Function} props.getFieldDefinition      Get field definition handler
+ * @param {Object}   props.i18n                    Translations
  */
 export default function FormEditor( {
 	steps = [],
@@ -443,6 +584,7 @@ export default function FormEditor( {
 	addFieldToStep,
 	removeFieldFromStep,
 	updateFieldInStep,
+	updateSystemFieldInStep,
 	moveFieldBetweenSteps,
 	reorderFieldsInStep,
 	getUnusedFields,
@@ -454,6 +596,8 @@ export default function FormEditor( {
 	const [ editingTitle, setEditingTitle ] = useState( '' );
 	const [ showAddFieldFor, setShowAddFieldFor ] = useState( null );
 	const [ activeStepId, setActiveStepId ] = useState( null );
+	// System field editing state: { stepId, systemField }
+	const [ editingSystemField, setEditingSystemField ] = useState( null );
 
 	// Sensors for drag and drop
 	const sensors = useSensors(
@@ -483,7 +627,7 @@ export default function FormEditor( {
 
 	// Save step title
 	const saveStepTitle = () => {
-		if ( editingStepId && editingTitle.trim() ) {
+		if ( editingStepId && editingTitle.trim() && updateStep ) {
 			updateStep( editingStepId, { title: editingTitle.trim() } );
 		}
 		setEditingStepId( null );
@@ -498,6 +642,9 @@ export default function FormEditor( {
 
 	// Handle add step
 	const handleAddStep = () => {
+		if ( ! addStep ) {
+			return;
+		}
 		const newStepId = addStep( {
 			title: __( 'Neuer Schritt', 'recruiting-playbook' ),
 		} );
@@ -508,18 +655,49 @@ export default function FormEditor( {
 
 	// Handle add field to step
 	const handleAddField = ( stepId, fieldKey ) => {
+		if ( ! addFieldToStep ) {
+			return;
+		}
 		addFieldToStep( stepId, fieldKey, { is_visible: true, is_required: false } );
 		setShowAddFieldFor( null );
 	};
 
 	// Handle remove field from step
 	const handleRemoveField = ( stepId, fieldKey ) => {
+		if ( ! removeFieldFromStep ) {
+			return;
+		}
 		removeFieldFromStep( stepId, fieldKey );
 	};
 
 	// Handle toggle field required
 	const handleToggleRequired = ( stepId, fieldKey, currentValue ) => {
+		if ( ! updateFieldInStep ) {
+			return;
+		}
 		updateFieldInStep( stepId, fieldKey, { is_required: ! currentValue } );
+	};
+
+	// Handle open system field settings
+	const handleOpenSystemFieldSettings = ( stepId, systemField ) => {
+		setEditingSystemField( { stepId, systemField } );
+	};
+
+	// Handle save system field settings
+	const handleSaveSystemFieldSettings = ( newSettings ) => {
+		if ( editingSystemField && updateSystemFieldInStep ) {
+			updateSystemFieldInStep(
+				editingSystemField.stepId,
+				editingSystemField.systemField.field_key,
+				newSettings
+			);
+		}
+		setEditingSystemField( null );
+	};
+
+	// Handle close system field settings
+	const handleCloseSystemFieldSettings = () => {
+		setEditingSystemField( null );
 	};
 
 	// Handle step drag end
@@ -527,6 +705,11 @@ export default function FormEditor( {
 		const { active, over } = event;
 
 		if ( ! over || active.id === over.id ) {
+			setActiveStepId( null );
+			return;
+		}
+
+		if ( ! reorderSteps ) {
 			setActiveStepId( null );
 			return;
 		}
@@ -548,6 +731,10 @@ export default function FormEditor( {
 		const { active, over } = event;
 
 		if ( ! over || active.id === over.id ) {
+			return;
+		}
+
+		if ( ! reorderFieldsInStep ) {
 			return;
 		}
 
@@ -611,6 +798,7 @@ export default function FormEditor( {
 								setShowAddFieldFor={ setShowAddFieldFor }
 								unusedFields={ unusedFields }
 								getFieldDefinition={ getFieldDefinition }
+								onOpenSystemFieldSettings={ handleOpenSystemFieldSettings }
 								sensors={ sensors }
 								onFieldDragEnd={ handleFieldDragEnd }
 							/>
@@ -673,6 +861,7 @@ export default function FormEditor( {
 						setShowAddFieldFor={ setShowAddFieldFor }
 						unusedFields={ unusedFields }
 						getFieldDefinition={ getFieldDefinition }
+						onOpenSystemFieldSettings={ handleOpenSystemFieldSettings }
 						sensors={ sensors }
 						onFieldDragEnd={ handleFieldDragEnd }
 					/>
@@ -687,6 +876,29 @@ export default function FormEditor( {
 					{ __( 'Klicken Sie auf den Titel, um ihn zu bearbeiten. Ziehen Sie Schritte und Felder per Drag & Drop, um sie neu anzuordnen. Der Finale-Schritt ist immer der letzte und enthält typischerweise die Datenschutz-Zustimmung.', 'recruiting-playbook' ) }
 				</p>
 			</div>
+
+			{ /* System Field Settings Modals */ }
+			{ editingSystemField?.systemField?.field_key === 'file_upload' && (
+				<FileUploadSettings
+					settings={ editingSystemField.systemField.settings || {} }
+					onSave={ handleSaveSystemFieldSettings }
+					onClose={ handleCloseSystemFieldSettings }
+				/>
+			) }
+			{ editingSystemField?.systemField?.field_key === 'summary' && (
+				<SummarySettings
+					settings={ editingSystemField.systemField.settings || {} }
+					onSave={ handleSaveSystemFieldSettings }
+					onClose={ handleCloseSystemFieldSettings }
+				/>
+			) }
+			{ editingSystemField?.systemField?.field_key === 'privacy_consent' && (
+				<PrivacyConsentSettings
+					settings={ editingSystemField.systemField.settings || {} }
+					onSave={ handleSaveSystemFieldSettings }
+					onClose={ handleCloseSystemFieldSettings }
+				/>
+			) }
 		</div>
 	);
 }

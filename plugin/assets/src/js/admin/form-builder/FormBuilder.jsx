@@ -21,6 +21,7 @@ import FieldEditor from './components/FieldEditor';
 import FieldTypeSelector from './components/FieldTypeSelector';
 import FormPreview from './components/FormPreview';
 import FormEditor from './components/FormEditor';
+import FreeVersionOverlay from './components/FreeVersionOverlay';
 import { useFormConfig } from './hooks/useFormConfig';
 import { useFieldDefinitions } from './hooks/useFieldDefinitions';
 
@@ -59,6 +60,7 @@ export default function FormBuilder() {
 		addFieldToStep,
 		removeFieldFromStep,
 		updateFieldInStep,
+		updateSystemFieldInStep,
 		moveFieldBetweenSteps,
 		reorderFieldsInStep,
 		updateSettings,
@@ -292,24 +294,33 @@ export default function FormBuilder() {
 
 					{ /* Form Tab - Step-based Form Editor */ }
 					<TabsContent value="form" className="mt-0">
-						<FormEditor
-							steps={ steps }
-							regularSteps={ regularSteps }
-							finaleStep={ finaleStep }
-							availableFields={ availableFields }
-							addStep={ addStep }
-							updateStep={ updateStep }
-							removeStep={ removeStep }
-							reorderSteps={ reorderSteps }
-							addFieldToStep={ addFieldToStep }
-							removeFieldFromStep={ removeFieldFromStep }
-							updateFieldInStep={ updateFieldInStep }
-							moveFieldBetweenSteps={ moveFieldBetweenSteps }
-							reorderFieldsInStep={ reorderFieldsInStep }
-							getUnusedFields={ getUnusedFields }
-							getFieldDefinition={ getFieldDefinition }
-							i18n={ i18n }
-						/>
+						<div style={ { position: 'relative' } }>
+							<FormEditor
+								steps={ steps }
+								regularSteps={ regularSteps }
+								finaleStep={ finaleStep }
+								availableFields={ availableFields }
+								addStep={ isPro ? addStep : undefined }
+								updateStep={ isPro ? updateStep : undefined }
+								removeStep={ isPro ? removeStep : undefined }
+								reorderSteps={ isPro ? reorderSteps : undefined }
+								addFieldToStep={ isPro ? addFieldToStep : undefined }
+								removeFieldFromStep={ isPro ? removeFieldFromStep : undefined }
+								updateFieldInStep={ isPro ? updateFieldInStep : undefined }
+								updateSystemFieldInStep={ isPro ? updateSystemFieldInStep : undefined }
+								moveFieldBetweenSteps={ isPro ? moveFieldBetweenSteps : undefined }
+								reorderFieldsInStep={ isPro ? reorderFieldsInStep : undefined }
+								getUnusedFields={ getUnusedFields }
+								getFieldDefinition={ getFieldDefinition }
+								i18n={ i18n }
+							/>
+							{ ! isPro && (
+								<FreeVersionOverlay
+									upgradeUrl={ upgradeUrl }
+									i18n={ i18n }
+								/>
+							) }
+						</div>
 					</TabsContent>
 
 					{ /* Fields Tab - Field Library */ }

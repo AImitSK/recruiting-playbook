@@ -24,6 +24,13 @@ use WP_Error;
 class FormConfigService {
 
 	/**
+	 * Pflichtfelder, die nicht entfernt werden können.
+	 *
+	 * Diese Felder sind für E-Mail-Platzhalter und DSGVO-Compliance erforderlich.
+	 */
+	public const REQUIRED_FIELDS = [ 'first_name', 'last_name', 'email', 'privacy_consent' ];
+
+	/**
 	 * Repository
 	 *
 	 * @var FormConfigRepository
@@ -55,6 +62,7 @@ class FormConfigService {
 	 * Draft-Konfiguration laden
 	 *
 	 * Lädt die Draft-Version oder erstellt eine Standard-Konfiguration.
+	 * Migriert automatisch v1-Konfigurationen zu v2.
 	 *
 	 * @return array
 	 */
@@ -62,7 +70,8 @@ class FormConfigService {
 		$draft = $this->repository->getDraft();
 
 		if ( $draft ) {
-			return $draft['config_data'];
+			// Automatisch migrieren falls v1.
+			return $this->migrateConfig( $draft['config_data'] );
 		}
 
 		// Fallback auf Default-Konfiguration.
@@ -73,6 +82,7 @@ class FormConfigService {
 	 * Published-Konfiguration laden
 	 *
 	 * Lädt die veröffentlichte Version oder erstellt eine Standard-Konfiguration.
+	 * Migriert automatisch v1-Konfigurationen zu v2.
 	 *
 	 * @return array
 	 */
@@ -80,7 +90,8 @@ class FormConfigService {
 		$published = $this->repository->getPublished();
 
 		if ( $published ) {
-			return $published['config_data'];
+			// Automatisch migrieren falls v1.
+			return $this->migrateConfig( $published['config_data'] );
 		}
 
 		// Fallback auf Default-Konfiguration.
@@ -255,23 +266,33 @@ class FormConfigService {
 			}
 		}
 
-		// Pflichtfelder prüfen (mind. E-Mail für Bewerbung).
-		$required_fields = $this->getRequiredFieldKeys( $config );
+		// Pflichtfelder prüfen (E-Mail-Platzhalter und DSGVO).
+		$visible_fields = $this->getVisibleFieldKeys( $config );
 
-		if ( ! in_array( 'email', $required_fields, true ) ) {
-			return new WP_Error(
-				'missing_email_field',
-				__( 'Das E-Mail-Feld ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
-				[ 'status' => 422 ]
-			);
-		}
+		foreach ( self::REQUIRED_FIELDS as $required_field ) {
+			// privacy_consent wird jetzt als system_field geprüft.
+			if ( 'privacy_consent' === $required_field ) {
+				if ( ! $this->hasPrivacyConsentSystemField( $config ) ) {
+					return new WP_Error(
+						'missing_privacy_consent',
+						__( 'Das Datenschutz-Feld ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
+						[ 'status' => 422 ]
+					);
+				}
+				continue;
+			}
 
-		if ( ! in_array( 'privacy_consent', $required_fields, true ) ) {
-			return new WP_Error(
-				'missing_privacy_consent',
-				__( 'Das Datenschutz-Feld ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
-				[ 'status' => 422 ]
-			);
+			if ( ! in_array( $required_field, $visible_fields, true ) ) {
+				return new WP_Error(
+					'missing_required_field',
+					sprintf(
+						/* translators: %s: Field name */
+						__( 'Das Feld "%s" ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
+						$required_field
+					),
+					[ 'status' => 422 ]
+				);
+			}
 		}
 
 		return true;
@@ -333,7 +354,7 @@ class FormConfigService {
 	 * @param array $config Konfiguration.
 	 * @return array<string>
 	 */
-	private function getRequiredFieldKeys( array $config ): array {
+	private function getVisibleFieldKeys( array $config ): array {
 		$field_keys = [];
 
 		foreach ( $config['steps'] as $step ) {
@@ -352,13 +373,56 @@ class FormConfigService {
 	}
 
 	/**
-	 * Standard-Konfiguration laden
+	 * Prüfen ob privacy_consent als System-Feld im Finale-Step vorhanden ist
+	 *
+	 * @param array $config Konfiguration.
+	 * @return bool
+	 */
+	private function hasPrivacyConsentSystemField( array $config ): bool {
+		foreach ( $config['steps'] as $step ) {
+			if ( empty( $step['is_finale'] ) ) {
+				continue;
+			}
+
+			if ( empty( $step['system_fields'] ) || ! is_array( $step['system_fields'] ) ) {
+				return false;
+			}
+
+			foreach ( $step['system_fields'] as $system_field ) {
+				if ( 'privacy_consent' === ( $system_field['field_key'] ?? '' ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Prüfen ob ein Feld entfernt werden kann
+	 *
+	 * Pflichtfelder (first_name, last_name, email, privacy_consent) können nicht entfernt werden.
+	 *
+	 * @param string $field_key Feld-Key.
+	 * @return bool True wenn entfernbar, false wenn Pflichtfeld.
+	 */
+	public function isFieldRemovable( string $field_key ): bool {
+		return ! in_array( $field_key, self::REQUIRED_FIELDS, true );
+	}
+
+	/**
+	 * Standard-Konfiguration laden (Schema v2)
+	 *
+	 * Struktur:
+	 * - version: 2
+	 * - system_fields: Hardcodierte Felder pro Step (file_upload, summary, privacy_consent)
+	 * - is_removable: Flag ob Feld entfernt werden kann (false für Pflichtfelder)
 	 *
 	 * @return array
 	 */
 	public function getDefaultConfig(): array {
 		return [
-			'version'  => 1,
+			'version'  => 2,
 			'settings' => [
 				'showStepIndicator' => true,
 				'showStepTitles'    => true,
@@ -372,61 +436,219 @@ class FormConfigService {
 					'deletable' => false,
 					'fields'    => [
 						[
-							'field_key'   => 'first_name',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'first_name',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
+							'width'        => 'half',
+							'settings'     => [
+								'label'       => __( 'Vorname', 'recruiting-playbook' ),
+								'placeholder' => 'Max',
+							],
 						],
 						[
-							'field_key'   => 'last_name',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'last_name',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
+							'width'        => 'half',
+							'settings'     => [
+								'label'       => __( 'Nachname', 'recruiting-playbook' ),
+								'placeholder' => 'Mustermann',
+							],
 						],
 						[
-							'field_key'   => 'email',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'email',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
+							'width'        => 'full',
+							'settings'     => [
+								'label'       => __( 'E-Mail-Adresse', 'recruiting-playbook' ),
+								'placeholder' => 'max@beispiel.de',
+							],
 						],
 						[
-							'field_key'   => 'phone',
-							'is_visible'  => true,
-							'is_required' => false,
+							'field_key'    => 'phone',
+							'is_visible'   => true,
+							'is_required'  => false,
+							'is_removable' => true,
+							'width'        => 'full',
+							'settings'     => [
+								'label'       => __( 'Telefon', 'recruiting-playbook' ),
+								'placeholder' => '+49...',
+							],
 						],
 					],
 				],
 				[
-					'id'        => 'step_documents',
-					'title'     => __( 'Dokumente', 'recruiting-playbook' ),
-					'position'  => 2,
-					'deletable' => true,
-					'fields'    => [
+					'id'            => 'step_documents',
+					'title'         => __( 'Dokumente', 'recruiting-playbook' ),
+					'position'      => 2,
+					'deletable'     => true,
+					'fields'        => [
 						[
-							'field_key'   => 'message',
-							'is_visible'  => true,
-							'is_required' => false,
+							'field_key'    => 'message',
+							'is_visible'   => true,
+							'is_required'  => false,
+							'is_removable' => true,
+							'width'        => 'full',
+							'settings'     => [
+								'label'       => __( 'Anschreiben / Nachricht', 'recruiting-playbook' ),
+								'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
+							],
 						],
+					],
+					'system_fields' => [
 						[
-							'field_key'   => 'resume',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key' => 'file_upload',
+							'type'      => 'file_upload',
+							'settings'  => [
+								'label'         => __( 'Dokumente hochladen', 'recruiting-playbook' ),
+								'help_text'     => __( 'Lebenslauf und weitere Dokumente (PDF, Word)', 'recruiting-playbook' ),
+								'allowed_types' => [ 'pdf', 'doc', 'docx' ],
+								'max_file_size' => 10,
+								'max_files'     => 5,
+							],
 						],
 					],
 				],
 				[
-					'id'        => 'step_finale',
-					'title'     => __( 'Abschluss', 'recruiting-playbook' ),
-					'position'  => 999,
-					'deletable' => false,
-					'is_finale' => true,
-					'fields'    => [
+					'id'            => 'step_finale',
+					'title'         => __( 'Abschluss', 'recruiting-playbook' ),
+					'position'      => 999,
+					'deletable'     => false,
+					'is_finale'     => true,
+					'fields'        => [],
+					'system_fields' => [
 						[
-							'field_key'   => 'privacy_consent',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key' => 'summary',
+							'type'      => 'summary',
+							'settings'  => [
+								'title'           => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'layout'          => 'two-column',
+								'additional_text' => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'show_only_filled' => false,
+							],
+						],
+						[
+							'field_key'    => 'privacy_consent',
+							'type'         => 'privacy_consent',
+							'is_removable' => false,
+							'settings'     => [
+								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+								'privacy_url'   => get_privacy_policy_url() ?: '/datenschutz',
+							],
 						],
 					],
 				],
 			],
 		];
+	}
+
+	/**
+	 * Konfiguration von v1 auf v2 migrieren
+	 *
+	 * Fügt system_fields und is_removable Flags hinzu.
+	 *
+	 * @param array $config Alte Konfiguration.
+	 * @return array Migrierte Konfiguration.
+	 */
+	public function migrateConfig( array $config ): array {
+		// Bereits v2 oder höher - keine Migration nötig.
+		if ( ( $config['version'] ?? 1 ) >= 2 ) {
+			return $config;
+		}
+
+		// Steps durchgehen und migrieren.
+		foreach ( $config['steps'] as &$step ) {
+			// Dokumente-Step: file_upload als System-Feld hinzufügen.
+			if ( 'step_documents' === $step['id'] ) {
+				$step['system_fields'] = [
+					[
+						'field_key' => 'file_upload',
+						'type'      => 'file_upload',
+						'settings'  => [
+							'label'         => __( 'Dokumente hochladen', 'recruiting-playbook' ),
+							'help_text'     => __( 'Lebenslauf und weitere Dokumente (PDF, Word)', 'recruiting-playbook' ),
+							'allowed_types' => [ 'pdf', 'doc', 'docx' ],
+							'max_file_size' => 10,
+							'max_files'     => 5,
+						],
+					],
+				];
+
+				// resume-Feld aus fields entfernen (wird durch file_upload ersetzt).
+				$step['fields'] = array_values(
+					array_filter(
+						$step['fields'] ?? [],
+						function ( $field ) {
+							return 'resume' !== ( $field['field_key'] ?? '' );
+						}
+					)
+				);
+			}
+
+			// Finale-Step: summary und privacy_consent als System-Felder.
+			if ( ! empty( $step['is_finale'] ) ) {
+				$step['system_fields'] = [
+					[
+						'field_key' => 'summary',
+						'type'      => 'summary',
+						'settings'  => [
+							'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+							'layout'           => 'two-column',
+							'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+							'show_only_filled' => false,
+						],
+					],
+					[
+						'field_key'    => 'privacy_consent',
+						'type'         => 'privacy_consent',
+						'is_removable' => false,
+						'settings'     => [
+							'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+							'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+							'privacy_url'   => get_privacy_policy_url() ?: '/datenschutz',
+						],
+					],
+				];
+
+				// privacy_consent aus fields entfernen (jetzt in system_fields).
+				$step['fields'] = array_values(
+					array_filter(
+						$step['fields'] ?? [],
+						function ( $field ) {
+							return 'privacy_consent' !== ( $field['field_key'] ?? '' );
+						}
+					)
+				);
+			}
+
+			// is_removable Flag für alle Felder hinzufügen.
+			if ( ! empty( $step['fields'] ) ) {
+				foreach ( $step['fields'] as &$field ) {
+					if ( ! isset( $field['is_removable'] ) ) {
+						$field['is_removable'] = $this->isFieldRemovable( $field['field_key'] ?? '' );
+					}
+
+					// Default width hinzufügen.
+					if ( ! isset( $field['width'] ) ) {
+						$field['width'] = 'full';
+						// Vorname/Nachname nebeneinander.
+						if ( in_array( $field['field_key'] ?? '', [ 'first_name', 'last_name' ], true ) ) {
+							$field['width'] = 'half';
+						}
+					}
+				}
+			}
+		}
+
+		// Version auf 2 setzen.
+		$config['version'] = 2;
+
+		return $config;
 	}
 
 	/**
@@ -472,5 +694,126 @@ class FormConfigService {
 			'has_changes'       => $this->hasUnpublishedChanges(),
 			'available_fields'  => $this->getAvailableFields(),
 		];
+	}
+
+	/**
+	 * Aktive (sichtbare) Felder aus der Published-Konfiguration laden
+	 *
+	 * Liefert alle sichtbaren Felder mit ihren vollständigen Definitionen
+	 * sowie System-Felder separat für die ApplicantDetail-Ansicht.
+	 *
+	 * @return array{fields: array, system_fields: array}
+	 */
+	public function getActiveFields(): array {
+		// Cache-Key basierend auf Published-Version.
+		$cache_key = 'rp_active_fields_v' . $this->getPublishedVersion();
+		$cached    = wp_cache_get( $cache_key, 'recruiting_playbook' );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$config = $this->getPublished();
+
+		// Alle Field-Definitionen laden für vollständige Daten.
+		$field_definitions = [];
+		foreach ( $this->field_repository->findAll() as $field ) {
+			$field_definitions[ $field->getFieldKey() ] = [
+				'field_key'   => $field->getFieldKey(),
+				'field_type'  => $field->getFieldType(),
+				'label'       => $field->getLabel(),
+				'placeholder' => $field->getPlaceholder(),
+				'description' => $field->getDescription(),
+				'is_required' => $field->isRequired(),
+				'is_system'   => $field->isSystem(),
+				'settings'    => $field->getSettings(),
+				'validation'  => $field->getValidation(),
+				'options'     => $field->getOptions(),
+			];
+		}
+
+		$fields        = [];
+		$system_fields = [];
+
+		// Felder aus Steps extrahieren.
+		foreach ( $config['steps'] ?? [] as $step ) {
+			// Steps müssen Arrays sein.
+			if ( ! is_array( $step ) ) {
+				continue;
+			}
+
+			// Reguläre Felder.
+			if ( ! empty( $step['fields'] ) && is_array( $step['fields'] ) ) {
+				foreach ( $step['fields'] as $field_config ) {
+					// Field-Config muss Array sein.
+					if ( ! is_array( $field_config ) ) {
+						continue;
+					}
+
+					// Nur sichtbare Felder.
+					if ( empty( $field_config['is_visible'] ) ) {
+						continue;
+					}
+
+					$field_key = $field_config['field_key'] ?? '';
+
+					if ( empty( $field_key ) || ! isset( $field_definitions[ $field_key ] ) ) {
+						continue;
+					}
+
+					$definition = $field_definitions[ $field_key ];
+
+					// Label-Validierung: nur Strings akzeptieren.
+					$custom_label = $field_config['settings']['label'] ?? null;
+					$label        = is_string( $custom_label ) ? $custom_label : $definition['label'];
+
+					$fields[] = [
+						'field_key'   => $field_key,
+						'field_type'  => $definition['field_type'],
+						'label'       => $label,
+						'is_system'   => $definition['is_system'],
+						'is_required' => $field_config['is_required'] ?? $definition['is_required'],
+						'options'     => $definition['options'],
+						'step_id'     => $step['id'] ?? null,
+					];
+				}
+			}
+
+			// System-Felder (file_upload, summary, privacy_consent).
+			if ( ! empty( $step['system_fields'] ) && is_array( $step['system_fields'] ) ) {
+				foreach ( $step['system_fields'] as $system_field ) {
+					// System-Field-Config muss Array sein.
+					if ( ! is_array( $system_field ) ) {
+						continue;
+					}
+
+					$field_key = $system_field['field_key'] ?? '';
+					$type      = $system_field['type'] ?? $field_key;
+					$settings  = is_array( $system_field['settings'] ?? null ) ? $system_field['settings'] : [];
+
+					// Label-Validierung.
+					$system_label = $settings['label'] ?? null;
+					$label        = is_string( $system_label ) ? $system_label : ucfirst( str_replace( '_', ' ', $field_key ) );
+
+					$system_fields[] = [
+						'field_key' => $field_key,
+						'type'      => $type,
+						'label'     => $label,
+						'settings'  => $settings,
+						'step_id'   => $step['id'] ?? null,
+					];
+				}
+			}
+		}
+
+		$result = [
+			'fields'        => $fields,
+			'system_fields' => $system_fields,
+		];
+
+		// 5 Minuten cachen.
+		wp_cache_set( $cache_key, $result, 'recruiting_playbook', 300 );
+
+		return $result;
 	}
 }

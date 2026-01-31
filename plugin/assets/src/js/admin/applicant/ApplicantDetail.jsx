@@ -38,6 +38,8 @@ import { Timeline } from './Timeline';
 import { TalentPoolButton } from './TalentPoolButton';
 import { EmailTab } from './EmailTab';
 import { CustomFieldsPanel } from './CustomFieldsPanel';
+import { DynamicFieldRenderer } from '../components/shared/DynamicFieldRenderer';
+import { useActiveFields } from '../hooks/useActiveFields';
 
 /**
  * Status-Konfiguration mit Farben
@@ -89,6 +91,9 @@ export function ApplicantDetail( { applicationId } ) {
 	const [ notesCount, setNotesCount ] = useState( 0 );
 	const [ timelineCount, setTimelineCount ] = useState( 0 );
 	const [ emailsCount, setEmailsCount ] = useState( 0 );
+
+	// Aktive Felder aus Form-Config laden
+	const { fields: activeFields, loading: fieldsLoading } = useActiveFields();
 
 	const config = window.rpApplicant || {};
 	const canSendEmails = config.canSendEmails !== false;
@@ -359,97 +364,73 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Details */ }
 						{ activeTab === 'details' && (
 							<>
-								{ /* Kandidaten-Details - 2-spaltig */ }
+								{ /* Kandidaten-Details - dynamisch basierend auf Form-Config */ }
 								<Card>
 									<CardHeader style={ { paddingBottom: 0 } }>
 										<CardTitle>{ __( 'Kandidaten-Details', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
 									<CardContent style={ { padding: '1rem 1.5rem' } }>
-										<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
-											{ /* Zeile 1 */ }
-											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
-												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
-											</div>
-											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Anrede', 'recruiting-playbook' ) }</span>
-												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.salutation || '-' }</span>
-											</div>
-											{ /* Zeile 2 */ }
-											<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'E-Mail', 'recruiting-playbook' ) }</span>
-												{ application.email ? (
-													<>
-														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.email }</a>
-														<button
-															type="button"
-															onClick={ () => copyToClipboard( application.email ) }
-															title={ __( 'Kopieren', 'recruiting-playbook' ) }
-															style={ { marginLeft: '0.5rem', padding: '0.25rem', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', borderRadius: '0.25rem' } }
-															onMouseEnter={ ( e ) => e.currentTarget.style.color = '#6b7280' }
-															onMouseLeave={ ( e ) => e.currentTarget.style.color = '#9ca3af' }
-														>
-															<Copy style={ { width: '0.875rem', height: '0.875rem' } } />
-														</button>
-													</>
-												) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
-											</div>
-											<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Telefon', 'recruiting-playbook' ) }</span>
-												{ application.phone ? (
-													<>
-														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.phone }</a>
-														<button
-															type="button"
-															onClick={ () => copyToClipboard( application.phone ) }
-															title={ __( 'Kopieren', 'recruiting-playbook' ) }
-															style={ { marginLeft: '0.5rem', padding: '0.25rem', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', borderRadius: '0.25rem' } }
-															onMouseEnter={ ( e ) => e.currentTarget.style.color = '#6b7280' }
-															onMouseLeave={ ( e ) => e.currentTarget.style.color = '#9ca3af' }
-														>
-															<Copy style={ { width: '0.875rem', height: '0.875rem' } } />
-														</button>
-													</>
-												) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
-											</div>
-											{ /* Zeile 3 */ }
-											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Stelle', 'recruiting-playbook' ) }</span>
-												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.job_title || '-' }</span>
-											</div>
-											<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Beworben am', 'recruiting-playbook' ) }</span>
-												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ formatDate( application.created_at ) }</span>
-											</div>
-											{ /* Zeile 4 */ }
-											<div style={ { display: 'flex', padding: '0.5rem 0' } }>
-												<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Quelle', 'recruiting-playbook' ) }</span>
-												<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.source || 'Website' }</span>
-											</div>
-										</div>
-
-										{ /* Anschreiben */ }
-										{ application.cover_letter && (
-											<div style={ { marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
-												<div style={ { fontSize: '0.875rem', fontWeight: 500, color: '#1f2937', marginBottom: '0.75rem' } }>
-													{ __( 'Anschreiben', 'recruiting-playbook' ) }
+										{ /* Dynamische Felder aus Form-Konfiguration */ }
+										{ activeFields && activeFields.length > 0 ? (
+											<DynamicFieldRenderer
+												fields={ activeFields }
+												data={ {
+													first_name: application.first_name,
+													last_name: application.last_name,
+													email: application.email,
+													phone: application.phone,
+													salutation: application.salutation,
+													message: application.cover_letter,
+													...( application.form_data || {} ),
+												} }
+												layout="two-column"
+												labelWidth={ 100 }
+												hideEmptyOptional={ true }
+											/>
+										) : (
+											// Fallback: Hardcodierte Felder wenn keine Config geladen
+											<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
+												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
 												</div>
-												<div
-													style={ {
-														fontSize: '0.875rem',
-														color: '#374151',
-														lineHeight: 1.6,
-														whiteSpace: 'pre-wrap',
-													} }
-													dangerouslySetInnerHTML={ { __html: application.cover_letter } }
-												/>
+												<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'E-Mail', 'recruiting-playbook' ) }</span>
+													{ application.email ? (
+														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.email }</a>
+													) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
+												</div>
+												<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Telefon', 'recruiting-playbook' ) }</span>
+													{ application.phone ? (
+														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.phone }</a>
+													) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
+												</div>
 											</div>
 										) }
+
+										{ /* Meta-Informationen (nicht aus Form-Config) */ }
+										<div style={ { marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
+											<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
+												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Stelle', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.job_title || '-' }</span>
+												</div>
+												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Beworben am', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ formatDate( application.created_at ) }</span>
+												</div>
+												<div style={ { display: 'flex', padding: '0.5rem 0' } }>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Quelle', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.source || 'Website' }</span>
+												</div>
+											</div>
+										</div>
 									</CardContent>
 								</Card>
 
-								{ /* Custom Fields (Pro) */ }
-								{ application.custom_fields && application.custom_fields.length > 0 && (
+								{ /* Custom Fields Fallback (nur wenn keine dynamischen Felder aktiv) */ }
+								{ ( ! activeFields || activeFields.length === 0 ) && application.custom_fields && application.custom_fields.length > 0 && (
 									<CustomFieldsPanel customFields={ application.custom_fields } />
 								) }
 

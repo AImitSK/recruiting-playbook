@@ -123,6 +123,19 @@ class FormConfigController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// GET /form-builder/active-fields — Aktive Felder für ApplicantDetail.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/active-fields',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_active_fields' ],
+					'permission_callback' => [ $this, 'get_config_permissions_check' ],
+				],
+			]
+		);
 	}
 
 	/**
@@ -179,12 +192,20 @@ class FormConfigController extends WP_REST_Controller {
 	 * Liefert Draft-Konfiguration + verfügbare Felder + Publish-Status.
 	 *
 	 * @param WP_REST_Request $request Request.
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_config( $request ): WP_REST_Response {
-		$data = $this->service->getBuilderData();
+	public function get_config( $request ): WP_REST_Response|WP_Error {
+		try {
+			$data = $this->service->getBuilderData();
 
-		return new WP_REST_Response( $data, 200 );
+			return new WP_REST_Response( $data, 200 );
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
+		}
 	}
 
 	/**
@@ -194,26 +215,34 @@ class FormConfigController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_config( $request ): WP_REST_Response|WP_Error {
-		$config = [
-			'steps'    => $request->get_param( 'steps' ) ?? [],
-			'settings' => $request->get_param( 'settings' ) ?? [],
-			'version'  => $request->get_param( 'version' ) ?? 1,
-		];
+		try {
+			$config = [
+				'steps'    => $request->get_param( 'steps' ) ?? [],
+				'settings' => $request->get_param( 'settings' ) ?? [],
+				'version'  => $request->get_param( 'version' ) ?? 1,
+			];
 
-		$result = $this->service->saveDraft( $config );
+			$result = $this->service->saveDraft( $config );
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			return new WP_REST_Response(
+				[
+					'success'     => true,
+					'message'     => __( 'Entwurf gespeichert.', 'recruiting-playbook' ),
+					'has_changes' => $this->service->hasUnpublishedChanges(),
+				],
+				200
+			);
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
 		}
-
-		return new WP_REST_Response(
-			[
-				'success'     => true,
-				'message'     => __( 'Entwurf gespeichert.', 'recruiting-playbook' ),
-				'has_changes' => $this->service->hasUnpublishedChanges(),
-			],
-			200
-		);
 	}
 
 	/**
@@ -223,21 +252,29 @@ class FormConfigController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function publish_config( $request ): WP_REST_Response|WP_Error {
-		$result = $this->service->publish();
+		try {
+			$result = $this->service->publish();
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			return new WP_REST_Response(
+				[
+					'success'           => true,
+					'message'           => __( 'Formular veröffentlicht.', 'recruiting-playbook' ),
+					'published_version' => $this->service->getPublishedVersion(),
+					'has_changes'       => false,
+				],
+				200
+			);
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
 		}
-
-		return new WP_REST_Response(
-			[
-				'success'           => true,
-				'message'           => __( 'Formular veröffentlicht.', 'recruiting-playbook' ),
-				'published_version' => $this->service->getPublishedVersion(),
-				'has_changes'       => false,
-			],
-			200
-		);
 	}
 
 	/**
@@ -247,21 +284,29 @@ class FormConfigController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function discard_config( $request ): WP_REST_Response|WP_Error {
-		$result = $this->service->discardDraft();
+		try {
+			$result = $this->service->discardDraft();
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			return new WP_REST_Response(
+				[
+					'success'     => true,
+					'message'     => __( 'Änderungen verworfen.', 'recruiting-playbook' ),
+					'draft'       => $this->service->getDraft(),
+					'has_changes' => false,
+				],
+				200
+			);
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
 		}
-
-		return new WP_REST_Response(
-			[
-				'success'     => true,
-				'message'     => __( 'Änderungen verworfen.', 'recruiting-playbook' ),
-				'draft'       => $this->service->getDraft(),
-				'has_changes' => false,
-			],
-			200
-		);
 	}
 
 	/**
@@ -270,16 +315,56 @@ class FormConfigController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response
 	 */
-	public function get_published( $request ): WP_REST_Response {
-		$config = $this->service->getPublished();
+	public function get_published( $request ): WP_REST_Response|WP_Error {
+		try {
+			$config = $this->service->getPublished();
 
-		return new WP_REST_Response(
-			[
-				'config'  => $config,
-				'version' => $this->service->getPublishedVersion(),
-			],
-			200
-		);
+			return new WP_REST_Response(
+				[
+					'config'  => $config,
+					'version' => $this->service->getPublishedVersion(),
+				],
+				200
+			);
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
+		}
+	}
+
+	/**
+	 * Aktive (sichtbare) Felder abrufen
+	 *
+	 * Liefert alle in der Published-Konfiguration sichtbaren Felder
+	 * mit ihren vollständigen Definitionen für die ApplicantDetail-Ansicht.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_active_fields( $request ): WP_REST_Response|WP_Error {
+		try {
+			$data = $this->service->getActiveFields();
+
+			// Response-Validierung: Sicherstellen dass erwartete Struktur vorhanden ist.
+			if ( ! is_array( $data ) || ! isset( $data['fields'], $data['system_fields'] ) ) {
+				return new WP_Error(
+					'invalid_data',
+					__( 'Fehler beim Laden der aktiven Felder', 'recruiting-playbook' ),
+					[ 'status' => 500 ]
+				);
+			}
+
+			return new WP_REST_Response( $data, 200 );
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
+		}
 	}
 
 	/**
