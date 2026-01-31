@@ -35,6 +35,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="match-modal-title"
+		@click.stop
 		x-transition:enter="rp-transition rp-ease-out rp-duration-200"
 		x-transition:enter-start="rp-opacity-0 rp-scale-95"
 		x-transition:enter-end="rp-opacity-100 rp-scale-100"
@@ -47,7 +48,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			<h2 id="match-modal-title" class="rp-match-modal__title">
 				<?php esc_html_e( 'Passe ich zu diesem Job?', 'recruiting-playbook' ); ?>
 			</h2>
-			<button type="button" class="rp-match-modal__close" @click="close()">
+			<button type="button" class="rp-match-modal__close" @click.stop="close()">
 				<span class="rp-sr-only"><?php esc_html_e( 'Schließen', 'recruiting-playbook' ); ?></span>
 				<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

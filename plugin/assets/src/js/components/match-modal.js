@@ -50,6 +50,7 @@ const matchModalComponent = () => ({
 
         // Modal schließen
         close() {
+            console.log('[RP] matchModal.close() called, isOpen was:', this.isOpen);
             this.isOpen = false;
             document.body.classList.remove('rp-modal-open');
             this.stopPolling();

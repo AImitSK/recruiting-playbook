@@ -181,6 +181,13 @@ while ( have_posts() ) :
 						<?php endif; ?>
 					</div>
 
+					<!-- KI-Job-Match Button (automatisch, wenn Feature aktiv) -->
+					<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+						<div class="rp-mt-4">
+							<?php echo do_shortcode( '[rp_ai_job_match style="outline" class="rp-w-full"]' ); ?>
+						</div>
+					<?php endif; ?>
+
 					<!-- Details -->
 					<div>
 						<h3 class="rp-mb-4"><?php esc_html_e( 'Details', 'recruiting-playbook' ); ?></h3>
