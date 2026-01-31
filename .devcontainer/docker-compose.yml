@@ -82,7 +82,7 @@ services:
   # Mailpit (E-Mail Testing - fängt alle E-Mails ab)
   # Drop-in Ersatz für MailHog mit ARM-Support
   # =============================================================
-  mailhog:
+  mailpit:
     image: axllent/mailpit:latest
     ports:
       - "1025:1025"  # SMTP

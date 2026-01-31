@@ -164,27 +164,10 @@ while ( have_posts() ) :
 				<aside class="rp-space-y-6 lg:rp-sticky lg:rp-top-8">
 
 					<!-- Jetzt bewerben Button -->
-					<div class="rp-space-y-3">
+					<div>
 						<a href="#apply-form" class="wp-element-button rp-block rp-w-full rp-py-3 rp-text-center rp-no-underline">
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
-
-						<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
-							<!-- KI-Matching Button -->
-							<button
-								type="button"
-								class="rp-w-full rp-py-3 rp-px-4 rp-text-center rp-font-medium rp-text-primary rp-bg-white rp-border rp-border-primary rp-rounded-lg hover:rp-bg-primary-light rp-transition-colors rp-cursor-pointer rp-flex rp-items-center rp-justify-center rp-gap-2"
-								@click="$dispatch('open-match-modal', {
-									jobId: <?php echo esc_attr( get_the_ID() ); ?>,
-									jobTitle: '<?php echo esc_js( get_the_title() ); ?>'
-								})"
-							>
-								<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-								</svg>
-								<?php esc_html_e( 'Bin ich ein Match?', 'recruiting-playbook' ); ?>
-							</button>
-						<?php endif; ?>
 						<?php if ( $deadline ) : ?>
 							<p class="rp-mt-2 rp-text-sm rp-text-gray-500 rp-text-center">
 								<?php

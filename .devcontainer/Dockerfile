@@ -55,8 +55,8 @@ RUN echo "upload_max_filesize = 64M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "display_errors = On" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/uploads.ini
 
-# MailHog SMTP Konfiguration (E-Mail-Testing)
-RUN echo "account default\nhost mailhog\nport 1025\nfrom wordpress@localhost\n" > /etc/msmtprc \
+# Mailpit SMTP Konfiguration (E-Mail-Testing)
+RUN echo "account default\nhost mailpit\nport 1025\nfrom wordpress@localhost\n" > /etc/msmtprc \
     && echo "sendmail_path = /usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/mail.ini
 
 # Apache mod_rewrite für WordPress Permalinks

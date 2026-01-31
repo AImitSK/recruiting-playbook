@@ -5,8 +5,9 @@
  * Ermöglicht Bewerbern, ihren Lebenslauf hochzuladen und
  * eine KI-basierte Einschätzung der Passgenauigkeit zu erhalten.
  */
-document.addEventListener('alpine:init', () => {
-    Alpine.data('matchModal', () => ({
+
+// Komponenten-Definition
+const matchModalComponent = () => ({
         // Modal State
         isOpen: false,
         jobId: null,
@@ -28,11 +29,7 @@ document.addEventListener('alpine:init', () => {
 
         // Init
         init() {
-            // Modal öffnen Event
-            window.addEventListener('open-match-modal', (e) => {
-                this.open(e.detail.jobId, e.detail.jobTitle);
-            });
-
+            console.log('[RP] matchModal component initialized');
             // ESC zum Schließen
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.isOpen) {
@@ -43,6 +40,7 @@ document.addEventListener('alpine:init', () => {
 
         // Modal öffnen
         open(jobId, jobTitle) {
+            console.log('[RP] matchModal.open called', { jobId, jobTitle });
             this.reset();
             this.jobId = jobId;
             this.jobTitle = jobTitle;
@@ -252,14 +250,31 @@ document.addEventListener('alpine:init', () => {
             return name;
         },
 
-        // Formatierte Dateigröße
-        get fileSize() {
-            if (!this.file) return '';
-            const kb = this.file.size / 1024;
-            if (kb < 1024) {
-                return Math.round(kb) + ' KB';
-            }
-            return (kb / 1024).toFixed(1) + ' MB';
-        },
-    }));
+    // Formatierte Dateigröße
+    get fileSize() {
+        if (!this.file) return '';
+        const kb = this.file.size / 1024;
+        if (kb < 1024) {
+            return Math.round(kb) + ' KB';
+        }
+        return (kb / 1024).toFixed(1) + ' MB';
+    },
 });
+
+// Komponente registrieren - mit Fallback für verschiedene Ladereihenfolgen
+function registerMatchModalComponent() {
+    if (typeof Alpine !== 'undefined' && Alpine.data) {
+        console.log('[RP] Registering matchModal component');
+        Alpine.data('matchModal', matchModalComponent);
+    } else {
+        console.warn('[RP] Alpine not available for matchModal registration');
+    }
+}
+
+// Versuche sofortige Registrierung (falls Alpine schon geladen)
+if (typeof Alpine !== 'undefined') {
+    registerMatchModalComponent();
+} else {
+    // Warte auf Alpine via alpine:init Event
+    document.addEventListener('alpine:init', registerMatchModalComponent);
+}

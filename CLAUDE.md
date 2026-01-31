@@ -33,7 +33,7 @@ This repository uses VS Code Dev Containers for a consistent development environ
 | WordPress | http://localhost:8082 | admin / admin |
 | WP Admin | http://localhost:8082/wp-admin | admin / admin |
 | phpMyAdmin | http://localhost:8081 | wordpress / wordpress |
-| MailHog | http://localhost:8025 | - |
+| Mailpit | http://localhost:8025 | - |
 
 ### Repository Structure
 

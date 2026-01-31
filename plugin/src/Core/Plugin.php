@@ -106,6 +106,50 @@ final class Plugin {
 		// Assets laden.
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueueFrontendAssets' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAdminAssets' ] );
+
+		// Entferne WordPress Interactivity API Module auf Plugin-Seiten.
+		// Diese Module verursachen JS-Fehler die Alpine.js blockieren.
+		add_action(
+			'wp_enqueue_scripts',
+			function () {
+				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
+					// Deregistriere alle WordPress Script-Module.
+					wp_deregister_script_module( '@wordpress/interactivity' );
+					wp_deregister_script_module( '@wordpress/interactivity-router' );
+					wp_deregister_script_module( '@wordpress/block-library/navigation/view' );
+				}
+			},
+			1
+		);
+
+		// Fallback: Entferne Module-Scripts via Output Buffer falls Deregistrierung nicht wirkt.
+		add_action(
+			'template_redirect',
+			function () {
+				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
+					ob_start(
+						function ( $html ) {
+							// Entferne alle script type="module" Tags.
+							$html = preg_replace( '/<script[^>]*type=["\']module["\'][^>]*>.*?<\/script>/s', '', $html );
+							return $html;
+						}
+					);
+				}
+			}
+		);
+
+		// Output Buffer beenden.
+		add_action(
+			'shutdown',
+			function () {
+				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
+					if ( ob_get_level() > 0 ) {
+						ob_end_flush();
+					}
+				}
+			},
+			0
+		);
 	}
 
 	/**
@@ -543,8 +587,8 @@ final class Plugin {
 			}
 		}
 
-		// Match-Modal JS & CSS (AI-Addon Feature) - nur auf Einzelseiten.
-		if ( is_singular( 'job_listing' ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
+		// Match-Modal JS & CSS (AI-Addon Feature) - auf Archiv und Einzelseiten.
+		if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
 			// CSS.
 			$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 			if ( file_exists( $match_css_file ) ) {
@@ -605,34 +649,19 @@ final class Plugin {
 			);
 		}
 
-		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
-		// Das defer-Attribut sorgt dafür, dass Alpine nach DOM-Ready initialisiert.
+		// Alpine.js (lokal gebundelt) - muss NACH Komponenten-Scripts geladen werden.
+		// WICHTIG: Kein defer! Komponenten müssen VOR Alpine.start() registriert sein.
+		// Alpine startet automatisch via queueMicrotask nach dem Script-Load.
+		// Siehe: https://github.com/alpinejs/alpine/discussions/3978
 		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
 		if ( file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
 				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
-				$alpine_deps, // Abhängigkeit: application-form.js muss zuerst laden (falls vorhanden)
+				$alpine_deps, // Abhängigkeit: Komponenten-Scripts müssen zuerst laden
 				'3.14.3',
-				true
+				true // Im Footer laden - nach allen anderen Scripts
 			);
-		}
-
-		// Defer-Attribut hinzufügen für Alpine.js (einmalig registrieren).
-		static $filter_added = false;
-		if ( ! $filter_added ) {
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
-						return str_replace( ' src', ' defer src', $tag );
-					}
-					return $tag;
-				},
-				10,
-				2
-			);
-			$filter_added = true;
 		}
 
 		// Frontend JS (optional, für zukünftige Erweiterungen).

@@ -22,6 +22,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 	x-cloak
 	class="rp-match-modal-overlay"
 	@click.self="close()"
+	@open-match-modal.window="open($event.detail.jobId, $event.detail.jobTitle)"
 	x-transition:enter="rp-transition rp-ease-out rp-duration-200"
 	x-transition:enter-start="rp-opacity-0"
 	x-transition:enter-end="rp-opacity-100"
@@ -44,7 +45,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 		<!-- Header -->
 		<div class="rp-match-modal__header">
 			<h2 id="match-modal-title" class="rp-match-modal__title">
-				<?php esc_html_e( 'Bin ich ein Match?', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Passe ich zu diesem Job?', 'recruiting-playbook' ); ?>
 			</h2>
 			<button type="button" class="rp-match-modal__close" @click="close()">
 				<span class="rp-sr-only"><?php esc_html_e( 'Schließen', 'recruiting-playbook' ); ?></span>

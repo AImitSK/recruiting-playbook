@@ -39,6 +39,11 @@ if (file_exists(RP_PLUGIN_DIR . 'vendor/autoload.php')) {
     require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
 }
 
+// Freemius SDK initialisieren (für Lizenzierung & Updates).
+if (file_exists(RP_PLUGIN_DIR . 'freemius.php')) {
+    require_once RP_PLUGIN_DIR . 'freemius.php';
+}
+
 /**
  * Requirements prüfen
  */
