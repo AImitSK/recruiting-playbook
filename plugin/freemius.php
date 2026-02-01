@@ -15,8 +15,8 @@ defined( 'ABSPATH' ) || exit;
  * Diese Werte müssen im Freemius Dashboard erstellt und hier eingetragen werden.
  * Anleitung: https://freemius.com/help/documentation/wordpress-sdk/integrating-freemius-sdk/
  */
-define( 'RP_FREEMIUS_PLUGIN_ID', '' );    // Plugin ID aus Freemius Dashboard.
-define( 'RP_FREEMIUS_PUBLIC_KEY', '' );   // Public Key aus Freemius Dashboard.
+define( 'RP_FREEMIUS_PLUGIN_ID', '23533' );
+define( 'RP_FREEMIUS_PUBLIC_KEY', 'pk_169f4df2b23e899b6b4f9c3df4548' );
 
 /**
  * Prüft ob Freemius konfiguriert ist
