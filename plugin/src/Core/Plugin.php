@@ -41,6 +41,7 @@ use RecruitingPlaybook\Api\SystemStatusController;
 use RecruitingPlaybook\Api\FieldDefinitionController;
 use RecruitingPlaybook\Api\FormTemplateController;
 use RecruitingPlaybook\Api\MatchController;
+use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
@@ -480,6 +481,10 @@ final class Plugin {
 		// Match Controller (KI-Matching - AI-Addon Feature).
 		$match_controller = new MatchController();
 		$match_controller->register_routes();
+
+		// Form Config Controller (Form Builder - Pro Feature).
+		$form_config_controller = new FormConfigController();
+		$form_config_controller->register_routes();
 	}
 
 	/**

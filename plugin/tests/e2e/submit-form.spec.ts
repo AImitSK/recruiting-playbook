@@ -29,16 +29,14 @@ test('Bewerbung absenden mit Anhängen', async ({ page }) => {
     await page.waitForTimeout(500);
 
     // Schritt 2: Dokumente hochladen
-    // Lebenslauf hochladen
+    // Lebenslauf hochladen (optional im neuen Schema)
     const resumeInput = page.locator('input[type="file"]').first();
-    await resumeInput.setInputFiles(testPdfPath);
-    await page.waitForTimeout(500);
+    if (await resumeInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await resumeInput.setInputFiles(testPdfPath);
+        await page.waitForTimeout(500);
+    }
 
-    // Anschreiben/Nachricht eingeben
-    await page.fill('textarea[x-model="formData.cover_letter"]', 'Dies ist mein Anschreiben. Ich bewerbe mich hiermit auf die ausgeschriebene Stelle.');
-    await page.waitForTimeout(500);
-
-    // Weiter zu Schritt 3
+    // Weiter zu Schritt 3 (final step with summary and privacy consent)
     await page.click('button:has-text("Weiter")');
     await page.waitForTimeout(500);
 

@@ -117,6 +117,22 @@ class FormTemplateRepository {
 	}
 
 	/**
+	 * Erlaubte Spalten für die Datenbank
+	 *
+	 * @var array<string>
+	 */
+	private const ALLOWED_COLUMNS = [
+		'name',
+		'description',
+		'is_default',
+		'settings',
+		'created_by',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
+	/**
 	 * Template erstellen
 	 *
 	 * @param array $data Template-Daten.
@@ -140,6 +156,9 @@ class FormTemplateRepository {
 		if ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) {
 			$data['settings'] = wp_json_encode( $data['settings'] );
 		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->insert(
@@ -171,6 +190,9 @@ class FormTemplateRepository {
 		if ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) {
 			$data['settings'] = wp_json_encode( $data['settings'] );
 		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
@@ -419,5 +441,15 @@ class FormTemplateRepository {
 		}
 
 		return $formats;
+	}
+
+	/**
+	 * Nur erlaubte Spalten durchlassen
+	 *
+	 * @param array $data Daten.
+	 * @return array Gefilterte Daten.
+	 */
+	private function filterAllowedColumns( array $data ): array {
+		return array_intersect_key( $data, array_flip( self::ALLOWED_COLUMNS ) );
 	}
 }

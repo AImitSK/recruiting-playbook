@@ -560,4 +560,133 @@ class ApplicationServiceTest extends TestCase {
 			$this->assertStringContainsString( 'a.job_id =', $sql );
 		}
 	}
+
+	// =========================================================================
+	// listForKanban - Enhanced Data Fields
+	// =========================================================================
+
+	/**
+	 * Test: listForKanban() gibt notes_count, average_rating und in_talent_pool zurück
+	 */
+	public function test_list_for_kanban_includes_enhanced_data_fields(): void {
+		global $wpdb;
+
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		$capturedQuery = null;
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQuery ) {
+				$capturedQuery = $sql;
+				return [
+					[
+						'id'              => 1,
+						'job_id'          => 10,
+						'status'          => 'new',
+						'kanban_position' => 0,
+						'created_at'      => '2025-01-21 12:00:00',
+						'first_name'      => 'Max',
+						'last_name'       => 'Mustermann',
+						'email'           => 'test@example.com',
+						'documents_count' => 2,
+						'notes_count'     => 5,
+						'average_rating'  => 4.2,
+						'in_talent_pool'  => 1,
+					],
+				];
+			} );
+
+		$result = $this->service->listForKanban();
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'items', $result );
+		$this->assertCount( 1, $result['items'] );
+
+		$item = $result['items'][0];
+
+		// Prüfe dass alle erweiterten Felder vorhanden sind.
+		$this->assertArrayHasKey( 'notes_count', $item );
+		$this->assertArrayHasKey( 'average_rating', $item );
+		$this->assertArrayHasKey( 'in_talent_pool', $item );
+
+		$this->assertEquals( 5, $item['notes_count'] );
+		$this->assertEquals( 4.2, $item['average_rating'] );
+		$this->assertEquals( 1, $item['in_talent_pool'] );
+
+		// Verifiziere dass die Query Subqueries für notes_count und average_rating enthält.
+		$this->assertNotNull( $capturedQuery );
+		$this->assertStringContainsString( 'notes_count', $capturedQuery );
+		$this->assertStringContainsString( 'average_rating', $capturedQuery );
+		$this->assertStringContainsString( 'in_talent_pool', $capturedQuery );
+	}
+
+	/**
+	 * Test: listForKanban() behandelt null-Werte korrekt
+	 */
+	public function test_list_for_kanban_handles_null_values(): void {
+		global $wpdb;
+
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturn( [
+				[
+					'id'              => 1,
+					'job_id'          => 10,
+					'status'          => 'new',
+					'kanban_position' => 0,
+					'created_at'      => '2025-01-21 12:00:00',
+					'first_name'      => 'Max',
+					'last_name'       => 'Mustermann',
+					'email'           => 'test@example.com',
+					'documents_count' => 0,
+					'notes_count'     => 0,
+					'average_rating'  => null,
+					'in_talent_pool'  => 0,
+				],
+			] );
+
+		$result = $this->service->listForKanban();
+
+		$item = $result['items'][0];
+
+		// Keine Notizen.
+		$this->assertEquals( 0, $item['notes_count'] );
+
+		// Keine Bewertung.
+		$this->assertNull( $item['average_rating'] );
+
+		// Nicht im Talent-Pool.
+		$this->assertEquals( 0, $item['in_talent_pool'] );
+	}
+
+	/**
+	 * Test: listForKanban() Query enthält LEFT JOINs für Talent-Pool
+	 */
+	public function test_list_for_kanban_query_includes_talent_pool_join(): void {
+		global $wpdb;
+
+		Functions\when( 'sanitize_key' )->returnArg();
+		Functions\when( 'get_posts' )->justReturn( [] );
+
+		$capturedQuery = null;
+
+		$wpdb->shouldReceive( 'get_results' )
+			->once()
+			->andReturnUsing( function ( $sql ) use ( &$capturedQuery ) {
+				$capturedQuery = $sql;
+				return [];
+			} );
+
+		$this->service->listForKanban();
+
+		// Query muss LEFT JOIN für talent_pool enthalten.
+		$this->assertNotNull( $capturedQuery );
+		$this->assertStringContainsString( 'LEFT JOIN', $capturedQuery );
+		$this->assertStringContainsString( 'talent_pool', $capturedQuery );
+	}
 }

@@ -2,6 +2,8 @@
 /**
  * Field Template: File Upload
  *
+ * Uses inline Alpine.js scope to avoid data collision with parent form.
+ *
  * @package RecruitingPlaybook
  */
 
@@ -14,6 +16,9 @@ $multiple      = ( $settings['multiple'] ?? false ) || $max_files > 1;
 
 // Akzeptierte MIME-Types für Input.
 $accept = $allowed_types;
+
+// Generate unique scope ID to avoid conflicts.
+$scope_id = 'fileUpload_' . esc_attr( $field_key );
 ?>
 
 <label class="rp-label">
@@ -24,18 +29,110 @@ $accept = $allowed_types;
 </label>
 
 <div
-	x-data="rpFileUpload('<?php echo esc_attr( $field_key ); ?>', { maxFiles: <?php echo esc_attr( $max_files ); ?>, maxSize: <?php echo esc_attr( $max_file_size ); ?>, multiple: <?php echo $multiple ? 'true' : 'false'; ?> })"
+	x-data="{
+		_files: [],
+		_dragging: false,
+		_error: null,
+		_maxFiles: <?php echo esc_attr( $max_files ); ?>,
+		_maxSize: <?php echo esc_attr( $max_file_size ); ?> * 1024 * 1024,
+		_multiple: <?php echo $multiple ? 'true' : 'false'; ?>,
+		_fieldKey: '<?php echo esc_attr( $field_key ); ?>',
+
+		init() {
+			// Sync with parent form (applicationForm)
+			if (typeof this.files !== 'undefined' && this.files !== null) {
+				// Check for resume/lebenslauf field
+				if (this._fieldKey === 'resume' || this._fieldKey === 'lebenslauf') {
+					// Combine resume and documents into _files array
+					const existingFiles = [];
+					if (this.files.resume) {
+						existingFiles.push(this.files.resume);
+					}
+					if (this.files.documents && this.files.documents.length > 0) {
+						existingFiles.push(...this.files.documents);
+					}
+					this._files = existingFiles;
+				} else if (this.files.documents) {
+					this._files = this.files.documents;
+				}
+			}
+		},
+
+		syncToParent() {
+			if (typeof this.files !== 'undefined' && this.files !== null) {
+				if (this._fieldKey === 'resume' || this._fieldKey === 'lebenslauf') {
+					// First file goes to resume, rest go to documents
+					this.files.resume = this._files.length > 0 ? this._files[0] : null;
+					this.files.documents = this._files.length > 1 ? this._files.slice(1) : [];
+				} else {
+					this.files.documents = this._files;
+				}
+			}
+		},
+
+		handleSelect(event) {
+			this.addFiles(event.target.files);
+			event.target.value = '';
+		},
+
+		handleDrop(event) {
+			this._dragging = false;
+			this.addFiles(event.dataTransfer.files);
+		},
+
+		addFiles(fileList) {
+			this._error = null;
+
+			for (const file of fileList) {
+				if (this._files.length >= this._maxFiles) {
+					this._error = 'Maximal ' + this._maxFiles + ' Dateien erlaubt';
+					break;
+				}
+
+				if (file.size > this._maxSize) {
+					this._error = 'Datei zu groß (max. ' + (this._maxSize / 1024 / 1024) + ' MB)';
+					continue;
+				}
+
+				if (this._multiple) {
+					this._files.push(file);
+				} else {
+					this._files = [file];
+				}
+			}
+
+			this.syncToParent();
+			this.clearParentError();
+		},
+
+		removeFile(index) {
+			this._files.splice(index, 1);
+			this.syncToParent();
+		},
+
+		clearParentError() {
+			if (typeof this.errors !== 'undefined' && this.errors[this._fieldKey]) {
+				delete this.errors[this._fieldKey];
+			}
+		},
+
+		formatSize(bytes) {
+			if (bytes < 1024) return bytes + ' B';
+			if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+			return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+		}
+	}"
 	class="rp-file-upload"
 >
 	<!-- Dropzone -->
 	<div
-		@dragover.prevent="isDragging = true"
-		@dragleave.prevent="isDragging = false"
+		@dragover.prevent="_dragging = true"
+		@dragleave.prevent="_dragging = false"
 		@drop.prevent="handleDrop($event)"
-		:class="{ 'rp-border-primary rp-bg-primary-light': isDragging, 'rp-border-success rp-bg-success-light': files.length > 0 }"
+		:class="{ 'rp-border-primary rp-bg-primary-light': _dragging, 'rp-border-success rp-bg-success-light': _files.length > 0 }"
 		class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
 	>
-		<template x-if="files.length === 0">
+		<template x-if="_files.length === 0">
 			<div>
 				<svg class="rp-w-10 rp-h-10 rp-text-gray-400 rp-mx-auto rp-mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
@@ -79,9 +176,9 @@ $accept = $allowed_types;
 		</template>
 
 		<!-- Hochgeladene Dateien -->
-		<template x-if="files.length > 0">
+		<template x-if="_files.length > 0">
 			<div class="rp-space-y-2">
-				<template x-for="(file, index) in files" :key="index">
+				<template x-for="(file, index) in _files" :key="index">
 					<div class="rp-flex rp-items-center rp-justify-between rp-bg-white rp-rounded rp-px-3 rp-py-2 rp-border rp-border-gray-200">
 						<div class="rp-flex rp-items-center rp-gap-3">
 							<svg class="rp-w-5 rp-h-5 rp-text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,7 +218,7 @@ $accept = $allowed_types;
 	</div>
 
 	<!-- Fehler -->
-	<p x-show="error" x-text="error" class="rp-error-text rp-mt-2"></p>
+	<p x-show="_error" x-text="_error" class="rp-error-text rp-mt-2"></p>
 </div>
 
 <?php if ( $description ) : ?>

@@ -628,6 +628,9 @@ document.addEventListener('alpine:init', () => {
      * File Upload Component
      *
      * Usage: x-data="rpFileUpload('field_key', { maxFiles: 5, maxSize: 10, multiple: true })"
+     *
+     * Note: Uses 'uploadedFiles' internally to avoid collision with parent form's 'files' property.
+     * The template should use 'uploadedFiles' for x-if conditions and x-for loops.
      */
     Alpine.data('rpFileUpload', (fieldKey, options = {}) => ({
         fieldKey,
@@ -636,7 +639,8 @@ document.addEventListener('alpine:init', () => {
         multiple: options.multiple !== false,
         allowedTypes: options.allowedTypes || null,
 
-        files: [],
+        // Renamed from 'files' to 'uploadedFiles' to avoid collision with parent form
+        uploadedFiles: [],
         isDragging: false,
         error: null,
 
@@ -644,18 +648,50 @@ document.addEventListener('alpine:init', () => {
          * Initialize
          */
         init() {
-            // Sync with parent form if available
-            const parentForm = Alpine.$data(this.$el.closest('[x-data*="rpCustomFieldsForm"]'));
-            if (parentForm && parentForm.files) {
-                this.files = parentForm.files[this.fieldKey] || [];
+            // Sync with parent form if available (supports both rpCustomFieldsForm and applicationForm)
+            const customFieldsForm = this.$el.closest('[x-data*="rpCustomFieldsForm"]');
+            const applicationForm = this.$el.closest('[x-data*="applicationForm"]');
+            const parentEl = customFieldsForm || applicationForm;
 
-                // Watch for changes
-                this.$watch('files', (value) => {
-                    if (parentForm.files) {
-                        parentForm.files[this.fieldKey] = value;
+            if (parentEl) {
+                const parentForm = Alpine.$data(parentEl);
+
+                if (parentForm && parentForm.files) {
+                    // For applicationForm, files are stored differently (resume, documents)
+                    if (applicationForm && !customFieldsForm) {
+                        // Map field keys to applicationForm file structure
+                        if (this.fieldKey === 'resume' || this.fieldKey === 'lebenslauf') {
+                            if (parentForm.files.resume) {
+                                this.uploadedFiles = [parentForm.files.resume];
+                            }
+                            this.$watch('uploadedFiles', (value) => {
+                                parentForm.files.resume = value.length > 0 ? value[0] : null;
+                            });
+                        } else {
+                            // Other file fields map to documents array
+                            this.uploadedFiles = parentForm.files.documents || [];
+                            this.$watch('uploadedFiles', (value) => {
+                                parentForm.files.documents = value;
+                            });
+                        }
+                    } else {
+                        // rpCustomFieldsForm structure
+                        this.uploadedFiles = parentForm.files[this.fieldKey] || [];
+                        this.$watch('uploadedFiles', (value) => {
+                            if (parentForm.files) {
+                                parentForm.files[this.fieldKey] = value;
+                            }
+                        });
                     }
-                });
+                }
             }
+        },
+
+        /**
+         * Getter for backward compatibility with templates using 'files'
+         */
+        get files() {
+            return this.uploadedFiles;
         },
 
         /**
@@ -684,7 +720,7 @@ document.addEventListener('alpine:init', () => {
 
             for (const file of fileList) {
                 // Check max files
-                if (this.files.length >= this.maxFiles) {
+                if (this.uploadedFiles.length >= this.maxFiles) {
                     this.error = `Maximal ${this.maxFiles} Dateien erlaubt`;
                     break;
                 }
@@ -698,9 +734,9 @@ document.addEventListener('alpine:init', () => {
 
                 // Add file
                 if (this.multiple) {
-                    this.files.push(file);
+                    this.uploadedFiles.push(file);
                 } else {
-                    this.files = [file];
+                    this.uploadedFiles = [file];
                 }
             }
 
@@ -760,9 +796,19 @@ document.addEventListener('alpine:init', () => {
          * Clear parent form error for this field
          */
         clearParentError() {
-            const parentForm = Alpine.$data(this.$el.closest('[x-data*="rpCustomFieldsForm"]'));
-            if (parentForm && parentForm.errors) {
-                delete parentForm.errors[this.fieldKey];
+            const customFieldsForm = this.$el.closest('[x-data*="rpCustomFieldsForm"]');
+            const applicationForm = this.$el.closest('[x-data*="applicationForm"]');
+            const parentEl = customFieldsForm || applicationForm;
+
+            if (parentEl) {
+                const parentForm = Alpine.$data(parentEl);
+                if (parentForm && parentForm.errors) {
+                    delete parentForm.errors[this.fieldKey];
+                    // Also try common field names for applicationForm
+                    if (this.fieldKey === 'lebenslauf') {
+                        delete parentForm.errors.resume;
+                    }
+                }
             }
         },
 

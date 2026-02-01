@@ -69,6 +69,11 @@ class Activator {
 				add_option( $option, $value );
 			}
 		}
+
+		// DSGVO: Datenschutzrichtlinien-Version (für Consent-Tracking).
+		if ( false === get_option( 'rp_privacy_policy_version' ) ) {
+			add_option( 'rp_privacy_policy_version', '1.0' );
+		}
 	}
 
 }

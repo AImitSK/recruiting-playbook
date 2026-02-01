@@ -16,39 +16,13 @@ import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../components/ui/select';
+import { Select, SelectOption } from '../../components/ui/select';
 import { Spinner } from '../../components/ui/spinner';
 import { X, Trash2, Lock, AlertCircle } from 'lucide-react';
 import OptionsEditor from './OptionsEditor';
 import ValidationEditor from './ValidationEditor';
 import ConditionalEditor from './ConditionalEditor';
 
-/**
- * Debounce helper
- *
- * @param {Function} func     Function to debounce
- * @param {number}   wait     Wait time in ms
- * @return {Function} Debounced function
- */
-function useDebounce( value, delay ) {
-	const [ debouncedValue, setDebouncedValue ] = useState( value );
-
-	useEffect( () => {
-		const handler = setTimeout( () => {
-			setDebouncedValue( value );
-		}, delay );
-
-		return () => clearTimeout( handler );
-	}, [ value, delay ] );
-
-	return debouncedValue;
-}
 
 /**
  * FieldEditor component
@@ -92,16 +66,6 @@ export default function FieldEditor( {
 		const changed = JSON.stringify( localField ) !== JSON.stringify( field );
 		setHasChanges( changed );
 	}, [ localField, field ] );
-
-	// Debounced field value for auto-save
-	const debouncedField = useDebounce( localField, 1000 );
-
-	// Auto-save on debounced changes
-	useEffect( () => {
-		if ( hasChanges && debouncedField.id === field.id ) {
-			handleSave();
-		}
-	}, [ debouncedField ] );
 
 	// Update local field value
 	const updateLocalField = useCallback( ( updates ) => {
@@ -212,9 +176,9 @@ export default function FieldEditor( {
 							</TabsTrigger>
 						) }
 						{ hasConditional && (
-							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
+							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' } }>
 								{ i18n?.conditional || __( 'Bedingt', 'recruiting-playbook' ) }
-								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem' } } /> }
+								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem', flexShrink: 0 } } /> }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -235,7 +199,7 @@ export default function FieldEditor( {
 								disabled={ field.is_system }
 							/>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (nur Kleinbuchstaben, Zahlen, Unterstriche)', 'recruiting-playbook' ) }
+								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (keine Sonderzeichen)', 'recruiting-playbook' ) }
 							</p>
 						</div>
 
@@ -286,17 +250,12 @@ export default function FieldEditor( {
 							<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ localField.settings?.width || 'full' }
-								onValueChange={ ( value ) => updateSettings( 'width', value ) }
+								onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
 							>
-								<SelectTrigger>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="third">{ i18n?.widthThird || __( 'Ein Drittel', 'recruiting-playbook' ) }</SelectItem>
-									<SelectItem value="two-thirds">{ i18n?.widthTwoThirds || __( 'Zwei Drittel', 'recruiting-playbook' ) }</SelectItem>
-								</SelectContent>
+								<SelectOption value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="third">{ i18n?.widthThird || __( 'Ein Drittel', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="two-thirds">{ i18n?.widthTwoThirds || __( 'Zwei Drittel', 'recruiting-playbook' ) }</SelectOption>
 							</Select>
 						</div>
 

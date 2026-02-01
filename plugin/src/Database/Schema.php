@@ -40,6 +40,7 @@ class Schema {
 			'stats_cache'       => $wpdb->prefix . 'rp_stats_cache',
 			'field_definitions' => $wpdb->prefix . 'rp_field_definitions',
 			'form_templates'    => $wpdb->prefix . 'rp_form_templates',
+			'form_config'       => $wpdb->prefix . 'rp_form_config',
 		];
 	}
 
@@ -56,6 +57,7 @@ class Schema {
 		return "CREATE TABLE {$table} (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			email varchar(255) NOT NULL,
+			email_hash varchar(64) NOT NULL DEFAULT '',
 			salutation varchar(20) DEFAULT '',
 			first_name varchar(100) DEFAULT '',
 			last_name varchar(100) DEFAULT '',
@@ -99,6 +101,7 @@ class Schema {
 			source_url varchar(500) DEFAULT '',
 			consent_privacy tinyint(1) DEFAULT 0,
 			consent_privacy_at datetime DEFAULT NULL,
+			consent_privacy_version varchar(20) DEFAULT '',
 			consent_ip varchar(45) DEFAULT '',
 			ip_address varchar(45) DEFAULT '',
 			user_agent varchar(500) DEFAULT '',
@@ -495,6 +498,34 @@ class Schema {
 			KEY is_default (is_default),
 			KEY created_by (created_by),
 			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_form_config
+	 *
+	 * Speichert die Step-basierte Formular-Konfiguration.
+	 * Zwei Einträge: 'draft' (Arbeitsversion) und 'published' (Live-Version).
+	 *
+	 * @return string
+	 */
+	public static function getFormConfigTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['form_config'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			config_type varchar(20) NOT NULL,
+			config_data longtext NOT NULL,
+			version int(11) unsigned NOT NULL DEFAULT 1,
+			created_by bigint(20) unsigned DEFAULT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY config_type (config_type),
+			KEY version (version),
+			KEY created_by (created_by)
 		) {$charset};";
 	}
 }
