@@ -261,11 +261,17 @@ class FormConfigRepository {
 		$draft     = $this->getDraft();
 		$published = $this->getPublished();
 
-		if ( ! $draft || ! $published ) {
+		// Kein Draft vorhanden → keine Änderungen.
+		if ( ! $draft ) {
 			return false;
 		}
 
-		// JSON-Vergleich der Konfigurationsdaten.
+		// Draft vorhanden aber kein Published → es gibt Änderungen!
+		if ( ! $published ) {
+			return true;
+		}
+
+		// Beide vorhanden → JSON-Vergleich der Konfigurationsdaten.
 		$draft_json     = wp_json_encode( $draft['config_data'] );
 		$published_json = wp_json_encode( $published['config_data'] );
 
@@ -281,6 +287,29 @@ class FormConfigRepository {
 		$published = $this->getPublished();
 
 		return $published ? $published['version'] : null;
+	}
+
+	/**
+	 * Konfiguration auf Standard zurücksetzen
+	 *
+	 * Löscht Draft und Published, sodass beim nächsten Laden
+	 * die Default-Konfiguration verwendet wird.
+	 *
+	 * @return bool
+	 */
+	public function resetToDefault(): bool {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$result = $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$this->table} WHERE config_type IN (%s, %s)",
+				'draft',
+				'published'
+			)
+		);
+
+		return $result !== false;
 	}
 
 	/**

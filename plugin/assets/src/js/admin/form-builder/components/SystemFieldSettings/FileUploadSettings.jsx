@@ -190,7 +190,7 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 							id="help-text"
 							value={ helpText }
 							onChange={ ( e ) => setHelpText( e.target.value ) }
-							placeholder={ __( 'z.B. "Bitte laden Sie Ihren Lebenslauf und relevante Zeugnisse hoch."', 'recruiting-playbook' ) }
+							placeholder={ __( 'z.B. "PDF, Word - max. 10 MB pro Datei"', 'recruiting-playbook' ) }
 							rows={ 2 }
 						/>
 					</div>

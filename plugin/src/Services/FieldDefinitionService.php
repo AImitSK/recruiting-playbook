@@ -299,6 +299,12 @@ class FieldDefinitionService {
 		}
 		unset( $data['is_enabled'] ); // Remove original API field.
 
+		// Extract options from settings if present (Frontend sends settings.options).
+		if ( isset( $data['settings']['options'] ) && ! isset( $data['options'] ) ) {
+			$data['options'] = $data['settings']['options'];
+			unset( $data['settings']['options'] );
+		}
+
 		// Remove ID from update data (cannot be changed).
 		unset( $data['id'] );
 
@@ -380,6 +386,11 @@ class FieldDefinitionService {
 			);
 		}
 
+		$field_key = $existing->getFieldKey();
+
+		// Feld aus Formular-Konfiguration entfernen (Draft + Published).
+		$this->removeFieldFromFormConfig( $field_key );
+
 		$result = $this->repository->delete( $id );
 
 		if ( ! $result ) {
@@ -391,6 +402,67 @@ class FieldDefinitionService {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Feld aus Formular-Konfiguration entfernen
+	 *
+	 * Entfernt ein Feld aus Draft und Published Config, wenn es dort verwendet wird.
+	 *
+	 * @param string $field_key Field Key zu entfernen.
+	 */
+	private function removeFieldFromFormConfig( string $field_key ): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_form_config';
+
+		// Beide Configs laden und aktualisieren.
+		foreach ( [ 'draft', 'published' ] as $config_type ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$row = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT id, config_data FROM {$table} WHERE config_type = %s",
+					$config_type
+				)
+			);
+
+			if ( ! $row || empty( $row->config_data ) ) {
+				continue;
+			}
+
+			$config  = json_decode( $row->config_data, true );
+			$changed = false;
+
+			if ( ! empty( $config['steps'] ) && is_array( $config['steps'] ) ) {
+				foreach ( $config['steps'] as &$step ) {
+					if ( ! empty( $step['fields'] ) && is_array( $step['fields'] ) ) {
+						$original_count  = count( $step['fields'] );
+						$step['fields']  = array_values(
+							array_filter(
+								$step['fields'],
+								fn( $f ) => ( $f['field_key'] ?? '' ) !== $field_key
+							)
+						);
+						if ( count( $step['fields'] ) !== $original_count ) {
+							$changed = true;
+						}
+					}
+				}
+				unset( $step );
+			}
+
+			// Config speichern wenn geändert.
+			if ( $changed ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->update(
+					$table,
+					[ 'config_data' => wp_json_encode( $config ) ],
+					[ 'id' => $row->id ],
+					[ '%s' ],
+					[ '%d' ]
+				);
+			}
+		}
 	}
 
 	/**

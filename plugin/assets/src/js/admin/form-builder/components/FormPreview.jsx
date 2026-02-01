@@ -13,6 +13,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Monitor, Tablet, Smartphone, ChevronLeft, ChevronRight } from 'lucide-react';
 import FieldPreview from './FieldPreview';
+import SystemFieldPreview from './SystemFieldPreview';
 
 /**
  * FormPreview component - Step-based preview
@@ -77,28 +78,44 @@ export default function FormPreview( {
 			.filter( Boolean );
 	};
 
+	// Get system fields for a step
+	const getStepSystemFields = ( step ) => {
+		if ( ! step?.system_fields || ! Array.isArray( step.system_fields ) ) {
+			return [];
+		}
+		return step.system_fields;
+	};
+
 	// Total steps for navigation
 	const totalSteps = steps.length;
 
 	// Current step data
 	const currentStepData = steps[ currentStep - 1 ] || null;
 	const currentFields = currentStepData ? getStepFields( currentStepData ) : [];
+	const currentSystemFields = currentStepData ? getStepSystemFields( currentStepData ) : [];
 
-	// Count all visible fields across all steps
+	// Count all visible fields across all steps (including system fields)
 	const totalVisibleFields = useMemo( () => {
 		let count = 0;
 		steps.forEach( ( step ) => {
 			count += getStepFields( step ).length;
+			count += getStepSystemFields( step ).length;
 		} );
 		return count;
 	}, [ steps, fieldMap ] );
 
-	// Count required fields
+	// Count required fields (including required system fields like privacy_consent)
 	const totalRequiredFields = useMemo( () => {
 		let count = 0;
 		steps.forEach( ( step ) => {
 			getStepFields( step ).forEach( ( field ) => {
 				if ( field.is_required ) {
+					count++;
+				}
+			} );
+			// System fields like privacy_consent are always required
+			getStepSystemFields( step ).forEach( ( sf ) => {
+				if ( sf.type === 'privacy_consent' || sf.settings?.is_required ) {
 					count++;
 				}
 			} );
@@ -225,21 +242,33 @@ export default function FormPreview( {
 
 							{ /* Field grid */ }
 							<div className="rp-form-preview__fields" style={ { display: 'grid', gridTemplateColumns: viewMode === 'mobile' ? '1fr' : 'repeat(2, 1fr)', gap: '1rem' } }>
-								{ currentFields.length === 0 ? (
-									<div style={ { textAlign: 'center', padding: '2rem 0', color: '#9ca3af' } }>
+								{ currentFields.length === 0 && currentSystemFields.length === 0 ? (
+									<div style={ { textAlign: 'center', padding: '2rem 0', color: '#9ca3af', gridColumn: 'span 2 / span 2' } }>
 										<p style={ { margin: 0, fontSize: '0.875rem' } }>
 											{ __( 'Keine Felder in diesem Schritt', 'recruiting-playbook' ) }
 										</p>
 									</div>
 								) : (
-									currentFields.map( ( field, index ) => (
-										<FieldPreview
-											key={ `${ field.field_key }-${ index }` }
-											field={ field }
-											fieldType={ fieldTypes[ field.field_type ] || fieldTypes[ field.type ] }
-											viewMode={ viewMode }
-										/>
-									) )
+									<>
+										{ /* Regular fields */ }
+										{ currentFields.map( ( field, index ) => (
+											<FieldPreview
+												key={ `${ field.field_key }-${ index }` }
+												field={ field }
+												fieldType={ fieldTypes[ field.field_type ] || fieldTypes[ field.type ] }
+												viewMode={ viewMode }
+											/>
+										) ) }
+
+										{ /* System fields */ }
+										{ currentSystemFields.map( ( systemField, index ) => (
+											<SystemFieldPreview
+												key={ `system-${ systemField.field_key }-${ index }` }
+												systemField={ systemField }
+												viewMode={ viewMode }
+											/>
+										) ) }
+									</>
 								) }
 							</div>
 

@@ -316,6 +316,13 @@ class FieldDefinitionController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Felder die über system_fields im Finale-Step gehandhabt werden
+	 *
+	 * @var array<string>
+	 */
+	private const SYSTEM_FIELD_KEYS_TO_HIDE = [ 'privacy_consent' ];
+
+	/**
 	 * Alle Felddefinitionen abrufen
 	 *
 	 * @param WP_REST_Request $request Request.
@@ -342,6 +349,12 @@ class FieldDefinitionController extends WP_REST_Controller {
 			$fields         = array_filter( $fields, fn( $f ) => $f->isSystem() === $is_system_bool );
 		}
 
+		// Felder ausblenden, die jetzt über system_fields gehandhabt werden.
+		$fields = array_filter(
+			$fields,
+			fn( $f ) => ! in_array( $f->getFieldKey(), self::SYSTEM_FIELD_KEYS_TO_HIDE, true )
+		);
+
 		$data = array_map( [ $this, 'prepare_item_for_response_array' ], array_values( $fields ) );
 
 		return new WP_REST_Response( [ 'fields' => $data ], 200 );
@@ -355,7 +368,14 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function get_system_fields( $request ): WP_REST_Response {
 		$fields = $this->repository->findSystemFields();
-		$data   = array_map( [ $this, 'prepare_item_for_response_array' ], $fields );
+
+		// Felder ausblenden, die jetzt über system_fields gehandhabt werden.
+		$fields = array_filter(
+			$fields,
+			fn( $f ) => ! in_array( $f->getFieldKey(), self::SYSTEM_FIELD_KEYS_TO_HIDE, true )
+		);
+
+		$data = array_map( [ $this, 'prepare_item_for_response_array' ], array_values( $fields ) );
 
 		return new WP_REST_Response( [ 'fields' => $data ], 200 );
 	}

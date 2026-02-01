@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { Spinner } from '../components/ui/spinner';
-import { Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle2, RotateCcw } from 'lucide-react';
 
 import FieldList from './components/FieldList';
 import FieldEditor from './components/FieldEditor';
@@ -66,6 +66,8 @@ export default function FormBuilder() {
 		updateSettings,
 		getUnusedFields,
 		getFieldDefinition,
+		refreshAvailableFields,
+		resetToDefault,
 	} = useFormConfig();
 
 	// Field definitions (for "Felder" tab - creating custom fields)
@@ -128,6 +130,8 @@ export default function FormBuilder() {
 
 		if ( newField ) {
 			setSelectedField( newField );
+			// Refresh availableFields to include the new field in the Formular tab
+			await refreshAvailableFields();
 		}
 	};
 
@@ -138,6 +142,8 @@ export default function FormBuilder() {
 			setSelectedField( ( prev ) =>
 				prev?.id === fieldId ? { ...prev, ...updates } : prev
 			);
+			// Refresh availableFields to reflect updated field properties in the Formular tab
+			await refreshAvailableFields();
 		}
 		return success;
 	};
@@ -145,8 +151,12 @@ export default function FormBuilder() {
 	// Handle field deletion
 	const handleFieldDelete = async ( fieldId ) => {
 		const success = await deleteField( fieldId );
-		if ( success && selectedField?.id === fieldId ) {
-			setSelectedField( null );
+		if ( success ) {
+			if ( selectedField?.id === fieldId ) {
+				setSelectedField( null );
+			}
+			// Refresh availableFields to remove the deleted field from the Formular tab
+			await refreshAvailableFields();
 		}
 		return success;
 	};
@@ -243,6 +253,17 @@ export default function FormBuilder() {
 								? __( 'Veröffentlichen...', 'recruiting-playbook' )
 								: __( 'Veröffentlichen', 'recruiting-playbook' )
 							}
+						</Button>
+
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={ resetToDefault }
+							disabled={ isPublishing || configLoading }
+							title={ __( 'Auf Standard zurücksetzen', 'recruiting-playbook' ) }
+							style={ { marginLeft: '0.5rem', color: '#6b7280' } }
+						>
+							<RotateCcw style={ { height: '1rem', width: '1rem' } } />
 						</Button>
 					</div>
 				</div>

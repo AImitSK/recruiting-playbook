@@ -360,6 +360,13 @@ class FieldDefinitionRepository {
 		);
 
 		if ( $result === false ) {
+			// Log detailed error for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'FieldDefinitionRepository::update failed - wpdb error: ' . $wpdb->last_error );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				error_log( 'FieldDefinitionRepository::update data: ' . print_r( $data, true ) );
+			}
 			return false;
 		}
 

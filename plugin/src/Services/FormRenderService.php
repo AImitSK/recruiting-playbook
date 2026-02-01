@@ -260,7 +260,7 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderFileUploadSystemField( array $settings ): string {
-		$label         = $settings['label'] ?? __( 'Dokumente hochladen', 'recruiting-playbook' );
+		$label         = $settings['label'] ?? __( 'Bewerbungsunterlagen', 'recruiting-playbook' );
 		$help_text     = $settings['help_text'] ?? '';
 		$allowed_types = $settings['allowed_types'] ?? [ 'pdf', 'doc', 'docx' ];
 		$max_file_size = $settings['max_file_size'] ?? 10;
@@ -269,9 +269,22 @@ class FormRenderService {
 		// Allowed types als Accept-String formatieren.
 		$accept = '.' . implode( ',.', $allowed_types );
 
+		// Konfiguration für Alpine-Komponente.
+		$component_config = [
+			'maxFiles'         => $max_files,
+			'maxSize'          => $max_file_size,
+			'allowedTypes'     => $allowed_types,
+			'errorMaxFiles'    => sprintf( __( 'Maximal %d Dateien erlaubt', 'recruiting-playbook' ), $max_files ),
+			'errorInvalidType' => sprintf( __( 'Ungültiger Dateityp. Erlaubt: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ),
+			'errorTooLarge'    => sprintf( __( 'Datei zu groß (max. %d MB)', 'recruiting-playbook' ), $max_file_size ),
+		];
+
 		ob_start();
 		?>
-		<div class="rp-system-field rp-system-field--file-upload rp-mt-6">
+		<div
+			class="rp-system-field rp-system-field--file-upload rp-mt-6"
+			@files-updated.stop="files.documents = $event.detail.files"
+		>
 			<label class="rp-label">
 				<?php echo esc_html( $label ); ?>
 			</label>
@@ -281,78 +294,7 @@ class FormRenderService {
 			<?php endif; ?>
 
 			<div
-				x-data="{
-					files: [],
-					dragging: false,
-					error: null,
-					maxFiles: <?php echo esc_attr( $max_files ); ?>,
-					maxSize: <?php echo esc_attr( $max_file_size ); ?> * 1024 * 1024,
-					allowedTypes: <?php echo wp_json_encode( $allowed_types ); ?>,
-
-					init() {
-						// Sync mit Parent-Formular.
-						if (typeof $data.files !== 'undefined' && $data.files.documents) {
-							this.files = [...$data.files.documents];
-						}
-					},
-
-					syncToParent() {
-						if (typeof $data.files !== 'undefined') {
-							$data.files.documents = [...this.files];
-						}
-					},
-
-					handleSelect(event) {
-						this.addFiles(event.target.files);
-						event.target.value = '';
-					},
-
-					handleDrop(event) {
-						this.dragging = false;
-						this.addFiles(event.dataTransfer.files);
-					},
-
-					isValidType(file) {
-						const ext = file.name.split('.').pop().toLowerCase();
-						return this.allowedTypes.includes(ext);
-					},
-
-					addFiles(fileList) {
-						this.error = null;
-
-						for (const file of fileList) {
-							if (this.files.length >= this.maxFiles) {
-								this.error = '<?php echo esc_js( sprintf( __( 'Maximal %d Dateien erlaubt', 'recruiting-playbook' ), $max_files ) ); ?>';
-								break;
-							}
-
-							if (!this.isValidType(file)) {
-								this.error = '<?php echo esc_js( sprintf( __( 'Ungültiger Dateityp. Erlaubt: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ) ); ?>';
-								continue;
-							}
-
-							if (file.size > this.maxSize) {
-								this.error = '<?php echo esc_js( sprintf( __( 'Datei zu groß (max. %d MB)', 'recruiting-playbook' ), $max_file_size ) ); ?>';
-								continue;
-							}
-
-							this.files.push(file);
-						}
-
-						this.syncToParent();
-					},
-
-					removeFile(index) {
-						this.files.splice(index, 1);
-						this.syncToParent();
-					},
-
-					formatSize(bytes) {
-						if (bytes < 1024) return bytes + ' B';
-						if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-						return (bytes / 1024 / 1024).toFixed(1) + ' MB';
-					}
-				}"
+				x-data="rpFileUpload(<?php echo esc_attr( wp_json_encode( $component_config ) ); ?>)"
 				class="rp-file-upload"
 			>
 				<!-- Dropzone -->
@@ -459,11 +401,12 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderSummarySystemField( array $settings, array $config, array $field_definitions ): string {
-		$label            = $settings['label'] ?? __( 'Zusammenfassung', 'recruiting-playbook' );
-		$show_header      = $settings['show_header'] ?? true;
-		$show_step_titles = $settings['show_step_titles'] ?? true;
+		// Unterstütze beide Key-Varianten für Abwärtskompatibilität.
+		$label             = $settings['title'] ?? $settings['label'] ?? __( 'Ihre Angaben im Überblick', 'recruiting-playbook' );
+		$show_header       = $settings['show_header'] ?? true;
+		$show_step_titles  = $settings['show_step_titles'] ?? true;
 		$show_edit_buttons = $settings['show_edit_buttons'] ?? true;
-		$help_text        = $settings['help_text'] ?? '';
+		$help_text         = $settings['additional_text'] ?? $settings['help_text'] ?? '';
 
 		return $this->renderSummary( $config, $field_definitions, $label, $show_header, $show_step_titles, $show_edit_buttons, $help_text );
 	}
@@ -475,8 +418,9 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderPrivacyConsentSystemField( array $settings ): string {
-		$consent_text      = $settings['consent_text'] ?? __( 'Ich habe die {privacy_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' );
-		$privacy_link_text = $settings['privacy_link_text'] ?? __( 'Datenschutzerklärung', 'recruiting-playbook' );
+		// Unterstütze beide Key-Varianten für Abwärtskompatibilität.
+		$consent_text      = $settings['checkbox_text'] ?? $settings['consent_text'] ?? __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' );
+		$privacy_link_text = $settings['link_text'] ?? $settings['privacy_link_text'] ?? __( 'Datenschutzerklärung', 'recruiting-playbook' );
 		$privacy_url       = $settings['privacy_url'] ?? get_privacy_policy_url();
 		$error_message     = $settings['error_message'] ?? __( 'Sie müssen der Datenschutzerklärung zustimmen.', 'recruiting-playbook' );
 		$help_text         = $settings['help_text'] ?? '';
@@ -489,8 +433,14 @@ class FormRenderService {
 			esc_html( $privacy_link_text )
 		);
 
-		// Text in Teile aufteilen und jeden Teil escapen.
-		$parts = explode( '{privacy_link}', $consent_text, 2 );
+		// Text in Teile aufteilen - unterstütze beide Platzhalter-Varianten.
+		// Zuerst {datenschutz_link} versuchen, dann {privacy_link}.
+		$parts = explode( '{datenschutz_link}', $consent_text, 2 );
+		if ( count( $parts ) === 1 ) {
+			// {datenschutz_link} nicht gefunden, versuche {privacy_link}.
+			$parts = explode( '{privacy_link}', $consent_text, 2 );
+		}
+
 		if ( count( $parts ) === 2 ) {
 			$consent_html = esc_html( $parts[0] ) . $link . esc_html( $parts[1] );
 		} else {
@@ -665,10 +615,59 @@ class FormRenderService {
 			}
 		}
 
+		// Hochgeladene Dateien aus dem file_upload System-Feld anzeigen (files.documents).
+		$output .= $this->renderUploadedFilesSummary( $config );
+
 		$output .= '</dl>';
 		$output .= '</div>';
 
 		return $output;
+	}
+
+	/**
+	 * Hochgeladene Dateien aus dem file_upload System-Feld in der Zusammenfassung anzeigen
+	 *
+	 * @param array $config Formular-Konfiguration.
+	 * @return string HTML.
+	 */
+	private function renderUploadedFilesSummary( array $config ): string {
+		// Prüfen ob file_upload System-Feld in irgendeinem Step vorhanden ist.
+		$has_file_upload   = false;
+		$file_upload_label = __( 'Bewerbungsunterlagen', 'recruiting-playbook' );
+
+		foreach ( $config['steps'] as $step ) {
+			if ( empty( $step['system_fields'] ) ) {
+				continue;
+			}
+
+			foreach ( $step['system_fields'] as $sf ) {
+				if ( ( $sf['field_key'] ?? '' ) === 'file_upload' ) {
+					$has_file_upload = true;
+					// Label aus Settings übernehmen wenn vorhanden.
+					if ( ! empty( $sf['settings']['label'] ) ) {
+						$file_upload_label = $sf['settings']['label'];
+					}
+					break 2;
+				}
+			}
+		}
+
+		if ( ! $has_file_upload ) {
+			return '';
+		}
+
+		// Dateiliste mit x-for rendern (zeigt alle hochgeladenen Dateien).
+		return sprintf(
+			'<div class="rp-flex rp-flex-col sm:rp-flex-row sm:rp-gap-2" x-show="files.documents && files.documents.length > 0">
+				<dt class="rp-text-gray-500 sm:rp-w-32 rp-flex-shrink-0">%s:</dt>
+				<dd class="rp-text-gray-900">
+					<template x-for="(doc, index) in files.documents" :key="index">
+						<span class="rp-block" x-text="doc.name"></span>
+					</template>
+				</dd>
+			</div>',
+			esc_html( $file_upload_label )
+		);
 	}
 
 	/**

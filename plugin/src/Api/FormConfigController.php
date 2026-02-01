@@ -136,6 +136,19 @@ class FormConfigController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// POST /form-builder/reset — Auf Standard zurücksetzen.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/reset',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'reset_config' ],
+					'permission_callback' => [ $this, 'edit_config_permissions_check' ],
+				],
+			]
+		);
 	}
 
 	/**
@@ -358,6 +371,41 @@ class FormConfigController extends WP_REST_Controller {
 			}
 
 			return new WP_REST_Response( $data, 200 );
+		} catch ( \Exception $e ) {
+			return new WP_Error(
+				'server_error',
+				$e->getMessage(),
+				[ 'status' => 500 ]
+			);
+		}
+	}
+
+	/**
+	 * Konfiguration auf Standard zurücksetzen
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reset_config( $request ): WP_REST_Response|WP_Error {
+		try {
+			$result = $this->service->resetToDefault();
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			// Neue Default-Konfiguration laden und zurückgeben.
+			$data = $this->service->getBuilderData();
+
+			return new WP_REST_Response(
+				[
+					'success'     => true,
+					'message'     => __( 'Formular auf Standard zurückgesetzt.', 'recruiting-playbook' ),
+					'draft'       => $data['draft'],
+					'has_changes' => false,
+				],
+				200
+			);
 		} catch ( \Exception $e ) {
 			return new WP_Error(
 				'server_error',

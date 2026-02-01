@@ -87,6 +87,26 @@ export function useFormConfig() {
 	}, [ namespace ] );
 
 	/**
+	 * Refresh available fields without affecting draft state
+	 *
+	 * Call this after creating/deleting fields in FieldDefinitions
+	 * to keep the availableFields list in sync.
+	 */
+	const refreshAvailableFields = useCallback( async () => {
+		try {
+			// Add cache-busting timestamp to prevent stale data
+			const response = await apiFetch( {
+				path: `${ namespace }/form-builder/config?_=${ Date.now() }`,
+				method: 'GET',
+			} );
+
+			setAvailableFields( response.available_fields || [] );
+		} catch ( err ) {
+			console.error( 'Failed to refresh available fields:', err );
+		}
+	}, [ namespace ] );
+
+	/**
 	 * Save draft to API
 	 *
 	 * @param {Object} configData Optional config data, uses current draft if not provided
@@ -224,6 +244,49 @@ export function useFormConfig() {
 		} catch ( err ) {
 			setError( err.message || 'Fehler beim Verwerfen' );
 			console.error( 'Failed to discard draft:', err );
+			return false;
+		} finally {
+			setIsLoading( false );
+		}
+	}, [ namespace, showSuccess ] );
+
+	/**
+	 * Reset to default configuration
+	 *
+	 * @return {boolean} Success status
+	 */
+	const resetToDefault = useCallback( async () => {
+		// Cancel any pending saves
+		if ( saveTimerRef.current ) {
+			clearTimeout( saveTimerRef.current );
+		}
+
+		// Confirmation dialog
+		const confirmed = window.confirm(
+			'Möchten Sie das Formular wirklich auf die Standardeinstellungen zurücksetzen? Alle Anpassungen gehen verloren.'
+		);
+
+		if ( ! confirmed ) {
+			return false;
+		}
+
+		setIsLoading( true );
+		setError( null );
+
+		try {
+			const response = await apiFetch( {
+				path: `${ namespace }/form-builder/reset`,
+				method: 'POST',
+			} );
+
+			setDraft( response.draft || null );
+			setHasChanges( false );
+			setPublishedVersion( 1 );
+			showSuccess( 'Formular auf Standard zurückgesetzt' );
+			return true;
+		} catch ( err ) {
+			setError( err.message || 'Fehler beim Zurücksetzen' );
+			console.error( 'Failed to reset config:', err );
 			return false;
 		} finally {
 			setIsLoading( false );
@@ -673,9 +736,11 @@ export function useFormConfig() {
 
 		// Actions
 		fetchConfig,
+		refreshAvailableFields,
 		saveDraft,
 		publish,
 		discardDraft,
+		resetToDefault,
 
 		// Step operations
 		addStep,

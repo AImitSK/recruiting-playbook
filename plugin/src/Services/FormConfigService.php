@@ -71,7 +71,9 @@ class FormConfigService {
 
 		if ( $draft ) {
 			// Automatisch migrieren falls v1.
-			return $this->migrateConfig( $draft['config_data'] );
+			$config = $this->migrateConfig( $draft['config_data'] );
+			// Sicherstellen dass System-Felder vorhanden sind.
+			return $this->ensureRequiredSystemFields( $config );
 		}
 
 		// Fallback auf Default-Konfiguration.
@@ -91,7 +93,9 @@ class FormConfigService {
 
 		if ( $published ) {
 			// Automatisch migrieren falls v1.
-			return $this->migrateConfig( $published['config_data'] );
+			$config = $this->migrateConfig( $published['config_data'] );
+			// Sicherstellen dass System-Felder vorhanden sind.
+			return $this->ensureRequiredSystemFields( $config );
 		}
 
 		// Fallback auf Default-Konfiguration.
@@ -105,6 +109,9 @@ class FormConfigService {
 	 * @return true|WP_Error
 	 */
 	public function saveDraft( array $config ): bool|WP_Error {
+		// System-Felder sicherstellen bevor Validierung.
+		$config = $this->ensureRequiredSystemFields( $config );
+
 		// Validierung.
 		$validation = $this->validateConfig( $config );
 
@@ -190,6 +197,49 @@ class FormConfigService {
 			return new WP_Error(
 				'discard_failed',
 				__( 'Änderungen konnten nicht verworfen werden.', 'recruiting-playbook' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Konfiguration auf Standard zurücksetzen
+	 *
+	 * Löscht Draft und Published und speichert/veröffentlicht die Default-Konfiguration.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function resetToDefault(): bool|WP_Error {
+		// Alte Konfiguration löschen.
+		$result = $this->repository->resetToDefault();
+
+		if ( ! $result ) {
+			return new WP_Error(
+				'reset_failed',
+				__( 'Konfiguration konnte nicht zurückgesetzt werden.', 'recruiting-playbook' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		// Default-Konfiguration als Draft speichern.
+		$default_config = $this->getDefaultConfig();
+		$save_result    = $this->saveDraft( $default_config );
+
+		if ( is_wp_error( $save_result ) ) {
+			return $save_result;
+		}
+
+		// Sofort veröffentlichen, damit das Frontend die Konfiguration hat.
+		// Direkt über Repository, um die "no changes" Prüfung zu umgehen.
+		$user_id        = get_current_user_id();
+		$publish_result = $this->repository->publish( $user_id ?: null );
+
+		if ( ! $publish_result ) {
+			return new WP_Error(
+				'publish_failed',
+				__( 'Default-Konfiguration konnte nicht veröffentlicht werden.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -504,8 +554,8 @@ class FormConfigService {
 							'field_key' => 'file_upload',
 							'type'      => 'file_upload',
 							'settings'  => [
-								'label'         => __( 'Dokumente hochladen', 'recruiting-playbook' ),
-								'help_text'     => __( 'Lebenslauf und weitere Dokumente (PDF, Word)', 'recruiting-playbook' ),
+								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
 								'allowed_types' => [ 'pdf', 'doc', 'docx' ],
 								'max_file_size' => 10,
 								'max_files'     => 5,
@@ -570,8 +620,8 @@ class FormConfigService {
 						'field_key' => 'file_upload',
 						'type'      => 'file_upload',
 						'settings'  => [
-							'label'         => __( 'Dokumente hochladen', 'recruiting-playbook' ),
-							'help_text'     => __( 'Lebenslauf und weitere Dokumente (PDF, Word)', 'recruiting-playbook' ),
+							'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
+							'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
 							'allowed_types' => [ 'pdf', 'doc', 'docx' ],
 							'max_file_size' => 10,
 							'max_files'     => 5,
@@ -652,31 +702,132 @@ class FormConfigService {
 	}
 
 	/**
+	 * Sicherstellen dass erforderliche System-Felder vorhanden sind
+	 *
+	 * Diese Methode stellt sicher, dass der Finale-Step immer die
+	 * erforderlichen System-Felder (summary, privacy_consent) enthält.
+	 *
+	 * @param array $config Konfiguration.
+	 * @return array Korrigierte Konfiguration.
+	 */
+	private function ensureRequiredSystemFields( array $config ): array {
+		if ( empty( $config['steps'] ) || ! is_array( $config['steps'] ) ) {
+			return $config;
+		}
+
+		foreach ( $config['steps'] as &$step ) {
+			// Nur Finale-Step prüfen.
+			if ( empty( $step['is_finale'] ) ) {
+				continue;
+			}
+
+			// system_fields Array initialisieren falls nicht vorhanden.
+			if ( ! isset( $step['system_fields'] ) || ! is_array( $step['system_fields'] ) ) {
+				$step['system_fields'] = [];
+			}
+
+			// Prüfen ob summary vorhanden ist.
+			$has_summary = false;
+			foreach ( $step['system_fields'] as $sf ) {
+				if ( 'summary' === ( $sf['field_key'] ?? '' ) ) {
+					$has_summary = true;
+					break;
+				}
+			}
+
+			// Summary hinzufügen falls nicht vorhanden.
+			if ( ! $has_summary ) {
+				array_unshift(
+					$step['system_fields'],
+					[
+						'field_key' => 'summary',
+						'type'      => 'summary',
+						'settings'  => [
+							'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+							'layout'           => 'two-column',
+							'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+							'show_only_filled' => false,
+						],
+					]
+				);
+			}
+
+			// Prüfen ob privacy_consent vorhanden ist.
+			$has_privacy = false;
+			foreach ( $step['system_fields'] as $sf ) {
+				if ( 'privacy_consent' === ( $sf['field_key'] ?? '' ) ) {
+					$has_privacy = true;
+					break;
+				}
+			}
+
+			// privacy_consent hinzufügen falls nicht vorhanden.
+			if ( ! $has_privacy ) {
+				$step['system_fields'][] = [
+					'field_key'    => 'privacy_consent',
+					'type'         => 'privacy_consent',
+					'is_removable' => false,
+					'settings'     => [
+						'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+						'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+						'privacy_url'   => function_exists( 'get_privacy_policy_url' ) ? ( get_privacy_policy_url() ?: '/datenschutz' ) : '/datenschutz',
+					],
+				];
+			}
+
+			// privacy_consent aus fields entfernen (wird über system_fields gerendert).
+			if ( isset( $step['fields'] ) && is_array( $step['fields'] ) ) {
+				$step['fields'] = array_values(
+					array_filter(
+						$step['fields'],
+						fn( $f ) => ( $f['field_key'] ?? '' ) !== 'privacy_consent'
+					)
+				);
+			}
+		}
+
+		return $config;
+	}
+
+	/**
 	 * Verfügbare Felder für den Builder laden
 	 *
 	 * Lädt alle Felder (System + Custom) mit ihren vollständigen Definitionen.
+	 * Filtert Felder heraus, die jetzt über system_fields im Finale-Step gehandhabt werden.
 	 *
 	 * @return array
 	 */
 	public function getAvailableFields(): array {
-		// Load ALL fields (system + custom), not just system fields
+		// Load ALL fields (system + custom), not just system fields.
 		$fields = $this->field_repository->findAll();
 
-		return array_map(
-			function ( $field ) {
-				return [
-					'field_key'   => $field->getFieldKey(),
-					'field_type'  => $field->getFieldType(),
-					'label'       => $field->getLabel(),
-					'placeholder' => $field->getPlaceholder(),
-					'description' => $field->getDescription(),
-					'is_required' => $field->isRequired(),
-					'is_system'   => $field->isSystem(),
-					'settings'    => $field->getSettings(),
-					'validation'  => $field->getValidation(),
-				];
-			},
-			$fields
+		// Felder die jetzt über system_fields gehandhabt werden (nicht mehr als normale Felder anzeigen).
+		$system_field_keys = [ 'privacy_consent' ];
+
+		// Felder filtern.
+		$filtered = array_filter(
+			$fields,
+			fn( $field ) => ! in_array( $field->getFieldKey(), $system_field_keys, true )
+		);
+
+		// array_values() um numerische Indizes zu erhalten (wichtig für JSON-Array statt Objekt).
+		return array_values(
+			array_map(
+				function ( $field ) {
+					return [
+						'field_key'   => $field->getFieldKey(),
+						'field_type'  => $field->getFieldType(),
+						'label'       => $field->getLabel(),
+						'placeholder' => $field->getPlaceholder(),
+						'description' => $field->getDescription(),
+						'is_required' => $field->isRequired(),
+						'is_system'   => $field->isSystem(),
+						'settings'    => $field->getSettings(),
+						'validation'  => $field->getValidation(),
+					];
+				},
+				$filtered
+			)
 		);
 	}
 

@@ -646,6 +646,20 @@ final class Plugin {
 			// Siehe Shortcodes::registerMatchModal().
 		}
 
+		// Frontend JS - MUSS VOR Alpine.js geladen werden für alpine:init Event.
+		// Registriert rpFileUpload und andere Komponenten.
+		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/frontend.js';
+		if ( file_exists( $js_file ) ) {
+			wp_enqueue_script(
+				'rp-frontend-js',
+				RP_PLUGIN_URL . 'assets/dist/js/frontend.js',
+				[], // Keine Abhängigkeit - muss VOR Alpine laden!
+				RP_VERSION,
+				true
+			);
+			$alpine_deps[] = 'rp-frontend-js';
+		}
+
 		// Alpine.js (lokal gebundelt) - muss NACH Komponenten-Scripts geladen werden.
 		// WICHTIG: Kein defer! Komponenten müssen VOR Alpine.start() registriert sein.
 		// Alpine startet automatisch via queueMicrotask nach dem Script-Load.
@@ -658,18 +672,6 @@ final class Plugin {
 				$alpine_deps, // Abhängigkeit: Komponenten-Scripts müssen zuerst laden
 				'3.14.3',
 				true // Im Footer laden - nach allen anderen Scripts
-			);
-		}
-
-		// Frontend JS (optional, für zukünftige Erweiterungen).
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/frontend.js';
-		if ( file_exists( $js_file ) ) {
-			wp_enqueue_script(
-				'rp-frontend',
-				RP_PLUGIN_URL . 'assets/dist/js/frontend.js',
-				[ 'rp-alpine' ],
-				RP_VERSION,
-				true
 			);
 		}
 	}

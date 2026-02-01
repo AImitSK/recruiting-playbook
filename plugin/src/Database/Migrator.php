@@ -432,7 +432,7 @@ class Migrator {
 			[
 				'field_key'   => 'resume',
 				'field_type'  => 'file',
-				'label'       => __( 'Lebenslauf', 'recruiting-playbook' ),
+				'label'       => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
 				'description' => __( 'Erlaubte Formate: PDF, DOC, DOCX (max. 10 MB)', 'recruiting-playbook' ),
 				'is_required' => 1,
 				'is_system'   => 1,
