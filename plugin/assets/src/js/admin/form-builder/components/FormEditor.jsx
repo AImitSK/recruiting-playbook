@@ -45,6 +45,7 @@ import {
 	ListChecks,
 	Shield,
 	Settings,
+	RotateCcw,
 } from 'lucide-react';
 import { Input } from '../../components/ui/input';
 import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
@@ -563,6 +564,7 @@ function SortableStep( {
  * @param {Function} props.reorderFieldsInStep     Reorder fields in step handler
  * @param {Function} props.getUnusedFields         Get unused fields handler
  * @param {Function} props.getFieldDefinition      Get field definition handler
+ * @param {Function} props.onResetToDefault        Reset to default handler
  * @param {Object}   props.i18n                    Translations
  */
 export default function FormEditor( {
@@ -582,6 +584,7 @@ export default function FormEditor( {
 	reorderFieldsInStep,
 	getUnusedFields,
 	getFieldDefinition,
+	onResetToDefault,
 	i18n = {},
 } ) {
 	const [ expandedSteps, setExpandedSteps ] = useState( {} );
@@ -851,14 +854,19 @@ export default function FormEditor( {
 				</div>
 			) }
 
-			{ /* Help text */ }
-			<div style={ { marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '0.5rem', border: '1px solid #bae6fd' } }>
-				<p style={ { margin: 0, fontSize: '0.875rem', color: '#0369a1' } }>
-					<strong>{ __( 'Tipps:', 'recruiting-playbook' ) }</strong>
-					{ ' ' }
-					{ __( 'Klicken Sie auf den Titel, um ihn zu bearbeiten. Ziehen Sie Schritte und Felder per Drag & Drop, um sie neu anzuordnen. Der Finale-Schritt ist immer der letzte und enthält typischerweise die Datenschutz-Zustimmung.', 'recruiting-playbook' ) }
-				</p>
-			</div>
+			{ /* Reset to Default Button */ }
+			{ onResetToDefault && (
+				<div style={ { marginTop: '1.5rem' } }>
+					<Button
+						variant="outline"
+						onClick={ onResetToDefault }
+						style={ { color: '#6b7280' } }
+					>
+						<RotateCcw style={ { height: '1rem', width: '1rem', marginRight: '0.5rem' } } />
+						{ __( 'Formular zurücksetzen', 'recruiting-playbook' ) }
+					</Button>
+				</div>
+			) }
 
 			{ /* System Field Settings Modals */ }
 			{ editingSystemField?.systemField?.field_key === 'file_upload' && (

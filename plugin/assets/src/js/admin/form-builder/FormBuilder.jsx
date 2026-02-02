@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { Spinner } from '../components/ui/spinner';
-import { Lock, AlertCircle, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 import FieldList from './components/FieldList';
 import FieldEditor from './components/FieldEditor';
@@ -198,74 +198,13 @@ export default function FormBuilder() {
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1200px' } }>
 				{ /* Header */ }
-				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' } }>
-					<div style={ { display: 'flex', alignItems: 'flex-end', gap: '1rem' } }>
-						{ logoUrl && (
-							<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
-						) }
-						<div>
-							<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-								{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
-							</h1>
-							<p style={ { margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#6b7280' } }>
-								{ __( 'Version', 'recruiting-playbook' ) } { publishedVersion }
-								{ hasChanges && (
-									<span style={ { marginLeft: '0.5rem', color: '#f59e0b' } }>
-										({ __( 'ungespeicherte Änderungen', 'recruiting-playbook' ) })
-									</span>
-								) }
-							</p>
-						</div>
-					</div>
-
-					{ /* Publish Controls */ }
-					<div style={ { display: 'flex', gap: '0.5rem', alignItems: 'center' } }>
-						{ isSaving && (
-							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
-								{ __( 'Speichern...', 'recruiting-playbook' ) }
-							</span>
-						) }
-
-						{ successMessage && (
-							<span style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', color: '#10b981' } }>
-								<CheckCircle2 style={ { height: '1rem', width: '1rem' } } />
-								{ successMessage }
-							</span>
-						) }
-
-						{ hasChanges && (
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={ handleDiscard }
-								disabled={ isPublishing }
-							>
-								{ __( 'Verwerfen', 'recruiting-playbook' ) }
-							</Button>
-						) }
-
-						<Button
-							onClick={ handlePublish }
-							disabled={ ! hasChanges || isPublishing }
-							size="sm"
-						>
-							{ isPublishing
-								? __( 'Veröffentlichen...', 'recruiting-playbook' )
-								: __( 'Veröffentlichen', 'recruiting-playbook' )
-							}
-						</Button>
-
-						<Button
-							variant="ghost"
-							size="sm"
-							onClick={ resetToDefault }
-							disabled={ isPublishing || configLoading }
-							title={ __( 'Auf Standard zurücksetzen', 'recruiting-playbook' ) }
-							style={ { marginLeft: '0.5rem', color: '#6b7280' } }
-						>
-							<RotateCcw style={ { height: '1rem', width: '1rem' } } />
-						</Button>
-					</div>
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
+					</h1>
 				</div>
 
 				{ /* Pro Upgrade Notice */ }
@@ -300,18 +239,58 @@ export default function FormBuilder() {
 
 				{ /* Main Tabs */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
-					<TabsList className="mb-4">
-						<TabsTrigger value="form">
-							{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="fields">
-							{ i18n?.tabFields || __( 'Felder', 'recruiting-playbook' ) }
-							{ ! isPro && <Lock className="ml-1 h-3 w-3" /> }
-						</TabsTrigger>
-						<TabsTrigger value="preview">
-							{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
-						</TabsTrigger>
-					</TabsList>
+					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' } }>
+						<TabsList>
+							<TabsTrigger value="form">
+								{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
+							</TabsTrigger>
+							<TabsTrigger value="fields">
+								{ i18n?.tabFields || __( 'Felder', 'recruiting-playbook' ) }
+								{ ! isPro && <Lock className="ml-1 h-3 w-3" /> }
+							</TabsTrigger>
+							<TabsTrigger value="preview">
+								{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						</TabsList>
+
+						{ /* Publish Controls */ }
+						<div style={ { display: 'flex', gap: '0.5rem', alignItems: 'center' } }>
+							{ isSaving && (
+								<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
+									{ __( 'Speichern...', 'recruiting-playbook' ) }
+								</span>
+							) }
+
+							{ successMessage && (
+								<span style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', color: '#10b981' } }>
+									<CheckCircle2 style={ { height: '1rem', width: '1rem' } } />
+									{ successMessage }
+								</span>
+							) }
+
+							{ hasChanges && (
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={ handleDiscard }
+									disabled={ isPublishing }
+								>
+									{ __( 'Verwerfen', 'recruiting-playbook' ) }
+								</Button>
+							) }
+
+							<Button
+								onClick={ handlePublish }
+								disabled={ ! hasChanges || isPublishing }
+								size="sm"
+							>
+								{ isPublishing
+									? __( 'Veröffentlichen...', 'recruiting-playbook' )
+									: __( 'Veröffentlichen', 'recruiting-playbook' )
+								}
+							</Button>
+						</div>
+					</div>
 
 					{ /* Form Tab - Step-based Form Editor */ }
 					<TabsContent value="form" className="mt-0">
@@ -333,6 +312,7 @@ export default function FormBuilder() {
 								reorderFieldsInStep={ isPro ? reorderFieldsInStep : undefined }
 								getUnusedFields={ getUnusedFields }
 								getFieldDefinition={ getFieldDefinition }
+								onResetToDefault={ resetToDefault }
 								i18n={ i18n }
 							/>
 							{ ! isPro && (
