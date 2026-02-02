@@ -45,31 +45,7 @@ import {
 	ListChecks,
 	Shield,
 	Settings,
-	Type,
-	AlignLeft,
-	Mail,
-	Phone,
-	Hash,
-	Circle,
-	CheckSquare,
-	Calendar,
 } from 'lucide-react';
-
-/**
- * Field type configuration with German labels and icons
- */
-const FIELD_TYPE_CONFIG = {
-	text: { label: 'Text', icon: Type },
-	textarea: { label: 'Textbereich', icon: AlignLeft },
-	email: { label: 'E-Mail', icon: Mail },
-	phone: { label: 'Telefon', icon: Phone },
-	number: { label: 'Zahl', icon: Hash },
-	select: { label: 'Auswahl', icon: ChevronDown },
-	radio: { label: 'Optionen', icon: Circle },
-	checkbox: { label: 'Checkbox', icon: CheckSquare },
-	date: { label: 'Datum', icon: Calendar },
-	file: { label: 'Datei', icon: Upload },
-};
 import { Input } from '../../components/ui/input';
 import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
 import SummarySettings from './SystemFieldSettings/SummarySettings';
@@ -110,9 +86,6 @@ function SortableFieldItem( {
 	};
 
 	const label = fieldDef?.label || fieldConfig.field_key;
-	const fieldType = fieldDef?.field_type || 'text';
-	const typeConfig = FIELD_TYPE_CONFIG[ fieldType ] || FIELD_TYPE_CONFIG.text;
-	const TypeIcon = typeConfig.icon;
 
 	// Check if field is removable (default to true for backwards compatibility)
 	const isRemovable = fieldConfig.is_removable !== false;
@@ -173,25 +146,8 @@ function SortableFieldItem( {
 				) }
 			</div>
 
-			{ /* Right side: Field type badge with icon, Delete button */ }
+			{ /* Right side: Delete button */ }
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-				{ /* Field type badge with icon */ }
-				<Badge
-					variant="outline"
-					style={ {
-						backgroundColor: '#ffffff',
-						color: '#6b7280',
-						fontSize: '0.75rem',
-						border: '1px solid #d1d5db',
-						display: 'flex',
-						alignItems: 'center',
-						gap: '0.25rem',
-					} }
-				>
-					<TypeIcon style={ { height: '0.75rem', width: '0.75rem' } } />
-					{ typeConfig.label }
-				</Badge>
-
 				{ /* Delete button only for removable fields */ }
 				{ isRemovable ? (
 					<Button
