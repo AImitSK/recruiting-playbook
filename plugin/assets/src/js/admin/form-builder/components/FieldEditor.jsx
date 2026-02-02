@@ -254,8 +254,6 @@ export default function FieldEditor( {
 							>
 								<SelectOption value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectOption>
 								<SelectOption value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectOption>
-								<SelectOption value="third">{ i18n?.widthThird || __( 'Ein Drittel', 'recruiting-playbook' ) }</SelectOption>
-								<SelectOption value="two-thirds">{ i18n?.widthTwoThirds || __( 'Zwei Drittel', 'recruiting-playbook' ) }</SelectOption>
 							</Select>
 						</div>
 
