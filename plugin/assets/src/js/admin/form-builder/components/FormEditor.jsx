@@ -179,7 +179,7 @@ function SortableFieldItem( {
 				<Badge
 					variant="outline"
 					style={ {
-						backgroundColor: '#f3f4f6',
+						backgroundColor: '#ffffff',
 						color: '#6b7280',
 						fontSize: '0.75rem',
 						borderColor: '#e5e7eb',
