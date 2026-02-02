@@ -654,7 +654,10 @@ export default function FormEditor( {
 		if ( ! addFieldToStep ) {
 			return;
 		}
-		addFieldToStep( stepId, fieldKey, { is_visible: true, is_required: false } );
+		// Get field definition to use its is_required setting
+		const fieldDef = getFieldDefinition ? getFieldDefinition( fieldKey ) : null;
+		const isRequired = fieldDef?.is_required ?? false;
+		addFieldToStep( stepId, fieldKey, { is_visible: true, is_required: isRequired } );
 		setShowAddFieldFor( null );
 	};
 
