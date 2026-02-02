@@ -163,11 +163,11 @@ function SortableFieldItem( {
 
 				{ /* Required/Optional badge */ }
 				{ fieldConfig.is_required ? (
-					<Badge style={ { backgroundColor: '#ef4444', color: 'white', fontSize: '0.75rem' } }>
+					<Badge style={ { backgroundColor: '#ef4444', color: 'white', fontSize: '0.625rem', padding: '0.125rem 0.375rem', lineHeight: 1 } }>
 						{ __( 'Pflicht', 'recruiting-playbook' ) }
 					</Badge>
 				) : (
-					<Badge variant="outline" style={ { backgroundColor: '#f3f4f6', color: '#6b7280', fontSize: '0.75rem', borderColor: '#e5e7eb' } }>
+					<Badge variant="outline" style={ { backgroundColor: '#f3f4f6', color: '#6b7280', fontSize: '0.625rem', padding: '0.125rem 0.375rem', lineHeight: 1, borderColor: '#e5e7eb' } }>
 						{ __( 'Optional', 'recruiting-playbook' ) }
 					</Badge>
 				) }
