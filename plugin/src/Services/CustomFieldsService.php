@@ -89,7 +89,7 @@ class CustomFieldsService {
 
 		// Nur aktivierte, nicht-System-Felder (System-Felder werden direkt verarbeitet).
 		$custom_fields = array_filter( $fields, function ( FieldDefinition $field ) {
-			return $field->isEnabled() && ! $field->isSystem();
+			return $field->isActive() && ! $field->isSystem();
 		} );
 
 		if ( empty( $custom_fields ) ) {
@@ -127,7 +127,7 @@ class CustomFieldsService {
 
 		foreach ( $custom_fields as $field ) {
 			$field_key = $field->getFieldKey();
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Conditional Logic: Feld überspringen wenn nicht sichtbar.
 			if ( ! $this->conditional_service->isFieldVisible( $field, $data ) ) {
@@ -135,7 +135,7 @@ class CustomFieldsService {
 			}
 
 			// Datei-Felder: Dokument-IDs aus Upload-Ergebnis.
-			if ( 'file' === $field->getType() ) {
+			if ( 'file' === $field->getFieldType() ) {
 				$result[ $field_key ] = $file_mappings[ $field_key ] ?? [];
 				continue;
 			}
@@ -176,10 +176,10 @@ class CustomFieldsService {
 			}
 
 			$value = $data[ $field_key ] ?? null;
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Datei-Felder werden separat validiert.
-			if ( 'file' === $field->getType() ) {
+			if ( 'file' === $field->getFieldType() ) {
 				continue;
 			}
 
@@ -224,7 +224,7 @@ class CustomFieldsService {
 			return '';
 		}
 
-		return match ( $field->getType() ) {
+		return match ( $field->getFieldType() ) {
 			'text', 'textarea' => sanitize_textarea_field( (string) $value ),
 			'email'            => sanitize_email( (string) $value ),
 			'url'              => esc_url_raw( (string) $value ),
@@ -351,7 +351,7 @@ class CustomFieldsService {
 			}
 
 			$value      = $custom_fields[ $field_key ];
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Wert formatieren.
 			$display_value = $value;
@@ -366,7 +366,7 @@ class CustomFieldsService {
 				'label'         => $field->getLabel(),
 				'value'         => $value,
 				'display_value' => $display_value,
-				'type'          => $field->getType(),
+				'type'          => $field->getFieldType(),
 			];
 		}
 
@@ -408,7 +408,7 @@ class CustomFieldsService {
 			}
 
 			$value      = $custom_fields[ $field_key ];
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Wert für Export formatieren.
 			$export_value = $value;

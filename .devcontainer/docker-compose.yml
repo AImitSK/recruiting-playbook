@@ -16,6 +16,9 @@ services:
       # Plugin-Code direkt ins Plugin-Verzeichnis mounten
       - ../plugin:/var/www/html/wp-content/plugins/recruiting-playbook:cached
 
+      # MU-Plugins für Entwicklung (Mailpit SMTP)
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins:cached
+
       # Repo-Root für Setup-Skript und Dokumentation
       - ..:/workspace:cached
 

@@ -394,6 +394,17 @@ class ConditionalLogicService {
 	}
 
 	/**
+	 * Prüfen ob ein einzelnes Feld sichtbar ist
+	 *
+	 * @param FieldDefinition $field     Felddefinition.
+	 * @param array           $form_data Formulardaten.
+	 * @return bool True wenn sichtbar.
+	 */
+	public function isFieldVisible( FieldDefinition $field, array $form_data ): bool {
+		return $this->evaluate( $field->getConditional() ?? [], $form_data );
+	}
+
+	/**
 	 * Felder filtern basierend auf Conditional Logic
 	 *
 	 * Gibt nur die Felder zurück, deren Bedingungen erfüllt sind.
@@ -405,7 +416,7 @@ class ConditionalLogicService {
 	public function filterVisibleFields( array $fields, array $form_data ): array {
 		return array_filter(
 			$fields,
-			fn( $field ) => $this->evaluate( $field->getConditional() ?? [], $form_data )
+			fn( $field ) => $this->isFieldVisible( $field, $form_data )
 		);
 	}
 

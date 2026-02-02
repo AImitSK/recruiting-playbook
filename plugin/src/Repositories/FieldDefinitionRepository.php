@@ -187,6 +187,42 @@ class FieldDefinitionRepository {
 	}
 
 	/**
+	 * Globale Custom Fields laden (nicht-System, ohne Template/Job)
+	 *
+	 * Diese Felder wurden im Custom Fields Builder erstellt und gelten
+	 * für alle Jobs, sofern nicht anders konfiguriert.
+	 *
+	 * @param bool $active_only Nur aktive Felder.
+	 * @return array<FieldDefinition>
+	 */
+	public function findGlobalCustomFields( bool $active_only = true ): array {
+		global $wpdb;
+
+		// Note: Accept both NULL and 0 for template_id/job_id as "global".
+		// Frontend may save 0 instead of NULL for new custom fields.
+		$where = [
+			'is_system = 0',
+			'(template_id IS NULL OR template_id = 0)',
+			'(job_id IS NULL OR job_id = 0)',
+			'deleted_at IS NULL',
+		];
+
+		if ( $active_only ) {
+			$where[] = 'is_active = 1';
+		}
+
+		$where_sql = implode( ' AND ', $where );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			"SELECT * FROM {$this->table} WHERE {$where_sql} ORDER BY position ASC",
+			ARRAY_A
+		);
+
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+	}
+
+	/**
 	 * Alle Feld-Definitionen laden
 	 *
 	 * @param array $args Query-Argumente.

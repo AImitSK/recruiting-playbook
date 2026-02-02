@@ -69,7 +69,7 @@ class FieldDefinitionService {
 	}
 
 	/**
-	 * Alle Felder für einen Job laden (kombiniert System + Template + Job-spezifisch)
+	 * Alle Felder für einen Job laden (kombiniert System + Global Custom + Template + Job-spezifisch)
 	 *
 	 * @param int $job_id Job ID.
 	 * @return array<FieldDefinition>
@@ -77,6 +77,9 @@ class FieldDefinitionService {
 	public function getFieldsForJob( int $job_id ): array {
 		// System-Felder laden (Basisfelder).
 		$system_fields = $this->repository->findSystemFields();
+
+		// Globale Custom Fields laden (aus Custom Fields Builder).
+		$global_custom_fields = $this->repository->findGlobalCustomFields();
 
 		// Template-ID für diesen Job ermitteln.
 		$template_id = get_post_meta( $job_id, '_rp_form_template_id', true );
@@ -90,8 +93,8 @@ class FieldDefinitionService {
 		// Job-spezifische Felder/Overrides laden.
 		$job_fields = $this->repository->findByJob( $job_id );
 
-		// Felder zusammenführen.
-		$merged = $this->mergeFields( $system_fields, $template_fields, $job_fields );
+		// Felder zusammenführen (System + Global Custom + Template + Job).
+		$merged = $this->mergeFields( $system_fields, $global_custom_fields, $template_fields, $job_fields );
 
 		// Job-spezifische Custom Fields Konfiguration anwenden (aus Meta Box).
 		$merged = $this->applyJobCustomFieldsConfig( $job_id, $merged );
@@ -641,29 +644,25 @@ class FieldDefinitionService {
 	}
 
 	/**
-	 * Felder zusammenführen (System + Template + Job)
+	 * Felder zusammenführen (System + Global Custom + Template + Job)
 	 *
-	 * @param array<FieldDefinition> $system_fields   System-Felder.
-	 * @param array<FieldDefinition> $template_fields Template-Felder.
-	 * @param array<FieldDefinition> $job_fields      Job-spezifische Felder.
+	 * Felder werden in dieser Reihenfolge zusammengeführt (spätere überschreiben frühere):
+	 * 1. System-Felder (Basisfelder)
+	 * 2. Globale Custom Fields (aus Custom Fields Builder)
+	 * 3. Template-Felder (falls Template zugewiesen)
+	 * 4. Job-spezifische Felder (Overrides)
+	 *
+	 * @param array<FieldDefinition> ...$field_arrays Field arrays in merge order.
 	 * @return array<FieldDefinition>
 	 */
-	private function mergeFields( array $system_fields, array $template_fields = [], array $job_fields = [] ): array {
+	private function mergeFields( array ...$field_arrays ): array {
 		$merged = [];
 
-		// Alle System-Felder hinzufügen.
-		foreach ( $system_fields as $field ) {
-			$merged[ $field->getFieldKey() ] = $field;
-		}
-
-		// Template-Felder hinzufügen/überschreiben.
-		foreach ( $template_fields as $field ) {
-			$merged[ $field->getFieldKey() ] = $field;
-		}
-
-		// Job-spezifische Felder hinzufügen/überschreiben.
-		foreach ( $job_fields as $field ) {
-			$merged[ $field->getFieldKey() ] = $field;
+		// Alle Feld-Arrays der Reihe nach zusammenführen.
+		foreach ( $field_arrays as $fields ) {
+			foreach ( $fields as $field ) {
+				$merged[ $field->getFieldKey() ] = $field;
+			}
 		}
 
 		// Nach Position sortieren.

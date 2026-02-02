@@ -342,12 +342,12 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'integer',
 				'required'    => false,
 			],
-			// Custom Fields (Pro)
+			// Custom Fields (Pro) - akzeptiert JSON-String oder Objekt
 			'custom_fields'    => [
-				'description' => __( 'Custom Field Werte (Pro-Feature)', 'recruiting-playbook' ),
-				'type'        => 'object',
-				'required'    => false,
-				'default'     => [],
+				'description'       => __( 'Custom Field Werte (Pro-Feature)', 'recruiting-playbook' ),
+				'required'          => false,
+				'default'           => [],
+				'sanitize_callback' => [ $this, 'sanitize_custom_fields' ],
 			],
 		];
 	}
@@ -391,6 +391,13 @@ class ApplicationController extends WP_REST_Controller {
 			}
 		}
 
+		// Custom Fields: JSON-String dekodieren falls nötig (FormData sendet Strings).
+		$custom_fields = $request->get_param( 'custom_fields' ) ?: [];
+		if ( is_string( $custom_fields ) ) {
+			$decoded = json_decode( $custom_fields, true );
+			$custom_fields = is_array( $decoded ) ? $decoded : [];
+		}
+
 		// Bewerbung erstellen
 		$result = $this->application_service->create( [
 			'job_id'          => $request->get_param( 'job_id' ),
@@ -404,7 +411,7 @@ class ApplicationController extends WP_REST_Controller {
 			'ip_address'      => $this->get_client_ip(),
 			'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
 			'files'           => $files,
-			'custom_fields'   => $request->get_param( 'custom_fields' ) ?: [],
+			'custom_fields'   => $custom_fields,
 			'custom_files'    => $custom_files,
 		] );
 
@@ -634,6 +641,23 @@ class ApplicationController extends WP_REST_Controller {
 				'default'     => 'view',
 			],
 		];
+	}
+
+	/**
+	 * Custom Fields sanitize
+	 *
+	 * Dekodiert JSON-Strings und stellt sicher, dass ein Array zurückgegeben wird.
+	 *
+	 * @param mixed $value Wert (JSON-String oder Array).
+	 * @return array
+	 */
+	public function sanitize_custom_fields( $value ): array {
+		// JSON-String dekodieren falls nötig.
+		if ( is_string( $value ) ) {
+			$decoded = json_decode( $value, true );
+			return is_array( $decoded ) ? $decoded : [];
+		}
+		return is_array( $value ) ? $value : [];
 	}
 
 	/**
