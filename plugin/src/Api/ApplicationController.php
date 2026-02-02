@@ -324,6 +324,12 @@ class ApplicationController extends WP_REST_Controller {
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
+			'message'          => [
+				'description'       => __( 'Anschreiben (Alias)', 'recruiting-playbook' ),
+				'type'              => 'string',
+				'required'          => false,
+				'sanitize_callback' => 'wp_kses_post',
+			],
 			'privacy_consent'  => [
 				'description'       => __( 'Datenschutz-Einwilligung', 'recruiting-playbook' ),
 				'type'              => 'boolean',
@@ -406,7 +412,7 @@ class ApplicationController extends WP_REST_Controller {
 			'last_name'       => $request->get_param( 'last_name' ),
 			'email'           => $request->get_param( 'email' ),
 			'phone'           => $request->get_param( 'phone' ) ?: '',
-			'cover_letter'    => $request->get_param( 'cover_letter' ) ?: '',
+			'cover_letter'    => $request->get_param( 'cover_letter' ) ?: $request->get_param( 'message' ) ?: '',
 			'privacy_consent' => $request->get_param( 'privacy_consent' ),
 			'ip_address'      => $this->get_client_ip(),
 			'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
