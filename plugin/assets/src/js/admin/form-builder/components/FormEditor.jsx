@@ -182,7 +182,7 @@ function SortableFieldItem( {
 						backgroundColor: '#ffffff',
 						color: '#6b7280',
 						fontSize: '0.75rem',
-						borderColor: '#e5e7eb',
+						border: '1px solid #d1d5db',
 						display: 'flex',
 						alignItems: 'center',
 						gap: '0.25rem',
