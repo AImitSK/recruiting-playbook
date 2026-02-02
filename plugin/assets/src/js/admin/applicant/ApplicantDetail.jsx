@@ -381,7 +381,16 @@ export function ApplicantDetail( { applicationId } ) {
 													phone: application.phone,
 													salutation: application.salutation,
 													message: application.cover_letter,
-													...( application.form_data || {} ),
+													// Custom Fields aus der Datenbank (als Key-Value-Objekt)
+													...( application.custom_fields_raw || {} ),
+													// Fallback: Custom Fields Array in Objekt umwandeln
+													...( Array.isArray( application.custom_fields )
+														? application.custom_fields.reduce( ( acc, cf ) => {
+															acc[ cf.key ] = cf.value;
+															return acc;
+														}, {} )
+														: {}
+													),
 												} }
 												layout="two-column"
 												labelWidth={ 100 }
