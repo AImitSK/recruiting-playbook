@@ -45,7 +45,31 @@ import {
 	ListChecks,
 	Shield,
 	Settings,
+	Type,
+	AlignLeft,
+	Mail,
+	Phone,
+	Hash,
+	Circle,
+	CheckSquare,
+	Calendar,
 } from 'lucide-react';
+
+/**
+ * Field type configuration with German labels and icons
+ */
+const FIELD_TYPE_CONFIG = {
+	text: { label: 'Text', icon: Type },
+	textarea: { label: 'Textbereich', icon: AlignLeft },
+	email: { label: 'E-Mail', icon: Mail },
+	phone: { label: 'Telefon', icon: Phone },
+	number: { label: 'Zahl', icon: Hash },
+	select: { label: 'Auswahl', icon: ChevronDown },
+	radio: { label: 'Optionen', icon: Circle },
+	checkbox: { label: 'Checkbox', icon: CheckSquare },
+	date: { label: 'Datum', icon: Calendar },
+	file: { label: 'Datei', icon: Upload },
+};
 import { Input } from '../../components/ui/input';
 import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
 import SummarySettings from './SystemFieldSettings/SummarySettings';
@@ -61,7 +85,6 @@ function SortableFieldItem( {
 	fieldConfig,
 	stepId,
 	fieldDef,
-	onToggleRequired,
 	onRemove,
 } ) {
 	const {
@@ -88,6 +111,8 @@ function SortableFieldItem( {
 
 	const label = fieldDef?.label || fieldConfig.field_key;
 	const fieldType = fieldDef?.field_type || 'text';
+	const typeConfig = FIELD_TYPE_CONFIG[ fieldType ] || FIELD_TYPE_CONFIG.text;
+	const TypeIcon = typeConfig.icon;
 
 	// Check if field is removable (default to true for backwards compatibility)
 	const isRemovable = fieldConfig.is_removable !== false;
@@ -106,6 +131,7 @@ function SortableFieldItem( {
 				border: isDragging ? '1px solid #3b82f6' : ( isRemovable ? '1px solid #e5e7eb' : '1px solid #fcd34d' ),
 			} }
 		>
+			{ /* Left side: Drag handle, Lock icon, Label, Required/Optional badge */ }
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 				<button
 					type="button"
@@ -134,24 +160,37 @@ function SortableFieldItem( {
 				) }
 
 				<span style={ { fontWeight: 500 } }>{ label }</span>
-				<Badge variant="outline" style={ { fontSize: '0.75rem' } }>
-					{ fieldType }
-				</Badge>
-				{ fieldConfig.is_required && (
-					<Badge style={ { backgroundColor: '#ef4444', fontSize: '0.75rem' } }>
+
+				{ /* Required/Optional badge */ }
+				{ fieldConfig.is_required ? (
+					<Badge style={ { backgroundColor: '#ef4444', color: 'white', fontSize: '0.75rem' } }>
 						{ __( 'Pflicht', 'recruiting-playbook' ) }
+					</Badge>
+				) : (
+					<Badge variant="outline" style={ { backgroundColor: '#f3f4f6', color: '#6b7280', fontSize: '0.75rem', borderColor: '#e5e7eb' } }>
+						{ __( 'Optional', 'recruiting-playbook' ) }
 					</Badge>
 				) }
 			</div>
-			<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
-				<Button
-					variant="ghost"
-					size="sm"
-					onClick={ () => onToggleRequired( stepId, fieldConfig.field_key, fieldConfig.is_required ) }
-					title={ fieldConfig.is_required ? __( 'Optional machen', 'recruiting-playbook' ) : __( 'Pflichtfeld machen', 'recruiting-playbook' ) }
+
+			{ /* Right side: Field type badge with icon, Delete button */ }
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+				{ /* Field type badge with icon */ }
+				<Badge
+					variant="outline"
+					style={ {
+						backgroundColor: '#f3f4f6',
+						color: '#6b7280',
+						fontSize: '0.75rem',
+						borderColor: '#e5e7eb',
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0.25rem',
+					} }
 				>
-					{ fieldConfig.is_required ? '*' : 'opt' }
-				</Button>
+					<TypeIcon style={ { height: '0.75rem', width: '0.75rem' } } />
+					{ typeConfig.label }
+				</Badge>
 
 				{ /* Delete button only for removable fields */ }
 				{ isRemovable ? (
@@ -275,7 +314,6 @@ function SortableStep( {
 	onSaveTitle,
 	onCancelEditingTitle,
 	onRemove,
-	onToggleRequired,
 	onRemoveField,
 	onAddField,
 	showAddFieldFor,
@@ -474,7 +512,6 @@ function SortableStep( {
 											fieldConfig={ fieldConfig }
 											stepId={ step.id }
 											fieldDef={ getFieldDefinition ? getFieldDefinition( fieldConfig.field_key ) : null }
-											onToggleRequired={ onToggleRequired }
 											onRemove={ onRemoveField }
 										/>
 									) )
@@ -670,14 +707,6 @@ export default function FormEditor( {
 		removeFieldFromStep( stepId, fieldKey );
 	};
 
-	// Handle toggle field required
-	const handleToggleRequired = ( stepId, fieldKey, currentValue ) => {
-		if ( ! updateFieldInStep ) {
-			return;
-		}
-		updateFieldInStep( stepId, fieldKey, { is_required: ! currentValue } );
-	};
-
 	// Handle open system field settings
 	const handleOpenSystemFieldSettings = ( stepId, systemField ) => {
 		setEditingSystemField( { stepId, systemField } );
@@ -791,7 +820,6 @@ export default function FormEditor( {
 								onSaveTitle={ saveStepTitle }
 								onCancelEditingTitle={ cancelEditingTitle }
 								onRemove={ removeStep }
-								onToggleRequired={ handleToggleRequired }
 								onRemoveField={ handleRemoveField }
 								onAddField={ handleAddField }
 								showAddFieldFor={ showAddFieldFor }
@@ -854,7 +882,6 @@ export default function FormEditor( {
 						onSaveTitle={ saveStepTitle }
 						onCancelEditingTitle={ cancelEditingTitle }
 						onRemove={ removeStep }
-						onToggleRequired={ handleToggleRequired }
 						onRemoveField={ handleRemoveField }
 						onAddField={ handleAddField }
 						showAddFieldFor={ showAddFieldFor }
