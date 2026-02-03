@@ -107,6 +107,46 @@ if ( ! function_exists( 'rp_fs' ) ) {
 
     // Signal that SDK was initiated.
     do_action( 'rp_fs_loaded' );
+
+    // Temporärer Debug-Output im Admin (nur wenn WP_FS__DEV_MODE aktiv).
+    if ( defined( 'WP_FS__DEV_MODE' ) && WP_FS__DEV_MODE ) {
+        add_action( 'admin_notices', function() {
+            if ( ! current_user_can( 'manage_options' ) ) {
+                return;
+            }
+
+            $fs = rp_fs();
+
+            $debug_info = array(
+                'is_registered'    => $fs->is_registered() ? 'true' : 'false',
+                'is_paying'        => $fs->is_paying() ? 'true' : 'false',
+                'is_trial'         => $fs->is_trial() ? 'true' : 'false',
+                'is_free_plan'     => $fs->is_free_plan() ? 'true' : 'false',
+                'is_plan(pro)'     => $fs->is_plan( 'pro' ) ? 'true' : 'false',
+                'is_plan(pro,true)'=> $fs->is_plan( 'pro', true ) ? 'true' : 'false',
+                'is_plan(bundle)'  => $fs->is_plan( 'bundle' ) ? 'true' : 'false',
+                'get_plan_name'    => $fs->get_plan_name(),
+                'rp_tier()'        => function_exists( 'rp_tier' ) ? rp_tier() : 'N/A',
+                'rp_can(kanban)'   => function_exists( 'rp_can' ) ? ( rp_can( 'kanban_board' ) ? 'true' : 'false' ) : 'N/A',
+            );
+
+            // Lizenz-Info falls vorhanden.
+            $license = $fs->_get_license();
+            if ( $license ) {
+                $debug_info['license_id']     = $license->id;
+                $debug_info['license_plan_id'] = $license->plan_id;
+                $debug_info['license_is_active'] = $license->is_active() ? 'true' : 'false';
+            } else {
+                $debug_info['license'] = 'keine Lizenz';
+            }
+
+            echo '<div class="notice notice-info"><p><strong>Freemius Debug (rp_fs):</strong></p><pre>';
+            foreach ( $debug_info as $key => $value ) {
+                echo esc_html( $key ) . ': ' . esc_html( $value ) . "\n";
+            }
+            echo '</pre></div>';
+        } );
+    }
 }
 
 /**
