@@ -10,7 +10,7 @@ import { createRoot } from '@wordpress/element';
 import { KanbanPage } from './kanban/KanbanPage';
 import { ApplicantDetail } from './applicant/ApplicantDetail';
 import { TalentPoolList } from './talent-pool/TalentPoolList';
-import { LicensePage } from './license/LicensePage';
+// LicensePage entfernt - Freemius bietet eigene Account-Seite
 import { DashboardPage } from './dashboard/DashboardPage';
 import { ApplicationsPage } from './applications/ApplicationsPage';
 import { SettingsPage } from './settings/SettingsPage';
@@ -53,18 +53,6 @@ function initTalentPool() {
 	if ( container ) {
 		const root = createRoot( container );
 		root.render( <TalentPoolList /> );
-	}
-}
-
-/**
- * Initialisiert die Lizenz-Seite
- */
-function initLicense() {
-	const container = document.getElementById( 'rp-license-root' );
-
-	if ( container ) {
-		const root = createRoot( container );
-		root.render( <LicensePage /> );
 	}
 }
 
@@ -125,7 +113,6 @@ function initAdmin() {
 	initKanban();
 	initApplicantDetail();
 	initTalentPool();
-	initLicense();
 	initSettings();
 	initReporting();
 }

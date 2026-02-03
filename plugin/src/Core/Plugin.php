@@ -32,7 +32,6 @@ use RecruitingPlaybook\Api\EmailController;
 use RecruitingPlaybook\Api\EmailLogController;
 use RecruitingPlaybook\Api\SignatureController;
 use RecruitingPlaybook\Api\SettingsController;
-use RecruitingPlaybook\Api\LicenseController;
 use RecruitingPlaybook\Api\RoleController;
 use RecruitingPlaybook\Api\JobAssignmentController;
 use RecruitingPlaybook\Api\StatsController;
@@ -47,7 +46,6 @@ use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
-use RecruitingPlaybook\Licensing\LicenseManager;
 use RecruitingPlaybook\Traits\Singleton;
 
 /**
@@ -66,9 +64,6 @@ final class Plugin {
 
 		// Lizenz-Helper-Funktionen laden.
 		$this->loadLicenseHelpers();
-
-		// Lizenz-Manager initialisieren.
-		LicenseManager::get_instance();
 
 		// Datenbank-Schema nur im Admin prüfen (Performance).
 		if ( is_admin() ) {
@@ -447,10 +442,6 @@ final class Plugin {
 		// Settings Controller (für Firmendaten etc.).
 		$settings_controller = new SettingsController();
 		$settings_controller->register_routes();
-
-		// License Controller.
-		$license_controller = new LicenseController();
-		$license_controller->register_routes();
 
 		// User Roles Controllers (Pro-Feature).
 		$role_controller = new RoleController();

@@ -1,6 +1,10 @@
 <?php
 /**
- * Globale Helper-Funktionen für Lizenz-System
+ * Globale Helper-Funktionen für Lizenz-System (Freemius)
+ *
+ * Diese Funktionen nutzen Freemius für die Lizenzierung statt
+ * des eigenen LicenseManager. Die FeatureFlags-Klasse dient
+ * weiterhin als Feature-Referenz.
  *
  * @package RecruitingPlaybook
  */
@@ -9,8 +13,41 @@ declare(strict_types=1);
 
 defined( 'ABSPATH' ) || exit;
 
-use RecruitingPlaybook\Licensing\LicenseManager;
 use RecruitingPlaybook\Licensing\FeatureFlags;
+
+/**
+ * Feature-Mapping: Welche Features gehören zu welchem Plan
+ *
+ * @return array<string, array<string>> Feature => Plan-Array
+ */
+function rp_get_feature_plan_mapping(): array {
+	return [
+		// Pro Features.
+		'kanban_board'                  => [ 'pro', 'bundle' ],
+		'advanced_applicant_management' => [ 'pro', 'bundle' ],
+		'email_templates'               => [ 'pro', 'bundle' ],
+		'custom_fields'                 => [ 'pro', 'bundle' ],
+		'api_access'                    => [ 'pro', 'bundle' ],
+		'webhooks'                      => [ 'pro', 'bundle' ],
+		'advanced_reporting'            => [ 'pro', 'bundle' ],
+		'csv_export'                    => [ 'pro', 'bundle' ],
+		'design_settings'               => [ 'pro', 'bundle' ],
+		'custom_branding'               => [ 'pro', 'bundle' ],
+		'user_roles'                    => [ 'pro', 'bundle' ],
+		'priority_support'              => [ 'pro', 'ai_addon', 'bundle' ],
+
+		// AI Features.
+		'ai_job_generation'             => [ 'ai_addon', 'bundle' ],
+		'ai_text_improvement'           => [ 'ai_addon', 'bundle' ],
+		'ai_templates'                  => [ 'ai_addon', 'bundle' ],
+		'ai_cv_matching'                => [ 'ai_addon', 'bundle' ],
+
+		// Free Features (immer verfügbar).
+		'create_jobs'                   => [ 'free', 'pro', 'ai_addon', 'bundle' ],
+		'unlimited_jobs'                => [ 'free', 'pro', 'ai_addon', 'bundle' ],
+		'application_list'              => [ 'free', 'pro', 'ai_addon', 'bundle' ],
+	];
+}
 
 /**
  * Prüft ob ein Feature verfügbar ist
@@ -23,14 +60,34 @@ use RecruitingPlaybook\Licensing\FeatureFlags;
  * $max = rp_can( 'max_jobs' ); // -1 (unlimited)
  */
 function rp_can( string $feature ): mixed {
-	static $flags = null;
+	$mapping = rp_get_feature_plan_mapping();
 
-	if ( null === $flags ) {
-		$license_manager = LicenseManager::get_instance();
-		$tier            = $license_manager->get_tier();
-		$flags           = new FeatureFlags( $tier );
+	// Feature in Mapping definiert → Plan-basierte Prüfung.
+	if ( isset( $mapping[ $feature ] ) ) {
+		$required_plans = $mapping[ $feature ];
+
+		// Free Features sind immer verfügbar.
+		if ( in_array( 'free', $required_plans, true ) ) {
+			return true;
+		}
+
+		// Freemius Plan Check.
+		if ( ! function_exists( 'rp_fs' ) ) {
+			return false;
+		}
+
+		foreach ( $required_plans as $plan ) {
+			if ( rp_fs()->is_plan( $plan, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
+	// Fallback: FeatureFlags-Klasse für detaillierte Werte (z.B. max_jobs, reporting level).
+	$tier  = rp_tier();
+	$flags = new FeatureFlags( $tier );
 	return $flags->get( $feature );
 }
 
@@ -40,8 +97,21 @@ function rp_can( string $feature ): mixed {
  * @return string Tier-Name (FREE, PRO, AI_ADDON, BUNDLE).
  */
 function rp_tier(): string {
-	$license_manager = LicenseManager::get_instance();
-	return $license_manager->get_tier();
+	if ( ! function_exists( 'rp_fs' ) ) {
+		return 'FREE';
+	}
+
+	if ( rp_fs()->is_plan( 'bundle', true ) ) {
+		return 'BUNDLE';
+	}
+	if ( rp_fs()->is_plan( 'pro', true ) ) {
+		return 'PRO';
+	}
+	if ( rp_fs()->is_plan( 'ai_addon', true ) ) {
+		return 'AI_ADDON';
+	}
+
+	return 'FREE';
 }
 
 /**
@@ -50,7 +120,10 @@ function rp_tier(): string {
  * @return bool True wenn PRO oder BUNDLE.
  */
 function rp_is_pro(): bool {
-	return in_array( rp_tier(), array( 'PRO', 'BUNDLE' ), true );
+	if ( ! function_exists( 'rp_fs' ) ) {
+		return false;
+	}
+	return rp_fs()->is_plan( 'pro', true ) || rp_fs()->is_plan( 'bundle', true );
 }
 
 /**
@@ -59,7 +132,10 @@ function rp_is_pro(): bool {
  * @return bool True wenn AI_ADDON oder BUNDLE.
  */
 function rp_has_ai(): bool {
-	return in_array( rp_tier(), array( 'AI_ADDON', 'BUNDLE' ), true );
+	if ( ! function_exists( 'rp_fs' ) ) {
+		return false;
+	}
+	return rp_fs()->is_plan( 'ai_addon', true ) || rp_fs()->is_plan( 'bundle', true );
 }
 
 /**
@@ -72,14 +148,16 @@ function rp_has_cv_matching(): bool {
 }
 
 /**
- * Gibt Upgrade-URL zurück
+ * Gibt Upgrade-URL zurück (Freemius Pricing Page)
  *
  * @param string|null $tier Optional: Spezifischer Tier für Deep-Link.
  * @return string Upgrade-URL.
  */
 function rp_upgrade_url( ?string $tier = null ): string {
-	$license_manager = LicenseManager::get_instance();
-	return $license_manager->get_upgrade_url( $tier );
+	if ( ! function_exists( 'rp_fs' ) ) {
+		return 'https://recruiting-playbook.com/pricing/';
+	}
+	return rp_fs()->get_upgrade_url();
 }
 
 /**
@@ -94,8 +172,12 @@ function rp_license_is_valid(): bool {
 		return true;
 	}
 
-	$license_manager = LicenseManager::get_instance();
-	return $license_manager->is_valid();
+	if ( ! function_exists( 'rp_fs' ) ) {
+		return false;
+	}
+
+	// Freemius prüft automatisch die Lizenzgültigkeit.
+	return rp_fs()->is_paying();
 }
 
 /**
@@ -104,8 +186,40 @@ function rp_license_is_valid(): bool {
  * @return array<string, mixed> Status-Array.
  */
 function rp_license_status(): array {
-	$license_manager = LicenseManager::get_instance();
-	return $license_manager->get_status();
+	$tier = rp_tier();
+
+	$tier_labels = [
+		'FREE'     => 'Free',
+		'PRO'      => 'Pro',
+		'AI_ADDON' => 'AI Addon',
+		'BUNDLE'   => 'Pro + AI Bundle',
+	];
+
+	if ( ! function_exists( 'rp_fs' ) || 'FREE' === $tier ) {
+		return [
+			'tier'        => 'FREE',
+			'is_active'   => false,
+			'is_valid'    => true,
+			'message'     => __( 'Kostenlose Version', 'recruiting-playbook' ),
+			'upgrade_url' => rp_upgrade_url(),
+		];
+	}
+
+	$is_paying = rp_fs()->is_paying();
+
+	return [
+		'tier'        => $tier,
+		'is_active'   => $is_paying,
+		'is_valid'    => $is_paying,
+		'message'     => $is_paying
+			? sprintf(
+				/* translators: %s: tier name */
+				__( '%s Lizenz aktiv', 'recruiting-playbook' ),
+				$tier_labels[ $tier ] ?? $tier
+			)
+			: __( 'Lizenz ungültig oder abgelaufen.', 'recruiting-playbook' ),
+		'upgrade_url' => rp_upgrade_url(),
+	];
 }
 
 /**
@@ -224,11 +338,11 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 	}
 
 	// Upgrade-Hinweis anzeigen.
-	$tier_labels = array(
+	$tier_labels = [
 		'PRO'      => 'Pro',
 		'AI_ADDON' => 'AI Addon',
 		'BUNDLE'   => 'Pro + AI Bundle',
-	);
+	];
 
 	printf(
 		'<div class="rp-upgrade-prompt">

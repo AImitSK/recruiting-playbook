@@ -239,13 +239,13 @@ class SystemStatusService {
 	}
 
 	/**
-	 * Lizenz-Status prüfen
+	 * Lizenz-Status prüfen (nutzt Freemius)
 	 *
 	 * @return array
 	 */
 	private function checkLicense(): array {
-		// Prüfen ob LicenseManager existiert.
-		if ( ! class_exists( '\RecruitingPlaybook\Licensing\LicenseManager' ) ) {
+		// Prüfen ob Freemius-Helper verfügbar ist.
+		if ( ! function_exists( 'rp_tier' ) ) {
 			return [
 				'status'  => 'ok',
 				'message' => __( 'Free-Version aktiv', 'recruiting-playbook' ),
@@ -255,8 +255,7 @@ class SystemStatusService {
 			];
 		}
 
-		$license_manager = \RecruitingPlaybook\Licensing\LicenseManager::get_instance();
-		$tier = $license_manager->get_tier();
+		$tier = rp_tier();
 
 		if ( $tier === 'FREE' ) {
 			return [
@@ -268,19 +267,22 @@ class SystemStatusService {
 			];
 		}
 
-		$license_data = get_option( 'rp_license_data', [] );
+		// Freemius bietet automatisch Lizenz-Infos.
+		$is_paying = function_exists( 'rp_fs' ) ? rp_fs()->is_paying() : false;
 
 		return [
-			'status'  => 'ok',
-			'message' => sprintf(
-				/* translators: %s: License tier */
-				__( '%s-Lizenz aktiv', 'recruiting-playbook' ),
-				$tier
-			),
+			'status'  => $is_paying ? 'ok' : 'warning',
+			'message' => $is_paying
+				? sprintf(
+					/* translators: %s: License tier */
+					__( '%s-Lizenz aktiv', 'recruiting-playbook' ),
+					$tier
+				)
+				: __( 'Lizenz ungültig oder abgelaufen', 'recruiting-playbook' ),
 			'details' => [
-				'type'    => strtolower( $tier ),
-				'expires' => $license_data['expires'] ?? null,
-				'domain'  => $license_data['domain'] ?? wp_parse_url( home_url(), PHP_URL_HOST ),
+				'type'   => strtolower( $tier ),
+				'valid'  => $is_paying,
+				'domain' => wp_parse_url( home_url(), PHP_URL_HOST ),
 			],
 		];
 	}

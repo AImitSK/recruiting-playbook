@@ -24,16 +24,13 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_169f4df2b23e899b6b4f9c3df4548',
                 'is_premium'          => true,
-                // If your plugin is a serviceware, set this option to false.
                 'has_premium_version' => true,
-                'has_addons'          => false,
+                'has_addons'          => true,  // AI-Addon ist separates Add-on.
                 'has_paid_plans'      => true,
-                // Automatically removed in the free version. If you're not using the
-                // auto-generated free version, delete this line before uploading to wp.org.
-                'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
                 'menu'                => array(
-                    'slug'           => 'recruiting-playbook',
-                    'support'        => false,
+                    'slug'    => 'recruiting-playbook',
+                    'support' => false,
+                    'account' => true,  // Freemius Account-Seite im Menü aktivieren.
                 ),
             ) );
         }
