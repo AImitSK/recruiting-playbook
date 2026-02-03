@@ -50,7 +50,7 @@ if ( ! function_exists( 'rp_fs' ) ) {
 
     // Sprache auf Deutsch setzen für Checkout.
     rp_fs()->add_filter( 'checkout/parameters', function( $params ) {
-        $params['language'] = 'de';
+        $params['locale'] = 'de_DE';
         return $params;
     });
 
