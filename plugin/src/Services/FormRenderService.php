@@ -605,6 +605,11 @@ class FormRenderService {
 					continue;
 				}
 
+				// Skip display-only fields (no data collected).
+				if ( in_array( $field_type, [ 'html', 'heading' ], true ) ) {
+					continue;
+				}
+
 				// Skip empty textarea fields.
 				if ( 'textarea' === $field_type ) {
 					$output .= $this->renderSummaryItem( $label, $field_key, true );

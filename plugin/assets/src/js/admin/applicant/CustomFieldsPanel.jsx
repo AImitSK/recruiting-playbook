@@ -46,6 +46,11 @@ function FieldValue( { field } ) {
 	const { type, label, value, display_value } = field;
 	const Icon = FIELD_TYPE_ICONS[ type ];
 
+	// Skip display-only fields (html, heading renders as section header)
+	if ( type === 'html' ) {
+		return null;
+	}
+
 	// Heading wird als Überschrift gerendert
 	if ( type === 'heading' ) {
 		return (
