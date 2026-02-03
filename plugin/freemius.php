@@ -25,7 +25,7 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'public_key'          => 'pk_169f4df2b23e899b6b4f9c3df4548',
                 'is_premium'          => true,
                 'has_premium_version' => true,
-                'has_addons'          => true,  // AI-Addon ist separates Add-on.
+                'has_addons'          => false, // AI ist als Plan integriert, nicht als separates Add-on.
                 'has_paid_plans'      => true,
                 'menu'                => array(
                     'slug'    => 'recruiting-playbook',
