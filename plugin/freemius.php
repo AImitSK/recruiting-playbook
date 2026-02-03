@@ -9,70 +9,40 @@
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Freemius Konfiguration
- *
- * Diese Werte müssen im Freemius Dashboard erstellt und hier eingetragen werden.
- * Anleitung: https://freemius.com/help/documentation/wordpress-sdk/integrating-freemius-sdk/
- */
-define( 'RP_FREEMIUS_PLUGIN_ID', '' );    // Plugin ID aus Freemius Dashboard.
-define( 'RP_FREEMIUS_PUBLIC_KEY', '' );   // Public Key aus Freemius Dashboard.
+if ( ! function_exists( 'rp_fs' ) ) {
+    // Create a helper function for easy SDK access.
+    function rp_fs() {
+        global $rp_fs;
 
-/**
- * Prüft ob Freemius konfiguriert ist
- *
- * @return bool
- */
-function rp_fs_is_configured(): bool {
-	return ! empty( RP_FREEMIUS_PLUGIN_ID ) && ! empty( RP_FREEMIUS_PUBLIC_KEY );
-}
+        if ( ! isset( $rp_fs ) ) {
+            // Include Freemius SDK.
+            require_once dirname( __FILE__ ) . '/vendor/freemius/wordpress-sdk/start.php';
 
-/**
- * Freemius SDK initialisieren
- *
- * @return \Freemius|null
- */
-function rp_fs() {
-	global $rp_fs;
+            $rp_fs = fs_dynamic_init( array(
+                'id'                  => '23533',
+                'slug'                => 'recruiting-playbook',
+                'type'                => 'plugin',
+                'public_key'          => 'pk_169f4df2b23e899b6b4f9c3df4548',
+                'is_premium'          => true,
+                // If your plugin is a serviceware, set this option to false.
+                'has_premium_version' => true,
+                'has_addons'          => false,
+                'has_paid_plans'      => true,
+                // Automatically removed in the free version. If you're not using the
+                // auto-generated free version, delete this line before uploading to wp.org.
+                'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+                'menu'                => array(
+                    'slug'           => 'recruiting-playbook',
+                    'support'        => false,
+                ),
+            ) );
+        }
 
-	// Nicht initialisieren wenn nicht konfiguriert.
-	if ( ! rp_fs_is_configured() ) {
-		return null;
-	}
+        return $rp_fs;
+    }
 
-	if ( ! isset( $rp_fs ) ) {
-		// Freemius SDK laden.
-		$sdk_path = RP_PLUGIN_DIR . 'vendor/freemius/wordpress-sdk/start.php';
-		if ( ! file_exists( $sdk_path ) ) {
-			return null;
-		}
-		require_once $sdk_path;
-
-		$rp_fs = fs_dynamic_init(
-			array(
-				'id'                  => RP_FREEMIUS_PLUGIN_ID,
-				'slug'                => 'recruiting-playbook',
-				'type'                => 'plugin',
-				'public_key'          => RP_FREEMIUS_PUBLIC_KEY,
-				'is_premium'          => false,
-				'premium_suffix'      => 'Pro',
-				'has_addons'          => true,
-				'has_paid_plans'      => true,
-				'has_affiliation'     => 'selected',
-				'menu'                => array(
-					'slug'    => 'recruiting-playbook',
-					'support' => false,
-				),
-				'is_live'             => true,
-			)
-		);
-	}
-
-	return $rp_fs;
-}
-
-// Freemius initialisieren (nur wenn konfiguriert).
-if ( rp_fs_is_configured() ) {
-	rp_fs();
-	do_action( 'rp_fs_loaded' );
+    // Init Freemius.
+    rp_fs();
+    // Signal that SDK was initiated.
+    do_action( 'rp_fs_loaded' );
 }

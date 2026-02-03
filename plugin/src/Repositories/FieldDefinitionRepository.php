@@ -237,6 +237,32 @@ class FieldDefinitionRepository {
 	}
 
 	/**
+	 * Erlaubte Spalten für die Datenbank
+	 *
+	 * @var array<string>
+	 */
+	private const ALLOWED_COLUMNS = [
+		'template_id',
+		'job_id',
+		'field_key',
+		'field_type',
+		'label',
+		'placeholder',
+		'description',
+		'options',
+		'validation',
+		'conditional',
+		'settings',
+		'position',
+		'is_required',
+		'is_system',
+		'is_active',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
+	/**
 	 * Feld-Definition erstellen
 	 *
 	 * @param array $data Feld-Daten.
@@ -264,6 +290,16 @@ class FieldDefinitionRepository {
 				$data[ $json_field ] = wp_json_encode( $data[ $json_field ] );
 			}
 		}
+
+		// Boolean-Werte in Integer umwandeln.
+		foreach ( [ 'is_required', 'is_system', 'is_active' ] as $bool_field ) {
+			if ( isset( $data[ $bool_field ] ) ) {
+				$data[ $bool_field ] = $data[ $bool_field ] ? 1 : 0;
+			}
+		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->insert(
@@ -298,6 +334,22 @@ class FieldDefinitionRepository {
 			}
 		}
 
+		// Boolean-Werte in Integer umwandeln.
+		foreach ( [ 'is_required', 'is_system', 'is_active' ] as $bool_field ) {
+			if ( isset( $data[ $bool_field ] ) ) {
+				$data[ $bool_field ] = $data[ $bool_field ] ? 1 : 0;
+			}
+		}
+
+		// Nur erlaubte Spalten durchlassen.
+		$data = $this->filterAllowedColumns( $data );
+
+		// Wenn keine Daten zum Aktualisieren übrig sind, abbrechen.
+		if ( empty( $data ) || ( count( $data ) === 1 && isset( $data['updated_at'] ) ) ) {
+			// Nur updated_at - nichts zu aktualisieren, aber kein Fehler.
+			return $this->find( $id );
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
 			$this->table,
@@ -308,6 +360,13 @@ class FieldDefinitionRepository {
 		);
 
 		if ( $result === false ) {
+			// Log detailed error for debugging.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'FieldDefinitionRepository::update failed - wpdb error: ' . $wpdb->last_error );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_print_r
+				error_log( 'FieldDefinitionRepository::update data: ' . print_r( $data, true ) );
+			}
 			return false;
 		}
 
@@ -478,18 +537,30 @@ class FieldDefinitionRepository {
 	private function getFormats( array $data ): array {
 		$formats = [];
 
-		foreach ( $data as $value ) {
-			if ( is_int( $value ) ) {
+		foreach ( $data as $key => $value ) {
+			// Boolean-Werte als Integer behandeln.
+			if ( is_bool( $value ) ) {
+				$formats[] = '%d';
+			} elseif ( is_int( $value ) ) {
 				$formats[] = '%d';
 			} elseif ( is_float( $value ) ) {
 				$formats[] = '%f';
-			} elseif ( is_null( $value ) ) {
-				$formats[] = null;
 			} else {
+				// Strings und null als String behandeln.
 				$formats[] = '%s';
 			}
 		}
 
 		return $formats;
+	}
+
+	/**
+	 * Nur erlaubte Spalten durchlassen
+	 *
+	 * @param array $data Daten.
+	 * @return array Gefilterte Daten.
+	 */
+	private function filterAllowedColumns( array $data ): array {
+		return array_intersect_key( $data, array_flip( self::ALLOWED_COLUMNS ) );
 	}
 }

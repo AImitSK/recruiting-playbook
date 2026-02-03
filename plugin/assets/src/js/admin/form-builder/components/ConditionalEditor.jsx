@@ -12,13 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Switch } from '../../components/ui/switch';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../components/ui/select';
+import { Select, SelectOption } from '../../components/ui/select';
 import { Trash2, Plus } from 'lucide-react';
 
 /**
@@ -50,60 +44,58 @@ function ConditionRow( { condition, allFields, onChange, onRemove, i18n } ) {
 	const needsValue = selectedOperator?.needsValue ?? true;
 
 	return (
-		<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
-			{ /* Field selector */ }
-			<Select
-				value={ condition.field || '' }
-				onValueChange={ ( value ) => onChange( { ...condition, field: value } ) }
-			>
-				<SelectTrigger className="w-[150px]">
-					<SelectValue placeholder={ i18n?.selectField || __( 'Feld wählen', 'recruiting-playbook' ) } />
-				</SelectTrigger>
-				<SelectContent>
+		<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
+			{ /* Row 1: Field + Operator + Delete */ }
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+				{ /* Field selector */ }
+				<Select
+					value={ condition.field || '' }
+					onChange={ ( e ) => onChange( { ...condition, field: e.target.value } ) }
+					style={ { flex: 1 } }
+				>
+					<SelectOption value="">
+						{ i18n?.selectField || __( 'Feld wählen', 'recruiting-playbook' ) }
+					</SelectOption>
 					{ allFields.map( ( field ) => (
-						<SelectItem key={ field.id } value={ field.field_key }>
+						<SelectOption key={ field.id } value={ field.field_key }>
 							{ field.label }
-						</SelectItem>
+						</SelectOption>
 					) ) }
-				</SelectContent>
-			</Select>
+				</Select>
 
-			{ /* Operator selector */ }
-			<Select
-				value={ condition.operator || 'equals' }
-				onValueChange={ ( value ) => onChange( { ...condition, operator: value } ) }
-			>
-				<SelectTrigger className="w-[150px]">
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
+				{ /* Operator selector */ }
+				<Select
+					value={ condition.operator || 'equals' }
+					onChange={ ( e ) => onChange( { ...condition, operator: e.target.value } ) }
+					style={ { flex: 1 } }
+				>
 					{ OPERATORS.map( ( op ) => (
-						<SelectItem key={ op.value } value={ op.value }>
+						<SelectOption key={ op.value } value={ op.value }>
 							{ i18n?.[ `op${ op.value.charAt( 0 ).toUpperCase() + op.value.slice( 1 ).replace( /_/g, '' ) }` ] || op.label }
-						</SelectItem>
+						</SelectOption>
 					) ) }
-				</SelectContent>
-			</Select>
+				</Select>
 
-			{ /* Value input */ }
+				{ /* Remove button */ }
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={ onRemove }
+					style={ { color: '#ef4444', flexShrink: 0 } }
+				>
+					<Trash2 style={ { height: '1rem', width: '1rem' } } />
+				</Button>
+			</div>
+
+			{ /* Row 2: Value input (full width) */ }
 			{ needsValue && (
 				<Input
 					value={ condition.value || '' }
 					onChange={ ( e ) => onChange( { ...condition, value: e.target.value } ) }
-					placeholder={ i18n?.value || __( 'Wert', 'recruiting-playbook' ) }
-					className="flex-1"
+					placeholder={ i18n?.value || __( 'Wert eingeben...', 'recruiting-playbook' ) }
+					style={ { width: '100%' } }
 				/>
 			) }
-
-			{ /* Remove button */ }
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={ onRemove }
-				className="text-red-500 hover:text-red-700 hover:bg-red-50"
-			>
-				<Trash2 style={ { height: '1rem', width: '1rem' } } />
-			</Button>
 		</div>
 	);
 }
@@ -136,8 +128,8 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 
 	// Update logic operator (and/or)
 	const handleLogicChange = useCallback(
-		( newLogic ) => {
-			onChange( { ...conditional, logic: newLogic } );
+		( e ) => {
+			onChange( { ...conditional, logic: e.target.value } );
 		},
 		[ conditional, onChange ]
 	);
@@ -204,19 +196,15 @@ export default function ConditionalEditor( { conditional = {}, onChange, allFiel
 							<Label>{ i18n?.showWhen || __( 'Anzeigen wenn', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ logic }
-								onValueChange={ handleLogicChange }
+								onChange={ handleLogicChange }
+								style={ { width: '120px' } }
 							>
-								<SelectTrigger className="w-[120px]">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="and">
-										{ i18n?.conditionAllMatch || __( 'ALLE', 'recruiting-playbook' ) }
-									</SelectItem>
-									<SelectItem value="or">
-										{ i18n?.conditionAnyMatch || __( 'EINE', 'recruiting-playbook' ) }
-									</SelectItem>
-								</SelectContent>
+								<SelectOption value="and">
+									{ i18n?.conditionAllMatch || __( 'ALLE', 'recruiting-playbook' ) }
+								</SelectOption>
+								<SelectOption value="or">
+									{ i18n?.conditionAnyMatch || __( 'EINE', 'recruiting-playbook' ) }
+								</SelectOption>
 							</Select>
 							<span style={ { fontSize: '0.875rem', color: '#4b5563' } }>
 								{ logic === 'and'

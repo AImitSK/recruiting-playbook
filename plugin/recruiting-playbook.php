@@ -23,26 +23,30 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Plugin-Konstanten
-define('RP_VERSION', '1.1.0');
-define('RP_PLUGIN_FILE', __FILE__);
-define('RP_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('RP_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('RP_PLUGIN_BASENAME', plugin_basename(__FILE__));
+// Freemius SDK: Premium/Free Version Handling
+if ( function_exists( '\rp_fs' ) ) {
+    \rp_fs()->set_basename( true, __FILE__ );
+} else {
+    // Plugin-Konstanten
+    define('RP_VERSION', '1.1.0');
+    define('RP_PLUGIN_FILE', __FILE__);
+    define('RP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+    define('RP_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('RP_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
-// Minimum Requirements
-define('RP_MIN_PHP_VERSION', '8.0');
-define('RP_MIN_WP_VERSION', '6.0');
+    // Minimum Requirements
+    define('RP_MIN_PHP_VERSION', '8.0');
+    define('RP_MIN_WP_VERSION', '6.0');
 
-// Autoloader
-if (file_exists(RP_PLUGIN_DIR . 'vendor/autoload.php')) {
-    require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
-}
+    // Autoloader
+    if (file_exists(RP_PLUGIN_DIR . 'vendor/autoload.php')) {
+        require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
+    }
 
-// Freemius SDK initialisieren (für Lizenzierung & Updates).
-if (file_exists(RP_PLUGIN_DIR . 'freemius.php')) {
-    require_once RP_PLUGIN_DIR . 'freemius.php';
-}
+    // Freemius SDK initialisieren (für Lizenzierung & Updates).
+    if (file_exists(RP_PLUGIN_DIR . 'freemius.php')) {
+        require_once RP_PLUGIN_DIR . 'freemius.php';
+    }
 
 /**
  * Requirements prüfen
@@ -116,3 +120,5 @@ add_action('init', function() {
 
     Core\Plugin::get_instance();
 }, 5);
+
+} // End else block for Freemius SDK

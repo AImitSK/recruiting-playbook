@@ -81,16 +81,17 @@ class ApplicationService {
 		$has_consent = ! empty( $data['privacy_consent'] );
 
 		$application_data = [
-			'job_id'              => (int) $data['job_id'],
-			'candidate_id'        => $candidate_id,
-			'status'              => ApplicationStatus::NEW,
-			'cover_letter'        => $data['cover_letter'] ?? '',
-			'source'              => 'website',
-			'consent_privacy'     => $has_consent ? 1 : 0,
-			'consent_privacy_at'  => $has_consent ? current_time( 'mysql' ) : null,
-			'consent_ip'          => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
-			'created_at'          => current_time( 'mysql' ),
-			'updated_at'          => current_time( 'mysql' ),
+			'job_id'                   => (int) $data['job_id'],
+			'candidate_id'             => $candidate_id,
+			'status'                   => ApplicationStatus::NEW,
+			'cover_letter'             => $data['cover_letter'] ?? '',
+			'source'                   => 'website',
+			'consent_privacy'          => $has_consent ? 1 : 0,
+			'consent_privacy_at'       => $has_consent ? current_time( 'mysql' ) : null,
+			'consent_privacy_version'  => $has_consent ? get_option( 'rp_privacy_policy_version', '1.0' ) : '',
+			'consent_ip'               => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
+			'created_at'               => current_time( 'mysql' ),
+			'updated_at'               => current_time( 'mysql' ),
 		];
 
 		$table = $wpdb->prefix . 'rp_applications';
@@ -324,7 +325,8 @@ class ApplicationService {
 	/**
 	 * Bewerbungen für Kanban-Board auflisten
 	 *
-	 * Optimiert für Kanban-Board: Flache Struktur mit Dokumentenanzahl.
+	 * Optimiert für Kanban-Board: Flache Struktur mit allen für die Anzeige
+	 * benötigten Daten (documents_count, notes_count, average_rating, in_talent_pool).
 	 *
 	 * @param array $args Filter-Argumente.
 	 * @return array Mit 'items' Array für Frontend.
@@ -332,9 +334,12 @@ class ApplicationService {
 	public function listForKanban( array $args = [] ): array {
 		global $wpdb;
 
-		$table            = $wpdb->prefix . 'rp_applications';
-		$candidates_table = $wpdb->prefix . 'rp_candidates';
-		$documents_table  = $wpdb->prefix . 'rp_documents';
+		$table             = $wpdb->prefix . 'rp_applications';
+		$candidates_table  = $wpdb->prefix . 'rp_candidates';
+		$documents_table   = $wpdb->prefix . 'rp_documents';
+		$activity_table    = $wpdb->prefix . 'rp_activity_log';
+		$ratings_table     = $wpdb->prefix . 'rp_ratings';
+		$talent_pool_table = $wpdb->prefix . 'rp_talent_pool';
 
 		$where  = [ '1=1', 'a.deleted_at IS NULL' ];
 		$values = [];
@@ -385,7 +390,8 @@ class ApplicationService {
 		$page     = max( (int) ( $args['page'] ?? 1 ), 1 );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		// Query mit Dokumentenanzahl via LEFT JOIN (effizienter als Subquery).
+		// Query mit documents_count, notes_count, average_rating, in_talent_pool
+		// Verwendet LEFT JOINs und Subqueries für optimale Performance.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
 		$results = $wpdb->get_results(
@@ -393,18 +399,34 @@ class ApplicationService {
 				"SELECT
 					a.id,
 					a.job_id,
+					a.candidate_id,
 					a.status,
 					a.kanban_position,
 					a.created_at,
 					c.first_name,
 					c.last_name,
 					c.email,
-					COUNT(d.id) AS documents_count
+					COUNT(DISTINCT d.id) AS documents_count,
+					(
+						SELECT COUNT(*)
+						FROM {$activity_table} al
+						WHERE al.object_id = a.id
+						AND al.object_type = 'application'
+						AND al.action = 'note_added'
+					) AS notes_count,
+					(
+						SELECT ROUND(AVG(r.rating), 1)
+						FROM {$ratings_table} r
+						WHERE r.application_id = a.id
+					) AS average_rating,
+					CASE WHEN tp.id IS NOT NULL THEN 1 ELSE 0 END AS in_talent_pool
 				FROM {$table} a
 				LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
 				LEFT JOIN {$documents_table} d ON d.application_id = a.id
+				LEFT JOIN {$talent_pool_table} tp ON tp.candidate_id = a.candidate_id
 				WHERE {$where_clause}
-				GROUP BY a.id, a.job_id, a.status, a.kanban_position, a.created_at, c.first_name, c.last_name, c.email
+				GROUP BY a.id, a.job_id, a.candidate_id, a.status, a.kanban_position, a.created_at,
+				         c.first_name, c.last_name, c.email, tp.id
 				ORDER BY {$orderby} {$order}
 				LIMIT %d OFFSET %d",
 				...array_merge( $values, [ $per_page, $offset ] )
@@ -436,8 +458,12 @@ class ApplicationService {
 			$row['job_title']       = $jobs[ (int) $row['job_id'] ] ?? '';
 			$row['id']              = (int) $row['id'];
 			$row['job_id']          = (int) $row['job_id'];
+			$row['candidate_id']    = (int) $row['candidate_id'];
 			$row['kanban_position'] = (int) $row['kanban_position'];
 			$row['documents_count'] = (int) $row['documents_count'];
+			$row['notes_count']     = (int) $row['notes_count'];
+			$row['average_rating']  = null !== $row['average_rating'] ? (float) $row['average_rating'] : null;
+			$row['in_talent_pool']  = (bool) $row['in_talent_pool'];
 		}
 
 		return [
@@ -554,6 +580,7 @@ class ApplicationService {
 
 		$table = $wpdb->prefix . 'rp_candidates';
 		$email = strtolower( trim( $data['email'] ) );
+		$email_hash = hash( 'sha256', $email );
 
 		// Prüfen ob Kandidat bereits existiert
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -565,11 +592,12 @@ class ApplicationService {
 		);
 
 		if ( $existing ) {
-			// Kandidaten-Daten aktualisieren
+			// Kandidaten-Daten aktualisieren (inkl. email_hash für Konsistenz)
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update(
 				$table,
 				[
+					'email_hash'  => $email_hash,
 					'salutation'  => $data['salutation'] ?? '',
 					'first_name'  => $data['first_name'],
 					'last_name'   => $data['last_name'],
@@ -577,7 +605,7 @@ class ApplicationService {
 					'updated_at'  => current_time( 'mysql' ),
 				],
 				[ 'id' => $existing ],
-				[ '%s', '%s', '%s', '%s', '%s' ],
+				[ '%s', '%s', '%s', '%s', '%s', '%s' ],
 				[ '%d' ]
 			);
 
@@ -587,6 +615,7 @@ class ApplicationService {
 		// Neuen Kandidaten erstellen
 		$candidate_data = [
 			'email'      => $email,
+			'email_hash' => $email_hash,
 			'salutation' => $data['salutation'] ?? '',
 			'first_name' => $data['first_name'],
 			'last_name'  => $data['last_name'],

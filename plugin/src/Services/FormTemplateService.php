@@ -103,6 +103,9 @@ class FormTemplateService {
 	 * @return FormTemplate|WP_Error
 	 */
 	public function create( array $data ): FormTemplate|WP_Error {
+		// Remove ID if sent (auto-generated).
+		unset( $data['id'] );
+
 		// Validierung.
 		$validation = $this->validateTemplateData( $data );
 		if ( is_wp_error( $validation ) ) {
@@ -145,6 +148,9 @@ class FormTemplateService {
 	 * @return FormTemplate|WP_Error
 	 */
 	public function update( int $id, array $data ): FormTemplate|WP_Error {
+		// Remove ID from update data (cannot be changed).
+		unset( $data['id'] );
+
 		$existing = $this->repository->find( $id );
 
 		if ( ! $existing ) {

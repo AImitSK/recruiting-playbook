@@ -60,7 +60,8 @@ class PlaceholderService {
 		}
 
 		// Unbekannte Platzhalter entfernen.
-		$text = preg_replace( '/\{[a-z_]+\}/', '', $text );
+		// SECURITY: Längenbegrenzung (max 50 Zeichen) um ReDoS zu verhindern.
+		$text = preg_replace( '/\{[a-z_]{1,50}\}/', '', $text );
 
 		return $text;
 	}
@@ -224,6 +225,29 @@ class PlaceholderService {
 	 */
 	public function isValidPlaceholder( string $placeholder ): bool {
 		return isset( $this->definitions[ $placeholder ] );
+	}
+
+	/**
+	 * Template validieren und ungültige Platzhalter zurückgeben
+	 *
+	 * @param string $template Template-Text.
+	 * @return array{valid: bool, invalid: array, found: array}
+	 */
+	public function validateTemplate( string $template ): array {
+		$found   = $this->findPlaceholders( $template );
+		$invalid = [];
+
+		foreach ( $found as $placeholder ) {
+			if ( ! $this->isValidPlaceholder( $placeholder ) ) {
+				$invalid[] = $placeholder;
+			}
+		}
+
+		return [
+			'valid'   => empty( $invalid ),
+			'invalid' => $invalid,
+			'found'   => $found,
+		];
 	}
 
 	/**

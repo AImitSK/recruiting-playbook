@@ -316,6 +316,13 @@ class FieldDefinitionController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Felder die über system_fields im Finale-Step gehandhabt werden
+	 *
+	 * @var array<string>
+	 */
+	private const SYSTEM_FIELD_KEYS_TO_HIDE = [ 'privacy_consent' ];
+
+	/**
 	 * Alle Felddefinitionen abrufen
 	 *
 	 * @param WP_REST_Request $request Request.
@@ -342,6 +349,12 @@ class FieldDefinitionController extends WP_REST_Controller {
 			$fields         = array_filter( $fields, fn( $f ) => $f->isSystem() === $is_system_bool );
 		}
 
+		// Felder ausblenden, die jetzt über system_fields gehandhabt werden.
+		$fields = array_filter(
+			$fields,
+			fn( $f ) => ! in_array( $f->getFieldKey(), self::SYSTEM_FIELD_KEYS_TO_HIDE, true )
+		);
+
 		$data = array_map( [ $this, 'prepare_item_for_response_array' ], array_values( $fields ) );
 
 		return new WP_REST_Response( [ 'fields' => $data ], 200 );
@@ -355,7 +368,14 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function get_system_fields( $request ): WP_REST_Response {
 		$fields = $this->repository->findSystemFields();
-		$data   = array_map( [ $this, 'prepare_item_for_response_array' ], $fields );
+
+		// Felder ausblenden, die jetzt über system_fields gehandhabt werden.
+		$fields = array_filter(
+			$fields,
+			fn( $f ) => ! in_array( $f->getFieldKey(), self::SYSTEM_FIELD_KEYS_TO_HIDE, true )
+		);
+
+		$data = array_map( [ $this, 'prepare_item_for_response_array' ], array_values( $fields ) );
 
 		return new WP_REST_Response( [ 'fields' => $data ], 200 );
 	}
@@ -388,7 +408,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ): WP_REST_Response|WP_Error {
-		$result = $this->service->createField( $request->get_params() );
+		$result = $this->service->create( $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -405,7 +425,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function update_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->updateField( $id, $request->get_params() );
+		$result = $this->service->update( $id, $request->get_params() );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -422,7 +442,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ): WP_REST_Response|WP_Error {
 		$id     = (int) $request->get_param( 'id' );
-		$result = $this->service->deleteField( $id );
+		$result = $this->service->delete( $id );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -515,7 +535,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		return [
 			'id'          => $field->getId(),
 			'field_key'   => $field->getFieldKey(),
-			'type'        => $field->getType(),
+			'type'        => $field->getFieldType(),
 			'label'       => $field->getLabel(),
 			'placeholder' => $field->getPlaceholder(),
 			'description' => $field->getDescription(),

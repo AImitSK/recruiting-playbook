@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '1.8.1';
+	private const SCHEMA_VERSION = '2.0.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -46,6 +46,7 @@ class Migrator {
 			dbDelta( Schema::getStatsCacheTableSql() );
 			dbDelta( Schema::getFieldDefinitionsTableSql() );
 			dbDelta( Schema::getFormTemplatesTableSql() );
+			dbDelta( Schema::getFormConfigTableSql() );
 
 			// Spezielle Migrationen für bestehende Installationen.
 			$this->runMigrations( $current_version );
@@ -62,6 +63,7 @@ class Migrator {
 		$this->seedDefaultEmailTemplates();
 		$this->seedDefaultCompanySignature();
 		$this->seedSystemFields();
+		$this->seedDefaultFormConfig();
 	}
 
 	/**
@@ -99,6 +101,16 @@ class Migrator {
 		// Migration 1.8.0: Custom Fields Builder Tabellen + System-Felder.
 		if ( version_compare( $from_version, '1.8.0', '<' ) ) {
 			$this->seedSystemFields();
+		}
+
+		// Migration 1.9.0: Step-basierter Form Builder mit Draft/Publish.
+		if ( version_compare( $from_version, '1.9.0', '<' ) ) {
+			$this->seedDefaultFormConfig();
+		}
+
+		// Migration 2.0.0: email_hash für bestehende Kandidaten berechnen.
+		if ( version_compare( $from_version, '2.0.0', '<' ) ) {
+			$this->migrateEmailHash();
 		}
 	}
 
@@ -185,6 +197,27 @@ class Migrator {
 			$wpdb->query( "ALTER TABLE {$table} ADD INDEX deleted_at (deleted_at)" );
 
 			$this->log( 'Added deleted_at column to applications table' );
+		}
+	}
+
+	/**
+	 * Migration: email_hash für bestehende Kandidaten berechnen
+	 *
+	 * Setzt email_hash = SHA256(LOWER(TRIM(email))) für alle Kandidaten ohne email_hash.
+	 */
+	private function migrateEmailHash(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['candidates'];
+
+		// Alle Kandidaten ohne email_hash aktualisieren.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$updated = $wpdb->query(
+			"UPDATE {$table} SET email_hash = SHA2(LOWER(TRIM(email)), 256) WHERE email_hash IS NULL OR email_hash = ''"
+		);
+
+		if ( $updated > 0 ) {
+			$this->log( 'Migrated email_hash for ' . $updated . ' candidates' );
 		}
 	}
 
@@ -292,12 +325,9 @@ class Migrator {
 		$now   = current_time( 'mysql' );
 
 		// Prüfen ob bereits eine Firmen-Signatur existiert (user_id = NULL).
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL",
-				[]
-			)
+			"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL"
 		);
 
 		if ( $exists > 0 ) {
@@ -402,7 +432,7 @@ class Migrator {
 			[
 				'field_key'   => 'resume',
 				'field_type'  => 'file',
-				'label'       => __( 'Lebenslauf', 'recruiting-playbook' ),
+				'label'       => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
 				'description' => __( 'Erlaubte Formate: PDF, DOC, DOCX (max. 10 MB)', 'recruiting-playbook' ),
 				'is_required' => 1,
 				'is_system'   => 1,
@@ -463,6 +493,137 @@ class Migrator {
 		if ( $inserted > 0 ) {
 			$this->log( 'Seeded ' . $inserted . ' system fields for custom fields builder' );
 		}
+	}
+
+	/**
+	 * Migration: Standard-Formular-Konfiguration erstellen
+	 *
+	 * Erstellt die initiale Step-basierte Formular-Konfiguration
+	 * mit Draft und Published Einträgen.
+	 */
+	private function seedDefaultFormConfig(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['form_config'];
+		$now   = current_time( 'mysql' );
+
+		// Prüfen ob bereits eine Konfiguration existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$exists = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE config_type IN (%s, %s)",
+				'draft',
+				'published'
+			)
+		);
+
+		if ( $exists > 0 ) {
+			return;
+		}
+
+		// Standard-Konfiguration mit Steps.
+		$default_config = [
+			'version'  => 1,
+			'settings' => [
+				'showStepIndicator' => true,
+				'showStepTitles'    => true,
+				'animateSteps'      => true,
+			],
+			'steps'    => [
+				[
+					'id'        => 'step_personal',
+					'title'     => __( 'Persönliche Daten', 'recruiting-playbook' ),
+					'position'  => 1,
+					'deletable' => false,
+					'fields'    => [
+						[
+							'field_key'   => 'first_name',
+							'is_visible'  => true,
+							'is_required' => true,
+						],
+						[
+							'field_key'   => 'last_name',
+							'is_visible'  => true,
+							'is_required' => true,
+						],
+						[
+							'field_key'   => 'email',
+							'is_visible'  => true,
+							'is_required' => true,
+						],
+						[
+							'field_key'   => 'phone',
+							'is_visible'  => true,
+							'is_required' => false,
+						],
+					],
+				],
+				[
+					'id'        => 'step_documents',
+					'title'     => __( 'Dokumente', 'recruiting-playbook' ),
+					'position'  => 2,
+					'deletable' => true,
+					'fields'    => [
+						[
+							'field_key'   => 'message',
+							'is_visible'  => true,
+							'is_required' => false,
+						],
+						[
+							'field_key'   => 'resume',
+							'is_visible'  => true,
+							'is_required' => true,
+						],
+					],
+				],
+				[
+					'id'        => 'step_finale',
+					'title'     => __( 'Abschluss', 'recruiting-playbook' ),
+					'position'  => 999,
+					'deletable' => false,
+					'is_finale' => true,
+					'fields'    => [
+						[
+							'field_key'   => 'privacy_consent',
+							'is_visible'  => true,
+							'is_required' => true,
+						],
+					],
+				],
+			],
+		];
+
+		$config_json = wp_json_encode( $default_config, JSON_UNESCAPED_UNICODE );
+
+		// Published-Version erstellen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$table,
+			[
+				'config_type' => 'published',
+				'config_data' => $config_json,
+				'version'     => 1,
+				'created_at'  => $now,
+				'updated_at'  => $now,
+			],
+			[ '%s', '%s', '%d', '%s', '%s' ]
+		);
+
+		// Draft-Version erstellen (identisch mit published).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$table,
+			[
+				'config_type' => 'draft',
+				'config_data' => $config_json,
+				'version'     => 1,
+				'created_at'  => $now,
+				'updated_at'  => $now,
+			],
+			[ '%s', '%s', '%d', '%s', '%s' ]
+		);
+
+		$this->log( 'Seeded default form configuration' );
 	}
 
 	/**
