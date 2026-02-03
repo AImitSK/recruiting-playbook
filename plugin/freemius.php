@@ -48,6 +48,12 @@ if ( ! function_exists( 'rp_fs' ) ) {
         return 'eur';
     });
 
+    // Sprache auf Deutsch setzen für Checkout.
+    rp_fs()->add_filter( 'checkout/parameters', function( $params ) {
+        $params['language'] = 'de';
+        return $params;
+    });
+
 
     // Deutsche Übersetzungen für Freemius SDK Strings.
     rp_fs()->override_i18n( array(
