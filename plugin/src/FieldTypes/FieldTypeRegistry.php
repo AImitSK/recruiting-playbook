@@ -76,7 +76,6 @@ class FieldTypeRegistry {
 			new TextareaField(),
 			new EmailField(),
 			new PhoneField(),
-			new NumberField(),
 			new UrlField(),
 
 			// Choice Gruppe.
@@ -86,10 +85,9 @@ class FieldTypeRegistry {
 
 			// Special Gruppe.
 			new DateField(),
-			new FileField(),
 
 			// Layout Gruppe.
-			new HeadingField(),
+			new HtmlField(),
 		];
 
 		foreach ( $default_types as $type ) {
