@@ -23,10 +23,10 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'slug'                => 'recruiting-playbook',
                 'type'                => 'plugin',
                 'public_key'          => 'pk_169f4df2b23e899b6b4f9c3df4548',
-                'is_premium'          => true,
-                'has_premium_version' => true,
+                'is_premium'          => false, // Free-Version, keine Lizenz für Basis-Funktionen nötig.
+                'has_premium_version' => true,  // Es gibt Premium-Pläne.
                 'has_addons'          => false, // AI ist als Plan integriert, nicht als separates Add-on.
-                'has_paid_plans'      => true,
+                'has_paid_plans'      => true,  // Paid Plans verfügbar (Pro, AI, Bundle).
                 'menu'                => array(
                     'slug'    => 'recruiting-playbook',
                     'support' => false,
