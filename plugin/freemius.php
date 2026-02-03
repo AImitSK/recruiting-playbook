@@ -48,13 +48,6 @@ if ( ! function_exists( 'rp_fs' ) ) {
         return 'eur';
     });
 
-    // Sprache explizit auf Deutsch setzen für Pricing/Checkout URLs.
-    rp_fs()->add_filter( 'pricing_url', function( $url ) {
-        return add_query_arg( 'language', 'de', $url );
-    });
-    rp_fs()->add_filter( 'checkout_url', function( $url ) {
-        return add_query_arg( 'language', 'de', $url );
-    });
 
     // Deutsche Übersetzungen für Freemius SDK Strings.
     rp_fs()->override_i18n( array(
