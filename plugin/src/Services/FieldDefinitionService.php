@@ -47,6 +47,7 @@ class FieldDefinitionService {
 		'file',
 		'url',
 		'heading',
+		'html',
 	];
 
 	/**
