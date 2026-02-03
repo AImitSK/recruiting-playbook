@@ -171,6 +171,12 @@ document.addEventListener('alpine:init', () => {
                 return false;
             }
 
+            // URL validation
+            if (rules.url && !this.isValidUrl(value)) {
+                this.errors[fieldKey] = this.i18n.invalidUrl || 'Bitte geben Sie eine gültige URL ein';
+                return false;
+            }
+
             // Min length
             if (rules.minLength && typeof value === 'string' && value.length < rules.minLength) {
                 this.errors[fieldKey] = (this.i18n.minLength || 'Mindestens %d Zeichen erforderlich').replace('%d', rules.minLength);
@@ -221,6 +227,18 @@ document.addEventListener('alpine:init', () => {
             // Allow digits, spaces, dashes, parentheses, and + sign
             const regex = /^[+]?[\d\s\-().]{6,20}$/;
             return regex.test(phone);
+        },
+
+        /**
+         * URL validation
+         */
+        isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
         },
 
         /**
@@ -345,10 +363,43 @@ document.addEventListener('alpine:init', () => {
         },
 
         /**
+         * Validate all steps before submit
+         */
+        validateAllSteps() {
+            this.errors = {};
+            let valid = true;
+            let firstErrorStep = null;
+
+            // Validate all fields from all steps
+            for (const [fieldKey, rules] of Object.entries(this.validationRules)) {
+                if (!this.validateField(fieldKey, rules)) {
+                    valid = false;
+                    // Find which step this field is in
+                    if (firstErrorStep === null) {
+                        for (let s = 1; s <= this.totalSteps; s++) {
+                            const stepContainer = this.$el.querySelector(`[x-show="step === ${s}"]`);
+                            if (stepContainer && stepContainer.querySelector(`[data-field="${fieldKey}"]`)) {
+                                firstErrorStep = s;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Navigate to first step with error
+            if (!valid && firstErrorStep !== null) {
+                this.step = firstErrorStep;
+            }
+
+            return valid;
+        },
+
+        /**
          * Submit form
          */
         async submit() {
-            if (!this.validateCurrentStep()) {
+            if (!this.validateAllSteps()) {
                 return;
             }
 
@@ -430,6 +481,10 @@ document.addEventListener('alpine:init', () => {
                 const data = await response.json();
 
                 if (!response.ok) {
+                    // Handle field-specific validation errors from backend.
+                    if (data.data?.field_errors) {
+                        this.errors = { ...this.errors, ...data.data.field_errors };
+                    }
                     throw new Error(data.message || data.error?.message || 'Ein Fehler ist aufgetreten');
                 }
 

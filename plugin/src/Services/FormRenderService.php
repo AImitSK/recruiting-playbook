@@ -97,7 +97,7 @@ class FormRenderService {
 			$output .= $this->renderProgressBar( count( $config['steps'] ) );
 
 			// Formular-Start mit Spam-Schutz.
-			$output .= '<form @submit.prevent="submit">';
+			$output .= '<form @submit.prevent="submit" novalidate>';
 			$output .= SpamProtection::getHoneypotField();
 			$output .= SpamProtection::getTimestampField();
 		}
@@ -833,6 +833,9 @@ class FormRenderService {
 				}
 				if ( $field_type === 'phone' ) {
 					$rules['phone'] = true;
+				}
+				if ( $field_type === 'url' ) {
+					$rules['url'] = true;
 				}
 
 				if ( ! empty( $rules ) ) {

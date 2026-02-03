@@ -181,8 +181,17 @@ class CustomFieldsService {
 		$errors = [];
 		$registry = FieldTypeRegistry::getInstance();
 
+		// Build lookup of submitted field keys.
+		$submitted_keys = array_keys( $data );
+
 		foreach ( $fields as $field ) {
 			$field_key = $field->getFieldKey();
+
+			// Only validate fields that were actually submitted.
+			// Fields not in the form should not be validated.
+			if ( ! in_array( $field_key, $submitted_keys, true ) ) {
+				continue;
+			}
 
 			$value = $data[ $field_key ] ?? null;
 			$field_type = $registry->get( $field->getFieldType() );
