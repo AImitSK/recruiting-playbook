@@ -329,9 +329,22 @@ class FieldDefinition {
 	/**
 	 * Get Options
 	 *
+	 * Falls die Optionen in der Haupt-options-Spalte leer sind,
+	 * wird auf settings.options als Fallback zurückgegriffen.
+	 *
 	 * @return array|null
 	 */
 	public function getOptions(): ?array {
+		// Direkte options-Spalte prüfen.
+		if ( ! empty( $this->options ) ) {
+			return $this->options;
+		}
+
+		// Fallback: settings.options (Frontend speichert dort).
+		if ( ! empty( $this->settings['options'] ) && is_array( $this->settings['options'] ) ) {
+			return $this->settings['options'];
+		}
+
 		return $this->options;
 	}
 

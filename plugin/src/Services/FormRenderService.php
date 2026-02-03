@@ -97,7 +97,7 @@ class FormRenderService {
 			$output .= $this->renderProgressBar( count( $config['steps'] ) );
 
 			// Formular-Start mit Spam-Schutz.
-			$output .= '<form @submit.prevent="submit">';
+			$output .= '<form @submit.prevent="submit" novalidate>';
 			$output .= SpamProtection::getHoneypotField();
 			$output .= SpamProtection::getTimestampField();
 		}
@@ -605,6 +605,11 @@ class FormRenderService {
 					continue;
 				}
 
+				// Skip display-only fields (no data collected).
+				if ( in_array( $field_type, [ 'html', 'heading' ], true ) ) {
+					continue;
+				}
+
 				// Skip empty textarea fields.
 				if ( 'textarea' === $field_type ) {
 					$output .= $this->renderSummaryItem( $label, $field_key, true );
@@ -828,6 +833,9 @@ class FormRenderService {
 				}
 				if ( $field_type === 'phone' ) {
 					$rules['phone'] = true;
+				}
+				if ( $field_type === 'url' ) {
+					$rules['url'] = true;
 				}
 
 				if ( ! empty( $rules ) ) {

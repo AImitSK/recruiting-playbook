@@ -381,15 +381,24 @@ export function ApplicantDetail( { applicationId } ) {
 													phone: application.phone,
 													salutation: application.salutation,
 													message: application.cover_letter,
-													...( application.form_data || {} ),
+													// Custom Fields aus der Datenbank (als Key-Value-Objekt)
+													...( application.custom_fields_raw || {} ),
+													// Fallback: Custom Fields Array in Objekt umwandeln
+													...( Array.isArray( application.custom_fields )
+														? application.custom_fields.reduce( ( acc, cf ) => {
+															acc[ cf.key ] = cf.value;
+															return acc;
+														}, {} )
+														: {}
+													),
 												} }
-												layout="two-column"
-												labelWidth={ 100 }
+												layout="single"
+												labelWidth={ 140 }
 												hideEmptyOptional={ true }
 											/>
 										) : (
 											// Fallback: Hardcodierte Felder wenn keine Config geladen
-											<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
+											<div style={ { display: 'grid', gridTemplateColumns: '1fr', gap: '0' } }>
 												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
 													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
 													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
@@ -408,24 +417,6 @@ export function ApplicantDetail( { applicationId } ) {
 												</div>
 											</div>
 										) }
-
-										{ /* Meta-Informationen (nicht aus Form-Config) */ }
-										<div style={ { marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' } }>
-											<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem 2rem' } }>
-												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Stelle', 'recruiting-playbook' ) }</span>
-													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.job_title || '-' }</span>
-												</div>
-												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Beworben am', 'recruiting-playbook' ) }</span>
-													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ formatDate( application.created_at ) }</span>
-												</div>
-												<div style={ { display: 'flex', padding: '0.5rem 0' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Quelle', 'recruiting-playbook' ) }</span>
-													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.source || 'Website' }</span>
-												</div>
-											</div>
-										</div>
 									</CardContent>
 								</Card>
 

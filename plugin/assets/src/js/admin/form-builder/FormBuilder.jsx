@@ -14,10 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { Spinner } from '../components/ui/spinner';
-import { Lock, AlertCircle, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-import FieldList from './components/FieldList';
 import FieldEditor from './components/FieldEditor';
+import FieldEditorModal from './components/FieldEditorModal';
 import FieldTypeSelector from './components/FieldTypeSelector';
 import FormPreview from './components/FormPreview';
 import FormEditor from './components/FormEditor';
@@ -35,6 +35,8 @@ export default function FormBuilder() {
 	const [ activeTab, setActiveTab ] = useState( 'form' );
 	const [ selectedField, setSelectedField ] = useState( null );
 	const [ showFieldTypeSelector, setShowFieldTypeSelector ] = useState( false );
+	const [ fieldTypeSelectorStepId, setFieldTypeSelectorStepId ] = useState( null );
+	const [ editingFieldKey, setEditingFieldKey ] = useState( null );
 
 	// Form configuration (step-based)
 	const {
@@ -64,7 +66,6 @@ export default function FormBuilder() {
 		moveFieldBetweenSteps,
 		reorderFieldsInStep,
 		updateSettings,
-		getUnusedFields,
 		getFieldDefinition,
 		refreshAvailableFields,
 		resetToDefault,
@@ -109,29 +110,54 @@ export default function FormBuilder() {
 		setSelectedField( field );
 	};
 
-	// Handle field creation (for "Felder" tab)
-	const handleAddField = () => {
+	// Handle create field for a specific step (opens FieldTypeSelector modal)
+	const handleCreateFieldForStep = ( stepId ) => {
+		setFieldTypeSelectorStepId( stepId );
 		setShowFieldTypeSelector( true );
 	};
 
-	// Handle field type selection
-	const handleFieldTypeSelect = async ( fieldType ) => {
+	// Handle field type selection - creates field and optionally adds to step
+	const handleFieldTypeSelect = async ( fieldType, fieldSettings = {} ) => {
+		const targetStepId = fieldTypeSelectorStepId;
 		setShowFieldTypeSelector( false );
+		setFieldTypeSelectorStepId( null );
+
+		// Build settings object
+		const settings = {
+			width: fieldSettings.width || 'full',
+			options: fieldSettings.options || [],
+		};
+
+		// Add content for HTML fields
+		if ( fieldSettings.content ) {
+			settings.content = fieldSettings.content;
+		}
 
 		const newField = await createField( {
 			type: fieldType,
 			field_key: `field_${ Date.now() }`,
-			label: fieldTypes[ fieldType ]?.label || fieldType,
-			is_required: false,
+			label: fieldSettings.label || fieldTypes[ fieldType ]?.label || fieldType,
+			placeholder: fieldSettings.placeholder || '',
+			description: fieldSettings.description || '',
+			is_required: fieldSettings.is_required || false,
 			is_enabled: true,
 			is_system: false,
 			sort_order: customFields.length,
+			settings,
 		} );
 
 		if ( newField ) {
-			setSelectedField( newField );
-			// Refresh availableFields to include the new field in the Formular tab
+			// Refresh availableFields to include the new field
 			await refreshAvailableFields();
+
+			// If we have a target step, add the field to it
+			if ( targetStepId && addFieldToStep ) {
+				addFieldToStep( targetStepId, newField.field_key, {
+					is_visible: true,
+					is_required: fieldSettings.is_required || false,
+					width: fieldSettings.width || 'full',
+				} );
+			}
 		}
 	};
 
@@ -171,6 +197,30 @@ export default function FormBuilder() {
 		setSelectedField( null );
 	};
 
+	// Handle edit field (from FormEditor)
+	const handleEditField = ( fieldKey ) => {
+		setEditingFieldKey( fieldKey );
+	};
+
+	// Handle edit field update (from FieldEditorModal)
+	const handleEditFieldUpdate = async ( fieldId, updates ) => {
+		const success = await updateField( fieldId, updates );
+		if ( success ) {
+			await refreshAvailableFields();
+		}
+		return success;
+	};
+
+	// Handle edit field delete (from FieldEditorModal)
+	const handleEditFieldDelete = async ( fieldId ) => {
+		const success = await deleteField( fieldId );
+		if ( success ) {
+			setEditingFieldKey( null );
+			await refreshAvailableFields();
+		}
+		return success;
+	};
+
 	// Publish handler
 	const handlePublish = async () => {
 		await publish();
@@ -198,74 +248,13 @@ export default function FormBuilder() {
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1200px' } }>
 				{ /* Header */ }
-				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' } }>
-					<div style={ { display: 'flex', alignItems: 'flex-end', gap: '1rem' } }>
-						{ logoUrl && (
-							<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
-						) }
-						<div>
-							<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-								{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
-							</h1>
-							<p style={ { margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#6b7280' } }>
-								{ __( 'Version', 'recruiting-playbook' ) } { publishedVersion }
-								{ hasChanges && (
-									<span style={ { marginLeft: '0.5rem', color: '#f59e0b' } }>
-										({ __( 'ungespeicherte Änderungen', 'recruiting-playbook' ) })
-									</span>
-								) }
-							</p>
-						</div>
-					</div>
-
-					{ /* Publish Controls */ }
-					<div style={ { display: 'flex', gap: '0.5rem', alignItems: 'center' } }>
-						{ isSaving && (
-							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
-								{ __( 'Speichern...', 'recruiting-playbook' ) }
-							</span>
-						) }
-
-						{ successMessage && (
-							<span style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', color: '#10b981' } }>
-								<CheckCircle2 style={ { height: '1rem', width: '1rem' } } />
-								{ successMessage }
-							</span>
-						) }
-
-						{ hasChanges && (
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={ handleDiscard }
-								disabled={ isPublishing }
-							>
-								{ __( 'Verwerfen', 'recruiting-playbook' ) }
-							</Button>
-						) }
-
-						<Button
-							onClick={ handlePublish }
-							disabled={ ! hasChanges || isPublishing }
-							size="sm"
-						>
-							{ isPublishing
-								? __( 'Veröffentlichen...', 'recruiting-playbook' )
-								: __( 'Veröffentlichen', 'recruiting-playbook' )
-							}
-						</Button>
-
-						<Button
-							variant="ghost"
-							size="sm"
-							onClick={ resetToDefault }
-							disabled={ isPublishing || configLoading }
-							title={ __( 'Auf Standard zurücksetzen', 'recruiting-playbook' ) }
-							style={ { marginLeft: '0.5rem', color: '#6b7280' } }
-						>
-							<RotateCcw style={ { height: '1rem', width: '1rem' } } />
-						</Button>
-					</div>
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
+					</h1>
 				</div>
 
 				{ /* Pro Upgrade Notice */ }
@@ -300,18 +289,54 @@ export default function FormBuilder() {
 
 				{ /* Main Tabs */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
-					<TabsList className="mb-4">
-						<TabsTrigger value="form">
-							{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="fields">
-							{ i18n?.tabFields || __( 'Felder', 'recruiting-playbook' ) }
-							{ ! isPro && <Lock className="ml-1 h-3 w-3" /> }
-						</TabsTrigger>
-						<TabsTrigger value="preview">
-							{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
-						</TabsTrigger>
-					</TabsList>
+					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' } }>
+						<TabsList>
+							<TabsTrigger value="form">
+								{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
+							</TabsTrigger>
+							<TabsTrigger value="preview">
+								{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						</TabsList>
+
+						{ /* Publish Controls */ }
+						<div style={ { display: 'flex', gap: '0.5rem', alignItems: 'center' } }>
+							{ isSaving && (
+								<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
+									{ __( 'Speichern...', 'recruiting-playbook' ) }
+								</span>
+							) }
+
+							{ successMessage && (
+								<span style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', color: '#10b981' } }>
+									<CheckCircle2 style={ { height: '1rem', width: '1rem' } } />
+									{ successMessage }
+								</span>
+							) }
+
+							{ hasChanges && (
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={ handleDiscard }
+									disabled={ isPublishing }
+								>
+									{ __( 'Verwerfen', 'recruiting-playbook' ) }
+								</Button>
+							) }
+
+							<Button
+								onClick={ handlePublish }
+								disabled={ ! hasChanges || isPublishing }
+								size="sm"
+							>
+								{ isPublishing
+									? __( 'Veröffentlichen...', 'recruiting-playbook' )
+									: __( 'Veröffentlichen', 'recruiting-playbook' )
+								}
+							</Button>
+						</div>
+					</div>
 
 					{ /* Form Tab - Step-based Form Editor */ }
 					<TabsContent value="form" className="mt-0">
@@ -331,8 +356,10 @@ export default function FormBuilder() {
 								updateSystemFieldInStep={ isPro ? updateSystemFieldInStep : undefined }
 								moveFieldBetweenSteps={ isPro ? moveFieldBetweenSteps : undefined }
 								reorderFieldsInStep={ isPro ? reorderFieldsInStep : undefined }
-								getUnusedFields={ getUnusedFields }
 								getFieldDefinition={ getFieldDefinition }
+								onResetToDefault={ resetToDefault }
+								onEditField={ handleEditField }
+								onCreateField={ handleCreateFieldForStep }
 								i18n={ i18n }
 							/>
 							{ ! isPro && (
@@ -341,50 +368,6 @@ export default function FormBuilder() {
 									i18n={ i18n }
 								/>
 							) }
-						</div>
-					</TabsContent>
-
-					{ /* Fields Tab - Field Library */ }
-					<TabsContent value="fields" className="mt-0">
-						<div className="rp-form-builder__content rp-grid rp-grid-cols-1 lg:rp-grid-cols-2 rp-gap-6">
-							<div>
-								<FieldList
-									systemFields={ systemFields }
-									customFields={ customFields }
-									selectedFieldId={ selectedField?.id }
-									onFieldSelect={ handleFieldSelect }
-									onFieldReorder={ handleFieldReorder }
-									onAddField={ handleAddField }
-									isLoading={ fieldsLoading }
-									isPro={ isPro }
-									i18n={ i18n }
-								/>
-							</div>
-							<div>
-								{ selectedField ? (
-									<FieldEditor
-										field={ selectedField }
-										fieldTypes={ fieldTypes }
-										allFields={ fields }
-										onUpdate={ handleFieldUpdate }
-										onDelete={ handleFieldDelete }
-										onClose={ handleCloseEditor }
-										isPro={ isPro }
-										i18n={ i18n }
-									/>
-								) : (
-									<Card>
-										<CardHeader>
-											<CardTitle>
-												{ i18n?.editField || __( 'Feld bearbeiten', 'recruiting-playbook' ) }
-											</CardTitle>
-											<CardDescription>
-												{ i18n?.selectFieldToEdit || __( 'Wählen Sie ein Feld aus der Liste, um es zu bearbeiten.', 'recruiting-playbook' ) }
-											</CardDescription>
-										</CardHeader>
-									</Card>
-								) }
-							</div>
 						</div>
 					</TabsContent>
 
@@ -407,6 +390,18 @@ export default function FormBuilder() {
 						onSelect={ handleFieldTypeSelect }
 						onClose={ () => setShowFieldTypeSelector( false ) }
 						isPro={ isPro }
+						i18n={ i18n }
+					/>
+				) }
+
+				{ /* Field Editor Modal (for editing custom fields from FormEditor) */ }
+				{ editingFieldKey && (
+					<FieldEditorModal
+						field={ getFieldDefinition( editingFieldKey ) }
+						fieldTypes={ fieldTypes }
+						onUpdate={ handleEditFieldUpdate }
+						onDelete={ handleEditFieldDelete }
+						onClose={ () => setEditingFieldKey( null ) }
 						i18n={ i18n }
 					/>
 				) }

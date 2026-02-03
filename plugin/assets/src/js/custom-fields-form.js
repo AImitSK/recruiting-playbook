@@ -519,6 +519,13 @@ document.addEventListener('alpine:init', () => {
             try {
                 const submitData = new FormData();
 
+                // System-Felder, die direkt gesendet werden (nicht als custom_fields)
+                const systemFields = [
+                    'job_id', 'salutation', 'first_name', 'last_name', 'email', 'phone',
+                    'cover_letter', 'message', 'privacy_consent',
+                    '_hp_field', '_form_timestamp'
+                ];
+
                 // Read honeypot field from DOM
                 const honeypotField = this.$el.querySelector('input[name="_hp_field"]');
                 if (honeypotField) {
@@ -530,6 +537,9 @@ document.addEventListener('alpine:init', () => {
                 if (timestampField && timestampField.value) {
                     this.formData._form_timestamp = parseInt(timestampField.value, 10);
                 }
+
+                // Collect custom fields separately
+                const customFieldsData = {};
 
                 // Add regular form fields
                 for (const [key, value] of Object.entries(this.formData)) {
@@ -544,13 +554,33 @@ document.addEventListener('alpine:init', () => {
                         continue;
                     }
 
-                    if (typeof value === 'boolean') {
-                        submitData.append(key, value ? 'true' : 'false');
-                    } else if (Array.isArray(value)) {
-                        submitData.append(key, JSON.stringify(value));
+                    // Check if this is a system field or custom field
+                    const isSystemField = systemFields.includes(key) || key.startsWith('_');
+
+                    if (isSystemField) {
+                        // System fields go directly into FormData
+                        if (typeof value === 'boolean') {
+                            submitData.append(key, value ? 'true' : 'false');
+                        } else if (Array.isArray(value)) {
+                            submitData.append(key, JSON.stringify(value));
+                        } else {
+                            submitData.append(key, value);
+                        }
                     } else {
-                        submitData.append(key, value);
+                        // Non-system fields are custom fields
+                        if (typeof value === 'boolean') {
+                            customFieldsData[key] = value;
+                        } else if (Array.isArray(value)) {
+                            customFieldsData[key] = value;
+                        } else {
+                            customFieldsData[key] = value;
+                        }
                     }
+                }
+
+                // Add custom_fields as JSON object
+                if (Object.keys(customFieldsData).length > 0) {
+                    submitData.append('custom_fields', JSON.stringify(customFieldsData));
                 }
 
                 // Add file fields
@@ -561,24 +591,21 @@ document.addEventListener('alpine:init', () => {
                     }
 
                     for (const file of fileList) {
-                        submitData.append(`${key}[]`, file);
+                        // Custom file fields get prefixed
+                        if (!systemFields.includes(key)) {
+                            submitData.append(`custom_${key}[]`, file);
+                        } else {
+                            submitData.append(`${key}[]`, file);
+                        }
                     }
                 }
 
-                // Add custom fields metadata
-                submitData.append('_custom_fields', JSON.stringify(
-                    this.fields
-                        .filter(f => this.isFieldVisible(f.field_key))
-                        .map(f => f.field_key)
-                ));
-
                 // Send request
+                // WICHTIG: Keine Nonce für öffentliche Bewerbungen senden!
+                // WordPress REST API gibt 403 zurück wenn Nonce ungültig ist (z.B. durch Caching).
                 const response = await fetch(window.rpForm.apiUrl + 'applications', {
                     method: 'POST',
-                    body: submitData,
-                    headers: {
-                        'X-WP-Nonce': window.rpForm.nonce
-                    }
+                    body: submitData
                 });
 
                 const data = await response.json();

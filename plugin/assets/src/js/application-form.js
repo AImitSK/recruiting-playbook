@@ -171,6 +171,12 @@ document.addEventListener('alpine:init', () => {
                 return false;
             }
 
+            // URL validation
+            if (rules.url && !this.isValidUrl(value)) {
+                this.errors[fieldKey] = this.i18n.invalidUrl || 'Bitte geben Sie eine gültige URL ein';
+                return false;
+            }
+
             // Min length
             if (rules.minLength && typeof value === 'string' && value.length < rules.minLength) {
                 this.errors[fieldKey] = (this.i18n.minLength || 'Mindestens %d Zeichen erforderlich').replace('%d', rules.minLength);
@@ -221,6 +227,18 @@ document.addEventListener('alpine:init', () => {
             // Allow digits, spaces, dashes, parentheses, and + sign
             const regex = /^[+]?[\d\s\-().]{6,20}$/;
             return regex.test(phone);
+        },
+
+        /**
+         * URL validation
+         */
+        isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
         },
 
         /**
@@ -345,10 +363,43 @@ document.addEventListener('alpine:init', () => {
         },
 
         /**
+         * Validate all steps before submit
+         */
+        validateAllSteps() {
+            this.errors = {};
+            let valid = true;
+            let firstErrorStep = null;
+
+            // Validate all fields from all steps
+            for (const [fieldKey, rules] of Object.entries(this.validationRules)) {
+                if (!this.validateField(fieldKey, rules)) {
+                    valid = false;
+                    // Find which step this field is in
+                    if (firstErrorStep === null) {
+                        for (let s = 1; s <= this.totalSteps; s++) {
+                            const stepContainer = this.$el.querySelector(`[x-show="step === ${s}"]`);
+                            if (stepContainer && stepContainer.querySelector(`[data-field="${fieldKey}"]`)) {
+                                firstErrorStep = s;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Navigate to first step with error
+            if (!valid && firstErrorStep !== null) {
+                this.step = firstErrorStep;
+            }
+
+            return valid;
+        },
+
+        /**
          * Submit form
          */
         async submit() {
-            if (!this.validateCurrentStep()) {
+            if (!this.validateAllSteps()) {
                 return;
             }
 
@@ -357,6 +408,13 @@ document.addEventListener('alpine:init', () => {
 
             try {
                 const formData = new FormData();
+
+                // System-Felder, die direkt gesendet werden (nicht als custom_fields)
+                const systemFields = [
+                    'job_id', 'salutation', 'first_name', 'last_name', 'email', 'phone',
+                    'cover_letter', 'message', 'privacy_consent', 'resume',
+                    '_hp_field', '_form_timestamp'
+                ];
 
                 // Read honeypot field from DOM (bot detection)
                 const honeypotField = this.$el.querySelector('input[name="_hp_field"]');
@@ -370,14 +428,36 @@ document.addEventListener('alpine:init', () => {
                     this.formData._form_timestamp = parseInt(timestampField.value, 10);
                 }
 
+                // Collect custom fields separately
+                const customFieldsData = {};
+
                 // Add form fields
                 for (const [key, value] of Object.entries(this.formData)) {
-                    if (typeof value === 'boolean') {
-                        // REST API expects 'true'/'false' strings for boolean validation
-                        formData.append(key, value ? 'true' : 'false');
+                    // Check if this is a system field or custom field
+                    const isSystemField = systemFields.includes(key) || key.startsWith('_');
+
+                    if (isSystemField) {
+                        // System fields go directly into FormData
+                        if (typeof value === 'boolean') {
+                            formData.append(key, value ? 'true' : 'false');
+                        } else {
+                            formData.append(key, value);
+                        }
                     } else {
-                        formData.append(key, value);
+                        // Non-system fields are custom fields (e.g., field_123456789)
+                        if (typeof value === 'boolean') {
+                            customFieldsData[key] = value;
+                        } else if (Array.isArray(value)) {
+                            customFieldsData[key] = value;
+                        } else {
+                            customFieldsData[key] = value;
+                        }
                     }
+                }
+
+                // Add custom_fields as JSON object if there are any
+                if (Object.keys(customFieldsData).length > 0) {
+                    formData.append('custom_fields', JSON.stringify(customFieldsData));
                 }
 
                 // Add files
@@ -390,17 +470,21 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 // Send request
+                // WICHTIG: Keine Nonce für öffentliche Bewerbungen senden!
+                // WordPress REST API gibt 403 zurück wenn Nonce ungültig ist (z.B. durch Caching).
+                // Spam-Schutz wird stattdessen durch Honeypot und Timestamp gewährleistet.
                 const response = await fetch(window.rpForm.apiUrl + 'applications', {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-WP-Nonce': window.rpForm.nonce
-                    }
+                    body: formData
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
+                    // Handle field-specific validation errors from backend.
+                    if (data.data?.field_errors) {
+                        this.errors = { ...this.errors, ...data.data.field_errors };
+                    }
                     throw new Error(data.message || data.error?.message || 'Ein Fehler ist aufgetreten');
                 }
 

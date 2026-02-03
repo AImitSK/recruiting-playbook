@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 use RecruitingPlaybook\Services\FieldDefinitionService;
 use RecruitingPlaybook\Services\FormValidationService;
 use RecruitingPlaybook\Services\CustomFieldsService;
-use RecruitingPlaybook\Services\ConditionalLogicService;
 use RecruitingPlaybook\Services\FormRenderService;
 use RecruitingPlaybook\Models\FieldDefinition;
 use RecruitingPlaybook\FieldTypes\FieldTypeRegistry;
@@ -311,25 +310,6 @@ class CustomFieldsWorkflowTest extends TestCase {
 	/**
 	 * @test
 	 */
-	public function it_evaluates_multiple_conditional_rules(): void {
-		$conditional_service = new ConditionalLogicService();
-
-		// Test mehrere Bedingungen mit AND.
-		$conditions = [
-			[ 'field' => 'type', 'operator' => 'equals', 'value' => 'premium' ],
-			[ 'field' => 'age', 'operator' => 'greater_than', 'value' => '18' ],
-		];
-
-		$form_data_pass = [ 'type' => 'premium', 'age' => 25 ];
-		$form_data_fail = [ 'type' => 'premium', 'age' => 16 ];
-
-		$this->assertTrue( $conditional_service->evaluateMultiple( $conditions, 'and', $form_data_pass ) );
-		$this->assertFalse( $conditional_service->evaluateMultiple( $conditions, 'and', $form_data_fail ) );
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_sanitizes_and_validates_in_one_step(): void {
 		$fields = [
 			$this->createFieldDefinition( 'name', 'text', 'Name', true ),
@@ -374,29 +354,6 @@ class CustomFieldsWorkflowTest extends TestCase {
 		return FieldDefinition::hydrate( $data );
 	}
 
-	/**
-	 * Hilfsmethode zum Erstellen einer FieldDefinition mit Conditional
-	 */
-	private function createFieldDefinitionWithConditional(
-		string $key,
-		string $type,
-		string $label,
-		bool $required,
-		array $conditional
-	): FieldDefinition {
-		$data = [
-			'id'          => rand( 1, 1000 ),
-			'field_key'   => $key,
-			'type'        => $type,
-			'label'       => $label,
-			'is_required' => $required,
-			'is_enabled'  => true,
-			'is_system'   => false,
-			'conditional' => json_encode( $conditional ),
-		];
-
-		return FieldDefinition::hydrate( $data );
-	}
 
 	/**
 	 * Hilfsmethode zum Erstellen einer FieldDefinition mit Validation

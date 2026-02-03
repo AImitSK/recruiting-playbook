@@ -51,8 +51,11 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	const width = field.settings?.width || 'full';
 	const widthStyle = getWidthStyle( width, viewMode );
 
+	// Support both 'type' and 'field_type' property names for API compatibility
+	const type = field.type || field.field_type || 'text';
+
 	// Render heading differently
-	if ( field.type === 'heading' ) {
+	if ( type === 'heading' ) {
 		const level = field.settings?.level || 'h3';
 		const HeadingTag = level;
 
@@ -66,6 +69,36 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 				</HeadingTag>
 				{ field.description && (
 					<p style={ { fontSize: '0.875rem', color: '#4b5563', marginTop: '0.25rem' } }>{ field.description }</p>
+				) }
+			</div>
+		);
+	}
+
+	// Render HTML content block differently
+	if ( type === 'html' ) {
+		const content = field.settings?.content || '';
+
+		return (
+			<div
+				className="rp-field-preview rp-field-preview--html"
+				style={ {
+					...widthStyle,
+					padding: '0.75rem',
+					backgroundColor: '#f9fafb',
+					borderRadius: '0.375rem',
+					border: '1px solid #e5e7eb',
+				} }
+			>
+				{ content ? (
+					<div
+						className="rp-html-content"
+						style={ { fontSize: '0.875rem', color: '#374151' } }
+						dangerouslySetInnerHTML={ { __html: content } }
+					/>
+				) : (
+					<p style={ { fontSize: '0.875rem', color: '#9ca3af', fontStyle: 'italic', margin: 0 } }>
+						{ __( 'HTML-Inhalt wird hier angezeigt...', 'recruiting-playbook' ) }
+					</p>
 				) }
 			</div>
 		);
@@ -87,14 +120,14 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	const renderInput = () => {
 		const options = field.settings?.options || [];
 
-		switch ( field.type ) {
+		switch ( type ) {
 			case 'text':
 			case 'email':
 			case 'phone':
 			case 'url':
 				return (
 					<Input
-						type={ field.type === 'phone' ? 'tel' : field.type }
+						type={ type === 'phone' ? 'tel' : type }
 						placeholder={ field.placeholder || '' }
 						disabled
 					/>
@@ -218,11 +251,11 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 	return (
 		<div
-			className={ `rp-field-preview rp-field-preview--${ field.type }` }
+			className={ `rp-field-preview rp-field-preview--${ type }` }
 			style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', ...widthStyle } }
 		>
 			{ /* Don't show label for checkbox single mode */ }
-			{ ! ( field.type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
+			{ ! ( type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
 
 			{ renderInput() }
 

@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '2.0.0';
+	private const SCHEMA_VERSION = '2.0.1';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -111,6 +111,18 @@ class Migrator {
 		// Migration 2.0.0: email_hash für bestehende Kandidaten berechnen.
 		if ( version_compare( $from_version, '2.0.0', '<' ) ) {
 			$this->migrateEmailHash();
+		}
+
+		// Migration 2.0.1: Doppelte System-Felder entfernen (resume, privacy_consent).
+		// Diese werden durch die grünen Spezialfelder im Form Builder ersetzt.
+		if ( version_compare( $from_version, '2.0.1', '<' ) ) {
+			$this->migrateRemoveDuplicateSystemFields();
+			$this->migrateFormConfigToV2();
+		}
+
+		// Migration 2.0.2: phone und message zu Custom Fields machen (editierbar).
+		if ( version_compare( $from_version, '2.0.2', '<' ) ) {
+			$this->migratePhoneMessageToCustomFields();
 		}
 	}
 
@@ -218,6 +230,232 @@ class Migrator {
 
 		if ( $updated > 0 ) {
 			$this->log( 'Migrated email_hash for ' . $updated . ' candidates' );
+		}
+	}
+
+	/**
+	 * Migration: Doppelte System-Felder entfernen
+	 *
+	 * Entfernt 'resume' und 'privacy_consent' aus den System-Feldern,
+	 * da diese durch die grünen Spezialfelder im Form Builder ersetzt werden:
+	 * - 'file_upload' (ersetzt 'resume' / Bewerbungsunterlagen)
+	 * - 'privacy_consent' im system_fields Array (ersetzt das DB-System-Feld)
+	 */
+	private function migrateRemoveDuplicateSystemFields(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['field_definitions'];
+
+		// Felder entfernen die jetzt durch Spezialfelder ersetzt werden.
+		$fields_to_remove = [ 'resume', 'privacy_consent' ];
+
+		foreach ( $fields_to_remove as $field_key ) {
+			// Nur globale System-Felder löschen (keine Template/Job-spezifischen).
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$deleted = $wpdb->delete(
+				$table,
+				[
+					'field_key' => $field_key,
+					'is_system' => 1,
+				],
+				[ '%s', '%d' ]
+			);
+
+			if ( $deleted > 0 ) {
+				$this->log( 'Removed duplicate system field: ' . $field_key );
+			}
+		}
+	}
+
+	/**
+	 * Migration: FormConfig auf v2 Format migrieren
+	 *
+	 * Aktualisiert bestehende FormConfig-Einträge:
+	 * - Entfernt 'resume' aus fields, ersetzt durch 'file_upload' in system_fields
+	 * - Entfernt 'privacy_consent' aus fields, verschiebt nach system_fields
+	 * - Fügt 'summary' zu system_fields im Finale-Step hinzu
+	 */
+	private function migrateFormConfigToV2(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['form_config'];
+
+		// Beide Konfigurationen (draft und published) holen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$configs = $wpdb->get_results(
+			"SELECT id, config_type, config_data, version FROM {$table}",
+			ARRAY_A
+		);
+
+		if ( empty( $configs ) ) {
+			return;
+		}
+
+		$updated = 0;
+
+		foreach ( $configs as $config_row ) {
+			$config_data = json_decode( $config_row['config_data'], true );
+
+			if ( empty( $config_data ) || ! is_array( $config_data ) ) {
+				continue;
+			}
+
+			// Bereits v2 - überspringen.
+			if ( ( $config_data['version'] ?? 1 ) >= 2 ) {
+				continue;
+			}
+
+			// Steps migrieren.
+			if ( empty( $config_data['steps'] ) ) {
+				continue;
+			}
+
+			$migrated = false;
+
+			foreach ( $config_data['steps'] as &$step ) {
+				// Dokumente-Step: resume -> file_upload.
+				if ( 'step_documents' === $step['id'] ) {
+					// system_fields initialisieren falls nicht vorhanden.
+					if ( ! isset( $step['system_fields'] ) || ! is_array( $step['system_fields'] ) ) {
+						$step['system_fields'] = [];
+					}
+
+					// file_upload hinzufügen falls noch nicht vorhanden.
+					$has_file_upload = false;
+					foreach ( $step['system_fields'] as $sf ) {
+						if ( 'file_upload' === ( $sf['field_key'] ?? '' ) ) {
+							$has_file_upload = true;
+							break;
+						}
+					}
+
+					if ( ! $has_file_upload ) {
+						$step['system_fields'][] = [
+							'field_key' => 'file_upload',
+							'type'      => 'file_upload',
+							'settings'  => [
+								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+								'allowed_types' => 'pdf,doc,docx',
+								'max_file_size' => 10,
+								'max_files'     => 5,
+								'is_required'   => true,
+							],
+						];
+						$migrated = true;
+					}
+
+					// resume aus fields entfernen.
+					if ( ! empty( $step['fields'] ) ) {
+						$original_count      = count( $step['fields'] );
+						$step['fields'] = array_values(
+							array_filter(
+								$step['fields'],
+								function ( $field ) {
+									return 'resume' !== ( $field['field_key'] ?? '' );
+								}
+							)
+						);
+						if ( count( $step['fields'] ) < $original_count ) {
+							$migrated = true;
+						}
+					}
+				}
+
+				// Finale-Step: summary und privacy_consent als system_fields.
+				if ( ! empty( $step['is_finale'] ) ) {
+					// system_fields initialisieren falls nicht vorhanden.
+					if ( ! isset( $step['system_fields'] ) || ! is_array( $step['system_fields'] ) ) {
+						$step['system_fields'] = [];
+					}
+
+					// summary hinzufügen falls noch nicht vorhanden.
+					$has_summary = false;
+					foreach ( $step['system_fields'] as $sf ) {
+						if ( 'summary' === ( $sf['field_key'] ?? '' ) ) {
+							$has_summary = true;
+							break;
+						}
+					}
+
+					if ( ! $has_summary ) {
+						// summary am Anfang einfügen.
+						array_unshift( $step['system_fields'], [
+							'field_key' => 'summary',
+							'type'      => 'summary',
+							'settings'  => [
+								'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'layout'           => 'two-column',
+								'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'show_only_filled' => false,
+							],
+						] );
+						$migrated = true;
+					}
+
+					// privacy_consent in system_fields hinzufügen falls noch nicht vorhanden.
+					$has_privacy = false;
+					foreach ( $step['system_fields'] as $sf ) {
+						if ( 'privacy_consent' === ( $sf['field_key'] ?? '' ) ) {
+							$has_privacy = true;
+							break;
+						}
+					}
+
+					if ( ! $has_privacy ) {
+						$step['system_fields'][] = [
+							'field_key'    => 'privacy_consent',
+							'type'         => 'privacy_consent',
+							'is_removable' => false,
+							'settings'     => [
+								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+							],
+						];
+						$migrated = true;
+					}
+
+					// privacy_consent aus fields entfernen.
+					if ( ! empty( $step['fields'] ) ) {
+						$original_count      = count( $step['fields'] );
+						$step['fields'] = array_values(
+							array_filter(
+								$step['fields'],
+								function ( $field ) {
+									return 'privacy_consent' !== ( $field['field_key'] ?? '' );
+								}
+							)
+						);
+						if ( count( $step['fields'] ) < $original_count ) {
+							$migrated = true;
+						}
+					}
+				}
+			}
+
+			// Nur speichern wenn Änderungen gemacht wurden.
+			if ( $migrated ) {
+				$config_data['version'] = 2;
+				$new_json               = wp_json_encode( $config_data, JSON_UNESCAPED_UNICODE );
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->update(
+					$table,
+					[
+						'config_data' => $new_json,
+						'updated_at'  => current_time( 'mysql' ),
+					],
+					[ 'id' => $config_row['id'] ],
+					[ '%s', '%s' ],
+					[ '%d' ]
+				);
+
+				++$updated;
+			}
+		}
+
+		if ( $updated > 0 ) {
+			$this->log( 'Migrated ' . $updated . ' form config(s) to v2 format' );
 		}
 	}
 
@@ -413,7 +651,7 @@ class Migrator {
 				'label'       => __( 'Telefon', 'recruiting-playbook' ),
 				'placeholder' => __( '+49 123 456789', 'recruiting-playbook' ),
 				'is_required' => 0,
-				'is_system'   => 1,
+				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 4,
 				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'tel' ] ),
 			],
@@ -424,41 +662,15 @@ class Migrator {
 				'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
 				'description' => __( 'Optional: Schreiben Sie uns, warum Sie sich für diese Stelle interessieren.', 'recruiting-playbook' ),
 				'is_required' => 0,
-				'is_system'   => 1,
+				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 5,
 				'validation'  => wp_json_encode( [ 'max_length' => 5000 ] ),
 				'settings'    => wp_json_encode( [ 'rows' => 6 ] ),
 			],
-			[
-				'field_key'   => 'resume',
-				'field_type'  => 'file',
-				'label'       => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
-				'description' => __( 'Erlaubte Formate: PDF, DOC, DOCX (max. 10 MB)', 'recruiting-playbook' ),
-				'is_required' => 1,
-				'is_system'   => 1,
-				'position'    => 6,
-				'validation'  => wp_json_encode( [
-					'allowed_extensions' => [ 'pdf', 'doc', 'docx' ],
-					'max_file_size'      => 10485760,
-				] ),
-				'settings'    => wp_json_encode( [ 'accept' => '.pdf,.doc,.docx', 'drag_drop' => true ] ),
-			],
-			[
-				'field_key'   => 'privacy_consent',
-				'field_type'  => 'checkbox',
-				'label'       => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
-				'is_required' => 1,
-				'is_system'   => 1,
-				'position'    => 100,
-				'options'     => wp_json_encode( [
-					'choices' => [
-						[
-							'value' => '1',
-							'label' => __( 'Ich habe die Datenschutzerklärung gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-						],
-					],
-				] ),
-			],
+			// Hinweis: 'resume' und 'privacy_consent' werden NICHT mehr als System-Felder erstellt.
+			// Diese werden durch die grünen Spezialfelder im Form Builder ersetzt:
+			// - 'file_upload' (Bewerbungsunterlagen)
+			// - 'privacy_consent' (Datenschutz-Zustimmung)
 		];
 
 		foreach ( $system_fields as $field ) {
@@ -521,9 +733,9 @@ class Migrator {
 			return;
 		}
 
-		// Standard-Konfiguration mit Steps.
+		// Standard-Konfiguration mit Steps (v2 Format mit system_fields).
 		$default_config = [
-			'version'  => 1,
+			'version'  => 2,
 			'settings' => [
 				'showStepIndicator' => true,
 				'showStepTitles'    => true,
@@ -537,19 +749,22 @@ class Migrator {
 					'deletable' => false,
 					'fields'    => [
 						[
-							'field_key'   => 'first_name',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'first_name',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
 						],
 						[
-							'field_key'   => 'last_name',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'last_name',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
 						],
 						[
-							'field_key'   => 'email',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key'    => 'email',
+							'is_visible'   => true,
+							'is_required'  => true,
+							'is_removable' => false,
 						],
 						[
 							'field_key'   => 'phone',
@@ -557,36 +772,61 @@ class Migrator {
 							'is_required' => false,
 						],
 					],
+					'system_fields' => [],
 				],
 				[
 					'id'        => 'step_documents',
 					'title'     => __( 'Dokumente', 'recruiting-playbook' ),
 					'position'  => 2,
-					'deletable' => true,
+					'deletable' => false,
 					'fields'    => [
 						[
 							'field_key'   => 'message',
 							'is_visible'  => true,
 							'is_required' => false,
 						],
+					],
+					'system_fields' => [
 						[
-							'field_key'   => 'resume',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key' => 'file_upload',
+							'type'      => 'file_upload',
+							'settings'  => [
+								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+								'allowed_types' => 'pdf,doc,docx',
+								'max_file_size' => 10,
+								'max_files'     => 5,
+								'is_required'   => true,
+							],
 						],
 					],
 				],
 				[
-					'id'        => 'step_finale',
-					'title'     => __( 'Abschluss', 'recruiting-playbook' ),
-					'position'  => 999,
-					'deletable' => false,
-					'is_finale' => true,
-					'fields'    => [
+					'id'            => 'step_finale',
+					'title'         => __( 'Abschluss', 'recruiting-playbook' ),
+					'position'      => 999,
+					'deletable'     => false,
+					'is_finale'     => true,
+					'fields'        => [],
+					'system_fields' => [
 						[
-							'field_key'   => 'privacy_consent',
-							'is_visible'  => true,
-							'is_required' => true,
+							'field_key' => 'summary',
+							'type'      => 'summary',
+							'settings'  => [
+								'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'layout'           => 'two-column',
+								'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'show_only_filled' => false,
+							],
+						],
+						[
+							'field_key'    => 'privacy_consent',
+							'type'         => 'privacy_consent',
+							'is_removable' => false,
+							'settings'     => [
+								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+							],
 						],
 					],
 				],
@@ -1002,6 +1242,39 @@ class Migrator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Migration 2.0.2: phone und message zu Custom Fields machen
+	 *
+	 * Diese Felder waren vorher System-Felder (nicht editierbar).
+	 * Jetzt werden sie zu Custom Fields (editierbar mit Zahnrad-Icon).
+	 */
+	private function migratePhoneMessageToCustomFields(): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_field_definitions';
+
+		// Prüfen ob Tabelle existiert.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" );
+		if ( ! $table_exists ) {
+			return;
+		}
+
+		// phone und message auf is_system = 0 setzen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$table} SET is_system = 0 WHERE field_key IN (%s, %s)",
+				'phone',
+				'message'
+			)
+		);
+
+		if ( $updated > 0 ) {
+			$this->log( "Migrated phone and message to custom fields ({$updated} rows updated)" );
+		}
 	}
 
 	/**

@@ -14,7 +14,6 @@ use RecruitingPlaybook\Services\CustomFieldsService;
 use RecruitingPlaybook\Services\FieldDefinitionService;
 use RecruitingPlaybook\Services\FormValidationService;
 use RecruitingPlaybook\Services\CustomFieldFileService;
-use RecruitingPlaybook\Services\ConditionalLogicService;
 use RecruitingPlaybook\Models\FieldDefinition;
 use RecruitingPlaybook\FieldTypes\FieldTypeRegistry;
 use RecruitingPlaybook\FieldTypes\TextField;
@@ -33,7 +32,6 @@ class CustomFieldsServiceTest extends TestCase {
 	private $field_service_mock;
 	private $validation_service_mock;
 	private $file_service_mock;
-	private $conditional_service_mock;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -53,19 +51,11 @@ class CustomFieldsServiceTest extends TestCase {
 		$this->field_service_mock       = Mockery::mock( FieldDefinitionService::class );
 		$this->validation_service_mock  = Mockery::mock( FormValidationService::class );
 		$this->file_service_mock        = Mockery::mock( CustomFieldFileService::class );
-		$this->conditional_service_mock = Mockery::mock( ConditionalLogicService::class );
-
-		// Conditional Service Standard-Verhalten.
-		$this->conditional_service_mock
-			->shouldReceive( 'isFieldVisible' )
-			->andReturn( true )
-			->byDefault();
 
 		$this->service = new CustomFieldsService(
 			$this->field_service_mock,
 			$this->validation_service_mock,
-			$this->file_service_mock,
-			$this->conditional_service_mock
+			$this->file_service_mock
 		);
 	}
 
@@ -148,37 +138,6 @@ class CustomFieldsServiceTest extends TestCase {
 
 		$this->assertInstanceOf( WP_Error::class, $result );
 		$this->assertEquals( 'validation_failed', $result->get_error_code() );
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_skips_hidden_fields_based_on_conditional_logic(): void {
-		$visible_field = $this->createFieldDefinition( 'type', 'select', true, false );
-		$hidden_field  = $this->createFieldDefinition( 'other_type', 'text', true, false );
-
-		$this->field_service_mock
-			->shouldReceive( 'getFieldsForJob' )
-			->with( 1 )
-			->andReturn( [ $visible_field, $hidden_field ] );
-
-		$this->conditional_service_mock
-			->shouldReceive( 'isFieldVisible' )
-			->with( $visible_field, Mockery::any() )
-			->andReturn( true );
-
-		$this->conditional_service_mock
-			->shouldReceive( 'isFieldVisible' )
-			->with( $hidden_field, Mockery::any() )
-			->andReturn( false );
-
-		$result = $this->service->processCustomFields( 1, 0, [
-			'type'       => 'normal',
-			'other_type' => 'something',
-		] );
-
-		$this->assertArrayHasKey( 'type', $result );
-		$this->assertArrayNotHasKey( 'other_type', $result );
 	}
 
 	/**

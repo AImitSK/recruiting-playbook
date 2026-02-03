@@ -130,7 +130,12 @@ class ApplicationService {
 			);
 
 			if ( is_wp_error( $custom_fields_result ) ) {
-				$this->logActivity( $application_id, 'custom_fields_error', $custom_fields_result->get_error_message() );
+				// Custom Fields Validierung fehlgeschlagen - Bewerbung entfernen und Fehler zurückgeben.
+				global $wpdb;
+				$table = $wpdb->prefix . 'rp_applications';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->delete( $table, [ 'id' => $application_id ], [ '%d' ] );
+				return $custom_fields_result;
 			}
 		}
 

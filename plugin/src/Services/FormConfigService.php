@@ -535,7 +535,7 @@ class FormConfigService {
 					'id'            => 'step_documents',
 					'title'         => __( 'Dokumente', 'recruiting-playbook' ),
 					'position'      => 2,
-					'deletable'     => true,
+					'deletable'     => false,
 					'fields'        => [
 						[
 							'field_key'    => 'message',
@@ -814,7 +814,16 @@ class FormConfigService {
 		return array_values(
 			array_map(
 				function ( $field ) {
+					// Settings holen und options hinzufügen (falls vorhanden).
+					// getOptions() prüft sowohl die options-Spalte als auch settings.options.
+					$settings = $field->getSettings() ?? [];
+					$options  = $field->getOptions();
+					if ( $options !== null && ! empty( $options ) ) {
+						$settings['options'] = $options;
+					}
+
 					return [
+						'id'          => $field->getId(),
 						'field_key'   => $field->getFieldKey(),
 						'field_type'  => $field->getFieldType(),
 						'label'       => $field->getLabel(),
@@ -822,7 +831,7 @@ class FormConfigService {
 						'description' => $field->getDescription(),
 						'is_required' => $field->isRequired(),
 						'is_system'   => $field->isSystem(),
-						'settings'    => $field->getSettings(),
+						'settings'    => $settings,
 						'validation'  => $field->getValidation(),
 					];
 				},

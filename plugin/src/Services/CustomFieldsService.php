@@ -44,30 +44,20 @@ class CustomFieldsService {
 	private CustomFieldFileService $file_service;
 
 	/**
-	 * Conditional Logic Service
-	 *
-	 * @var ConditionalLogicService
-	 */
-	private ConditionalLogicService $conditional_service;
-
-	/**
 	 * Konstruktor
 	 *
-	 * @param FieldDefinitionService|null  $field_service       Optional.
-	 * @param FormValidationService|null   $validation_service  Optional.
-	 * @param CustomFieldFileService|null  $file_service        Optional.
-	 * @param ConditionalLogicService|null $conditional_service Optional.
+	 * @param FieldDefinitionService|null $field_service      Optional.
+	 * @param FormValidationService|null  $validation_service Optional.
+	 * @param CustomFieldFileService|null $file_service       Optional.
 	 */
 	public function __construct(
 		?FieldDefinitionService $field_service = null,
 		?FormValidationService $validation_service = null,
-		?CustomFieldFileService $file_service = null,
-		?ConditionalLogicService $conditional_service = null
+		?CustomFieldFileService $file_service = null
 	) {
-		$this->field_service       = $field_service ?? new FieldDefinitionService();
-		$this->validation_service  = $validation_service ?? new FormValidationService();
-		$this->file_service        = $file_service ?? new CustomFieldFileService();
-		$this->conditional_service = $conditional_service ?? new ConditionalLogicService();
+		$this->field_service      = $field_service ?? new FieldDefinitionService();
+		$this->validation_service = $validation_service ?? new FormValidationService();
+		$this->file_service       = $file_service ?? new CustomFieldFileService();
 	}
 
 	/**
@@ -89,7 +79,7 @@ class CustomFieldsService {
 
 		// Nur aktivierte, nicht-System-Felder (System-Felder werden direkt verarbeitet).
 		$custom_fields = array_filter( $fields, function ( FieldDefinition $field ) {
-			return $field->isEnabled() && ! $field->isSystem();
+			return $field->isActive() && ! $field->isSystem();
 		} );
 
 		if ( empty( $custom_fields ) ) {
@@ -125,32 +115,56 @@ class CustomFieldsService {
 		$result = [];
 		$registry = FieldTypeRegistry::getInstance();
 
+		// Build a lookup map of field definitions by key.
+		$field_map = [];
 		foreach ( $custom_fields as $field ) {
-			$field_key = $field->getFieldKey();
-			$field_type = $registry->get( $field->getType() );
+			$field_map[ $field->getFieldKey() ] = $field;
+		}
 
-			// Conditional Logic: Feld überspringen wenn nicht sichtbar.
-			if ( ! $this->conditional_service->isFieldVisible( $field, $data ) ) {
+		// Process ALL data from frontend, not just defined fields.
+		// This ensures no data is lost if field definitions are missing.
+		foreach ( $data as $field_key => $value ) {
+			// Skip empty keys or internal fields (starting with underscore).
+			if ( empty( $field_key ) || ( is_string( $field_key ) && strpos( $field_key, '_' ) === 0 ) ) {
 				continue;
 			}
 
-			// Datei-Felder: Dokument-IDs aus Upload-Ergebnis.
-			if ( 'file' === $field->getType() ) {
-				$result[ $field_key ] = $file_mappings[ $field_key ] ?? [];
-				continue;
-			}
+			// Check if we have a field definition for this key.
+			$field = $field_map[ $field_key ] ?? null;
 
-			// Normaler Wert.
-			$value = $data[ $field_key ] ?? null;
+			if ( $field ) {
+				$field_type = $registry->get( $field->getFieldType() );
 
-			// Sanitizen.
-			if ( $field_type ) {
-				$value = $field_type->sanitize( $value, $field );
+				// Datei-Felder: Dokument-IDs aus Upload-Ergebnis.
+				if ( 'file' === $field->getFieldType() ) {
+					$result[ $field_key ] = $file_mappings[ $field_key ] ?? [];
+					continue;
+				}
+
+				// Sanitizen mit Feldtyp.
+				if ( $field_type ) {
+					$value = $field_type->sanitize( $value, $field );
+				} else {
+					$value = $this->sanitizeValue( $value, $field );
+				}
 			} else {
-				$value = $this->sanitizeValue( $value, $field );
+				// No field definition found - apply basic sanitization.
+				// This prevents data loss when field definitions are missing.
+				if ( is_array( $value ) ) {
+					$value = array_map( 'sanitize_text_field', $value );
+				} elseif ( is_string( $value ) ) {
+					$value = sanitize_text_field( $value );
+				}
 			}
 
 			$result[ $field_key ] = $value;
+		}
+
+		// Also add file mappings for defined file fields not in $data.
+		foreach ( $file_mappings as $field_key => $doc_ids ) {
+			if ( ! isset( $result[ $field_key ] ) ) {
+				$result[ $field_key ] = $doc_ids;
+			}
 		}
 
 		return $result;
@@ -167,19 +181,23 @@ class CustomFieldsService {
 		$errors = [];
 		$registry = FieldTypeRegistry::getInstance();
 
+		// Build lookup of submitted field keys.
+		$submitted_keys = array_keys( $data );
+
 		foreach ( $fields as $field ) {
 			$field_key = $field->getFieldKey();
 
-			// Conditional Logic: Feld überspringen wenn nicht sichtbar.
-			if ( ! $this->conditional_service->isFieldVisible( $field, $data ) ) {
+			// Only validate fields that were actually submitted.
+			// Fields not in the form should not be validated.
+			if ( ! in_array( $field_key, $submitted_keys, true ) ) {
 				continue;
 			}
 
 			$value = $data[ $field_key ] ?? null;
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Datei-Felder werden separat validiert.
-			if ( 'file' === $field->getType() ) {
+			if ( 'file' === $field->getFieldType() ) {
 				continue;
 			}
 
@@ -224,7 +242,7 @@ class CustomFieldsService {
 			return '';
 		}
 
-		return match ( $field->getType() ) {
+		return match ( $field->getFieldType() ) {
 			'text', 'textarea' => sanitize_textarea_field( (string) $value ),
 			'email'            => sanitize_email( (string) $value ),
 			'url'              => esc_url_raw( (string) $value ),
@@ -338,36 +356,69 @@ class CustomFieldsService {
 		$registry = FieldTypeRegistry::getInstance();
 		$result   = [];
 
+		// Build a lookup map of field definitions by key.
+		$field_map = [];
 		foreach ( $fields as $field ) {
-			$field_key = $field->getFieldKey();
+			if ( ! $field->isSystem() ) {
+				$field_map[ $field->getFieldKey() ] = $field;
+			}
+		}
 
-			// System-Felder überspringen.
-			if ( $field->isSystem() ) {
+		// Process ALL stored custom fields, not just those with definitions.
+		// This ensures no data is hidden if field definitions are missing.
+		foreach ( $custom_fields as $field_key => $value ) {
+			// Skip empty keys or internal fields (starting with underscore).
+			if ( empty( $field_key ) || ( is_string( $field_key ) && strpos( $field_key, '_' ) === 0 ) ) {
 				continue;
 			}
 
-			if ( ! array_key_exists( $field_key, $custom_fields ) ) {
-				continue;
+			// Skip display-only fields (html, heading) - they don't have values to show.
+			$field = $field_map[ $field_key ] ?? null;
+
+			if ( $field ) {
+				$field_type_key = $field->getFieldType();
+
+				// Skip display-only fields.
+				if ( in_array( $field_type_key, [ 'html', 'heading' ], true ) ) {
+					continue;
+				}
+
+				$field_type = $registry->get( $field_type_key );
+
+				// Wert formatieren.
+				$display_value = $value;
+				if ( $field_type ) {
+					$display_value = $field_type->formatDisplayValue( $value, $field );
+				} elseif ( is_array( $value ) ) {
+					$display_value = implode( ', ', $value );
+				}
+
+				$result[] = [
+					'key'           => $field_key,
+					'label'         => $field->getLabel(),
+					'value'         => $value,
+					'display_value' => $display_value,
+					'type'          => $field_type_key,
+				];
+			} else {
+				// No field definition found - use fallback formatting.
+				// This ensures stored data is still visible.
+				$display_value = $value;
+				if ( is_array( $value ) ) {
+					$display_value = implode( ', ', $value );
+				}
+
+				// Generate a human-readable label from the field_key.
+				$label = ucfirst( str_replace( [ 'field_', '_' ], [ '', ' ' ], $field_key ) );
+
+				$result[] = [
+					'key'           => $field_key,
+					'label'         => $label,
+					'value'         => $value,
+					'display_value' => $display_value,
+					'type'          => 'text', // Fallback type.
+				];
 			}
-
-			$value      = $custom_fields[ $field_key ];
-			$field_type = $registry->get( $field->getType() );
-
-			// Wert formatieren.
-			$display_value = $value;
-			if ( $field_type ) {
-				$display_value = $field_type->formatDisplayValue( $value, $field );
-			} elseif ( is_array( $value ) ) {
-				$display_value = implode( ', ', $value );
-			}
-
-			$result[] = [
-				'key'           => $field_key,
-				'label'         => $field->getLabel(),
-				'value'         => $value,
-				'display_value' => $display_value,
-				'type'          => $field->getType(),
-			];
 		}
 
 		return $result;
@@ -408,7 +459,7 @@ class CustomFieldsService {
 			}
 
 			$value      = $custom_fields[ $field_key ];
-			$field_type = $registry->get( $field->getType() );
+			$field_type = $registry->get( $field->getFieldType() );
 
 			// Wert für Export formatieren.
 			$export_value = $value;
