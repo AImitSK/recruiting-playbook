@@ -43,6 +43,18 @@ if ( function_exists( '\rp_fs' ) ) {
         require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
     }
 
+    // Freemius Development Settings (für Staging/Testing).
+    // TODO: Vor Production-Release entfernen!
+    if ( ! defined( 'WP_FS__DEV_MODE' ) ) {
+        define( 'WP_FS__DEV_MODE', true );
+    }
+    if ( ! defined( 'WP_FS__SKIP_EMAIL_ACTIVATION' ) ) {
+        define( 'WP_FS__SKIP_EMAIL_ACTIVATION', true );
+    }
+    if ( ! defined( 'WP_FS__recruiting-playbook_SECRET_KEY' ) ) {
+        define( 'WP_FS__recruiting-playbook_SECRET_KEY', 'sk_Hg&7eI}C]qSqo<T)j.ur5w8n;}8dh' );
+    }
+
     // Freemius SDK initialisieren (für Lizenzierung & Updates).
     if (file_exists(RP_PLUGIN_DIR . 'freemius.php')) {
         require_once RP_PLUGIN_DIR . 'freemius.php';
