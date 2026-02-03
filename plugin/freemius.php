@@ -40,6 +40,92 @@ if ( ! function_exists( 'rp_fs' ) ) {
 
     // Init Freemius.
     rp_fs();
+
+    // Default-Währung auf EUR setzen.
+    rp_fs()->add_filter( 'default_currency', function( $currency ) {
+        return 'eur';
+    });
+
+    // Deutsche Übersetzungen für Freemius SDK Strings.
+    rp_fs()->override_i18n( array(
+        // Opt-in Dialog.
+        'opt-in-connect'                    => 'Ja, ich bin dabei!',
+        'skip'                              => 'Überspringen',
+        'opt-in-skip'                       => 'Nicht jetzt',
+
+        // Account Page.
+        'account'                           => 'Konto',
+        'plan'                              => 'Plan',
+        'free'                              => 'Kostenlos',
+        'activate'                          => 'Aktivieren',
+        'change-plan'                       => 'Plan ändern',
+        'upgrade'                           => 'Upgrade',
+        'downgrade'                         => 'Downgrade',
+        'cancel-subscription'               => 'Abo kündigen',
+        'cancel-trial'                      => 'Testphase beenden',
+        'renews-in'                         => 'Verlängert sich in %s',
+        'expires-in'                        => 'Läuft ab in %s',
+        'license'                           => 'Lizenz',
+        'activate-license'                  => 'Lizenz aktivieren',
+        'sync-license'                      => 'Lizenz synchronisieren',
+        'deactivate-license'                => 'Lizenz deaktivieren',
+        'name'                              => 'Name',
+        'email'                             => 'E-Mail',
+        'edit'                              => 'Bearbeiten',
+        'update'                            => 'Aktualisieren',
+        'delete'                            => 'Löschen',
+        'cancel'                            => 'Abbrechen',
+        'ok'                                => 'OK',
+        'yes'                               => 'Ja',
+        'no'                                => 'Nein',
+        'save'                              => 'Speichern',
+        'send'                              => 'Senden',
+        'submit'                            => 'Absenden',
+        'continue'                          => 'Weiter',
+
+        // Pricing/Checkout.
+        'pricing'                           => 'Preise',
+        'buy'                               => 'Kaufen',
+        'purchase'                          => 'Kaufen',
+        'monthly'                           => 'Monatlich',
+        'annual'                            => 'Jährlich',
+        'annually'                          => 'Jährlich',
+        'lifetime'                          => 'Einmalig',
+        'single-site'                       => 'Einzelne Seite',
+        'unlimited-sites'                   => 'Unbegrenzte Seiten',
+        'sites'                             => 'Seiten',
+        'site'                              => 'Seite',
+        'price'                             => 'Preis',
+        'billed-annually'                   => 'Jährliche Abrechnung',
+        'billed-monthly'                    => 'Monatliche Abrechnung',
+        'best-value'                        => 'Bestes Angebot',
+        'recommended'                       => 'Empfohlen',
+        'most-popular'                      => 'Am beliebtesten',
+        'support'                           => 'Support',
+        'no-support'                        => 'Kein Support',
+        'priority-support'                  => 'Priorisierter Support',
+        'priority-email-support'            => 'Priorisierter E-Mail-Support',
+        'your-plan'                         => 'Dein Plan',
+        'upgrade-now'                       => 'Jetzt upgraden',
+        'buy-now'                           => 'Jetzt kaufen',
+
+        // Contact.
+        'contact'                           => 'Kontakt',
+        'contact-us'                        => 'Kontaktiere uns',
+        'send-feedback'                     => 'Feedback senden',
+        'message'                           => 'Nachricht',
+        'subject'                           => 'Betreff',
+
+        // Misc.
+        'version'                           => 'Version',
+        'add-ons'                           => 'Add-ons',
+        'bundle-plan'                       => 'Bundle-Plan',
+        'premium-version'                   => 'Premium-Version',
+        'free-version'                      => 'Kostenlose Version',
+        'features'                          => 'Features',
+        'all-features'                      => 'Alle Features',
+    ) );
+
     // Signal that SDK was initiated.
     do_action( 'rp_fs_loaded' );
 }
