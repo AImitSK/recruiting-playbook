@@ -7,7 +7,7 @@
  * @package RecruitingPlaybook
  */
 
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -82,6 +82,35 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 		width: 'full',
 		options: [],
 	} );
+	const [ dropdownOpen, setDropdownOpen ] = useState( false );
+	const [ dropdownPosition, setDropdownPosition ] = useState( { top: 0, left: 0, width: 0 } );
+	const dropdownRef = useRef( null );
+	const triggerRef = useRef( null );
+
+	// Close dropdown when clicking outside
+	useEffect( () => {
+		const handleClickOutside = ( event ) => {
+			if ( dropdownRef.current && ! dropdownRef.current.contains( event.target ) &&
+			     triggerRef.current && ! triggerRef.current.contains( event.target ) ) {
+				setDropdownOpen( false );
+			}
+		};
+		document.addEventListener( 'mousedown', handleClickOutside );
+		return () => document.removeEventListener( 'mousedown', handleClickOutside );
+	}, [] );
+
+	// Calculate dropdown position when opening
+	const openDropdown = () => {
+		if ( triggerRef.current ) {
+			const rect = triggerRef.current.getBoundingClientRect();
+			setDropdownPosition( {
+				top: rect.bottom + 4,
+				left: rect.left,
+				width: rect.width,
+			} );
+		}
+		setDropdownOpen( true );
+	};
 
 	// Group and sort field types for dropdown
 	const sortedFieldTypes = useMemo( () => {
@@ -120,16 +149,16 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 	};
 
 	// Handle type selection
-	const handleTypeChange = ( e ) => {
-		const newType = e.target.value;
+	const handleTypeSelect = ( newType ) => {
 		setSelectedType( newType );
+		setDropdownOpen( false );
 
 		// Set default label based on type
 		if ( newType && fieldTypes[ newType ] ) {
 			setFieldSettings( ( prev ) => ( {
 				...prev,
 				label: prev.label || fieldTypes[ newType ].label || '',
-				options: hasOptions ? prev.options : [],
+				options: [ 'select', 'radio', 'checkbox' ].includes( newType ) ? prev.options : [],
 			} ) );
 		}
 	};
@@ -227,10 +256,11 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 							<span style={ { color: '#ef4444' } }> *</span>
 						</Label>
 						<div style={ { position: 'relative' } }>
-							<select
-								id="field_type"
-								value={ selectedType }
-								onChange={ handleTypeChange }
+							{ /* Dropdown trigger button */ }
+							<button
+								ref={ triggerRef }
+								type="button"
+								onClick={ () => dropdownOpen ? setDropdownOpen( false ) : openDropdown() }
 								style={ {
 									width: '100%',
 									padding: '0.5rem 2.5rem 0.5rem 2.5rem',
@@ -238,26 +268,17 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									borderRadius: '0.375rem',
 									border: '1px solid #d1d5db',
 									backgroundColor: 'white',
-									appearance: 'none',
 									cursor: 'pointer',
+									textAlign: 'left',
+									display: 'flex',
+									alignItems: 'center',
 								} }
 							>
-								<option value="">
-									{ i18n?.selectFieldType || __( 'Feldtyp wählen...', 'recruiting-playbook' ) }
-								</option>
-								{ sortedFieldTypes.map( ( [ key, type ] ) => {
-									const isProType = requiresPro( key );
-									return (
-										<option
-											key={ key }
-											value={ key }
-											disabled={ isProType }
-										>
-											{ type.label }{ isProType ? ' (Pro)' : '' }
-										</option>
-									);
-								} ) }
-							</select>
+								{ selectedType && fieldTypes[ selectedType ]
+									? fieldTypes[ selectedType ].label
+									: ( i18n?.selectFieldType || __( 'Feldtyp wählen...', 'recruiting-playbook' ) )
+								}
+							</button>
 
 							{ /* Icon on left */ }
 							<div
@@ -291,8 +312,68 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									width: '1rem',
 									color: '#6b7280',
 									pointerEvents: 'none',
+									transition: 'transform 0.2s',
+									...(dropdownOpen ? { transform: 'translateY(-50%) rotate(180deg)' } : {}),
 								} }
 							/>
+
+							{ /* Dropdown list - rendered with fixed position to escape overflow */ }
+							{ dropdownOpen && (
+								<div
+									ref={ dropdownRef }
+									style={ {
+										position: 'fixed',
+										top: dropdownPosition.top,
+										left: dropdownPosition.left,
+										width: dropdownPosition.width,
+										backgroundColor: 'white',
+										border: '1px solid #d1d5db',
+										borderRadius: '0.375rem',
+										boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+										zIndex: 100001,
+										maxHeight: '15rem',
+										overflowY: 'auto',
+									} }
+								>
+									{ sortedFieldTypes.map( ( [ key, type ] ) => {
+										const isProType = requiresPro( key );
+										const IconComponent = fieldTypeIcons[ key ] || Type;
+										const isSelected = selectedType === key;
+
+										return (
+											<button
+												key={ key }
+												type="button"
+												onClick={ () => ! isProType && handleTypeSelect( key ) }
+												disabled={ isProType }
+												style={ {
+													width: '100%',
+													padding: '0.5rem 0.75rem',
+													display: 'flex',
+													alignItems: 'center',
+													gap: '0.5rem',
+													fontSize: '0.875rem',
+													textAlign: 'left',
+													border: 'none',
+													backgroundColor: isSelected ? '#f3f4f6' : 'transparent',
+													cursor: isProType ? 'not-allowed' : 'pointer',
+													color: isProType ? '#9ca3af' : '#374151',
+												} }
+												className={ ! isProType ? 'hover:bg-gray-100' : '' }
+											>
+												<IconComponent style={ { height: '1rem', width: '1rem', flexShrink: 0, color: isProType ? '#9ca3af' : '#6b7280' } } />
+												<span style={ { flex: 1 } }>{ type.label }</span>
+												{ isProType && (
+													<span style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#9ca3af' } }>
+														<Lock style={ { height: '0.75rem', width: '0.75rem' } } />
+														Pro
+													</span>
+												) }
+											</button>
+										);
+									} ) }
+								</div>
+							) }
 						</div>
 					</div>
 

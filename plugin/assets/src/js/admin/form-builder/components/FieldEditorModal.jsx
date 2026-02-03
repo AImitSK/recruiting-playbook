@@ -129,10 +129,11 @@ export default function FieldEditorModal( {
 		return () => document.removeEventListener( 'keydown', handleKeyDown );
 	}, [ onClose ] );
 
-	// Field type config
-	const fieldTypeConfig = fieldTypes?.[ field?.type ] || {};
-	const hasOptions = [ 'select', 'radio', 'checkbox' ].includes( field?.type );
-	const hasValidation = ! [ 'heading' ].includes( field?.type );
+	// Field type config (API returns field_type, not type)
+	const fieldType = field?.field_type || field?.type;
+	const fieldTypeConfig = fieldTypes?.[ fieldType ] || {};
+	const hasOptions = [ 'select', 'radio', 'checkbox' ].includes( fieldType );
+	const hasValidation = ! [ 'heading' ].includes( fieldType );
 
 	if ( ! field ) {
 		return null;
@@ -250,7 +251,7 @@ export default function FieldEditorModal( {
 							</div>
 
 							{ /* Placeholder (for input fields) */ }
-							{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( field.type ) && (
+							{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( fieldType ) && (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 									<Label htmlFor="placeholder">
 										{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
@@ -299,7 +300,7 @@ export default function FieldEditorModal( {
 								<OptionsEditor
 									options={ localField.settings?.options || [] }
 									onChange={ ( options ) => updateSettings( 'options', options ) }
-									fieldType={ field.type }
+									fieldType={ fieldType }
 									i18n={ i18n }
 								/>
 							) }
@@ -330,7 +331,7 @@ export default function FieldEditorModal( {
 								<ValidationEditor
 									validation={ localField.validation || {} }
 									onChange={ updateValidation }
-									fieldType={ field.type }
+									fieldType={ fieldType }
 									i18n={ i18n }
 								/>
 							</TabsContent>

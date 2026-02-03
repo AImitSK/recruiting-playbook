@@ -157,6 +157,7 @@ function SortableFieldItem( {
 				alignItems: 'center',
 				justifyContent: 'space-between',
 				padding: '0.5rem 0.75rem',
+				minHeight: '2.75rem',
 				backgroundColor: isDragging ? '#dbeafe' : ( isRemovable ? '#f9fafb' : '#fef3c7' ),
 				borderRadius: '0.375rem',
 				border: isDragging ? '1px solid #3b82f6' : ( isRemovable ? '1px solid #e5e7eb' : '1px solid #fcd34d' ),
@@ -271,15 +272,24 @@ function SortableFieldItem( {
 				>
 					{ /* Settings button only for custom fields */ }
 					{ isCustomField && onEditField && (
-						<Button
-							variant="ghost"
-							size="sm"
+						<button
+							type="button"
 							onClick={ () => onEditField( fieldConfig.field_key ) }
 							title={ __( 'Feld bearbeiten', 'recruiting-playbook' ) }
-							style={ { padding: '0.25rem', height: 'auto', minHeight: 'auto' } }
+							style={ {
+								background: 'none',
+								border: 'none',
+								padding: '0.25rem',
+								cursor: 'pointer',
+								color: '#71717a',
+								display: 'flex',
+								alignItems: 'center',
+								borderRadius: '0.25rem',
+							} }
+							className="hover:bg-gray-100"
 						>
 							<Settings style={ { height: '1rem', width: '1rem' } } />
-						</Button>
+						</button>
 					) }
 
 					{ /* Delete button or Lock icon */ }
@@ -360,6 +370,7 @@ function SystemFieldCard( {
 				alignItems: 'center',
 				justifyContent: 'space-between',
 				padding: '0.5rem 0.75rem',
+				minHeight: '2.75rem',
 				backgroundColor: '#f0fdf4',
 				borderRadius: '0.375rem',
 				border: '1px solid #86efac',
@@ -390,14 +401,24 @@ function SystemFieldCard( {
 
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
 				{ /* Settings button */ }
-				<Button
-					variant="ghost"
-					size="sm"
+				<button
+					type="button"
 					onClick={ () => onOpenSettings && onOpenSettings( stepId, systemField ) }
 					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					style={ {
+						background: 'none',
+						border: 'none',
+						padding: '0.25rem',
+						cursor: 'pointer',
+						color: '#22c55e',
+						display: 'flex',
+						alignItems: 'center',
+						borderRadius: '0.25rem',
+					} }
+					className="hover:bg-green-100"
 				>
 					<Settings style={ { height: '1rem', width: '1rem' } } />
-				</Button>
+				</button>
 			</div>
 		</div>
 	);
