@@ -15,22 +15,21 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { Select, SelectOption } from '../../components/ui/select';
+import { RichTextEditor } from '../../components/ui/rich-text-editor';
 import {
 	X,
 	Type,
 	AlignLeft,
 	Mail,
 	Phone,
-	Hash,
 	List,
 	Circle,
 	CheckSquare,
 	Calendar,
-	Upload,
 	Link,
-	Heading,
 	Lock,
 	ChevronDown,
+	Code,
 } from 'lucide-react';
 import OptionsEditor from './OptionsEditor';
 
@@ -42,14 +41,12 @@ const fieldTypeIcons = {
 	textarea: AlignLeft,
 	email: Mail,
 	phone: Phone,
-	number: Hash,
 	select: List,
 	radio: Circle,
 	checkbox: CheckSquare,
 	date: Calendar,
-	file: Upload,
 	url: Link,
-	heading: Heading,
+	html: Code,
 };
 
 /**
@@ -81,6 +78,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 		is_required: false,
 		width: 'full',
 		options: [],
+		content: '', // For HTML field type
 	} );
 	const [ dropdownOpen, setDropdownOpen ] = useState( false );
 	const [ dropdownPosition, setDropdownPosition ] = useState( { top: 0, left: 0, width: 0 } );
@@ -133,7 +131,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 
 	// Check if a field type requires Pro
 	const requiresPro = ( typeKey ) => {
-		const proTypes = [ 'file', 'date' ];
+		const proTypes = [ 'date' ];
 		return ! isPro && proTypes.includes( typeKey );
 	};
 
@@ -142,6 +140,9 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 
 	// Check if selected type supports placeholder
 	const hasPlaceholder = [ 'text', 'textarea', 'email', 'phone', 'number', 'url', 'select' ].includes( selectedType );
+
+	// Check if selected type is HTML (display-only content)
+	const isHtmlField = selectedType === 'html';
 
 	// Update field settings
 	const updateSettings = ( key, value ) => {
@@ -157,15 +158,25 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 		if ( newType && fieldTypes[ newType ] ) {
 			setFieldSettings( ( prev ) => ( {
 				...prev,
-				label: prev.label || fieldTypes[ newType ].label || '',
+				label: newType === 'html'
+					? ( prev.label || __( 'Hinweistext', 'recruiting-playbook' ) )
+					: ( prev.label || fieldTypes[ newType ].label || '' ),
 				options: [ 'select', 'radio', 'checkbox' ].includes( newType ) ? prev.options : [],
+				content: newType === 'html' ? ( prev.content || '' ) : '',
 			} ) );
 		}
 	};
 
 	// Handle form submit
 	const handleSubmit = () => {
-		if ( ! selectedType || ! fieldSettings.label.trim() ) {
+		// For HTML fields, content is required; for others, label is required
+		const isValidSubmit = selectedType && (
+			selectedType === 'html'
+				? fieldSettings.content.trim()
+				: fieldSettings.label.trim()
+		);
+
+		if ( ! isValidSubmit ) {
 			return;
 		}
 
@@ -183,7 +194,12 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 	};
 
 	// Check if form is valid
-	const isValid = selectedType && fieldSettings.label.trim();
+	// For HTML fields, content is required; for others, label is required
+	const isValid = selectedType && (
+		isHtmlField
+			? fieldSettings.content.trim()
+			: fieldSettings.label.trim()
+	);
 
 	return (
 		<div
@@ -484,6 +500,25 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 										fieldType={ selectedType }
 										i18n={ i18n }
 									/>
+								</div>
+							) }
+
+							{ /* HTML Content Editor */ }
+							{ isHtmlField && (
+								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+									<Label>
+										{ __( 'Inhalt', 'recruiting-playbook' ) }
+										<span style={ { color: '#ef4444' } }> *</span>
+									</Label>
+									<RichTextEditor
+										value={ fieldSettings.content }
+										onChange={ ( content ) => updateSettings( 'content', content ) }
+										placeholder={ __( 'HTML-Inhalt eingeben...', 'recruiting-playbook' ) }
+										minHeight="150px"
+									/>
+									<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
+										{ __( 'Formatierter Text wird im Formular angezeigt (z.B. Hinweise, Erklärungen).', 'recruiting-playbook' ) }
+									</p>
 								</div>
 							) }
 						</>

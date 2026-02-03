@@ -74,6 +74,36 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 		);
 	}
 
+	// Render HTML content block differently
+	if ( type === 'html' ) {
+		const content = field.settings?.content || '';
+
+		return (
+			<div
+				className="rp-field-preview rp-field-preview--html"
+				style={ {
+					...widthStyle,
+					padding: '0.75rem',
+					backgroundColor: '#f9fafb',
+					borderRadius: '0.375rem',
+					border: '1px solid #e5e7eb',
+				} }
+			>
+				{ content ? (
+					<div
+						className="rp-html-content"
+						style={ { fontSize: '0.875rem', color: '#374151' } }
+						dangerouslySetInnerHTML={ { __html: content } }
+					/>
+				) : (
+					<p style={ { fontSize: '0.875rem', color: '#9ca3af', fontStyle: 'italic', margin: 0 } }>
+						{ __( 'HTML-Inhalt wird hier angezeigt...', 'recruiting-playbook' ) }
+					</p>
+				) }
+			</div>
+		);
+	}
+
 	// Field label with required indicator
 	const renderLabel = () => (
 		<Label style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>

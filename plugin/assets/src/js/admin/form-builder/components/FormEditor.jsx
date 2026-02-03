@@ -50,15 +50,14 @@ import {
 	AlignLeft,
 	Mail,
 	Phone,
-	Hash,
 	List,
 	Circle,
 	CheckSquare,
 	Calendar,
 	Link,
-	Heading,
 	Square,
 	Columns2,
+	Code,
 } from 'lucide-react';
 import { Input } from '../../components/ui/input';
 import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
@@ -73,14 +72,12 @@ const fieldTypeIcons = {
 	textarea: AlignLeft,
 	email: Mail,
 	phone: Phone,
-	number: Hash,
 	select: List,
 	radio: Circle,
 	checkbox: CheckSquare,
 	date: Calendar,
-	file: Upload,
 	url: Link,
-	heading: Heading,
+	html: Code,
 };
 
 /**
@@ -91,14 +88,12 @@ const fieldTypeLabels = {
 	textarea: __( 'Textbereich', 'recruiting-playbook' ),
 	email: __( 'E-Mail', 'recruiting-playbook' ),
 	phone: __( 'Telefon', 'recruiting-playbook' ),
-	number: __( 'Zahl', 'recruiting-playbook' ),
 	select: __( 'Auswahl', 'recruiting-playbook' ),
 	radio: __( 'Radio', 'recruiting-playbook' ),
 	checkbox: __( 'Checkbox', 'recruiting-playbook' ),
 	date: __( 'Datum', 'recruiting-playbook' ),
-	file: __( 'Datei', 'recruiting-playbook' ),
 	url: __( 'URL', 'recruiting-playbook' ),
-	heading: __( 'Überschrift', 'recruiting-playbook' ),
+	html: __( 'HTML', 'recruiting-playbook' ),
 };
 
 /**
