@@ -48,6 +48,11 @@ if ( ! function_exists( 'rp_fs' ) ) {
         return 'eur';
     });
 
+    // Sprache explizit auf Deutsch setzen.
+    rp_fs()->add_filter( 'plugin_locale', function( $locale ) {
+        return 'de_DE';
+    });
+
     // Deutsche Übersetzungen für Freemius SDK Strings.
     rp_fs()->override_i18n( array(
         // Opt-in Dialog.
