@@ -51,8 +51,22 @@ if ( ! function_exists( 'rp_fs' ) ) {
     // Sprache auf Deutsch setzen für Checkout.
     rp_fs()->add_filter( 'checkout/parameters', function( $params ) {
         $params['locale'] = 'de_DE';
+        $params['language'] = 'de';
         return $params;
     });
+
+    // Locale Parameter zur Pricing-Seite URL hinzufügen.
+    add_action( 'admin_init', function() {
+        // Nur auf Pricing-Seite.
+        if ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'pricing' ) !== false ) {
+            if ( ! isset( $_GET['language'] ) ) {
+                $_GET['language'] = 'de';
+            }
+            if ( ! isset( $_GET['locale'] ) ) {
+                $_GET['locale'] = 'de_DE';
+            }
+        }
+    }, 1 );
 
 
     // Deutsche Übersetzungen für Freemius SDK Strings.
