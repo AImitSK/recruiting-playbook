@@ -51,8 +51,11 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	const width = field.settings?.width || 'full';
 	const widthStyle = getWidthStyle( width, viewMode );
 
+	// Support both 'type' and 'field_type' property names for API compatibility
+	const type = field.type || field.field_type || 'text';
+
 	// Render heading differently
-	if ( field.type === 'heading' ) {
+	if ( type === 'heading' ) {
 		const level = field.settings?.level || 'h3';
 		const HeadingTag = level;
 
@@ -87,14 +90,14 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 	const renderInput = () => {
 		const options = field.settings?.options || [];
 
-		switch ( field.type ) {
+		switch ( type ) {
 			case 'text':
 			case 'email':
 			case 'phone':
 			case 'url':
 				return (
 					<Input
-						type={ field.type === 'phone' ? 'tel' : field.type }
+						type={ type === 'phone' ? 'tel' : type }
 						placeholder={ field.placeholder || '' }
 						disabled
 					/>
@@ -218,11 +221,11 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 
 	return (
 		<div
-			className={ `rp-field-preview rp-field-preview--${ field.type }` }
+			className={ `rp-field-preview rp-field-preview--${ type }` }
 			style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', ...widthStyle } }
 		>
 			{ /* Don't show label for checkbox single mode */ }
-			{ ! ( field.type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
+			{ ! ( type === 'checkbox' && field.settings?.mode !== 'multi' ) && renderLabel() }
 
 			{ renderInput() }
 
