@@ -44,30 +44,20 @@ class CustomFieldsService {
 	private CustomFieldFileService $file_service;
 
 	/**
-	 * Conditional Logic Service
-	 *
-	 * @var ConditionalLogicService
-	 */
-	private ConditionalLogicService $conditional_service;
-
-	/**
 	 * Konstruktor
 	 *
-	 * @param FieldDefinitionService|null  $field_service       Optional.
-	 * @param FormValidationService|null   $validation_service  Optional.
-	 * @param CustomFieldFileService|null  $file_service        Optional.
-	 * @param ConditionalLogicService|null $conditional_service Optional.
+	 * @param FieldDefinitionService|null $field_service      Optional.
+	 * @param FormValidationService|null  $validation_service Optional.
+	 * @param CustomFieldFileService|null $file_service       Optional.
 	 */
 	public function __construct(
 		?FieldDefinitionService $field_service = null,
 		?FormValidationService $validation_service = null,
-		?CustomFieldFileService $file_service = null,
-		?ConditionalLogicService $conditional_service = null
+		?CustomFieldFileService $file_service = null
 	) {
-		$this->field_service       = $field_service ?? new FieldDefinitionService();
-		$this->validation_service  = $validation_service ?? new FormValidationService();
-		$this->file_service        = $file_service ?? new CustomFieldFileService();
-		$this->conditional_service = $conditional_service ?? new ConditionalLogicService();
+		$this->field_service      = $field_service ?? new FieldDefinitionService();
+		$this->validation_service = $validation_service ?? new FormValidationService();
+		$this->file_service       = $file_service ?? new CustomFieldFileService();
 	}
 
 	/**
@@ -129,11 +119,6 @@ class CustomFieldsService {
 			$field_key = $field->getFieldKey();
 			$field_type = $registry->get( $field->getFieldType() );
 
-			// Conditional Logic: Feld überspringen wenn nicht sichtbar.
-			if ( ! $this->conditional_service->isFieldVisible( $field, $data ) ) {
-				continue;
-			}
-
 			// Datei-Felder: Dokument-IDs aus Upload-Ergebnis.
 			if ( 'file' === $field->getFieldType() ) {
 				$result[ $field_key ] = $file_mappings[ $field_key ] ?? [];
@@ -169,11 +154,6 @@ class CustomFieldsService {
 
 		foreach ( $fields as $field ) {
 			$field_key = $field->getFieldKey();
-
-			// Conditional Logic: Feld überspringen wenn nicht sichtbar.
-			if ( ! $this->conditional_service->isFieldVisible( $field, $data ) ) {
-				continue;
-			}
 
 			$value = $data[ $field_key ] ?? null;
 			$field_type = $registry->get( $field->getFieldType() );

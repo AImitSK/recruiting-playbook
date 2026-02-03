@@ -535,7 +535,7 @@ class FormConfigService {
 					'id'            => 'step_documents',
 					'title'         => __( 'Dokumente', 'recruiting-playbook' ),
 					'position'      => 2,
-					'deletable'     => true,
+					'deletable'     => false,
 					'fields'        => [
 						[
 							'field_key'    => 'message',

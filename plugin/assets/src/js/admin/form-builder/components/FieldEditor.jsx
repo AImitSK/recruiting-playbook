@@ -21,7 +21,6 @@ import { Spinner } from '../../components/ui/spinner';
 import { X, Trash2, Lock, AlertCircle } from 'lucide-react';
 import OptionsEditor from './OptionsEditor';
 import ValidationEditor from './ValidationEditor';
-import ConditionalEditor from './ConditionalEditor';
 
 
 /**
@@ -88,14 +87,6 @@ export default function FieldEditor( {
 		} ) );
 	}, [] );
 
-	// Update conditional logic
-	const updateConditional = useCallback( ( conditional ) => {
-		setLocalField( ( prev ) => ( {
-			...prev,
-			conditional,
-		} ) );
-	}, [] );
-
 	// Save changes
 	const handleSave = async () => {
 		if ( ! hasChanges || isSaving ) {
@@ -133,7 +124,6 @@ export default function FieldEditor( {
 	const fieldTypeConfig = fieldTypes[ field.type ] || {};
 	const hasOptions = [ 'select', 'radio', 'checkbox' ].includes( field.type );
 	const hasValidation = ! [ 'heading' ].includes( field.type );
-	const hasConditional = ! [ 'heading' ].includes( field.type );
 
 	return (
 		<Card className="rp-field-editor">
@@ -166,19 +156,13 @@ export default function FieldEditor( {
 				) }
 
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
-					<TabsList style={ { marginBottom: '1rem', width: '100%', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' } }>
+					<TabsList style={ { marginBottom: '1rem', width: '100%', display: 'grid', gridTemplateColumns: hasValidation ? 'repeat(2, 1fr)' : '1fr' } }>
 						<TabsTrigger value="general">
 							{ i18n?.general || __( 'Allgemein', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ hasValidation && (
 							<TabsTrigger value="validation">
 								{ i18n?.validation || __( 'Validierung', 'recruiting-playbook' ) }
-							</TabsTrigger>
-						) }
-						{ hasConditional && (
-							<TabsTrigger value="conditional" style={ { display: 'flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' } }>
-								{ i18n?.conditional || __( 'Bedingt', 'recruiting-playbook' ) }
-								{ ! isPro && <Lock style={ { height: '0.75rem', width: '0.75rem', flexShrink: 0 } } /> }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -301,26 +285,6 @@ export default function FieldEditor( {
 								fieldType={ field.type }
 								i18n={ i18n }
 							/>
-						</TabsContent>
-					) }
-
-					{ hasConditional && (
-						<TabsContent value="conditional">
-							{ isPro ? (
-								<ConditionalEditor
-									conditional={ localField.conditional || {} }
-									onChange={ updateConditional }
-									allFields={ allFields.filter( ( f ) => f.id !== field.id ) }
-									i18n={ i18n }
-								/>
-							) : (
-								<div style={ { textAlign: 'center', padding: '2rem 0' } }>
-									<Lock style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#9ca3af' } } />
-									<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
-										{ i18n?.conditionalLogicPro || __( 'Bedingte Logik ist ein Pro-Feature', 'recruiting-playbook' ) }
-									</p>
-								</div>
-							) }
 						</TabsContent>
 					) }
 				</Tabs>

@@ -263,9 +263,36 @@ Badges:
 
 ## Implementierungs-Reihenfolge
 
-1. **Phase 1**: Breiten-Icon zu Feld-Anzeige hinzufügen
-2. **Phase 2**: Edit-Button für Custom Fields hinzufügen
-3. **Phase 3**: FieldTypeSelector zu Dropdown + Formular umbauen
-4. **Phase 4**: Felder Tab entfernen, Modal-Flow implementieren
-5. **Phase 5**: Bedingte Anzeige komplett entfernen
-6. **Phase 6**: Aufräumen (ungenutzte Dateien löschen)
+1. **Phase 1**: Breiten-Icon zu Feld-Anzeige hinzufügen ✅
+2. **Phase 2**: Edit-Button für Custom Fields hinzufügen ✅
+3. **Phase 3**: FieldTypeSelector zu Dropdown + Formular umbauen ✅
+4. **Phase 4**: Felder Tab entfernen, Modal-Flow implementieren ✅
+5. **Phase 5**: Bedingte Anzeige komplett entfernen ✅
+6. **Phase 6**: Aufräumen (ungenutzte Dateien löschen) ✅
+
+---
+
+## Status: Abgeschlossen (2026-02-03)
+
+Alle Phasen wurden erfolgreich implementiert:
+
+### Gelöschte Dateien
+- `plugin/assets/src/js/admin/form-builder/components/FieldList.jsx`
+- `plugin/assets/src/js/admin/form-builder/components/FieldListItem.jsx`
+- `plugin/assets/src/js/admin/form-builder/components/ConditionalEditor.jsx`
+- `plugin/src/Services/ConditionalLogicService.php`
+- `plugin/src/Services/ConditionalScriptGenerator.php`
+- `plugin/tests/Unit/Services/ConditionalLogicServiceTest.php`
+- `plugin/tests/Unit/Services/ConditionalScriptGeneratorTest.php`
+
+### Neue Dateien
+- `plugin/assets/src/js/admin/form-builder/components/FieldEditorModal.jsx`
+
+### Geänderte Dateien
+- `FormBuilder.jsx` - "Felder" Tab entfernt, Modal-Flow implementiert
+- `FormEditor.jsx` - Neues Feld-Layout mit Icons (Typ, Breite, Edit, Delete/Lock)
+- `FieldTypeSelector.jsx` - Dropdown statt Grid, mit Einstellungs-Formular
+- `FieldEditor.jsx` - "Bedingte Anzeige" Tab entfernt
+- `CustomFieldsService.php` - Conditional Logic entfernt
+- `components/index.js` - Exporte bereinigt
+- Test-Dateien bereinigt

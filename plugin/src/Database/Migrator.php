@@ -119,6 +119,11 @@ class Migrator {
 			$this->migrateRemoveDuplicateSystemFields();
 			$this->migrateFormConfigToV2();
 		}
+
+		// Migration 2.0.2: phone und message zu Custom Fields machen (editierbar).
+		if ( version_compare( $from_version, '2.0.2', '<' ) ) {
+			$this->migratePhoneMessageToCustomFields();
+		}
 	}
 
 	/**
@@ -646,7 +651,7 @@ class Migrator {
 				'label'       => __( 'Telefon', 'recruiting-playbook' ),
 				'placeholder' => __( '+49 123 456789', 'recruiting-playbook' ),
 				'is_required' => 0,
-				'is_system'   => 1,
+				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 4,
 				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'tel' ] ),
 			],
@@ -657,7 +662,7 @@ class Migrator {
 				'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
 				'description' => __( 'Optional: Schreiben Sie uns, warum Sie sich für diese Stelle interessieren.', 'recruiting-playbook' ),
 				'is_required' => 0,
-				'is_system'   => 1,
+				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 5,
 				'validation'  => wp_json_encode( [ 'max_length' => 5000 ] ),
 				'settings'    => wp_json_encode( [ 'rows' => 6 ] ),
@@ -773,7 +778,7 @@ class Migrator {
 					'id'        => 'step_documents',
 					'title'     => __( 'Dokumente', 'recruiting-playbook' ),
 					'position'  => 2,
-					'deletable' => true,
+					'deletable' => false,
 					'fields'    => [
 						[
 							'field_key'   => 'message',
@@ -1237,6 +1242,39 @@ class Migrator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Migration 2.0.2: phone und message zu Custom Fields machen
+	 *
+	 * Diese Felder waren vorher System-Felder (nicht editierbar).
+	 * Jetzt werden sie zu Custom Fields (editierbar mit Zahnrad-Icon).
+	 */
+	private function migratePhoneMessageToCustomFields(): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_field_definitions';
+
+		// Prüfen ob Tabelle existiert.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" );
+		if ( ! $table_exists ) {
+			return;
+		}
+
+		// phone und message auf is_system = 0 setzen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$table} SET is_system = 0 WHERE field_key IN (%s, %s)",
+				'phone',
+				'message'
+			)
+		);
+
+		if ( $updated > 0 ) {
+			$this->log( "Migrated phone and message to custom fields ({$updated} rows updated)" );
+		}
 	}
 
 	/**

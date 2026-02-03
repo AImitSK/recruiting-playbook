@@ -46,11 +46,60 @@ import {
 	Shield,
 	Settings,
 	RotateCcw,
+	Type,
+	AlignLeft,
+	Mail,
+	Phone,
+	Hash,
+	List,
+	Circle,
+	CheckSquare,
+	Calendar,
+	Link,
+	Heading,
+	Square,
+	Columns2,
 } from 'lucide-react';
 import { Input } from '../../components/ui/input';
 import FileUploadSettings from './SystemFieldSettings/FileUploadSettings';
 import SummarySettings from './SystemFieldSettings/SummarySettings';
 import PrivacyConsentSettings from './SystemFieldSettings/PrivacyConsentSettings';
+
+/**
+ * Icon mapping for field types
+ */
+const fieldTypeIcons = {
+	text: Type,
+	textarea: AlignLeft,
+	email: Mail,
+	phone: Phone,
+	number: Hash,
+	select: List,
+	radio: Circle,
+	checkbox: CheckSquare,
+	date: Calendar,
+	file: Upload,
+	url: Link,
+	heading: Heading,
+};
+
+/**
+ * Label mapping for field types
+ */
+const fieldTypeLabels = {
+	text: __( 'Text', 'recruiting-playbook' ),
+	textarea: __( 'Textbereich', 'recruiting-playbook' ),
+	email: __( 'E-Mail', 'recruiting-playbook' ),
+	phone: __( 'Telefon', 'recruiting-playbook' ),
+	number: __( 'Zahl', 'recruiting-playbook' ),
+	select: __( 'Auswahl', 'recruiting-playbook' ),
+	radio: __( 'Radio', 'recruiting-playbook' ),
+	checkbox: __( 'Checkbox', 'recruiting-playbook' ),
+	date: __( 'Datum', 'recruiting-playbook' ),
+	file: __( 'Datei', 'recruiting-playbook' ),
+	url: __( 'URL', 'recruiting-playbook' ),
+	heading: __( 'Überschrift', 'recruiting-playbook' ),
+};
 
 /**
  * SortableFieldItem - Draggable field within a step
@@ -63,6 +112,7 @@ function SortableFieldItem( {
 	stepId,
 	fieldDef,
 	onRemove,
+	onEditField,
 } ) {
 	const {
 		attributes,
@@ -91,6 +141,13 @@ function SortableFieldItem( {
 	// Check if field is removable (default to true for backwards compatibility)
 	const isRemovable = fieldConfig.is_removable !== false;
 
+	// Check if field is a custom field (not a system field)
+	const isCustomField = fieldDef && ! fieldDef.is_system;
+
+	// Get field type icon (API returns field_type, not type)
+	const fieldType = fieldDef?.field_type || 'text';
+	const FieldTypeIcon = fieldTypeIcons[ fieldType ] || Type;
+
 	return (
 		<div
 			ref={ setNodeRef }
@@ -105,7 +162,7 @@ function SortableFieldItem( {
 				border: isDragging ? '1px solid #3b82f6' : ( isRemovable ? '1px solid #e5e7eb' : '1px solid #fcd34d' ),
 			} }
 		>
-			{ /* Left side: Drag handle, Lock icon, Label, Required/Optional badge */ }
+			{ /* Left side: Drag handle, Label, Required/Optional badge */ }
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 				<button
 					type="button"
@@ -125,14 +182,6 @@ function SortableFieldItem( {
 					<GripVertical style={ { height: '1rem', width: '1rem' } } />
 				</button>
 
-				{ /* Lock icon for non-removable fields */ }
-				{ ! isRemovable && (
-					<Lock
-						style={ { height: '0.875rem', width: '0.875rem', color: '#d97706', flexShrink: 0 } }
-						title={ __( 'Pflichtfeld - kann nicht entfernt werden', 'recruiting-playbook' ) }
-					/>
-				) }
-
 				<span style={ { fontWeight: 500 } }>{ label }</span>
 
 				{ /* Required/Optional badge */ }
@@ -147,27 +196,126 @@ function SortableFieldItem( {
 				) }
 			</div>
 
-			{ /* Right side: Delete button */ }
-			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-				{ /* Delete button only for removable fields */ }
-				{ isRemovable ? (
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={ () => onRemove( stepId, fieldConfig.field_key ) }
-						style={ { color: '#ef4444' } }
-						title={ __( 'Feld entfernen', 'recruiting-playbook' ) }
+			{ /* Right side: Type badge, Width badge, Action buttons */ }
+			<div style={ { display: 'flex', alignItems: 'center', gap: '0' } }>
+				{ /* Group 1: Badges (fixed width, left-aligned) */ }
+				<div
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0.5rem',
+						width: '13rem',
+						justifyContent: 'flex-start',
+					} }
+				>
+					{ /* Field type badge with icon + text */ }
+					<span
+						style={ {
+							display: 'inline-flex',
+							alignItems: 'center',
+							gap: '0.375rem',
+							padding: '0.125rem 0.5rem',
+							backgroundColor: 'white',
+							border: '1px solid #e4e4e7',
+							borderRadius: '9999px',
+							fontSize: '0.75rem',
+							fontWeight: 500,
+							color: '#71717a',
+							whiteSpace: 'nowrap',
+						} }
 					>
-						<X style={ { height: '1rem', width: '1rem' } } />
-					</Button>
-				) : (
-					<div
-						style={ { width: '2rem', height: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' } }
-						title={ __( 'Dieses Feld kann nicht entfernt werden', 'recruiting-playbook' ) }
+						<FieldTypeIcon style={ { height: '0.75rem', width: '0.75rem' } } />
+						{ fieldTypeLabels[ fieldType ] || fieldType }
+					</span>
+
+					{ /* Width badge with icon + text */ }
+					<span
+						style={ {
+							display: 'inline-flex',
+							alignItems: 'center',
+							gap: '0.375rem',
+							padding: '0.125rem 0.5rem',
+							backgroundColor: 'white',
+							border: '1px solid #e4e4e7',
+							borderRadius: '9999px',
+							fontSize: '0.75rem',
+							fontWeight: 500,
+							color: '#71717a',
+							whiteSpace: 'nowrap',
+						} }
 					>
-						{ /* Placeholder to maintain alignment */ }
-					</div>
-				) }
+						{ fieldConfig.width === 'half' ? (
+							<>
+								<Columns2 style={ { height: '0.75rem', width: '0.75rem' } } />
+								{ __( 'Halbe Spalte', 'recruiting-playbook' ) }
+							</>
+						) : (
+							<>
+								<Square style={ { height: '0.75rem', width: '0.75rem' } } />
+								{ __( 'Volle Spalte', 'recruiting-playbook' ) }
+							</>
+						) }
+					</span>
+				</div>
+
+				{ /* Group 2: Action buttons (Settings, Delete/Lock) - fixed width for alignment */ }
+				<div
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'flex-end',
+						gap: '0.25rem',
+						marginLeft: '0.75rem',
+						width: '3.5rem',
+					} }
+				>
+					{ /* Settings button only for custom fields */ }
+					{ isCustomField && onEditField && (
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={ () => onEditField( fieldConfig.field_key ) }
+							title={ __( 'Feld bearbeiten', 'recruiting-playbook' ) }
+							style={ { padding: '0.25rem', height: 'auto', minHeight: 'auto' } }
+						>
+							<Settings style={ { height: '1rem', width: '1rem' } } />
+						</Button>
+					) }
+
+					{ /* Delete button or Lock icon */ }
+					{ isRemovable ? (
+						<button
+							type="button"
+							onClick={ () => onRemove( stepId, fieldConfig.field_key ) }
+							style={ {
+								background: 'none',
+								border: 'none',
+								padding: '0.25rem',
+								cursor: 'pointer',
+								color: '#374151',
+								display: 'flex',
+								alignItems: 'center',
+								borderRadius: '0.25rem',
+							} }
+							className="hover:bg-gray-100"
+							title={ __( 'Feld entfernen', 'recruiting-playbook' ) }
+						>
+							<X style={ { height: '1rem', width: '1rem' } } />
+						</button>
+					) : (
+						<div
+							style={ {
+								padding: '0.25rem',
+								color: '#d97706',
+								display: 'flex',
+								alignItems: 'center',
+							} }
+							title={ __( 'Pflichtfeld - kann nicht entfernt werden', 'recruiting-playbook' ) }
+						>
+							<Lock style={ { height: '1rem', width: '1rem' } } />
+						</div>
+					) }
+				</div>
 			</div>
 		</div>
 	);
@@ -272,10 +420,8 @@ function SortableStep( {
 	onCancelEditingTitle,
 	onRemove,
 	onRemoveField,
-	onAddField,
-	showAddFieldFor,
-	setShowAddFieldFor,
-	unusedFields,
+	onEditField,
+	onCreateField,
 	getFieldDefinition,
 	onOpenSystemFieldSettings,
 	sensors,
@@ -470,6 +616,7 @@ function SortableStep( {
 											stepId={ step.id }
 											fieldDef={ getFieldDefinition ? getFieldDefinition( fieldConfig.field_key ) : null }
 											onRemove={ onRemoveField }
+											onEditField={ onEditField }
 										/>
 									) )
 								) }
@@ -495,49 +642,19 @@ function SortableStep( {
 					) }
 
 					{ /* Add field button */ }
-					<div style={ { marginTop: '0.75rem' } }>
-						{ showAddFieldFor === step.id ? (
-							<div style={ { position: 'relative' } }>
-								<div style={ { display: 'flex', flexWrap: 'wrap', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#f3f4f6', borderRadius: '0.5rem' } }>
-									{ unusedFields.length === 0 ? (
-										<span style={ { color: '#6b7280', fontSize: '0.875rem' } }>
-											{ __( 'Alle Felder sind bereits verwendet', 'recruiting-playbook' ) }
-										</span>
-									) : (
-										unusedFields.map( ( field ) => (
-											<Button
-												key={ field.field_key }
-												variant="outline"
-												size="sm"
-												onClick={ () => onAddField( step.id, field.field_key ) }
-											>
-												<Plus style={ { height: '0.875rem', width: '0.875rem', marginRight: '0.25rem' } } />
-												{ field.label }
-											</Button>
-										) )
-									) }
-								</div>
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={ () => setShowAddFieldFor( null ) }
-									style={ { position: 'absolute', top: '0.25rem', right: '0.25rem' } }
-								>
-									<X style={ { height: '1rem', width: '1rem' } } />
-								</Button>
-							</div>
-						) : (
+					{ onCreateField && (
+						<div style={ { marginTop: '0.75rem' } }>
 							<Button
 								variant="outline"
 								size="sm"
-								onClick={ () => setShowAddFieldFor( step.id ) }
+								onClick={ () => onCreateField( step.id ) }
 								style={ { width: '100%' } }
 							>
 								<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.5rem' } } />
-								{ __( 'Feld hinzufügen', 'recruiting-playbook' ) }
+								{ __( 'Neues Feld erstellen', 'recruiting-playbook' ) }
 							</Button>
-						) }
-					</div>
+						</div>
+					) }
 				</CardContent>
 			) }
 		</Card>
@@ -562,7 +679,6 @@ function SortableStep( {
  * @param {Function} props.updateSystemFieldInStep Update system field in step handler
  * @param {Function} props.moveFieldBetweenSteps   Move field between steps handler
  * @param {Function} props.reorderFieldsInStep     Reorder fields in step handler
- * @param {Function} props.getUnusedFields         Get unused fields handler
  * @param {Function} props.getFieldDefinition      Get field definition handler
  * @param {Function} props.onResetToDefault        Reset to default handler
  * @param {Object}   props.i18n                    Translations
@@ -582,15 +698,15 @@ export default function FormEditor( {
 	updateSystemFieldInStep,
 	moveFieldBetweenSteps,
 	reorderFieldsInStep,
-	getUnusedFields,
 	getFieldDefinition,
 	onResetToDefault,
+	onEditField,
+	onCreateField,
 	i18n = {},
 } ) {
 	const [ expandedSteps, setExpandedSteps ] = useState( {} );
 	const [ editingStepId, setEditingStepId ] = useState( null );
 	const [ editingTitle, setEditingTitle ] = useState( '' );
-	const [ showAddFieldFor, setShowAddFieldFor ] = useState( null );
 	const [ activeStepId, setActiveStepId ] = useState( null );
 	// System field editing state: { stepId, systemField }
 	const [ editingSystemField, setEditingSystemField ] = useState( null );
@@ -647,18 +763,6 @@ export default function FormEditor( {
 		if ( newStepId ) {
 			setExpandedSteps( ( prev ) => ( { ...prev, [ newStepId ]: true } ) );
 		}
-	};
-
-	// Handle add field to step
-	const handleAddField = ( stepId, fieldKey ) => {
-		if ( ! addFieldToStep ) {
-			return;
-		}
-		// Get field definition to use its is_required setting
-		const fieldDef = getFieldDefinition ? getFieldDefinition( fieldKey ) : null;
-		const isRequired = fieldDef?.is_required ?? false;
-		addFieldToStep( stepId, fieldKey, { is_visible: true, is_required: isRequired } );
-		setShowAddFieldFor( null );
 	};
 
 	// Handle remove field from step
@@ -747,9 +851,6 @@ export default function FormEditor( {
 		}
 	};
 
-	// Get unused fields for the add field dropdown
-	const unusedFields = getUnusedFields ? getUnusedFields() : [];
-
 	// Step IDs for sortable context (only regular steps, not finale)
 	const stepIds = regularSteps.map( ( s ) => s.id );
 
@@ -783,10 +884,8 @@ export default function FormEditor( {
 								onCancelEditingTitle={ cancelEditingTitle }
 								onRemove={ removeStep }
 								onRemoveField={ handleRemoveField }
-								onAddField={ handleAddField }
-								showAddFieldFor={ showAddFieldFor }
-								setShowAddFieldFor={ setShowAddFieldFor }
-								unusedFields={ unusedFields }
+								onEditField={ onEditField }
+								onCreateField={ onCreateField }
 								getFieldDefinition={ getFieldDefinition }
 								onOpenSystemFieldSettings={ handleOpenSystemFieldSettings }
 								sensors={ sensors }
@@ -845,10 +944,8 @@ export default function FormEditor( {
 						onCancelEditingTitle={ cancelEditingTitle }
 						onRemove={ removeStep }
 						onRemoveField={ handleRemoveField }
-						onAddField={ handleAddField }
-						showAddFieldFor={ showAddFieldFor }
-						setShowAddFieldFor={ setShowAddFieldFor }
-						unusedFields={ unusedFields }
+						onEditField={ onEditField }
+						onCreateField={ onCreateField }
 						getFieldDefinition={ getFieldDefinition }
 						onOpenSystemFieldSettings={ handleOpenSystemFieldSettings }
 						sensors={ sensors }

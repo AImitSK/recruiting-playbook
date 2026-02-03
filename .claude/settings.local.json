@@ -49,7 +49,9 @@
       "Bash(powershell -Command:*)",
       "Bash(git pull:*)",
       "Bash(git fetch:*)",
-      "Bash(composer test:*)"
+      "Bash(composer test:*)",
+      "Bash(del \"C:\\\\Users\\\\skuehne\\\\Desktop\\\\Projekt\\\\recruiting-playbook-docs\\\\plugin\\\\test-debug.php\")",
+      "WebFetch(domain:ui.shadcn.com)"
     ]
   }
 }
