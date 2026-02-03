@@ -122,6 +122,17 @@ export default function FormBuilder() {
 		setShowFieldTypeSelector( false );
 		setFieldTypeSelectorStepId( null );
 
+		// Build settings object
+		const settings = {
+			width: fieldSettings.width || 'full',
+			options: fieldSettings.options || [],
+		};
+
+		// Add content for HTML fields
+		if ( fieldSettings.content ) {
+			settings.content = fieldSettings.content;
+		}
+
 		const newField = await createField( {
 			type: fieldType,
 			field_key: `field_${ Date.now() }`,
@@ -132,10 +143,7 @@ export default function FormBuilder() {
 			is_enabled: true,
 			is_system: false,
 			sort_order: customFields.length,
-			settings: {
-				width: fieldSettings.width || 'full',
-				options: fieldSettings.options || [],
-			},
+			settings,
 		} );
 
 		if ( newField ) {
