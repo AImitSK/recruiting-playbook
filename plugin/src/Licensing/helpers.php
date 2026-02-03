@@ -76,8 +76,14 @@ function rp_can( string $feature ): mixed {
 			return false;
 		}
 
+		// User muss zahlen (oder Trial haben) UND auf passendem Plan sein.
+		if ( ! rp_fs()->is_paying() && ! rp_fs()->is_trial() ) {
+			return false;
+		}
+
 		foreach ( $required_plans as $plan ) {
-			if ( rp_fs()->is_plan( $plan, true ) ) {
+			// is_plan ohne zweiten Parameter: true wenn Plan ODER höher.
+			if ( rp_fs()->is_plan( $plan ) ) {
 				return true;
 			}
 		}
@@ -101,6 +107,13 @@ function rp_tier(): string {
 		return 'FREE';
 	}
 
+	// User muss zahlen oder Trial haben.
+	if ( ! rp_fs()->is_paying() && ! rp_fs()->is_trial() ) {
+		return 'FREE';
+	}
+
+	// Plan-Hierarchie: Bundle > Pro > AI_Addon > Free.
+	// is_plan ohne zweiten Parameter prüft auch höhere Pläne.
 	if ( rp_fs()->is_plan( 'bundle', true ) ) {
 		return 'BUNDLE';
 	}
