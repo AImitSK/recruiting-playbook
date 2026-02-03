@@ -124,8 +124,8 @@ class CustomFieldsService {
 		// Process ALL data from frontend, not just defined fields.
 		// This ensures no data is lost if field definitions are missing.
 		foreach ( $data as $field_key => $value ) {
-			// Skip empty keys or internal fields.
-			if ( empty( $field_key ) || str_starts_with( $field_key, '_' ) ) {
+			// Skip empty keys or internal fields (starting with underscore).
+			if ( empty( $field_key ) || ( is_string( $field_key ) && strpos( $field_key, '_' ) === 0 ) ) {
 				continue;
 			}
 
@@ -358,8 +358,8 @@ class CustomFieldsService {
 		// Process ALL stored custom fields, not just those with definitions.
 		// This ensures no data is hidden if field definitions are missing.
 		foreach ( $custom_fields as $field_key => $value ) {
-			// Skip empty keys or internal fields.
-			if ( empty( $field_key ) || str_starts_with( $field_key, '_' ) ) {
+			// Skip empty keys or internal fields (starting with underscore).
+			if ( empty( $field_key ) || ( is_string( $field_key ) && strpos( $field_key, '_' ) === 0 ) ) {
 				continue;
 			}
 
