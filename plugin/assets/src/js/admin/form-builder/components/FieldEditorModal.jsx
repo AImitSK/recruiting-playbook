@@ -21,6 +21,7 @@ import { Spinner } from '../../components/ui/spinner';
 import { X, Trash2, AlertCircle } from 'lucide-react';
 import OptionsEditor from './OptionsEditor';
 import ValidationEditor from './ValidationEditor';
+import { RichTextEditor } from '../../components/ui/rich-text-editor';
 
 /**
  * FieldEditorModal component
@@ -133,7 +134,8 @@ export default function FieldEditorModal( {
 	const fieldType = field?.field_type || field?.type;
 	const fieldTypeConfig = fieldTypes?.[ fieldType ] || {};
 	const hasOptions = [ 'select', 'radio', 'checkbox' ].includes( fieldType );
-	const hasValidation = ! [ 'heading' ].includes( fieldType );
+	const hasValidation = ! [ 'heading', 'html' ].includes( fieldType );
+	const isHtmlField = fieldType === 'html';
 
 	if ( ! field ) {
 		return null;
@@ -237,93 +239,113 @@ export default function FieldEditorModal( {
 						</TabsList>
 
 						<TabsContent value="general" style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
-							{ /* Label */ }
-							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-								<Label htmlFor="label">
-									{ i18n?.fieldLabel || __( 'Bezeichnung', 'recruiting-playbook' ) }
-								</Label>
-								<Input
-									id="label"
-									value={ localField.label || '' }
-									onChange={ ( e ) => updateLocalField( { label: e.target.value } ) }
-									placeholder={ i18n?.labelPlaceholder || __( 'Feld-Bezeichnung', 'recruiting-playbook' ) }
-								/>
-							</div>
-
-							{ /* Placeholder (for input fields) */ }
-							{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( fieldType ) && (
+							{ /* HTML Field - only show content editor */ }
+							{ isHtmlField ? (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-									<Label htmlFor="placeholder">
-										{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
+									<Label>
+										{ __( 'Inhalt', 'recruiting-playbook' ) }
 									</Label>
-									<Input
-										id="placeholder"
-										value={ localField.placeholder || '' }
-										onChange={ ( e ) => updateLocalField( { placeholder: e.target.value } ) }
-										placeholder={ i18n?.placeholderHelp || __( 'Platzhaltertext...', 'recruiting-playbook' ) }
+									<RichTextEditor
+										value={ localField.settings?.content || '' }
+										onChange={ ( content ) => updateSettings( 'content', content ) }
+										placeholder={ __( 'HTML-Inhalt eingeben...', 'recruiting-playbook' ) }
+										minHeight="150px"
 									/>
+									<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
+										{ __( 'Formatierter Text wird im Formular angezeigt (z.B. Hinweise, Erklärungen).', 'recruiting-playbook' ) }
+									</p>
 								</div>
+							) : (
+								<>
+									{ /* Label */ }
+									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+										<Label htmlFor="label">
+											{ i18n?.fieldLabel || __( 'Bezeichnung', 'recruiting-playbook' ) }
+										</Label>
+										<Input
+											id="label"
+											value={ localField.label || '' }
+											onChange={ ( e ) => updateLocalField( { label: e.target.value } ) }
+											placeholder={ i18n?.labelPlaceholder || __( 'Feld-Bezeichnung', 'recruiting-playbook' ) }
+										/>
+									</div>
+
+									{ /* Placeholder (for input fields) */ }
+									{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( fieldType ) && (
+										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+											<Label htmlFor="placeholder">
+												{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
+											</Label>
+											<Input
+												id="placeholder"
+												value={ localField.placeholder || '' }
+												onChange={ ( e ) => updateLocalField( { placeholder: e.target.value } ) }
+												placeholder={ i18n?.placeholderHelp || __( 'Platzhaltertext...', 'recruiting-playbook' ) }
+											/>
+										</div>
+									) }
+
+									{ /* Description */ }
+									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+										<Label htmlFor="description">
+											{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
+										</Label>
+										<Textarea
+											id="description"
+											value={ localField.description || '' }
+											onChange={ ( e ) => updateLocalField( { description: e.target.value } ) }
+											placeholder={ i18n?.descriptionHelp || __( 'Hilfetext für das Feld', 'recruiting-playbook' ) }
+											rows={ 2 }
+										/>
+									</div>
+
+									{ /* Width */ }
+									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
+										<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
+										<Select
+											value={ localField.settings?.width || 'full' }
+											onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
+										>
+											<SelectOption value="full">
+												{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }
+											</SelectOption>
+											<SelectOption value="half">
+												{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }
+											</SelectOption>
+										</Select>
+									</div>
+
+									{ /* Options for select/radio/checkbox */ }
+									{ hasOptions && (
+										<OptionsEditor
+											options={ localField.settings?.options || [] }
+											onChange={ ( options ) => updateSettings( 'options', options ) }
+											fieldType={ fieldType }
+											i18n={ i18n }
+										/>
+									) }
+
+									{ /* Required toggle */ }
+									<div
+										style={ {
+											display: 'flex',
+											alignItems: 'center',
+											gap: '0.75rem',
+											paddingTop: '1rem',
+											borderTop: '1px solid #e5e7eb',
+										} }
+									>
+										<Switch
+											id="is_required"
+											checked={ localField.is_required }
+											onCheckedChange={ ( checked ) => updateLocalField( { is_required: checked } ) }
+										/>
+										<Label htmlFor="is_required" style={ { cursor: 'pointer' } }>
+											{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }
+										</Label>
+									</div>
+								</>
 							) }
-
-							{ /* Description */ }
-							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-								<Label htmlFor="description">
-									{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
-								</Label>
-								<Textarea
-									id="description"
-									value={ localField.description || '' }
-									onChange={ ( e ) => updateLocalField( { description: e.target.value } ) }
-									placeholder={ i18n?.descriptionHelp || __( 'Hilfetext für das Feld', 'recruiting-playbook' ) }
-									rows={ 2 }
-								/>
-							</div>
-
-							{ /* Width */ }
-							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-								<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
-								<Select
-									value={ localField.settings?.width || 'full' }
-									onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
-								>
-									<SelectOption value="full">
-										{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }
-									</SelectOption>
-									<SelectOption value="half">
-										{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }
-									</SelectOption>
-								</Select>
-							</div>
-
-							{ /* Options for select/radio/checkbox */ }
-							{ hasOptions && (
-								<OptionsEditor
-									options={ localField.settings?.options || [] }
-									onChange={ ( options ) => updateSettings( 'options', options ) }
-									fieldType={ fieldType }
-									i18n={ i18n }
-								/>
-							) }
-
-							{ /* Required toggle */ }
-							<div
-								style={ {
-									display: 'flex',
-									alignItems: 'center',
-									gap: '0.75rem',
-									paddingTop: '1rem',
-									borderTop: '1px solid #e5e7eb',
-								} }
-							>
-								<Switch
-									id="is_required"
-									checked={ localField.is_required }
-									onCheckedChange={ ( checked ) => updateLocalField( { is_required: checked } ) }
-								/>
-								<Label htmlFor="is_required" style={ { cursor: 'pointer' } }>
-									{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }
-								</Label>
-							</div>
 						</TabsContent>
 
 						{ hasValidation && (
