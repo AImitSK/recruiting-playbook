@@ -1448,6 +1448,131 @@ POST /wp-json/recruiting/v1/job-assignments/bulk
 
 ---
 
+### Form Builder (Pro)
+
+Die Form Builder API ermöglicht die Konfiguration von Bewerbungsformularen mit einem Draft/Publish-Workflow.
+
+#### Draft-Konfiguration laden
+
+```
+GET /wp-json/recruiting/v1/form-builder/config
+```
+
+**Berechtigung:** `rp_manage_forms` oder `manage_options`
+
+**Response:**
+
+```json
+{
+  "config": {
+    "version": 2,
+    "settings": {
+      "showStepIndicator": true,
+      "showStepTitles": true,
+      "animateSteps": true
+    },
+    "steps": [...]
+  },
+  "has_unpublished_changes": true,
+  "draft_version": 5,
+  "published_version": 4,
+  "last_published_at": "2026-02-01T10:00:00Z"
+}
+```
+
+#### Draft speichern
+
+```
+PUT /wp-json/recruiting/v1/form-builder/config
+```
+
+**Request Body:**
+
+```json
+{
+  "config": {
+    "version": 2,
+    "settings": {...},
+    "steps": [...]
+  }
+}
+```
+
+#### Draft veröffentlichen
+
+```
+POST /wp-json/recruiting/v1/form-builder/publish
+```
+
+Validiert die Konfiguration und veröffentlicht sie. Ab diesem Moment wird die neue Konfiguration im Frontend verwendet.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Formular wurde veröffentlicht.",
+  "published_version": 5
+}
+```
+
+#### Änderungen verwerfen
+
+```
+POST /wp-json/recruiting/v1/form-builder/discard
+```
+
+Setzt den Draft auf die veröffentlichte Version zurück.
+
+#### Veröffentlichte Konfiguration (öffentlich)
+
+```
+GET /wp-json/recruiting/v1/form-builder/published
+```
+
+**Berechtigung:** Keine (öffentlich für Frontend)
+
+Gibt die veröffentlichte Formular-Konfiguration für das Frontend zurück.
+
+#### Aktive Felder abrufen
+
+```
+GET /wp-json/recruiting/v1/form-builder/active-fields
+```
+
+Gibt alle sichtbaren Felder für die Bewerberdetail-Ansicht zurück.
+
+**Response:**
+
+```json
+{
+  "fields": [
+    {
+      "field_key": "first_name",
+      "label": "Vorname",
+      "type": "text",
+      "is_system": true
+    },
+    {
+      "field_key": "salary_expectation",
+      "label": "Gehaltsvorstellung",
+      "type": "number",
+      "is_system": false
+    }
+  ]
+}
+```
+
+#### Auf Standard zurücksetzen
+
+```
+POST /wp-json/recruiting/v1/form-builder/reset
+```
+
+Setzt die Formular-Konfiguration auf die Standard-Konfiguration zurück.
+
+---
+
 ## Breaking Changes
 
 ### Version 1.5.0: E-Mail-Platzhalter bereinigt
@@ -1695,6 +1820,21 @@ curl -X PUT \
 
 ## Änderungsprotokoll
 
+### v2.2.0 (Februar 2026)
+
+- **Form Builder API (Pro)** - Formular-Konfiguration mit Draft/Publish-Workflow
+  - `GET /form-builder/config` - Draft-Konfiguration laden
+  - `PUT /form-builder/config` - Draft speichern
+  - `POST /form-builder/publish` - Draft veröffentlichen
+  - `POST /form-builder/discard` - Änderungen verwerfen
+  - `GET /form-builder/published` - Veröffentlichte Konfiguration (öffentlich)
+  - `GET /form-builder/active-fields` - Sichtbare Felder
+  - `POST /form-builder/reset` - Auf Standard zurücksetzen
+- **Step-basiertes Formular-System** - Multi-Step Formulare mit konfigurierbaren Steps
+- **12 Feldtypen** - text, textarea, email, phone, number, select, radio, checkbox, date, file, url, heading, html
+- **System-Felder** - file_upload, summary, privacy_consent
+- **Live-Vorschau** - Responsive Vorschau (Desktop/Tablet/Mobile)
+
 ### v2.1.0 (Januar 2026)
 
 - **Custom Fields API (Pro)** - Benutzerdefinierte Formularfelder verwalten (`/field-definitions`)
@@ -1740,4 +1880,4 @@ curl -X PUT \
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: Februar 2026*

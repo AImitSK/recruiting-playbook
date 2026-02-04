@@ -1,33 +1,59 @@
 ---
-title: Custom Fields Builder
-description: Erstellen Sie individuelle Bewerbungsformulare mit benutzerdefinierten Feldern und bedingter Logik.
+title: Form Builder & Custom Fields
+description: Erstellen Sie individuelle Bewerbungsformulare mit Multi-Step Wizard, benutzerdefinierten Feldern und bedingter Logik.
 ---
 
 <Callout type="info" title="Pro Feature">
-Der Custom Fields Builder ist ein Pro-Feature. Mit der Pro-Lizenz koennen Sie beliebig viele benutzerdefinierte Felder erstellen.
+Der Form Builder ist ein Pro-Feature. Mit der Pro-Lizenz koennen Sie Formulare vollstaendig anpassen, Steps hinzufuegen und benutzerdefinierte Felder erstellen.
 </Callout>
 
 ## Uebersicht
 
-Mit dem Custom Fields Builder koennen Sie:
+Mit dem Form Builder koennen Sie:
 
-- **Benutzerdefinierte Felder** zu Bewerbungsformularen hinzufuegen
-- **12 verschiedene Feldtypen** nutzen (Text, Select, Checkbox, Datum, etc.)
+- **Multi-Step Formulare** mit beliebig vielen Schritten erstellen
+- **Benutzerdefinierte Felder** aus 12+ Feldtypen hinzufuegen
 - **Bedingte Logik** fuer dynamische Formulare einrichten
 - **Mehrere Dateien** pro Upload-Feld erlauben
 - **Formulare pro Stelle** individuell anpassen
+- **Live-Vorschau** fuer Desktop, Tablet und Mobile
+- **Draft/Publish Workflow** fuer sichere Aenderungen
 
 ## Form Builder oeffnen
 
 Navigieren Sie zu **Recruiting** &rarr; **Form Builder** im WordPress-Admin.
 
-Der Form Builder besteht aus drei Bereichen:
+Der Form Builder besteht aus zwei Hauptbereichen:
 
 | Bereich | Funktion |
 |---------|----------|
-| **Feldliste** (links) | Alle Felder per Drag & Drop sortieren |
-| **Feld-Editor** (mitte) | Ausgewaehltes Feld konfigurieren |
-| **Vorschau** (rechts) | Live-Vorschau des Formulars |
+| **Formular** | Steps und Felder per Drag & Drop anordnen |
+| **Vorschau** | Live-Vorschau in verschiedenen Bildschirmgroessen |
+
+## Step-basiertes Formular-System
+
+Das Bewerbungsformular ist in Steps (Schritte) unterteilt:
+
+### Standard-Steps
+
+| Step | Beschreibung | Loeschbar |
+|------|--------------|-----------|
+| **Persoenliche Daten** | Enthalt Pflichtfelder (Vorname, Nachname, E-Mail) | Nein |
+| **Dokumente** | Datei-Upload fuer Lebenslauf und Zeugnisse | Ja |
+| **Abschluss** | Zusammenfassung und Datenschutz-Einwilligung | Nein |
+
+### Steps hinzufuegen (Pro)
+
+1. Klicken Sie auf **+ Step hinzufuegen**
+2. Geben Sie einen Titel ein (z.B. "Qualifikationen")
+3. Ziehen Sie Felder in den neuen Step
+
+### Step-Einstellungen
+
+Klicken Sie auf das Zahnrad-Symbol eines Steps:
+
+- **Titel**: Anzeigename des Steps
+- **Position**: Reihenfolge der Steps
 
 ## Verfuegbare Feldtypen
 
@@ -57,6 +83,33 @@ Der Form Builder besteht aus drei Bereichen:
 |-----|--------------|----------|
 | Datei-Upload | Dokumente hochladen | Zeugnisse |
 | Ueberschrift | Abschnitt-Trenner | Abschnitte gliedern |
+| HTML | Statischer HTML-Inhalt | Hinweistexte, Erklaerungen |
+
+## System-Felder
+
+Diese Felder sind fest im Formular integriert:
+
+### Datei-Upload (Step: Dokumente)
+
+Konfigurierbare Optionen:
+- **Erlaubte Dateitypen**: PDF, DOC, DOCX, etc.
+- **Maximale Dateigroesse**: Standard 10 MB
+- **Maximale Anzahl Dateien**: Standard 5
+
+### Zusammenfassung (Step: Abschluss)
+
+Zeigt alle eingegebenen Daten zur Pruefung:
+- **Titel**: Anpassbar (z.B. "Ihre Angaben im Ueberblick")
+- **Layout**: Ein- oder zweispaltig
+- **Nur ausgefuellte Felder**: Optionale Einstellung
+- **Zusatztext**: Hinweis vor dem Absenden
+
+### Datenschutz-Einwilligung (Step: Abschluss)
+
+Pflichtfeld fuer DSGVO-Konformitaet:
+- **Checkbox-Text**: Anpassbar mit {datenschutz_link} Platzhalter
+- **Link-Text**: Text fuer den Datenschutz-Link
+- **Datenschutz-URL**: Link zur Datenschutzerklaerung
 
 ## Neues Feld erstellen
 
@@ -77,6 +130,7 @@ Jeder Feldtyp hat spezifische Validierungsoptionen:
 - Mindestlaenge
 - Maximallaenge
 - Regex-Pattern
+- Benutzerdefinierte Fehlermeldung
 
 ### Zahlenfeld
 - Minimalwert
@@ -114,6 +168,8 @@ Sie moechten ein Textfeld nur anzeigen, wenn im Dropdown "Sonstiges" gewaehlt wu
 | Kleiner als | Numerischer Vergleich |
 | Ist leer | Feld ist leer |
 | Ist nicht leer | Feld hat Wert |
+| Ist ausgewaehlt | Checkbox ist aktiviert |
+| Ist nicht ausgewaehlt | Checkbox ist deaktiviert |
 
 ### Mehrere Bedingungen
 
@@ -122,7 +178,39 @@ Sie koennen mehrere Bedingungen kombinieren:
 - **UND**: Alle Bedingungen muessen erfuellt sein
 - **ODER**: Eine Bedingung muss erfuellt sein
 
-## Formulare pro Stelle
+## Draft/Publish Workflow
+
+Der Form Builder verwendet ein Draft/Publish-System fuer sichere Aenderungen:
+
+### So funktioniert es
+
+1. **Bearbeiten**: Aenderungen werden automatisch als Draft gespeichert
+2. **Vorschau**: Pruefen Sie die Aenderungen in der Live-Vorschau
+3. **Veroeffentlichen**: Klicken Sie auf "Veroeffentlichen" um die Aenderungen zu aktivieren
+4. **Verwerfen**: Bei Bedarf koennen Sie Aenderungen verwerfen
+
+<Callout type="tip" title="Auto-Save">
+Aenderungen werden automatisch alle 30 Sekunden als Draft gespeichert. Sie koennen die Seite verlassen ohne Aenderungen zu verlieren.
+</Callout>
+
+### Status-Anzeige
+
+| Status | Bedeutung |
+|--------|-----------|
+| **Keine Aenderungen** | Draft entspricht der veroeffentlichten Version |
+| **Unveroeffentlichte Aenderungen** | Draft enthaelt Aenderungen, die noch nicht live sind |
+
+## Live-Vorschau
+
+Die Vorschau zeigt das Formular so, wie es Bewerber sehen:
+
+- **Desktop**: Volle Breite (Standard)
+- **Tablet**: Mittlere Breite
+- **Mobile**: Smartphone-Ansicht
+
+Klicken Sie durch die Steps um die vollstaendige Bewerber-Erfahrung zu sehen.
+
+## Formulare pro Stelle (Pro)
 
 Sie koennen fuer jede Stelle festlegen, welche Custom Fields angezeigt werden:
 
@@ -135,6 +223,20 @@ Sie koennen fuer jede Stelle festlegen, welche Custom Fields angezeigt werden:
 Wenn Sie nichts anpassen, werden die global konfigurierten Felder verwendet.
 </Callout>
 
+## Formular-Templates (Pro)
+
+Erstellen Sie wiederverwendbare Formular-Templates:
+
+1. Navigieren Sie zu **Form Builder** &rarr; **Templates**
+2. Klicken Sie auf **+ Neues Template**
+3. Konfigurieren Sie die Felder
+4. Speichern Sie das Template
+
+### Template einer Stelle zuweisen
+
+1. Bearbeiten Sie eine Stellenanzeige
+2. Waehlen Sie unter **Formular-Template** das gewuenschte Template
+
 ## Custom Fields in der Bewerberansicht
 
 Die eingegebenen Custom Field Werte werden automatisch angezeigt:
@@ -143,51 +245,57 @@ Die eingegebenen Custom Field Werte werden automatisch angezeigt:
 - **CSV-Export**: Alle Custom Fields als zusaetzliche Spalten
 - **API**: `custom_fields` Array in der Bewerber-Response
 
-## Multi-File-Upload
+## Pflichtfelder (nicht entfernbar)
 
-File-Felder unterstuetzen optional mehrere Dateien:
+Diese Felder sind immer im Formular und koennen nicht geloescht werden:
 
-1. Waehlen Sie ein File-Feld
-2. Unter Einstellungen aktivieren Sie **Mehrfachauswahl**
-3. Legen Sie die **maximale Anzahl** fest
+| Feld | Typ | Begruendung |
+|------|-----|-------------|
+| Vorname | Text | E-Mail-Platzhalter, Identifikation |
+| Nachname | Text | E-Mail-Platzhalter, Identifikation |
+| E-Mail | E-Mail | Kontakt, Benachrichtigungen |
+| Datenschutz | Checkbox | DSGVO-Pflicht |
 
-<Callout type="warning" title="Dateitypen beschraenken">
-Erlauben Sie nur sichere Dateitypen wie PDF, DOC, DOCX. Vermeiden Sie ausfuehrbare Formate.
-</Callout>
-
-## System-Felder
-
-Folgende Felder sind vorinstalliert und koennen nicht geloescht werden:
-
-| Feld | Typ | Pflicht |
-|------|-----|---------|
-| Vorname | Text | Ja |
-| Nachname | Text | Ja |
-| E-Mail | E-Mail | Ja |
-| Telefon | Telefon | Nein |
-| Anschreiben | Textarea | Nein |
-| Lebenslauf | Datei | Ja |
-| Datenschutz | Checkbox | Ja |
-
-Sie koennen diese Felder aber konfigurieren (z.B. Pflichtfeld aendern oder Label anpassen).
+Sie koennen diese Felder aber konfigurieren (Label, Placeholder, Hilfetext anpassen).
 
 ## Shortcode
 
-Verwenden Sie den Shortcode fuer erweiterte Formulare:
+Verwenden Sie den Shortcode fuer das Bewerbungsformular:
 
 ```
-[rp_custom_application_form job_id="123"]
+[rp_application_form job_id="123"]
 ```
 
 Parameter:
-- `job_id` - ID der Stelle (optional, verwendet aktuelle Stelle)
-
-Bei Free-Version faellt der Shortcode automatisch auf das Standard-Formular zurueck.
+- `job_id` - ID der Stelle (optional, verwendet aktuelle Stelle auf Stellen-Einzelseite)
 
 ## Best Practices
 
 1. **Weniger ist mehr**: Fragen Sie nur, was wirklich noetig ist
 2. **Pflichtfelder sparsam nutzen**: Zu viele Pflichtfelder schrecken ab
 3. **Hilfetext verwenden**: Erklaeren Sie, was erwartet wird
-4. **Logische Reihenfolge**: Gruppieren Sie zusammengehoerige Felder
-5. **Mobile testen**: Pruefen Sie das Formular auf dem Smartphone
+4. **Logische Reihenfolge**: Gruppieren Sie zusammengehoerige Felder in Steps
+5. **Mobile testen**: Pruefen Sie das Formular in der Mobile-Vorschau
+6. **Vor Veroeffentlichung pruefen**: Nutzen Sie die Vorschau ausfuehrlich
+7. **Steps sinnvoll benennen**: Klare Titel helfen Bewerbern
+
+<Callout type="warning" title="Dateitypen beschraenken">
+Erlauben Sie nur sichere Dateitypen wie PDF, DOC, DOCX. Vermeiden Sie ausfuehrbare Formate.
+</Callout>
+
+## Fehlerbehebung
+
+### Formular wird nicht gespeichert
+
+- Pruefen Sie Ihre Berechtigung (Pro-Lizenz erforderlich)
+- Stellen Sie sicher, dass alle Pflichtfelder vorhanden sind
+
+### Felder erscheinen nicht im Frontend
+
+- Pruefen Sie ob die Aenderungen veroeffentlicht wurden
+- Leeren Sie ggf. den Cache
+
+### Bedingte Logik funktioniert nicht
+
+- Pruefen Sie den Feld-Schluessel in der Bedingung
+- Stellen Sie sicher, dass der Wert exakt uebereinstimmt

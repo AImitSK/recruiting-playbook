@@ -1,8 +1,10 @@
-# Form Builder - Ziel-Spezifikation
+# Form Builder - Spezifikation
 
 **Erstellt:** 2025-01-31
-**Status:** Geplant
+**Status:** ✅ Implementiert (Februar 2026)
 **Bezug:** [Datenfluss-Analyse](./data-flow-analysis.md)
+
+> **Hinweis:** Diese Spezifikation wurde vollständig umgesetzt. Der Form Builder ist als Pro-Feature verfügbar und umfasst alle hier beschriebenen Funktionen plus zusätzliche Features wie HTML-Feldtyp, Live-Vorschau und erweiterte Validierungsoptionen.
 
 ---
 
@@ -565,3 +567,88 @@ public function migrateConfig(array $config): array {
     return $config;
 }
 ```
+
+---
+
+## 9. Implementierungs-Status (Februar 2026)
+
+### 9.1 Implementierte Kern-Komponenten
+
+| Komponente | Datei | Status |
+|------------|-------|--------|
+| Admin Page | `src/Admin/Pages/FormBuilderPage.php` | ✅ |
+| Form Config Controller | `src/Api/FormConfigController.php` | ✅ |
+| Form Template Controller | `src/Api/FormTemplateController.php` | ✅ |
+| Form Config Service | `src/Services/FormConfigService.php` | ✅ |
+| Form Template Service | `src/Services/FormTemplateService.php` | ✅ |
+| Field Definition Service | `src/Services/FieldDefinitionService.php` | ✅ |
+| Form Validation Service | `src/Services/FormValidationService.php` | ✅ |
+| Form Render Service | `src/Services/FormRenderService.php` | ✅ |
+| Custom Fields Service | `src/Services/CustomFieldsService.php` | ✅ |
+| React Form Builder UI | `assets/src/js/admin/form-builder/` | ✅ |
+
+### 9.2 Implementierte Feldtypen (12 Typen)
+
+| Typ | Klasse | Gruppe |
+|-----|--------|--------|
+| `text` | TextField | text |
+| `textarea` | TextareaField | text |
+| `email` | EmailField | text |
+| `phone` | PhoneField | text |
+| `url` | UrlField | text |
+| `number` | NumberField | text |
+| `select` | SelectField | choice |
+| `radio` | RadioField | choice |
+| `checkbox` | CheckboxField | choice |
+| `date` | DateField | special |
+| `file` | FileField | special |
+| `heading` | HeadingField | layout |
+| `html` | HtmlField | layout |
+
+### 9.3 REST API Endpoints
+
+```
+GET    /recruiting/v1/form-builder/config      - Draft-Konfiguration laden
+PUT    /recruiting/v1/form-builder/config      - Draft speichern
+POST   /recruiting/v1/form-builder/publish     - Draft veröffentlichen
+POST   /recruiting/v1/form-builder/discard     - Änderungen verwerfen
+GET    /recruiting/v1/form-builder/published   - Veröffentlichte Konfiguration (öffentlich)
+GET    /recruiting/v1/form-builder/active-fields - Sichtbare Felder
+POST   /recruiting/v1/form-builder/reset       - Auf Standard zurücksetzen
+
+GET    /recruiting/v1/form-templates           - Alle Templates
+POST   /recruiting/v1/form-templates           - Template erstellen
+GET    /recruiting/v1/form-templates/{id}      - Einzelnes Template
+PUT    /recruiting/v1/form-templates/{id}      - Template aktualisieren
+DELETE /recruiting/v1/form-templates/{id}      - Template löschen
+POST   /recruiting/v1/form-templates/{id}/duplicate   - Template duplizieren
+POST   /recruiting/v1/form-templates/{id}/set-default - Als Standard setzen
+```
+
+### 9.4 React-Komponenten
+
+```
+FormBuilder.jsx              - Hauptkomponente
+├── FormEditor.jsx           - Step-basierter Editor mit Drag & Drop
+├── FormPreview.jsx          - Live-Vorschau (Desktop/Tablet/Mobile)
+├── FieldEditor.jsx          - Feld-Einstellungen
+├── FieldTypeSelector.jsx    - Feldtyp-Auswahl-Modal
+├── FieldEditorModal.jsx     - Custom Field bearbeiten/löschen
+└── SystemFieldSettings/
+    ├── FileUploadSettings.jsx
+    ├── SummarySettings.jsx
+    └── PrivacyConsentSettings.jsx
+```
+
+### 9.5 Zusätzliche Features (über Spezifikation hinaus)
+
+- **HTML-Feldtyp**: Statischer HTML-Content für Hinweistexte
+- **Live-Vorschau**: Responsive Ansicht (Desktop/Tablet/Mobile)
+- **Auto-Save**: Draft wird automatisch alle 30 Sekunden gespeichert
+- **Erweiterte Validierung**: Min/Max Length, Regex Pattern, Custom Error Messages
+- **Field Type Registry**: Erweiterbar über Hook `recruiting_playbook_register_field_types`
+- **Caching**: Active Fields werden gecacht für Performance
+
+---
+
+*Letzte Aktualisierung: 4. Februar 2026*

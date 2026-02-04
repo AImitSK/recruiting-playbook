@@ -19,6 +19,11 @@
 | Custom Fields | ❌ | ✅ | ✅ |
 | DSGVO-Checkboxen | ✅ | ✅ | ✅ |
 | Conditional Logic | ❌ | ✅ | ✅ |
+| Multi-Step Formulare | ❌ | ✅ | ✅ |
+| Form Builder (Drag & Drop) | ❌ | ✅ | ✅ |
+| Formular-Templates | ❌ | ✅ | ✅ |
+| Live-Vorschau | ❌ | ✅ | ✅ |
+| 12+ Feldtypen | ❌ | ✅ | ✅ |
 | | | | |
 | **Bewerbermanagement** | | | |
 | Bewerber-Liste | Basic | Erweitert | Erweitert |
@@ -189,13 +194,13 @@ Tonalität: ○ Formell  ● Freundlich  ○ Locker
 5. E-Mail-Benachrichtigung
 6. Basis-Styling
 
-### Should-Have (Phase 2 / Pro)
+### Should-Have (Phase 2 / Pro) ✅
 
-7. Kanban-Board
-8. Status-Tracking
-9. E-Mail-Templates
-10. Benutzerrollen
-11. Custom Fields
+7. ✅ Kanban-Board
+8. ✅ Status-Tracking
+9. ✅ E-Mail-Templates
+10. ✅ Benutzerrollen
+11. ✅ Custom Fields & Form Builder
 
 ### Nice-to-Have (Phase 3 / AI)
 
@@ -206,4 +211,4 @@ Tonalität: ○ Formell  ● Freundlich  ○ Locker
 
 ---
 
-*Letzte Aktualisierung: 28. Januar 2025*
+*Letzte Aktualisierung: 4. Februar 2026*

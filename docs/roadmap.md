@@ -367,13 +367,18 @@ Design & Branding │                   │
 - [x] **Systemstatus-Widget (Integritäts-Check)**
 - [ ] ~~Conversion-Rate (Besucher → Bewerbung)~~ - View-Tracking nicht implementiert, entfernt
 
-### M2.6: Erweiterte Formulare
+### M2.6: Erweiterte Formulare ✅
 
-- [ ] Custom Fields Builder
-- [ ] Feldtypen: Text, Textarea, Select, Checkbox, Radio, Date
-- [ ] Pflichtfeld-Option
-- [ ] Conditional Logic (Feld X zeigen wenn Y)
-- [ ] Mehrfach-Uploads
+- [x] Custom Fields Builder (React-basiert mit Drag & Drop)
+- [x] Feldtypen: Text, Textarea, Email, Phone, Number, Select, Radio, Checkbox, Date, File, URL, Heading, HTML
+- [x] Pflichtfeld-Option
+- [x] Conditional Logic (Feld X zeigen wenn Y)
+- [x] Mehrfach-Uploads
+- [x] Step-basiertes Multi-Step Formular System
+- [x] Draft/Publish Workflow für sichere Änderungen
+- [x] Formular-Templates (Pro)
+- [x] Live-Vorschau (Desktop/Tablet/Mobile)
+- [x] System-Felder: Datei-Upload, Zusammenfassung, Datenschutz
 
 ### M2.7: Hintergrund-Infrastruktur ⚡ NEU
 
@@ -672,4 +677,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: 30. Januar 2025*
+*Letzte Aktualisierung: 4. Februar 2026*

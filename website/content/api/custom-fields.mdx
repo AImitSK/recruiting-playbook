@@ -1,11 +1,188 @@
 ---
-title: Custom Fields
-description: API-Endpunkte fuer die Verwaltung benutzerdefinierter Formularfelder.
+title: Form Builder & Custom Fields API
+description: API-Endpunkte fuer Form Builder Konfiguration und benutzerdefinierte Formularfelder.
 ---
 
 <Callout type="info" title="Pro Feature">
-Alle Custom Fields Endpunkte erfordern eine aktive Pro-Lizenz.
+Alle Form Builder und Custom Fields Endpunkte erfordern eine aktive Pro-Lizenz.
 </Callout>
+
+## Form Builder Konfiguration
+
+Der Form Builder verwendet einen Draft/Publish-Workflow. Aenderungen werden zuerst als Draft gespeichert und muessen veroeffentlicht werden, um im Frontend sichtbar zu sein.
+
+### Draft-Konfiguration laden
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/form-builder/config" />
+
+**Query-Parameter:**
+
+| Parameter | Typ | Beschreibung |
+|-----------|-----|--------------|
+| `include_fields` | boolean | Verfuegbare Felder einschliessen (Standard: true) |
+
+**Response:**
+
+```json
+{
+  "config": {
+    "version": 2,
+    "settings": {
+      "showStepIndicator": true,
+      "showStepTitles": true,
+      "animateSteps": true
+    },
+    "steps": [
+      {
+        "id": "step_personal",
+        "title": "Persoenliche Daten",
+        "position": 1,
+        "deletable": false,
+        "fields": [
+          {
+            "field_key": "first_name",
+            "is_visible": true,
+            "is_required": true,
+            "is_removable": false,
+            "width": "half",
+            "settings": {
+              "label": "Vorname",
+              "placeholder": "Max"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "has_unpublished_changes": true,
+  "draft_version": 5,
+  "published_version": 4,
+  "last_published_at": "2026-02-01T10:00:00Z",
+  "available_fields": [...]
+}
+```
+
+### Draft speichern
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/form-builder/config" />
+
+**Request Body:**
+
+```json
+{
+  "config": {
+    "version": 2,
+    "settings": {
+      "showStepIndicator": true,
+      "showStepTitles": true,
+      "animateSteps": true
+    },
+    "steps": [...]
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "draft_version": 6,
+  "has_unpublished_changes": true
+}
+```
+
+### Draft veroeffentlichen
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/form-builder/publish" />
+
+Validiert die Konfiguration und veroeffentlicht sie. Ab diesem Moment wird die neue Konfiguration im Frontend verwendet.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Formular wurde veroeffentlicht.",
+  "published_version": 6
+}
+```
+
+**Fehler-Codes:**
+
+| Code | Beschreibung |
+|------|--------------|
+| `missing_required_field` | Pflichtfeld fehlt in der Konfiguration |
+| `no_steps` | Mindestens ein Step erforderlich |
+| `no_finale` | Abschluss-Step fehlt |
+| `invalid_step` | Step hat keine ID oder Titel |
+
+### Aenderungen verwerfen
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/form-builder/discard" />
+
+Setzt den Draft auf die veroeffentlichte Version zurueck.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Aenderungen wurden verworfen."
+}
+```
+
+### Veroeffentlichte Konfiguration (oeffentlich)
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/form-builder/published" />
+
+**Berechtigung:** Keine (oeffentlich fuer Frontend)
+
+Gibt die veroeffentlichte Formular-Konfiguration fuer das Frontend zurueck.
+
+### Aktive Felder abrufen
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/form-builder/active-fields" />
+
+Gibt alle sichtbaren Felder fuer die Bewerberdetail-Ansicht zurueck.
+
+**Response:**
+
+```json
+{
+  "fields": [
+    {
+      "field_key": "first_name",
+      "label": "Vorname",
+      "type": "text",
+      "is_system": true
+    },
+    {
+      "field_key": "salary_expectation",
+      "label": "Gehaltsvorstellung",
+      "type": "number",
+      "is_system": false
+    }
+  ]
+}
+```
+
+### Auf Standard zuruecksetzen
+
+<EndpointHeader method="POST" path="/wp-json/recruiting/v1/form-builder/reset" />
+
+Setzt die Formular-Konfiguration auf die Standard-Konfiguration zurueck.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Formular wurde auf Standard zurueckgesetzt."
+}
+```
+
+---
 
 ## Field Definitions
 
@@ -156,6 +333,8 @@ System-Felder (is_system: true) koennen nicht geloescht werden.
 
 Die IDs werden in der angegebenen Reihenfolge gespeichert.
 
+---
+
 ## Feldtypen
 
 | Type | Beschreibung |
@@ -172,6 +351,9 @@ Die IDs werden in der angegebenen Reihenfolge gespeichert.
 | `file` | Datei-Upload |
 | `url` | URL |
 | `heading` | Ueberschrift (nur Anzeige) |
+| `html` | Statischer HTML-Inhalt |
+
+---
 
 ## Validierungsregeln
 
@@ -217,6 +399,8 @@ Je nach Feldtyp stehen verschiedene Validierungsregeln zur Verfuegung:
 }
 ```
 
+---
+
 ## Bedingte Logik
 
 Die `conditional` Eigenschaft steuert die Sichtbarkeit:
@@ -251,11 +435,15 @@ Die `conditional` Eigenschaft steuert die Sichtbarkeit:
 | `is_checked` | Ist ausgewaehlt |
 | `is_not_checked` | Ist nicht ausgewaehlt |
 
+---
+
 ## Felder einer Stelle abrufen
 
 <EndpointHeader method="GET" path="/wp-json/recruiting/v1/jobs/{id}/fields" />
 
 Gibt die fuer eine Stelle konfigurierten Felder zurueck. Beruecksichtigt stellen-spezifische Anpassungen.
+
+---
 
 ## Form Templates
 
@@ -274,6 +462,7 @@ Gibt die fuer eine Stelle konfigurierten Felder zurueck. Beruecksichtigt stellen
       "description": "Basis-Formular fuer alle Stellen",
       "is_default": true,
       "field_count": 8,
+      "usage_count": 12,
       "created_at": "2025-01-15T10:00:00Z"
     }
   ],
@@ -299,6 +488,18 @@ Enthaelt das vollstaendige Template mit allen Feld-Definitionen.
 }
 ```
 
+### Template aktualisieren
+
+<EndpointHeader method="PUT" path="/wp-json/recruiting/v1/form-templates/{id}" />
+
+### Template loeschen
+
+<EndpointHeader method="DELETE" path="/wp-json/recruiting/v1/form-templates/{id}" />
+
+<Callout type="warning" title="Templates in Verwendung">
+Templates die von Stellen verwendet werden, koennen nicht geloescht werden.
+</Callout>
+
 ### Template duplizieren
 
 <EndpointHeader method="POST" path="/wp-json/recruiting/v1/form-templates/{id}/duplicate" />
@@ -310,6 +511,12 @@ Erstellt eine Kopie des Templates mit allen Feldern.
 <EndpointHeader method="POST" path="/wp-json/recruiting/v1/form-templates/{id}/set-default" />
 
 Setzt dieses Template als Standard fuer neue Stellen.
+
+### Standard-Template abrufen
+
+<EndpointHeader method="GET" path="/wp-json/recruiting/v1/form-templates/default" />
+
+---
 
 ## Custom Fields in Bewerbungen
 
@@ -331,6 +538,8 @@ Custom Field Werte werden im `custom_fields` Array der Bewerbung gespeichert:
 
 Bei Datei-Feldern werden Document-IDs gespeichert, die ueber die Documents API abgerufen werden koennen.
 
+---
+
 ## Fehler-Codes
 
 | Code | Beschreibung |
@@ -340,3 +549,5 @@ Bei Datei-Feldern werden Document-IDs gespeichert, die ueber die Documents API a
 | `invalid_field_type` | Ungueltiger Feldtyp |
 | `validation_failed` | Validierung fehlgeschlagen |
 | `feature_not_available` | Pro-Lizenz erforderlich |
+| `missing_required_field` | Pflichtfeld fehlt in Formular-Konfiguration |
+| `template_in_use` | Template wird von Stellen verwendet |
