@@ -1,6 +1,6 @@
 /**
  * Freemius Install Response (von API)
- * Endpoint: GET /v1/developers/{dev_id}/plugins/{product_id}/installs/{install_id}.json
+ * Endpoint: GET /v1/products/{product_id}/installs/{install_id}.json
  */
 export interface FreemiusInstall {
   id: number;
@@ -20,7 +20,7 @@ export interface FreemiusInstall {
 
 /**
  * Freemius License Response (von API)
- * Endpoint: GET /v1/developers/{dev_id}/plugins/{product_id}/licenses/{license_id}.json
+ * Endpoint: GET /v1/products/{product_id}/licenses/{license_id}.json
  */
 export interface FreemiusLicense {
   id: number;
@@ -66,9 +66,7 @@ export interface Bindings {
   OPENROUTER_API_KEY: string; // OpenRouter API Key (https://openrouter.ai)
   ENVIRONMENT: string;
   FREEMIUS_PRODUCT_ID: string;
-  FREEMIUS_DEV_ID: string;
-  FREEMIUS_DEV_PUBLIC_KEY: string;
-  FREEMIUS_DEV_SECRET_KEY: string;
+  FREEMIUS_BEARER_TOKEN: string; // Product-scope Bearer Token from Freemius Dashboard
   FREEMIUS_WEBHOOK_SECRET: string;
   PRESIDIO_URL: string;
   PRESIDIO_API_KEY?: string; // Optional wenn Presidio ohne Auth läuft

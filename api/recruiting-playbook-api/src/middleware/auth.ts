@@ -60,12 +60,10 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   let cachedLicense = (await c.env.CACHE.get(cacheKey, 'json')) as ValidatedLicense | null;
 
   if (!cachedLicense) {
-    // Freemius API abfragen
+    // Freemius API abfragen (Product-Scope mit Bearer Token)
     const freemius = new FreemiusService(
-      c.env.FREEMIUS_DEV_ID,
       c.env.FREEMIUS_PRODUCT_ID,
-      c.env.FREEMIUS_DEV_PUBLIC_KEY,
-      c.env.FREEMIUS_DEV_SECRET_KEY
+      c.env.FREEMIUS_BEARER_TOKEN
     );
 
     // Install-Details holen (inkl. secret_key)

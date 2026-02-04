@@ -3,38 +3,34 @@ import type { FreemiusInstall, FreemiusLicense, FreemiusPlan } from '../types';
 /**
  * Freemius API Service
  *
- * Verwendet Developer-Scope API für Server-zu-Server Kommunikation.
- * Docs: https://freemius.com/help/documentation/saas/integrating-license-key-activation/
+ * Verwendet Product-Scope API mit Bearer Token für Server-zu-Server Kommunikation.
+ * Bearer Tokens funktionieren nur für /products/{product_id}/ Endpoints.
+ * Docs: https://docs.freemius.com/api
  */
 export class FreemiusService {
   private baseUrl = 'https://api.freemius.com/v1';
 
   constructor(
-    private devId: string,
     private productId: string,
-    private devPublicKey: string,
-    private devSecretKey: string
+    private bearerToken: string
   ) {}
 
   /**
    * Install-Details abrufen (inkl. secret_key)
    */
   async getInstall(installId: string): Promise<FreemiusInstall | null> {
-    const path = `/developers/${this.devId}/plugins/${this.productId}/installs/${installId}.json`;
+    const path = `/products/${this.productId}/installs/${installId}.json`;
 
     try {
-      // Für Developer-Scope: Basic Auth mit dev_id:dev_secret
-      const authHeader = btoa(`${this.devId}:${this.devSecretKey}`);
-
       const response = await fetch(`${this.baseUrl}${path}`, {
         headers: {
-          Authorization: `Basic ${authHeader}`,
+          Authorization: `Bearer ${this.bearerToken}`,
           'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
-        console.error('Freemius API error:', response.status);
+        console.error('Freemius API error:', response.status, await response.text());
         return null;
       }
 
@@ -49,14 +45,12 @@ export class FreemiusService {
    * Lizenz-Details abrufen
    */
   async getLicense(licenseId: string): Promise<FreemiusLicense | null> {
-    const path = `/developers/${this.devId}/plugins/${this.productId}/licenses/${licenseId}.json`;
+    const path = `/products/${this.productId}/licenses/${licenseId}.json`;
 
     try {
-      const authHeader = btoa(`${this.devId}:${this.devSecretKey}`);
-
       const response = await fetch(`${this.baseUrl}${path}`, {
         headers: {
-          Authorization: `Basic ${authHeader}`,
+          Authorization: `Bearer ${this.bearerToken}`,
           'Content-Type': 'application/json',
         },
       });
@@ -76,14 +70,12 @@ export class FreemiusService {
    * Plan-Details abrufen
    */
   async getPlan(planId: number): Promise<FreemiusPlan | null> {
-    const path = `/developers/${this.devId}/plugins/${this.productId}/plans/${planId}.json`;
+    const path = `/products/${this.productId}/plans/${planId}.json`;
 
     try {
-      const authHeader = btoa(`${this.devId}:${this.devSecretKey}`);
-
       const response = await fetch(`${this.baseUrl}${path}`, {
         headers: {
-          Authorization: `Basic ${authHeader}`,
+          Authorization: `Bearer ${this.bearerToken}`,
           'Content-Type': 'application/json',
         },
       });

@@ -10,7 +10,5 @@ ENVIRONMENT=development
 
 # Secrets müssen separat gesetzt werden (wrangler secret put ...)
 # - OPENROUTER_API_KEY
-# - FREEMIUS_DEV_ID
-# - FREEMIUS_DEV_SECRET_KEY
-# - FREEMIUS_DEV_PUBLIC_KEY
+# - FREEMIUS_BEARER_TOKEN (Product-scope Bearer Token from Freemius Dashboard)
 # - FREEMIUS_WEBHOOK_SECRET
