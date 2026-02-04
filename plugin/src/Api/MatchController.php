@@ -44,7 +44,7 @@ class MatchController extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	private const API_BASE_URL = 'https://api.recruiting-playbook.de/v1';
+	private const API_BASE_URL = 'https://api.recruiting-playbook.com/v1';
 
 	/**
 	 * Routes registrieren
