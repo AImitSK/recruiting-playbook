@@ -18,7 +18,6 @@ use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
 use RecruitingPlaybook\Admin\Pages\DashboardPage;
 use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
-use RecruitingPlaybook\Admin\Pages\LicensePage;
 use RecruitingPlaybook\Admin\Pages\ReportingPage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Services\GdprService;
@@ -136,16 +135,6 @@ class Menu {
 			'manage_options',
 			'rp-settings',
 			[ $this, 'renderSettings' ]
-		);
-
-		// Lizenz.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Lizenz', 'recruiting-playbook' ),
-			$this->getLicenseMenuLabel(),
-			'manage_options',
-			'rp-license',
-			[ $this, 'renderLicense' ]
 		);
 
 		// Bewerbung-Detailansicht (unter Parent registriert für Menü-Highlighting).
@@ -495,14 +484,6 @@ class Menu {
 	}
 
 	/**
-	 * Lizenz-Seite rendern
-	 */
-	public function renderLicense(): void {
-		$license_page = new LicensePage();
-		$license_page->render();
-	}
-
-	/**
 	 * Kanban-Board rendern
 	 */
 	public function renderKanban(): void {
@@ -521,22 +502,6 @@ class Menu {
 		// Lock-Icon für Free-User.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'kanban_board' ) ) {
 			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * Lizenz-Menü-Label mit Tier-Badge
-	 *
-	 * @return string Menü-Label mit optionalem Badge.
-	 */
-	private function getLicenseMenuLabel(): string {
-		$label = __( 'Lizenz', 'recruiting-playbook' );
-
-		// Tier-Badge hinzufügen wenn Pro aktiv.
-		if ( function_exists( 'rp_is_pro' ) && rp_is_pro() ) {
-			$label .= ' <span class="update-plugins count-1" style="background: linear-gradient(to right, #2fac66, #36a9e1);"><span class="plugin-count">PRO</span></span>';
 		}
 
 		return $label;

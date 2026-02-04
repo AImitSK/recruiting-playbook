@@ -387,15 +387,22 @@ async function processJobFinder(
       UPDATE analysis_jobs SET status = 'processing', started_at = ? WHERE id = ?
     `).bind(Date.now(), jobId).run();
 
-    // 1. Anonymisieren
+    // 1. File zu ArrayBuffer konvertieren
+    const fileBuffer = await file.arrayBuffer();
+
+    // 2. Anonymisieren (wie in Mode A)
     const presidio = new PresidioService(env.PRESIDIO_URL, env.PRESIDIO_API_KEY);
-    const anonymizedText = await presidio.anonymize(file);
+    const anonymized = await presidio.anonymize(fileBuffer, file.name, 'text');
 
-    // 2. Multi-Job-Analyse
-    const claude = new ClaudeService(env.CLAUDE_API_KEY);
-    const result = await claude.analyzeJobFinder(anonymizedText, jobs, limit);
+    if (!anonymized.anonymizedText) {
+      throw new Error('Anonymisierung fehlgeschlagen - kein Text extrahiert');
+    }
 
-    // 3. Ergebnis speichern
+    // 3. Multi-Job-Analyse
+    const claude = new ClaudeService(env.OPENROUTER_API_KEY);
+    const result = await claude.analyzeJobFinder(anonymized.anonymizedText, jobs, limit);
+
+    // 4. Ergebnis speichern
     await env.DB.prepare(`
       UPDATE analysis_jobs
       SET status = 'completed',
@@ -412,7 +419,7 @@ async function processJobFinder(
       jobId
     ).run();
 
-    // 4. Usage inkrementieren
+    // 5. Usage inkrementieren
     const usageService = new UsageService(env.DB);
     await usageService.incrementUsage(installId);
 
@@ -530,10 +537,33 @@ ${jobsText}
 Analysiere den Lebenslauf und finde die ${limit} besten Matches.
 Antworte NUR mit validem JSON im angegebenen Format.`;
 
-  const response = await this.callClaude(systemPrompt, userPrompt);
+  // Claude API aufrufen (wie in analyzeMatch)
+  const response = await this.client.messages.create({
+    model: this.model,
+    max_tokens: 2048, // Mehr Tokens für Multi-Job-Response
+    system: systemPrompt,
+    messages: [
+      {
+        role: 'user',
+        content: userPrompt,
+      },
+    ],
+  });
 
-  // JSON parsen
-  const result = JSON.parse(response);
+  // Response extrahieren
+  const content = response.content[0];
+  if (content.type !== 'text') {
+    throw new Error('Unexpected response type');
+  }
+
+  // JSON parsen (mit Markdown-Block-Handling)
+  let jsonStr = content.text.trim();
+  const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (jsonMatch) {
+    jsonStr = jsonMatch[1].trim();
+  }
+
+  const result = JSON.parse(jsonStr);
 
   // Job-URLs hinzufügen
   result.matches = result.matches.map((match: any) => {
