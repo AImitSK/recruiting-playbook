@@ -146,7 +146,8 @@ class DesignService {
 			$palette         = $global_settings['color']['palette']['theme'] ?? [];
 
 			// Suche nach bekannten Primärfarben-Slugs (Reihenfolge = Priorität).
-			$primary_slugs = [ 'primary', 'accent', 'contrast', 'secondary' ];
+			// NICHT: contrast (ist meist schwarz/text), base (ist hintergrund).
+			$primary_slugs = [ 'primary', 'accent', 'secondary', 'tertiary' ];
 
 			foreach ( $primary_slugs as $slug ) {
 				foreach ( $palette as $color_def ) {
