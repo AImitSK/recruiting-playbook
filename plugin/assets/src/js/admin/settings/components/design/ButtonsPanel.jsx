@@ -63,6 +63,9 @@ export function ButtonsPanel( { settings, onUpdate, computedPrimaryColor } ) {
 								<br />
 								{ __( 'Buttons übernehmen automatisch Farben, Radius, Padding und alle anderen Styles aus deinem WordPress-Theme.', 'recruiting-playbook' ) }
 							</p>
+							<p className="rp-text-xs rp-text-green-600 rp-mt-2">
+								{ __( 'Hinweis: Die Vorschau zeigt nur die Primärfarbe. Das echte Button-Design siehst du im Frontend.', 'recruiting-playbook' ) }
+							</p>
 						</div>
 					) }
 				</CardContent>
