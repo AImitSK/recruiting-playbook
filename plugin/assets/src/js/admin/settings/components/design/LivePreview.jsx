@@ -56,13 +56,19 @@ function JobCardPreview( { settings, computedPrimaryColor } ) {
 	};
 
 	const buttonStyle = useMemo( () => {
+		// Custom Design: Custom-Farben mit Fallback auf Primärfarbe
+		// Theme Design: Primärfarbe
 		const bgColor = settings.button_use_custom_design
-			? ( settings.button_bg_color || '#2563eb' )
+			? ( settings.button_bg_color || computedPrimaryColor )
 			: computedPrimaryColor;
+
+		const textColor = settings.button_use_custom_design
+			? ( settings.button_text_color || '#ffffff' )
+			: '#ffffff';
 
 		return {
 			backgroundColor: bgColor,
-			color: settings.button_text_color || '#ffffff',
+			color: textColor,
 			borderRadius: `${ settings.button_border_radius ?? 6 }px`,
 		};
 	}, [ settings, computedPrimaryColor ] );
@@ -156,13 +162,18 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
 	}, [ settings ] );
 
 	const buttonStyle = useMemo( () => {
+		// Custom Design: Custom-Farben mit Fallback auf Primärfarbe
 		const bgColor = settings.button_use_custom_design
-			? ( settings.button_bg_color || '#2563eb' )
+			? ( settings.button_bg_color || computedPrimaryColor )
 			: computedPrimaryColor;
+
+		const textColor = settings.button_use_custom_design
+			? ( settings.button_text_color || '#ffffff' )
+			: '#ffffff';
 
 		return {
 			backgroundColor: bgColor,
-			color: settings.button_text_color || '#ffffff',
+			color: textColor,
 			borderRadius: `${ settings.button_border_radius ?? 6 }px`,
 		};
 	}, [ settings, computedPrimaryColor ] );
@@ -202,9 +213,14 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
  */
 function ButtonsPreview( { settings, computedPrimaryColor } ) {
 	const primaryStyle = useMemo( () => {
+		// Custom Design: Custom-Farben mit Fallback auf Primärfarbe
 		const bgColor = settings.button_use_custom_design
-			? ( settings.button_bg_color || '#2563eb' )
+			? ( settings.button_bg_color || computedPrimaryColor )
 			: computedPrimaryColor;
+
+		const textColor = settings.button_use_custom_design
+			? ( settings.button_text_color || '#ffffff' )
+			: '#ffffff';
 
 		const shadowValues = {
 			none: 'none',
@@ -221,7 +237,7 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 
 		return {
 			backgroundColor: bgColor,
-			color: settings.button_text_color || '#ffffff',
+			color: textColor,
 			borderRadius: `${ settings.button_border_radius ?? 6 }px`,
 			boxShadow: shadowValues[ settings.button_shadow || 'none' ],
 			padding: paddingValues[ settings.button_size || 'medium' ],
@@ -232,8 +248,9 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 	}, [ settings, computedPrimaryColor ] );
 
 	const outlineStyle = useMemo( () => {
+		// Custom Design: Custom-Farben mit Fallback auf Primärfarbe
 		const color = settings.button_use_custom_design
-			? ( settings.button_bg_color || '#2563eb' )
+			? ( settings.button_bg_color || computedPrimaryColor )
 			: computedPrimaryColor;
 
 		return {
