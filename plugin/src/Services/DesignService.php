@@ -132,41 +132,21 @@ class DesignService {
 	 * Primärfarbe vom Theme lesen
 	 *
 	 * Fallback-Kette:
-	 * 1. WordPress Global Styles (FSE Themes) - mehrere Quellen
-	 * 2. Bekannte Theme Mod Namen
-	 * 3. Default #2563eb
+	 * 1. Global Settings Farbpalette (theme.json) - primary/accent Slugs
+	 * 2. WordPress Global Styles - Button-Hintergrund
+	 * 3. Bekannte Theme Mod Namen
+	 * 4. Default #2563eb
 	 *
 	 * @return string Hex-Farbe.
 	 */
 	public function get_theme_primary_color(): string {
-		// 1. WordPress Global Styles (Block Themes / FSE).
-		if ( function_exists( 'wp_get_global_styles' ) ) {
-			$global_styles = wp_get_global_styles();
-
-			// 1a. Direkt gesetzte Link-Farbe (häufigste Primärfarbe).
-			if ( ! empty( $global_styles['elements']['link']['color']['text'] ) ) {
-				$color = $this->resolve_css_var( $global_styles['elements']['link']['color']['text'] );
-				if ( $this->is_valid_hex_color( $color ) ) {
-					return $color;
-				}
-			}
-
-			// 1b. Button-Hintergrundfarbe.
-			if ( ! empty( $global_styles['elements']['button']['color']['background'] ) ) {
-				$color = $this->resolve_css_var( $global_styles['elements']['button']['color']['background'] );
-				if ( $this->is_valid_hex_color( $color ) ) {
-					return $color;
-				}
-			}
-		}
-
-		// 2. Global Settings Farbpalette (theme.json).
+		// 1. Global Settings Farbpalette (theme.json) - PRIORITÄT.
 		if ( function_exists( 'wp_get_global_settings' ) ) {
 			$global_settings = wp_get_global_settings();
 			$palette         = $global_settings['color']['palette']['theme'] ?? [];
 
-			// Suche nach bekannten Primärfarben-Slugs.
-			$primary_slugs = [ 'primary', 'accent', 'contrast', 'base', 'link', 'vivid-purple', 'vivid-cyan-blue' ];
+			// Suche nach bekannten Primärfarben-Slugs (Reihenfolge = Priorität).
+			$primary_slugs = [ 'primary', 'accent', 'contrast', 'secondary' ];
 
 			foreach ( $primary_slugs as $slug ) {
 				foreach ( $palette as $color_def ) {
@@ -177,10 +157,17 @@ class DesignService {
 					}
 				}
 			}
+		}
 
-			// Nimm erste Farbe aus Palette wenn vorhanden (oft die Primärfarbe).
-			if ( ! empty( $palette[0]['color'] ) && $this->is_valid_hex_color( $palette[0]['color'] ) ) {
-				return $palette[0]['color'];
+		// 2. WordPress Global Styles - Button-Hintergrundfarbe.
+		if ( function_exists( 'wp_get_global_styles' ) ) {
+			$global_styles = wp_get_global_styles();
+
+			if ( ! empty( $global_styles['elements']['button']['color']['background'] ) ) {
+				$color = $this->resolve_css_var( $global_styles['elements']['button']['color']['background'] );
+				if ( $this->is_valid_hex_color( $color ) ) {
+					return $color;
+				}
 			}
 		}
 
