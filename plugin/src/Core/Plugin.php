@@ -44,6 +44,7 @@ use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
+use RecruitingPlaybook\Services\CssGeneratorService;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -356,6 +357,19 @@ final class Plugin {
 		// Shortcodes registrieren.
 		$shortcodes = new Shortcodes();
 		$shortcodes->register();
+
+		// Design & Branding CSS-Variablen (nur auf Plugin-Seiten).
+		// WICHTIG: Keine Lizenzprüfung - Design bleibt nach Ablauf erhalten.
+		add_action(
+			'wp_head',
+			function () {
+				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
+					$css_generator = new CssGeneratorService();
+					$css_generator->output_css_variables();
+				}
+			},
+			5 // Früh laden, damit CSS-Variablen für Tailwind verfügbar sind.
+		);
 
 		// Security Headers für Plugin-Seiten.
 		add_action( 'send_headers', [ $this, 'addSecurityHeaders' ] );

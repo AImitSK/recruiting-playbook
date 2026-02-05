@@ -16,6 +16,7 @@ use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use RecruitingPlaybook\Services\DesignService;
 
 /**
  * REST Controller für Plugin-Einstellungen
@@ -98,6 +99,29 @@ class SettingsController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'update_auto_email' ],
+					'permission_callback' => [ $this, 'update_company_permissions_check' ],
+				],
+			]
+		);
+
+		// Design & Branding settings.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/design',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_design_settings' ],
+					'permission_callback' => [ $this, 'update_company_permissions_check' ],
+				],
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'update_design_settings' ],
+					'permission_callback' => [ $this, 'update_company_permissions_check' ],
+				],
+				[
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => [ $this, 'reset_design_settings' ],
 					'permission_callback' => [ $this, 'update_company_permissions_check' ],
 				],
 			]
@@ -569,5 +593,89 @@ class SettingsController extends WP_REST_Controller {
 				],
 			],
 		];
+	}
+
+	// =========================================================================
+	// Design & Branding Settings
+	// =========================================================================
+
+	/**
+	 * Get Design & Branding settings
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response Response object.
+	 */
+	public function get_design_settings( WP_REST_Request $request ) {
+		$design_service = new DesignService();
+		$settings       = $design_service->get_design_settings();
+		$schema         = $design_service->get_schema();
+		$defaults       = $design_service->get_defaults();
+
+		// Zusätzliche Metadaten für das Frontend.
+		$meta = [
+			'primary_color_computed' => $design_service->get_primary_color(),
+			'logo_url_computed'      => $design_service->get_logo_url(),
+			'theme_has_primary'      => (bool) get_theme_mod( 'primary_color', '' ),
+			'theme_has_logo'         => (bool) get_theme_mod( 'custom_logo', 0 ),
+		];
+
+		return rest_ensure_response( [
+			'settings' => $settings,
+			'schema'   => $schema,
+			'defaults' => $defaults,
+			'meta'     => $meta,
+		] );
+	}
+
+	/**
+	 * Update Design & Branding settings
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error Response object.
+	 */
+	public function update_design_settings( WP_REST_Request $request ) {
+		$design_service = new DesignService();
+		$new_settings   = $request->get_json_params();
+
+		if ( empty( $new_settings ) || ! is_array( $new_settings ) ) {
+			return new WP_Error(
+				'invalid_settings',
+				__( 'Ungültige Einstellungen.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$success = $design_service->save_design_settings( $new_settings );
+
+		if ( ! $success ) {
+			return new WP_Error(
+				'save_failed',
+				__( 'Einstellungen konnten nicht gespeichert werden.', 'recruiting-playbook' ),
+				[ 'status' => 500 ]
+			);
+		}
+
+		return rest_ensure_response( [
+			'success'  => true,
+			'message'  => __( 'Design-Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+			'settings' => $design_service->get_design_settings(),
+		] );
+	}
+
+	/**
+	 * Reset Design & Branding settings to defaults
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response Response object.
+	 */
+	public function reset_design_settings( WP_REST_Request $request ) {
+		$design_service = new DesignService();
+		$design_service->reset_to_defaults();
+
+		return rest_ensure_response( [
+			'success'  => true,
+			'message'  => __( 'Design-Einstellungen wurden zurückgesetzt.', 'recruiting-playbook' ),
+			'settings' => $design_service->get_design_settings(),
+		] );
 	}
 }

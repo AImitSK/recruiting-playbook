@@ -260,13 +260,29 @@
         box-shadow: none;
     }
 
-    /* Focus Reset */
-    .rp-plugin button:focus,
-    .rp-plugin [role="button"]:focus,
-    .rp-plugin input:focus,
-    .rp-plugin select:focus,
-    .rp-plugin textarea:focus {
+    /* Focus Reset - nur bei Maus-Klick, nicht bei Tastatur */
+    .rp-plugin button:focus:not(:focus-visible),
+    .rp-plugin [role="button"]:focus:not(:focus-visible),
+    .rp-plugin input:focus:not(:focus-visible),
+    .rp-plugin select:focus:not(:focus-visible),
+    .rp-plugin textarea:focus:not(:focus-visible) {
         outline: none;
+    }
+
+    /* Focus-Visible - Tastatur-Navigation (Barrierefreiheit) */
+    .rp-plugin button:focus-visible,
+    .rp-plugin [role="button"]:focus-visible,
+    .rp-plugin a:focus-visible {
+        outline: 2px solid var(--rp-color-primary);
+        outline-offset: 2px;
+    }
+
+    .rp-plugin input:focus-visible,
+    .rp-plugin select:focus-visible,
+    .rp-plugin textarea:focus-visible {
+        outline: none;
+        border-color: var(--rp-color-primary);
+        box-shadow: 0 0 0 3px var(--rp-color-primary-light);
     }
 
     /* Table Reset */
@@ -329,29 +345,31 @@
     font-weight: inherit;
 }
 
+/* Headings - Pro-Override via CssGeneratorService */
 .rp-plugin h1 {
-    font-size: var(--rp-text-4xl);  /* 36px */
-    line-height: var(--rp-leading-tight);
+    font-size: var(--rp-font-size-h1, var(--rp-text-4xl));  /* Default: 36px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
 }
 
 .rp-plugin h2 {
-    font-size: var(--rp-text-3xl);  /* 30px */
-    line-height: var(--rp-leading-tight);
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));  /* Default: 30px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
 }
 
 .rp-plugin h3 {
-    font-size: var(--rp-text-2xl);  /* 24px */
-    line-height: var(--rp-leading-snug);
+    font-size: var(--rp-font-size-h3, var(--rp-text-2xl));  /* Default: 24px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-snug));
+    color: var(--rp-color-primary);  /* Akzentfarbe laut Farbkaskade */
 }
 
 .rp-plugin h4 {
-    font-size: var(--rp-text-xl);   /* 20px */
-    line-height: var(--rp-leading-snug);
+    font-size: var(--rp-text-xl);   /* 20px - nicht konfigurierbar */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-snug));
 }
 
 .rp-plugin h5 {
-    font-size: var(--rp-text-lg);   /* 18px */
-    line-height: var(--rp-leading-normal);
+    font-size: var(--rp-text-lg);   /* 18px - nicht konfigurierbar */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-normal));
 }
 
 /* Sidebar Definition Lists - kleiner als Basis */
@@ -386,32 +404,61 @@
 }
 
 /* Prose/Content Bereich - List-Styles wiederherstellen */
-.rp-plugin .rp-prose ul {
+.rp-plugin .rp-prose ul,
+.rp-plugin .rp-job-content ul {
     list-style-type: disc;
     padding-left: 1.5rem;
     margin: 1rem 0;
 }
 
-.rp-plugin .rp-prose ol {
+.rp-plugin .rp-prose ol,
+.rp-plugin .rp-job-content ol {
     list-style-type: decimal;
     padding-left: 1.5rem;
     margin: 1rem 0;
 }
 
-.rp-plugin .rp-prose li {
+.rp-plugin .rp-prose li,
+.rp-plugin .rp-job-content li {
     margin: 0.5rem 0;
 }
 
-.rp-plugin .rp-prose p {
-    margin: 1rem 0;
+.rp-plugin .rp-prose p,
+.rp-plugin .rp-job-content p {
+    margin-bottom: var(--rp-paragraph-spacing, 1em);
+    line-height: var(--rp-line-height-body, 1.6);
 }
 
 .rp-plugin .rp-prose h1,
 .rp-plugin .rp-prose h2,
 .rp-plugin .rp-prose h3,
-.rp-plugin .rp-prose h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+.rp-plugin .rp-prose h4,
+.rp-plugin .rp-job-content h1,
+.rp-plugin .rp-job-content h2,
+.rp-plugin .rp-job-content h3,
+.rp-plugin .rp-job-content h4 {
+    margin-top: var(--rp-heading-margin-top, 1.5em);
+    margin-bottom: var(--rp-heading-margin-bottom, 0.5em);
+    line-height: var(--rp-line-height-heading, 1.2);
+}
+
+/* Erste Überschrift im Content ohne Top-Margin */
+.rp-plugin .rp-prose > h1:first-child,
+.rp-plugin .rp-prose > h2:first-child,
+.rp-plugin .rp-prose > h3:first-child,
+.rp-plugin .rp-prose > h4:first-child,
+.rp-plugin .rp-job-content > h1:first-child,
+.rp-plugin .rp-job-content > h2:first-child,
+.rp-plugin .rp-job-content > h3:first-child,
+.rp-plugin .rp-job-content > h4:first-child {
+    margin-top: 0;
+}
+
+/* Job Content Links - Design-Variablen */
+.rp-plugin .rp-job-content a,
+.rp-plugin .rp-prose a {
+    color: var(--rp-link-color, var(--rp-color-primary));
+    text-decoration: var(--rp-link-decoration, underline);
 }
 
 /* =============================================================================
@@ -426,11 +473,13 @@
         align-items: center;
         justify-content: center;
         gap: var(--rp-space-2);
-        padding: var(--rp-space-2) var(--rp-space-4);
+        padding: var(--rp-btn-padding, var(--rp-space-2) var(--rp-space-4));
         font-size: var(--rp-text-sm);
         font-weight: 500;
         line-height: var(--rp-leading-normal);
-        border-radius: var(--rp-radius-md);
+        border-radius: var(--rp-btn-radius, var(--rp-radius-md));
+        border: var(--rp-btn-border, none);
+        box-shadow: var(--rp-btn-shadow, none);
         transition: all var(--rp-transition);
         cursor: pointer;
     }
@@ -441,12 +490,14 @@
     }
 
     .rp-plugin .rp-btn-primary {
-        background-color: var(--rp-color-primary);
-        color: var(--rp-color-primary-contrast);
+        background-color: var(--rp-btn-bg, var(--rp-color-primary));
+        color: var(--rp-btn-text, var(--rp-color-primary-contrast));
     }
 
     .rp-plugin .rp-btn-primary:hover:not(:disabled) {
-        background-color: var(--rp-color-primary-hover);
+        background-color: var(--rp-btn-bg-hover, var(--rp-color-primary-hover));
+        color: var(--rp-btn-text-hover, var(--rp-color-primary-contrast));
+        box-shadow: var(--rp-btn-shadow-hover, none);
     }
 
     .rp-plugin .rp-btn-secondary {
@@ -458,6 +509,21 @@
     .rp-plugin .rp-btn-secondary:hover:not(:disabled) {
         background-color: var(--rp-color-primary-light);
         border-color: var(--rp-color-primary);
+    }
+
+    /* AI/KI Button - spezielles Styling für KI-Features */
+    .rp-plugin .rp-btn-ai {
+        background: var(--rp-ai-btn-bg, linear-gradient(135deg, #8b5cf6, #ec4899));
+        color: var(--rp-ai-btn-text, #ffffff);
+        border-radius: var(--rp-ai-btn-radius, var(--rp-radius-lg));
+        border: var(--rp-ai-btn-border, none);
+        box-shadow: var(--rp-ai-btn-shadow, 0 4px 15px rgba(139, 92, 246, 0.3));
+        padding: var(--rp-space-2) var(--rp-space-4);
+    }
+
+    .rp-plugin .rp-btn-ai:hover:not(:disabled) {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
     }
 
     /* ─────────────────────────────────────────────────────────────────────
@@ -553,16 +619,18 @@
        Cards
        ───────────────────────────────────────────────────────────────────── */
     .rp-plugin .rp-card {
-        background-color: var(--rp-color-surface);
-        border: 1px solid var(--rp-color-border);
-        border-radius: var(--rp-radius-xl);
-        padding: var(--rp-space-6);
-        box-shadow: var(--rp-shadow-md);
-        transition: box-shadow var(--rp-transition), border-color var(--rp-transition);
+        /* Design & Branding: Überschreibbar via CssGeneratorService */
+        background-color: var(--rp-card-bg, var(--rp-color-surface));
+        border: var(--rp-card-border, 1px solid var(--rp-color-border));
+        border-radius: var(--rp-card-radius, var(--rp-radius-xl));
+        padding: var(--rp-card-padding, var(--rp-space-6));
+        box-shadow: var(--rp-card-shadow, var(--rp-shadow-md));
+        transition: box-shadow var(--rp-transition), border-color var(--rp-transition), transform var(--rp-transition);
     }
 
+    /* Card Hover - Standard, wird durch card_hover_effect Setting überschrieben */
     .rp-plugin .rp-card:hover {
-        box-shadow: var(--rp-shadow-lg);
+        box-shadow: var(--rp-card-shadow-hover, var(--rp-shadow-lg));
         border-color: var(--rp-color-border-dark);
     }
 
@@ -580,9 +648,10 @@
         border-radius: var(--rp-radius-full);
     }
 
+    /* Badge-Farben: Überschreibbar via CssGeneratorService */
     .rp-plugin .rp-badge-gray {
-        background-color: #f1f5f9;
-        color: #475569;
+        background-color: var(--rp-badge-category-bg, #f1f5f9);
+        color: var(--rp-badge-category-text, #475569);
     }
 
     .rp-plugin .rp-badge-primary {
@@ -590,9 +659,20 @@
         color: var(--rp-color-primary);
     }
 
-    .rp-plugin .rp-badge-success {
-        background-color: var(--rp-color-success-light);
-        color: #166534;
+    .rp-plugin .rp-badge-success,
+    .rp-plugin .rp-badge-new {
+        background-color: var(--rp-badge-new-bg, var(--rp-color-success-light));
+        color: var(--rp-badge-new-text, #166534);
+    }
+
+    .rp-plugin .rp-badge-remote {
+        background-color: var(--rp-badge-remote-bg, #ede9fe);
+        color: var(--rp-badge-remote-text, #7c3aed);
+    }
+
+    .rp-plugin .rp-badge-salary {
+        background-color: var(--rp-badge-salary-bg, var(--rp-color-primary-light));
+        color: var(--rp-badge-salary-text, var(--rp-color-primary));
     }
 
     .rp-plugin .rp-badge-warning {

@@ -154,7 +154,7 @@ while ( have_posts() ) :
 					</header>
 
 					<!-- Stellenbeschreibung -->
-					<div class="rp-job-description rp-prose rp-max-w-none">
+					<div class="rp-job-description rp-job-content rp-prose rp-max-w-none">
 						<?php the_content(); ?>
 					</div>
 
@@ -258,8 +258,8 @@ while ( have_posts() ) :
 
 			</div>
 
-			<!-- Bewerbungsformular -->
-			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-4 sm:rp-p-6 md:rp-p-8 rp-border rp-border-gray-200 rp-bg-white rp-overflow-hidden" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
+			<!-- Bewerbungsformular - verwendet .rp-card für Design-System-Konsistenz -->
+			<div id="apply-form" class="rp-card rp-mt-12 rp-overflow-hidden" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
 				<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?></h2>
 
 				<?php

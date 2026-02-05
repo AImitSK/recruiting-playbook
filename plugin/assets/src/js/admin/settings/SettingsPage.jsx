@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs'
 import { Spinner } from '../components/ui/spinner';
 
 import { GeneralSettings, CompanySettings, ExportSettings, RolesSettings } from './components';
+import { DesignTab } from './tabs/DesignTab';
 import { useSettings } from './hooks';
 
 /**
@@ -93,7 +94,7 @@ export function SettingsPage() {
 
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
-			<div style={ { maxWidth: '900px' } }>
+			<div style={ { maxWidth: activeTab === 'design' ? '1100px' : '900px' } }>
 				{ /* Header: Logo links, Titel rechts */ }
 				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
 					{ logoUrl && (
@@ -135,6 +136,11 @@ export function SettingsPage() {
 								{ __( 'Benutzerrollen', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
+						{ config.isPro && (
+							<TabsTrigger value="design">
+								{ __( 'Design & Branding', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
 					</TabsList>
 
 					<TabsContent value="general">
@@ -165,6 +171,12 @@ export function SettingsPage() {
 					{ config.isPro && (
 						<TabsContent value="roles">
 							<RolesSettings />
+						</TabsContent>
+					) }
+
+					{ config.isPro && (
+						<TabsContent value="design">
+							<DesignTab />
 						</TabsContent>
 					) }
 				</Tabs>
