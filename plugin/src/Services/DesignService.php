@@ -92,7 +92,13 @@ class DesignService {
 		// Cache invalidieren.
 		self::$cached_settings = null;
 
-		return update_option( self::OPTION_NAME, $merged );
+		// update_option gibt false zurück wenn Wert unverändert - das ist kein Fehler.
+		$result = update_option( self::OPTION_NAME, $merged );
+
+		// Prüfen ob der Wert jetzt korrekt gespeichert ist.
+		$saved = get_option( self::OPTION_NAME, [] );
+
+		return $saved === $merged;
 	}
 
 	/**
@@ -238,7 +244,7 @@ class DesignService {
 			// ============================================
 
 			// Card 1: Layout-Preset.
-			'card_layout_preset'       => 'standard', // kompakt|standard|grosszuegig
+			'card_layout_preset'       => 'standard', // compact|standard|spacious
 
 			// Card 2: Erscheinungsbild.
 			'card_border_radius'       => 8,      // 0-24 px
@@ -361,7 +367,7 @@ class DesignService {
 			'link_decoration'          => [ 'type' => 'select', 'options' => [ 'none', 'underline', 'hover' ] ],
 
 			// Cards - Layout.
-			'card_layout_preset'       => [ 'type' => 'select', 'options' => [ 'kompakt', 'standard', 'grosszuegig' ] ],
+			'card_layout_preset'       => [ 'type' => 'select', 'options' => [ 'compact', 'standard', 'spacious' ] ],
 
 			// Cards - Erscheinungsbild.
 			'card_border_radius'       => [ 'type' => 'slider', 'min' => 0, 'max' => 24 ],
