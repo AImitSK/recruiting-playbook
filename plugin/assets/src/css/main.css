@@ -388,6 +388,11 @@
     font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
 }
 
+/* Card Teaser/Excerpt - Pro-Override */
+.rp-plugin .rp-card p {
+    font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
+}
+
 /* Sidebar Definition Lists - kleiner als Basis */
 .rp-plugin dl {
     font-size: var(--rp-text-sm);   /* 14px */
