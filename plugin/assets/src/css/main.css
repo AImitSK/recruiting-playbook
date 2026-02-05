@@ -372,6 +372,22 @@
     line-height: var(--rp-line-height-heading, var(--rp-leading-normal));
 }
 
+/* Body Text - Pro-Override via CssGeneratorService */
+.rp-plugin .rp-job-content p,
+.rp-plugin .rp-job-content li,
+.rp-plugin .rp-prose p,
+.rp-plugin .rp-prose li {
+    font-size: var(--rp-font-size-body, var(--rp-text-base));  /* Default: 16px */
+    line-height: var(--rp-line-height-body, var(--rp-leading-relaxed));
+}
+
+/* Small Text - Pro-Override via CssGeneratorService */
+.rp-plugin small,
+.rp-plugin .rp-text-small,
+.rp-plugin .rp-job-content small {
+    font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
+}
+
 /* Sidebar Definition Lists - kleiner als Basis */
 .rp-plugin dl {
     font-size: var(--rp-text-sm);   /* 14px */
