@@ -132,33 +132,110 @@ class DesignService {
 	 * Primärfarbe vom Theme lesen
 	 *
 	 * Fallback-Kette:
-	 * 1. theme_mod 'primary_color'
-	 * 2. WordPress Global Styles (FSE Themes)
+	 * 1. WordPress Global Styles (FSE Themes) - mehrere Quellen
+	 * 2. Bekannte Theme Mod Namen
 	 * 3. Default #2563eb
 	 *
 	 * @return string Hex-Farbe.
 	 */
 	public function get_theme_primary_color(): string {
-		// 1. Theme Mod.
-		$color = get_theme_mod( 'primary_color', '' );
-		if ( $this->is_valid_hex_color( $color ) ) {
-			return $color;
-		}
+		// 1. WordPress Global Styles (Block Themes / FSE).
+		if ( function_exists( 'wp_get_global_styles' ) ) {
+			$global_styles = wp_get_global_styles();
 
-		// 2. WordPress Global Styles (Block Themes).
-		if ( function_exists( 'wp_get_global_settings' ) ) {
-			$global_settings = wp_get_global_settings();
-			$palette         = $global_settings['color']['palette']['theme'] ?? [];
+			// 1a. Direkt gesetzte Link-Farbe (häufigste Primärfarbe).
+			if ( ! empty( $global_styles['elements']['link']['color']['text'] ) ) {
+				$color = $this->resolve_css_var( $global_styles['elements']['link']['color']['text'] );
+				if ( $this->is_valid_hex_color( $color ) ) {
+					return $color;
+				}
+			}
 
-			foreach ( $palette as $color_def ) {
-				if ( isset( $color_def['slug'] ) && 'primary' === $color_def['slug'] ) {
-					return $color_def['color'];
+			// 1b. Button-Hintergrundfarbe.
+			if ( ! empty( $global_styles['elements']['button']['color']['background'] ) ) {
+				$color = $this->resolve_css_var( $global_styles['elements']['button']['color']['background'] );
+				if ( $this->is_valid_hex_color( $color ) ) {
+					return $color;
 				}
 			}
 		}
 
-		// 3. Fallback.
+		// 2. Global Settings Farbpalette (theme.json).
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$global_settings = wp_get_global_settings();
+			$palette         = $global_settings['color']['palette']['theme'] ?? [];
+
+			// Suche nach bekannten Primärfarben-Slugs.
+			$primary_slugs = [ 'primary', 'accent', 'contrast', 'base', 'link', 'vivid-purple', 'vivid-cyan-blue' ];
+
+			foreach ( $primary_slugs as $slug ) {
+				foreach ( $palette as $color_def ) {
+					if ( isset( $color_def['slug'] ) && $slug === $color_def['slug'] ) {
+						if ( $this->is_valid_hex_color( $color_def['color'] ) ) {
+							return $color_def['color'];
+						}
+					}
+				}
+			}
+
+			// Nimm erste Farbe aus Palette wenn vorhanden (oft die Primärfarbe).
+			if ( ! empty( $palette[0]['color'] ) && $this->is_valid_hex_color( $palette[0]['color'] ) ) {
+				return $palette[0]['color'];
+			}
+		}
+
+		// 3. Bekannte Theme Mod Namen (Classic Themes).
+		$theme_mod_names = [
+			'primary_color',
+			'accent_color',
+			'link_color',
+			'theme_color',
+			'brand_color',
+			'main_color',
+		];
+
+		foreach ( $theme_mod_names as $mod_name ) {
+			$color = get_theme_mod( $mod_name, '' );
+			if ( $this->is_valid_hex_color( $color ) ) {
+				return $color;
+			}
+		}
+
+		// 4. Fallback.
 		return '#2563eb';
+	}
+
+	/**
+	 * CSS-Variable zu Hex-Wert auflösen
+	 *
+	 * Wandelt z.B. "var(--wp--preset--color--primary)" in den Hex-Wert um.
+	 *
+	 * @param string $value CSS-Wert (kann var() oder direkt Hex sein).
+	 * @return string Hex-Farbe oder ursprünglicher Wert.
+	 */
+	private function resolve_css_var( string $value ): string {
+		// Direkte Hex-Farbe.
+		if ( $this->is_valid_hex_color( $value ) ) {
+			return $value;
+		}
+
+		// CSS Variable: var(--wp--preset--color--{slug}).
+		if ( preg_match( '/var\(--wp--preset--color--([a-z0-9-]+)\)/', $value, $matches ) ) {
+			$slug = $matches[1];
+
+			if ( function_exists( 'wp_get_global_settings' ) ) {
+				$global_settings = wp_get_global_settings();
+				$palette         = $global_settings['color']['palette']['theme'] ?? [];
+
+				foreach ( $palette as $color_def ) {
+					if ( isset( $color_def['slug'] ) && $slug === $color_def['slug'] ) {
+						return $color_def['color'];
+					}
+				}
+			}
+		}
+
+		return $value;
 	}
 
 	/**

@@ -154,9 +154,9 @@ class CssGeneratorService {
 
 		// Layout-Preset Padding.
 		$padding_values = [
-			'kompakt'     => '12px',
-			'standard'    => '20px',
-			'grosszuegig' => '32px',
+			'compact'  => '12px',
+			'standard' => '20px',
+			'spacious' => '32px',
 		];
 		$vars['--rp-card-padding'] = $padding_values[ $settings['card_layout_preset'] ] ?? '20px';
 
