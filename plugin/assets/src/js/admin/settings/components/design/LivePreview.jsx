@@ -56,7 +56,7 @@ function JobCardPreview( { settings, computedPrimaryColor } ) {
 	};
 
 	const buttonStyle = useMemo( () => {
-		const bgColor = settings.override_button_colors
+		const bgColor = settings.button_use_custom_design
 			? ( settings.button_bg_color || '#2563eb' )
 			: computedPrimaryColor;
 
@@ -156,7 +156,7 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
 	}, [ settings ] );
 
 	const buttonStyle = useMemo( () => {
-		const bgColor = settings.override_button_colors
+		const bgColor = settings.button_use_custom_design
 			? ( settings.button_bg_color || '#2563eb' )
 			: computedPrimaryColor;
 
@@ -202,7 +202,7 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
  */
 function ButtonsPreview( { settings, computedPrimaryColor } ) {
 	const primaryStyle = useMemo( () => {
-		const bgColor = settings.override_button_colors
+		const bgColor = settings.button_use_custom_design
 			? ( settings.button_bg_color || '#2563eb' )
 			: computedPrimaryColor;
 
@@ -232,7 +232,7 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 	}, [ settings, computedPrimaryColor ] );
 
 	const outlineStyle = useMemo( () => {
-		const color = settings.override_button_colors
+		const color = settings.button_use_custom_design
 			? ( settings.button_bg_color || '#2563eb' )
 			: computedPrimaryColor;
 

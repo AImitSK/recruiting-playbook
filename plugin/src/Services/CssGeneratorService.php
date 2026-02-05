@@ -180,18 +180,12 @@ class CssGeneratorService {
 	private function generate_button_variables( array $settings, string $primary ): array {
 		$vars = [];
 
-		// Farben: Bei override_button_colors=false erben von Primärfarbe.
-		if ( $settings['override_button_colors'] ) {
-			$vars['--rp-btn-bg']         = $settings['button_bg_color'];
-			$vars['--rp-btn-bg-hover']   = $settings['button_bg_color_hover'];
-			$vars['--rp-btn-text']       = $settings['button_text_color'];
-			$vars['--rp-btn-text-hover'] = $settings['button_text_color_hover'];
-		} else {
-			$vars['--rp-btn-bg']         = $primary;
-			$vars['--rp-btn-bg-hover']   = $this->design_service->adjust_color_brightness( $primary, -15 );
-			$vars['--rp-btn-text']       = '#ffffff';
-			$vars['--rp-btn-text-hover'] = '#ffffff';
-		}
+		// Custom Design aktiv: Verwende Custom-Farben aus Settings.
+		// Fallback auf Primärfarbe wenn nicht explizit gesetzt.
+		$vars['--rp-btn-bg']         = $settings['button_bg_color'] ?: $primary;
+		$vars['--rp-btn-bg-hover']   = $settings['button_bg_color_hover'] ?: $this->design_service->adjust_color_brightness( $settings['button_bg_color'] ?: $primary, -15 );
+		$vars['--rp-btn-text']       = $settings['button_text_color'] ?: '#ffffff';
+		$vars['--rp-btn-text-hover'] = $settings['button_text_color_hover'] ?: '#ffffff';
 
 		// Border-Radius.
 		$vars['--rp-btn-radius'] = $settings['button_border_radius'] . 'px';
