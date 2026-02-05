@@ -13,13 +13,7 @@ import { Label } from '../../../components/ui/label';
 import { Slider } from '../../../components/ui/slider';
 import { ColorPicker } from '../../../components/ui/color-picker';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../../components/ui/select';
+import { Select, SelectOption } from '../../../components/ui/select';
 
 /**
  * ButtonsPanel Component
@@ -200,17 +194,13 @@ export function ButtonsPanel( { settings, onUpdate, computedPrimaryColor } ) {
 						<Label>{ __( 'Schatten', 'recruiting-playbook' ) }</Label>
 						<Select
 							value={ settings.button_shadow || 'none' }
-							onValueChange={ ( value ) => onUpdate( 'button_shadow', value ) }
+							onChange={ ( e ) => onUpdate( 'button_shadow', e.target.value ) }
+							style={ { width: '112px' } }
 						>
-							<SelectTrigger className="rp-w-28">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="medium">{ __( 'Mittel', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="strong">{ __( 'Stark', 'recruiting-playbook' ) }</SelectItem>
-							</SelectContent>
+							<SelectOption value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="medium">{ __( 'Mittel', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="strong">{ __( 'Stark', 'recruiting-playbook' ) }</SelectOption>
 						</Select>
 					</div>
 
@@ -219,17 +209,13 @@ export function ButtonsPanel( { settings, onUpdate, computedPrimaryColor } ) {
 						<Label>{ __( 'Schatten (Hover)', 'recruiting-playbook' ) }</Label>
 						<Select
 							value={ settings.button_shadow_hover || 'light' }
-							onValueChange={ ( value ) => onUpdate( 'button_shadow_hover', value ) }
+							onChange={ ( e ) => onUpdate( 'button_shadow_hover', e.target.value ) }
+							style={ { width: '112px' } }
 						>
-							<SelectTrigger className="rp-w-28">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="medium">{ __( 'Mittel', 'recruiting-playbook' ) }</SelectItem>
-								<SelectItem value="strong">{ __( 'Stark', 'recruiting-playbook' ) }</SelectItem>
-							</SelectContent>
+							<SelectOption value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="medium">{ __( 'Mittel', 'recruiting-playbook' ) }</SelectOption>
+							<SelectOption value="strong">{ __( 'Stark', 'recruiting-playbook' ) }</SelectOption>
 						</Select>
 					</div>
 				</CardContent>

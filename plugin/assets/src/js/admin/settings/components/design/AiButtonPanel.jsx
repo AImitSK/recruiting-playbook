@@ -14,13 +14,7 @@ import { Input } from '../../../components/ui/input';
 import { Slider } from '../../../components/ui/slider';
 import { ColorPicker } from '../../../components/ui/color-picker';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../../components/ui/select';
+import { Select, SelectOption } from '../../../components/ui/select';
 import { Sparkles, Check, Star, Zap, Target, User } from 'lucide-react';
 
 /**
@@ -330,21 +324,14 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 						<Label>{ __( 'Icon', 'recruiting-playbook' ) }</Label>
 						<Select
 							value={ settings.ai_match_button_icon || 'sparkles' }
-							onValueChange={ ( value ) => onUpdate( 'ai_match_button_icon', value ) }
+							onChange={ ( e ) => onUpdate( 'ai_match_button_icon', e.target.value ) }
+							style={ { width: '160px' } }
 						>
-							<SelectTrigger className="rp-w-40">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								{ iconOptions.map( ( option ) => (
-									<SelectItem key={ option.value } value={ option.value }>
-										<div className="rp-flex rp-items-center rp-gap-2">
-											<option.Icon className="rp-w-4 rp-h-4" />
-											{ option.label }
-										</div>
-									</SelectItem>
-								) ) }
-							</SelectContent>
+							{ iconOptions.map( ( option ) => (
+								<SelectOption key={ option.value } value={ option.value }>
+									{ option.label }
+								</SelectOption>
+							) ) }
 						</Select>
 					</div>
 				</CardContent>

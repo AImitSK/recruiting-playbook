@@ -12,13 +12,7 @@ import { Switch } from '../../../components/ui/switch';
 import { Label } from '../../../components/ui/label';
 import { ColorPicker } from '../../../components/ui/color-picker';
 import { Slider } from '../../../components/ui/slider';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '../../../components/ui/select';
+import { Select, SelectOption } from '../../../components/ui/select';
 
 /**
  * BrandingPanel Component
@@ -146,16 +140,12 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 								</Label>
 								<Select
 									value={ settings.signature_logo_position || 'top' }
-									onValueChange={ ( value ) => onUpdate( 'signature_logo_position', value ) }
+									onChange={ ( e ) => onUpdate( 'signature_logo_position', e.target.value ) }
+									style={ { width: '128px' } }
 								>
-									<SelectTrigger className="rp-w-32">
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="top">{ __( 'Oben', 'recruiting-playbook' ) }</SelectItem>
-										<SelectItem value="bottom">{ __( 'Unten', 'recruiting-playbook' ) }</SelectItem>
-										<SelectItem value="left">{ __( 'Links', 'recruiting-playbook' ) }</SelectItem>
-									</SelectContent>
+									<SelectOption value="top">{ __( 'Oben', 'recruiting-playbook' ) }</SelectOption>
+									<SelectOption value="bottom">{ __( 'Unten', 'recruiting-playbook' ) }</SelectOption>
+									<SelectOption value="left">{ __( 'Links', 'recruiting-playbook' ) }</SelectOption>
 								</Select>
 							</div>
 
