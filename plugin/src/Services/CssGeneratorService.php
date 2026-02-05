@@ -89,8 +89,10 @@ class CssGeneratorService {
 		// Card-Variablen.
 		$css_vars = array_merge( $css_vars, $this->generate_card_variables( $settings ) );
 
-		// Button-Variablen.
-		$css_vars = array_merge( $css_vars, $this->generate_button_variables( $settings, $primary ) );
+		// Button-Variablen (nur bei Custom Design).
+		if ( ! empty( $settings['button_use_custom_design'] ) ) {
+			$css_vars = array_merge( $css_vars, $this->generate_button_variables( $settings, $primary ) );
+		}
 
 		// Typografie-Variablen (nur wenn von Defaults abweichend).
 		$css_vars = array_merge( $css_vars, $this->generate_typography_variables( $settings, $defaults ) );
@@ -112,6 +114,11 @@ class CssGeneratorService {
 			}
 		}
 		$css .= "}\n";
+
+		// Button Custom Design: Wenn aktiv, Styles generieren die Theme überschreiben.
+		if ( ! empty( $settings['button_use_custom_design'] ) ) {
+			$css .= $this->generate_custom_button_css( $settings );
+		}
 
 		// Zusätzliche CSS-Regeln (Hover-Effekte etc.).
 		$css .= $this->generate_additional_rules( $settings );
@@ -431,6 +438,39 @@ class CssGeneratorService {
 				'text' => '#7c3aed',
 			],
 		];
+	}
+
+	/**
+	 * Custom Button CSS generieren (überschreibt Theme-Buttons)
+	 *
+	 * Wird NUR ausgegeben wenn button_use_custom_design aktiviert ist.
+	 *
+	 * @param array $settings Design-Einstellungen.
+	 * @return string CSS.
+	 */
+	private function generate_custom_button_css( array $settings ): string {
+		$css = "\n/* Custom Button Design (überschreibt Theme) */\n";
+
+		// Hauptbutton-Styles.
+		$css .= ".rp-plugin .wp-element-button,\n";
+		$css .= ".rp-plugin a.wp-element-button {\n";
+		$css .= "  background-color: var(--rp-btn-bg) !important;\n";
+		$css .= "  color: var(--rp-btn-text) !important;\n";
+		$css .= "  border-radius: var(--rp-btn-radius) !important;\n";
+		$css .= "  padding: var(--rp-btn-padding) !important;\n";
+		$css .= "  border: var(--rp-btn-border) !important;\n";
+		$css .= "  box-shadow: var(--rp-btn-shadow) !important;\n";
+		$css .= "}\n";
+
+		// Hover-Styles.
+		$css .= ".rp-plugin .wp-element-button:hover,\n";
+		$css .= ".rp-plugin a.wp-element-button:hover {\n";
+		$css .= "  background-color: var(--rp-btn-bg-hover) !important;\n";
+		$css .= "  color: var(--rp-btn-text-hover) !important;\n";
+		$css .= "  box-shadow: var(--rp-btn-shadow-hover) !important;\n";
+		$css .= "}\n";
+
+		return $css;
 	}
 
 	/**

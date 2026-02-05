@@ -714,58 +714,33 @@
 }
 
 /* =============================================================================
-   BUTTON FALLBACK - Für Classic Themes (Avada etc.)
+   BUTTON - Strukturelle Styles (für alle Themes)
 
-   WordPress Block Themes stylen .wp-element-button automatisch.
-   Classic Themes kennen diese Klasse nicht, daher eigene Styles.
+   Block Themes (FSE) stylen .wp-element-button vollständig.
+   Classic Themes brauchen minimale Fallbacks.
+
+   WICHTIG: Keine Farben/Radius hier - das kommt vom Theme oder Custom Design.
+   Custom Design CSS wird von CssGeneratorService mit !important eingefügt.
    ============================================================================= */
+
+/* Strukturelle Basis (überschreibt nichts Visuelles) */
 .rp-plugin .wp-element-button,
 .rp-plugin a.wp-element-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--rp-space-2);
-    padding: var(--rp-space-3) var(--rp-space-6);
-    font-size: var(--rp-text-base);
-    font-weight: 600;
-    line-height: var(--rp-leading-normal);
-    color: var(--rp-color-primary-contrast);
-    background-color: var(--rp-color-primary);
-    border: none;
-    border-radius: var(--rp-radius-md);
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--rp-transition), transform var(--rp-transition);
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .rp-plugin .wp-element-button:hover,
 .rp-plugin a.wp-element-button:hover {
-    background-color: var(--rp-color-primary-hover);
-    color: var(--rp-color-primary-contrast);
     text-decoration: none;
-}
-
-.rp-plugin .wp-element-button:focus,
-.rp-plugin a.wp-element-button:focus {
-    outline: 2px solid var(--rp-color-primary);
-    outline-offset: 2px;
 }
 
 .rp-plugin .wp-element-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-/* Outline/Secondary Button Variant */
-.rp-plugin .wp-element-button.is-style-outline,
-.rp-plugin a.wp-element-button.is-style-outline {
-    background-color: transparent;
-    color: var(--rp-color-primary);
-    border: 2px solid var(--rp-color-primary);
-}
-
-.rp-plugin .wp-element-button.is-style-outline:hover,
-.rp-plugin a.wp-element-button.is-style-outline:hover {
-    background-color: var(--rp-color-primary);
-    color: var(--rp-color-primary-contrast);
 }

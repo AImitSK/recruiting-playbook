@@ -323,8 +323,11 @@ class DesignService {
 			// Tab: Buttons (Abschnitt 3.4)
 			// ============================================
 
-			// Card 1: Farben.
-			'override_button_colors'   => false,
+			// Design-Modus: false = Theme-Design, true = Custom.
+			'button_use_custom_design' => false,
+
+			// Card 1: Farben (nur bei Custom).
+			'override_button_colors'   => false, // Legacy, wird durch button_use_custom_design ersetzt.
 			'button_bg_color'          => '#2563eb',
 			'button_bg_color_hover'    => '#1d4ed8',
 			'button_text_color'        => '#ffffff',
@@ -442,8 +445,9 @@ class DesignService {
 			'card_background'          => [ 'type' => 'color' ],
 			'card_hover_effect'        => [ 'type' => 'select', 'options' => [ 'none', 'lift', 'glow', 'border' ] ],
 
-			// Buttons - Farben.
-			'override_button_colors'   => [ 'type' => 'boolean' ],
+			// Buttons - Design-Modus.
+			'button_use_custom_design' => [ 'type' => 'boolean' ],
+			'override_button_colors'   => [ 'type' => 'boolean' ], // Legacy.
 			'button_bg_color'          => [ 'type' => 'color' ],
 			'button_bg_color_hover'    => [ 'type' => 'color' ],
 			'button_text_color'        => [ 'type' => 'color' ],
