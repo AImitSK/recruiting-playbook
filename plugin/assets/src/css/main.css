@@ -391,6 +391,7 @@
 /* Card Teaser/Excerpt - Pro-Override */
 .rp-plugin .rp-card p {
     font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
+    line-height: var(--rp-line-height-body, var(--rp-leading-relaxed));
 }
 
 /* Sidebar Definition Lists - kleiner als Basis */
