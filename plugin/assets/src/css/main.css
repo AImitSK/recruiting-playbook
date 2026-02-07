@@ -1010,3 +1010,77 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* =============================================================================
+   SHORTCODE COMPONENTS - Stile für Shortcode-Ausgaben
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_job_count] - Stellen-Zähler
+   ───────────────────────────────────────────────────────────────────── */
+.rp-job-count {
+    font-weight: 600;
+    color: inherit;
+}
+
+.rp-job-count--zero {
+    color: var(--rp-color-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_featured_jobs] - Hervorgehobene Stellen
+   ───────────────────────────────────────────────────────────────────── */
+.rp-featured-jobs {
+    /* Wrapper für featured jobs - erbt Plugin-Container Styles */
+}
+
+.rp-plugin .rp-featured-jobs__title {
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));
+    font-weight: 700;
+    color: inherit;
+    margin-bottom: var(--rp-space-6);
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_latest_jobs] - Neueste Stellen
+   ───────────────────────────────────────────────────────────────────── */
+.rp-latest-jobs {
+    /* Wrapper für latest jobs - erbt Plugin-Container Styles */
+}
+
+.rp-plugin .rp-latest-jobs__title {
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));
+    font-weight: 700;
+    color: inherit;
+    margin-bottom: var(--rp-space-6);
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_job_categories] - Kategorie-Übersicht
+   ───────────────────────────────────────────────────────────────────── */
+.rp-job-categories {
+    /* Grid wird über rp-grid Klassen gesteuert */
+}
+
+.rp-plugin .rp-job-category-card {
+    /* Erbt von .rp-card, zusätzliche Anpassungen */
+    text-decoration: none;
+    color: inherit;
+}
+
+.rp-plugin .rp-job-category-card:hover {
+    text-decoration: none;
+    border-color: var(--rp-color-primary);
+}
+
+.rp-plugin .rp-job-category-card__name {
+    font-size: var(--rp-text-base);
+    font-weight: 500;
+    color: var(--rp-color-text);
+}
+
+.rp-plugin .rp-job-category-card__count {
+    /* Nutzt .rp-badge Styles */
+}
