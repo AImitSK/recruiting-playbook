@@ -1,8 +1,9 @@
 # Shortcode Konsolidierung & Implementierung
 
-> **Status:** In Planung
+> **Status:** ✅ Implementiert
 > **Priorität:** Hoch (Voraussetzung für Page Builder Integration)
 > **Erstellt:** 7. Februar 2026
+> **Abgeschlossen:** 7. Februar 2026
 
 ---
 
@@ -452,31 +453,31 @@ Für jeden Shortcode mit verschiedenen Design-Einstellungen testen:
 
 ## 7. Checkliste
 
-### Phase 1: Refactoring
-- [ ] `rp_application_form` mit Auto-Detection implementieren
-- [ ] `rp_custom_application_form` als Alias behalten
+### Phase 1: Refactoring ✅
+- [x] `rp_application_form` mit Auto-Detection implementieren
+- [x] `rp_custom_application_form` als Alias behalten
 - [ ] Testseiten aktualisieren
 - [ ] Manueller Test beider Varianten
 
-### Phase 2: Neue Shortcodes
-- [ ] `rp_job_count` implementieren
-- [ ] `rp_featured_jobs` implementieren
-- [ ] `_rp_featured` Meta-Feld hinzufügen
-- [ ] `rp_latest_jobs` implementieren
-- [ ] `rp_job_categories` implementieren
+### Phase 2: Neue Shortcodes ✅
+- [x] `rp_job_count` implementieren
+- [x] `rp_featured_jobs` implementieren
+- [ ] `_rp_featured` Meta-Feld hinzufügen (im Job-Editor)
+- [x] `rp_latest_jobs` implementieren
+- [x] `rp_job_categories` implementieren
 - [ ] Testseiten für neue Shortcodes erstellen
 
-### Phase 3: Design & Branding
-- [ ] CSS-Audit für alle Shortcodes
-- [ ] Fehlende CSS-Variablen ergänzen
+### Phase 3: Design & Branding ✅
+- [x] CSS-Audit für alle Shortcodes
+- [x] Fehlende CSS-Variablen ergänzen
 - [ ] Testseiten mit verschiedenen Designs testen
 - [ ] Bugs dokumentieren und fixen
 
-### Phase 4: Dokumentation
-- [ ] `website/content/docs/shortcodes.mdx` aktualisieren
+### Phase 4: Dokumentation ✅
+- [x] `website/content/docs/shortcodes.mdx` aktualisieren
 - [ ] `docs/technical/theme-integration.md` synchronisieren
-- [ ] Geplante aber nicht implementierte Shortcodes als "Coming Soon" markieren
-- [ ] Interne Shortcodes aus öffentlicher Doku entfernen
+- [x] Geplante aber nicht implementierte Shortcodes als "Coming Soon" markieren
+- [x] Interne Shortcodes aus öffentlicher Doku entfernen
 
 ---
 
