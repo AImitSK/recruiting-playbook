@@ -28,13 +28,19 @@ use RecruitingPlaybook\Repositories\FormConfigRepository;
 /**
  * Shortcode-Handler
  *
- * Verfügbare Shortcodes:
- * - [rp_jobs] - Stellenliste
+ * Öffentliche Shortcodes:
+ * - [rp_jobs] - Stellenliste mit Grid-Layout
  * - [rp_job_search] - Stellensuche mit Filtern
- * - [rp_application_form] - Bewerbungsformular (statisch, 3 Schritte)
- * - [rp_custom_application_form] - Bewerbungsformular mit Custom Fields (Pro)
- * - [rp_ai_job_match] - KI-Matching für einzelne Stelle (AI-Addon)
- * - [rp_ai_job_finder] - KI-Job-Finder für alle Stellen (AI-Addon)
+ * - [rp_job_count] - Stellen-Zähler für Headlines
+ * - [rp_featured_jobs] - Hervorgehobene Stellen
+ * - [rp_latest_jobs] - Neueste Stellen
+ * - [rp_job_categories] - Kategorie-Übersicht
+ * - [rp_application_form] - Bewerbungsformular (Auto-Detection Form Builder)
+ * - [rp_ai_job_finder] - KI-Job-Finder (AI-Addon)
+ *
+ * Interne Shortcodes (nicht für Endanwender):
+ * - [rp_custom_application_form] - Alias für rp_application_form (deprecated)
+ * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (AI-Addon)
  */
 class Shortcodes {
 
@@ -64,8 +70,15 @@ class Shortcodes {
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
+		// Job-Listen Shortcodes.
 		add_shortcode( 'rp_jobs', [ $this, 'renderJobList' ] );
 		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
+		add_shortcode( 'rp_job_count', [ $this, 'renderJobCount' ] );
+		add_shortcode( 'rp_featured_jobs', [ $this, 'renderFeaturedJobs' ] );
+		add_shortcode( 'rp_latest_jobs', [ $this, 'renderLatestJobs' ] );
+		add_shortcode( 'rp_job_categories', [ $this, 'renderJobCategories' ] );
+
+		// Bewerbungsformular Shortcodes.
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
 
@@ -143,6 +156,7 @@ class Shortcodes {
 				'category'     => '',
 				'location'     => '',
 				'type'         => '',
+				'featured'     => '',
 				'orderby'      => 'date',
 				'order'        => 'DESC',
 				'columns'      => 1,
@@ -152,7 +166,7 @@ class Shortcodes {
 			'rp_jobs'
 		);
 
-		// Query-Argumente aufbauen
+		// Query-Argumente aufbauen.
 		$args = [
 			'post_type'      => 'job_listing',
 			'post_status'    => 'publish',
@@ -161,7 +175,18 @@ class Shortcodes {
 			'order'          => 'ASC' === strtoupper( $atts['order'] ) ? 'ASC' : 'DESC',
 		];
 
-		// Taxonomie-Filter
+		// Featured-Filter (Meta-Query).
+		if ( filter_var( $atts['featured'], FILTER_VALIDATE_BOOLEAN ) ) {
+			$args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				[
+					'key'     => '_rp_featured',
+					'value'   => '1',
+					'compare' => '=',
+				],
+			];
+		}
+
+		// Taxonomie-Filter.
 		$tax_query = [];
 
 		if ( ! empty( $atts['category'] ) ) {
@@ -189,7 +214,7 @@ class Shortcodes {
 		}
 
 		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query;
+			$args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		}
 
 		$query = new \WP_Query( $args );
@@ -299,6 +324,258 @@ class Shortcodes {
 		</div>
 		<?php
 		wp_reset_postdata();
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Job-Zähler rendern
+	 *
+	 * Zeigt die Anzahl der verfügbaren Stellen an, optional gefiltert.
+	 *
+	 * Attribute:
+	 * - category: Filter nach Kategorie-Slug
+	 * - location: Filter nach Standort-Slug
+	 * - type: Filter nach Beschäftigungsart-Slug
+	 * - format: Ausgabeformat mit {count} Platzhalter (default: "{count} offene Stellen")
+	 * - singular: Text für 1 Stelle (default: "{count} offene Stelle")
+	 * - zero: Text für 0 Stellen (default: "Keine offenen Stellen")
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderJobCount( $atts ): string {
+		$atts = shortcode_atts(
+			[
+				'category' => '',
+				'location' => '',
+				'type'     => '',
+				'format'   => __( '{count} offene Stellen', 'recruiting-playbook' ),
+				'singular' => __( '{count} offene Stelle', 'recruiting-playbook' ),
+				'zero'     => __( 'Keine offenen Stellen', 'recruiting-playbook' ),
+			],
+			$atts,
+			'rp_job_count'
+		);
+
+		// Query-Args aufbauen.
+		$query_args = [
+			'post_type'      => 'job_listing',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+		];
+
+		// Taxonomy-Filter.
+		$tax_query = [];
+
+		if ( ! empty( $atts['category'] ) ) {
+			$tax_query[] = [
+				'taxonomy' => 'job_category',
+				'field'    => 'slug',
+				'terms'    => array_map( 'trim', explode( ',', $atts['category'] ) ),
+			];
+		}
+
+		if ( ! empty( $atts['location'] ) ) {
+			$tax_query[] = [
+				'taxonomy' => 'job_location',
+				'field'    => 'slug',
+				'terms'    => array_map( 'trim', explode( ',', $atts['location'] ) ),
+			];
+		}
+
+		if ( ! empty( $atts['type'] ) ) {
+			$tax_query[] = [
+				'taxonomy' => 'employment_type',
+				'field'    => 'slug',
+				'terms'    => array_map( 'trim', explode( ',', $atts['type'] ) ),
+			];
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$tax_query['relation']  = 'AND';
+			$query_args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+		}
+
+		$query = new \WP_Query( $query_args );
+		$count = $query->found_posts;
+
+		// Text bestimmen.
+		if ( 0 === $count ) {
+			$text = $atts['zero'];
+		} elseif ( 1 === $count ) {
+			$text = str_replace( '{count}', number_format_i18n( $count ), $atts['singular'] );
+		} else {
+			$text = str_replace( '{count}', number_format_i18n( $count ), $atts['format'] );
+		}
+
+		$class = 0 === $count ? 'rp-job-count rp-job-count--zero' : 'rp-job-count';
+
+		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $text ) . '</span>';
+	}
+
+	/**
+	 * Hervorgehobene Stellen rendern (Pro)
+	 *
+	 * Zeigt Stellen an, die als "featured" markiert sind.
+	 *
+	 * Attribute:
+	 * - limit: Anzahl der Stellen (default: 3)
+	 * - columns: Spalten im Grid (1-4, default: 3)
+	 * - title: Optionale Überschrift
+	 * - show_excerpt: Auszug anzeigen (true/false, default: true)
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderFeaturedJobs( $atts ): string {
+		$atts = shortcode_atts(
+			[
+				'limit'        => 3,
+				'columns'      => 3,
+				'title'        => '',
+				'show_excerpt' => 'true',
+			],
+			$atts,
+			'rp_featured_jobs'
+		);
+
+		// An rp_jobs mit featured Filter delegieren.
+		$jobs_atts = [
+			'limit'        => $atts['limit'],
+			'columns'      => $atts['columns'],
+			'featured'     => 'true',
+			'show_excerpt' => $atts['show_excerpt'],
+		];
+
+		$output = '';
+
+		if ( ! empty( $atts['title'] ) ) {
+			$output .= '<h2 class="rp-featured-jobs__title rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6">' . esc_html( $atts['title'] ) . '</h2>';
+		}
+
+		$output .= $this->renderJobList( $jobs_atts );
+
+		return '<div class="rp-featured-jobs">' . $output . '</div>';
+	}
+
+	/**
+	 * Neueste Stellen rendern
+	 *
+	 * Zeigt die zuletzt veröffentlichten Stellen an.
+	 *
+	 * Attribute:
+	 * - limit: Anzahl der Stellen (default: 5)
+	 * - columns: Spalten im Grid (0 = Liste, 1-4, default: 0)
+	 * - title: Optionale Überschrift
+	 * - category: Filter nach Kategorie-Slug
+	 * - show_date: Datum anzeigen (true/false, default: true)
+	 * - show_excerpt: Auszug anzeigen (true/false, default: false für Liste)
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderLatestJobs( $atts ): string {
+		$atts = shortcode_atts(
+			[
+				'limit'        => 5,
+				'columns'      => 0,
+				'title'        => '',
+				'category'     => '',
+				'show_date'    => 'true',
+				'show_excerpt' => 'false',
+			],
+			$atts,
+			'rp_latest_jobs'
+		);
+
+		$columns = absint( $atts['columns'] );
+
+		// An rp_jobs delegieren.
+		$jobs_atts = [
+			'limit'        => $atts['limit'],
+			'columns'      => max( 1, $columns ), // Mindestens 1 für Grid.
+			'orderby'      => 'date',
+			'order'        => 'DESC',
+			'show_excerpt' => $atts['show_excerpt'],
+		];
+
+		if ( ! empty( $atts['category'] ) ) {
+			$jobs_atts['category'] = $atts['category'];
+		}
+
+		$output = '';
+
+		if ( ! empty( $atts['title'] ) ) {
+			$output .= '<h2 class="rp-latest-jobs__title rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6">' . esc_html( $atts['title'] ) . '</h2>';
+		}
+
+		$output .= $this->renderJobList( $jobs_atts );
+
+		return '<div class="rp-latest-jobs">' . $output . '</div>';
+	}
+
+	/**
+	 * Job-Kategorien Übersicht rendern
+	 *
+	 * Zeigt alle Job-Kategorien als klickbare Karten an.
+	 *
+	 * Attribute:
+	 * - columns: Spalten im Grid (1-6, default: 4)
+	 * - show_count: Anzahl pro Kategorie anzeigen (true/false, default: true)
+	 * - hide_empty: Leere Kategorien verstecken (true/false, default: true)
+	 * - orderby: Sortierung (name, count, default: name)
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderJobCategories( $atts ): string {
+		$this->enqueueAssets();
+
+		$atts = shortcode_atts(
+			[
+				'columns'    => 4,
+				'show_count' => 'true',
+				'hide_empty' => 'true',
+				'orderby'    => 'name',
+			],
+			$atts,
+			'rp_job_categories'
+		);
+
+		$show_count = filter_var( $atts['show_count'], FILTER_VALIDATE_BOOLEAN );
+		$hide_empty = filter_var( $atts['hide_empty'], FILTER_VALIDATE_BOOLEAN );
+		$columns    = min( 6, max( 1, absint( $atts['columns'] ) ) );
+
+		$terms = get_terms(
+			[
+				'taxonomy'   => 'job_category',
+				'hide_empty' => $hide_empty,
+				'orderby'    => 'count' === $atts['orderby'] ? 'count' : 'name',
+				'order'      => 'count' === $atts['orderby'] ? 'DESC' : 'ASC',
+			]
+		);
+
+		if ( empty( $terms ) || is_wp_error( $terms ) ) {
+			return '';
+		}
+
+		ob_start();
+		?>
+		<div class="rp-plugin">
+			<div class="rp-job-categories rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 md:rp-grid-cols-<?php echo esc_attr( $columns ); ?> rp-gap-4">
+				<?php foreach ( $terms as $term ) : ?>
+					<a href="<?php echo esc_url( get_term_link( $term ) ); ?>" class="rp-job-category-card rp-card rp-p-4 rp-flex rp-items-center rp-justify-between rp-transition-shadow hover:rp-shadow-md">
+						<span class="rp-job-category-card__name rp-font-medium rp-text-gray-900"><?php echo esc_html( $term->name ); ?></span>
+						<?php if ( $show_count ) : ?>
+							<span class="rp-job-category-card__count rp-badge rp-badge-gray"><?php echo esc_html( number_format_i18n( $term->count ) ); ?></span>
+						<?php endif; ?>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
 
 		return ob_get_clean();
 	}
