@@ -50,7 +50,7 @@ class FormValidationService {
 
 		foreach ( $fields as $field ) {
 			// Überschriften und Layout-Elemente überspringen.
-			$field_type = $this->registry->get( $field->getType() );
+			$field_type = $this->registry->get( $field->getFieldType() );
 			if ( $field_type === null ) {
 				continue;
 			}
@@ -164,7 +164,7 @@ class FormValidationService {
 		$sanitized = [];
 
 		foreach ( $fields as $field ) {
-			$field_type = $this->registry->get( $field->getType() );
+			$field_type = $this->registry->get( $field->getFieldType() );
 			if ( $field_type === null ) {
 				continue;
 			}
@@ -216,7 +216,7 @@ class FormValidationService {
 		$formatted = [];
 
 		foreach ( $fields as $field ) {
-			$field_type = $this->registry->get( $field->getType() );
+			$field_type = $this->registry->get( $field->getFieldType() );
 			if ( $field_type === null ) {
 				continue;
 			}
@@ -232,7 +232,7 @@ class FormValidationService {
 			$formatted[ $field_key ] = [
 				'label' => $field->getLabel(),
 				'value' => $field_type->formatDisplayValue( $value, $field ),
-				'type'  => $field->getType(),
+				'type'  => $field->getFieldType(),
 			];
 		}
 
@@ -250,7 +250,7 @@ class FormValidationService {
 		$export = [];
 
 		foreach ( $fields as $field ) {
-			$field_type = $this->registry->get( $field->getType() );
+			$field_type = $this->registry->get( $field->getFieldType() );
 			if ( $field_type === null ) {
 				continue;
 			}
@@ -279,7 +279,7 @@ class FormValidationService {
 		$headers = [];
 
 		foreach ( $fields as $field ) {
-			$field_type = $this->registry->get( $field->getType() );
+			$field_type = $this->registry->get( $field->getFieldType() );
 			if ( $field_type === null ) {
 				continue;
 			}

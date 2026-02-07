@@ -365,7 +365,7 @@ class ExportService {
 
 		foreach ( $fields as $field ) {
 			// System-Felder und Headings überspringen.
-			if ( $field->isSystem() || 'heading' === $field->getType() ) {
+			if ( $field->isSystem() || 'heading' === $field->getFieldType() ) {
 				continue;
 			}
 

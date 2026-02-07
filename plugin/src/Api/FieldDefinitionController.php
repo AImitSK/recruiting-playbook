@@ -341,7 +341,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 
 		// Filter anwenden.
 		if ( $type ) {
-			$fields = array_filter( $fields, fn( $f ) => $f->getType() === $type );
+			$fields = array_filter( $fields, fn( $f ) => $f->getFieldType() === $type );
 		}
 
 		if ( $is_system !== null ) {

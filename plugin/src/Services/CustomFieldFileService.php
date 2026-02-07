@@ -82,7 +82,7 @@ class CustomFieldFileService {
 		$errors  = [];
 
 		foreach ( $fields as $field ) {
-			if ( 'file' !== $field->getType() ) {
+			if ( 'file' !== $field->getFieldType() ) {
 				continue;
 			}
 

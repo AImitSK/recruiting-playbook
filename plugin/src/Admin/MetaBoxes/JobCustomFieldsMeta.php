@@ -109,7 +109,7 @@ class JobCustomFieldsMeta {
 		// Nur nicht-System-Felder anzeigen.
 		$custom_fields = array_filter(
 			$fields,
-			fn( FieldDefinition $f ) => ! $f->isSystem() && 'heading' !== $f->getType()
+			fn( FieldDefinition $f ) => ! $f->isSystem() && 'heading' !== $f->getFieldType()
 		);
 
 		if ( empty( $custom_fields ) ) {
