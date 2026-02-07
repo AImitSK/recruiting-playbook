@@ -24,12 +24,15 @@ if ( ! function_exists( 'rpk_fs' ) ) {
 
 		if ( ! isset( $rpk_fs ) ) {
 			// Include Freemius SDK.
-			if ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php' ) ) {
+			// Use WP_PLUGIN_DIR to avoid symlink path resolution issues.
+			if ( file_exists( WP_PLUGIN_DIR . '/recruiting-playbook/freemius/start.php' ) ) {
 				// Try to load SDK from parent plugin folder.
-				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php';
-			} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php' ) ) {
+				require_once WP_PLUGIN_DIR . '/recruiting-playbook/freemius/start.php';
+			} elseif ( file_exists( WP_PLUGIN_DIR . '/recruiting-playbook-premium/freemius/start.php' ) ) {
 				// Try to load SDK from premium parent plugin folder.
-				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php';
+				require_once WP_PLUGIN_DIR . '/recruiting-playbook-premium/freemius/start.php';
+			} elseif ( function_exists( 'fs_dynamic_init' ) ) {
+				// SDK already loaded by parent plugin (e.g. via Composer).
 			} else {
 				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
 			}
