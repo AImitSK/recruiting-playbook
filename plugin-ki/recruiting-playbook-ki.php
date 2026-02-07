@@ -18,24 +18,20 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! function_exists( 'rpk_fs' ) ) {
-	/**
-	 * Hilfsfunktion für einfachen Zugriff auf das Freemius SDK.
-	 *
-	 * @return \Freemius
-	 */
+	// Create a helper function for easy SDK access.
 	function rpk_fs() {
 		global $rpk_fs;
 
 		if ( ! isset( $rpk_fs ) ) {
-			// Include Freemius SDK (falls noch nicht vom Parent geladen).
-			if ( ! function_exists( 'fs_dynamic_init' ) ) {
-				$parent_dir = dirname( dirname( __FILE__ ) );
-
-				if ( file_exists( $parent_dir . '/recruiting-playbook/vendor/freemius/wordpress-sdk/start.php' ) ) {
-					require_once $parent_dir . '/recruiting-playbook/vendor/freemius/wordpress-sdk/start.php';
-				} elseif ( file_exists( $parent_dir . '/recruiting-playbook-premium/vendor/freemius/wordpress-sdk/start.php' ) ) {
-					require_once $parent_dir . '/recruiting-playbook-premium/vendor/freemius/wordpress-sdk/start.php';
-				}
+			// Include Freemius SDK.
+			if ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php' ) ) {
+				// Try to load SDK from parent plugin folder.
+				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php';
+			} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php' ) ) {
+				// Try to load SDK from premium parent plugin folder.
+				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php';
+			} else {
+				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
 			}
 
 			$rpk_fs = fs_dynamic_init(
@@ -65,21 +61,12 @@ if ( ! function_exists( 'rpk_fs' ) ) {
 	}
 }
 
-/**
- * Prüft ob das Parent-Plugin geladen und die SDK initialisiert ist.
- *
- * @return bool
- */
-function rpk_fs_is_parent_active_and_loaded(): bool {
+function rpk_fs_is_parent_active_and_loaded() {
+	// Check if the parent's init SDK method exists.
 	return function_exists( 'rp_fs' );
 }
 
-/**
- * Prüft ob das Parent-Plugin aktiviert ist (auch wenn noch nicht geladen).
- *
- * @return bool
- */
-function rpk_fs_is_parent_active(): bool {
+function rpk_fs_is_parent_active() {
 	$active_plugins = get_option( 'active_plugins', array() );
 
 	if ( is_multisite() ) {
@@ -98,29 +85,18 @@ function rpk_fs_is_parent_active(): bool {
 	return false;
 }
 
-/**
- * Initialisiert das KI-Addon.
- */
-function rpk_fs_init(): void {
+function rpk_fs_init() {
 	if ( rpk_fs_is_parent_active_and_loaded() ) {
 		// Init Freemius.
 		rpk_fs();
 
 		// Signal that the add-on's SDK was initiated.
 		do_action( 'rpk_fs_loaded' );
+
+		// Parent is active, add your init code here.
+
 	} else {
-		// Parent ist nicht aktiv – Admin-Hinweis anzeigen.
-		add_action(
-			'admin_notices',
-			function () {
-				echo '<div class="notice notice-error"><p>';
-				esc_html_e(
-					'Recruiting Playbook KI benötigt das Plugin "Recruiting Playbook" als Basis. Bitte installieren und aktivieren Sie es zuerst.',
-					'recruiting-playbook-ki'
-				);
-				echo '</p></div>';
-			}
-		);
+		// Parent is inactive, add your error handling here.
 	}
 }
 
