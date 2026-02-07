@@ -90,10 +90,13 @@ function rpk_fs_init() {
 		// Init Freemius.
 		rpk_fs();
 
+		// Default-Währung auf EUR setzen (DACH-Markt).
+		rpk_fs()->add_filter( 'default_currency', function ( $currency ) {
+			return 'eur';
+		} );
+
 		// Signal that the add-on's SDK was initiated.
 		do_action( 'rpk_fs_loaded' );
-
-		// Parent is active, add your init code here.
 
 	} else {
 		// Parent is inactive, add your error handling here.
