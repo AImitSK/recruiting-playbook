@@ -1213,7 +1213,7 @@ class Shortcodes {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'KI-Job-Match', 'recruiting-playbook' ),
-				'AI_ADDON'
+				'KI'
 			);
 		}
 
@@ -1383,7 +1383,7 @@ class Shortcodes {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'KI-Job-Finder', 'recruiting-playbook' ),
-				'AI_ADDON'
+				'KI'
 			);
 		}
 
@@ -1598,9 +1598,8 @@ class Shortcodes {
 	 */
 	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
 		$tier_labels = [
-			'PRO'      => 'Pro',
-			'AI_ADDON' => 'AI Addon',
-			'BUNDLE'   => 'Pro + AI Bundle',
+			'PRO' => 'Pro',
+			'KI'  => 'KI-Addon',
 		];
 
 		$label = $tier_labels[ $required_tier ] ?? $required_tier;

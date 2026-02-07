@@ -29,102 +29,54 @@ class FeatureFlags {
 	/**
 	 * Feature-Definitionen pro Tier
 	 */
-	private const FEATURES = array(
-		'FREE'     => array(
-			'create_jobs'                  => true,
-			'unlimited_jobs'               => true,
-			'max_jobs'                     => -1,
-			'application_list'             => true,
-			'kanban_board'                 => false,
+	private const FEATURES = [
+		'FREE' => [
+			'create_jobs'                   => true,
+			'unlimited_jobs'                => true,
+			'max_jobs'                      => -1,
+			'application_list'              => true,
+			'kanban_board'                  => false,
 			'advanced_applicant_management' => false,  // Notizen, Bewertungen, Timeline, Talent-Pool.
-			'application_status'           => 'basic',
-			'user_roles'                   => false,
-			'email_templates'              => false,
-			'custom_fields'                => false,   // Formular-Builder, Custom Fields.
-			'api_access'                   => false,
-			'webhooks'                     => false,
-			'reporting'                    => 'basic',
-			'advanced_reporting'           => false,  // Time-to-Hire, Conversion, Trends.
-			'csv_export'                   => false,
-			'design_settings'              => false,
-			'ai_job_generation'            => false,
-			'ai_text_improvement'          => false,
-			'ai_templates'                 => false,
-			'custom_branding'              => false,
-			'priority_support'             => false,
-		),
-		'PRO'      => array(
-			'create_jobs'                  => true,
-			'unlimited_jobs'               => true,
-			'max_jobs'                     => -1,
-			'application_list'             => true,
-			'kanban_board'                 => true,
+			'application_status'            => 'basic',
+			'user_roles'                    => false,
+			'email_templates'               => false,
+			'custom_fields'                 => false,   // Formular-Builder, Custom Fields.
+			'api_access'                    => false,
+			'webhooks'                      => false,
+			'reporting'                     => 'basic',
+			'advanced_reporting'            => false,  // Time-to-Hire, Conversion, Trends.
+			'csv_export'                    => false,
+			'design_settings'               => false,
+			'ai_job_generation'             => false,
+			'ai_text_improvement'           => false,
+			'ai_templates'                  => false,
+			'custom_branding'               => false,
+			'priority_support'              => false,
+		],
+		'PRO'  => [
+			'create_jobs'                   => true,
+			'unlimited_jobs'                => true,
+			'max_jobs'                      => -1,
+			'application_list'              => true,
+			'kanban_board'                  => true,
 			'advanced_applicant_management' => true,  // Notizen, Bewertungen, Timeline, Talent-Pool.
-			'application_status'           => 'full',
-			'user_roles'                   => true,
-			'email_templates'              => true,
-			'custom_fields'                => true,   // Formular-Builder, Custom Fields.
-			'api_access'                   => true,
-			'webhooks'                     => true,
-			'reporting'                    => 'full',
-			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
-			'csv_export'                   => true,
-			'design_settings'              => true,
-			'ai_job_generation'            => false,
-			'ai_text_improvement'          => false,
-			'ai_templates'                 => false,
-			'custom_branding'              => true,
-			'priority_support'             => true,
-		),
-		'AI_ADDON' => array(
-			'create_jobs'                  => true,
-			'unlimited_jobs'               => true,
-			'max_jobs'                     => -1,
-			'application_list'             => true,
-			'kanban_board'                 => false,
-			'advanced_applicant_management' => false,
-			'application_status'           => 'basic',
-			'user_roles'                   => false,
-			'email_templates'              => false,
-			'custom_fields'                => false,   // Formular-Builder, Custom Fields.
-			'api_access'                   => false,
-			'webhooks'                     => false,
-			'reporting'                    => 'basic',
-			'advanced_reporting'           => false,
-			'csv_export'                   => false,
-			'design_settings'              => false,
-			'ai_job_generation'            => true,
-			'ai_text_improvement'          => true,
-			'ai_templates'                 => true,
-			'ai_cv_matching'               => true,    // KI-Matching für Lebensläufe.
-			'custom_branding'              => false,
-			'priority_support'             => true,
-		),
-		'BUNDLE'   => array(
-			'create_jobs'                  => true,
-			'unlimited_jobs'               => true,
-			'max_jobs'                     => -1,
-			'application_list'             => true,
-			'kanban_board'                 => true,
-			'advanced_applicant_management' => true,  // Notizen, Bewertungen, Timeline, Talent-Pool.
-			'application_status'           => 'full',
-			'user_roles'                   => true,
-			'email_templates'              => true,
-			'custom_fields'                => true,   // Formular-Builder, Custom Fields.
-			'api_access'                   => true,
-			'webhooks'                     => true,
-			'reporting'                    => 'full',
-			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
-			'csv_export'                   => true,
-			'design_settings'              => true,
-			'ai_job_generation'            => true,
-			'ai_text_improvement'          => true,
-			'ai_templates'                 => true,
-			'ai_cv_matching'               => true,   // KI-Matching für Lebensläufe.
-			'custom_branding'              => true,
-			'priority_support'             => true,
-		),
-	);
+			'application_status'            => 'full',
+			'user_roles'                    => true,
+			'email_templates'               => true,
+			'custom_fields'                 => true,   // Formular-Builder, Custom Fields.
+			'api_access'                    => true,
+			'webhooks'                      => true,
+			'reporting'                     => 'full',
+			'advanced_reporting'            => true,   // Time-to-Hire, Conversion, Trends.
+			'csv_export'                    => true,
+			'design_settings'               => true,
+			'ai_job_generation'             => false,
+			'ai_text_improvement'           => false,
+			'ai_templates'                  => false,
+			'custom_branding'               => true,
+			'priority_support'              => true,
+		],
+	];
 
 	/**
 	 * Aktueller Tier
@@ -136,7 +88,7 @@ class FeatureFlags {
 	/**
 	 * Constructor
 	 *
-	 * @param string $tier Lizenz-Tier (FREE, PRO, AI_ADDON, BUNDLE).
+	 * @param string $tier Lizenz-Tier (FREE, PRO).
 	 */
 	public function __construct( string $tier = 'FREE' ) {
 		$this->tier = isset( self::FEATURES[ $tier ] ) ? $tier : 'FREE';

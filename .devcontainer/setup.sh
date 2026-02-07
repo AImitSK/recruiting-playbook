@@ -61,6 +61,7 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     wp config set WP_FS__DEV_MODE true --raw --allow-root
     wp config set WP_FS__SKIP_EMAIL_ACTIVATION true --raw --allow-root
     wp config set 'WP_FS__recruiting-playbook_SECRET_KEY' 'sk_Hg&7eI]C]qSqo<T}j.ur5w8n;}8dh' --allow-root
+    wp config set 'WP_FS__recruiting-playbook-ki_SECRET_KEY' 'undefined' --allow-root
 
     echo -e "${GREEN}✓ wp-config.php erstellt${NC}"
 else
@@ -70,6 +71,7 @@ else
     wp config set WP_FS__DEV_MODE true --raw --allow-root 2>/dev/null || true
     wp config set WP_FS__SKIP_EMAIL_ACTIVATION true --raw --allow-root 2>/dev/null || true
     wp config set 'WP_FS__recruiting-playbook_SECRET_KEY' 'sk_Hg&7eI]C]qSqo<T}j.ur5w8n;}8dh' --allow-root 2>/dev/null || true
+    wp config set 'WP_FS__recruiting-playbook-ki_SECRET_KEY' 'undefined' --allow-root 2>/dev/null || true
 fi
 
 # =============================================================
