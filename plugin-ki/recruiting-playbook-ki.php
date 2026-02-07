@@ -27,15 +27,15 @@ if ( ! function_exists( 'rpk_fs' ) ) {
 		global $rpk_fs;
 
 		if ( ! isset( $rpk_fs ) ) {
-			// Include Freemius SDK.
-			if ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php' ) ) {
-				// Try to load SDK from parent plugin folder.
-				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php';
-			} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php' ) ) {
-				// Try to load SDK from premium parent plugin folder.
-				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php';
-			} else {
-				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+			// Include Freemius SDK (falls noch nicht vom Parent geladen).
+			if ( ! function_exists( 'fs_dynamic_init' ) ) {
+				$parent_dir = dirname( dirname( __FILE__ ) );
+
+				if ( file_exists( $parent_dir . '/recruiting-playbook/vendor/freemius/wordpress-sdk/start.php' ) ) {
+					require_once $parent_dir . '/recruiting-playbook/vendor/freemius/wordpress-sdk/start.php';
+				} elseif ( file_exists( $parent_dir . '/recruiting-playbook-premium/vendor/freemius/wordpress-sdk/start.php' ) ) {
+					require_once $parent_dir . '/recruiting-playbook-premium/vendor/freemius/wordpress-sdk/start.php';
+				}
 			}
 
 			$rpk_fs = fs_dynamic_init(
