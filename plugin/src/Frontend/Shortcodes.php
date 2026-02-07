@@ -23,6 +23,7 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\FormRenderService;
+use RecruitingPlaybook\Repositories\FormConfigRepository;
 
 /**
  * Shortcode-Handler
@@ -43,6 +44,13 @@ class Shortcodes {
 	 * @var FormRenderService|null
 	 */
 	private ?FormRenderService $form_render_service = null;
+
+	/**
+	 * FormConfigRepository für Auto-Detection
+	 *
+	 * @var FormConfigRepository|null
+	 */
+	private ?FormConfigRepository $form_config_repository = null;
 
 	/**
 	 * Flag ob Match-Modal bereits für Footer registriert wurde
@@ -78,6 +86,36 @@ class Shortcodes {
 			$this->form_render_service = new FormRenderService();
 		}
 		return $this->form_render_service;
+	}
+
+	/**
+	 * FormConfigRepository lazy laden
+	 *
+	 * @return FormConfigRepository
+	 */
+	private function getFormConfigRepository(): FormConfigRepository {
+		if ( null === $this->form_config_repository ) {
+			$this->form_config_repository = new FormConfigRepository();
+		}
+		return $this->form_config_repository;
+	}
+
+	/**
+	 * Prüfen ob Form Builder aktiv ist (Pro + veröffentlichte Konfiguration)
+	 *
+	 * @return bool True wenn Form Builder verwendet werden soll.
+	 */
+	private function shouldUseFormBuilder(): bool {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			return false;
+		}
+
+		// Prüfen ob eine veröffentlichte Konfiguration existiert.
+		$repository = $this->getFormConfigRepository();
+		$published  = $repository->getPublished();
+
+		return null !== $published;
 	}
 
 	/**
@@ -618,10 +656,16 @@ class Shortcodes {
 	/**
 	 * Bewerbungsformular rendern
 	 *
+	 * Erkennt automatisch ob der Form Builder (Pro) verwendet werden soll:
+	 * - Wenn Pro-Lizenz aktiv UND veröffentlichte Form Builder Konfiguration existiert
+	 *   → Dynamisches Multi-Step Formular mit Custom Fields
+	 * - Sonst → Standard 3-Step Formular
+	 *
 	 * Attribute:
-	 * - job_id: ID der Stelle (required)
+	 * - job_id: ID der Stelle (required oder aktueller Job)
 	 * - title: Überschrift (default: "Jetzt bewerben")
 	 * - show_job_title: Job-Titel anzeigen (true/false)
+	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
 	 *
 	 * @param array|string $atts Shortcode-Attribute.
 	 * @return string HTML-Ausgabe.
@@ -632,6 +676,7 @@ class Shortcodes {
 				'job_id'         => 0,
 				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
 				'show_job_title' => 'true',
+				'show_progress'  => 'true',
 			],
 			$atts,
 			'rp_application_form'
@@ -639,12 +684,12 @@ class Shortcodes {
 
 		$job_id = absint( $atts['job_id'] );
 
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
 		if ( ! $job_id && is_singular( 'job_listing' ) ) {
 			$job_id = get_the_ID();
 		}
 
-		// Validieren
+		// Validieren.
 		if ( ! $job_id ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
@@ -662,11 +707,31 @@ class Shortcodes {
 			</div>';
 		}
 
-		// Assets laden
+		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
+		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
+
+		// Auto-Detection: Form Builder verwenden?
+		if ( $this->shouldUseFormBuilder() ) {
+			return $this->renderFormBuilderForm( $job_id, $job, $atts, $show_job_title, $show_progress );
+		}
+
+		// Standard-Formular rendern.
+		return $this->renderStandardForm( $job_id, $job, $atts, $show_job_title );
+	}
+
+	/**
+	 * Standard 3-Step Formular rendern
+	 *
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @return string HTML-Ausgabe.
+	 */
+	private function renderStandardForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title ): string {
+		// Assets laden.
 		$this->enqueueAssets();
 		$this->enqueueFormAssets();
-
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
 
 		ob_start();
 		?>
@@ -697,65 +762,18 @@ class Shortcodes {
 	}
 
 	/**
-	 * Custom Application Form mit dynamischen Feldern rendern (Pro)
+	 * Form Builder Formular rendern (Pro)
 	 *
-	 * Attribute:
-	 * - job_id: ID der Stelle (required oder aktueller Job)
-	 * - title: Überschrift (default: "Jetzt bewerben")
-	 * - show_job_title: Job-Titel anzeigen (true/false)
-	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @param bool     $show_progress  Fortschrittsanzeige.
 	 * @return string HTML-Ausgabe.
 	 */
-	public function renderCustomApplicationForm( $atts ): string {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
-			// Fallback auf Standard-Formular.
-			return $this->renderApplicationForm( $atts );
-		}
-
-		$atts = shortcode_atts(
-			[
-				'job_id'         => 0,
-				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
-				'show_job_title' => 'true',
-				'show_progress'  => 'true',
-			],
-			$atts,
-			'rp_custom_application_form'
-		);
-
-		$job_id = absint( $atts['job_id'] );
-
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
-		if ( ! $job_id && is_singular( 'job_listing' ) ) {
-			$job_id = get_the_ID();
-		}
-
-		// Validieren.
-		if ( ! $job_id ) {
-			return '<div class="rp-plugin">
-				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Keine Stelle angegeben. Bitte job_id Attribut setzen.', 'recruiting-playbook' ) . '
-				</div>
-			</div>';
-		}
-
-		$job = get_post( $job_id );
-		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
-			return '<div class="rp-plugin">
-				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
-				</div>
-			</div>';
-		}
-
-		// Assets laden.
+	private function renderFormBuilderForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title, bool $show_progress ): string {
+		// Custom Fields Assets laden.
 		$this->enqueueCustomFieldsAssets();
-
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
-		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
 
 		ob_start();
 		?>
@@ -783,6 +801,21 @@ class Shortcodes {
 		<?php
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Custom Application Form Shortcode (Alias für rp_application_form)
+	 *
+	 * DEPRECATED: Dieser Shortcode wird in einer zukünftigen Version entfernt.
+	 * Bitte [rp_application_form] verwenden - erkennt automatisch ob Form Builder aktiv ist.
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderCustomApplicationForm( $atts ): string {
+		// Direkt an renderApplicationForm delegieren.
+		// Die Auto-Detection dort entscheidet ob Form Builder verwendet wird.
+		return $this->renderApplicationForm( $atts );
 	}
 
 	/**
