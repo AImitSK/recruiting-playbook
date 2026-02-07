@@ -32,7 +32,9 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'menu'                => array(
                     'slug'    => 'recruiting-playbook',
                     'support' => false,
-                    'account' => true,  // Freemius Account-Seite im Menü aktivieren.
+                    'account' => true,   // Freemius Account-Seite im Menü aktivieren.
+                    'pricing' => true,   // Upgrade/Pricing-Seite im Menü anzeigen.
+                    'addons'  => true,   // Add-ons-Seite im Menü anzeigen.
                 ),
             ) );
         }
