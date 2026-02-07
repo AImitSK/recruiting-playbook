@@ -320,12 +320,13 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 					</div>
 
 					{ /* Icon */ }
-					<div className="rp-flex rp-items-center rp-justify-between">
-						<Label>{ __( 'Icon', 'recruiting-playbook' ) }</Label>
+					<div>
+						<Label className="rp-mb-2 rp-block">
+							{ __( 'Icon', 'recruiting-playbook' ) }
+						</Label>
 						<Select
 							value={ settings.ai_match_button_icon || 'sparkles' }
 							onChange={ ( e ) => onUpdate( 'ai_match_button_icon', e.target.value ) }
-							style={ { width: '160px' } }
 						>
 							{ iconOptions.map( ( option ) => (
 								<SelectOption key={ option.value } value={ option.value }>

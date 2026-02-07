@@ -79,6 +79,7 @@ const RadioGroupItem = forwardRef(
 		);
 
 		// Different variant styles
+		// Verwendet CSS-Variablen für WordPress-Admin-Primärfarbe
 		const variantStyles = {
 			default: cn(
 				'rp-flex rp-items-center rp-gap-2 rp-cursor-pointer',
@@ -86,18 +87,18 @@ const RadioGroupItem = forwardRef(
 			),
 			buttons: cn(
 				'rp-px-3 rp-py-1.5 rp-text-sm rp-font-medium rp-rounded-md rp-border rp-transition-colors',
-				'focus:rp-outline-none focus-visible:rp-ring-2 focus-visible:rp-ring-blue-500',
+				'focus:rp-outline-none focus-visible:rp-ring-2',
 				isSelected
-					? 'rp-bg-blue-600 rp-text-white rp-border-blue-600'
+					? 'rp-radio-selected rp-text-white'
 					: 'rp-bg-white rp-text-gray-700 rp-border-gray-300 hover:rp-bg-gray-50',
 				isDisabled && 'rp-opacity-50 rp-cursor-not-allowed',
 				! isDisabled && 'rp-cursor-pointer'
 			),
 			cards: cn(
 				'rp-flex rp-flex-col rp-items-center rp-p-4 rp-rounded-lg rp-border-2 rp-transition-colors',
-				'focus:rp-outline-none focus-visible:rp-ring-2 focus-visible:rp-ring-blue-500',
+				'focus:rp-outline-none focus-visible:rp-ring-2',
 				isSelected
-					? 'rp-border-blue-600 rp-bg-blue-50'
+					? 'rp-radio-card-selected'
 					: 'rp-border-gray-200 rp-bg-white hover:rp-border-gray-300',
 				isDisabled && 'rp-opacity-50 rp-cursor-not-allowed',
 				! isDisabled && 'rp-cursor-pointer'
@@ -137,9 +138,9 @@ const RadioGroupItem = forwardRef(
 					onKeyDown={ handleKeyDown }
 					className={ cn(
 						'rp-w-4 rp-h-4 rp-rounded-full rp-border-2 rp-flex rp-items-center rp-justify-center rp-transition-colors',
-						'focus:rp-outline-none focus-visible:rp-ring-2 focus-visible:rp-ring-blue-500 focus-visible:rp-ring-offset-2',
+						'focus:rp-outline-none focus-visible:rp-ring-2 focus-visible:rp-ring-offset-2',
 						isSelected
-							? 'rp-border-blue-600 rp-bg-blue-600'
+							? 'rp-radio-dot-selected'
 							: 'rp-border-gray-300 rp-bg-white',
 						isDisabled && 'rp-cursor-not-allowed'
 					) }

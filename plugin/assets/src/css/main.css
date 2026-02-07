@@ -686,9 +686,10 @@
     /* KOMPAKT: Minimalistisch, horizontal, Badges oben, Icon-Buttons rechts */
     .rp-plugin .rp-card.rp-card--compact {
         padding: 12px 16px !important;
-        border-radius: 6px !important;
-        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-        border: 1px solid #e5e7eb !important;
+        border-radius: var(--rp-card-radius, 6px) !important;
+        box-shadow: var(--rp-card-shadow, 0 1px 2px 0 rgb(0 0 0 / 0.05)) !important;
+        border: var(--rp-card-border, 1px solid #e5e7eb) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
         /* Flexbox für horizontales Layout */
         display: flex !important;
         flex-direction: row !important;
@@ -828,9 +829,10 @@
     /* STANDARD: Ausgewogenes Design (default) */
     .rp-plugin .rp-card.rp-card--standard {
         padding: 20px 24px !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-        border: none !important;
+        border-radius: var(--rp-card-radius, 12px) !important;
+        box-shadow: var(--rp-card-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)) !important;
+        border: var(--rp-card-border, none) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
         /* Flexbox für Button-Ausrichtung unten */
         display: flex !important;
         flex-direction: column !important;
@@ -853,9 +855,10 @@
     /* GROSSZÜGIG: Prominent, viel Raum, volle Beschreibung */
     .rp-plugin .rp-card.rp-card--spacious {
         padding: 32px 40px !important;
-        border-radius: 16px !important;
-        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
-        border: none !important;
+        border-radius: var(--rp-card-radius, 16px) !important;
+        box-shadow: var(--rp-card-shadow, 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)) !important;
+        border: var(--rp-card-border, none) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
         /* Flexbox für Button-Ausrichtung unten */
         display: flex !important;
         flex-direction: column !important;

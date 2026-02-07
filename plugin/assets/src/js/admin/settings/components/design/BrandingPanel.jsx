@@ -134,14 +134,13 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 					{ settings.logo_in_signature && (
 						<div className="rp-pl-4 rp-border-l-2 rp-border-gray-200 rp-space-y-3">
 							{ /* Position */ }
-							<div className="rp-flex rp-items-center rp-justify-between">
-								<Label htmlFor="signature_logo_position">
+							<div>
+								<Label htmlFor="signature_logo_position" className="rp-mb-2 rp-block">
 									{ __( 'Position', 'recruiting-playbook' ) }
 								</Label>
 								<Select
 									value={ settings.signature_logo_position || 'top' }
 									onChange={ ( e ) => onUpdate( 'signature_logo_position', e.target.value ) }
-									style={ { width: '128px' } }
 								>
 									<SelectOption value="top">{ __( 'Oben', 'recruiting-playbook' ) }</SelectOption>
 									<SelectOption value="bottom">{ __( 'Unten', 'recruiting-playbook' ) }</SelectOption>

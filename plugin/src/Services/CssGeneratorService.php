@@ -163,7 +163,8 @@ class CssGeneratorService {
 		if ( isset( $settings['card_border_show'] ) ) {
 			if ( $settings['card_border_show'] ) {
 				$border_color = $settings['card_border_color'] ?: '#e5e7eb';
-				$vars['--rp-card-border'] = '1px solid ' . $border_color;
+				$border_width = ( $settings['card_border_width'] ?? 1 ) . 'px';
+				$vars['--rp-card-border'] = $border_width . ' solid ' . $border_color;
 				$vars['--rp-card-border-color'] = $border_color;
 			} else {
 				$vars['--rp-card-border'] = 'none';

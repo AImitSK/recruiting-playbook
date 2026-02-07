@@ -316,6 +316,7 @@ class DesignService {
 			'card_shadow'              => 'light', // none|light|medium|strong
 			'card_border_show'         => true,
 			'card_border_color'        => '#e5e7eb',
+			'card_border_width'        => 1,        // 1-5 px
 			'card_background'          => '#ffffff',
 			'card_hover_effect'        => 'lift', // none|lift|glow|border
 
@@ -442,6 +443,7 @@ class DesignService {
 			'card_shadow'              => [ 'type' => 'select', 'options' => [ 'none', 'light', 'medium', 'strong' ] ],
 			'card_border_show'         => [ 'type' => 'boolean' ],
 			'card_border_color'        => [ 'type' => 'color' ],
+			'card_border_width'        => [ 'type' => 'slider', 'min' => 1, 'max' => 5 ],
 			'card_background'          => [ 'type' => 'color' ],
 			'card_hover_effect'        => [ 'type' => 'select', 'options' => [ 'none', 'lift', 'glow', 'border' ] ],
 

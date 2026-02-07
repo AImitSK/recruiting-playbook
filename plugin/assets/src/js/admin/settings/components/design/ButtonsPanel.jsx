@@ -199,12 +199,13 @@ export function ButtonsPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							) }
 
 							{ /* Schatten */ }
-							<div className="rp-flex rp-items-center rp-justify-between">
-								<Label>{ __( 'Schatten', 'recruiting-playbook' ) }</Label>
+							<div>
+								<Label className="rp-mb-2 rp-block">
+									{ __( 'Schatten', 'recruiting-playbook' ) }
+								</Label>
 								<Select
 									value={ settings.button_shadow || 'none' }
 									onChange={ ( e ) => onUpdate( 'button_shadow', e.target.value ) }
-									style={ { width: '112px' } }
 								>
 									<SelectOption value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectOption>
 									<SelectOption value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectOption>
@@ -214,12 +215,13 @@ export function ButtonsPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							</div>
 
 							{ /* Schatten (Hover) */ }
-							<div className="rp-flex rp-items-center rp-justify-between">
-								<Label>{ __( 'Schatten (Hover)', 'recruiting-playbook' ) }</Label>
+							<div>
+								<Label className="rp-mb-2 rp-block">
+									{ __( 'Schatten (Hover)', 'recruiting-playbook' ) }
+								</Label>
 								<Select
 									value={ settings.button_shadow_hover || 'light' }
 									onChange={ ( e ) => onUpdate( 'button_shadow_hover', e.target.value ) }
-									style={ { width: '112px' } }
 								>
 									<SelectOption value="none">{ __( 'Keiner', 'recruiting-playbook' ) }</SelectOption>
 									<SelectOption value="light">{ __( 'Leicht', 'recruiting-playbook' ) }</SelectOption>

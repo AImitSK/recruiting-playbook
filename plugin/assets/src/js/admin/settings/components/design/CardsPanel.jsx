@@ -146,6 +146,21 @@ export function CardsPanel( { settings, onUpdate } ) {
 						</div>
 					) }
 
+					{ /* Rahmenstärke (nur wenn Rahmen aktiv) */ }
+					{ settings.card_border_show && (
+						<div className="rp-pl-4">
+							<Slider
+								label={ __( 'Rahmenstärke', 'recruiting-playbook' ) }
+								value={ settings.card_border_width ?? 1 }
+								onChange={ ( value ) => onUpdate( 'card_border_width', value ) }
+								min={ 1 }
+								max={ 5 }
+								step={ 1 }
+								unit="px"
+							/>
+						</div>
+					) }
+
 					{ /* Hintergrund */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<Label htmlFor="card_background">
