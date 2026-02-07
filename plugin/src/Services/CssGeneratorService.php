@@ -129,45 +129,91 @@ class CssGeneratorService {
 	/**
 	 * Card-Variablen generieren
 	 *
+	 * Layout-Presets werden über CSS-Klassen gesteuert (rp-card--compact, etc.).
+	 * Hier werden nur individuelle Überschreibungen als CSS-Variablen ausgegeben.
+	 *
 	 * @param array $settings Design-Einstellungen.
 	 * @return array CSS-Variablen.
 	 */
 	private function generate_card_variables( array $settings ): array {
 		$vars = [];
 
-		// Border-Radius.
-		$vars['--rp-card-radius'] = $settings['card_border_radius'] . 'px';
-
-		// Schatten.
+		// Schatten-Werte.
 		$shadow_values = [
 			'none'   => 'none',
 			'light'  => '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
 			'medium' => '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
 			'strong' => '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
 		];
-		$vars['--rp-card-shadow'] = $shadow_values[ $settings['card_shadow'] ] ?? $shadow_values['light'];
+
+		// Individuelle Überschreibungen (nur wenn gesetzt).
+		// Diese überschreiben die Preset-Defaults via CSS-Variablen.
+
+		// Border-Radius.
+		if ( isset( $settings['card_border_radius'] ) ) {
+			$vars['--rp-card-radius'] = $settings['card_border_radius'] . 'px';
+		}
+
+		// Schatten.
+		if ( ! empty( $settings['card_shadow'] ) ) {
+			$vars['--rp-card-shadow'] = $shadow_values[ $settings['card_shadow'] ] ?? $shadow_values['light'];
+		}
 
 		// Border.
-		if ( $settings['card_border_show'] ) {
-			$vars['--rp-card-border'] = '1px solid ' . $settings['card_border_color'];
-			$vars['--rp-card-border-color'] = $settings['card_border_color'];
-		} else {
-			$vars['--rp-card-border'] = 'none';
-			$vars['--rp-card-border-color'] = 'transparent';
+		if ( isset( $settings['card_border_show'] ) ) {
+			if ( $settings['card_border_show'] ) {
+				$border_color = $settings['card_border_color'] ?: '#e5e7eb';
+				$vars['--rp-card-border'] = '1px solid ' . $border_color;
+				$vars['--rp-card-border-color'] = $border_color;
+			} else {
+				$vars['--rp-card-border'] = 'none';
+				$vars['--rp-card-border-color'] = 'transparent';
+			}
 		}
 
 		// Hintergrund.
-		$vars['--rp-card-bg'] = $settings['card_background'];
-
-		// Layout-Preset Padding.
-		$padding_values = [
-			'compact'  => '12px',
-			'standard' => '20px',
-			'spacious' => '32px',
-		];
-		$vars['--rp-card-padding'] = $padding_values[ $settings['card_layout_preset'] ] ?? '20px';
+		if ( ! empty( $settings['card_background'] ) ) {
+			$vars['--rp-card-bg'] = $settings['card_background'];
+		}
 
 		return $vars;
+	}
+
+	/**
+	 * Card-Preset-Definitionen (Referenz für LivePreview)
+	 *
+	 * @return array Preset-Konfigurationen.
+	 */
+	public static function get_card_presets(): array {
+		return [
+			'compact'  => [
+				'padding'      => '12px 16px',
+				'radius'       => '6px',
+				'radius_value' => 6,
+				'shadow'       => '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+				'border'       => '1px solid #e5e7eb',
+				'border_color' => '#e5e7eb',
+				'background'   => '#ffffff',
+			],
+			'standard' => [
+				'padding'      => '20px 24px',
+				'radius'       => '12px',
+				'radius_value' => 12,
+				'shadow'       => '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+				'border'       => 'none',
+				'border_color' => 'transparent',
+				'background'   => '#ffffff',
+			],
+			'spacious' => [
+				'padding'      => '32px 40px',
+				'radius'       => '16px',
+				'radius_value' => 16,
+				'shadow'       => '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+				'border'       => 'none',
+				'border_color' => 'transparent',
+				'background'   => '#ffffff',
+			],
+		];
 	}
 
 	/**
@@ -282,8 +328,8 @@ class CssGeneratorService {
 	private function generate_link_variables( array $settings, string $primary ): array {
 		$vars = [];
 
-		// Farbe: Primär oder Custom.
-		$vars['--rp-link-color'] = $settings['link_use_primary'] ? $primary : $settings['link_color'];
+		// Farbe: Primär oder Custom (mit Fallback auf Primärfarbe).
+		$vars['--rp-link-color'] = $settings['link_use_primary'] ? $primary : ( $settings['link_color'] ?: $primary );
 
 		// Decoration.
 		$decoration_values = [

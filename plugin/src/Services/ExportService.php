@@ -370,7 +370,7 @@ class ExportService {
 			}
 
 			// Nur aktivierte Felder.
-			if ( ! $field->isEnabled() ) {
+			if ( ! $field->isActive() ) {
 				continue;
 			}
 

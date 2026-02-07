@@ -14,6 +14,25 @@ module.exports = {
         './assets/src/css/**/*.css',
     ],
 
+    /*
+     * Safelist: Klassen die NIE gepurgt werden
+     * Dynamische Klassen die via PHP/Settings generiert werden
+     */
+    safelist: [
+        // Card Layout Presets
+        'rp-card--compact',
+        'rp-card--standard',
+        'rp-card--spacious',
+        // Grid Columns (dynamisch generiert)
+        'rp-grid-cols-1',
+        'md:rp-grid-cols-2',
+        'lg:rp-grid-cols-3',
+        'lg:rp-grid-cols-4',
+        // List Layout
+        'rp-flex',
+        'rp-flex-col',
+    ],
+
     theme: {
         extend: {
             /*

@@ -26,24 +26,78 @@ function PreviewSection( { title, children } ) {
 }
 
 /**
+ * Card-Preset-Definitionen (synchron mit CssGeneratorService)
+ */
+const CARD_PRESETS = {
+	compact: {
+		padding: '12px 16px',
+		radius: 6,
+		shadow: '0 1px 2px rgba(0,0,0,0.05)',
+		border: '1px solid #e5e7eb',
+		borderColor: '#e5e7eb',
+		background: '#ffffff',
+	},
+	standard: {
+		padding: '20px 24px',
+		radius: 12,
+		shadow: '0 4px 6px rgba(0,0,0,0.1)',
+		border: 'none',
+		borderColor: 'transparent',
+		background: '#ffffff',
+	},
+	spacious: {
+		padding: '32px 40px',
+		radius: 16,
+		shadow: '0 10px 25px rgba(0,0,0,0.1)',
+		border: 'none',
+		borderColor: 'transparent',
+		background: '#ffffff',
+	},
+};
+
+/**
  * JobCardPreview - Mini Job-Card Vorschau
  */
 function JobCardPreview( { settings, computedPrimaryColor } ) {
 	const cardStyle = useMemo( () => {
+		// Preset als Basis laden.
+		const preset = CARD_PRESETS[ settings.card_layout_preset ] || CARD_PRESETS.standard;
+
+		// Schatten-Werte für individuelle Überschreibung.
 		const shadowValues = {
 			none: 'none',
 			light: '0 1px 3px rgba(0,0,0,0.1)',
 			medium: '0 4px 6px rgba(0,0,0,0.1)',
 			strong: '0 10px 25px rgba(0,0,0,0.15)',
+			preset: preset.shadow, // Preset-Schatten.
 		};
 
+		// Preset-Werte mit individuellen Überschreibungen.
+		const background = settings.card_background && settings.card_background !== '#ffffff'
+			? settings.card_background
+			: preset.background;
+
+		const radius = settings.card_border_radius !== undefined && settings.card_border_radius !== preset.radius
+			? settings.card_border_radius
+			: preset.radius;
+
+		const shadow = settings.card_shadow && settings.card_shadow !== 'preset'
+			? shadowValues[ settings.card_shadow ]
+			: preset.shadow;
+
+		let border = preset.border;
+		if ( settings.card_border_show !== undefined ) {
+			border = settings.card_border_show
+				? `1px solid ${ settings.card_border_color || preset.borderColor }`
+				: 'none';
+		}
+
 		return {
-			backgroundColor: settings.card_background || '#ffffff',
-			border: settings.card_border_show
-				? `1px solid ${ settings.card_border_color || '#e5e7eb' }`
-				: 'none',
-			borderRadius: `${ settings.card_border_radius ?? 8 }px`,
-			boxShadow: shadowValues[ settings.card_shadow || 'light' ],
+			backgroundColor: background,
+			border,
+			borderRadius: `${ radius }px`,
+			boxShadow: shadow,
+			padding: preset.padding,
 		};
 	}, [ settings ] );
 
@@ -74,7 +128,7 @@ function JobCardPreview( { settings, computedPrimaryColor } ) {
 	}, [ settings, computedPrimaryColor ] );
 
 	return (
-		<div className="rp-p-3" style={ cardStyle }>
+		<div style={ cardStyle }>
 			{ /* Badges */ }
 			{ settings.show_badges !== false && (
 				<div className="rp-flex rp-gap-1 rp-mb-2">
@@ -380,7 +434,7 @@ function AiButtonPreview( { settings, computedPrimaryColor } ) {
 function TypographyPreview( { settings, computedPrimaryColor } ) {
 	const linkColor = settings.link_use_primary !== false
 		? computedPrimaryColor
-		: ( settings.link_color || '#2563eb' );
+		: ( settings.link_color || computedPrimaryColor );
 
 	const linkDecoration = settings.link_decoration || 'underline';
 

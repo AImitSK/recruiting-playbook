@@ -476,10 +476,14 @@
     margin-top: 0;
 }
 
-/* Job Content Links - Design-Variablen */
+/* Job Content Links - Design-Variablen (erhöhte Spezifität für Theme-Override) */
 .rp-plugin .rp-job-content a,
+.rp-plugin .rp-job-content ul a,
+.rp-plugin .rp-job-content ol a,
+.rp-plugin .rp-job-content li a,
+.rp-plugin .rp-job-content p a,
 .rp-plugin .rp-prose a {
-    color: var(--rp-link-color, var(--rp-color-primary));
+    color: var(--rp-link-color, var(--rp-color-primary)) !important;
     text-decoration: var(--rp-link-decoration, underline);
 }
 
@@ -534,13 +538,17 @@
     }
 
     /* AI/KI Button - spezielles Styling für KI-Features */
+    /* Verwendet --rp-btn-padding für gleiche Höhe wie normale Buttons */
     .rp-plugin .rp-btn-ai {
         background: var(--rp-ai-btn-bg, linear-gradient(135deg, #8b5cf6, #ec4899));
         color: var(--rp-ai-btn-text, #ffffff);
         border-radius: var(--rp-ai-btn-radius, var(--rp-radius-lg));
         border: var(--rp-ai-btn-border, none);
         box-shadow: var(--rp-ai-btn-shadow, 0 4px 15px rgba(139, 92, 246, 0.3));
-        padding: var(--rp-space-2) var(--rp-space-4);
+        padding: var(--rp-btn-padding, 0.75rem 1.5rem);
+        font-size: var(--rp-text-sm);
+        font-weight: 500;
+        line-height: var(--rp-leading-normal);
     }
 
     .rp-plugin .rp-btn-ai:hover:not(:disabled) {
@@ -654,6 +662,239 @@
     .rp-plugin .rp-card:hover {
         box-shadow: var(--rp-card-shadow-hover, var(--rp-shadow-lg));
         border-color: var(--rp-color-border-dark);
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────
+       Card Layout Presets
+       Gemäß Design & Branding Spec v2: Kompakt / Standard / Großzügig
+
+       Diese Presets steuern:
+       - Padding & Abstände
+       - Border-Radius & Schatten
+       - Beschreibungslänge (line-clamp)
+       - Button-Layout & -Größe
+       - Badge-Größe
+       ───────────────────────────────────────────────────────────────────── */
+
+    /* ─────────────────────────────────────────────────────────────────────
+       Grid für Cards - WICHTIG für height: 100% der Cards
+       ───────────────────────────────────────────────────────────────────── */
+    .rp-plugin .rp-grid {
+        align-items: stretch !important;
+    }
+
+    /* KOMPAKT: Minimalistisch, horizontal, Badges oben, Icon-Buttons rechts */
+    .rp-plugin .rp-card.rp-card--compact {
+        padding: 12px 16px !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+        border: 1px solid #e5e7eb !important;
+        /* Flexbox für horizontales Layout */
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 8px 16px !important;
+        height: auto !important;
+    }
+
+    /* Badges-Bereich (Datum + alle Badges) - ganz links, umbrechen erlaubt */
+    .rp-plugin .rp-card--compact .rp-flex.rp-items-center.rp-gap-4 {
+        order: 1;
+        flex: 1 1 auto;
+        flex-wrap: wrap !important;
+        gap: 0.5rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* Tags-Bereich (Standort, Art, Remote) - nach Badges, umbrechen erlaubt */
+    .rp-plugin .rp-card--compact .rp-flex.rp-flex-wrap.rp-items-center.rp-gap-2.rp-text-xs {
+        order: 2;
+        flex: 1 1 auto;
+        flex-wrap: wrap !important;
+        margin-top: 0 !important;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* Titel-Bereich - nimmt verfügbaren Platz */
+    .rp-plugin .rp-card--compact > div:has(h3) {
+        order: 3;
+        flex: 1 1 auto;
+        min-width: 150px;
+    }
+
+    .rp-plugin .rp-card--compact h3 {
+        font-size: 0.95rem;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Beschreibung ausblenden */
+    .rp-plugin .rp-card--compact p.rp-line-clamp-3,
+    .rp-plugin .rp-card--compact > div > p {
+        display: none !important;
+    }
+
+    /* Buttons rechts ausgerichtet */
+    .rp-plugin .rp-card--compact .rp-card-buttons {
+        order: 4;
+        flex: 0 0 auto;
+        margin-left: auto !important;
+        margin-top: 0 !important;
+        padding-top: 0;
+        gap: 0.25rem;
+    }
+
+    /* Badges kleiner */
+    .rp-plugin .rp-card--compact .rp-badge {
+        padding: 2px 6px;
+        font-size: 0.65rem;
+    }
+
+    /* Buttons als Icons - Text verstecken */
+    .rp-plugin .rp-card--compact .wp-element-button,
+    .rp-plugin .rp-card--compact .rp-btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 6px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        color: transparent !important;
+    }
+
+    /* Pfeil-Icon für den "Mehr erfahren" Button - absolut zentriert */
+    .rp-plugin .rp-card--compact .rp-card-buttons > a.wp-element-button:first-child::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 20px !important;
+        height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M14 5l7 7m0 0l-7 7m7-7H3'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* KI-Icon für den KI-Match Button (Glühbirne/Sparkles) - absolut zentriert */
+    .rp-plugin .rp-card--compact .rp-card-buttons > div button::before,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div .wp-element-button::before,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div a::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 20px !important;
+        height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* KI-Button im div auch als Icon-Button stylen */
+    .rp-plugin .rp-card--compact .rp-card-buttons > div button,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div .wp-element-button,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div a {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 6px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        color: transparent !important;
+        padding: 0 !important;
+    }
+
+    /* KI-Button Icon (falls vorhanden) */
+    .rp-plugin .rp-card--compact .rp-btn-ai::before {
+        content: "" !important;
+        display: block !important;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* STANDARD: Ausgewogenes Design (default) */
+    .rp-plugin .rp-card.rp-card--standard {
+        padding: 20px 24px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+        border: none !important;
+        /* Flexbox für Button-Ausrichtung unten */
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+
+    .rp-plugin .rp-card--standard p.rp-line-clamp-3,
+    .rp-plugin .rp-card--standard > div > p {
+        -webkit-line-clamp: 3;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .rp-plugin .rp-card--standard .rp-card-buttons {
+        margin-top: auto !important;
+        padding-top: 1rem;
+    }
+
+    /* GROSSZÜGIG: Prominent, viel Raum, volle Beschreibung */
+    .rp-plugin .rp-card.rp-card--spacious {
+        padding: 32px 40px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+        border: none !important;
+        /* Flexbox für Button-Ausrichtung unten */
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+
+    .rp-plugin .rp-card--spacious h3 {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .rp-plugin .rp-card--spacious p.rp-line-clamp-3,
+    .rp-plugin .rp-card--spacious > div > p {
+        -webkit-line-clamp: 5;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .rp-plugin .rp-card--spacious .rp-card-buttons {
+        /* Button-Container: Gestapelt und nach unten ausgerichtet */
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: auto !important;
+        padding-top: 1.5rem;
+    }
+
+    .rp-plugin .rp-card--spacious .wp-element-button,
+    .rp-plugin .rp-card--spacious .rp-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 24px !important;
+    }
+
+    .rp-plugin .rp-card--spacious .rp-badge {
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
 
     /* ─────────────────────────────────────────────────────────────────────

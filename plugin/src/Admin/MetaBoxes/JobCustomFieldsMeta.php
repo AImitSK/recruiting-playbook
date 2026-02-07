@@ -143,7 +143,7 @@ class JobCustomFieldsMeta {
 				<?php foreach ( $custom_fields as $field ) : ?>
 					<?php
 					$field_key = $field->getFieldKey();
-					$is_enabled = isset( $config[ $field_key ] ) ? (bool) $config[ $field_key ] : $field->isEnabled();
+					$is_enabled = isset( $config[ $field_key ] ) ? (bool) $config[ $field_key ] : $field->isActive();
 					?>
 					<p>
 						<label style="display: flex; align-items: center; gap: 8px;">
@@ -171,7 +171,7 @@ class JobCustomFieldsMeta {
 				<p class="description">
 					<?php
 					$enabled_count = count(
-						array_filter( $custom_fields, fn( FieldDefinition $f ) => $f->isEnabled() )
+						array_filter( $custom_fields, fn( FieldDefinition $f ) => $f->isActive() )
 					);
 					printf(
 						/* translators: %d: number of enabled fields */
