@@ -2,7 +2,7 @@
 /**
  * Shortcode Test Pages Creator
  *
- * Erstellt Testseiten für alle Shortcodes mit Navigation.
+ * Erstellt Testseiten für alle öffentlichen Shortcodes mit Navigation.
  *
  * Ausführen:
  *   wp eval-file plugin/tools/create-shortcode-test-pages.php
@@ -38,38 +38,41 @@ $test_pages = [
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Diese Seiten dienen zum Testen aller Shortcodes und ihrer Kompatibilität mit den Design & Branding Einstellungen.</p>
+<p>Diese Seiten dienen zum Testen aller öffentlichen Shortcodes und ihrer Kompatibilität mit den Design & Branding Einstellungen.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
-<h3>✅ Implementierte Shortcodes</h3>
+<h3>Job-Listen Shortcodes</h3>
 <!-- /wp:heading -->
 
 <!-- wp:list -->
 <ul>
 <li><a href="/shortcode-test-rp-jobs/">rp_jobs</a> - Job-Liste mit Grid</li>
 <li><a href="/shortcode-test-rp-job-search/">rp_job_search</a> - Suchformular mit Filtern</li>
-<li><a href="/shortcode-test-rp-application-form/">rp_application_form</a> - Bewerbungsformular</li>
-<li><a href="/shortcode-test-rp-custom-application-form/">rp_custom_application_form</a> - Custom Formular (Form Builder)</li>
-<li><a href="/shortcode-test-rp-ai-job-match/">rp_ai_job_match</a> - KI-Matching Button</li>
-<li><a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder</a> - KI-Job-Finder</li>
+<li><a href="/shortcode-test-rp-job-count/">rp_job_count</a> - Stellen-Zähler</li>
+<li><a href="/shortcode-test-rp-featured-jobs/">rp_featured_jobs</a> - Hervorgehobene Stellen</li>
+<li><a href="/shortcode-test-rp-latest-jobs/">rp_latest_jobs</a> - Neueste Stellen</li>
+<li><a href="/shortcode-test-rp-job-categories/">rp_job_categories</a> - Kategorie-Übersicht</li>
 </ul>
 <!-- /wp:list -->
 
 <!-- wp:heading {"level":3} -->
-<h3>❌ Nicht implementierte Shortcodes (geplant)</h3>
+<h3>Bewerbungsformular</h3>
 <!-- /wp:heading -->
 
 <!-- wp:list -->
 <ul>
-<li>rp_jobs_tabs - Gefilterte Tabs</li>
-<li>rp_jobs_slider - Karussell</li>
-<li>rp_job_card - Einzelne Job-Karte</li>
-<li>rp_featured_jobs - Top-Stellen</li>
-<li>rp_latest_jobs - Neueste Stellen</li>
-<li>rp_job_count - Stellen-Counter</li>
-<li>rp_job_categories - Kategorie-Übersicht</li>
-<li>rp_ai_chance_check - Einstellungschancen</li>
+<li><a href="/shortcode-test-rp-application-form/">rp_application_form</a> - Bewerbungsformular (Auto-Detection Form Builder)</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3>KI-Features (AI-Addon)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li><a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder</a> - KI-Job-Finder</li>
 </ul>
 <!-- /wp:list -->
 
@@ -140,6 +143,12 @@ $test_pages = [
 [rp_jobs limit="3" show_excerpt="false"]
 
 <!-- wp:heading {"level":3} -->
+<h3>Nur Featured Jobs</h3>
+<!-- /wp:heading -->
+
+[rp_jobs limit="3" featured="true"]
+
+<!-- wp:heading {"level":3} -->
 <h3>Sortiert nach Titel ASC</h3>
 <!-- /wp:heading -->
 
@@ -168,7 +177,7 @@ $test_pages = [
 <li>[ ] Hover-Effekt</li>
 <li>[ ] Badge-Farben (Neu, Remote, Kategorie)</li>
 <li>[ ] Badge-Stil (Hell/Ausgefüllt)</li>
-<li>[ ] Link-Farbe ("mehr Informationen")</li>
+<li>[ ] Link-Farbe</li>
 <li>[ ] Schriftgrößen</li>
 </ul>
 <!-- /wp:list -->
@@ -181,7 +190,7 @@ $test_pages = [
     'shortcode-test-rp-job-search' => [
         'title'   => 'Test: rp_job_search',
         'content' => '<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-jobs/">← rp_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-application-form/">rp_application_form →</a></p>
+<p><a href="/shortcode-test-rp-jobs/">← rp_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-job-count/">rp_job_count →</a></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
@@ -219,28 +228,10 @@ $test_pages = [
 [rp_job_search show_location="false"]
 
 <!-- wp:heading {"level":3} -->
-<h3>Ohne Beschäftigungsart-Filter</h3>
-<!-- /wp:heading -->
-
-[rp_job_search show_type="false"]
-
-<!-- wp:heading {"level":3} -->
 <h3>Nur Suchfeld (keine Dropdowns)</h3>
 <!-- /wp:heading -->
 
 [rp_job_search show_category="false" show_location="false" show_type="false"]
-
-<!-- wp:heading {"level":3} -->
-<h3>Ohne Suchfeld (nur Dropdowns)</h3>
-<!-- /wp:heading -->
-
-[rp_job_search show_search="false"]
-
-<!-- wp:heading {"level":3} -->
-<h3>Limit 5 pro Seite</h3>
-<!-- /wp:heading -->
-
-[rp_job_search limit="5"]
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
@@ -256,29 +247,295 @@ $test_pages = [
 <li>[ ] Dropdown-Styling</li>
 <li>[ ] Such-Button (Primärfarbe)</li>
 <li>[ ] Filter-Tags</li>
-<li>[ ] Ergebnis-Cards (siehe rp_jobs)</li>
-<li>[ ] Pagination</li>
+<li>[ ] Ergebnis-Cards</li>
 <li>[ ] "Keine Ergebnisse" Meldung</li>
 </ul>
 <!-- /wp:list -->
 
 <!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-jobs/">← rp_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-application-form/">rp_application_form →</a></p>
+<p><a href="/shortcode-test-rp-jobs/">← rp_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-job-count/">rp_job_count →</a></p>
+<!-- /wp:paragraph -->',
+    ],
+
+    'shortcode-test-rp-job-count' => [
+        'title'   => 'Test: rp_job_count',
+        'content' => '<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-job-search/">← rp_job_search</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-featured-jobs/">rp_featured_jobs →</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>[rp_job_count] - Stellen-Zähler</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Standard</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Aktuell: [rp_job_count]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>In einer Überschrift</h3>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":2} -->
+<h2>Wir haben [rp_job_count] für Sie!</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit eigenem Format</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>[rp_job_count format="Entdecken Sie {count} Karrieremöglichkeiten"]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit Singular-Form</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>[rp_job_count singular="{count} offene Stelle" format="{count} offene Stellen"]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit Zero-Text</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>[rp_job_count zero="Aktuell keine offenen Stellen - schauen Sie bald wieder vorbei!"]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Gefiltert nach Kategorie</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>IT-Stellen: [rp_job_count category="it"]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Design-Prüfung</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li>[ ] Text erbt Farbe vom Kontext</li>
+<li>[ ] Zero-State hat gedämpfte Farbe</li>
+<li>[ ] Font-Weight ist bold</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-job-search/">← rp_job_search</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-featured-jobs/">rp_featured_jobs →</a></p>
+<!-- /wp:paragraph -->',
+    ],
+
+    'shortcode-test-rp-featured-jobs' => [
+        'title'   => 'Test: rp_featured_jobs',
+        'content' => '<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-job-count/">← rp_job_count</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-latest-jobs/">rp_latest_jobs →</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>[rp_featured_jobs] - Hervorgehobene Stellen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"backgroundColor":"pale-pink"} -->
+<p class="has-pale-pink-background-color has-background"><strong>Hinweis:</strong> Stellen müssen im Job-Editor als "Featured" markiert werden (Meta-Feld _rp_featured).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Standard (3 Stellen, 3 Spalten)</h3>
+<!-- /wp:heading -->
+
+[rp_featured_jobs]
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit Überschrift</h3>
+<!-- /wp:heading -->
+
+[rp_featured_jobs title="Unsere Top-Stellenangebote"]
+
+<!-- wp:heading {"level":3} -->
+<h3>4 Stellen, 2 Spalten</h3>
+<!-- /wp:heading -->
+
+[rp_featured_jobs limit="4" columns="2"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Ohne Auszug</h3>
+<!-- /wp:heading -->
+
+[rp_featured_jobs show_excerpt="false"]
+
+<!-- wp:separator -->
+<hr class="wp-block-separator"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Design-Prüfung</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li>[ ] Titel-Styling</li>
+<li>[ ] Card-Design (wie rp_jobs)</li>
+<li>[ ] Grid-Layout</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-job-count/">← rp_job_count</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-latest-jobs/">rp_latest_jobs →</a></p>
+<!-- /wp:paragraph -->',
+    ],
+
+    'shortcode-test-rp-latest-jobs' => [
+        'title'   => 'Test: rp_latest_jobs',
+        'content' => '<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-featured-jobs/">← rp_featured_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-job-categories/">rp_job_categories →</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>[rp_latest_jobs] - Neueste Stellen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Standard (5 Stellen als Liste)</h3>
+<!-- /wp:heading -->
+
+[rp_latest_jobs]
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit Überschrift</h3>
+<!-- /wp:heading -->
+
+[rp_latest_jobs title="Neu bei uns"]
+
+<!-- wp:heading {"level":3} -->
+<h3>3 Stellen, 3 Spalten</h3>
+<!-- /wp:heading -->
+
+[rp_latest_jobs limit="3" columns="3"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit Auszug</h3>
+<!-- /wp:heading -->
+
+[rp_latest_jobs limit="3" show_excerpt="true"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Gefiltert nach Kategorie</h3>
+<!-- /wp:heading -->
+
+[rp_latest_jobs category="it" limit="3"]
+
+<!-- wp:separator -->
+<hr class="wp-block-separator"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Design-Prüfung</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li>[ ] Titel-Styling</li>
+<li>[ ] Card-Design</li>
+<li>[ ] Datum-Anzeige</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-featured-jobs/">← rp_featured_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-job-categories/">rp_job_categories →</a></p>
+<!-- /wp:paragraph -->',
+    ],
+
+    'shortcode-test-rp-job-categories' => [
+        'title'   => 'Test: rp_job_categories',
+        'content' => '<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-latest-jobs/">← rp_latest_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-application-form/">rp_application_form →</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>[rp_job_categories] - Kategorie-Übersicht</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Standard (4 Spalten)</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories]
+
+<!-- wp:heading {"level":3} -->
+<h3>3 Spalten</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories columns="3"]
+
+<!-- wp:heading {"level":3} -->
+<h3>2 Spalten</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories columns="2"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Nach Anzahl sortiert</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories orderby="count"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Ohne Anzahl-Badge</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories show_count="false"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Mit leeren Kategorien</h3>
+<!-- /wp:heading -->
+
+[rp_job_categories hide_empty="false"]
+
+<!-- wp:separator -->
+<hr class="wp-block-separator"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Design-Prüfung</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li>[ ] Card-Styling</li>
+<li>[ ] Hover-Effekt (Border-Farbe)</li>
+<li>[ ] Badge-Styling (Anzahl)</li>
+<li>[ ] Grid-Layout responsive</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><a href="/shortcode-test-rp-latest-jobs/">← rp_latest_jobs</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-application-form/">rp_application_form →</a></p>
 <!-- /wp:paragraph -->',
     ],
 
     'shortcode-test-rp-application-form' => [
         'title'   => 'Test: rp_application_form',
         'content' => '<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-job-search/">← rp_job_search</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-custom-application-form/">rp_custom_application_form →</a></p>
+<p><a href="/shortcode-test-rp-job-categories/">← rp_job_categories</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder →</a></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
 <h2>[rp_application_form] - Bewerbungsformular</h2>
 <!-- /wp:heading -->
 
-<!-- wp:paragraph {"backgroundColor":"pale-pink"} -->
-<p class="has-pale-pink-background-color has-background"><strong>Hinweis:</strong> Dieser Shortcode benötigt eine job_id. Ohne ID erscheint eine Fehlermeldung (außer auf Job-Einzelseiten).</p>
+<!-- wp:paragraph {"backgroundColor":"pale-cyan-blue"} -->
+<p class="has-pale-cyan-blue-background-color has-background"><strong>Auto-Detection:</strong> Erkennt automatisch ob der Form Builder (Pro) aktiv ist und verwendet dann das konfigurierte Multi-Step Formular.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -288,12 +545,8 @@ $test_pages = [
 [rp_application_form]
 
 <!-- wp:heading {"level":3} -->
-<h3>Mit job_id (erste Stelle)</h3>
+<h3>Mit job_id</h3>
 <!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p><em>Die job_id wird dynamisch eingefügt wenn Jobs existieren.</em></p>
-<!-- /wp:paragraph -->
 
 [rp_application_form job_id="REPLACE_WITH_JOB_ID"]
 
@@ -308,6 +561,12 @@ $test_pages = [
 <!-- /wp:heading -->
 
 [rp_application_form job_id="REPLACE_WITH_JOB_ID" show_job_title="false"]
+
+<!-- wp:heading {"level":3} -->
+<h3>Ohne Fortschrittsanzeige</h3>
+<!-- /wp:heading -->
+
+[rp_application_form job_id="REPLACE_WITH_JOB_ID" show_progress="false"]
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
@@ -325,6 +584,7 @@ $test_pages = [
 <li>[ ] Pflichtfeld-Markierung (*)</li>
 <li>[ ] Datei-Upload Bereich</li>
 <li>[ ] Checkbox-Styling (DSGVO)</li>
+<li>[ ] Fortschrittsbalken (Primärfarbe)</li>
 <li>[ ] Submit-Button (Primärfarbe/Custom)</li>
 <li>[ ] Validierungs-Fehlermeldungen</li>
 <li>[ ] Erfolgs-Meldung</li>
@@ -332,110 +592,14 @@ $test_pages = [
 <!-- /wp:list -->
 
 <!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-job-search/">← rp_job_search</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-custom-application-form/">rp_custom_application_form →</a></p>
-<!-- /wp:paragraph -->',
-    ],
-
-    'shortcode-test-rp-custom-application-form' => [
-        'title'   => 'Test: rp_custom_application_form',
-        'content' => '<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-application-form/">← rp_application_form</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-match/">rp_ai_job_match →</a></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading -->
-<h2>[rp_custom_application_form] - Custom Form Builder Formular</h2>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph {"backgroundColor":"pale-pink"} -->
-<p class="has-pale-pink-background-color has-background"><strong>Hinweis:</strong> Dieser Shortcode zeigt das im Form Builder konfigurierte Formular. Benötigt eine job_id.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {"level":3} -->
-<h3>Custom Formular mit job_id</h3>
-<!-- /wp:heading -->
-
-[rp_custom_application_form job_id="REPLACE_WITH_JOB_ID"]
-
-<!-- wp:separator -->
-<hr class="wp-block-separator"/>
-<!-- /wp:separator -->
-
-<!-- wp:heading {"level":3} -->
-<h3>Design-Prüfung</h3>
-<!-- /wp:heading -->
-
-<!-- wp:list -->
-<ul>
-<li>[ ] Formular-Container (Card-Design)</li>
-<li>[ ] Multi-Step Navigation (wenn aktiviert)</li>
-<li>[ ] Alle Feldtypen korrekt gestylt</li>
-<li>[ ] Custom Fields aus Form Builder</li>
-<li>[ ] Datei-Upload Bereich</li>
-<li>[ ] Submit-Button</li>
-<li>[ ] Step-Indicator (bei Multi-Step)</li>
-</ul>
-<!-- /wp:list -->
-
-<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-application-form/">← rp_application_form</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-match/">rp_ai_job_match →</a></p>
-<!-- /wp:paragraph -->',
-    ],
-
-    'shortcode-test-rp-ai-job-match' => [
-        'title'   => 'Test: rp_ai_job_match',
-        'content' => '<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-custom-application-form/">← rp_custom_application_form</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder →</a></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading -->
-<h2>[rp_ai_job_match] - KI-Matching Button</h2>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph {"backgroundColor":"pale-cyan-blue"} -->
-<p class="has-pale-cyan-blue-background-color has-background"><strong>Pro-Feature:</strong> Benötigt Pro-Lizenz und AI-Addon. Ohne Lizenz wird ein Upgrade-Hinweis angezeigt.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {"level":3} -->
-<h3>Standard (auf Job-Seite)</h3>
-<!-- /wp:heading -->
-
-[rp_ai_job_match]
-
-<!-- wp:heading {"level":3} -->
-<h3>Mit job_id</h3>
-<!-- /wp:heading -->
-
-[rp_ai_job_match job_id="REPLACE_WITH_JOB_ID"]
-
-<!-- wp:separator -->
-<hr class="wp-block-separator"/>
-<!-- /wp:separator -->
-
-<!-- wp:heading {"level":3} -->
-<h3>Design-Prüfung (KI-Button Tab in Design & Branding)</h3>
-<!-- /wp:heading -->
-
-<!-- wp:list -->
-<ul>
-<li>[ ] Button-Stil: Theme-Modus</li>
-<li>[ ] Button-Stil: Preset-Modus (Gradient, Outline, etc.)</li>
-<li>[ ] Button-Stil: Manueller Modus</li>
-<li>[ ] Icon wird angezeigt</li>
-<li>[ ] Button-Text aus Einstellungen</li>
-<li>[ ] Button-Höhe gleich wie normale Buttons</li>
-<li>[ ] Hover-Effekt</li>
-</ul>
-<!-- /wp:list -->
-
-<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-custom-application-form/">← rp_custom_application_form</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder →</a></p>
+<p><a href="/shortcode-test-rp-job-categories/">← rp_job_categories</a> | <a href="/shortcode-tests/">Übersicht</a> | <a href="/shortcode-test-rp-ai-job-finder/">rp_ai_job_finder →</a></p>
 <!-- /wp:paragraph -->',
     ],
 
     'shortcode-test-rp-ai-job-finder' => [
         'title'   => 'Test: rp_ai_job_finder',
         'content' => '<!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-ai-job-match/">← rp_ai_job_match</a> | <a href="/shortcode-tests/">Übersicht</a></p>
+<p><a href="/shortcode-test-rp-application-form/">← rp_application_form</a> | <a href="/shortcode-tests/">Übersicht</a></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
@@ -443,7 +607,7 @@ $test_pages = [
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"backgroundColor":"pale-cyan-blue"} -->
-<p class="has-pale-cyan-blue-background-color has-background"><strong>Pro-Feature:</strong> Benötigt Pro-Lizenz und AI-Addon. Ohne Lizenz wird ein Upgrade-Hinweis angezeigt.</p>
+<p class="has-pale-cyan-blue-background-color has-background"><strong>AI-Addon Feature:</strong> Benötigt AI-Addon Lizenz. Ohne Lizenz wird ein Upgrade-Hinweis angezeigt.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -459,16 +623,10 @@ $test_pages = [
 [rp_ai_job_finder title="Welcher Job passt zu dir?"]
 
 <!-- wp:heading {"level":3} -->
-<h3>Max 5 Matches</h3>
+<h3>Max 3 Vorschläge</h3>
 <!-- /wp:heading -->
 
-[rp_ai_job_finder max_matches="5"]
-
-<!-- wp:heading {"level":3} -->
-<h3>Ohne Profil-Anzeige</h3>
-<!-- /wp:heading -->
-
-[rp_ai_job_finder show_profile="false"]
+[rp_ai_job_finder limit="3"]
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
@@ -486,15 +644,22 @@ $test_pages = [
 <li>[ ] Lade-Animation</li>
 <li>[ ] Ergebnis-Cards (Match-Score)</li>
 <li>[ ] Match-Percentage Balken</li>
-<li>[ ] Profil-Zusammenfassung</li>
 <li>[ ] "Jetzt bewerben" Buttons</li>
 </ul>
 <!-- /wp:list -->
 
 <!-- wp:paragraph -->
-<p><a href="/shortcode-test-rp-ai-job-match/">← rp_ai_job_match</a> | <a href="/shortcode-tests/">Übersicht</a></p>
+<p><a href="/shortcode-test-rp-application-form/">← rp_application_form</a> | <a href="/shortcode-tests/">Übersicht</a></p>
 <!-- /wp:paragraph -->',
     ],
+];
+
+/**
+ * Alte Testseiten die gelöscht werden sollen
+ */
+$old_pages_to_delete = [
+    'shortcode-test-rp-custom-application-form',
+    'shortcode-test-rp-ai-job-match',
 ];
 
 /**
@@ -514,12 +679,14 @@ function get_first_job_id(): int {
 /**
  * Testseiten löschen
  */
-function delete_test_pages( array $pages ): void {
-    foreach ( $pages as $slug => $page ) {
+function delete_test_pages( array $pages, array $old_pages = [] ): void {
+    $all_slugs = array_merge( array_keys( $pages ), $old_pages );
+
+    foreach ( $all_slugs as $slug ) {
         $existing = get_page_by_path( $slug );
         if ( $existing ) {
             wp_delete_post( $existing->ID, true );
-            echo "Gelöscht: {$page['title']} (/{$slug}/)\n";
+            echo "Gelöscht: /{$slug}/\n";
         }
     }
     echo "\nAlle Testseiten wurden gelöscht.\n";
@@ -528,13 +695,22 @@ function delete_test_pages( array $pages ): void {
 /**
  * Testseiten erstellen
  */
-function create_test_pages( array $pages ): void {
+function create_test_pages( array $pages, array $old_pages = [] ): void {
+    // Zuerst alte Seiten löschen
+    foreach ( $old_pages as $slug ) {
+        $existing = get_page_by_path( $slug );
+        if ( $existing ) {
+            wp_delete_post( $existing->ID, true );
+            echo "Alte Seite gelöscht: /{$slug}/\n";
+        }
+    }
+
     $job_id = get_first_job_id();
 
     if ( ! $job_id ) {
-        echo "⚠️  Warnung: Keine Jobs gefunden. Platzhalter 'REPLACE_WITH_JOB_ID' muss manuell ersetzt werden.\n\n";
+        echo "\n⚠️  Warnung: Keine Jobs gefunden. Platzhalter 'REPLACE_WITH_JOB_ID' muss manuell ersetzt werden.\n\n";
     } else {
-        echo "✅ Erste Job-ID gefunden: {$job_id}\n\n";
+        echo "\n✅ Erste Job-ID gefunden: {$job_id}\n\n";
     }
 
     $created = 0;
@@ -592,7 +768,7 @@ function create_test_pages( array $pages ): void {
 
 // Ausführen
 if ( $delete_mode ) {
-    delete_test_pages( $test_pages );
+    delete_test_pages( $test_pages, $old_pages_to_delete );
 } else {
-    create_test_pages( $test_pages );
+    create_test_pages( $test_pages, $old_pages_to_delete );
 }
