@@ -102,6 +102,19 @@ register_deactivation_hook(__FILE__, function() {
     Core\Deactivator::deactivate();
 });
 
+// Avada/Fusion Builder Integration FRÜH registrieren.
+// MUSS vor 'after_setup_theme' Priority 10 laufen, wo FusionBuilder startet!
+add_action('after_setup_theme', function() {
+    // Nur wenn Autoloader verfügbar ist.
+    if (!class_exists('RecruitingPlaybook\\Integrations\\Avada\\AvadaIntegration')) {
+        return;
+    }
+
+    // Avada Integration registrieren (Hook auf fusion_builder_before_init).
+    $avada_integration = new \RecruitingPlaybook\Integrations\Avada\AvadaIntegration();
+    $avada_integration->register();
+}, 5); // Priority 5 = VOR FusionBuilder (Priority 10)
+
 // Plugin initialisieren (im init Hook mit Priorität 5 - vor Standard-Hooks)
 add_action('init', function() {
     if (!rp_check_requirements()) {

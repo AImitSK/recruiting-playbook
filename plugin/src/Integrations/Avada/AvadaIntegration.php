@@ -32,8 +32,13 @@ class AvadaIntegration {
 			return;
 		}
 
-		// Elements registrieren
+		// Elements registrieren (in $all_fusion_builder_elements)
 		add_action( 'fusion_builder_before_init', [ $this, 'registerElements' ], 11 );
+
+		// WICHTIG: Elements nach dem Filtern wieder hinzufügen
+		// Fusion Builder filtert basierend auf Benutzer-Einstellungen,
+		// aber wir wollen unsere Elements IMMER verfügbar machen.
+		add_filter( 'fusion_builder_all_elements', [ $this, 'ensureElementsAvailable' ], 20 );
 
 		// Element-Kategorie hinzufügen
 		add_filter( 'fusion_builder_element_categories', [ $this, 'addCategory' ] );
@@ -50,6 +55,30 @@ class AvadaIntegration {
 	public function registerElements(): void {
 		$loader = new ElementLoader();
 		$loader->registerAll();
+	}
+
+	/**
+	 * Stellt sicher, dass RP-Elements nach dem Filtern verfügbar sind
+	 *
+	 * Fusion Builder filtert Elements basierend auf Benutzer-Einstellungen.
+	 * Unsere Elements sollen aber immer verfügbar sein (solange Pro aktiv ist).
+	 *
+	 * @param array $elements Gefilterte Elements.
+	 * @return array Elements mit RP-Elements.
+	 */
+	public function ensureElementsAvailable( array $elements ): array {
+		global $all_fusion_builder_elements;
+
+		// RP-Elements aus der globalen Liste holen und hinzufügen.
+		if ( ! empty( $all_fusion_builder_elements ) ) {
+			foreach ( $all_fusion_builder_elements as $shortcode => $config ) {
+				if ( strpos( $shortcode, 'rp_' ) === 0 && ! isset( $elements[ $shortcode ] ) ) {
+					$elements[ $shortcode ] = $config;
+				}
+			}
+		}
+
+		return $elements;
 	}
 
 	/**

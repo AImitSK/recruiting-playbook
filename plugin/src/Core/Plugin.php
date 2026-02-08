@@ -99,8 +99,8 @@ final class Plugin {
 		// Gutenberg Blocks (Pro-Feature).
 		$this->initBlocks();
 
-		// Avada / Fusion Builder Integration (Pro-Feature).
-		$this->initAvadaIntegration();
+		// Avada Integration wird FRÜHER in recruiting-playbook.php registriert
+		// (auf after_setup_theme, Priority 5, VOR FusionBuilder).
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
