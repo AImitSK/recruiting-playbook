@@ -138,7 +138,6 @@ class BlockLoader {
 				[
 					'slug'  => 'recruiting-playbook',
 					'title' => __( 'Recruiting Playbook', 'recruiting-playbook' ),
-					'icon'  => 'businessperson',
 				],
 			],
 			$categories
