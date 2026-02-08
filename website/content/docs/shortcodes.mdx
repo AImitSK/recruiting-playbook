@@ -3,7 +3,11 @@ title: Shortcodes
 description: Alle verfuegbaren Shortcodes mit Attributen und Beispielen.
 ---
 
-Recruiting Playbook stellt drei Shortcodes bereit, mit denen Sie Stellenanzeigen und Bewerbungsformulare in jede WordPress-Seite einbinden koennen.
+Recruiting Playbook stellt neun Shortcodes bereit, mit denen Sie Stellenanzeigen, Bewerbungsformulare und KI-Features in jede WordPress-Seite einbinden koennen.
+
+<Callout type="info">
+Alternativ zu Shortcodes koennen Sie die nativen [Gutenberg-Bloecke](/docs/gutenberg-blocks) verwenden, die eine visuelle Bearbeitung ermoeglichen.
+</Callout>
 
 ## rp_jobs
 
@@ -14,13 +18,13 @@ Zeigt eine Liste der Stellenanzeigen an.
 | Attribut | Beschreibung | Standard |
 |----------|-------------|----------|
 | `limit` | Anzahl der angezeigten Stellen | `10` |
-| `category` | Filter nach Kategorie-Slug | - |
-| `location` | Filter nach Standort-Slug | - |
+| `category` | Filter nach Kategorie-Slug (mehrere mit Komma) | - |
+| `location` | Filter nach Standort-Slug (mehrere mit Komma) | - |
 | `type` | Filter nach Beschaeftigungsart | - |
+| `featured` | Nur hervorgehobene Stellen (`true`/`false`) | `false` |
 | `orderby` | Sortierung (`date`, `title`, `rand`) | `date` |
 | `order` | Reihenfolge: `ASC` oder `DESC` | `DESC` |
-| `columns` | Spalten im Grid (1-4) | `1` |
-| `show_excerpt` | Auszug anzeigen | `true` |
+| `columns` | Spalten im Grid (1-4, leer = Design-Einstellung) | - |
 
 ### Beispiele
 
@@ -42,10 +46,10 @@ Zeigt eine Liste der Stellenanzeigen an.
 [rp_jobs category="pflege" location="berlin" columns="2"]
 ```
 
-**Zufaellige Reihenfolge:**
+**Nur Featured Jobs, zufaellige Reihenfolge:**
 
 ```html
-[rp_jobs limit="3" orderby="rand"]
+[rp_jobs featured="true" limit="3" orderby="rand"]
 ```
 
 ## rp_job_search
@@ -83,9 +87,133 @@ Zeigt ein Suchformular mit Filtern und Ergebnisliste. Ideal fuer die Karrieresei
 [rp_job_search show_category="false" show_location="false" show_type="false"]
 ```
 
+## rp_job_count
+
+Zeigt die Anzahl der verfuegbaren Stellen an. Ideal fuer Headlines.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `category` | Filter nach Kategorie-Slug | - |
+| `location` | Filter nach Standort-Slug | - |
+| `type` | Filter nach Beschaeftigungsart | - |
+| `format` | Text fuer Mehrzahl mit `{count}` Platzhalter | `{count} offene Stellen` |
+| `singular` | Text fuer Einzahl | `{count} offene Stelle` |
+| `zero` | Text fuer 0 Stellen | `Keine offenen Stellen` |
+
+### Beispiele
+
+**Standard-Zaehler:**
+
+```html
+Aktuell [rp_job_count] verfuegbar.
+```
+
+**Gefiltert nach Kategorie:**
+
+```html
+[rp_job_count category="it" format="{count} IT-Stellen"]
+```
+
+**Eigene Texte:**
+
+```html
+[rp_job_count format="Wir haben {count} Jobs" singular="Wir haben {count} Job" zero="Aktuell keine Jobs"]
+```
+
+## rp_featured_jobs
+
+Zeigt hervorgehobene (Featured) Stellen an.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `limit` | Anzahl der Stellen | `3` |
+| `columns` | Spalten im Grid (1-4) | `3` |
+| `title` | Optionale Ueberschrift | - |
+| `show_excerpt` | Auszug anzeigen | `true` |
+
+### Beispiele
+
+**Standard Featured Jobs:**
+
+```html
+[rp_featured_jobs]
+```
+
+**Mit Ueberschrift, 2 Spalten:**
+
+```html
+[rp_featured_jobs title="Top-Stellenangebote" columns="2" limit="4"]
+```
+
+## rp_latest_jobs
+
+Zeigt die neuesten Stellenanzeigen an. Ideal fuer Sidebars.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `limit` | Anzahl der Stellen | `5` |
+| `columns` | Spalten (0 = Liste, 1-4) | `0` |
+| `title` | Optionale Ueberschrift | - |
+| `category` | Filter nach Kategorie-Slug | - |
+| `show_date` | Datum anzeigen | `true` |
+| `show_excerpt` | Auszug anzeigen | `false` |
+
+### Beispiele
+
+**Kompakte Liste fuer Sidebar:**
+
+```html
+[rp_latest_jobs limit="5"]
+```
+
+**Mit Ueberschrift und Grid:**
+
+```html
+[rp_latest_jobs title="Neueste Stellen" columns="2" limit="6" show_excerpt="true"]
+```
+
+## rp_job_categories
+
+Zeigt alle Job-Kategorien als klickbare Karten an.
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `columns` | Spalten im Grid (1-6) | `4` |
+| `show_count` | Anzahl pro Kategorie anzeigen | `true` |
+| `hide_empty` | Leere Kategorien verstecken | `true` |
+| `orderby` | Sortierung (`name`, `count`) | `name` |
+
+### Beispiele
+
+**Standard Kategorie-Uebersicht:**
+
+```html
+[rp_job_categories]
+```
+
+**3 Spalten, sortiert nach Anzahl:**
+
+```html
+[rp_job_categories columns="3" orderby="count"]
+```
+
+**Alle Kategorien (auch leere):**
+
+```html
+[rp_job_categories hide_empty="false"]
+```
+
 ## rp_application_form
 
-Zeigt das Bewerbungsformular an. Wird normalerweise automatisch auf der Stellendetail-Seite eingebunden, kann aber auch manuell auf beliebigen Seiten platziert werden.
+Zeigt das Bewerbungsformular an. Wird normalerweise automatisch auf der Stellendetail-Seite eingebunden, kann aber auch manuell platziert werden.
 
 ### Attribute
 
@@ -94,6 +222,7 @@ Zeigt das Bewerbungsformular an. Wird normalerweise automatisch auf der Stellend
 | `job_id` | ID der Stelle | automatisch |
 | `title` | Ueberschrift des Formulars | `Jetzt bewerben` |
 | `show_job_title` | Stellentitel ueber dem Formular anzeigen | `true` |
+| `show_progress` | Fortschrittsanzeige anzeigen | `true` |
 
 ### Beispiele
 
@@ -113,6 +242,60 @@ Zeigt das Bewerbungsformular an. Wird normalerweise automatisch auf der Stellend
 Wenn Sie `job_id` nicht angeben, versucht das Plugin automatisch die aktuelle Stelle zu erkennen. Auf einer Nicht-Stellen-Seite ist die Angabe der `job_id` erforderlich.
 </Callout>
 
+## rp_ai_job_finder
+
+KI-gestuetzter Job-Finder: Besucher laden ihren Lebenslauf hoch und erhalten passende Stellenvorschlaege.
+
+<Callout type="warning">
+Dieses Feature erfordert das AI-Addon.
+</Callout>
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `title` | Ueberschrift | `Finde deinen Traumjob` |
+| `subtitle` | Erklaerungstext | `Lade deinen Lebenslauf hoch...` |
+| `limit` | Max. Anzahl Vorschlaege (1-10) | `5` |
+| `class` | Zusaetzliche CSS-Klassen | - |
+
+### Beispiel
+
+```html
+[rp_ai_job_finder title="Welcher Job passt zu dir?" limit="3"]
+```
+
+## rp_ai_job_match
+
+"Passe ich zu diesem Job?" Button mit KI-Analyse.
+
+<Callout type="warning">
+Dieses Feature erfordert das AI-Addon.
+</Callout>
+
+### Attribute
+
+| Attribut | Beschreibung | Standard |
+|----------|-------------|----------|
+| `job_id` | ID der Stelle | automatisch |
+| `title` | Button-Text | `Passe ich zu diesem Job?` |
+| `style` | Button-Variante (`outline`) | - |
+| `class` | Zusaetzliche CSS-Klassen | - |
+
+### Beispiele
+
+**Standard (auf Stellendetail-Seite):**
+
+```html
+[rp_ai_job_match]
+```
+
+**Mit eigenem Text und Outline-Style:**
+
+```html
+[rp_ai_job_match title="Bin ich geeignet?" style="outline"]
+```
+
 ## Shortcodes im Block-Editor
 
 Im WordPress Block-Editor (Gutenberg) koennen Sie Shortcodes ueber den **Shortcode-Block** einfuegen:
@@ -120,3 +303,7 @@ Im WordPress Block-Editor (Gutenberg) koennen Sie Shortcodes ueber den **Shortco
 1. Neuen Block hinzufuegen
 2. Nach "Shortcode" suchen
 3. Shortcode einfuegen, z.B. `[rp_job_search]`
+
+<Callout type="info">
+Fuer eine bessere Benutzererfahrung empfehlen wir die nativen [Gutenberg-Bloecke](/docs/gutenberg-blocks), die eine visuelle Vorschau und einfache Einstellungen bieten.
+</Callout>
