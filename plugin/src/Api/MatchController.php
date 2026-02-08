@@ -535,12 +535,25 @@ class MatchController extends WP_REST_Controller {
 		$timestamp = gmdate( 'c' ); // ISO 8601 Format.
 		$signature = hash( 'sha256', $secret_key . '|' . $timestamp );
 
-		return [
+		$headers = [
 			'X-Freemius-Install-Id' => (string) $install_id,
 			'X-Freemius-Timestamp'  => $timestamp,
 			'X-Freemius-Signature'  => $signature,
 			'X-Site-Url'            => site_url(),
 		];
+
+		// KI-Addon Installationsdaten mitsenden (für Addon-Lizenz-Prüfung).
+		if ( function_exists( 'rpk_fs' ) ) {
+			$addon_site = rpk_fs()->get_site();
+			if ( $addon_site && ! empty( $addon_site->id ) ) {
+				$addon_signature                   = hash( 'sha256', $addon_site->secret_key . '|' . $timestamp );
+				$headers['X-Freemius-Addon-Id']    = (string) $addon_site->id;
+				$headers['X-Freemius-Addon-Sig']   = $addon_signature;
+				$headers['X-Freemius-Addon-Slug']  = 'recruiting-playbook-ki';
+			}
+		}
+
+		return $headers;
 	}
 
 	/**
