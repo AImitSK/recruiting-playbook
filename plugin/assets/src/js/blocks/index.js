@@ -21,9 +21,9 @@ import './latest-jobs';
 import './job-categories';
 
 // Phase 4: Form & AI blocks
-// import './application-form';
-// import './ai-job-finder';
-// import './ai-job-match';
+import './application-form';
+import './ai-job-finder';
+import './ai-job-match';
 
 // Temporary: Log that blocks are loaded (remove in production)
 if ( process.env.NODE_ENV === 'development' ) {
