@@ -266,6 +266,11 @@ class FormRenderService {
 		$max_file_size = $settings['max_file_size'] ?? 10;
 		$max_files     = $settings['max_files'] ?? 5;
 
+		// Sicherstellen, dass allowed_types ein Array ist (kann als kommaseparierter String gespeichert sein).
+		if ( is_string( $allowed_types ) ) {
+			$allowed_types = array_map( 'trim', explode( ',', $allowed_types ) );
+		}
+
 		// Allowed types als Accept-String formatieren.
 		$accept = '.' . implode( ',.', $allowed_types );
 
