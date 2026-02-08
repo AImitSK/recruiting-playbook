@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/job-count",
+	"version": "1.0.0",
+	"title": "Stellen-Zähler",
+	"category": "recruiting-playbook",
+	"description": "Zeigt die Anzahl der verfügbaren Stellen an.",
+	"keywords": ["count", "anzahl", "zähler", "jobs", "stellen"],
+	"textdomain": "recruiting-playbook",
+	"icon": "chart-bar",
+	"attributes": {
+		"category": {
+			"type": "string",
+			"default": ""
+		},
+		"location": {
+			"type": "string",
+			"default": ""
+		},
+		"type": {
+			"type": "string",
+			"default": ""
+		},
+		"format": {
+			"type": "string",
+			"default": "{count} offene Stellen"
+		},
+		"singular": {
+			"type": "string",
+			"default": "{count} offene Stelle"
+		},
+		"zero": {
+			"type": "string",
+			"default": "Keine offenen Stellen"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		},
+		"color": {
+			"text": true,
+			"background": true
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

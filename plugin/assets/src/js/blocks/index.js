@@ -11,9 +11,9 @@
 // Each block is imported from its own directory.
 
 // Phase 2: Core blocks
-// import './jobs';
-// import './job-search';
-// import './job-count';
+import './jobs';
+import './job-search';
+import './job-count';
 
 // Phase 3: Additional blocks
 // import './featured-jobs';
