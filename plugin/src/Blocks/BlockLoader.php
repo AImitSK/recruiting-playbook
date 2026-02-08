@@ -3,7 +3,7 @@
  * Gutenberg Block Loader
  *
  * Registriert alle Recruiting Playbook Blöcke für den Block-Editor.
- * Pro-Feature: Nur verfügbar mit aktiver Pro-Lizenz.
+ * Free-Feature: Verfügbar für alle Nutzer (Free & Pro).
  *
  * @package RecruitingPlaybook
  */
@@ -74,14 +74,12 @@ class BlockLoader {
 	/**
 	 * Prüfen ob Blöcke verwendet werden können
 	 *
-	 * @return bool True wenn Pro-Lizenz aktiv.
+	 * Gutenberg Blocks sind ein Free-Feature und immer verfügbar.
+	 * Nur Page Builder (Avada, Elementor, etc.) sind Pro-Features.
+	 *
+	 * @return bool Immer true - Blocks sind für alle verfügbar.
 	 */
 	private function canUseBlocks(): bool {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'gutenberg_blocks' ) ) {
-			return false;
-		}
-
 		return true;
 	}
 

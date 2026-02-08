@@ -3,7 +3,7 @@
  * Block Pattern Loader
  *
  * Registriert vorgefertigte Block-Patterns für Karriereseiten.
- * Pro-Feature: Nur verfügbar mit aktiver Pro-Lizenz.
+ * Free-Feature: Verfügbar für alle Nutzer (Free & Pro).
  *
  * @package RecruitingPlaybook
  */
@@ -21,13 +21,10 @@ class PatternLoader {
 
 	/**
 	 * Initialisierung
+	 *
+	 * Block-Patterns sind ein Free-Feature (wie Gutenberg Blocks).
 	 */
 	public function register(): void {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'gutenberg_blocks' ) ) {
-			return;
-		}
-
 		add_action( 'init', [ $this, 'registerPatternCategory' ] );
 		add_action( 'init', [ $this, 'registerPatterns' ] );
 	}
