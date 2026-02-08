@@ -34,6 +34,8 @@ function rp_get_feature_plan_mapping(): array {
 		'design_settings'               => [ 'pro', 'bundle' ],
 		'custom_branding'               => [ 'pro', 'bundle' ],
 		'user_roles'                    => [ 'pro', 'bundle' ],
+		'avada_integration'             => [ 'pro', 'bundle' ],
+		'gutenberg_blocks'              => [ 'pro', 'bundle' ],
 		'priority_support'              => [ 'pro', 'ai_addon', 'bundle' ],
 
 		// AI Features.
@@ -60,6 +62,16 @@ function rp_get_feature_plan_mapping(): array {
  * $max = rp_can( 'max_jobs' ); // -1 (unlimited)
  */
 function rp_can( string $feature ): mixed {
+	// Development Mode: Alle Features aktiviert.
+	// Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
+	if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {
+		// Für detaillierte Werte (max_jobs etc.) trotzdem FeatureFlags nutzen.
+		$tier  = 'BUNDLE'; // Höchster Tier mit allen Features.
+		$flags = new FeatureFlags( $tier );
+		$value = $flags->get( $feature );
+		return $value !== false ? $value : true;
+	}
+
 	$mapping = rp_get_feature_plan_mapping();
 
 	// Feature in Mapping definiert → Plan-basierte Prüfung.
