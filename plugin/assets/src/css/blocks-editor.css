@@ -1,0 +1,396 @@
+/**
+ * Recruiting Playbook - Block Editor Styles
+ *
+ * Styles for the Gutenberg block editor.
+ * These styles are only loaded in the editor, not on the frontend.
+ *
+ * @package RecruitingPlaybook
+ */
+
+/* ==========================================================================
+   Block Preview Styles
+   ========================================================================== */
+
+.rp-block-preview {
+	position: relative;
+	padding: 1rem;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.rp-block-preview--loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 150px;
+	color: #666;
+}
+
+.rp-block-preview__loading-text {
+	margin-top: 0.5rem;
+	font-size: 13px;
+}
+
+.rp-block-preview--empty {
+	min-height: 150px;
+}
+
+.rp-block-preview--server-side {
+	padding: 0;
+	overflow: hidden;
+}
+
+.rp-block-preview__overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.05);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	cursor: pointer;
+	z-index: 10;
+}
+
+.rp-block-preview:hover .rp-block-preview__overlay {
+	opacity: 1;
+}
+
+.rp-block-preview__overlay span {
+	padding: 0.5rem 1rem;
+	background: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	border-radius: 4px;
+	font-size: 12px;
+}
+
+.rp-block-preview__content {
+	pointer-events: none;
+}
+
+/* ==========================================================================
+   Pro Badge Styles
+   ========================================================================== */
+
+.rp-pro-badge,
+.rp-ai-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	border-radius: 3px;
+}
+
+/* Pro Badge Colors */
+.rp-pro-badge {
+	background: linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+	color: #fff;
+}
+
+/* AI Badge Colors */
+.rp-ai-badge {
+	background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+	color: #fff;
+}
+
+/* Size Variants */
+.rp-pro-badge--small,
+.rp-ai-badge--small {
+	padding: 2px 6px;
+	font-size: 9px;
+}
+
+.rp-pro-badge--medium,
+.rp-ai-badge--medium {
+	padding: 4px 8px;
+	font-size: 10px;
+}
+
+.rp-pro-badge--large,
+.rp-ai-badge--large {
+	padding: 6px 12px;
+	font-size: 12px;
+}
+
+/* Inline Variant */
+.rp-pro-badge--inline,
+.rp-ai-badge--inline {
+	margin-left: 0.5em;
+	vertical-align: middle;
+}
+
+/* ==========================================================================
+   Feature Gate Styles
+   ========================================================================== */
+
+.rp-feature-gate {
+	padding: 1.5rem;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.rp-feature-gate--locked {
+	background: #f8f8f8;
+	border: 1px dashed #ccc;
+}
+
+.rp-feature-gate__icon {
+	margin-bottom: 1rem;
+}
+
+.rp-feature-gate__icon .dashicons {
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+	color: #999;
+}
+
+.rp-feature-gate__content h4 {
+	margin: 0 0 0.5rem;
+	font-size: 14px;
+	color: #333;
+}
+
+.rp-feature-gate__content p {
+	margin: 0 0 1rem;
+	font-size: 13px;
+	color: #666;
+}
+
+.rp-feature-gate__button {
+	display: inline-flex;
+	align-items: center;
+	padding: 8px 16px;
+	background: #2271b1;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 500;
+	transition: background 0.2s ease;
+}
+
+.rp-feature-gate__button:hover {
+	background: #135e96;
+	color: #fff;
+}
+
+/* ==========================================================================
+   Block Category Icon
+   ========================================================================== */
+
+.block-editor-block-types-list__list-item[data-type^="recruiting-playbook/"] .block-editor-block-types-list__item-icon {
+	color: #2271b1;
+}
+
+/* ==========================================================================
+   Inspector Controls
+   ========================================================================== */
+
+.rp-inspector-section {
+	margin-bottom: 1.5rem;
+}
+
+.rp-inspector-section__title {
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid #e0e0e0;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: #757575;
+}
+
+/* ==========================================================================
+   Job Card Preview (Editor)
+   ========================================================================== */
+
+.rp-job-card-preview {
+	padding: 1rem;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+	margin-bottom: 0.75rem;
+}
+
+.rp-job-card-preview__title {
+	margin: 0 0 0.5rem;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.rp-job-card-preview__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	font-size: 13px;
+	color: #666;
+}
+
+.rp-job-card-preview__meta-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.rp-job-card-preview__meta-item .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* ==========================================================================
+   Grid Layout Preview
+   ========================================================================== */
+
+.rp-grid-preview {
+	display: grid;
+	gap: 1rem;
+}
+
+.rp-grid-preview--cols-1 { grid-template-columns: 1fr; }
+.rp-grid-preview--cols-2 { grid-template-columns: repeat(2, 1fr); }
+.rp-grid-preview--cols-3 { grid-template-columns: repeat(3, 1fr); }
+.rp-grid-preview--cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ==========================================================================
+   Search Block Preview
+   ========================================================================== */
+
+.rp-search-preview {
+	padding: 1.5rem;
+	background: #f8f9fa;
+	border-radius: 4px;
+}
+
+.rp-search-preview__row {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.rp-search-preview__field {
+	flex: 1;
+}
+
+.rp-search-preview__label {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 12px;
+	font-weight: 500;
+	color: #666;
+}
+
+.rp-search-preview__input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+	background: #fff;
+}
+
+.rp-search-preview__button {
+	padding: 8px 24px;
+	background: var(--rp-primary-color, #2271b1);
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+/* ==========================================================================
+   Count Block Preview
+   ========================================================================== */
+
+.rp-count-preview {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	background: #f0f6fc;
+	border-radius: 4px;
+	font-size: 14px;
+	color: #2271b1;
+}
+
+.rp-count-preview__number {
+	font-size: 24px;
+	font-weight: 700;
+}
+
+/* ==========================================================================
+   Form Block Preview
+   ========================================================================== */
+
+.rp-form-preview {
+	padding: 1.5rem;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+}
+
+.rp-form-preview__title {
+	margin: 0 0 1rem;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.rp-form-preview__fields {
+	display: grid;
+	gap: 1rem;
+}
+
+.rp-form-preview__field-row {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+}
+
+/* ==========================================================================
+   AI Job Finder Preview
+   ========================================================================== */
+
+.rp-ai-finder-preview {
+	padding: 2rem;
+	background: linear-gradient(135deg, #f8f4ff 0%, #fff 100%);
+	border: 2px solid #9b59b6;
+	border-radius: 8px;
+	text-align: center;
+}
+
+.rp-ai-finder-preview__icon {
+	margin-bottom: 1rem;
+}
+
+.rp-ai-finder-preview__icon .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	color: #9b59b6;
+}
+
+.rp-ai-finder-preview__title {
+	margin: 0 0 0.5rem;
+	font-size: 20px;
+	font-weight: 600;
+	color: #333;
+}
+
+.rp-ai-finder-preview__description {
+	margin: 0;
+	font-size: 14px;
+	color: #666;
+}

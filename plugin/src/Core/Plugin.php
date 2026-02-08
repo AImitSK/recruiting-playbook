@@ -45,6 +45,7 @@ use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
+use RecruitingPlaybook\Blocks\BlockLoader;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -93,6 +94,9 @@ final class Plugin {
 		if ( ! is_admin() ) {
 			$this->initFrontend();
 		}
+
+		// Gutenberg Blocks (Pro-Feature).
+		$this->initBlocks();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -312,6 +316,17 @@ final class Plugin {
 		add_action( 'init', [ $job_category, 'register' ] );
 		add_action( 'init', [ $job_location, 'register' ] );
 		add_action( 'init', [ $employment_type, 'register' ] );
+	}
+
+	/**
+	 * Gutenberg Blocks initialisieren
+	 *
+	 * Pro-Feature: Registriert native WordPress-Blöcke für den Block-Editor.
+	 * Blocks werden nur geladen wenn Pro-Lizenz aktiv ist.
+	 */
+	private function initBlocks(): void {
+		$block_loader = new BlockLoader();
+		$block_loader->register();
 	}
 
 	/**
