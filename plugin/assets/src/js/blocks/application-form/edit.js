@@ -104,7 +104,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_application_form]"
-					docSlug="blocks/application-form"
+					docAnchor="bewerbungsformular"
 				/>
 			</div>
 		</>

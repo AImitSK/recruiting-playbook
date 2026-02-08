@@ -100,7 +100,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_featured_jobs]"
-					docSlug="blocks/featured-jobs"
+					docAnchor="featured-jobs"
 				/>
 			</div>
 		</>

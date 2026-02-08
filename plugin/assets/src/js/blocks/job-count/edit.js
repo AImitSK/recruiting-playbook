@@ -105,7 +105,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_job_count]"
-					docSlug="blocks/job-count"
+					docAnchor="stellen-zaehler"
 				/>
 			</div>
 		</>

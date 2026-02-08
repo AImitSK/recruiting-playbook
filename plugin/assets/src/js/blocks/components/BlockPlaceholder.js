@@ -45,10 +45,11 @@ export function BlockPlaceholder( {
 	label,
 	summary,
 	helpText,
-	docSlug = 'blocks',
+	docAnchor = '',
 	shortcode = '',
 } ) {
-	const docUrl = `https://developer.recruiting-playbook.de/docs/${ docSlug }`;
+	const baseUrl = 'https://developer.recruiting-playbook.de/docs/gutenberg-blocks';
+	const docUrl = docAnchor ? `${ baseUrl }#${ docAnchor }` : baseUrl;
 
 	return (
 		<Placeholder

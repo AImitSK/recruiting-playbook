@@ -133,7 +133,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_job_search]"
-					docSlug="blocks/job-search"
+					docAnchor="stellensuche"
 				/>
 			</div>
 		</>
