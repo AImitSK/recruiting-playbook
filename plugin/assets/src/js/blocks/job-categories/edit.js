@@ -11,8 +11,9 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
+
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Job Categories block.
@@ -123,18 +124,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="category"
+				<BlockPlaceholder
 					label={ __( 'Job-Kategorien', 'recruiting-playbook' ) }
-					instructions={ getSummary() }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Zeigt alle Job-Kategorien als Karten an.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ getSummary() }
+					helpText={ __(
+						'Zeigt alle Job-Kategorien als Karten an.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_job_categories]"
+					docSlug="blocks/job-categories"
+				/>
 			</div>
 		</>
 	);

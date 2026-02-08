@@ -11,10 +11,10 @@ import {
 	RangeControl,
 	TextControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
 
 import { ColumnsControl } from '../components/ColumnsControl';
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Featured Jobs block.
@@ -92,18 +92,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="star-filled"
+				<BlockPlaceholder
 					label={ __( 'Featured Jobs', 'recruiting-playbook' ) }
-					instructions={ getSummary() }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Zeigt hervorgehobene Stellen an.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ getSummary() }
+					helpText={ __(
+						'Zeigt hervorgehobene Stellen an.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_featured_jobs]"
+					docSlug="blocks/featured-jobs"
+				/>
 			</div>
 		</>
 	);

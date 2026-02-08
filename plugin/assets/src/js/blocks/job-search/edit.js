@@ -10,10 +10,10 @@ import {
 	PanelBody,
 	RangeControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
 
 import { ColumnsControl } from '../components/ColumnsControl';
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Job Search block.
@@ -125,18 +125,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="search"
+				<BlockPlaceholder
 					label={ __( 'Stellensuche', 'recruiting-playbook' ) }
-					instructions={ `${ __( 'Filter:', 'recruiting-playbook' ) } ${ getFilterSummary() }` }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Suchformular mit Filtern und Ergebnisliste.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ `${ __( 'Filter:', 'recruiting-playbook' ) } ${ getFilterSummary() }` }
+					helpText={ __(
+						'Suchformular mit Filtern und Ergebnisliste.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_job_search]"
+					docSlug="blocks/job-search"
+				/>
 			</div>
 		</>
 	);

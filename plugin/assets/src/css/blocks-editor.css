@@ -592,3 +592,72 @@
 	margin: 0;
 	font-size: 13px;
 }
+
+/* ==========================================================================
+   Block Placeholder (RP-styled)
+   ========================================================================== */
+
+.rp-block-placeholder {
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.rp-block-placeholder .components-placeholder__label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+}
+
+.rp-block-placeholder .rp-block-icon {
+	flex-shrink: 0;
+	border-radius: 4px;
+}
+
+.rp-block-placeholder .components-placeholder__instructions {
+	color: #666;
+	font-size: 13px;
+}
+
+.rp-block-placeholder .components-placeholder__learn-more {
+	margin: 0.5rem 0;
+	font-size: 13px;
+	color: #757575;
+}
+
+.rp-block-placeholder__shortcode {
+	margin: 0.5rem 0;
+}
+
+.rp-block-placeholder__shortcode code {
+	display: inline-block;
+	padding: 4px 8px;
+	background: #f0f0f0;
+	border-radius: 3px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 12px;
+	color: #333;
+}
+
+.rp-block-placeholder__link {
+	margin: 0.75rem 0 0;
+}
+
+.rp-block-placeholder__link a {
+	display: inline-flex;
+	align-items: center;
+	color: #2271b1;
+	text-decoration: none;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.rp-block-placeholder__link a:hover {
+	color: #135e96;
+	text-decoration: underline;
+}
+
+.rp-block-placeholder__link svg {
+	opacity: 0.8;
+}

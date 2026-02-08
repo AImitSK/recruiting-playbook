@@ -11,11 +11,11 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
 
 import { TaxonomySelect } from '../components/TaxonomySelect';
 import { ColumnsControl } from '../components/ColumnsControl';
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Jobs block.
@@ -183,18 +183,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="businessman"
+				<BlockPlaceholder
 					label={ __( 'Stellenliste', 'recruiting-playbook' ) }
-					instructions={ getSummary() }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Konfiguriere die Anzeige in der Seitenleiste.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ getSummary() }
+					helpText={ __(
+						'Konfiguriere die Anzeige in der Seitenleiste.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_jobs]"
+					docSlug="blocks/jobs"
+				/>
 			</div>
 		</>
 	);

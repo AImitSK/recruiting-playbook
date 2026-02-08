@@ -10,8 +10,9 @@ import {
 	PanelBody,
 	TextControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
+
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Application Form block.
@@ -95,18 +96,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="clipboard"
+				<BlockPlaceholder
 					label={ __( 'Bewerbungsformular', 'recruiting-playbook' ) }
-					instructions={ getDescription() }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Das Formular wird im Frontend angezeigt.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ getDescription() }
+					helpText={ __(
+						'Das Formular wird im Frontend angezeigt.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_application_form]"
+					docSlug="blocks/application-form"
+				/>
 			</div>
 		</>
 	);

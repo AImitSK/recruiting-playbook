@@ -11,11 +11,11 @@ import {
 	RangeControl,
 	TextControl,
 	ToggleControl,
-	Placeholder,
 } from '@wordpress/components';
 
 import { TaxonomySelect } from '../components/TaxonomySelect';
 import { ColumnsControl } from '../components/ColumnsControl';
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Latest Jobs block.
@@ -110,18 +110,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="clock"
+				<BlockPlaceholder
 					label={ __( 'Neueste Stellen', 'recruiting-playbook' ) }
-					instructions={ getSummary() }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Zeigt die neuesten Stellenanzeigen an.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ getSummary() }
+					helpText={ __(
+						'Zeigt die neuesten Stellenanzeigen an.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_latest_jobs]"
+					docSlug="blocks/latest-jobs"
+				/>
 			</div>
 		</>
 	);

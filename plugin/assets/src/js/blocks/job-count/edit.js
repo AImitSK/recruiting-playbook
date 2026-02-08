@@ -6,9 +6,10 @@
 
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, Placeholder } from '@wordpress/components';
+import { PanelBody, TextControl } from '@wordpress/components';
 
 import { TaxonomySelect } from '../components/TaxonomySelect';
+import { BlockPlaceholder } from '../components/BlockPlaceholder';
 
 /**
  * Edit component for the Job Count block.
@@ -96,18 +97,16 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Placeholder
-					icon="chart-bar"
+				<BlockPlaceholder
 					label={ __( 'Stellen-Zähler', 'recruiting-playbook' ) }
-					instructions={ format }
-				>
-					<p className="components-placeholder__learn-more">
-						{ __(
-							'Zeigt die Anzahl offener Stellen an.',
-							'recruiting-playbook'
-						) }
-					</p>
-				</Placeholder>
+					summary={ format }
+					helpText={ __(
+						'Zeigt die Anzahl offener Stellen an.',
+						'recruiting-playbook'
+					) }
+					shortcode="[rp_job_count]"
+					docSlug="blocks/job-count"
+				/>
 			</div>
 		</>
 	);
