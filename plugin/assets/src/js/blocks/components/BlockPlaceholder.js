@@ -9,47 +9,23 @@
 import { __ } from '@wordpress/i18n';
 import { Placeholder } from '@wordpress/components';
 
+/* global rpBlocksConfig */
+
 /**
  * RP Logo Icon Component
  *
- * SVG version of the Recruiting Playbook logo.
+ * Uses the PNG logo from plugin assets.
  *
  * @return {JSX.Element} The RP icon.
  */
 const RPIcon = () => (
-	<svg
+	<img
+		src={ `${ rpBlocksConfig.pluginUrl }assets/images/rp-icon.png` }
+		alt="RP"
 		width="24"
 		height="24"
-		viewBox="0 0 512 512"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
 		className="rp-block-icon"
-	>
-		<defs>
-			<linearGradient
-				id="rp-gradient"
-				x1="0%"
-				y1="100%"
-				x2="100%"
-				y2="0%"
-			>
-				<stop offset="0%" stopColor="#10B981" />
-				<stop offset="100%" stopColor="#3B82F6" />
-			</linearGradient>
-		</defs>
-		<path
-			d="M0 32C0 14.3 14.3 0 32 0h448c17.7 0 32 14.3 32 32v384c0 17.7-14.3 32-32 32H384l128 64V32H0v448l128-64H32c-17.7 0-32-14.3-32-32V32z"
-			fill="url(#rp-gradient)"
-		/>
-		<path
-			d="M96 96h96c53 0 96 43 96 96s-43 96-96 96h-32v64H96V96zm64 128h32c17.7 0 32-14.3 32-32s-14.3-32-32-32h-32v64z"
-			fill="white"
-		/>
-		<path
-			d="M320 96h96c53 0 96 43 96 96s-43 96-96 96h-32v64h-64V96zm64 128h32c17.7 0 32-14.3 32-32s-14.3-32-32-32h-32v64z"
-			fill="white"
-		/>
-	</svg>
+	/>
 );
 
 /**
