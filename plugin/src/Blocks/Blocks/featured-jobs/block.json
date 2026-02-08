@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/featured-jobs",
+	"version": "1.0.0",
+	"title": "Featured Jobs",
+	"category": "recruiting-playbook",
+	"description": "Zeigt hervorgehobene Stellenanzeigen an.",
+	"keywords": ["featured", "highlight", "top", "jobs", "stellen"],
+	"textdomain": "recruiting-playbook",
+	"icon": "star-filled",
+	"attributes": {
+		"limit": {
+			"type": "number",
+			"default": 3
+		},
+		"columns": {
+			"type": "number",
+			"default": 3
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"showExcerpt": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

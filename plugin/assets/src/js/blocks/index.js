@@ -16,9 +16,9 @@ import './job-search';
 import './job-count';
 
 // Phase 3: Additional blocks
-// import './featured-jobs';
-// import './latest-jobs';
-// import './job-categories';
+import './featured-jobs';
+import './latest-jobs';
+import './job-categories';
 
 // Phase 4: Form & AI blocks
 // import './application-form';

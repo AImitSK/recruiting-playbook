@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/latest-jobs",
+	"version": "1.0.0",
+	"title": "Neueste Stellen",
+	"category": "recruiting-playbook",
+	"description": "Zeigt die neuesten Stellenanzeigen an.",
+	"keywords": ["latest", "recent", "neu", "aktuell", "jobs", "stellen"],
+	"textdomain": "recruiting-playbook",
+	"icon": "clock",
+	"attributes": {
+		"limit": {
+			"type": "number",
+			"default": 5
+		},
+		"columns": {
+			"type": "number",
+			"default": 1
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"category": {
+			"type": "string",
+			"default": ""
+		},
+		"showExcerpt": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}
