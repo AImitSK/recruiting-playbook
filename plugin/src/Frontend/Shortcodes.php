@@ -25,6 +25,11 @@ use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\FormRenderService;
 use RecruitingPlaybook\Repositories\FormConfigRepository;
 use RecruitingPlaybook\Frontend\Shortcodes\JobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobSearchShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCountShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\FeaturedJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\LatestJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
 
 /**
  * Shortcode-Handler
@@ -71,13 +76,13 @@ class Shortcodes {
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
-		// Job-Listen Shortcodes.
-		( new JobsShortcode() )->register(); // Neuer modularer Shortcode.
-		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
-		add_shortcode( 'rp_job_count', [ $this, 'renderJobCount' ] );
-		add_shortcode( 'rp_featured_jobs', [ $this, 'renderFeaturedJobs' ] );
-		add_shortcode( 'rp_latest_jobs', [ $this, 'renderLatestJobs' ] );
-		add_shortcode( 'rp_job_categories', [ $this, 'renderJobCategories' ] );
+		// Job-Listen Shortcodes (modulare Klassen).
+		( new JobsShortcode() )->register();
+		( new JobSearchShortcode() )->register();
+		( new JobCountShortcode() )->register();
+		( new FeaturedJobsShortcode() )->register();
+		( new LatestJobsShortcode() )->register();
+		( new JobCategoriesShortcode() )->register();
 
 		// Bewerbungsformular Shortcodes.
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );

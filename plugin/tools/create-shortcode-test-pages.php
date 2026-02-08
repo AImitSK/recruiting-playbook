@@ -542,31 +542,41 @@ $test_pages = [
 <h3>Ohne job_id (Fehlermeldung erwartet)</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_application_form]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Mit job_id</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_application_form job_id="REPLACE_WITH_JOB_ID"]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Mit custom title</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_application_form job_id="REPLACE_WITH_JOB_ID" title="Ihre Bewerbung für diese Stelle"]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Ohne Stellentitel</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_application_form job_id="REPLACE_WITH_JOB_ID" show_job_title="false"]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Ohne Fortschrittsanzeige</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_application_form job_id="REPLACE_WITH_JOB_ID" show_progress="false"]
+<!-- /wp:shortcode -->
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
@@ -614,19 +624,25 @@ $test_pages = [
 <h3>Standard</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_ai_job_finder]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Mit custom title</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_ai_job_finder title="Welcher Job passt zu dir?"]
+<!-- /wp:shortcode -->
 
 <!-- wp:heading {"level":3} -->
 <h3>Max 3 Vorschläge</h3>
 <!-- /wp:heading -->
 
+<!-- wp:shortcode -->
 [rp_ai_job_finder limit="3"]
+<!-- /wp:shortcode -->
 
 <!-- wp:separator -->
 <hr class="wp-block-separator"/>
