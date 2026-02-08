@@ -931,6 +931,14 @@
         color: var(--rp-badge-new-text, #166534);
     }
 
+    .rp-plugin .rp-badge-featured {
+        background-color: var(--rp-badge-featured-bg, #fef3c7);
+        color: var(--rp-badge-featured-text, #92400e);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
     .rp-plugin .rp-badge-remote {
         background-color: var(--rp-badge-remote-bg, #ede9fe);
         color: var(--rp-badge-remote-text, #7c3aed);

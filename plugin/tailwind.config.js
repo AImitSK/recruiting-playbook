@@ -23,14 +23,34 @@ module.exports = {
         'rp-card--compact',
         'rp-card--standard',
         'rp-card--spacious',
-        // Grid Columns (dynamisch generiert)
+        // Grid Columns (dynamisch generiert via columns Attribut)
+        'rp-grid',
         'rp-grid-cols-1',
+        'rp-grid-cols-2',
+        'rp-grid-cols-3',
+        'rp-grid-cols-4',
+        'rp-grid-cols-5',
+        'rp-grid-cols-6',
+        // Responsive Grid (sm, md, lg breakpoints)
+        'sm:rp-grid-cols-2',
+        'sm:rp-grid-cols-3',
+        'sm:rp-grid-cols-4',
         'md:rp-grid-cols-2',
+        'md:rp-grid-cols-3',
+        'md:rp-grid-cols-4',
+        'md:rp-grid-cols-5',
+        'md:rp-grid-cols-6',
+        'lg:rp-grid-cols-2',
         'lg:rp-grid-cols-3',
         'lg:rp-grid-cols-4',
+        'lg:rp-grid-cols-5',
+        'lg:rp-grid-cols-6',
         // List Layout
         'rp-flex',
         'rp-flex-col',
+        // Gap utilities
+        'rp-gap-4',
+        'rp-gap-6',
     ],
 
     theme: {

@@ -103,7 +103,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_jobs] - Job-Liste</h2>
+<h2>[[rp_jobs]] - Job-Liste</h2>
 <!-- /wp:heading -->
 
 <!-- wp:heading {"level":3} -->
@@ -194,7 +194,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_job_search] - Suchformular</h2>
+<h2>[[rp_job_search]] - Suchformular</h2>
 <!-- /wp:heading -->
 
 <!-- wp:heading {"level":3} -->
@@ -264,7 +264,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_job_count] - Stellen-Zähler</h2>
+<h2>[[rp_job_count]] - Stellen-Zähler</h2>
 <!-- /wp:heading -->
 
 <!-- wp:heading {"level":3} -->
@@ -288,7 +288,7 @@ $test_pages = [
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>[rp_job_count format="Entdecken Sie {count} Karrieremöglichkeiten"]</p>
+<p>Ergebnis: [rp_job_count format="Entdecken Sie {count} Karrieremöglichkeiten"]</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -296,7 +296,7 @@ $test_pages = [
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>[rp_job_count singular="{count} offene Stelle" format="{count} offene Stellen"]</p>
+<p>Ergebnis: [rp_job_count singular="{count} offene Stelle" format="{count} offene Stellen"]</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -304,7 +304,7 @@ $test_pages = [
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>[rp_job_count zero="Aktuell keine offenen Stellen - schauen Sie bald wieder vorbei!"]</p>
+<p>Ergebnis: [rp_job_count zero="Aktuell keine offenen Stellen - schauen Sie bald wieder vorbei!"]</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -343,7 +343,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_featured_jobs] - Hervorgehobene Stellen</h2>
+<h2>[[rp_featured_jobs]] - Hervorgehobene Stellen</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"backgroundColor":"pale-pink"} -->
@@ -402,7 +402,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_latest_jobs] - Neueste Stellen</h2>
+<h2>[[rp_latest_jobs]] - Neueste Stellen</h2>
 <!-- /wp:heading -->
 
 <!-- wp:heading {"level":3} -->
@@ -463,7 +463,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_job_categories] - Kategorie-Übersicht</h2>
+<h2>[[rp_job_categories]] - Kategorie-Übersicht</h2>
 <!-- /wp:heading -->
 
 <!-- wp:heading {"level":3} -->
@@ -531,7 +531,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_application_form] - Bewerbungsformular</h2>
+<h2>[[rp_application_form]] - Bewerbungsformular</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"backgroundColor":"pale-cyan-blue"} -->
@@ -603,7 +603,7 @@ $test_pages = [
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>[rp_ai_job_finder] - KI-Job-Finder</h2>
+<h2>[[rp_ai_job_finder]] - KI-Job-Finder</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"backgroundColor":"pale-cyan-blue"} -->

@@ -24,6 +24,7 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\FormRenderService;
 use RecruitingPlaybook\Repositories\FormConfigRepository;
+use RecruitingPlaybook\Frontend\Shortcodes\JobsShortcode;
 
 /**
  * Shortcode-Handler
@@ -71,7 +72,7 @@ class Shortcodes {
 	 */
 	public function register(): void {
 		// Job-Listen Shortcodes.
-		add_shortcode( 'rp_jobs', [ $this, 'renderJobList' ] );
+		( new JobsShortcode() )->register(); // Neuer modularer Shortcode.
 		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
 		add_shortcode( 'rp_job_count', [ $this, 'renderJobCount' ] );
 		add_shortcode( 'rp_featured_jobs', [ $this, 'renderFeaturedJobs' ] );
@@ -159,7 +160,7 @@ class Shortcodes {
 				'featured'     => '',
 				'orderby'      => 'date',
 				'order'        => 'DESC',
-				'columns'      => 1,
+				'columns'      => '',  // Leer = aus Design-Einstellungen.
 				'show_excerpt' => 'true',
 			],
 			$atts,
@@ -227,99 +228,65 @@ class Shortcodes {
 			</div>';
 		}
 
-		$columns      = max( 1, min( 4, absint( $atts['columns'] ) ) );
+		// Design-Einstellungen laden (identisch mit archive-job_listing.php).
+		$design_settings = get_option( 'rp_design_settings', [] );
+
+		// Card-Preset.
+		$card_preset = $design_settings['card_layout_preset'] ?? 'standard';
+		$card_class  = 'rp-card rp-card--' . esc_attr( $card_preset );
+
+		// Job-Liste Settings.
+		$job_list_layout      = $design_settings['job_list_layout'] ?? 'grid';
+		$job_list_columns     = (int) ( $design_settings['job_list_columns'] ?? 2 );
+		$show_badges          = $design_settings['show_badges'] ?? true;
+		$show_location        = $design_settings['show_location'] ?? true;
+		$show_employment_type = $design_settings['show_employment_type'] ?? true;
+		$show_salary          = $design_settings['show_salary'] ?? true;
+		$show_deadline        = $design_settings['show_deadline'] ?? false;
+
+		// Shortcode-Attribut überschreibt Design-Einstellung für Spalten.
+		if ( '' !== $atts['columns'] ) {
+			$job_list_columns = max( 1, min( 4, absint( $atts['columns'] ) ) );
+		}
 		$show_excerpt = filter_var( $atts['show_excerpt'], FILTER_VALIDATE_BOOLEAN );
 
-		// Grid-Klasse basierend auf Spaltenanzahl
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
+		// Grid-Klassen basierend auf Spaltenanzahl (identisch mit archive-job_listing.php).
+		$grid_classes = 'rp-mt-6 rp-gap-6';
+		if ( 'list' === $job_list_layout ) {
+			$grid_classes .= ' rp-flex rp-flex-col';
+		} else {
+			$grid_classes .= ' rp-grid rp-grid-cols-1';
+			switch ( $job_list_columns ) {
+				case 2:
+					$grid_classes .= ' md:rp-grid-cols-2';
+					break;
+				case 3:
+					$grid_classes .= ' md:rp-grid-cols-2 lg:rp-grid-cols-3';
+					break;
+				case 4:
+					$grid_classes .= ' md:rp-grid-cols-2 lg:rp-grid-cols-4';
+					break;
+			}
 		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
-		}
+
+		// Cache-Priming wie im Archive-Template.
+		$job_ids = wp_list_pluck( $query->posts, 'ID' );
+		update_meta_cache( 'post', $job_ids );
+		update_object_term_cache( $job_ids, 'job_listing' );
 
 		ob_start();
 		?>
 		<div class="rp-plugin">
-			<div class="<?php echo esc_attr( $grid_class ); ?>">
+			<div class="<?php echo esc_attr( $grid_classes ); ?>">
 				<?php
 				while ( $query->have_posts() ) :
 					$query->the_post();
-					$locations  = get_the_terms( get_the_ID(), 'job_location' );
-					$types      = get_the_terms( get_the_ID(), 'employment_type' );
-					$categories = get_the_terms( get_the_ID(), 'job_category' );
-					$remote     = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-					?>
-					<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
-						<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
-							<span class="rp-sr-only"><?php the_title(); ?></span>
-						</a>
 
-						<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs">
-							<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="rp-text-gray-500">
-								<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
-							</time>
+					// Job-Card Partial einbinden (identisch mit archive-job_listing.php).
+					include RP_PLUGIN_DIR . 'templates/partials/job-card.php';
 
-							<?php if ( $categories && ! is_wp_error( $categories ) ) : ?>
-								<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
-									<?php echo esc_html( $categories[0]->name ); ?>
-								</span>
-							<?php endif; ?>
-						</div>
-
-						<div>
-							<h3 class="rp-mt-3 rp-text-lg rp-leading-6 rp-font-semibold rp-text-gray-900">
-								<?php the_title(); ?>
-							</h3>
-
-							<?php if ( $show_excerpt && has_excerpt() ) : ?>
-								<p class="rp-mt-5 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-									<?php echo esc_html( wp_trim_words( get_the_excerpt(), 30, '...' ) ); ?>
-								</p>
-							<?php endif; ?>
-						</div>
-
-						<div class="rp-relative rp-mt-8 rp-flex rp-items-center rp-justify-between rp-text-xs">
-							<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-								<?php if ( $locations && ! is_wp_error( $locations ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-										</svg>
-										<?php echo esc_html( $locations[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $types && ! is_wp_error( $types ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-										</svg>
-										<?php echo esc_html( $types[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $remote && 'no' !== $remote ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-										</svg>
-										<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
-									</span>
-								<?php endif; ?>
-							</div>
-
-							<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
-								<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
-							</a>
-						</div>
-					</article>
-				<?php endwhile; ?>
+				endwhile;
+				?>
 			</div>
 		</div>
 		<?php
@@ -617,6 +584,21 @@ class Shortcodes {
 		$columns       = max( 1, min( 4, absint( $atts['columns'] ) ) );
 		$per_page      = absint( $atts['limit'] );
 
+		// Design-Einstellungen laden (identisch mit archive-job_listing.php).
+		$design_settings = get_option( 'rp_design_settings', [] );
+
+		// Card-Preset.
+		$card_preset = $design_settings['card_layout_preset'] ?? 'standard';
+		$card_class  = 'rp-card rp-card--' . esc_attr( $card_preset );
+
+		// Job-Liste Settings.
+		$job_list_layout          = $design_settings['job_list_layout'] ?? 'grid';
+		$design_show_badges       = $design_settings['show_badges'] ?? true;
+		$design_show_location     = $design_settings['show_location'] ?? true;
+		$design_show_employment   = $design_settings['show_employment_type'] ?? true;
+		$design_show_salary       = $design_settings['show_salary'] ?? true;
+		$design_show_deadline     = $design_settings['show_deadline'] ?? false;
+
 		// Filter-Werte aus GET-Parametern.
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only search form
 		$search   = isset( $_GET['rp_search'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_search'] ) ) : '';
@@ -694,16 +676,30 @@ class Shortcodes {
 
 		$query = new \WP_Query( $args );
 
-		// Grid-Klasse
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
+		// Grid-Klassen basierend auf Spaltenanzahl (identisch mit archive-job_listing.php).
+		$grid_classes = 'rp-mt-6 rp-gap-6';
+		if ( 'list' === $job_list_layout ) {
+			$grid_classes .= ' rp-flex rp-flex-col';
+		} else {
+			$grid_classes .= ' rp-grid rp-grid-cols-1';
+			switch ( $columns ) {
+				case 2:
+					$grid_classes .= ' md:rp-grid-cols-2';
+					break;
+				case 3:
+					$grid_classes .= ' md:rp-grid-cols-2 lg:rp-grid-cols-3';
+					break;
+				case 4:
+					$grid_classes .= ' md:rp-grid-cols-2 lg:rp-grid-cols-4';
+					break;
+			}
 		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
+
+		// Cache-Priming.
+		if ( $query->have_posts() ) {
+			$job_ids = wp_list_pluck( $query->posts, 'ID' );
+			update_meta_cache( 'post', $job_ids );
+			update_object_term_cache( $job_ids, 'job_listing' );
 		}
 
 		ob_start();
@@ -793,17 +789,13 @@ class Shortcodes {
 
 			<!-- Ergebnisse -->
 			<?php if ( $query->have_posts() ) : ?>
-				<div class="<?php echo esc_attr( $grid_class ); ?>">
+				<div class="<?php echo esc_attr( $grid_classes ); ?>">
 					<?php
 					while ( $query->have_posts() ) :
 						$query->the_post();
-						$job_locations = get_the_terms( get_the_ID(), 'job_location' );
-						$job_types     = get_the_terms( get_the_ID(), 'employment_type' );
-						$job_cats      = get_the_terms( get_the_ID(), 'job_category' );
-						$remote        = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-						$deadline      = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
 						?>
-						<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
+						<article class="<?php echo esc_attr( $card_class ); ?> rp-relative rp-transition-all hover:rp-shadow-lg">
+
 							<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
 								<span class="rp-sr-only"><?php the_title(); ?></span>
 							</a>
@@ -813,8 +805,12 @@ class Shortcodes {
 									<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
 								</time>
 
-								<?php if ( $job_cats && ! is_wp_error( $job_cats ) ) : ?>
-									<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
+								<?php
+								// Kategorie Badge.
+								$job_cats = get_the_terms( get_the_ID(), 'job_category' );
+								if ( $job_cats && ! is_wp_error( $job_cats ) ) :
+									?>
+									<span class="rp-badge rp-badge-gray rp-relative rp-z-10 hover:rp-bg-gray-200">
 										<?php echo esc_html( $job_cats[0]->name ); ?>
 									</span>
 								<?php endif; ?>
@@ -825,29 +821,23 @@ class Shortcodes {
 									<?php the_title(); ?>
 								</h3>
 
-								<?php if ( $deadline ) : ?>
-									<p class="rp-mt-2 rp-text-xs rp-text-gray-400">
-										<?php
-										printf(
-											/* translators: %s: Application deadline date */
-											esc_html__( 'Bewerbungsfrist: %s', 'recruiting-playbook' ),
-											esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) )
-										);
-										?>
-									</p>
-								<?php endif; ?>
-
 								<?php if ( has_excerpt() ) : ?>
-									<p class="rp-mt-4 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-										<?php echo esc_html( wp_trim_words( get_the_excerpt(), 25, '...' ) ); ?>
+									<p class="rp-mt-5 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
+										<?php echo esc_html( wp_trim_words( get_the_excerpt(), 30, '...' ) ); ?>
 									</p>
 								<?php endif; ?>
 							</div>
 
-							<div class="rp-relative rp-mt-6 rp-flex rp-items-center rp-justify-between rp-text-xs">
-								<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-									<?php if ( $job_locations && ! is_wp_error( $job_locations ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
+							<!-- Tags -->
+							<?php if ( $design_show_badges ) : ?>
+							<div class="rp-relative rp-mt-4 rp-flex rp-flex-wrap rp-items-center rp-gap-2 rp-text-xs">
+								<?php
+								// Standort.
+								if ( $design_show_location ) :
+									$job_locations = get_the_terms( get_the_ID(), 'job_location' );
+									if ( $job_locations && ! is_wp_error( $job_locations ) ) :
+										?>
+										<span class="rp-badge rp-badge-gray rp-badge-location">
 											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -855,30 +845,93 @@ class Shortcodes {
 											<?php echo esc_html( $job_locations[0]->name ); ?>
 										</span>
 									<?php endif; ?>
+								<?php endif; ?>
 
-									<?php if ( $job_types && ! is_wp_error( $job_types ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
+								<?php
+								// Beschäftigungsart.
+								if ( $design_show_employment ) :
+									$job_types = get_the_terms( get_the_ID(), 'employment_type' );
+									if ( $job_types && ! is_wp_error( $job_types ) ) :
+										?>
+										<span class="rp-badge rp-badge-gray rp-badge-employment">
 											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
 											</svg>
 											<?php echo esc_html( $job_types[0]->name ); ?>
 										</span>
 									<?php endif; ?>
+								<?php endif; ?>
 
-									<?php if ( $remote && 'no' !== $remote ) : ?>
-										<span class="rp-badge rp-badge-gray">
+								<?php
+								// Remote.
+								$remote = get_post_meta( get_the_ID(), '_rp_remote_option', true );
+								if ( $remote && 'no' !== $remote ) :
+									$remote_labels = [
+										'hybrid' => __( 'Hybrid', 'recruiting-playbook' ),
+										'full'   => __( 'Remote', 'recruiting-playbook' ),
+									];
+									?>
+									<span class="rp-badge rp-badge-gray rp-badge-remote">
+										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+										</svg>
+										<?php echo esc_html( $remote_labels[ $remote ] ?? $remote ); ?>
+									</span>
+								<?php endif; ?>
+
+								<?php
+								// Gehalt.
+								if ( $design_show_salary ) :
+									$salary = get_post_meta( get_the_ID(), '_rp_salary_range', true );
+									if ( $salary ) :
+										?>
+										<span class="rp-badge rp-badge-salary">
 											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
 											</svg>
-											<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
+											<?php echo esc_html( $salary ); ?>
 										</span>
 									<?php endif; ?>
-								</div>
+								<?php endif; ?>
 
+								<?php
+								// Bewerbungsfrist.
+								if ( $design_show_deadline ) :
+									$deadline = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
+									if ( $deadline ) :
+										?>
+										<span class="rp-badge rp-badge-gray rp-badge-deadline">
+											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+											</svg>
+											<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) ); ?>
+										</span>
+									<?php endif; ?>
+								<?php endif; ?>
+							</div>
+							<?php endif; ?>
+
+							<!-- Buttons -->
+							<div class="rp-card-buttons rp-relative rp-mt-4 rp-flex rp-flex-wrap rp-gap-2" x-data>
 								<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
 									<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
 								</a>
+
+								<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+									<div class="rp-relative rp-z-20" @click.stop>
+										<?php
+										echo do_shortcode(
+											sprintf(
+												'[rp_ai_job_match job_id="%d" title="%s" style="outline"]',
+												get_the_ID(),
+												esc_attr__( 'Passe ich zu diesem Job?', 'recruiting-playbook' )
+											)
+										);
+										?>
+									</div>
+								<?php endif; ?>
 							</div>
+
 						</article>
 					<?php endwhile; ?>
 				</div>
