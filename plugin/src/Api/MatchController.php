@@ -620,15 +620,16 @@ class MatchController extends WP_REST_Controller {
 			'Was wir erwarten',
 		];
 
-		$pattern = '<h[2-4][^>]*>\s*(?:' . implode( '|', array_map( 'preg_quote', $headings ) ) . ')\s*</h[2-4]>';
+		$escaped  = array_map( static function ( $h ) { return preg_quote( $h, '#' ); }, $headings );
+		$pattern  = '<h[2-4][^>]*>\s*(?:' . implode( '|', $escaped ) . ')\s*</h[2-4]>';
 
 		// Abschnitt nach der passenden Überschrift bis zur nächsten Überschrift finden.
-		if ( ! preg_match( '/' . $pattern . '\s*(.*?)(?=<h[2-4]|$)/is', $content, $match ) ) {
+		if ( ! preg_match( '#' . $pattern . '\s*(.*?)(?=<h[2-4]|$)#is', $content, $match ) ) {
 			return [];
 		}
 
 		// Listeneinträge (<li>) extrahieren.
-		if ( ! preg_match_all( '/<li[^>]*>(.*?)<\/li>/is', $match[1], $items ) ) {
+		if ( ! preg_match_all( '#<li[^>]*>(.*?)</li>#is', $match[1], $items ) ) {
 			return [];
 		}
 
