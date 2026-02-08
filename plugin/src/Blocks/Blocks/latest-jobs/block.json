@@ -42,6 +42,12 @@
 			"background": true
 		}
 	},
+	"example": {
+		"attributes": {
+			"limit": 5,
+			"columns": 1
+		}
+	},
 	"editorScript": "file:../../../../assets/dist/js/blocks.js",
 	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
 	"render": "file:./render.php"

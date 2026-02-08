@@ -46,6 +46,14 @@
 			"background": true
 		}
 	},
+	"example": {
+		"attributes": {
+			"showSearch": true,
+			"showCategory": true,
+			"showLocation": true,
+			"showType": false
+		}
+	},
 	"editorScript": "file:../../../../assets/dist/js/blocks.js",
 	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
 	"render": "file:./render.php"

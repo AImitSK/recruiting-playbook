@@ -31,6 +31,11 @@
 			"padding": true
 		}
 	},
+	"example": {
+		"attributes": {
+			"title": "Passe ich zu diesem Job?"
+		}
+	},
 	"editorScript": "file:../../../../assets/dist/js/blocks.js",
 	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
 	"render": "file:./render.php"
