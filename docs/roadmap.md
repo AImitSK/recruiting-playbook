@@ -414,11 +414,18 @@ Design & Branding │                   │
   - [ ] Export-Format
   - [ ] Dokumentation
 
-### M2.9: Page Builder Pro
+### M2.9: Page Builder Integration
 
-- [ ] Gutenberg Blocks (alle Elemente)
-- [ ] Elementor Widgets (alle Elemente)
-- [ ] Divi Modules (Basis)
+- [x] **Gutenberg Blocks (Free)** ✅
+  - [x] 9 native Blöcke (jobs, job-search, job-count, featured-jobs, latest-jobs, job-categories, application-form, ai-job-finder, ai-job-match)
+  - [x] Block-Kategorie "Recruiting Playbook"
+  - [x] InspectorControls für alle Attribute
+  - [x] Placeholder-Vorschau im Editor (statt ServerSideRender)
+  - [x] Block-Patterns (5 vorgefertigte Layouts)
+  - [x] Example-Attribute für Inserter-Vorschau
+  - [x] Dokumentation auf Website
+- [ ] Elementor Widgets (Pro) - alle Elemente
+- [ ] Divi Modules (Pro) - Basis
 
 ### M2.10: Lizenz-System & Launch
 

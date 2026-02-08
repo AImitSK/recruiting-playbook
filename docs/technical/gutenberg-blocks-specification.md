@@ -1,7 +1,10 @@
 # Gutenberg Blocks: Technische Spezifikation
 
-> **Pro-Feature: Native Gutenberg-Integration**
+> **Free-Feature: Native Gutenberg-Integration** ✅ IMPLEMENTIERT
 > Alle Recruiting Playbook Shortcodes als native WordPress-Blöcke für den Block-Editor
+>
+> **Status:** Vollständig implementiert (Februar 2026)
+> **Branch:** `feature/gutenberg-blocks` → merge in `feature/pro`
 
 ---
 
@@ -35,13 +38,17 @@ Native Gutenberg-Blöcke bieten:
 ### Feature-Gating
 
 ```php
-// Gutenberg Blocks sind Pro-Feature
-if ( ! rp_can( 'gutenberg_blocks' ) ) {
-    // Blöcke werden nicht registriert
-    // Shortcodes funktionieren weiterhin (Free)
-    return;
+// Gutenberg Blocks sind FREE - keine Lizenzprüfung nötig
+// Alle Nutzer können die Blöcke verwenden
+// Nur AI-Blöcke erfordern das AI-Addon
+
+private function canUseBlocks(): bool {
+    return true; // Free für alle
 }
 ```
+
+> **Hinweis:** Die Blöcke wurden von Pro auf Free geändert. Nur die Page Builder
+> Integrationen (Elementor, Divi, Avada) bleiben Pro-Features.
 
 ### Block-Übersicht
 
@@ -988,48 +995,62 @@ class JobsBlockTest extends TestCase {
 
 ## 11. Implementierungs-Reihenfolge
 
-### Phase 1: Basis-Infrastruktur
+### Phase 1: Basis-Infrastruktur ✅
 
-1. **BlockLoader.php** - Registrierung und Assets
-2. **Build-Setup** - @wordpress/scripts Konfiguration
-3. **Block-Kategorie** - "Recruiting Playbook"
-4. **Gemeinsame Komponenten** - TaxonomySelect, ColumnsControl
+1. ✅ **BlockLoader.php** - Registrierung und Assets
+2. ✅ **Build-Setup** - @wordpress/scripts Konfiguration
+3. ✅ **Block-Kategorie** - "Recruiting Playbook"
+4. ✅ **Gemeinsame Komponenten** - TaxonomySelect, ColumnsControl, BlockPlaceholder
 
-### Phase 2: Kern-Blöcke
+### Phase 2: Kern-Blöcke ✅
 
-5. **rp/jobs** - Stellenliste (Hauptblock)
-6. **rp/job-search** - Suche mit Filtern
-7. **rp/job-count** - Stellen-Zähler
+5. ✅ **rp/jobs** - Stellenliste (Hauptblock)
+6. ✅ **rp/job-search** - Suche mit Filtern
+7. ✅ **rp/job-count** - Stellen-Zähler
 
-### Phase 3: Ergänzende Blöcke
+### Phase 3: Ergänzende Blöcke ✅
 
-8. **rp/featured-jobs** - Hervorgehobene Stellen
-9. **rp/latest-jobs** - Neueste Stellen
-10. **rp/job-categories** - Kategorie-Übersicht
+8. ✅ **rp/featured-jobs** - Hervorgehobene Stellen
+9. ✅ **rp/latest-jobs** - Neueste Stellen
+10. ✅ **rp/job-categories** - Kategorie-Übersicht
 
-### Phase 4: Formular & AI
+### Phase 4: Formular & AI ✅
 
-11. **rp/application-form** - Bewerbungsformular
-12. **rp/ai-job-finder** - KI-Job-Finder
-13. **rp/ai-job-match** - KI-Job-Match
+11. ✅ **rp/application-form** - Bewerbungsformular
+12. ✅ **rp/ai-job-finder** - KI-Job-Finder
+13. ✅ **rp/ai-job-match** - KI-Job-Match
 
-### Phase 5: Polish
+### Phase 5: Polish ✅
 
-14. **Block-Patterns** - Vorgefertigte Layouts
-15. **Editor-Styles** - Konsistente Vorschau
-16. **Dokumentation** - Block-Referenz
+14. ✅ **Block-Patterns** - 5 vorgefertigte Layouts
+15. ✅ **Editor-Styles** - Placeholder-Vorschau (nicht ServerSideRender)
+16. ✅ **Dokumentation** - Website-Dokumentation + Spec aktualisiert
+
+### Phase 6: Code Review ✅
+
+17. ✅ **ESLint/Prettier** - WordPress Coding Standards
+18. ✅ **SVG-Icons** - Explizite Größenangaben
+19. ✅ **Block-Previews** - Example-Attribute für Inserter
 
 ---
 
-## Offene Fragen
+## Entscheidungen & Änderungen
 
-| Frage | Vorschlag |
-|-------|-----------|
-| Sollen Blöcke auch in Free verfügbar sein? | Nein, Gutenberg Blocks = Pro-Feature |
-| Wie mit Block-Transforms umgehen? | Shortcode → Block Transform anbieten |
-| Server-Side Render Caching? | Transients für häufig genutzte Queries |
-| Innerblocks für Job-Cards? | Nein, Server-Render ist konsistenter |
+| Frage | Entscheidung |
+|-------|--------------|
+| Sollen Blöcke auch in Free verfügbar sein? | ✅ **Ja** - Gutenberg Blocks sind FREE, nur Page Builder (Avada, Elementor, Divi) sind Pro |
+| Wie mit Block-Transforms umgehen? | Offen - kann später hinzugefügt werden |
+| Server-Side Render im Editor? | ✅ **Nein** - Placeholder-Komponente für bessere UX |
+| Innerblocks für Job-Cards? | ✅ **Nein** - Server-Render ist konsistenter |
+| Block-Inserter Vorschau? | ✅ **Ja** - Example-Attribute in block.json |
+
+### Implementierte Features (über Spezifikation hinaus)
+
+- **BlockPlaceholder-Komponente** mit RP-Icon und Dokumentations-Link
+- **Shortcode-Referenz** im Editor-Placeholder
+- **Design & Branding CSS-Variablen** auch im Editor verfügbar
 
 ---
 
 *Letzte Aktualisierung: 8. Februar 2026*
+*Implementierung abgeschlossen: 8. Februar 2026*
