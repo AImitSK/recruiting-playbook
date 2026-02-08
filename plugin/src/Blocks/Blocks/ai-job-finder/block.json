@@ -1,0 +1,46 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/ai-job-finder",
+	"version": "1.0.0",
+	"title": "KI-Job-Finder",
+	"category": "recruiting-playbook",
+	"description": "Lebenslauf-Upload mit KI-gestützter Stellensuche.",
+	"keywords": ["ki", "ai", "job", "finder", "matching", "lebenslauf", "cv"],
+	"textdomain": "recruiting-playbook",
+	"icon": "superhero",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": "Finde deinen Traumjob"
+		},
+		"subtitle": {
+			"type": "string",
+			"default": "Lade deinen Lebenslauf hoch und entdecke passende Stellen."
+		},
+		"limit": {
+			"type": "number",
+			"default": 5
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"title": "Finde deinen Traumjob",
+			"limit": 5
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

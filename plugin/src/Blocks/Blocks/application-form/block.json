@@ -1,0 +1,50 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/application-form",
+	"version": "1.0.0",
+	"title": "Bewerbungsformular",
+	"category": "recruiting-playbook",
+	"description": "Bewerbungsformular für Stellenseiten.",
+	"keywords": ["bewerbung", "formular", "application", "form", "bewerben"],
+	"textdomain": "recruiting-playbook",
+	"icon": "clipboard",
+	"attributes": {
+		"jobId": {
+			"type": "number",
+			"default": 0
+		},
+		"title": {
+			"type": "string",
+			"default": "Jetzt bewerben"
+		},
+		"showJobTitle": {
+			"type": "boolean",
+			"default": true
+		},
+		"showProgress": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"title": "Jetzt bewerben",
+			"showProgress": true
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

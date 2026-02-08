@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/job-categories",
+	"version": "1.0.0",
+	"title": "Job-Kategorien",
+	"category": "recruiting-playbook",
+	"description": "Zeigt alle Job-Kategorien als klickbare Karten an.",
+	"keywords": ["categories", "kategorien", "berufsfelder", "jobs"],
+	"textdomain": "recruiting-playbook",
+	"icon": "category",
+	"attributes": {
+		"columns": {
+			"type": "number",
+			"default": 4
+		},
+		"showCount": {
+			"type": "boolean",
+			"default": true
+		},
+		"hideEmpty": {
+			"type": "boolean",
+			"default": true
+		},
+		"orderby": {
+			"type": "string",
+			"default": "name",
+			"enum": ["name", "count"]
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"columns": 4,
+			"showCount": true
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

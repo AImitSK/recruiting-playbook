@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/ai-job-match",
+	"version": "1.0.0",
+	"title": "KI-Job-Match",
+	"category": "recruiting-playbook",
+	"description": "Button für KI-gestütztes Job-Matching.",
+	"keywords": ["ki", "ai", "match", "matching", "passe ich", "job"],
+	"textdomain": "recruiting-playbook",
+	"icon": "yes-alt",
+	"attributes": {
+		"jobId": {
+			"type": "number",
+			"default": 0
+		},
+		"title": {
+			"type": "string",
+			"default": "Passe ich zu diesem Job?"
+		},
+		"style": {
+			"type": "string",
+			"default": "",
+			"enum": ["", "outline"]
+		}
+	},
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"title": "Passe ich zu diesem Job?"
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

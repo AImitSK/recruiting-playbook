@@ -45,6 +45,7 @@ use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
+use RecruitingPlaybook\Blocks\BlockLoader;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -93,6 +94,9 @@ final class Plugin {
 		if ( ! is_admin() ) {
 			$this->initFrontend();
 		}
+
+		// Gutenberg Blocks (Pro-Feature).
+		$this->initBlocks();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -315,6 +319,17 @@ final class Plugin {
 	}
 
 	/**
+	 * Gutenberg Blocks initialisieren
+	 *
+	 * Pro-Feature: Registriert native WordPress-Blöcke für den Block-Editor.
+	 * Blocks werden nur geladen wenn Pro-Lizenz aktiv ist.
+	 */
+	private function initBlocks(): void {
+		$block_loader = new BlockLoader();
+		$block_loader->register();
+	}
+
+	/**
 	 * Admin-Bereich initialisieren
 	 */
 	private function initAdmin(): void {
@@ -358,18 +373,9 @@ final class Plugin {
 		$shortcodes = new Shortcodes();
 		$shortcodes->register();
 
-		// Design & Branding CSS-Variablen (nur auf Plugin-Seiten).
+		// Design & Branding CSS-Variablen werden über wp_add_inline_style geladen.
+		// Siehe enqueueFrontendAssets() - dort werden sie an rp-frontend angehängt.
 		// WICHTIG: Keine Lizenzprüfung - Design bleibt nach Ablauf erhalten.
-		add_action(
-			'wp_head',
-			function () {
-				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
-					$css_generator = new CssGeneratorService();
-					$css_generator->output_css_variables();
-				}
-			},
-			5 // Früh laden, damit CSS-Variablen für Tailwind verfügbar sind.
-		);
 
 		// Security Headers für Plugin-Seiten.
 		add_action( 'send_headers', [ $this, 'addSecurityHeaders' ] );
@@ -400,6 +406,7 @@ final class Plugin {
 	 * @return string
 	 */
 	public function loadTemplates( string $template ): string {
+		// Hauptarchiv für job_listing.
 		if ( is_post_type_archive( 'job_listing' ) ) {
 			$custom = locate_template( 'recruiting-playbook/archive-job_listing.php' );
 			if ( $custom ) {
@@ -408,6 +415,17 @@ final class Plugin {
 			return RP_PLUGIN_DIR . 'templates/archive-job_listing.php';
 		}
 
+		// Taxonomie-Archive (job_category, job_location, employment_type).
+		// Verwenden das gleiche Template wie das Hauptarchiv.
+		if ( is_tax( 'job_category' ) || is_tax( 'job_location' ) || is_tax( 'employment_type' ) ) {
+			$custom = locate_template( 'recruiting-playbook/archive-job_listing.php' );
+			if ( $custom ) {
+				return $custom;
+			}
+			return RP_PLUGIN_DIR . 'templates/archive-job_listing.php';
+		}
+
+		// Einzelseiten für job_listing.
 		if ( is_singular( 'job_listing' ) ) {
 			$custom = locate_template( 'recruiting-playbook/single-job_listing.php' );
 			if ( $custom ) {
@@ -517,31 +535,39 @@ final class Plugin {
 	}
 
 	/**
-	 * Frontend-Assets laden
+	 * Frontend-Assets registrieren und laden
+	 *
+	 * Assets werden immer registriert (für Shortcodes auf beliebigen Seiten).
+	 * Auf Job-Archive und Einzelseiten werden sie automatisch geladen.
 	 */
 	public function enqueueFrontendAssets(): void {
-		if ( ! is_post_type_archive( 'job_listing' ) && ! is_singular( 'job_listing' ) ) {
-			return;
-		}
-
-		// CSS - Basis-Styles registrieren (auch wenn dist-Datei nicht existiert).
-		wp_register_style( 'rp-frontend', false, [], RP_VERSION );
-		wp_enqueue_style( 'rp-frontend' );
-
-		// Kompiliertes CSS laden falls vorhanden.
+		// CSS registrieren (für Shortcodes auf beliebigen Seiten).
 		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
 		if ( file_exists( $css_file ) ) {
-			wp_deregister_style( 'rp-frontend' );
-			wp_enqueue_style(
+			wp_register_style(
 				'rp-frontend',
 				RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
 				[],
 				RP_VERSION . '-' . filemtime( $css_file )
 			);
+		} else {
+			wp_register_style( 'rp-frontend', false, [], RP_VERSION );
 		}
 
-		// x-cloak CSS für Alpine.js - verhindert Flackern vor Initialisierung.
-		wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
+		// Design & Branding CSS-Variablen als Inline-Style anhängen.
+		// WICHTIG: Keine Lizenzprüfung - Design bleibt nach Ablauf erhalten.
+		$css_generator = new CssGeneratorService();
+		$css           = $css_generator->generate_css();
+		$inline_css    = '[x-cloak] { display: none !important; }';
+		if ( ! empty( $css ) ) {
+			$inline_css .= "\n" . $css;
+		}
+		wp_add_inline_style( 'rp-frontend', $inline_css );
+
+		// Auf Job-Seiten automatisch laden, Shortcodes laden selbst via wp_enqueue_style().
+		if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
+			wp_enqueue_style( 'rp-frontend' );
+		}
 
 		// Conversion Tracking (DataLayer Events für GTM).
 		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';

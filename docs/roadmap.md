@@ -414,11 +414,18 @@ Design & Branding │                   │
   - [ ] Export-Format
   - [ ] Dokumentation
 
-### M2.9: Page Builder Pro
+### M2.9: Page Builder Integration
 
-- [ ] Gutenberg Blocks (alle Elemente)
-- [ ] Elementor Widgets (alle Elemente)
-- [ ] Divi Modules (Basis)
+- [x] **Gutenberg Blocks (Free)** ✅
+  - [x] 9 native Blöcke (jobs, job-search, job-count, featured-jobs, latest-jobs, job-categories, application-form, ai-job-finder, ai-job-match)
+  - [x] Block-Kategorie "Recruiting Playbook"
+  - [x] InspectorControls für alle Attribute
+  - [x] Placeholder-Vorschau im Editor (statt ServerSideRender)
+  - [x] Block-Patterns (5 vorgefertigte Layouts)
+  - [x] Example-Attribute für Inserter-Vorschau
+  - [x] Dokumentation auf Website
+- [ ] Elementor Widgets (Pro) - alle Elemente
+- [ ] Divi Modules (Pro) - Basis
 
 ### M2.10: Lizenz-System & Launch
 
@@ -439,42 +446,58 @@ Design & Branding │                   │
   - [ ] Landing Page
   - [ ] Support-Kanal einrichten
 
-### M2.11: Design & Branding (Admin-Seite)
+### M2.11: Design & Branding (Admin-Seite) ✅
 
 > Einstellungen → Design: Umfangreiche Anpassungsmöglichkeiten für das Frontend
 
-- [ ] **Branding**
-  - [ ] Firmenlogo (Upload oder Theme-Logo)
-  - [ ] Primärfarbe (Custom oder Theme-Farbe)
-  - [ ] "Powered by Recruiting Playbook" verstecken
-- [ ] **Typografie**
-  - [ ] Schriftart (Theme erben oder Custom)
-  - [ ] Überschriften H1–H6 (Größe in rem)
-  - [ ] Fließtext-Größe
-  - [ ] Kleine Texte (Labels, Hinweise)
-- [ ] **Cards & Container**
-  - [ ] Eckenradius (Slider 0–24px)
-  - [ ] Schattenstärke (Keine / Leicht / Mittel / Stark / Extra)
-  - [ ] Rahmen anzeigen (ja/nein)
-  - [ ] Rahmenfarbe
-- [ ] **Buttons**
-  - [ ] Theme-Button verwenden (WordPress .wp-element-button)
-  - [ ] Custom Button-Design:
-    - [ ] Hintergrundfarbe (Normal + Hover)
-    - [ ] Textfarbe (Normal + Hover)
-    - [ ] Rahmen anzeigen (ja/nein)
-    - [ ] Rahmenfarbe (Normal + Hover)
-    - [ ] Schatten (Normal + Hover)
-    - [ ] Eckenradius
-  - [ ] Live-Vorschau im Admin
-- [ ] **Job-Liste**
-  - [ ] Spaltenanzahl (2/3/4)
-  - [ ] Badges anzeigen
-  - [ ] Gehalt anzeigen
-  - [ ] Standort anzeigen
-- [ ] **CSS-Variable-Output**
-  - [ ] Dynamisches Inline-CSS oder separates Stylesheet
-  - [ ] Caching der generierten Styles
+- [x] **Branding**
+  - [x] Firmenlogo (Upload oder Theme-Logo)
+  - [x] Primärfarbe (Custom oder Theme-Farbe)
+  - [x] "Powered by Recruiting Playbook" verstecken
+- [x] **Typografie**
+  - [x] Schriftart (Theme erben oder Custom)
+  - [x] Überschriften H1–H6 (Größe in rem)
+  - [x] Fließtext-Größe
+  - [x] Kleine Texte (Labels, Hinweise)
+  - [x] Zeilenabstand (Überschriften + Fließtext)
+  - [x] Link-Styling (Farbe, Unterstreichung)
+- [x] **Cards & Container**
+  - [x] Layout-Preset (Kompakt / Standard / Großzügig)
+  - [x] Eckenradius (Slider 0–24px)
+  - [x] Schattenstärke (Keine / Leicht / Mittel / Stark)
+  - [x] Rahmen anzeigen (ja/nein)
+  - [x] Rahmenfarbe + Rahmenstärke
+  - [x] Hintergrundfarbe
+  - [x] Hover-Effekt (Keiner / Hochheben / Leuchten / Rahmen)
+- [x] **Buttons**
+  - [x] Theme-Button verwenden (WordPress .wp-element-button)
+  - [x] Custom Button-Design:
+    - [x] Hintergrundfarbe (Normal + Hover)
+    - [x] Textfarbe (Normal + Hover)
+    - [x] Rahmen anzeigen (ja/nein)
+    - [x] Rahmenfarbe + Rahmenbreite
+    - [x] Schatten (Normal + Hover)
+    - [x] Eckenradius
+    - [x] Größe (Klein / Mittel / Groß)
+  - [x] Live-Vorschau im Admin
+- [x] **KI-Button**
+  - [x] Stil-Modus (Theme / Preset / Manuell)
+  - [x] 5 Presets (Gradient, Outline, Minimal, Glow, Soft)
+  - [x] Manuelle Farben (Gradient, Textfarbe, Radius)
+  - [x] Button-Text + Icon-Auswahl
+- [x] **Job-Liste**
+  - [x] Darstellung (Grid / Liste)
+  - [x] Spaltenanzahl (2/3/4)
+  - [x] Badges anzeigen + Badge-Stil (Hell / Ausgefüllt)
+  - [x] Badge-Farben (Neu, Remote, Kategorie, Gehalt)
+  - [x] Gehalt anzeigen
+  - [x] Standort anzeigen
+  - [x] Beschäftigungsart anzeigen
+  - [x] Bewerbungsfrist anzeigen
+- [x] **CSS-Variable-Output**
+  - [x] Dynamisches Inline-CSS über CssGeneratorService
+  - [x] CSS-Variablen für alle Einstellungen
+  - [x] Card-Presets mit CSS-Variable-Overrides
 
 ### Deliverables Phase 2
 
@@ -487,7 +510,7 @@ Design & Branding │                   │
 | Talent-Pool | ✅ |
 | Reporting & Dashboard | ✅ |
 | Benutzerrollen & Stellen-Zuweisung | ✅ |
-| Design & Branding Admin-Seite | ⬜ |
+| Design & Branding Admin-Seite | ✅ |
 | Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
@@ -677,4 +700,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: 4. Februar 2026*
+*Letzte Aktualisierung: 7. Februar 2026*

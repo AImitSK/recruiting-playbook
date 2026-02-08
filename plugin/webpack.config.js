@@ -18,6 +18,8 @@ module.exports = {
 		'admin-email': path.resolve( __dirname, 'assets/src/js/admin/email/index.js' ),
 		// Form Builder App (separate Seite)
 		'admin-form-builder': path.resolve( __dirname, 'assets/src/js/admin/form-builder/index.js' ),
+		// Gutenberg Blocks (Pro-Feature)
+		blocks: path.resolve( __dirname, 'assets/src/js/blocks/index.js' ),
 	},
 	output: {
 		...defaultConfig.output,

@@ -23,17 +23,30 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\FormRenderService;
+use RecruitingPlaybook\Repositories\FormConfigRepository;
+use RecruitingPlaybook\Frontend\Shortcodes\JobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobSearchShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCountShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\FeaturedJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\LatestJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
 
 /**
  * Shortcode-Handler
  *
- * Verfügbare Shortcodes:
- * - [rp_jobs] - Stellenliste
+ * Öffentliche Shortcodes:
+ * - [rp_jobs] - Stellenliste mit Grid-Layout
  * - [rp_job_search] - Stellensuche mit Filtern
- * - [rp_application_form] - Bewerbungsformular (statisch, 3 Schritte)
- * - [rp_custom_application_form] - Bewerbungsformular mit Custom Fields (Pro)
- * - [rp_ai_job_match] - KI-Matching für einzelne Stelle (AI-Addon)
- * - [rp_ai_job_finder] - KI-Job-Finder für alle Stellen (AI-Addon)
+ * - [rp_job_count] - Stellen-Zähler für Headlines
+ * - [rp_featured_jobs] - Hervorgehobene Stellen
+ * - [rp_latest_jobs] - Neueste Stellen
+ * - [rp_job_categories] - Kategorie-Übersicht
+ * - [rp_application_form] - Bewerbungsformular (Auto-Detection Form Builder)
+ * - [rp_ai_job_finder] - KI-Job-Finder (AI-Addon)
+ *
+ * Interne Shortcodes (nicht für Endanwender):
+ * - [rp_custom_application_form] - Alias für rp_application_form (deprecated)
+ * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (AI-Addon)
  */
 class Shortcodes {
 
@@ -43,6 +56,13 @@ class Shortcodes {
 	 * @var FormRenderService|null
 	 */
 	private ?FormRenderService $form_render_service = null;
+
+	/**
+	 * FormConfigRepository für Auto-Detection
+	 *
+	 * @var FormConfigRepository|null
+	 */
+	private ?FormConfigRepository $form_config_repository = null;
 
 	/**
 	 * Flag ob Match-Modal bereits für Footer registriert wurde
@@ -56,8 +76,15 @@ class Shortcodes {
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
-		add_shortcode( 'rp_jobs', [ $this, 'renderJobList' ] );
-		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
+		// Job-Listen Shortcodes (modulare Klassen).
+		( new JobsShortcode() )->register();
+		( new JobSearchShortcode() )->register();
+		( new JobCountShortcode() )->register();
+		( new FeaturedJobsShortcode() )->register();
+		( new LatestJobsShortcode() )->register();
+		( new JobCategoriesShortcode() )->register();
+
+		// Bewerbungsformular Shortcodes.
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
 
@@ -81,547 +108,49 @@ class Shortcodes {
 	}
 
 	/**
-	 * Stellenliste rendern
+	 * FormConfigRepository lazy laden
 	 *
-	 * Attribute:
-	 * - limit: Anzahl Stellen (default: 10)
-	 * - category: Filter nach Kategorie-Slug
-	 * - location: Filter nach Standort-Slug
-	 * - type: Filter nach Beschäftigungsart-Slug
-	 * - orderby: Sortierung (date, title, rand)
-	 * - order: ASC oder DESC
-	 * - columns: Spalten im Grid (1-4, default: 1)
-	 * - show_excerpt: Auszug anzeigen (true/false)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
+	 * @return FormConfigRepository
 	 */
-	public function renderJobList( $atts ): string {
-		$this->enqueueAssets();
-
-		$atts = shortcode_atts(
-			[
-				'limit'        => 10,
-				'category'     => '',
-				'location'     => '',
-				'type'         => '',
-				'orderby'      => 'date',
-				'order'        => 'DESC',
-				'columns'      => 1,
-				'show_excerpt' => 'true',
-			],
-			$atts,
-			'rp_jobs'
-		);
-
-		// Query-Argumente aufbauen
-		$args = [
-			'post_type'      => 'job_listing',
-			'post_status'    => 'publish',
-			'posts_per_page' => absint( $atts['limit'] ),
-			'orderby'        => sanitize_key( $atts['orderby'] ),
-			'order'          => 'ASC' === strtoupper( $atts['order'] ) ? 'ASC' : 'DESC',
-		];
-
-		// Taxonomie-Filter
-		$tax_query = [];
-
-		if ( ! empty( $atts['category'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_category',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['category'] ) ),
-			];
+	private function getFormConfigRepository(): FormConfigRepository {
+		if ( null === $this->form_config_repository ) {
+			$this->form_config_repository = new FormConfigRepository();
 		}
-
-		if ( ! empty( $atts['location'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_location',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['location'] ) ),
-			];
-		}
-
-		if ( ! empty( $atts['type'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'employment_type',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['type'] ) ),
-			];
-		}
-
-		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query;
-		}
-
-		$query = new \WP_Query( $args );
-
-		if ( ! $query->have_posts() ) {
-			return '<div class="rp-plugin">
-				<div class="rp-text-center rp-py-12 rp-bg-gray-50 rp-rounded-lg">
-					<p class="rp-text-gray-500">' . esc_html__( 'Aktuell keine offenen Stellen verfügbar.', 'recruiting-playbook' ) . '</p>
-				</div>
-			</div>';
-		}
-
-		$columns      = max( 1, min( 4, absint( $atts['columns'] ) ) );
-		$show_excerpt = filter_var( $atts['show_excerpt'], FILTER_VALIDATE_BOOLEAN );
-
-		// Grid-Klasse basierend auf Spaltenanzahl
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
-		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
-		}
-
-		ob_start();
-		?>
-		<div class="rp-plugin">
-			<div class="<?php echo esc_attr( $grid_class ); ?>">
-				<?php
-				while ( $query->have_posts() ) :
-					$query->the_post();
-					$locations  = get_the_terms( get_the_ID(), 'job_location' );
-					$types      = get_the_terms( get_the_ID(), 'employment_type' );
-					$categories = get_the_terms( get_the_ID(), 'job_category' );
-					$remote     = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-					?>
-					<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
-						<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
-							<span class="rp-sr-only"><?php the_title(); ?></span>
-						</a>
-
-						<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs">
-							<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="rp-text-gray-500">
-								<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
-							</time>
-
-							<?php if ( $categories && ! is_wp_error( $categories ) ) : ?>
-								<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
-									<?php echo esc_html( $categories[0]->name ); ?>
-								</span>
-							<?php endif; ?>
-						</div>
-
-						<div>
-							<h3 class="rp-mt-3 rp-text-lg rp-leading-6 rp-font-semibold rp-text-gray-900">
-								<?php the_title(); ?>
-							</h3>
-
-							<?php if ( $show_excerpt && has_excerpt() ) : ?>
-								<p class="rp-mt-5 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-									<?php echo esc_html( wp_trim_words( get_the_excerpt(), 30, '...' ) ); ?>
-								</p>
-							<?php endif; ?>
-						</div>
-
-						<div class="rp-relative rp-mt-8 rp-flex rp-items-center rp-justify-between rp-text-xs">
-							<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-								<?php if ( $locations && ! is_wp_error( $locations ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-										</svg>
-										<?php echo esc_html( $locations[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $types && ! is_wp_error( $types ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-										</svg>
-										<?php echo esc_html( $types[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $remote && 'no' !== $remote ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-										</svg>
-										<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
-									</span>
-								<?php endif; ?>
-							</div>
-
-							<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
-								<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
-							</a>
-						</div>
-					</article>
-				<?php endwhile; ?>
-			</div>
-		</div>
-		<?php
-		wp_reset_postdata();
-
-		return ob_get_clean();
+		return $this->form_config_repository;
 	}
 
 	/**
-	 * Stellensuche mit Filtern rendern
+	 * Prüfen ob Form Builder aktiv ist (Pro + veröffentlichte Konfiguration)
 	 *
-	 * Attribute:
-	 * - show_search: Suchfeld anzeigen (true/false, default: true)
-	 * - show_category: Kategorie-Filter anzeigen (true/false, default: true)
-	 * - show_location: Standort-Filter anzeigen (true/false, default: true)
-	 * - show_type: Beschäftigungsart-Filter anzeigen (true/false, default: true)
-	 * - limit: Stellen pro Seite (default: 10)
-	 * - columns: Spalten im Grid (1-4, default: 1)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
+	 * @return bool True wenn Form Builder verwendet werden soll.
 	 */
-	public function renderJobSearch( $atts ): string {
-		$this->enqueueAssets();
-
-		$atts = shortcode_atts(
-			[
-				'show_search'   => 'true',
-				'show_category' => 'true',
-				'show_location' => 'true',
-				'show_type'     => 'true',
-				'limit'         => 10,
-				'columns'       => 1,
-			],
-			$atts,
-			'rp_job_search'
-		);
-
-		$show_search   = filter_var( $atts['show_search'], FILTER_VALIDATE_BOOLEAN );
-		$show_category = filter_var( $atts['show_category'], FILTER_VALIDATE_BOOLEAN );
-		$show_location = filter_var( $atts['show_location'], FILTER_VALIDATE_BOOLEAN );
-		$show_type     = filter_var( $atts['show_type'], FILTER_VALIDATE_BOOLEAN );
-		$columns       = max( 1, min( 4, absint( $atts['columns'] ) ) );
-		$per_page      = absint( $atts['limit'] );
-
-		// Filter-Werte aus GET-Parametern.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only search form
-		$search   = isset( $_GET['rp_search'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_search'] ) ) : '';
-		$category = isset( $_GET['rp_category'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_category'] ) ) : '';
-		$location = isset( $_GET['rp_location'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_location'] ) ) : '';
-		$type     = isset( $_GET['rp_type'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_type'] ) ) : '';
-		$paged    = isset( $_GET['rp_page'] ) ? absint( $_GET['rp_page'] ) : 1;
-		// phpcs:enable
-
-		// Taxonomien laden.
-		$categories = get_terms(
-			[
-				'taxonomy'   => 'job_category',
-				'hide_empty' => true,
-			]
-		);
-
-		$locations = get_terms(
-			[
-				'taxonomy'   => 'job_location',
-				'hide_empty' => true,
-			]
-		);
-
-		$types = get_terms(
-			[
-				'taxonomy'   => 'employment_type',
-				'hide_empty' => true,
-			]
-		);
-
-		// Query aufbauen.
-		$args = [
-			'post_type'      => 'job_listing',
-			'post_status'    => 'publish',
-			'posts_per_page' => $per_page,
-			'paged'          => $paged,
-		];
-
-		// Suche.
-		if ( ! empty( $search ) ) {
-			$args['s'] = $search;
+	private function shouldUseFormBuilder(): bool {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			return false;
 		}
 
-		// Taxonomie-Filter.
-		$tax_query = [];
+		// Prüfen ob eine veröffentlichte Konfiguration existiert.
+		$repository = $this->getFormConfigRepository();
+		$published  = $repository->getPublished();
 
-		if ( ! empty( $category ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_category',
-				'field'    => 'slug',
-				'terms'    => $category,
-			];
-		}
-
-		if ( ! empty( $location ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_location',
-				'field'    => 'slug',
-				'terms'    => $location,
-			];
-		}
-
-		if ( ! empty( $type ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'employment_type',
-				'field'    => 'slug',
-				'terms'    => $type,
-			];
-		}
-
-		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query;
-		}
-
-		$query = new \WP_Query( $args );
-
-		// Grid-Klasse
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
-		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
-		}
-
-		ob_start();
-		?>
-		<div class="rp-plugin">
-			<!-- Suchformular -->
-			<form class="rp-bg-gray-50 rp-p-6 rp-rounded-lg rp-mb-6 rp-border rp-border-gray-200" method="get" action="">
-				<div class="rp-grid rp-gap-4 sm:rp-grid-cols-2 lg:rp-grid-cols-4">
-					<?php if ( $show_search ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Suche', 'recruiting-playbook' ); ?></label>
-							<input
-								type="text"
-								name="rp_search"
-								value="<?php echo esc_attr( $search ); ?>"
-								placeholder="<?php esc_attr_e( 'Stichwort, Jobtitel...', 'recruiting-playbook' ); ?>"
-								class="rp-input"
-							>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_category && ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Berufsfeld', 'recruiting-playbook' ); ?></label>
-							<select name="rp_category" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Berufsfelder', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $categories as $cat ) : ?>
-									<option value="<?php echo esc_attr( $cat->slug ); ?>" <?php selected( $category, $cat->slug ); ?>>
-										<?php echo esc_html( $cat->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_location && ! empty( $locations ) && ! is_wp_error( $locations ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Standort', 'recruiting-playbook' ); ?></label>
-							<select name="rp_location" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Standorte', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $locations as $loc ) : ?>
-									<option value="<?php echo esc_attr( $loc->slug ); ?>" <?php selected( $location, $loc->slug ); ?>>
-										<?php echo esc_html( $loc->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_type && ! empty( $types ) && ! is_wp_error( $types ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Beschäftigungsart', 'recruiting-playbook' ); ?></label>
-							<select name="rp_type" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Arten', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $types as $t ) : ?>
-									<option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $type, $t->slug ); ?>>
-										<?php echo esc_html( $t->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-				</div>
-
-				<div class="rp-mt-4 rp-flex rp-gap-3 rp-flex-wrap">
-					<button type="submit" class="wp-element-button">
-						<?php esc_html_e( 'Suchen', 'recruiting-playbook' ); ?>
-					</button>
-					<?php if ( $search || $category || $location || $type ) : ?>
-						<a href="<?php echo esc_url( remove_query_arg( [ 'rp_search', 'rp_category', 'rp_location', 'rp_type', 'rp_page' ] ) ); ?>" class="wp-element-button is-style-outline">
-							<?php esc_html_e( 'Filter zurücksetzen', 'recruiting-playbook' ); ?>
-						</a>
-					<?php endif; ?>
-				</div>
-			</form>
-
-			<!-- Ergebniszähler -->
-			<div class="rp-mb-4 rp-text-gray-500 rp-text-sm">
-				<?php
-				printf(
-					/* translators: %d: Number of jobs found */
-					esc_html( _n( '%d Stelle gefunden', '%d Stellen gefunden', $query->found_posts, 'recruiting-playbook' ) ),
-					$query->found_posts
-				);
-				?>
-			</div>
-
-			<!-- Ergebnisse -->
-			<?php if ( $query->have_posts() ) : ?>
-				<div class="<?php echo esc_attr( $grid_class ); ?>">
-					<?php
-					while ( $query->have_posts() ) :
-						$query->the_post();
-						$job_locations = get_the_terms( get_the_ID(), 'job_location' );
-						$job_types     = get_the_terms( get_the_ID(), 'employment_type' );
-						$job_cats      = get_the_terms( get_the_ID(), 'job_category' );
-						$remote        = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-						$deadline      = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
-						?>
-						<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
-							<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
-								<span class="rp-sr-only"><?php the_title(); ?></span>
-							</a>
-
-							<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs">
-								<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="rp-text-gray-500">
-									<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
-								</time>
-
-								<?php if ( $job_cats && ! is_wp_error( $job_cats ) ) : ?>
-									<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
-										<?php echo esc_html( $job_cats[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-							</div>
-
-							<div>
-								<h3 class="rp-mt-3 rp-text-lg rp-leading-6 rp-font-semibold rp-text-gray-900">
-									<?php the_title(); ?>
-								</h3>
-
-								<?php if ( $deadline ) : ?>
-									<p class="rp-mt-2 rp-text-xs rp-text-gray-400">
-										<?php
-										printf(
-											/* translators: %s: Application deadline date */
-											esc_html__( 'Bewerbungsfrist: %s', 'recruiting-playbook' ),
-											esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) )
-										);
-										?>
-									</p>
-								<?php endif; ?>
-
-								<?php if ( has_excerpt() ) : ?>
-									<p class="rp-mt-4 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-										<?php echo esc_html( wp_trim_words( get_the_excerpt(), 25, '...' ) ); ?>
-									</p>
-								<?php endif; ?>
-							</div>
-
-							<div class="rp-relative rp-mt-6 rp-flex rp-items-center rp-justify-between rp-text-xs">
-								<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-									<?php if ( $job_locations && ! is_wp_error( $job_locations ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-											</svg>
-											<?php echo esc_html( $job_locations[0]->name ); ?>
-										</span>
-									<?php endif; ?>
-
-									<?php if ( $job_types && ! is_wp_error( $job_types ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-											</svg>
-											<?php echo esc_html( $job_types[0]->name ); ?>
-										</span>
-									<?php endif; ?>
-
-									<?php if ( $remote && 'no' !== $remote ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-											</svg>
-											<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
-										</span>
-									<?php endif; ?>
-								</div>
-
-								<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
-									<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
-								</a>
-							</div>
-						</article>
-					<?php endwhile; ?>
-				</div>
-
-				<?php
-				// Pagination.
-				$total_pages = $query->max_num_pages;
-				if ( $total_pages > 1 ) :
-					$current_url = remove_query_arg( 'rp_page' );
-					?>
-					<nav class="rp-mt-8 rp-flex rp-justify-center rp-gap-2 rp-flex-wrap">
-						<?php if ( $paged > 1 ) : ?>
-							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged - 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								&laquo; <?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
-							</a>
-						<?php endif; ?>
-
-						<?php for ( $i = 1; $i <= $total_pages; $i++ ) : ?>
-							<?php if ( $i === $paged ) : ?>
-								<span class="wp-element-button"><?php echo esc_html( $i ); ?></span>
-							<?php else : ?>
-								<a href="<?php echo esc_url( add_query_arg( 'rp_page', $i, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-									<?php echo esc_html( $i ); ?>
-								</a>
-							<?php endif; ?>
-						<?php endfor; ?>
-
-						<?php if ( $paged < $total_pages ) : ?>
-							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged + 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?> &raquo;
-							</a>
-						<?php endif; ?>
-					</nav>
-				<?php endif; ?>
-			<?php else : ?>
-				<div class="rp-text-center rp-py-12 rp-bg-gray-50 rp-rounded-lg">
-					<svg class="rp-mx-auto rp-h-12 rp-w-12 rp-text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-					</svg>
-					<p class="rp-mt-4 rp-text-gray-500">
-						<?php esc_html_e( 'Keine passenden Stellen gefunden. Bitte versuchen Sie andere Suchkriterien.', 'recruiting-playbook' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
-		</div>
-		<?php
-		wp_reset_postdata();
-
-		return ob_get_clean();
+		return null !== $published;
 	}
+
 
 	/**
 	 * Bewerbungsformular rendern
 	 *
+	 * Erkennt automatisch ob der Form Builder (Pro) verwendet werden soll:
+	 * - Wenn Pro-Lizenz aktiv UND veröffentlichte Form Builder Konfiguration existiert
+	 *   → Dynamisches Multi-Step Formular mit Custom Fields
+	 * - Sonst → Standard 3-Step Formular
+	 *
 	 * Attribute:
-	 * - job_id: ID der Stelle (required)
+	 * - job_id: ID der Stelle (required oder aktueller Job)
 	 * - title: Überschrift (default: "Jetzt bewerben")
 	 * - show_job_title: Job-Titel anzeigen (true/false)
+	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
 	 *
 	 * @param array|string $atts Shortcode-Attribute.
 	 * @return string HTML-Ausgabe.
@@ -632,6 +161,7 @@ class Shortcodes {
 				'job_id'         => 0,
 				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
 				'show_job_title' => 'true',
+				'show_progress'  => 'true',
 			],
 			$atts,
 			'rp_application_form'
@@ -639,12 +169,12 @@ class Shortcodes {
 
 		$job_id = absint( $atts['job_id'] );
 
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
 		if ( ! $job_id && is_singular( 'job_listing' ) ) {
 			$job_id = get_the_ID();
 		}
 
-		// Validieren
+		// Validieren.
 		if ( ! $job_id ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
@@ -662,11 +192,31 @@ class Shortcodes {
 			</div>';
 		}
 
-		// Assets laden
+		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
+		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
+
+		// Auto-Detection: Form Builder verwenden?
+		if ( $this->shouldUseFormBuilder() ) {
+			return $this->renderFormBuilderForm( $job_id, $job, $atts, $show_job_title, $show_progress );
+		}
+
+		// Standard-Formular rendern.
+		return $this->renderStandardForm( $job_id, $job, $atts, $show_job_title );
+	}
+
+	/**
+	 * Standard 3-Step Formular rendern
+	 *
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @return string HTML-Ausgabe.
+	 */
+	private function renderStandardForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title ): string {
+		// Assets laden.
 		$this->enqueueAssets();
 		$this->enqueueFormAssets();
-
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
 
 		ob_start();
 		?>
@@ -697,65 +247,18 @@ class Shortcodes {
 	}
 
 	/**
-	 * Custom Application Form mit dynamischen Feldern rendern (Pro)
+	 * Form Builder Formular rendern (Pro)
 	 *
-	 * Attribute:
-	 * - job_id: ID der Stelle (required oder aktueller Job)
-	 * - title: Überschrift (default: "Jetzt bewerben")
-	 * - show_job_title: Job-Titel anzeigen (true/false)
-	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @param bool     $show_progress  Fortschrittsanzeige.
 	 * @return string HTML-Ausgabe.
 	 */
-	public function renderCustomApplicationForm( $atts ): string {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
-			// Fallback auf Standard-Formular.
-			return $this->renderApplicationForm( $atts );
-		}
-
-		$atts = shortcode_atts(
-			[
-				'job_id'         => 0,
-				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
-				'show_job_title' => 'true',
-				'show_progress'  => 'true',
-			],
-			$atts,
-			'rp_custom_application_form'
-		);
-
-		$job_id = absint( $atts['job_id'] );
-
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
-		if ( ! $job_id && is_singular( 'job_listing' ) ) {
-			$job_id = get_the_ID();
-		}
-
-		// Validieren.
-		if ( ! $job_id ) {
-			return '<div class="rp-plugin">
-				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Keine Stelle angegeben. Bitte job_id Attribut setzen.', 'recruiting-playbook' ) . '
-				</div>
-			</div>';
-		}
-
-		$job = get_post( $job_id );
-		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
-			return '<div class="rp-plugin">
-				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
-				</div>
-			</div>';
-		}
-
-		// Assets laden.
+	private function renderFormBuilderForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title, bool $show_progress ): string {
+		// Custom Fields Assets laden.
 		$this->enqueueCustomFieldsAssets();
-
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
-		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
 
 		ob_start();
 		?>
@@ -783,6 +286,21 @@ class Shortcodes {
 		<?php
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Custom Application Form Shortcode (Alias für rp_application_form)
+	 *
+	 * DEPRECATED: Dieser Shortcode wird in einer zukünftigen Version entfernt.
+	 * Bitte [rp_application_form] verwenden - erkennt automatisch ob Form Builder aktiv ist.
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderCustomApplicationForm( $atts ): string {
+		// Direkt an renderApplicationForm delegieren.
+		// Die Auto-Detection dort entscheidet ob Form Builder verwendet wird.
+		return $this->renderApplicationForm( $atts );
 	}
 
 	/**
