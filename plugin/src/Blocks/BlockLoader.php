@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace RecruitingPlaybook\Blocks;
 
+use RecruitingPlaybook\Blocks\Patterns\PatternLoader;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -45,6 +47,13 @@ class BlockLoader {
 	];
 
 	/**
+	 * Pattern Loader Instanz
+	 *
+	 * @var PatternLoader
+	 */
+	private PatternLoader $pattern_loader;
+
+	/**
 	 * Initialisierung
 	 */
 	public function register(): void {
@@ -56,6 +65,10 @@ class BlockLoader {
 		add_action( 'init', [ $this, 'registerBlocks' ] );
 		add_filter( 'block_categories_all', [ $this, 'registerCategory' ], 10, 2 );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueueEditorAssets' ] );
+
+		// Block-Patterns registrieren.
+		$this->pattern_loader = new PatternLoader();
+		$this->pattern_loader->register();
 	}
 
 	/**

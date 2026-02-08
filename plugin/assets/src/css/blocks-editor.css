@@ -394,3 +394,201 @@
 	font-size: 14px;
 	color: #666;
 }
+
+/* ==========================================================================
+   AI Job Match Preview
+   ========================================================================== */
+
+.rp-ai-match-preview {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+
+.rp-ai-match-preview button {
+	pointer-events: none;
+}
+
+.rp-ai-match-preview .components-placeholder {
+	width: 100%;
+	margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Category Grid Preview
+   ========================================================================== */
+
+.rp-categories-preview {
+	display: grid;
+	gap: 1rem;
+}
+
+.rp-category-preview {
+	padding: 1.25rem;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	text-align: center;
+	transition: box-shadow 0.2s ease;
+}
+
+.rp-category-preview:hover {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.rp-category-preview__name {
+	margin: 0 0 0.25rem;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.rp-category-preview__count {
+	font-size: 13px;
+	color: #666;
+}
+
+/* ==========================================================================
+   Editor-Wide Block Improvements
+   ========================================================================== */
+
+/* Better focus styles for RP blocks */
+.wp-block[data-type^="rp/"] {
+	position: relative;
+}
+
+.wp-block[data-type^="rp/"]:focus-within {
+	outline: none;
+}
+
+.wp-block[data-type^="rp/"]::before {
+	content: "";
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	right: -2px;
+	bottom: -2px;
+	border: 2px solid transparent;
+	border-radius: 6px;
+	pointer-events: none;
+	transition: border-color 0.15s ease;
+}
+
+.wp-block[data-type^="rp/"].is-selected::before {
+	border-color: #2271b1;
+}
+
+/* Block title in inserter */
+.block-editor-inserter__menu .block-editor-block-types-list__item[data-type^="rp/"] {
+	border-left: 3px solid transparent;
+}
+
+.block-editor-inserter__menu .block-editor-block-types-list__item[data-type^="rp/"]:hover {
+	border-left-color: #2271b1;
+}
+
+/* AI blocks in inserter */
+.block-editor-inserter__menu .block-editor-block-types-list__item[data-type^="rp/ai-"] {
+	background: linear-gradient(135deg, #faf8ff 0%, #fff 100%);
+}
+
+.block-editor-inserter__menu .block-editor-block-types-list__item[data-type^="rp/ai-"]:hover {
+	border-left-color: #9b59b6;
+}
+
+/* ==========================================================================
+   Block Pattern Preview
+   ========================================================================== */
+
+.block-editor-block-patterns-list__item[data-type^="recruiting-playbook/"] {
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.block-editor-block-patterns-list__item[data-type^="recruiting-playbook/"]:hover {
+	border-color: #2271b1;
+}
+
+/* ==========================================================================
+   Responsive Block Previews
+   ========================================================================== */
+
+@media (max-width: 600px) {
+	.rp-grid-preview--cols-3,
+	.rp-grid-preview--cols-4 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.rp-search-preview__row {
+		flex-direction: column;
+	}
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.rp-block-skeleton {
+	animation: rp-skeleton-pulse 1.5s ease-in-out infinite;
+	background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	border-radius: 4px;
+}
+
+@keyframes rp-skeleton-pulse {
+	0% { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+.rp-block-skeleton--text {
+	height: 1em;
+	margin-bottom: 0.5em;
+}
+
+.rp-block-skeleton--text:last-child {
+	width: 60%;
+}
+
+.rp-block-skeleton--button {
+	width: 120px;
+	height: 36px;
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.rp-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	text-align: center;
+	color: #666;
+}
+
+.rp-empty-state__icon {
+	margin-bottom: 1rem;
+	color: #999;
+}
+
+.rp-empty-state__icon .dashicons {
+	font-size: 40px;
+	width: 40px;
+	height: 40px;
+}
+
+.rp-empty-state__title {
+	margin: 0 0 0.5rem;
+	font-size: 16px;
+	font-weight: 600;
+	color: #333;
+}
+
+.rp-empty-state__description {
+	margin: 0;
+	font-size: 13px;
+}
