@@ -4,7 +4,7 @@
  * Consistent wrapper for block previews in the editor.
  * Provides visual feedback and loading states.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { Spinner, Placeholder } from '@wordpress/components';
@@ -13,13 +13,13 @@ import { __ } from '@wordpress/i18n';
 /**
  * PreviewWrapper - Wrapper component for block previews
  *
- * @param {Object}      props             Component props.
- * @param {boolean}     props.isLoading   Show loading spinner.
- * @param {boolean}     props.isEmpty     Show empty state.
- * @param {string}      props.emptyLabel  Label for empty state.
- * @param {string}      props.icon        Dashicon name for empty state.
- * @param {JSX.Element} props.children    Content to render.
- * @param {string}      props.className   Additional CSS class.
+ * @param {Object}      props            Component props.
+ * @param {boolean}     props.isLoading  Show loading spinner.
+ * @param {boolean}     props.isEmpty    Show empty state.
+ * @param {string}      props.emptyLabel Label for empty state.
+ * @param {string}      props.icon       Dashicon name for empty state.
+ * @param {JSX.Element} props.children   Content to render.
+ * @param {string}      props.className  Additional CSS class.
  * @return {JSX.Element} The component.
  */
 export function PreviewWrapper( {
@@ -33,10 +33,12 @@ export function PreviewWrapper( {
 	// Loading state.
 	if ( isLoading ) {
 		return (
-			<div className={ `rp-block-preview rp-block-preview--loading ${ className }` }>
+			<div
+				className={ `rp-block-preview rp-block-preview--loading ${ className }` }
+			>
 				<Spinner />
 				<span className="rp-block-preview__loading-text">
-					{ __( 'Lade Vorschau...', 'recruiting-playbook' ) }
+					{ __( 'Lade Vorschau…', 'recruiting-playbook' ) }
 				</span>
 			</div>
 		);
@@ -47,7 +49,9 @@ export function PreviewWrapper( {
 		return (
 			<Placeholder
 				icon={ icon }
-				label={ emptyLabel || __( 'Keine Inhalte', 'recruiting-playbook' ) }
+				label={
+					emptyLabel || __( 'Keine Inhalte', 'recruiting-playbook' )
+				}
 				className={ `rp-block-preview rp-block-preview--empty ${ className }` }
 			>
 				<p>
@@ -62,9 +66,7 @@ export function PreviewWrapper( {
 
 	// Content.
 	return (
-		<div className={ `rp-block-preview ${ className }` }>
-			{ children }
-		</div>
+		<div className={ `rp-block-preview ${ className }` }>{ children }</div>
 	);
 }
 
@@ -73,11 +75,11 @@ export function PreviewWrapper( {
  *
  * Shows a styled preview with optional overlay for editor interaction.
  *
- * @param {Object}      props             Component props.
- * @param {string}      props.html        Server-rendered HTML.
- * @param {boolean}     props.isLoading   Show loading state.
- * @param {string}      props.className   Additional CSS class.
- * @param {boolean}     props.showOverlay Show interaction overlay.
+ * @param {Object}  props             Component props.
+ * @param {string}  props.html        Server-rendered HTML.
+ * @param {boolean} props.isLoading   Show loading state.
+ * @param {string}  props.className   Additional CSS class.
+ * @param {boolean} props.showOverlay Show interaction overlay.
  * @return {JSX.Element} The component.
  */
 export function ServerSidePreview( {
@@ -87,26 +89,34 @@ export function ServerSidePreview( {
 	showOverlay = false,
 } ) {
 	if ( isLoading ) {
-		return (
-			<PreviewWrapper isLoading={ true } className={ className } />
-		);
+		return <PreviewWrapper isLoading={ true } className={ className } />;
 	}
 
 	if ( ! html ) {
 		return (
 			<PreviewWrapper
 				isEmpty={ true }
-				emptyLabel={ __( 'Keine Vorschau verfügbar', 'recruiting-playbook' ) }
+				emptyLabel={ __(
+					'Keine Vorschau verfügbar',
+					'recruiting-playbook'
+				) }
 				className={ className }
 			/>
 		);
 	}
 
 	return (
-		<div className={ `rp-block-preview rp-block-preview--server-side ${ className }` }>
+		<div
+			className={ `rp-block-preview rp-block-preview--server-side ${ className }` }
+		>
 			{ showOverlay && (
 				<div className="rp-block-preview__overlay">
-					<span>{ __( 'Klicken zum Bearbeiten', 'recruiting-playbook' ) }</span>
+					<span>
+						{ __(
+							'Klicken zum Bearbeiten',
+							'recruiting-playbook'
+						) }
+					</span>
 				</div>
 			) }
 			<div

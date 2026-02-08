@@ -4,7 +4,7 @@
  * Button für KI-gestütztes Job-Matching.
  * AI-Addon Feature.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

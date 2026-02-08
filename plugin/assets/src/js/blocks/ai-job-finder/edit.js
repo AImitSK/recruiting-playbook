@@ -1,12 +1,17 @@
 /**
  * AI Job Finder Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, RangeControl, Placeholder } from '@wordpress/components';
+import {
+	PanelBody,
+	TextControl,
+	RangeControl,
+	Placeholder,
+} from '@wordpress/components';
 
 import { AiBadge, FeatureGate } from '../components/ProBadge';
 

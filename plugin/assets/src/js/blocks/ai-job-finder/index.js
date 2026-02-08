@@ -4,7 +4,7 @@
  * Lebenslauf-Upload mit KI-gestützter Stellensuche.
  * AI-Addon Feature.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

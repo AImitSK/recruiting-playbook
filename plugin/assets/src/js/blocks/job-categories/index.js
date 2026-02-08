@@ -3,7 +3,7 @@
  *
  * Zeigt alle Job-Kategorien als klickbare Karten an.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

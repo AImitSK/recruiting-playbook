@@ -1,7 +1,7 @@
 /**
  * Job Count Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -50,7 +50,9 @@ export default function Edit( { attributes, setAttributes } ) {
 					<TaxonomySelect
 						taxonomy="employment_type"
 						value={ type }
-						onChange={ ( value ) => setAttributes( { type: value } ) }
+						onChange={ ( value ) =>
+							setAttributes( { type: value } )
+						}
 					/>
 				</PanelBody>
 

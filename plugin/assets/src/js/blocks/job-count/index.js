@@ -3,7 +3,7 @@
  *
  * Zeigt die Anzahl der verfügbaren Stellen an.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

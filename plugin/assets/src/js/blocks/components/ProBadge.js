@@ -3,7 +3,7 @@
  *
  * Badge component to indicate Pro-only features in the block editor.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -17,16 +17,14 @@ import { __ } from '@wordpress/i18n';
  * @param {string}  props.className Additional CSS class.
  * @return {JSX.Element} The component.
  */
-export function ProBadge( {
-	size = 'small',
-	inline = false,
-	className = '',
-} ) {
+export function ProBadge( { size = 'small', inline = false, className = '' } ) {
 	const sizeClass = `rp-pro-badge--${ size }`;
 	const inlineClass = inline ? 'rp-pro-badge--inline' : '';
 
 	return (
-		<span className={ `rp-pro-badge ${ sizeClass } ${ inlineClass } ${ className }` }>
+		<span
+			className={ `rp-pro-badge ${ sizeClass } ${ inlineClass } ${ className }` }
+		>
 			{ __( 'PRO', 'recruiting-playbook' ) }
 		</span>
 	);
@@ -41,16 +39,14 @@ export function ProBadge( {
  * @param {string}  props.className Additional CSS class.
  * @return {JSX.Element} The component.
  */
-export function AiBadge( {
-	size = 'small',
-	inline = false,
-	className = '',
-} ) {
+export function AiBadge( { size = 'small', inline = false, className = '' } ) {
 	const sizeClass = `rp-ai-badge--${ size }`;
 	const inlineClass = inline ? 'rp-ai-badge--inline' : '';
 
 	return (
-		<span className={ `rp-ai-badge ${ sizeClass } ${ inlineClass } ${ className }` }>
+		<span
+			className={ `rp-ai-badge ${ sizeClass } ${ inlineClass } ${ className }` }
+		>
 			{ __( 'AI', 'recruiting-playbook' ) }
 		</span>
 	);
@@ -65,11 +61,7 @@ export function AiBadge( {
  * @param {JSX.Element} props.children   Content to show if feature available.
  * @return {JSX.Element} The component.
  */
-export function FeatureGate( {
-	feature,
-	upgradeUrl,
-	children,
-} ) {
+export function FeatureGate( { feature, upgradeUrl, children } ) {
 	// Check if feature is available via localized config.
 	const config = window.rpBlocksConfig || {};
 
@@ -81,7 +73,9 @@ export function FeatureGate( {
 					<span className="dashicons dashicons-lock"></span>
 				</div>
 				<div className="rp-feature-gate__content">
-					<h4>{ __( 'AI-Addon erforderlich', 'recruiting-playbook' ) }</h4>
+					<h4>
+						{ __( 'AI-Addon erforderlich', 'recruiting-playbook' ) }
+					</h4>
 					<p>
 						{ __(
 							'Diese Funktion erfordert das AI-Addon für automatische Kandidatenanalyse.',
@@ -95,7 +89,10 @@ export function FeatureGate( {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{ __( 'AI-Addon freischalten', 'recruiting-playbook' ) }
+							{ __(
+								'AI-Addon freischalten',
+								'recruiting-playbook'
+							) }
 						</a>
 					) }
 				</div>

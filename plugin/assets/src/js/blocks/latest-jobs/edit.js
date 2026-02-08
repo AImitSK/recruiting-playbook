@@ -1,7 +1,7 @@
 /**
  * Latest Jobs Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';

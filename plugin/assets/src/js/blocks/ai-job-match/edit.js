@@ -1,7 +1,7 @@
 /**
  * AI Job Match Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -44,7 +44,9 @@ export default function Edit( { attributes, setAttributes } ) {
 						label={ __( 'Job-ID', 'recruiting-playbook' ) }
 						value={ jobId || '' }
 						onChange={ ( value ) =>
-							setAttributes( { jobId: parseInt( value, 10 ) || 0 } )
+							setAttributes( {
+								jobId: parseInt( value, 10 ) || 0,
+							} )
 						}
 						type="number"
 						help={ __(
@@ -87,7 +89,9 @@ export default function Edit( { attributes, setAttributes } ) {
 							type="button"
 							className={
 								'wp-element-button' +
-								( style === 'outline' ? ' is-style-outline' : '' )
+								( style === 'outline'
+									? ' is-style-outline'
+									: '' )
 							}
 							disabled
 						>

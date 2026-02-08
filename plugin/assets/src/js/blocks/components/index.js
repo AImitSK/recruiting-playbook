@@ -3,7 +3,7 @@
  *
  * Re-exports all shared components for easy importing.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 export { TaxonomySelect, TaxonomyMultiSelect } from './TaxonomySelect';

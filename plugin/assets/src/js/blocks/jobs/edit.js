@@ -1,7 +1,7 @@
 /**
  * Jobs Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -92,10 +92,15 @@ export default function Edit( { attributes, setAttributes } ) {
 					<TaxonomySelect
 						taxonomy="employment_type"
 						value={ type }
-						onChange={ ( value ) => setAttributes( { type: value } ) }
+						onChange={ ( value ) =>
+							setAttributes( { type: value } )
+						}
 					/>
 					<ToggleControl
-						label={ __( 'Nur Featured Jobs', 'recruiting-playbook' ) }
+						label={ __(
+							'Nur Featured Jobs',
+							'recruiting-playbook'
+						) }
 						checked={ featured }
 						onChange={ ( value ) =>
 							setAttributes( { featured: value } )
@@ -137,11 +142,17 @@ export default function Edit( { attributes, setAttributes } ) {
 						value={ order }
 						options={ [
 							{
-								label: __( 'Neueste zuerst', 'recruiting-playbook' ),
+								label: __(
+									'Neueste zuerst',
+									'recruiting-playbook'
+								),
 								value: 'DESC',
 							},
 							{
-								label: __( 'Älteste zuerst', 'recruiting-playbook' ),
+								label: __(
+									'Älteste zuerst',
+									'recruiting-playbook'
+								),
 								value: 'ASC',
 							},
 						] }

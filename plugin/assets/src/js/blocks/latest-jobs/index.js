@@ -3,7 +3,7 @@
  *
  * Zeigt die neuesten Stellenanzeigen an.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

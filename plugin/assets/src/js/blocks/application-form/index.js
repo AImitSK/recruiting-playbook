@@ -3,7 +3,7 @@
  *
  * Bewerbungsformular für Stellenseiten.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

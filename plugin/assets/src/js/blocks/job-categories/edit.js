@@ -1,7 +1,7 @@
 /**
  * Job Categories Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -88,7 +88,10 @@ export default function Edit( { attributes, setAttributes } ) {
 						value={ orderby }
 						options={ [
 							{
-								label: __( 'Name (A-Z)', 'recruiting-playbook' ),
+								label: __(
+									'Name (A-Z)',
+									'recruiting-playbook'
+								),
 								value: 'name',
 							},
 							{

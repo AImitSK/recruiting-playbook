@@ -4,23 +4,22 @@
  * Reusable dropdown component for WordPress taxonomies.
  * Supports single and multi-select modes.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
-import { SelectControl } from '@wordpress/components';
-import { FormTokenField } from '@wordpress/components';
+import { SelectControl, FormTokenField } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
  * TaxonomySelect - Single select dropdown for taxonomy terms
  *
- * @param {Object}   props             Component props.
- * @param {string}   props.taxonomy    Taxonomy slug (job_category, job_location, employment_type).
- * @param {string}   props.value       Selected term slug.
- * @param {Function} props.onChange    Callback when selection changes.
- * @param {string}   props.label       Optional label override.
- * @param {boolean}  props.showCount   Show term count in label.
- * @param {boolean}  props.allowEmpty  Allow empty selection.
+ * @param {Object}   props            Component props.
+ * @param {string}   props.taxonomy   Taxonomy slug (job_category, job_location, employment_type).
+ * @param {string}   props.value      Selected term slug.
+ * @param {Function} props.onChange   Callback when selection changes.
+ * @param {string}   props.label      Optional label override.
+ * @param {boolean}  props.showCount  Show term count in label.
+ * @param {boolean}  props.allowEmpty Allow empty selection.
  * @return {JSX.Element} The component.
  */
 export function TaxonomySelect( {
@@ -75,11 +74,11 @@ export function TaxonomySelect( {
 /**
  * TaxonomyMultiSelect - Multi-select token field for taxonomy terms
  *
- * @param {Object}   props           Component props.
- * @param {string}   props.taxonomy  Taxonomy slug.
- * @param {Array}    props.value     Selected term slugs.
- * @param {Function} props.onChange  Callback when selection changes.
- * @param {string}   props.label     Optional label override.
+ * @param {Object}   props          Component props.
+ * @param {string}   props.taxonomy Taxonomy slug.
+ * @param {Array}    props.value    Selected term slugs.
+ * @param {Function} props.onChange Callback when selection changes.
+ * @param {string}   props.label    Optional label override.
  * @return {JSX.Element} The component.
  */
 export function TaxonomyMultiSelect( {

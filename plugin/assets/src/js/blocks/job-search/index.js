@@ -3,7 +3,7 @@
  *
  * Suchformular mit Filtern und Ergebnisliste.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { registerBlockType } from '@wordpress/blocks';

@@ -4,7 +4,7 @@
  * Entry point for all block registrations.
  * Pro-Feature: Native WordPress blocks for the Block Editor.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 // Block registrations will be added here as they are implemented.

@@ -4,7 +4,7 @@
  * Slider control for selecting column layout (1-4 columns).
  * Used in job grid and card layouts.
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { RangeControl } from '@wordpress/components';

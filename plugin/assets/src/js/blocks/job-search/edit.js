@@ -1,7 +1,7 @@
 /**
  * Job Search Block - Editor Component
  *
- * @package RecruitingPlaybook
+ * @package
  */
 
 import { __ } from '@wordpress/i18n';
@@ -20,14 +20,8 @@ import { ColumnsControl } from '../components/ColumnsControl';
  * @return {JSX.Element} The editor component.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const {
-		showSearch,
-		showCategory,
-		showLocation,
-		showType,
-		limit,
-		columns,
-	} = attributes;
+	const { showSearch, showCategory, showLocation, showType, limit, columns } =
+		attributes;
 
 	const blockProps = useBlockProps( {
 		className: 'rp-block-job-search-editor',
@@ -41,7 +35,10 @@ export default function Edit( { attributes, setAttributes } ) {
 					initialOpen={ true }
 				>
 					<ToggleControl
-						label={ __( 'Suchfeld anzeigen', 'recruiting-playbook' ) }
+						label={ __(
+							'Suchfeld anzeigen',
+							'recruiting-playbook'
+						) }
 						checked={ showSearch }
 						onChange={ ( value ) =>
 							setAttributes( { showSearch: value } )
@@ -84,7 +81,10 @@ export default function Edit( { attributes, setAttributes } ) {
 					initialOpen={ false }
 				>
 					<RangeControl
-						label={ __( 'Stellen pro Seite', 'recruiting-playbook' ) }
+						label={ __(
+							'Stellen pro Seite',
+							'recruiting-playbook'
+						) }
 						value={ limit }
 						onChange={ ( value ) =>
 							setAttributes( { limit: value } )
