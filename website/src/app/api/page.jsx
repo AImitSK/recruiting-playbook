@@ -6,6 +6,8 @@ const descriptions = {
   authentication: 'API keys, WordPress Application Passwords, and permissions.',
   jobs: 'Create, read, update, and delete job listings.',
   applications: 'Manage applications, status updates, notes, ratings, and documents.',
+  roles: 'Manage user roles and capabilities for recruiters and hiring managers.',
+  'job-assignments': 'Assign users to specific job listings and manage assignments.',
   webhooks: 'Register webhooks, available events, payloads, and signature validation.',
   reports: 'Recruiting overview and time-to-hire analytics.',
   errors: 'HTTP status codes, error codes, rate limiting, and versioning.',
