@@ -30,7 +30,14 @@ abstract class AbstractElement {
 	 */
 	public function register(): void {
 		if ( function_exists( 'fusion_builder_map' ) ) {
-			fusion_builder_map( $this->getConfig() );
+			$config = $this->getConfig();
+
+			// Kategorie automatisch hinzufügen falls nicht gesetzt.
+			if ( ! isset( $config['element_category'] ) ) {
+				$config['element_category'] = 'recruiting_playbook';
+			}
+
+			fusion_builder_map( $config );
 		}
 	}
 
