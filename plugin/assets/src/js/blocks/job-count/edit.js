@@ -6,8 +6,7 @@
 
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
+import { PanelBody, TextControl, Placeholder } from '@wordpress/components';
 
 import { TaxonomySelect } from '../components/TaxonomySelect';
 
@@ -97,15 +96,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<ServerSideRender
-					block="rp/job-count"
-					attributes={ attributes }
-					EmptyResponsePlaceholder={ () => (
-						<span className="rp-job-count">
-							{ __( '0 offene Stellen', 'recruiting-playbook' ) }
-						</span>
-					) }
-				/>
+				<Placeholder
+					icon="chart-bar"
+					label={ __( 'Stellen-Zähler', 'recruiting-playbook' ) }
+					instructions={ format }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Zeigt die Anzahl offener Stellen an.',
+							'recruiting-playbook'
+						) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);

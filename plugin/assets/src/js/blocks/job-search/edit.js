@@ -6,8 +6,12 @@
 
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
+import {
+	PanelBody,
+	RangeControl,
+	ToggleControl,
+	Placeholder,
+} from '@wordpress/components';
 
 import { ColumnsControl } from '../components/ColumnsControl';
 
@@ -26,6 +30,19 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'rp-block-job-search-editor',
 	} );
+
+	const getFilterSummary = () => {
+		const filters = [];
+		if ( showSearch ) filters.push( __( 'Suche', 'recruiting-playbook' ) );
+		if ( showCategory )
+			filters.push( __( 'Kategorie', 'recruiting-playbook' ) );
+		if ( showLocation )
+			filters.push( __( 'Standort', 'recruiting-playbook' ) );
+		if ( showType ) filters.push( __( 'Art', 'recruiting-playbook' ) );
+		return filters.length > 0
+			? filters.join( ', ' )
+			: __( 'Keine Filter', 'recruiting-playbook' );
+	};
 
 	return (
 		<>
@@ -108,18 +125,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<ServerSideRender
-					block="rp/job-search"
-					attributes={ attributes }
-					EmptyResponsePlaceholder={ () => (
-						<p className="rp-block-empty">
-							{ __(
-								'Stellensuche wird hier angezeigt.',
-								'recruiting-playbook'
-							) }
-						</p>
-					) }
-				/>
+				<Placeholder
+					icon="search"
+					label={ __( 'Stellensuche', 'recruiting-playbook' ) }
+					instructions={ `${ __( 'Filter:', 'recruiting-playbook' ) } ${ getFilterSummary() }` }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Suchformular mit Filtern und Ergebnisliste.',
+							'recruiting-playbook'
+						) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);

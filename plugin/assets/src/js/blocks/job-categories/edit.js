@@ -11,8 +11,8 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
+	Placeholder,
 } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
 
 /**
  * Edit component for the Job Categories block.
@@ -28,6 +28,19 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'rp-block-job-categories-editor',
 	} );
+
+	const getSummary = () => {
+		const parts = [];
+		parts.push(
+			columns === 1
+				? __( '1 Spalte', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+		);
+		if ( showCount ) {
+			parts.push( __( 'mit Zähler', 'recruiting-playbook' ) );
+		}
+		return parts.join( ' · ' );
+	};
 
 	return (
 		<>
@@ -110,18 +123,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<ServerSideRender
-					block="rp/job-categories"
-					attributes={ attributes }
-					EmptyResponsePlaceholder={ () => (
-						<p className="rp-block-empty">
-							{ __(
-								'Keine Kategorien vorhanden. Erstellen Sie Kategorien unter Jobs → Kategorien.',
-								'recruiting-playbook'
-							) }
-						</p>
-					) }
-				/>
+				<Placeholder
+					icon="category"
+					label={ __( 'Job-Kategorien', 'recruiting-playbook' ) }
+					instructions={ getSummary() }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Zeigt alle Job-Kategorien als Karten an.',
+							'recruiting-playbook'
+						) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);

@@ -11,8 +11,8 @@ import {
 	RangeControl,
 	TextControl,
 	ToggleControl,
+	Placeholder,
 } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
 
 import { ColumnsControl } from '../components/ColumnsControl';
 
@@ -30,6 +30,21 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'rp-block-featured-jobs-editor',
 	} );
+
+	const getSummary = () => {
+		const parts = [];
+		parts.push(
+			limit === 1
+				? __( '1 Stelle', 'recruiting-playbook' )
+				: `${ limit } ${ __( 'Stellen', 'recruiting-playbook' ) }`
+		);
+		parts.push(
+			columns === 1
+				? __( '1 Spalte', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+		);
+		return parts.join( ' · ' );
+	};
 
 	return (
 		<>
@@ -77,18 +92,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<ServerSideRender
-					block="rp/featured-jobs"
-					attributes={ attributes }
-					EmptyResponsePlaceholder={ () => (
-						<p className="rp-block-empty">
-							{ __(
-								'Keine Featured Jobs vorhanden. Markieren Sie Stellen als "Featured" in der Stellenverwaltung.',
-								'recruiting-playbook'
-							) }
-						</p>
-					) }
-				/>
+				<Placeholder
+					icon="star-filled"
+					label={ __( 'Featured Jobs', 'recruiting-playbook' ) }
+					instructions={ getSummary() }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Zeigt hervorgehobene Stellen an.',
+							'recruiting-playbook'
+						) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);

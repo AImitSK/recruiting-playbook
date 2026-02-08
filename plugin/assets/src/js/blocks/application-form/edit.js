@@ -12,7 +12,6 @@ import {
 	ToggleControl,
 	Placeholder,
 } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
 
 /**
  * Edit component for the Application Form block.
@@ -28,6 +27,13 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'rp-block-application-form-editor',
 	} );
+
+	const getDescription = () => {
+		if ( jobId > 0 ) {
+			return `Job-ID: ${ jobId }`;
+		}
+		return __( 'Automatische Erkennung', 'recruiting-playbook' );
+	};
 
 	return (
 		<>
@@ -89,43 +95,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				{ jobId > 0 ? (
-					<ServerSideRender
-						block="rp/application-form"
-						attributes={ attributes }
-						EmptyResponsePlaceholder={ () => (
-							<Placeholder
-								icon="clipboard"
-								label={ __(
-									'Bewerbungsformular',
-									'recruiting-playbook'
-								) }
-							>
-								<p>
-									{ __(
-										'Das Formular wird auf der Seite angezeigt.',
-										'recruiting-playbook'
-									) }
-								</p>
-							</Placeholder>
-						) }
-					/>
-				) : (
-					<Placeholder
-						icon="clipboard"
-						label={ __(
-							'Bewerbungsformular',
+				<Placeholder
+					icon="clipboard"
+					label={ __( 'Bewerbungsformular', 'recruiting-playbook' ) }
+					instructions={ getDescription() }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Das Formular wird im Frontend angezeigt.',
 							'recruiting-playbook'
 						) }
-					>
-						<p>
-							{ __(
-								'Das Formular erkennt automatisch die aktuelle Stelle oder geben Sie eine Job-ID in den Einstellungen an.',
-								'recruiting-playbook'
-							) }
-						</p>
-					</Placeholder>
-				) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);

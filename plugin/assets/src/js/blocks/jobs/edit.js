@@ -11,8 +11,8 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
+	Placeholder,
 } from '@wordpress/components';
-import ServerSideRender from '@wordpress/server-side-render';
 
 import { TaxonomySelect } from '../components/TaxonomySelect';
 import { ColumnsControl } from '../components/ColumnsControl';
@@ -40,6 +40,25 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'rp-block-jobs-editor',
 	} );
+
+	// Build summary text for placeholder.
+	const getSummary = () => {
+		const parts = [];
+		parts.push(
+			limit === 1
+				? __( '1 Stelle', 'recruiting-playbook' )
+				: `${ limit } ${ __( 'Stellen', 'recruiting-playbook' ) }`
+		);
+		parts.push(
+			columns === 1
+				? __( '1 Spalte', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+		);
+		if ( featured ) {
+			parts.push( __( 'Nur Featured', 'recruiting-playbook' ) );
+		}
+		return parts.join( ' · ' );
+	};
 
 	return (
 		<>
@@ -164,18 +183,18 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<ServerSideRender
-					block="rp/jobs"
-					attributes={ attributes }
-					EmptyResponsePlaceholder={ () => (
-						<p className="rp-block-empty">
-							{ __(
-								'Keine Stellen gefunden. Passen Sie die Filter an.',
-								'recruiting-playbook'
-							) }
-						</p>
-					) }
-				/>
+				<Placeholder
+					icon="businessman"
+					label={ __( 'Stellenliste', 'recruiting-playbook' ) }
+					instructions={ getSummary() }
+				>
+					<p className="components-placeholder__learn-more">
+						{ __(
+							'Konfiguriere die Anzeige in der Seitenleiste.',
+							'recruiting-playbook'
+						) }
+					</p>
+				</Placeholder>
 			</div>
 		</>
 	);
