@@ -47,6 +47,8 @@ class FeatureFlags {
 			'advanced_reporting'           => false,  // Time-to-Hire, Conversion, Trends.
 			'csv_export'                   => false,
 			'design_settings'              => false,
+			'avada_integration'            => false,   // Avada/Fusion Builder Elements.
+			'gutenberg_blocks'             => false,   // Native Gutenberg Blocks.
 			'ai_job_generation'            => false,
 			'ai_text_improvement'          => false,
 			'ai_templates'                 => false,
@@ -70,6 +72,8 @@ class FeatureFlags {
 			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
 			'csv_export'                   => true,
 			'design_settings'              => true,
+			'avada_integration'            => true,   // Avada/Fusion Builder Elements.
+			'gutenberg_blocks'             => true,   // Native Gutenberg Blocks.
 			'ai_job_generation'            => false,
 			'ai_text_improvement'          => false,
 			'ai_templates'                 => false,
@@ -93,6 +97,8 @@ class FeatureFlags {
 			'advanced_reporting'           => false,
 			'csv_export'                   => false,
 			'design_settings'              => false,
+			'avada_integration'            => false,   // Avada/Fusion Builder Elements.
+			'gutenberg_blocks'             => false,   // Native Gutenberg Blocks.
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,
 			'ai_templates'                 => true,
@@ -117,6 +123,8 @@ class FeatureFlags {
 			'advanced_reporting'           => true,   // Time-to-Hire, Conversion, Trends.
 			'csv_export'                   => true,
 			'design_settings'              => true,
+			'avada_integration'            => true,   // Avada/Fusion Builder Elements.
+			'gutenberg_blocks'             => true,   // Native Gutenberg Blocks.
 			'ai_job_generation'            => true,
 			'ai_text_improvement'          => true,
 			'ai_templates'                 => true,

@@ -46,6 +46,7 @@ use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
 use RecruitingPlaybook\Blocks\BlockLoader;
+use RecruitingPlaybook\Integrations\Avada\AvadaIntegration;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -97,6 +98,9 @@ final class Plugin {
 
 		// Gutenberg Blocks (Pro-Feature).
 		$this->initBlocks();
+
+		// Avada / Fusion Builder Integration (Pro-Feature).
+		$this->initAvadaIntegration();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -327,6 +331,22 @@ final class Plugin {
 	private function initBlocks(): void {
 		$block_loader = new BlockLoader();
 		$block_loader->register();
+	}
+
+	/**
+	 * Avada / Fusion Builder Integration initialisieren
+	 *
+	 * Pro-Feature: Registriert native Fusion Builder Elements für Avada.
+	 * Elements werden nur geladen wenn Pro-Lizenz und Avada aktiv sind.
+	 */
+	private function initAvadaIntegration(): void {
+		// Nur laden wenn Avada/Fusion Builder verfügbar ist.
+		if ( ! class_exists( 'FusionBuilder' ) ) {
+			return;
+		}
+
+		$avada_integration = new AvadaIntegration();
+		$avada_integration->register();
 	}
 
 	/**
