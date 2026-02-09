@@ -93,6 +93,19 @@ docs/website/
 *.zip
 
 # =============================================================
+# Avada Theme (temp files for development/analysis)
+# =============================================================
+.avada-temp/
+extract-avada.ps1
+find-zips.ps1
+list-zip.ps1
+
+# =============================================================
+# Dev Tools (not for production)
+# =============================================================
+plugin/tools/
+
+# =============================================================
 # Dev Container (do not ignore - needed for development)
 # =============================================================
 # .devcontainer/ is tracked!

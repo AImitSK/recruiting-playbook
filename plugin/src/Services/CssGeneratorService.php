@@ -118,6 +118,9 @@ class CssGeneratorService {
 		// Button Custom Design: Wenn aktiv, Styles generieren die Theme überschreiben.
 		if ( ! empty( $settings['button_use_custom_design'] ) ) {
 			$css .= $this->generate_custom_button_css( $settings );
+		} elseif ( $this->is_avada_active() ) {
+			// Avada stylt .wp-element-button nicht – Avada-Button-Styles übertragen.
+			$css .= $this->generate_avada_button_css();
 		}
 
 		// Zusätzliche CSS-Regeln (Hover-Effekte etc.).
@@ -510,6 +513,135 @@ class CssGeneratorService {
 		$css .= "  color: var(--rp-btn-text-hover) !important;\n";
 		$css .= "  box-shadow: var(--rp-btn-shadow-hover) !important;\n";
 		$css .= "}\n";
+
+		return $css;
+	}
+
+	/**
+	 * Prüft ob Avada das aktive Theme ist
+	 *
+	 * @return bool
+	 */
+	private function is_avada_active(): bool {
+		$theme = wp_get_theme();
+		$name  = $theme->get_template();
+		return 'Avada' === $name || 'avada' === strtolower( $name );
+	}
+
+	/**
+	 * Avada-Button-Styles auf .wp-element-button übertragen
+	 *
+	 * Avada stylt nur .fusion-button, nicht .wp-element-button.
+	 * Diese Methode liest die Avada-Button-Einstellungen (fusion_options)
+	 * und wendet sie auf die Plugin-Buttons an.
+	 *
+	 * @return string CSS.
+	 */
+	private function generate_avada_button_css(): string {
+		$fusion_opts = get_option( 'fusion_options', [] );
+
+		if ( empty( $fusion_opts ) ) {
+			return '';
+		}
+
+		$css = "\n/* Avada Theme Button Integration */\n";
+
+		// Hintergrundfarbe.
+		$bg       = $fusion_opts['button_gradient_top_color'] ?? 'var(--awb-color5)';
+		$bg_hover = $fusion_opts['button_gradient_top_color_hover'] ?? '';
+
+		// Textfarbe.
+		$text       = $fusion_opts['button_accent_color'] ?? 'var(--awb-color1)';
+		$text_hover = $fusion_opts['button_accent_hover_color'] ?? $text;
+
+		// Padding.
+		$padding = '';
+		if ( ! empty( $fusion_opts['button_padding'] ) && is_array( $fusion_opts['button_padding'] ) ) {
+			$p       = $fusion_opts['button_padding'];
+			$padding = ( $p['top'] ?? '13px' ) . ' ' . ( $p['right'] ?? '29px' ) . ' ' . ( $p['bottom'] ?? '13px' ) . ' ' . ( $p['left'] ?? '29px' );
+		}
+
+		// Border-Width.
+		$border_width = '';
+		if ( ! empty( $fusion_opts['button_border_width'] ) ) {
+			if ( is_array( $fusion_opts['button_border_width'] ) ) {
+				$bw           = $fusion_opts['button_border_width'];
+				$border_width = ( $bw['top'] ?? '0px' ) . ' ' . ( $bw['right'] ?? '0px' ) . ' ' . ( $bw['bottom'] ?? '0px' ) . ' ' . ( $bw['left'] ?? '0px' );
+			} else {
+				$border_width = $fusion_opts['button_border_width'];
+			}
+		}
+		$border_color       = $fusion_opts['button_border_color'] ?? 'transparent';
+		$border_hover_color = $fusion_opts['button_border_hover_color'] ?? $border_color;
+
+		// Border-Radius.
+		$radius = '';
+		if ( ! empty( $fusion_opts['button_border_radius'] ) ) {
+			if ( is_array( $fusion_opts['button_border_radius'] ) ) {
+				$br     = $fusion_opts['button_border_radius'];
+				$radius = ( $br['top_left'] ?? '0px' ) . ' ' . ( $br['top_right'] ?? '0px' ) . ' ' . ( $br['bottom_right'] ?? '0px' ) . ' ' . ( $br['bottom_left'] ?? '0px' );
+			} else {
+				$radius = $fusion_opts['button_border_radius'];
+			}
+		}
+
+		// Typografie.
+		$typo = $fusion_opts['button_typography'] ?? [];
+		if ( is_string( $typo ) ) {
+			$typo = json_decode( $typo, true ) ?: [];
+		}
+
+		// Normal-State.
+		$css .= ".rp-plugin .wp-element-button,\n";
+		$css .= ".rp-plugin a.wp-element-button {\n";
+		$css .= "  background: {$bg};\n";
+		$css .= "  color: {$text};\n";
+		if ( $padding ) {
+			$css .= "  padding: {$padding};\n";
+		}
+		if ( $border_width ) {
+			$css .= "  border-width: {$border_width};\n";
+			$css .= "  border-style: solid;\n";
+			$css .= "  border-color: {$border_color};\n";
+		}
+		if ( $radius ) {
+			$css .= "  border-radius: {$radius};\n";
+		}
+		if ( ! empty( $typo['font-weight'] ) ) {
+			$css .= "  font-weight: {$typo['font-weight']};\n";
+		}
+		if ( ! empty( $typo['font-size'] ) ) {
+			$css .= "  font-size: {$typo['font-size']};\n";
+		}
+		if ( ! empty( $typo['line-height'] ) ) {
+			$css .= "  line-height: {$typo['line-height']};\n";
+		}
+		if ( ! empty( $typo['letter-spacing'] ) ) {
+			$css .= "  letter-spacing: {$typo['letter-spacing']};\n";
+		}
+		if ( ! empty( $typo['text-transform'] ) ) {
+			$css .= "  text-transform: {$typo['text-transform']};\n";
+		}
+		if ( ! empty( $typo['font-family'] ) ) {
+			$css .= "  font-family: {$typo['font-family']};\n";
+		}
+		$css .= "}\n";
+
+		// Hover-State.
+		if ( $bg_hover || $text_hover ) {
+			$css .= ".rp-plugin .wp-element-button:hover,\n";
+			$css .= ".rp-plugin a.wp-element-button:hover {\n";
+			if ( $bg_hover ) {
+				$css .= "  background: {$bg_hover};\n";
+			}
+			if ( $text_hover ) {
+				$css .= "  color: {$text_hover};\n";
+			}
+			if ( $border_hover_color ) {
+				$css .= "  border-color: {$border_hover_color};\n";
+			}
+			$css .= "}\n";
+		}
 
 		return $css;
 	}
