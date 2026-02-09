@@ -22,6 +22,7 @@ use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
 use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
+use RecruitingPlaybook\Api\JobController;
 use RecruitingPlaybook\Api\ApplicationController;
 use RecruitingPlaybook\Api\NoteController;
 use RecruitingPlaybook\Api\RatingController;
@@ -467,6 +468,9 @@ final class Plugin {
 	 * REST API Routen registrieren
 	 */
 	public function registerRestRoutes(): void {
+		$job_controller = new JobController();
+		$job_controller->register_routes();
+
 		$application_controller = new ApplicationController();
 		$application_controller->register_routes();
 
