@@ -318,13 +318,16 @@ final class Plugin {
 	 * Taxonomien registrieren
 	 */
 	private function registerTaxonomies(): void {
-		$job_category    = new JobCategory();
-		$job_location    = new JobLocation();
-		$employment_type = new EmploymentType();
-
-		add_action( 'init', [ $job_category, 'register' ] );
-		add_action( 'init', [ $job_location, 'register' ] );
-		add_action( 'init', [ $employment_type, 'register' ] );
+		// Taxonomien könnten bereits früher registriert sein (Avada/Fusion Builder Kompatibilität).
+		if ( ! taxonomy_exists( JobCategory::TAXONOMY ) ) {
+			add_action( 'init', [ new JobCategory(), 'register' ] );
+		}
+		if ( ! taxonomy_exists( JobLocation::TAXONOMY ) ) {
+			add_action( 'init', [ new JobLocation(), 'register' ] );
+		}
+		if ( ! taxonomy_exists( EmploymentType::TAXONOMY ) ) {
+			add_action( 'init', [ new EmploymentType(), 'register' ] );
+		}
 	}
 
 	/**

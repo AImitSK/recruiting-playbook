@@ -54,8 +54,7 @@ class JobGrid extends AbstractElement {
 				'min'         => '1',
 				'max'         => '50',
 				'step'        => '1',
-				'group'       => esc_attr__( 'Allgemein', 'recruiting-playbook' ),
-			],
+				],
 			[
 				'type'        => 'radio_button_set',
 				'heading'     => esc_attr__( 'Spalten', 'recruiting-playbook' ),
@@ -68,7 +67,6 @@ class JobGrid extends AbstractElement {
 					'3' => '3',
 					'4' => '4',
 				],
-				'group'       => esc_attr__( 'Allgemein', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -87,7 +85,6 @@ class JobGrid extends AbstractElement {
 				'param_name'  => 'category',
 				'value'       => $this->getTaxonomyOptions( 'job_category' ),
 				'default'     => '',
-				'group'       => esc_attr__( 'Filter', 'recruiting-playbook' ),
 			],
 			[
 				'type'        => 'select',
@@ -96,7 +93,6 @@ class JobGrid extends AbstractElement {
 				'param_name'  => 'location',
 				'value'       => $this->getTaxonomyOptions( 'job_location' ),
 				'default'     => '',
-				'group'       => esc_attr__( 'Filter', 'recruiting-playbook' ),
 			],
 			[
 				'type'        => 'select',
@@ -105,7 +101,6 @@ class JobGrid extends AbstractElement {
 				'param_name'  => 'type',
 				'value'       => $this->getTaxonomyOptions( 'employment_type' ),
 				'default'     => '',
-				'group'       => esc_attr__( 'Filter', 'recruiting-playbook' ),
 			],
 			[
 				'type'        => 'radio_button_set',
@@ -117,7 +112,6 @@ class JobGrid extends AbstractElement {
 					'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
 					'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
 				],
-				'group'       => esc_attr__( 'Filter', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -139,7 +133,6 @@ class JobGrid extends AbstractElement {
 					'title' => esc_attr__( 'Titel', 'recruiting-playbook' ),
 					'rand'  => esc_attr__( 'Zufällig', 'recruiting-playbook' ),
 				],
-				'group'       => esc_attr__( 'Sortierung', 'recruiting-playbook' ),
 			],
 			[
 				'type'        => 'radio_button_set',
@@ -150,7 +143,6 @@ class JobGrid extends AbstractElement {
 					'DESC' => esc_attr__( 'Absteigend', 'recruiting-playbook' ),
 					'ASC'  => esc_attr__( 'Aufsteigend', 'recruiting-playbook' ),
 				],
-				'group'       => esc_attr__( 'Sortierung', 'recruiting-playbook' ),
 			],
 		];
 	}

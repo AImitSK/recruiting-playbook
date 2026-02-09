@@ -110,6 +110,15 @@ add_action('after_setup_theme', function() {
         return;
     }
 
+    // Taxonomien VOR Fusion Builder registrieren, damit getTaxonomyOptions()
+    // in den Element-Konfigurationen die Terms laden kann.
+    // (Normalerweise erst bei init:10, aber Fusion Builder braucht sie bei after_setup_theme:10.)
+    if (class_exists('FusionBuilder')) {
+        (new \RecruitingPlaybook\Taxonomies\JobCategory())->register();
+        (new \RecruitingPlaybook\Taxonomies\JobLocation())->register();
+        (new \RecruitingPlaybook\Taxonomies\EmploymentType())->register();
+    }
+
     // Avada Integration registrieren (Hook auf fusion_builder_before_init).
     $avada_integration = new \RecruitingPlaybook\Integrations\Avada\AvadaIntegration();
     $avada_integration->register();
