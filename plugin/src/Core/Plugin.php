@@ -91,7 +91,12 @@ final class Plugin {
 			$this->initAdmin();
 		}
 
-		// Frontend.
+		// Shortcodes immer registrieren (auch im Admin/AJAX-Kontext,
+		// damit Fusion Builder Live-Preview Shortcodes rendern kann).
+		$shortcodes = new Shortcodes();
+		$shortcodes->register();
+
+		// Frontend (Templates, Schema, etc. – nicht im Admin).
 		if ( ! is_admin() ) {
 			$this->initFrontend();
 		}
@@ -389,9 +394,7 @@ final class Plugin {
 		$job_schema = new JobSchema();
 		$job_schema->init();
 
-		// Shortcodes registrieren.
-		$shortcodes = new Shortcodes();
-		$shortcodes->register();
+		// Shortcodes werden bereits in init() registriert (auch für AJAX-Kontext).
 
 		// Design & Branding CSS-Variablen werden über wp_add_inline_style geladen.
 		// Siehe enqueueFrontendAssets() - dort werden sie an rp-frontend angehängt.
