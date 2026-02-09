@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '2.1.0';
+	private const SCHEMA_VERSION = '2.2.0';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -49,6 +49,7 @@ class Migrator {
 			dbDelta( Schema::getFormConfigTableSql() );
 			dbDelta( Schema::getWebhooksTableSql() );
 			dbDelta( Schema::getWebhookDeliveriesTableSql() );
+			dbDelta( Schema::getApiKeysTableSql() );
 
 			// Spezielle Migrationen für bestehende Installationen.
 			$this->runMigrations( $current_version );

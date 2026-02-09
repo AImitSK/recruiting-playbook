@@ -43,6 +43,7 @@ class Schema {
 			'form_config'       => $wpdb->prefix . 'rp_form_config',
 			'webhooks'          => $wpdb->prefix . 'rp_webhooks',
 			'webhook_deliveries' => $wpdb->prefix . 'rp_webhook_deliveries',
+			'api_keys'          => $wpdb->prefix . 'rp_api_keys',
 		];
 	}
 
@@ -592,6 +593,38 @@ class Schema {
 			KEY webhook_id (webhook_id),
 			KEY status (status),
 			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_api_keys
+	 *
+	 * @return string
+	 */
+	public static function getApiKeysTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['api_keys'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL,
+			key_prefix varchar(10) NOT NULL,
+			key_hash varchar(64) NOT NULL,
+			key_hint varchar(10) NOT NULL,
+			permissions longtext NOT NULL,
+			rate_limit int(10) unsigned DEFAULT 1000,
+			last_used_at datetime DEFAULT NULL,
+			request_count bigint(20) unsigned DEFAULT 0,
+			created_by bigint(20) unsigned NOT NULL,
+			is_active tinyint(1) DEFAULT 1,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			expires_at datetime DEFAULT NULL,
+			revoked_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY key_hash (key_hash),
+			KEY created_by (created_by),
+			KEY is_active (is_active)
 		) {$charset};";
 	}
 }

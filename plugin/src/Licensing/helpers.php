@@ -440,3 +440,30 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 
 	return false;
 }
+
+/**
+ * Gibt API-Key-Daten des aktuellen Requests zurück
+ *
+ * @return object|null Key-DB-Objekt oder null wenn kein API-Key-Auth.
+ */
+function rp_get_api_key_data(): ?object {
+	return $GLOBALS['rp_authenticated_api_key'] ?? null;
+}
+
+/**
+ * Prüft ob der aktuelle API-Key eine bestimmte Permission hat
+ *
+ * Bei WordPress-Auth (kein API-Key) wird immer true zurückgegeben,
+ * da die Berechtigung über WordPress Capabilities gesteuert wird.
+ *
+ * @param string $permission Permission-String (z.B. 'jobs_read').
+ * @return bool
+ */
+function rp_api_key_can( string $permission ): bool {
+	$key_data = rp_get_api_key_data();
+	if ( ! $key_data ) {
+		return true; // WordPress-Auth = alles erlaubt.
+	}
+	$service = new \RecruitingPlaybook\Services\ApiKeyService();
+	return $service->hasPermission( $key_data, $permission );
+}

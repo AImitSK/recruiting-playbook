@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import { Spinner } from '../components/ui/spinner';
 
-import { GeneralSettings, CompanySettings, ExportSettings, RolesSettings } from './components';
+import { GeneralSettings, CompanySettings, ExportSettings, RolesSettings, ApiKeySettings } from './components';
 import { DesignTab } from './tabs/DesignTab';
 import { useSettings } from './hooks';
 
@@ -94,7 +94,7 @@ export function SettingsPage() {
 
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
-			<div style={ { maxWidth: activeTab === 'design' ? '1100px' : '900px' } }>
+			<div style={ { maxWidth: ( activeTab === 'design' || activeTab === 'api' ) ? '1100px' : '900px' } }>
 				{ /* Header: Logo links, Titel rechts */ }
 				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
 					{ logoUrl && (
@@ -141,6 +141,11 @@ export function SettingsPage() {
 								{ __( 'Design & Branding', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
+						{ config.isPro && (
+							<TabsTrigger value="api">
+								{ __( 'API', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
 					</TabsList>
 
 					<TabsContent value="general">
@@ -177,6 +182,12 @@ export function SettingsPage() {
 					{ config.isPro && (
 						<TabsContent value="design">
 							<DesignTab />
+						</TabsContent>
+					) }
+
+					{ config.isPro && (
+						<TabsContent value="api">
+							<ApiKeySettings />
 						</TabsContent>
 					) }
 				</Tabs>

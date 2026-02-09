@@ -43,6 +43,8 @@ use RecruitingPlaybook\Api\FormTemplateController;
 use RecruitingPlaybook\Api\MatchController;
 use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Api\WebhookController;
+use RecruitingPlaybook\Api\ApiKeyController;
+use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\WebhookService;
 use RecruitingPlaybook\Services\EmailQueueService;
@@ -91,6 +93,9 @@ final class Plugin {
 
 		// Webhook-Hooks registrieren (Pro-Feature).
 		$this->registerWebhookHooks();
+
+		// API-Key Authentifizierung registrieren (Pro-Feature).
+		$this->registerApiKeyAuth();
 
 		// Admin-Bereich.
 		if ( is_admin() ) {
@@ -327,6 +332,122 @@ final class Plugin {
 
 		// Action Scheduler Hook für asynchrone Delivery.
 		add_action( 'rp_deliver_webhook', [ $service, 'deliver' ], 10, 1 );
+	}
+
+	/**
+	 * API-Key Authentifizierung registrieren
+	 *
+	 * Ermöglicht Authentifizierung über X-Recruiting-API-Key Header
+	 * oder api_key Query-Parameter. Pro-Feature.
+	 */
+	private function registerApiKeyAuth(): void {
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return;
+		}
+
+		add_filter( 'determine_current_user', [ $this, 'authenticateApiKey' ], 20 );
+		add_filter( 'rest_pre_dispatch', [ $this, 'checkApiKeyRateLimit' ], 10, 3 );
+
+		// Rate-Limit-Headers in Response setzen.
+		add_filter(
+			'rest_post_dispatch',
+			function ( $response ) {
+				if ( ! empty( $GLOBALS['rp_rate_limit_headers'] ) && $response instanceof \WP_REST_Response ) {
+					foreach ( $GLOBALS['rp_rate_limit_headers'] as $header => $value ) {
+						$response->header( $header, (string) $value );
+					}
+				}
+				return $response;
+			}
+		);
+	}
+
+	/**
+	 * API-Key aus Request extrahieren und User authentifizieren
+	 *
+	 * @param int|false $user_id Aktuelle User-ID.
+	 * @return int|false User-ID.
+	 */
+	public function authenticateApiKey( $user_id ) {
+		// Bereits authentifiziert → durchreichen.
+		if ( ! empty( $user_id ) ) {
+			return $user_id;
+		}
+
+		// Nur auf REST-Requests reagieren.
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
+			return $user_id;
+		}
+
+		// API-Key aus Header oder Query-Parameter extrahieren.
+		$api_key = '';
+		if ( ! empty( $_SERVER['HTTP_X_RECRUITING_API_KEY'] ) ) {
+			$api_key = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_RECRUITING_API_KEY'] ) );
+		} elseif ( ! empty( $_GET['api_key'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$api_key = sanitize_text_field( wp_unslash( $_GET['api_key'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		if ( empty( $api_key ) ) {
+			return $user_id;
+		}
+
+		$service  = new ApiKeyService();
+		$key_data = $service->validateKey( $api_key );
+
+		if ( ! $key_data ) {
+			return $user_id;
+		}
+
+		// Key-Daten für spätere Permission-Prüfungen speichern.
+		$GLOBALS['rp_authenticated_api_key'] = $key_data;
+
+		// created_by als authentifizierten User zurückgeben.
+		return (int) $key_data->created_by;
+	}
+
+	/**
+	 * Rate Limiting für API-Key-authentifizierte Requests
+	 *
+	 * @param mixed            $result  Response.
+	 * @param \WP_REST_Server  $server  REST Server.
+	 * @param WP_REST_Request  $request Request.
+	 * @return mixed Response oder WP_Error bei Rate Limit.
+	 */
+	public function checkApiKeyRateLimit( $result, $server, $request ) {
+		// Nur wenn API-Key-Auth aktiv.
+		if ( empty( $GLOBALS['rp_authenticated_api_key'] ) ) {
+			return $result;
+		}
+
+		// Nur auf recruiting/v1/* Routen.
+		$route = $request->get_route();
+		if ( ! str_starts_with( $route, '/recruiting/v1/' ) ) {
+			return $result;
+		}
+
+		$service    = new ApiKeyService();
+		$key_data   = $GLOBALS['rp_authenticated_api_key'];
+		$rate_check = $service->checkRateLimit( $key_data );
+
+		// Rate-Limit-Headers für Response speichern.
+		$GLOBALS['rp_rate_limit_headers'] = [
+			'X-RateLimit-Limit'     => $rate_check['limit'],
+			'X-RateLimit-Remaining' => $rate_check['remaining'],
+			'X-RateLimit-Reset'     => $rate_check['reset'],
+		];
+
+		if ( ! $rate_check['allowed'] ) {
+			return new \WP_Error(
+				'rate_limit_exceeded',
+				__( 'Rate Limit überschritten. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+				[
+					'status' => 429,
+					'retry_after' => $rate_check['reset'] - time(),
+				]
+			);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -574,6 +695,10 @@ final class Plugin {
 		// Webhook Controller (Pro-Feature).
 		$webhook_controller = new WebhookController();
 		$webhook_controller->register_routes();
+
+		// API-Key Controller (Pro-Feature).
+		$api_key_controller = new ApiKeyController();
+		$api_key_controller->register_routes();
 	}
 
 	/**
