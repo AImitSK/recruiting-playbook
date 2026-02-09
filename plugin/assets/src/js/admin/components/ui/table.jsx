@@ -7,7 +7,7 @@
 import { forwardRef } from '@wordpress/element';
 import { cn } from '../../lib/utils';
 
-const Table = forwardRef( ( { className, ...props }, ref ) => (
+const Table = forwardRef( ( { className, style, ...props }, ref ) => (
 	<div
 		className={ cn( 'rp-table-wrapper', className ) }
 		style={ {
@@ -23,6 +23,7 @@ const Table = forwardRef( ( { className, ...props }, ref ) => (
 				captionSide: 'bottom',
 				fontSize: '0.875rem',
 				borderCollapse: 'collapse',
+				...style,
 			} }
 			{ ...props }
 		/>
@@ -88,7 +89,7 @@ const TableRow = forwardRef( ( { className, isHeader = false, ...props }, ref ) 
 ) );
 TableRow.displayName = 'TableRow';
 
-const TableHead = forwardRef( ( { className, ...props }, ref ) => (
+const TableHead = forwardRef( ( { className, style, ...props }, ref ) => (
 	<th
 		ref={ ref }
 		className={ cn( 'rp-table-head', className ) }
@@ -103,13 +104,14 @@ const TableHead = forwardRef( ( { className, ...props }, ref ) => (
 			letterSpacing: '0.05em',
 			color: '#71717a',
 			whiteSpace: 'nowrap',
+			...style,
 		} }
 		{ ...props }
 	/>
 ) );
 TableHead.displayName = 'TableHead';
 
-const TableCell = forwardRef( ( { className, ...props }, ref ) => (
+const TableCell = forwardRef( ( { className, style, ...props }, ref ) => (
 	<td
 		ref={ ref }
 		className={ cn( 'rp-table-cell', className ) }
@@ -117,6 +119,7 @@ const TableCell = forwardRef( ( { className, ...props }, ref ) => (
 			padding: '1rem',
 			verticalAlign: 'middle',
 			color: '#1f2937',
+			...style,
 		} }
 		{ ...props }
 	/>

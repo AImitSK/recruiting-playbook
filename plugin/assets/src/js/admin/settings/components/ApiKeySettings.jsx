@@ -205,25 +205,25 @@ export function ApiKeySettings() {
 							</p>
 						</div>
 					) : (
-						<Table style={ { width: '100%' } }>
+						<Table>
 							<TableHeader>
 								<TableRow>
-									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { padding: '0.75rem 1rem', width: '1%' } }></TableHead>
+									<TableHead>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
+									<TableHead>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
+									<TableHead>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { textAlign: 'right' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
+									<TableHead></TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{ keys.map( ( key ) => (
 									<TableRow key={ key.id }>
-										<TableCell style={ { fontWeight: 500, verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
 											{ key.name }
 										</TableCell>
-										<TableCell style={ { verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { whiteSpace: 'nowrap' } }>
 											<code style={ {
 												fontSize: '0.8rem',
 												backgroundColor: '#f3f4f6',
@@ -233,7 +233,7 @@ export function ApiKeySettings() {
 												{ key.key_prefix }...{ key.key_hint }
 											</code>
 										</TableCell>
-										<TableCell style={ { verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
+										<TableCell>
 											<div style={ { display: 'flex', flexWrap: 'wrap', gap: '4px' } }>
 												{ ( key.permissions || [] ).slice( 0, 3 ).map( ( perm ) => (
 													<Badge key={ perm } variant="secondary" style={ { fontSize: '0.7rem' } }>
@@ -247,20 +247,20 @@ export function ApiKeySettings() {
 												) }
 											</div>
 										</TableCell>
-										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right', whiteSpace: 'nowrap' } }>
 											{ formatDate( key.last_used_at ) }
 										</TableCell>
-										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
+										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right' } }>
 											{ key.request_count.toLocaleString( 'de-DE' ) }
 										</TableCell>
-										<TableCell style={ { textAlign: 'center', verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
+										<TableCell style={ { textAlign: 'center' } }>
 											<Switch
 												checked={ key.is_active }
 												onCheckedChange={ () => handleToggleActive( key.id, key.is_active ) }
 												disabled={ saving }
 											/>
 										</TableCell>
-										<TableCell style={ { textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { textAlign: 'right', whiteSpace: 'nowrap' } }>
 											<Button
 												variant="ghost"
 												size="sm"
