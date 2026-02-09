@@ -28,7 +28,7 @@ function AlertDialog( { open, onOpenChange, children } ) {
 	);
 }
 
-const AlertDialogContent = forwardRef( ( { className, children, ...props }, ref ) => {
+const AlertDialogContent = forwardRef( ( { className, children, style, ...props }, ref ) => {
 	const { onOpenChange } = useContext( AlertDialogContext );
 
 	return (
@@ -59,6 +59,7 @@ const AlertDialogContent = forwardRef( ( { className, children, ...props }, ref 
 					borderRadius: '0.5rem',
 					boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
 					padding: '1.5rem',
+					...style,
 				} }
 				{ ...props }
 			>
