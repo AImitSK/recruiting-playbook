@@ -332,7 +332,7 @@ class MatchController extends WP_REST_Controller {
 
 		$jobs = [];
 		foreach ( $posts as $post ) {
-			$requirements = get_post_meta( $post->ID, '_rp_requirements', true ) ?: [];
+			$requirements = $this->get_job_requirements( $post );
 			$nice_to_have = get_post_meta( $post->ID, '_rp_nice_to_have', true ) ?: [];
 
 			$jobs[] = [
@@ -341,7 +341,7 @@ class MatchController extends WP_REST_Controller {
 				'url'          => get_permalink( $post->ID ),
 				'applyUrl'     => get_permalink( $post->ID ) . '#apply',
 				'description'  => wp_strip_all_tags( $post->post_content ),
-				'requirements' => is_array( $requirements ) ? $requirements : [ $requirements ],
+				'requirements' => $requirements,
 				'niceToHave'   => is_array( $nice_to_have ) ? $nice_to_have : [],
 			];
 		}
@@ -535,12 +535,25 @@ class MatchController extends WP_REST_Controller {
 		$timestamp = gmdate( 'c' ); // ISO 8601 Format.
 		$signature = hash( 'sha256', $secret_key . '|' . $timestamp );
 
-		return [
+		$headers = [
 			'X-Freemius-Install-Id' => (string) $install_id,
 			'X-Freemius-Timestamp'  => $timestamp,
 			'X-Freemius-Signature'  => $signature,
 			'X-Site-Url'            => site_url(),
 		];
+
+		// KI-Addon Installationsdaten mitsenden (für Addon-Lizenz-Prüfung).
+		if ( function_exists( 'rpk_fs' ) ) {
+			$addon_site = rpk_fs()->get_site();
+			if ( $addon_site && ! empty( $addon_site->id ) ) {
+				$addon_signature                   = hash( 'sha256', $addon_site->secret_key . '|' . $timestamp );
+				$headers['X-Freemius-Addon-Id']    = (string) $addon_site->id;
+				$headers['X-Freemius-Addon-Sig']   = $addon_signature;
+				$headers['X-Freemius-Addon-Slug']  = 'recruiting-playbook-ki';
+			}
+		}
+
+		return $headers;
 	}
 
 	/**
@@ -550,15 +563,86 @@ class MatchController extends WP_REST_Controller {
 	 * @return array Job-Daten.
 	 */
 	private function get_job_data( \WP_Post $job ): array {
-		$requirements = get_post_meta( $job->ID, '_rp_requirements', true ) ?: [];
+		$requirements = $this->get_job_requirements( $job );
 		$nice_to_have = get_post_meta( $job->ID, '_rp_nice_to_have', true ) ?: [];
 
 		return [
-			'title'       => $job->post_title,
-			'description' => wp_strip_all_tags( $job->post_content ),
-			'requirements' => is_array( $requirements ) ? $requirements : [ $requirements ],
-			'niceToHave'  => is_array( $nice_to_have ) ? $nice_to_have : [],
+			'title'        => $job->post_title,
+			'description'  => wp_strip_all_tags( $job->post_content ),
+			'requirements' => $requirements,
+			'niceToHave'   => is_array( $nice_to_have ) ? $nice_to_have : [],
 		];
+	}
+
+	/**
+	 * Requirements für einen Job laden
+	 *
+	 * Prüft zuerst das Meta-Feld _rp_requirements. Wenn leer,
+	 * werden die Anforderungen aus dem post_content extrahiert
+	 * (Listeneinträge nach Überschriften wie "Ihr Profil", "Anforderungen" etc.).
+	 *
+	 * @param \WP_Post $job Job-Post.
+	 * @return array Liste der Anforderungen.
+	 */
+	private function get_job_requirements( \WP_Post $job ): array {
+		$requirements = get_post_meta( $job->ID, '_rp_requirements', true );
+
+		if ( ! empty( $requirements ) ) {
+			return is_array( $requirements ) ? $requirements : [ $requirements ];
+		}
+
+		// Fallback: Requirements aus dem post_content extrahieren.
+		return $this->extract_requirements_from_content( $job->post_content );
+	}
+
+	/**
+	 * Anforderungen aus HTML-Content extrahieren
+	 *
+	 * Sucht nach Überschriften wie "Ihr Profil", "Anforderungen", "Voraussetzungen"
+	 * und extrahiert die darauf folgenden Listeneinträge.
+	 *
+	 * @param string $content HTML-Content.
+	 * @return array Extrahierte Anforderungen.
+	 */
+	private function extract_requirements_from_content( string $content ): array {
+		if ( empty( $content ) ) {
+			return [];
+		}
+
+		// Überschriften, die auf Anforderungen hindeuten.
+		$headings = [
+			'Ihr Profil',
+			'Anforderungen',
+			'Voraussetzungen',
+			'Was Sie mitbringen',
+			'Das bringen Sie mit',
+			'Qualifikationen',
+			'Was wir erwarten',
+		];
+
+		$escaped  = array_map( static function ( $h ) { return preg_quote( $h, '#' ); }, $headings );
+		$pattern  = '<h[2-4][^>]*>\s*(?:' . implode( '|', $escaped ) . ')\s*</h[2-4]>';
+
+		// Abschnitt nach der passenden Überschrift bis zur nächsten Überschrift finden.
+		if ( ! preg_match( '#' . $pattern . '\s*(.*?)(?=<h[2-4]|$)#is', $content, $match ) ) {
+			return [];
+		}
+
+		// Listeneinträge (<li>) extrahieren.
+		if ( ! preg_match_all( '#<li[^>]*>(.*?)</li>#is', $match[1], $items ) ) {
+			return [];
+		}
+
+		return array_values(
+			array_filter(
+				array_map(
+					function ( $item ) {
+						return trim( wp_strip_all_tags( $item ) );
+					},
+					$items[1]
+				)
+			)
+		);
 	}
 
 	/**

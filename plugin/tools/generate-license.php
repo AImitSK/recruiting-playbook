@@ -9,13 +9,12 @@
  *   php generate-license.php TIER [ANZAHL]
  *
  * Argumente:
- *   TIER    - Lizenz-Tier: PRO, AI oder BUNDLE (erforderlich)
+ *   TIER    - Lizenz-Tier: PRO oder AI (erforderlich)
  *   ANZAHL  - Anzahl zusätzlicher Schlüssel (1-100, optional)
  *
  * Beispiele:
  *   php generate-license.php PRO          - Einen Pro-Schlüssel erstellen
  *   php generate-license.php AI           - Einen AI-Addon-Schlüssel erstellen
- *   php generate-license.php BUNDLE       - Einen Bundle-Schlüssel erstellen
  *   php generate-license.php PRO 10       - 11 Pro-Schlüssel erstellen (1 + 10)
  *
  * Umgebungsvariablen:
@@ -35,7 +34,7 @@ $license_secret = getenv( 'RP_LICENSE_SECRET' ) ?: 'rp-default-license-secret-ch
 // Tier aus Argument lesen.
 $tier = strtoupper( $argv[1] ?? '' );
 
-$valid_tiers = array( 'PRO', 'AI', 'BUNDLE' );
+$valid_tiers = array( 'PRO', 'AI' );
 
 if ( empty( $tier ) || ! in_array( $tier, $valid_tiers, true ) ) {
 	echo 'Verwendung: php generate-license.php [TIER]' . PHP_EOL;
@@ -44,7 +43,6 @@ if ( empty( $tier ) || ! in_array( $tier, $valid_tiers, true ) ) {
 	echo 'Beispiele:' . PHP_EOL;
 	echo '  php generate-license.php PRO     - Erstellt einen Pro-Lizenzschlüssel' . PHP_EOL;
 	echo '  php generate-license.php AI      - Erstellt einen AI-Addon-Lizenzschlüssel' . PHP_EOL;
-	echo '  php generate-license.php BUNDLE  - Erstellt einen Bundle-Lizenzschlüssel' . PHP_EOL;
 	exit( 1 );
 }
 
@@ -68,7 +66,7 @@ function generate_random_block(): string {
 /**
  * Generiert einen vollständigen Lizenzschlüssel
  *
- * @param string $tier   Tier-Name (PRO, AI, BUNDLE).
+ * @param string $tier   Tier-Name (PRO, AI).
  * @param string $secret License Secret für HMAC.
  * @return string Vollständiger Lizenzschlüssel.
  */
@@ -98,7 +96,7 @@ function generate_license_key( string $tier, string $secret ): string {
  */
 function validate_license_key( string $key, string $secret ): bool {
 	// Format prüfen.
-	$pattern = '/^RP-(PRO|AI|BUNDLE)-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/';
+	$pattern = '/^RP-(PRO|AI)-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/';
 
 	if ( ! preg_match( $pattern, $key ) ) {
 		return false;

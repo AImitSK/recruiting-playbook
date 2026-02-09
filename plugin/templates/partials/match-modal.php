@@ -184,11 +184,11 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 					<div class="rp-match-result__actions">
 						<a
 							:href="'<?php echo esc_url( home_url( '/' ) ); ?>?p=' + jobId + '#apply-form'"
-							class="rp-btn rp-btn--primary"
+							class="wp-element-button"
 						>
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
-						<button type="button" class="rp-btn rp-btn--secondary" x-on:click="reset()">
+						<button type="button" class="rp-btn--secondary" x-on:click="reset()">
 							<?php esc_html_e( 'Neue Analyse', 'recruiting-playbook' ); ?>
 						</button>
 					</div>
@@ -202,7 +202,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
 					<p class="rp-match-error__text" x-text="error"></p>
-					<button type="button" class="rp-btn rp-btn--secondary" x-on:click="reset()">
+					<button type="button" class="rp-btn--secondary" x-on:click="reset()">
 						<?php esc_html_e( 'Erneut versuchen', 'recruiting-playbook' ); ?>
 					</button>
 				</div>
