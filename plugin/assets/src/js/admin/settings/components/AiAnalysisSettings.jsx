@@ -164,7 +164,7 @@ export function AiAnalysisSettings() {
 	}, [ localSettings, saveSettings, setError ] );
 
 	/**
-	 * Lokale Setting-Aenderung
+	 * Lokale Setting-Änderung
 	 */
 	const updateLocalSetting = useCallback( ( key, value ) => {
 		setLocalSettings( ( prev ) => ( { ...prev, [ key ]: value } ) );
@@ -234,7 +234,7 @@ export function AiAnalysisSettings() {
 							</Alert>
 						) }
 						<p style={ { margin: 0, fontSize: '0.8125rem', color: '#6b7280' } }>
-							{ __( 'Naechster Reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( 'de-DE' ) : '—' }
+							{ __( 'Nächster Reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( 'de-DE' ) : '—' }
 						</p>
 					</div>
 				</CardContent>
@@ -251,7 +251,7 @@ export function AiAnalysisSettings() {
 							onClick={ fetchHealth }
 							disabled={ healthLoading }
 						>
-							{ healthLoading ? <Spinner size="sm" /> : __( 'Jetzt pruefen', 'recruiting-playbook' ) }
+							{ healthLoading ? <Spinner size="sm" /> : __( 'Jetzt prüfen', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardHeader>
@@ -264,7 +264,7 @@ export function AiAnalysisSettings() {
 									? { backgroundColor: '#dcfce7', color: '#166534', border: 'none' }
 									: { backgroundColor: '#fecaca', color: '#991b1b', border: 'none' }
 								}>
-									{ health.reachable ? __( 'Erreichbar', 'recruiting-playbook' ) : __( 'Stoerung', 'recruiting-playbook' ) }
+									{ health.reachable ? __( 'Erreichbar', 'recruiting-playbook' ) : __( 'Störung', 'recruiting-playbook' ) }
 								</Badge>
 							</div>
 							<div style={ { display: 'flex', justifyContent: 'space-between' } }>
@@ -278,7 +278,7 @@ export function AiAnalysisSettings() {
 						</div>
 					) : (
 						<p style={ { margin: 0, fontSize: '0.875rem', color: '#6b7280' } }>
-							{ __( 'Noch kein Health-Check durchgefuehrt. Klicken Sie auf "Jetzt pruefen".', 'recruiting-playbook' ) }
+							{ __( 'Noch kein Health-Check durchgeführt. Klicken Sie auf "Jetzt prüfen".', 'recruiting-playbook' ) }
 						</p>
 					) }
 				</CardContent>
@@ -288,7 +288,7 @@ export function AiAnalysisSettings() {
 			<Card>
 				<CardHeader>
 					<CardTitle>{ __( 'Einstellungen', 'recruiting-playbook' ) }</CardTitle>
-					<CardDescription>{ __( 'Budget- und Datei-Einstellungen fuer die KI-Analyse.', 'recruiting-playbook' ) }</CardDescription>
+					<CardDescription>{ __( 'Budget- und Datei-Einstellungen für die KI-Analyse.', 'recruiting-playbook' ) }</CardDescription>
 				</CardHeader>
 				<CardContent>
 					{ settingsNotification && (
@@ -346,7 +346,7 @@ export function AiAnalysisSettings() {
 							</div>
 
 							<div style={ { maxWidth: '200px' } }>
-								<Label htmlFor="max_file_size">{ __( 'Max. Dateigroesse (MB)', 'recruiting-playbook' ) }</Label>
+								<Label htmlFor="max_file_size">{ __( 'Max. Dateigröße (MB)', 'recruiting-playbook' ) }</Label>
 								<Input
 									id="max_file_size"
 									type="number"
@@ -454,7 +454,7 @@ export function AiAnalysisSettings() {
 											disabled={ historyPage <= 1 }
 											onClick={ () => setHistoryPage( ( prev ) => Math.max( 1, prev - 1 ) ) }
 										>
-											{ __( 'Zurueck', 'recruiting-playbook' ) }
+											{ __( 'Zurück', 'recruiting-playbook' ) }
 										</Button>
 										<Button
 											variant="outline"
