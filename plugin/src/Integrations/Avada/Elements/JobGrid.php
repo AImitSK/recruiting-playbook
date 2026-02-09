@@ -25,7 +25,7 @@ class JobGrid extends AbstractElement {
 		return [
 			'name'            => esc_attr__( 'RP: Stellenliste', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_jobs',
-			'icon'            => 'fusiona-th-large',
+			'icon'            => 'fusiona-sorting-boxes',
 			'help_url'        => $this->getHelpUrl( 'rp_jobs' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,

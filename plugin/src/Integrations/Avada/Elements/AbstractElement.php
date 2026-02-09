@@ -37,6 +37,16 @@ abstract class AbstractElement {
 				$config['element_category'] = 'recruiting_playbook';
 			}
 
+			// Preview-Template automatisch hinzufügen.
+			$shortcode    = $config['shortcode'] ?? '';
+			$slug         = str_replace( '_', '-', $shortcode );
+			$preview_file = RP_PLUGIN_DIR . 'src/Integrations/Avada/previews/' . $slug . '-preview.php';
+
+			if ( $shortcode && file_exists( $preview_file ) ) {
+				$config['preview']    = $preview_file;
+				$config['preview_id'] = 'fusion-builder-block-module-' . $slug . '-preview-template';
+			}
+
 			fusion_builder_map( $config );
 		}
 	}
