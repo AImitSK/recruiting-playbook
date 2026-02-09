@@ -44,6 +44,7 @@ class Schema {
 			'webhooks'          => $wpdb->prefix . 'rp_webhooks',
 			'webhook_deliveries' => $wpdb->prefix . 'rp_webhook_deliveries',
 			'api_keys'          => $wpdb->prefix . 'rp_api_keys',
+			'ai_analyses'       => $wpdb->prefix . 'rp_ai_analyses',
 		];
 	}
 
@@ -591,6 +592,39 @@ class Schema {
 			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
 			KEY webhook_id (webhook_id),
+			KEY status (status),
+			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_ai_analyses
+	 *
+	 * @return string
+	 */
+	public static function getAiAnalysesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['ai_analyses'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			external_job_id varchar(100) DEFAULT NULL,
+			analysis_type varchar(20) DEFAULT 'job_match',
+			job_id bigint(20) unsigned DEFAULT NULL,
+			job_title varchar(255) DEFAULT '',
+			file_type varchar(20) DEFAULT '',
+			file_size bigint(20) unsigned DEFAULT 0,
+			score smallint(5) unsigned DEFAULT NULL,
+			category varchar(50) DEFAULT NULL,
+			status varchar(20) DEFAULT 'pending',
+			error_message text DEFAULT NULL,
+			result_summary text DEFAULT NULL,
+			ip_address varchar(45) DEFAULT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			completed_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY analysis_type (analysis_type),
 			KEY status (status),
 			KEY created_at (created_at)
 		) {$charset};";

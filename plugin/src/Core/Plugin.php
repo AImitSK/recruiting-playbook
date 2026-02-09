@@ -44,6 +44,7 @@ use RecruitingPlaybook\Api\MatchController;
 use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Api\WebhookController;
 use RecruitingPlaybook\Api\ApiKeyController;
+use RecruitingPlaybook\Api\AiAnalysisController;
 use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\WebhookService;
@@ -699,6 +700,10 @@ final class Plugin {
 		// API-Key Controller (Pro-Feature).
 		$api_key_controller = new ApiKeyController();
 		$api_key_controller->register_routes();
+
+		// AI Analysis Controller (KI-Addon Feature).
+		$ai_analysis_controller = new AiAnalysisController();
+		$ai_analysis_controller->register_routes();
 	}
 
 	/**

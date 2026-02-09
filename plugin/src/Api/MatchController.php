@@ -210,6 +210,17 @@ class MatchController extends WP_REST_Controller {
 			);
 		}
 
+		// Analyse in lokaler DB loggen.
+		$this->log_analysis( [
+			'external_job_id' => $response_body['jobId'] ?? '',
+			'analysis_type'   => 'job_match',
+			'job_id'          => $job_id,
+			'job_title'       => $job->post_title,
+			'file_type'       => $file['type'] ?? '',
+			'file_size'       => $file['size'] ?? 0,
+			'status'          => 'pending',
+		] );
+
 		return new WP_REST_Response( $response_body, 202 );
 	}
 
@@ -245,6 +256,13 @@ class MatchController extends WP_REST_Controller {
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		// Analyse-Status in lokaler DB aktualisieren.
+		$remote_status = $body['status'] ?? '';
+		if ( 'completed' === $remote_status || 'failed' === $remote_status ) {
+			$this->update_analysis_status( $analysis_id, $body );
+		}
+
 		return new WP_REST_Response( $body );
 	}
 
@@ -303,6 +321,17 @@ class MatchController extends WP_REST_Controller {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
+
+		// Analyse in lokaler DB loggen.
+		$this->log_analysis( [
+			'external_job_id' => $result['jobId'] ?? '',
+			'analysis_type'   => 'job_finder',
+			'job_id'          => null,
+			'job_title'       => sprintf( 'Job-Finder (%d Stellen)', count( $jobs ) ),
+			'file_type'       => $file['type'] ?? '',
+			'file_size'       => $file['size'] ?? 0,
+			'status'          => 'pending',
+		] );
 
 		return rest_ensure_response( $result );
 	}
@@ -642,6 +671,80 @@ class MatchController extends WP_REST_Controller {
 					$items[1]
 				)
 			)
+		);
+	}
+
+	/**
+	 * Analyse in lokaler DB loggen
+	 *
+	 * @param array $data Analyse-Daten.
+	 */
+	private function log_analysis( array $data ): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_ai_analyses';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$table,
+			[
+				'external_job_id' => $data['external_job_id'] ?? '',
+				'analysis_type'   => $data['analysis_type'] ?? 'job_match',
+				'job_id'          => $data['job_id'] ?? null,
+				'job_title'       => $data['job_title'] ?? '',
+				'file_type'       => $data['file_type'] ?? '',
+				'file_size'       => $data['file_size'] ?? 0,
+				'status'          => $data['status'] ?? 'pending',
+				'created_at'      => current_time( 'mysql' ),
+			],
+			[ '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s' ]
+		);
+	}
+
+	/**
+	 * Analyse-Status in lokaler DB aktualisieren
+	 *
+	 * @param string $external_job_id Externe Job-ID.
+	 * @param array  $result          Ergebnis-Daten vom Worker.
+	 */
+	private function update_analysis_status( string $external_job_id, array $result ): void {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_ai_analyses';
+
+		$update_data = [
+			'status'       => $result['status'] ?? 'completed',
+			'completed_at' => current_time( 'mysql' ),
+		];
+		$update_format = [ '%s', '%s' ];
+
+		if ( isset( $result['score'] ) ) {
+			$update_data['score'] = (int) $result['score'];
+			$update_format[]      = '%d';
+		}
+
+		if ( isset( $result['category'] ) ) {
+			$update_data['category'] = sanitize_text_field( $result['category'] );
+			$update_format[]         = '%s';
+		}
+
+		if ( isset( $result['summary'] ) ) {
+			$update_data['result_summary'] = sanitize_text_field( $result['summary'] );
+			$update_format[]               = '%s';
+		}
+
+		if ( isset( $result['error'] ) ) {
+			$update_data['error_message'] = sanitize_text_field( $result['error'] );
+			$update_format[]              = '%s';
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->update(
+			$table,
+			$update_data,
+			[ 'external_job_id' => $external_job_id ],
+			$update_format,
+			[ '%s' ]
 		);
 	}
 

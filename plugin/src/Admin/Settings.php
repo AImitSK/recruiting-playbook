@@ -392,13 +392,14 @@ class Settings {
 
 		// Konfiguration für React.
 		$data = [
-			'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-			'homeUrl'   => home_url(),
-			'exportUrl' => admin_url( 'admin.php?page=rp-settings' ),
-			'nonce'     => wp_create_nonce( 'rp_download_backup' ),
-			'pages'     => $this->getPages(),
-			'isPro'     => $is_pro,
-			'i18n'      => $this->getI18nStrings(),
+			'logoUrl'     => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			'homeUrl'     => home_url(),
+			'exportUrl'   => admin_url( 'admin.php?page=rp-settings' ),
+			'nonce'       => wp_create_nonce( 'rp_download_backup' ),
+			'pages'       => $this->getPages(),
+			'isPro'       => $is_pro,
+			'hasAiAddon'  => function_exists( 'rp_has_ai' ) && rp_has_ai(),
+			'i18n'        => $this->getI18nStrings(),
 		];
 
 		// Pro-Feature: Benutzerrollen-Daten für React-UI.
