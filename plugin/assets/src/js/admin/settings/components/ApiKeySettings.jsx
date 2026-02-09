@@ -205,25 +205,25 @@ export function ApiKeySettings() {
 							</p>
 						</div>
 					) : (
-						<Table style={ { tableLayout: 'fixed', width: '100%' } }>
+						<Table style={ { width: '100%' } }>
 							<TableHeader>
 								<TableRow>
-									<TableHead style={ { width: '12%' } }>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '14%' } }>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '28%' } }>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '15%', textAlign: 'right' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '9%', textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '8%', textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '14%' } }></TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem' } }>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem', textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { padding: '0.75rem 1rem', width: '1%' } }></TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{ keys.map( ( key ) => (
 									<TableRow key={ key.id }>
-										<TableCell style={ { fontWeight: 500, verticalAlign: 'middle' } }>
+										<TableCell style={ { fontWeight: 500, verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
 											{ key.name }
 										</TableCell>
-										<TableCell style={ { verticalAlign: 'middle' } }>
+										<TableCell style={ { verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
 											<code style={ {
 												fontSize: '0.8rem',
 												backgroundColor: '#f3f4f6',
@@ -233,7 +233,7 @@ export function ApiKeySettings() {
 												{ key.key_prefix }...{ key.key_hint }
 											</code>
 										</TableCell>
-										<TableCell style={ { verticalAlign: 'middle' } }>
+										<TableCell style={ { verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
 											<div style={ { display: 'flex', flexWrap: 'wrap', gap: '4px' } }>
 												{ ( key.permissions || [] ).slice( 0, 3 ).map( ( perm ) => (
 													<Badge key={ perm } variant="secondary" style={ { fontSize: '0.7rem' } }>
@@ -247,20 +247,20 @@ export function ApiKeySettings() {
 												) }
 											</div>
 										</TableCell>
-										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right', verticalAlign: 'middle' } }>
+										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
 											{ formatDate( key.last_used_at ) }
 										</TableCell>
-										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right', verticalAlign: 'middle' } }>
+										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
 											{ key.request_count.toLocaleString( 'de-DE' ) }
 										</TableCell>
-										<TableCell style={ { textAlign: 'center', verticalAlign: 'middle' } }>
+										<TableCell style={ { textAlign: 'center', verticalAlign: 'middle', padding: '0.875rem 1rem' } }>
 											<Switch
 												checked={ key.is_active }
 												onCheckedChange={ () => handleToggleActive( key.id, key.is_active ) }
 												disabled={ saving }
 											/>
 										</TableCell>
-										<TableCell style={ { textAlign: 'right', verticalAlign: 'middle' } }>
+										<TableCell style={ { textAlign: 'right', verticalAlign: 'middle', padding: '0.875rem 1rem', whiteSpace: 'nowrap' } }>
 											<Button
 												variant="ghost"
 												size="sm"
