@@ -205,25 +205,25 @@ export function ApiKeySettings() {
 							</p>
 						</div>
 					) : (
-						<Table>
+						<Table style={ { tableLayout: 'fixed' } }>
 							<TableHeader>
 								<TableRow>
-									<TableHead>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
-									<TableHead>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
-									<TableHead>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { textAlign: 'right' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
-									<TableHead></TableHead>
+									<TableHead style={ { width: '15%' } }>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '15%' } }>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '22%' } }>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '16%', textAlign: 'right' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '10%', textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '8%', textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '14%' } }></TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{ keys.map( ( key ) => (
 									<TableRow key={ key.id }>
-										<TableCell style={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
+										<TableCell style={ { fontWeight: 500 } }>
 											{ key.name }
 										</TableCell>
-										<TableCell style={ { whiteSpace: 'nowrap' } }>
+										<TableCell>
 											<code style={ {
 												fontSize: '0.8rem',
 												backgroundColor: '#f3f4f6',
@@ -247,7 +247,7 @@ export function ApiKeySettings() {
 												) }
 											</div>
 										</TableCell>
-										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { fontSize: '0.85rem', color: '#6b7280', textAlign: 'right' } }>
 											{ formatDate( key.last_used_at ) }
 										</TableCell>
 										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right' } }>
@@ -260,7 +260,7 @@ export function ApiKeySettings() {
 												disabled={ saving }
 											/>
 										</TableCell>
-										<TableCell style={ { textAlign: 'right', whiteSpace: 'nowrap' } }>
+										<TableCell style={ { textAlign: 'right' } }>
 											<Button
 												variant="ghost"
 												size="sm"
