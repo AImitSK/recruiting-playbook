@@ -13,7 +13,11 @@ defined( 'ABSPATH' ) || exit;
 		<span class="fusion-module-icon {{ fusionAllElements[element_type].icon }}"></span>
 		{{ fusionAllElements[element_type].name }}
 	</h4>
-	<span>Format: {{ params.format || '{count} offene Stellen' }}</span>
+	<# if ( params.format ) { #>
+		<span>Format: {{ params.format }}</span>
+	<# } else { #>
+		<span>Dynamischer Stellen-Z&auml;hler</span>
+	<# } #>
 	<# if ( params.category ) { #>
 		<br><span>Kategorie: {{ params.category }}</span>
 	<# } #>

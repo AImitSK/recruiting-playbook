@@ -45,13 +45,24 @@ class JobCountShortcode {
 				'category' => '',
 				'location' => '',
 				'type'     => '',
-				'format'   => __( '{count} offene Stellen', 'recruiting-playbook' ),
-				'singular' => __( '{count} offene Stelle', 'recruiting-playbook' ),
-				'zero'     => __( 'Keine offenen Stellen', 'recruiting-playbook' ),
+				'format'   => '',
+				'singular' => '',
+				'zero'     => '',
 			],
 			$atts,
 			'rp_job_count'
 		);
+
+		// Defaults anwenden wenn leer (Fusion Builder sendet leere Strings für ungesetzte Werte).
+		if ( '' === $atts['format'] ) {
+			$atts['format'] = __( '{count} offene Stellen', 'recruiting-playbook' );
+		}
+		if ( '' === $atts['singular'] ) {
+			$atts['singular'] = __( '{count} offene Stelle', 'recruiting-playbook' );
+		}
+		if ( '' === $atts['zero'] ) {
+			$atts['zero'] = __( 'Keine offenen Stellen', 'recruiting-playbook' );
+		}
 
 		// Query-Args aufbauen.
 		$query_args = [
@@ -106,7 +117,14 @@ class JobCountShortcode {
 		}
 
 		$class = 0 === $count ? 'rp-job-count rp-job-count--zero' : 'rp-job-count';
+		$span  = '<span class="' . esc_attr( $class ) . '">' . esc_html( $text ) . '</span>';
 
-		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $text ) . '</span>';
+		// Fusion Builder Live Editor rendert Shortcodes per AJAX.
+		// Block-Wrapper nötig, damit der Live Editor das Element verwalten kann.
+		if ( wp_doing_ajax() && defined( 'FUSION_BUILDER_VERSION' ) ) {
+			return '<div class="rp-plugin">' . $span . '</div>';
+		}
+
+		return $span;
 	}
 }
