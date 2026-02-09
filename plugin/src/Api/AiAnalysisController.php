@@ -315,7 +315,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		$start_time = microtime( true );
 
 		$response = wp_remote_get(
-			self::API_BASE_URL . '/health',
+			'https://api.recruiting-playbook.com/health',
 			[
 				'timeout' => 10,
 			]
