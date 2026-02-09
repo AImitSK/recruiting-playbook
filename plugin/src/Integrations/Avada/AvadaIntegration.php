@@ -43,8 +43,9 @@ class AvadaIntegration {
 		// Element-Kategorie hinzufügen
 		add_filter( 'fusion_builder_element_categories', [ $this, 'addCategory' ] );
 
-		// Editor-Assets laden
-		add_action( 'fusion_builder_enqueue_scripts', [ $this, 'enqueueEditorAssets' ] );
+		// Editor-Assets laden (Backend + Live Builder).
+		add_action( 'fusion_builder_admin_scripts_hook', [ $this, 'enqueueEditorAssets' ] );
+		add_action( 'fusion_builder_enqueue_live_scripts', [ $this, 'enqueueEditorAssets' ] );
 	}
 
 	/**
@@ -98,6 +99,7 @@ class AvadaIntegration {
 	 * @return void
 	 */
 	public function enqueueEditorAssets(): void {
+		// Frontend-CSS wird in Plugin::enqueueFrontendAssets() über ?builder / ?fb-edit geladen.
 		wp_enqueue_style(
 			'rp-avada-editor',
 			RP_PLUGIN_URL . 'assets/css/avada-editor.css',

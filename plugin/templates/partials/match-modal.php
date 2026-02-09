@@ -21,8 +21,8 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 	x-show="isOpen"
 	x-cloak
 	class="rp-match-modal-overlay"
-	@click.self="close()"
-	@open-match-modal.window="open($event.detail.jobId, $event.detail.jobTitle)"
+	x-on:click.self="close()"
+	x-on:open-match-modal.window="open($event.detail.jobId, $event.detail.jobTitle)"
 	x-transition:enter="rp-transition rp-ease-out rp-duration-200"
 	x-transition:enter-start="rp-opacity-0"
 	x-transition:enter-end="rp-opacity-100"
@@ -35,7 +35,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="match-modal-title"
-		@click.stop
+		x-on:click.stop
 		x-transition:enter="rp-transition rp-ease-out rp-duration-200"
 		x-transition:enter-start="rp-opacity-0 rp-scale-95"
 		x-transition:enter-end="rp-opacity-100 rp-scale-100"
@@ -48,7 +48,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			<h2 id="match-modal-title" class="rp-match-modal__title">
 				<?php esc_html_e( 'Passe ich zu diesem Job?', 'recruiting-playbook' ); ?>
 			</h2>
-			<button type="button" class="rp-match-modal__close" @click.stop="close()">
+			<button type="button" class="rp-match-modal__close" x-on:click.stop="close()">
 				<span class="rp-sr-only"><?php esc_html_e( 'Schließen', 'recruiting-playbook' ); ?></span>
 				<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -86,9 +86,9 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 							'rp-match-upload-zone--dragging': isDragging,
 							'rp-match-upload-zone--has-file': file
 						}"
-						@dragover="handleDragOver($event)"
-						@dragleave="handleDragLeave()"
-						@drop="handleDrop($event)"
+						x-on:dragover="handleDragOver($event)"
+						x-on:dragleave="handleDragLeave()"
+						x-on:drop="handleDrop($event)"
 					>
 						<template x-if="!file">
 							<div class="rp-match-upload-zone__empty">
@@ -107,7 +107,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 										type="file"
 										class="rp-match-file-input"
 										accept=".pdf,.jpg,.jpeg,.png,.docx"
-										@change="handleFileSelect($event)"
+										x-on:change="handleFileSelect($event)"
 									>
 								</label>
 								<p class="rp-match-upload-zone__formats">
@@ -125,7 +125,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 									<span class="rp-match-upload-zone__file-name" x-text="fileName"></span>
 									<span class="rp-match-upload-zone__file-size" x-text="fileSize"></span>
 								</div>
-								<button type="button" class="rp-match-upload-zone__remove" @click="removeFile()">
+								<button type="button" class="rp-match-upload-zone__remove" x-on:click="removeFile()">
 									<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 									</svg>
@@ -144,7 +144,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 						type="button"
 						class="rp-match-submit-btn"
 						:disabled="!file"
-						@click="startAnalysis()"
+						x-on:click="startAnalysis()"
 					>
 						<?php esc_html_e( 'Analyse starten', 'recruiting-playbook' ); ?>
 					</button>
@@ -188,7 +188,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 						>
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
-						<button type="button" class="rp-btn rp-btn--secondary" @click="reset()">
+						<button type="button" class="rp-btn rp-btn--secondary" x-on:click="reset()">
 							<?php esc_html_e( 'Neue Analyse', 'recruiting-playbook' ); ?>
 						</button>
 					</div>
@@ -202,7 +202,7 @@ if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
 					<p class="rp-match-error__text" x-text="error"></p>
-					<button type="button" class="rp-btn rp-btn--secondary" @click="reset()">
+					<button type="button" class="rp-btn rp-btn--secondary" x-on:click="reset()">
 						<?php esc_html_e( 'Erneut versuchen', 'recruiting-playbook' ); ?>
 					</button>
 				</div>

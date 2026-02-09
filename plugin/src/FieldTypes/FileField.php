@@ -420,10 +420,10 @@ class FileField extends AbstractFieldType {
 		// Drag & Drop Zone.
 		$html .= '<div class="rp-form__file-zone" x-data="rpFileUpload()">';
 		$html .= sprintf(
-			'<input %s class="rp-form__file-input" @change="handleFiles($event)" />',
+			'<input %s class="rp-form__file-input" x-on:change="handleFiles($event)" />',
 			$input_attrs
 		);
-		$html .= '<div class="rp-form__file-dropzone" @dragover.prevent="dragover = true" @dragleave.prevent="dragover = false" @drop.prevent="handleDrop($event)" :class="{ \'is-dragover\': dragover }">';
+		$html .= '<div class="rp-form__file-dropzone" x-on:dragover.prevent="dragover = true" x-on:dragleave.prevent="dragover = false" x-on:drop.prevent="handleDrop($event)" :class="{ \'is-dragover\': dragover }">';
 		$html .= '<div class="rp-form__file-dropzone-content">';
 		$html .= sprintf(
 			'<span class="rp-form__file-icon">%s</span>',
@@ -448,7 +448,7 @@ class FileField extends AbstractFieldType {
 		$html .= '<span class="rp-form__file-name" x-text="file.name"></span>';
 		$html .= '<span class="rp-form__file-size" x-text="formatSize(file.size)"></span>';
 		$html .= sprintf(
-			'<button type="button" class="rp-form__file-remove" @click="removeFile(index)" aria-label="%s">&times;</button>',
+			'<button type="button" class="rp-form__file-remove" x-on:click="removeFile(index)" aria-label="%s">&times;</button>',
 			esc_attr__( 'Entfernen', 'recruiting-playbook' )
 		);
 		$html .= '</li></template></ul>';

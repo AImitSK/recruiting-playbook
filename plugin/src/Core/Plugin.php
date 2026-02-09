@@ -592,6 +592,12 @@ final class Plugin {
 			wp_enqueue_style( 'rp-frontend' );
 		}
 
+		// Im Fusion Builder Editor immer laden (Shortcodes werden per AJAX gerendert).
+		// Parent-Frame hat ?fb-edit, Preview-iframe hat ?builder=true.
+		if ( isset( $_GET['fb-edit'] ) || isset( $_GET['builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			wp_enqueue_style( 'rp-frontend' );
+		}
+
 		// Conversion Tracking (DataLayer Events für GTM).
 		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		if ( file_exists( $tracking_file ) ) {

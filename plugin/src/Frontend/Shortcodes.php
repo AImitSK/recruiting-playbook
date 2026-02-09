@@ -352,7 +352,7 @@ class Shortcodes {
 					</div>
 					<?php endif; ?>
 
-					<form @submit.prevent="submit">
+					<form x-on:submit.prevent="submit">
 						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
@@ -440,7 +440,7 @@ class Shortcodes {
 						</div>
 					</div>
 
-					<form @submit.prevent="submit">
+					<form x-on:submit.prevent="submit">
 						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
@@ -515,9 +515,9 @@ class Shortcodes {
 							<div class="rp-mb-6">
 								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
 								<div
-									@dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
-									@dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
-									@drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
+									x-on:dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
+									x-on:dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
+									x-on:drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
 									:class="files.resume ? 'rp-border-success rp-bg-success-light' : ''"
 								>
@@ -529,7 +529,7 @@ class Shortcodes {
 											<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?></p>
 											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 												<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
-												<input type="file" @change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
+												<input type="file" x-on:change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
 											</label>
 											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' ); ?></p>
 										</div>
@@ -545,7 +545,7 @@ class Shortcodes {
 													<p class="rp-text-xs rp-text-gray-500" x-text="formatFileSize(files.resume.size)"></p>
 												</div>
 											</div>
-											<button type="button" @click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
+											<button type="button" x-on:click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
 												<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 												</svg>
@@ -560,13 +560,13 @@ class Shortcodes {
 							<div class="rp-mb-6">
 								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
 								<div
-									@dragover.prevent
-									@drop.prevent="handleDrop($event, 'documents')"
+									x-on:dragover.prevent
+									x-on:drop.prevent="handleDrop($event, 'documents')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
 								>
 									<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 										<?php esc_html_e( 'Dateien auswählen', 'recruiting-playbook' ); ?>
-										<input type="file" @change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
+										<input type="file" x-on:change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
 									</label>
 									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Mehrere Dateien möglich (max. 5 Dateien, je 10 MB)', 'recruiting-playbook' ); ?></p>
 								</div>
@@ -577,7 +577,7 @@ class Shortcodes {
 										<template x-for="(file, index) in files.documents" :key="index">
 											<li class="rp-flex rp-items-center rp-justify-between rp-px-3 rp-py-2 rp-border rp-border-gray-200 rp-rounded">
 												<span class="rp-text-sm rp-text-gray-700" x-text="file.name"></span>
-												<button type="button" @click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
+												<button type="button" x-on:click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
 													<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 													</svg>
@@ -825,7 +825,7 @@ class Shortcodes {
 			<button
 				type="button"
 				class="<?php echo esc_attr( $btn_class_string ); ?>"
-				@click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
+				x-on:click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
 			>
 				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
 					<?php echo $icon_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

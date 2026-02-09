@@ -67,10 +67,10 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                 <div
                     class="rp-match-upload-zone"
                     :class="{ 'rp-match-upload-zone--dragging': isDragging }"
-                    @dragover.prevent="handleDragOver"
-                    @dragleave.prevent="handleDragLeave"
-                    @drop.prevent="handleDrop"
-                    @click="$refs.fileInput.click()"
+                    x-on:dragover.prevent="handleDragOver"
+                    x-on:dragleave.prevent="handleDragLeave"
+                    x-on:drop.prevent="handleDrop"
+                    x-on:click="$refs.fileInput.click()"
                 >
                     <template x-if="!file">
                         <div>
@@ -101,7 +101,7 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                             <button
                                 type="button"
                                 class="rp-ml-2 rp-text-gray-400 hover:rp-text-red-500"
-                                @click.stop="removeFile()"
+                                x-on:click.stop="removeFile()"
                             >
                                 <svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -115,7 +115,7 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                         x-ref="fileInput"
                         class="rp-hidden"
                         accept=".pdf,.jpg,.jpeg,.png,.docx"
-                        @change="handleFileSelect"
+                        x-on:change="handleFileSelect"
                     >
                 </div>
 
@@ -124,7 +124,7 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                     type="button"
                     class="rp-job-finder__submit"
                     :disabled="!file"
-                    @click="startAnalysis()"
+                    x-on:click="startAnalysis()"
                 >
                     <?php esc_html_e( 'Passende Jobs finden', 'recruiting-playbook' ); ?>
                 </button>
@@ -242,7 +242,7 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                     <button
                         type="button"
                         class="rp-job-finder-match__btn rp-job-finder-match__btn--secondary"
-                        @click="reset()"
+                        x-on:click="reset()"
                     >
                         <?php esc_html_e( 'Neue Analyse starten', 'recruiting-playbook' ); ?>
                     </button>
@@ -275,7 +275,7 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                 <button
                     type="button"
                     class="rp-job-finder-match__btn rp-job-finder-match__btn--secondary rp-mt-4"
-                    @click="reset()"
+                    x-on:click="reset()"
                 >
                     <?php esc_html_e( 'Erneut versuchen', 'recruiting-playbook' ); ?>
                 </button>

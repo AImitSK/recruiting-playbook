@@ -172,7 +172,7 @@ class SelectField extends AbstractFieldType {
 			// Mit "Sonstiges" Option: Zeige Textfeld wenn "other" gewählt.
 			$html .= '<div x-data="{ showOther: false }">';
 			$html .= sprintf(
-				'<select %s class="rp-form__select" @change="showOther = $event.target.value === \'__other__\'">',
+				'<select %s class="rp-form__select" x-on:change="showOther = $event.target.value === \'__other__\'">',
 				$select_attrs
 			);
 		} else {

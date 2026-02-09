@@ -185,7 +185,7 @@ class RadioField extends AbstractFieldType {
 				esc_attr( $option_value ),
 				esc_attr( $field_key ),
 				$checked,
-				$allow_other ? ' @change="showOther = false"' : ''
+				$allow_other ? ' x-on:change="showOther = false"' : ''
 			);
 			$html .= sprintf( '<span class="rp-form__radio-text">%s</span>', esc_html( $option_label ) );
 			$html .= '</label>';
@@ -196,7 +196,7 @@ class RadioField extends AbstractFieldType {
 			$other_id = sprintf( 'rp-field-%s-other', $field_key );
 			$html    .= '<label class="rp-form__radio-label">';
 			$html    .= sprintf(
-				'<input type="radio" id="%s" name="%s" value="__other__" x-model="formData.%s" class="rp-form__radio" @change="showOther = true" />',
+				'<input type="radio" id="%s" name="%s" value="__other__" x-model="formData.%s" class="rp-form__radio" x-on:change="showOther = true" />',
 				esc_attr( $other_id ),
 				esc_attr( $field_key ),
 				esc_attr( $field_key )

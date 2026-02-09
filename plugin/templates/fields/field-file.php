@@ -126,9 +126,9 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 >
 	<!-- Dropzone -->
 	<div
-		@dragover.prevent="_dragging = true"
-		@dragleave.prevent="_dragging = false"
-		@drop.prevent="handleDrop($event)"
+		x-on:dragover.prevent="_dragging = true"
+		x-on:dragleave.prevent="_dragging = false"
+		x-on:drop.prevent="handleDrop($event)"
 		:class="{ 'rp-border-primary rp-bg-primary-light': _dragging, 'rp-border-success rp-bg-success-light': _files.length > 0 }"
 		class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
 	>
@@ -144,7 +144,7 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 					<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
 					<input
 						type="file"
-						@change="handleSelect($event)"
+						x-on:change="handleSelect($event)"
 						accept="<?php echo esc_attr( $accept ); ?>"
 						<?php if ( $multiple ) : ?>
 							multiple
@@ -191,7 +191,7 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 						</div>
 						<button
 							type="button"
-							@click="removeFile(index)"
+							x-on:click="removeFile(index)"
 							class="rp-p-1 rp-text-error hover:rp-bg-error-light rp-rounded"
 							title="<?php esc_attr_e( 'Datei entfernen', 'recruiting-playbook' ); ?>"
 						>
@@ -207,7 +207,7 @@ $scope_id = 'fileUpload_' . esc_attr( $field_key );
 						+ <?php esc_html_e( 'Weitere Datei hinzufügen', 'recruiting-playbook' ); ?>
 						<input
 							type="file"
-							@change="handleSelect($event)"
+							x-on:change="handleSelect($event)"
 							accept="<?php echo esc_attr( $accept ); ?>"
 							class="rp-hidden"
 						>

@@ -97,7 +97,7 @@ class FormRenderService {
 			$output .= $this->renderProgressBar( count( $config['steps'] ) );
 
 			// Formular-Start mit Spam-Schutz.
-			$output .= '<form @submit.prevent="submit" novalidate>';
+			$output .= '<form x-on:submit.prevent="submit" novalidate>';
 			$output .= SpamProtection::getHoneypotField();
 			$output .= SpamProtection::getTimestampField();
 		}
@@ -748,7 +748,7 @@ class FormRenderService {
 
 		// Zurück-Button (nicht auf Step 1).
 		$output .= sprintf(
-			'<button type="button" x-show="step > 1" @click="prevStep" class="wp-element-button is-style-outline">%s</button>',
+			'<button type="button" x-show="step > 1" x-on:click="prevStep" class="wp-element-button is-style-outline">%s</button>',
 			esc_html__( 'Zurück', 'recruiting-playbook' )
 		);
 
@@ -757,7 +757,7 @@ class FormRenderService {
 
 		// Weiter-Button (nicht auf letztem Step).
 		$output .= sprintf(
-			'<button type="button" x-show="step < totalSteps" @click="nextStep" class="wp-element-button">%s</button>',
+			'<button type="button" x-show="step < totalSteps" x-on:click="nextStep" class="wp-element-button">%s</button>',
 			esc_html__( 'Weiter', 'recruiting-playbook' )
 		);
 
