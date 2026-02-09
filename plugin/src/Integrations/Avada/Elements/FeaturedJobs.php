@@ -25,7 +25,7 @@ class FeaturedJobs extends AbstractElement {
 		return [
 			'name'            => esc_attr__( 'RP: Featured Jobs', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_featured_jobs',
-			'icon'            => 'fusiona-star',
+			'icon'            => 'fusiona-star-empty',
 			'help_url'        => $this->getHelpUrl( 'rp_featured_jobs' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,

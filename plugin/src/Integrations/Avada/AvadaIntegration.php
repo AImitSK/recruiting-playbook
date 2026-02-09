@@ -104,5 +104,33 @@ class AvadaIntegration {
 			[],
 			RP_VERSION
 		);
+
+		// Preview-Templates im Footer laden (Backend + Live Builder).
+		add_action( 'admin_footer', [ $this, 'outputPreviewTemplates' ], 99 );
+		add_action( 'wp_footer', [ $this, 'outputPreviewTemplates' ], 99 );
+	}
+
+	/**
+	 * Preview-Templates für den Fusion Builder ausgeben
+	 *
+	 * Lädt alle Underscore.js Preview-Templates in den Footer,
+	 * damit der Backend- und Live-Builder sie für die Element-Vorschau nutzen kann.
+	 *
+	 * @return void
+	 */
+	public function outputPreviewTemplates(): void {
+		$previews_dir = RP_PLUGIN_DIR . 'src/Integrations/Avada/previews/';
+
+		if ( ! is_dir( $previews_dir ) ) {
+			return;
+		}
+
+		$files = glob( $previews_dir . '*-preview.php' );
+
+		if ( ! empty( $files ) ) {
+			foreach ( $files as $file ) {
+				include $file;
+			}
+		}
 	}
 }

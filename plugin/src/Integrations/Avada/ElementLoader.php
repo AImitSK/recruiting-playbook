@@ -48,13 +48,6 @@ class ElementLoader {
 	 * @return void
 	 */
 	private function registerElement( string $element ): void {
-		// AI-Elements nur wenn AI-Addon aktiv
-		if ( str_starts_with( $element, 'Ai' ) ) {
-			if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
-				return;
-			}
-		}
-
 		$class = __NAMESPACE__ . '\\Elements\\' . $element;
 
 		if ( class_exists( $class ) ) {

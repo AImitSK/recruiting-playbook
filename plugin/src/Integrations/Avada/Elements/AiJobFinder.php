@@ -28,7 +28,7 @@ class AiJobFinder extends AbstractElement {
 		return [
 			'name'            => esc_attr__( 'RP: KI-Job-Finder', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_ai_job_finder',
-			'icon'            => 'fusiona-search-plus',
+			'icon'            => 'fusiona-avada-ai',
 			'help_url'        => $this->getHelpUrl( 'rp_ai_job_finder' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,

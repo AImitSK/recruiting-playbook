@@ -25,7 +25,7 @@ class JobCount extends AbstractElement {
 		return [
 			'name'            => esc_attr__( 'RP: Stellen-Zähler', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_job_count',
-			'icon'            => 'fusiona-counter-box',
+			'icon'            => 'fusiona-dashboard',
 			'help_url'        => $this->getHelpUrl( 'rp_job_count' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,

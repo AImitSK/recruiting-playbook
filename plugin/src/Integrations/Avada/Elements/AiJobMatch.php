@@ -28,7 +28,7 @@ class AiJobMatch extends AbstractElement {
 		return [
 			'name'            => esc_attr__( 'RP: KI-Job-Match', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_ai_job_match',
-			'icon'            => 'fusiona-check-circle-o',
+			'icon'            => 'fusiona-check_circle_outline',
 			'help_url'        => $this->getHelpUrl( 'rp_ai_job_match' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,
