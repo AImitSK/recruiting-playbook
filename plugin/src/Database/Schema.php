@@ -41,6 +41,8 @@ class Schema {
 			'field_definitions' => $wpdb->prefix . 'rp_field_definitions',
 			'form_templates'    => $wpdb->prefix . 'rp_form_templates',
 			'form_config'       => $wpdb->prefix . 'rp_form_config',
+			'webhooks'          => $wpdb->prefix . 'rp_webhooks',
+			'webhook_deliveries' => $wpdb->prefix . 'rp_webhook_deliveries',
 		];
 	}
 
@@ -526,6 +528,70 @@ class Schema {
 			UNIQUE KEY config_type (config_type),
 			KEY version (version),
 			KEY created_by (created_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_webhooks
+	 *
+	 * @return string
+	 */
+	public static function getWebhooksTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['webhooks'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL,
+			url varchar(500) NOT NULL,
+			secret varchar(255) NOT NULL,
+			events longtext NOT NULL,
+			is_active tinyint(1) DEFAULT 1,
+			last_triggered_at datetime DEFAULT NULL,
+			last_success_at datetime DEFAULT NULL,
+			last_failure_at datetime DEFAULT NULL,
+			failure_count int(10) unsigned DEFAULT 0,
+			success_count int(10) unsigned DEFAULT 0,
+			created_by bigint(20) unsigned NOT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY is_active (is_active),
+			KEY created_by (created_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_webhook_deliveries
+	 *
+	 * @return string
+	 */
+	public static function getWebhookDeliveriesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['webhook_deliveries'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			webhook_id bigint(20) unsigned NOT NULL,
+			event varchar(50) NOT NULL,
+			request_url varchar(500) NOT NULL,
+			request_headers longtext DEFAULT NULL,
+			request_body longtext DEFAULT NULL,
+			response_code smallint(5) unsigned DEFAULT NULL,
+			response_headers longtext DEFAULT NULL,
+			response_body text DEFAULT NULL,
+			response_time_ms int(10) unsigned DEFAULT NULL,
+			status varchar(20) NOT NULL,
+			error_message text DEFAULT NULL,
+			retry_count tinyint(3) unsigned DEFAULT 0,
+			next_retry_at datetime DEFAULT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY webhook_id (webhook_id),
+			KEY status (status),
+			KEY created_at (created_at)
 		) {$charset};";
 	}
 }

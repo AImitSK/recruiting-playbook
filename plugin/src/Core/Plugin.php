@@ -42,7 +42,9 @@ use RecruitingPlaybook\Api\FieldDefinitionController;
 use RecruitingPlaybook\Api\FormTemplateController;
 use RecruitingPlaybook\Api\MatchController;
 use RecruitingPlaybook\Api\FormConfigController;
+use RecruitingPlaybook\Api\WebhookController;
 use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Services\WebhookService;
 use RecruitingPlaybook\Services\EmailQueueService;
 use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
@@ -86,6 +88,9 @@ final class Plugin {
 
 		// Auto-E-Mail Service initialisieren (Pro-Feature).
 		$this->initAutoEmailService();
+
+		// Webhook-Hooks registrieren (Pro-Feature).
+		$this->registerWebhookHooks();
 
 		// Admin-Bereich.
 		if ( is_admin() ) {
@@ -295,6 +300,33 @@ final class Plugin {
 
 		$auto_email_service = new AutoEmailService();
 		$auto_email_service->registerHooks();
+	}
+
+	/**
+	 * Webhook Event-Hooks registrieren
+	 *
+	 * Verbindet Application- und Job-Events mit dem WebhookService
+	 * für asynchrone Benachrichtigung externer Systeme.
+	 * Pro-Feature: Nur aktiv wenn Webhooks Feature verfügbar ist.
+	 */
+	private function registerWebhookHooks(): void {
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'webhooks' ) ) {
+			return;
+		}
+
+		$service = new WebhookService();
+
+		// Application Events.
+		add_action( 'rp_application_created', [ $service, 'onApplicationCreated' ], 10, 2 );
+		add_action( 'rp_application_status_changed', [ $service, 'onApplicationStatusChanged' ], 10, 3 );
+
+		// Job Events (über WP-Hooks).
+		add_action( 'transition_post_status', [ $service, 'onJobStatusTransition' ], 10, 3 );
+		add_action( 'save_post_job_listing', [ $service, 'onJobSaved' ], 10, 3 );
+		add_action( 'before_delete_post', [ $service, 'onJobDeleted' ], 10, 1 );
+
+		// Action Scheduler Hook für asynchrone Delivery.
+		add_action( 'rp_deliver_webhook', [ $service, 'deliver' ], 10, 1 );
 	}
 
 	/**
@@ -538,6 +570,10 @@ final class Plugin {
 		// Form Config Controller (Form Builder - Pro Feature).
 		$form_config_controller = new FormConfigController();
 		$form_config_controller->register_routes();
+
+		// Webhook Controller (Pro-Feature).
+		$webhook_controller = new WebhookController();
+		$webhook_controller->register_routes();
 	}
 
 	/**
