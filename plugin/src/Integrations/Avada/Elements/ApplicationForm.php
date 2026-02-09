@@ -26,6 +26,7 @@ class ApplicationForm extends AbstractElement {
 			'name'            => esc_attr__( 'RP: Bewerbungs-Formular', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_application_form',
 			'icon'            => 'fusiona-list-alt',
+			'component'       => true,
 			'help_url'        => $this->getHelpUrl( 'rp_application_form' ),
 			'inline_editor'   => false,
 			'allow_generator' => true,
