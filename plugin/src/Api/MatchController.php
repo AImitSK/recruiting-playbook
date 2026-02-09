@@ -180,7 +180,7 @@ class MatchController extends WP_REST_Controller {
 		$response = wp_remote_post(
 			self::API_BASE_URL . '/analysis/upload',
 			[
-				'timeout' => 30,
+				'timeout' => 60,
 				'headers' => array_merge(
 					$auth_headers,
 					[
@@ -212,7 +212,7 @@ class MatchController extends WP_REST_Controller {
 
 		// Analyse in lokaler DB loggen.
 		$this->log_analysis( [
-			'external_job_id' => $response_body['jobId'] ?? '',
+			'external_job_id' => $response_body['job_id'] ?? $response_body['jobId'] ?? '',
 			'analysis_type'   => 'job_match',
 			'job_id'          => $job_id,
 			'job_title'       => $job->post_title,
@@ -324,7 +324,7 @@ class MatchController extends WP_REST_Controller {
 
 		// Analyse in lokaler DB loggen.
 		$this->log_analysis( [
-			'external_job_id' => $result['jobId'] ?? '',
+			'external_job_id' => $result['job_id'] ?? $result['jobId'] ?? '',
 			'analysis_type'   => 'job_finder',
 			'job_id'          => null,
 			'job_title'       => sprintf( 'Job-Finder (%d Stellen)', count( $jobs ) ),
@@ -410,7 +410,7 @@ class MatchController extends WP_REST_Controller {
 		$response = wp_remote_post(
 			$api_url,
 			[
-				'timeout' => 30,
+				'timeout' => 60,
 				'headers' => $headers,
 				'body'    => $body,
 			]
@@ -704,37 +704,51 @@ class MatchController extends WP_REST_Controller {
 	/**
 	 * Analyse-Status in lokaler DB aktualisieren
 	 *
+	 * Worker-Response hat verschachtelte Struktur:
+	 * { "status": "completed", "result": { "score": 82, "category": "high", ... } }
+	 *
 	 * @param string $external_job_id Externe Job-ID.
-	 * @param array  $result          Ergebnis-Daten vom Worker.
+	 * @param array  $response        Response-Daten vom Worker.
 	 */
-	private function update_analysis_status( string $external_job_id, array $result ): void {
+	private function update_analysis_status( string $external_job_id, array $response ): void {
 		global $wpdb;
 
 		$table = $wpdb->prefix . 'rp_ai_analyses';
 
+		// Score/Category können auf Top-Level oder in 'result' verschachtelt sein.
+		$result_data = $response['result'] ?? [];
+
 		$update_data = [
-			'status'       => $result['status'] ?? 'completed',
+			'status'       => $response['status'] ?? 'completed',
 			'completed_at' => current_time( 'mysql' ),
 		];
 		$update_format = [ '%s', '%s' ];
 
-		if ( isset( $result['score'] ) ) {
-			$update_data['score'] = (int) $result['score'];
+		// Score: erst in result, dann Top-Level.
+		$score = $result_data['score'] ?? $response['score'] ?? null;
+		if ( null !== $score ) {
+			$update_data['score'] = (int) $score;
 			$update_format[]      = '%d';
 		}
 
-		if ( isset( $result['category'] ) ) {
-			$update_data['category'] = sanitize_text_field( $result['category'] );
+		// Category: erst in result, dann Top-Level.
+		$category = $result_data['category'] ?? $response['category'] ?? null;
+		if ( null !== $category ) {
+			$update_data['category'] = sanitize_text_field( $category );
 			$update_format[]         = '%s';
 		}
 
-		if ( isset( $result['summary'] ) ) {
-			$update_data['result_summary'] = sanitize_text_field( $result['summary'] );
+		// Summary: erst in result, dann Top-Level.
+		$summary = $result_data['summary'] ?? $response['summary'] ?? null;
+		if ( null !== $summary ) {
+			$update_data['result_summary'] = sanitize_text_field( $summary );
 			$update_format[]               = '%s';
 		}
 
-		if ( isset( $result['error'] ) ) {
-			$update_data['error_message'] = sanitize_text_field( $result['error'] );
+		// Error.
+		$error = $response['error'] ?? $result_data['error'] ?? null;
+		if ( null !== $error ) {
+			$update_data['error_message'] = sanitize_text_field( $error );
 			$update_format[]              = '%s';
 		}
 

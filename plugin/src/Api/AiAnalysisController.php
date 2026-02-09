@@ -307,27 +307,17 @@ class AiAnalysisController extends WP_REST_Controller {
 	/**
 	 * GET /ai-analysis/health
 	 *
+	 * Health-Check braucht keine Auth-Headers — öffentlicher Endpoint.
+	 *
 	 * @return WP_REST_Response
 	 */
 	public function get_health(): WP_REST_Response {
-		$auth_headers = $this->get_freemius_auth_headers();
-
-		if ( is_wp_error( $auth_headers ) ) {
-			return new WP_REST_Response( [
-				'reachable'        => false,
-				'response_time_ms' => 0,
-				'checked_at'       => gmdate( 'c' ),
-				'error'            => $auth_headers->get_error_message(),
-			] );
-		}
-
 		$start_time = microtime( true );
 
 		$response = wp_remote_get(
 			self::API_BASE_URL . '/health',
 			[
 				'timeout' => 10,
-				'headers' => $auth_headers,
 			]
 		);
 
