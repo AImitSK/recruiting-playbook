@@ -7,8 +7,8 @@ import clsx from 'clsx'
 
 import { Container } from '@/components/Container'
 import screenshotKanban from '../../public/screenshots/kanban-board.png'
-import screenshotAI from '../../public/screenshots/frontend-details.png'
-import screenshotGoogle from '../../public/screenshots/frontend-grid.png'
+import screenshotReports from '../../public/screenshots/berichte-conversion.png'
+import screenshotGoogle from '../../public/screenshots/grid.png'
 import screenshotFormBuilder from '../../public/screenshots/formular-builder.png'
 
 const features = [
@@ -19,10 +19,10 @@ const features = [
     image: screenshotKanban,
   },
   {
-    title: 'KI-Analyse',
+    title: 'Berichte',
     description:
-      'Lebenslauf hochladen, KI-Matching starten. Automatische Bewertung, wie gut Bewerber zur Stelle passen.',
-    image: screenshotAI,
+      'Conversion-Raten, Bewerberquellen und Zeiträume auf einen Blick. Datenbasierte Entscheidungen für Ihr Recruiting.',
+    image: screenshotReports,
   },
   {
     title: 'Google for Jobs',
