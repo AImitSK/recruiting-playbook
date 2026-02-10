@@ -8,6 +8,8 @@ export const docsNav = [
   { slug: 'email', title: 'E-Mail-Konfiguration' },
   { slug: 'spam-protection', title: 'Spam-Schutz' },
   { slug: 'conversion-tracking', title: 'Conversion Tracking' },
+  { slug: 'google-for-jobs', title: 'Google for Jobs' },
+  { slug: 'xml-job-feed', title: 'XML Job Feed' },
   { slug: 'gdpr', title: 'DSGVO' },
   { slug: 'faq', title: 'FAQ & Troubleshooting' },
 ]
