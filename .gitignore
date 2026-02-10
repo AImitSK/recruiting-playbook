@@ -58,7 +58,6 @@ plugin/vendor/
 # =============================================================
 docs/screenshot/
 plugin/screenshots/
-**/screenshots/
 *.screenshot.png
 
 # =============================================================
