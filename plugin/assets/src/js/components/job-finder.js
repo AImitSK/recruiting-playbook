@@ -30,6 +30,8 @@ const rpJobFinderComponent = (options = {}) => ({
     // ===== INIT =====
     init() {
         console.log('[RP] Job-Finder Component initialized', { limit: this.limit, jobCount: this.jobCount });
+        // Services proaktiv aufwecken wenn Komponente sichtbar wird
+        this.warmUp();
     },
 
     // ===== FILE HANDLING =====
@@ -103,6 +105,18 @@ const rpJobFinderComponent = (options = {}) => ({
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     },
 
+    // ===== WARM-UP =====
+    warmUp() {
+        // Services proaktiv aufwecken (Cold Start Prevention)
+        try {
+            fetch( this.config.endpoints.status + '/warmup', {
+                headers: { 'X-WP-Nonce': this.config.nonce },
+            } ).catch( () => {} );
+        } catch ( e ) {
+            // Warm-Up ist optional
+        }
+    },
+
     // ===== ANALYSIS =====
     async startAnalysis() {
         if (!this.file) return;
@@ -149,6 +163,16 @@ const rpJobFinderComponent = (options = {}) => ({
 
         // Simulierter Progress
         this.simulateProgress();
+
+        // Timeout nach 4 Minuten (Cold Start von Cloud Run kann 30-60s dauern)
+        setTimeout(() => {
+            if (this.status === 'processing') {
+                this.stopPolling();
+                this.status = 'error';
+                this.error = this.config.i18n?.timeout ||
+                    'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.';
+            }
+        }, 240000);
     },
 
     stopPolling() {

@@ -46,6 +46,21 @@ const matchModalComponent = () => ({
             this.jobTitle = jobTitle;
             this.isOpen = true;
             document.body.classList.add('rp-modal-open');
+
+            // Warm-Up Ping: Services aufwecken während User Datei auswählt.
+            // Verhindert Cold-Start-Timeout bei Google Cloud Run / Cloudflare Worker.
+            this.warmUp();
+        },
+
+        // Warm-Up: Backend-Services proaktiv aufwecken
+        async warmUp() {
+            try {
+                fetch( rpMatchConfig.endpoints.status + '/warmup', {
+                    headers: { 'X-WP-Nonce': rpMatchConfig.nonce },
+                } ).catch( () => {} ); // Fire-and-forget, Fehler ignorieren
+            } catch ( e ) {
+                // Warm-Up ist optional, Fehler sind unkritisch
+            }
         },
 
         // Modal schließen
@@ -202,14 +217,14 @@ const matchModalComponent = () => ({
                 }
             }, 2000); // Alle 2 Sekunden
 
-            // Timeout nach 2 Minuten
+            // Timeout nach 4 Minuten (Cold Start von Cloud Run kann 30-60s dauern)
             setTimeout(() => {
                 if (this.status === 'processing') {
                     this.error = rpMatchConfig.i18n.timeout || 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.';
                     this.status = 'error';
                     this.stopPolling();
                 }
-            }, 120000);
+            }, 240000);
         },
 
         stopPolling() {

@@ -88,6 +88,17 @@ class MatchController extends WP_REST_Controller {
 			]
 		);
 
+		// GET /match/status/warmup - Services aufwecken (Cold Start)
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/status/warmup',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'warmup' ],
+				'permission_callback' => '__return_true',
+			]
+		);
+
 		// POST /match/job-finder - Multi-Job-Matching (Mode B)
 		register_rest_route(
 			$this->namespace,
@@ -264,6 +275,30 @@ class MatchController extends WP_REST_Controller {
 		}
 
 		return new WP_REST_Response( $body );
+	}
+
+	/**
+	 * GET /match/status/warmup - Backend-Services aufwecken
+	 *
+	 * Sendet einen leichtgewichtigen Health-Check an den Worker,
+	 * der wiederum Presidio (Google Cloud Run) aufweckt.
+	 * Wird beim Öffnen des Match-Modals aufgerufen,
+	 * um Cold-Start-Verzögerungen zu vermeiden.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function warmup(): WP_REST_Response {
+		$response = wp_remote_get(
+			str_replace( '/v1', '', self::API_BASE_URL ) . '/health',
+			[
+				'timeout' => 5,
+				'headers' => [ 'Accept' => 'application/json' ],
+			]
+		);
+
+		$reachable = ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) < 500;
+
+		return new WP_REST_Response( [ 'warm' => $reachable ], 200 );
 	}
 
 	/**
