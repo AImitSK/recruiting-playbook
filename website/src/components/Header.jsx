@@ -14,9 +14,75 @@ import { Container } from '@/components/Container'
 import { Logo } from '@/components/Logo'
 import { NavLink } from '@/components/NavLink'
 
-function MobileNavLink({ href, children }) {
+const resourceLinks = [
+  { href: '/docs', label: 'Dokumentation', description: 'Anleitungen & Konfiguration' },
+  { href: '/api', label: 'API', description: 'REST API Referenz' },
+  { href: '/support', label: 'Support', description: 'Hilfe & Kontakt' },
+  {
+    href: 'https://github.com/AImitSK/recruiting-playbook',
+    label: 'GitHub',
+    description: 'Quellcode & Issues',
+    external: true,
+  },
+]
+
+function ChevronDownIcon({ className }) {
   return (
-    <PopoverButton as={Link} href={href} className="block w-full p-2">
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+  )
+}
+
+function ResourcesDropdown() {
+  return (
+    <Popover className="relative">
+      {({ open }) => (
+        <>
+          <PopoverButton className="inline-flex items-center gap-x-1 rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus:outline-none">
+            Ressourcen
+            <ChevronDownIcon
+              className={clsx(
+                'h-4 w-4 transition',
+                open && 'rotate-180',
+              )}
+            />
+          </PopoverButton>
+          <PopoverPanel
+            transition
+            className="absolute left-1/2 z-50 mt-3 w-64 -translate-x-1/2 rounded-xl bg-white p-2 shadow-lg ring-1 ring-slate-900/5 data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+          >
+            {resourceLinks.map((link) => (
+              <PopoverButton
+                key={link.href}
+                as={Link}
+                href={link.href}
+                className="flex flex-col rounded-lg px-3 py-2.5 hover:bg-slate-50"
+                {...(link.external
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
+              >
+                <span className="text-sm font-medium text-slate-900">
+                  {link.label}
+                  {link.external && (
+                    <svg className="ml-1 inline h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  )}
+                </span>
+                <span className="text-xs text-slate-500">{link.description}</span>
+              </PopoverButton>
+            ))}
+          </PopoverPanel>
+        </>
+      )}
+    </Popover>
+  )
+}
+
+function MobileNavLink({ href, children, ...props }) {
+  return (
+    <PopoverButton as={Link} href={href} className="block w-full p-2" {...props}>
       {children}
     </PopoverButton>
   )
@@ -67,14 +133,19 @@ function MobileNavigation() {
         className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
       >
         <MobileNavLink href="/features">Features</MobileNavLink>
-        <MobileNavLink href="/pricing">Preise</MobileNavLink>
         <MobileNavLink href="/ai">KI-Addon</MobileNavLink>
+        <MobileNavLink href="/pricing">Preise</MobileNavLink>
+        <hr className="m-2 border-slate-300/40" />
         <MobileNavLink href="/docs">Dokumentation</MobileNavLink>
         <MobileNavLink href="/api">API</MobileNavLink>
         <MobileNavLink href="/support">Support</MobileNavLink>
         <MobileNavLink href="/account">Kundenportal</MobileNavLink>
         <hr className="m-2 border-slate-300/40" />
-        <MobileNavLink href="https://github.com/AImitSK/recruiting-playbook">
+        <MobileNavLink
+          href="https://github.com/AImitSK/recruiting-playbook"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           GitHub
         </MobileNavLink>
       </PopoverPanel>
@@ -91,21 +162,16 @@ export function Header() {
             <Link href="/" aria-label="Startseite">
               <Logo className="h-10 w-auto" />
             </Link>
-            <div className="hidden md:flex md:gap-x-6">
+            <div className="hidden md:flex md:items-center md:gap-x-6">
               <NavLink href="/features">Features</NavLink>
-              <NavLink href="/pricing">Preise</NavLink>
               <NavLink href="/ai">KI-Addon</NavLink>
-              <NavLink href="/docs">Dokumentation</NavLink>
-              <NavLink href="/api">API</NavLink>
-              <NavLink href="/support">Support</NavLink>
-              <NavLink href="/account">Kundenportal</NavLink>
+              <NavLink href="/pricing">Preise</NavLink>
+              <ResourcesDropdown />
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:block">
-              <NavLink href="https://github.com/AImitSK/recruiting-playbook">
-                GitHub
-              </NavLink>
+              <NavLink href="/account">Kundenportal</NavLink>
             </div>
             <Button href="/recruiting-playbook.zip" color="blue" download>
               <span>
