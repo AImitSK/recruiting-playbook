@@ -77,7 +77,7 @@ class ApplicationDetail {
 						'applicationId' => $application_id,
 						'apiUrl'        => rest_url( 'recruiting/v1/' ),
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
-						'listUrl'       => admin_url( 'admin.php?page=rp-applications' ),
+						'listUrl'       => admin_url( 'admin.php?page=recruiting-playbook' ),
 						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 						'canSendEmails' => function_exists( 'rp_can' ) && rp_can( 'email_templates' ),
 						'i18n'          => [
@@ -148,7 +148,7 @@ class ApplicationDetail {
 					esc_html( $candidate['first_name'] . ' ' . $candidate['last_name'] )
 				);
 				?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="page-title-action">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="page-title-action">
 					<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
 				</a>
 			</h1>
@@ -358,12 +358,12 @@ class ApplicationDetail {
 						<h2 class="hndle"><?php esc_html_e( 'DSGVO', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<p>
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=rp-applications&action=export_data&id=' . $id ), 'rp_export_data_' . $id ) ); ?>" class="button button-small" style="width: 100%; text-align: center;">
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=recruiting-playbook&action=export_data&id=' . $id ), 'rp_export_data_' . $id ) ); ?>" class="button button-small" style="width: 100%; text-align: center;">
 									<?php esc_html_e( 'Daten exportieren', 'recruiting-playbook' ); ?>
 								</a>
 							</p>
 							<p>
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=rp-applications&action=delete&id=' . $id ), 'rp_delete_' . $id ) ); ?>" class="button button-small button-link-delete" style="width: 100%; text-align: center;" onclick="return confirm('<?php esc_attr_e( 'Diese Bewerbung wirklich löschen?', 'recruiting-playbook' ); ?>');">
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=recruiting-playbook&action=delete&id=' . $id ), 'rp_delete_' . $id ) ); ?>" class="button button-small button-link-delete" style="width: 100%; text-align: center;" onclick="return confirm('<?php esc_attr_e( 'Diese Bewerbung wirklich löschen?', 'recruiting-playbook' ); ?>');">
 									<?php esc_html_e( 'Bewerbung löschen', 'recruiting-playbook' ); ?>
 								</a>
 							</p>

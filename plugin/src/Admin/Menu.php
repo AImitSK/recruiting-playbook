@@ -15,7 +15,6 @@ use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
 use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
-use RecruitingPlaybook\Admin\Pages\DashboardPage;
 use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\ReportingPage;
@@ -56,34 +55,24 @@ class Menu {
 		// Aktionen früh verarbeiten (vor Output).
 		add_action( 'admin_init', [ $this, 'handleEarlyActions' ] );
 
-		// Hauptmenü.
+		// Hauptmenü → Bewerbungen als Startseite.
 		add_menu_page(
 			__( 'Recruiting Playbook', 'recruiting-playbook' ),
 			__( 'Recruiting', 'recruiting-playbook' ),
-			'rp_manage_recruiting',
+			'rp_view_applications',
 			'recruiting-playbook',
-			[ $this, 'renderDashboard' ],
+			[ $this, 'renderApplications' ],
 			'dashicons-groups',
 			25
 		);
 
-		// Dashboard (ersetzt Hauptmenü-Eintrag).
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Dashboard', 'recruiting-playbook' ),
-			__( 'Dashboard', 'recruiting-playbook' ),
-			'rp_manage_recruiting',
-			'recruiting-playbook',
-			[ $this, 'renderDashboard' ]
-		);
-
-		// Bewerbungen.
+		// Bewerbungen (ersetzt Hauptmenü-Eintrag).
 		add_submenu_page(
 			'recruiting-playbook',
 			__( 'Bewerbungen', 'recruiting-playbook' ),
 			__( 'Bewerbungen', 'recruiting-playbook' ),
 			'rp_view_applications',
-			'rp-applications',
+			'recruiting-playbook',
 			[ $this, 'renderApplications' ]
 		);
 
@@ -185,13 +174,13 @@ class Menu {
 
 		// Bewerbung-Detail → Recruiting-Menü, Bewerbungen-Submenu.
 		if ( 'rp-application-detail' === $current_page ) {
-			$submenu_file = 'rp-applications';
+			$submenu_file = 'recruiting-playbook';
 			return 'recruiting-playbook';
 		}
 
 		// Bulk-E-Mail → Recruiting-Menü, Bewerbungen-Submenu.
 		if ( 'rp-bulk-email' === $current_page ) {
-			$submenu_file = 'rp-applications';
+			$submenu_file = 'recruiting-playbook';
 			return 'recruiting-playbook';
 		}
 
@@ -207,7 +196,7 @@ class Menu {
 
 		// Nur auf Bewerbungen-Seite.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
-		if ( ! isset( $_GET['page'] ) || 'rp-applications' !== $_GET['page'] ) {
+		if ( ! isset( $_GET['page'] ) || 'recruiting-playbook' !== $_GET['page'] ) {
 			return;
 		}
 
@@ -274,7 +263,7 @@ class Menu {
 				]
 			);
 
-			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&updated=1' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook&updated=1' ) );
 			exit;
 		}
 
@@ -294,7 +283,7 @@ class Menu {
 			$gdpr_service = new GdprService();
 			$gdpr_service->softDeleteApplication( $id );
 
-			wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&deleted=1' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook&deleted=1' ) );
 			exit;
 		}
 	}
@@ -380,7 +369,7 @@ class Menu {
 			case 'bulk_email':
 				// Pro-Feature Check.
 				if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-					wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&error=pro_required' ) );
+					wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook&error=pro_required' ) );
 					exit;
 				}
 
@@ -393,7 +382,7 @@ class Menu {
 				return; // Unbekannte Action - nicht redirecten.
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=rp-applications&bulk_updated=1' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook&bulk_updated=1' ) );
 		exit;
 	}
 
@@ -420,14 +409,6 @@ class Menu {
 				'created_at'  => current_time( 'mysql' ),
 			]
 		);
-	}
-
-	/**
-	 * Dashboard rendern
-	 */
-	public function renderDashboard(): void {
-		$page = new DashboardPage();
-		$page->render();
 	}
 
 	/**
@@ -606,7 +587,7 @@ class Menu {
 					<p><?php esc_html_e( 'Keine Bewerbungen ausgewählt. Bitte wählen Sie Bewerbungen in der Liste aus.', 'recruiting-playbook' ); ?></p>
 				</div>
 				<p>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button">
 						<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
 					</a>
 				</p>
@@ -699,7 +680,7 @@ class Menu {
 						</p>
 					</div>
 					<p>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button button-primary">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button button-primary">
 							<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
@@ -797,7 +778,7 @@ class Menu {
 								);
 								?>
 							</button>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-applications' ) ); ?>" class="button">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button">
 								<?php esc_html_e( 'Abbrechen', 'recruiting-playbook' ); ?>
 							</a>
 						</p>

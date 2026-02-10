@@ -48,7 +48,7 @@ class TalentPoolPage {
 					'apiUrl'            => rest_url( 'recruiting/v1/' ),
 					'nonce'             => wp_create_nonce( 'wp_rest' ),
 					'logoUrl'           => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-					'applicationsUrl'   => admin_url( 'admin.php?page=rp-applications' ),
+					'applicationsUrl'   => admin_url( 'admin.php?page=recruiting-playbook' ),
 					'applicationUrl'    => admin_url( 'admin.php?page=rp-application-detail&id=' ),
 					'i18n'              => [
 						'title'                => __( 'Talent-Pool', 'recruiting-playbook' ),

@@ -409,7 +409,7 @@ class ApplicationList extends \WP_List_Table {
 			$screening_url = wp_nonce_url(
 				admin_url(
 					sprintf(
-						'admin.php?page=rp-applications&action=set_status&id=%d&status=screening',
+						'admin.php?page=recruiting-playbook&action=set_status&id=%d&status=screening',
 						absint( $item['id'] )
 					)
 				),

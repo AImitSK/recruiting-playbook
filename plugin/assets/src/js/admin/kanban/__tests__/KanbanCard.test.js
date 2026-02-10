@@ -38,7 +38,7 @@ beforeEach( () => {
 			yesterday: 'Gestern',
 			daysAgo: 'vor %d Tagen',
 		},
-		detailUrl: '/wp-admin/admin.php?page=rp-applications&id=',
+		detailUrl: '/wp-admin/admin.php?page=recruiting-playbook&id=',
 	};
 } );
 

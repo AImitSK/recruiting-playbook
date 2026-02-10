@@ -14,7 +14,7 @@ test.describe( 'Email UI Screenshots', () => {
 		await page.waitForURL( '**/wp-admin/**', { timeout: 10000 } );
 
 		// Go to applications list
-		await page.goto( 'http://localhost:8080/wp-admin/admin.php?page=rp-applications' );
+		await page.goto( 'http://localhost:8080/wp-admin/admin.php?page=recruiting-playbook' );
 		await page.waitForTimeout( 3000 );
 
 		// Click on first "Ansehen" button using a more flexible selector

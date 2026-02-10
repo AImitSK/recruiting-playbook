@@ -161,7 +161,7 @@ class EmailService {
 
 		$message = $this->renderTemplate( 'email-application-received', [
 			'application'    => $application,
-			'admin_url'      => admin_url( 'admin.php?page=rp-applications&id=' . $application_id ),
+			'admin_url'      => admin_url( 'admin.php?page=recruiting-playbook&id=' . $application_id ),
 			'company_name'   => $this->from_name,
 		] );
 

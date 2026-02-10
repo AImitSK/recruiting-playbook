@@ -99,7 +99,7 @@ describe( 'ApplicantDetail', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.rpApplicant = {
-			listUrl: '/wp-admin/admin.php?page=rp-applications',
+			listUrl: '/wp-admin/admin.php?page=recruiting-playbook',
 			canSendEmails: true,
 			logoUrl: '',
 		};
@@ -171,7 +171,7 @@ describe( 'ApplicantDetail mit DynamicFieldRenderer', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.rpApplicant = {
-			listUrl: '/wp-admin/admin.php?page=rp-applications',
+			listUrl: '/wp-admin/admin.php?page=recruiting-playbook',
 			canSendEmails: true,
 			logoUrl: '',
 		};
@@ -279,7 +279,7 @@ describe( 'ApplicantDetail mit Custom Fields', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.rpApplicant = {
-			listUrl: '/wp-admin/admin.php?page=rp-applications',
+			listUrl: '/wp-admin/admin.php?page=recruiting-playbook',
 			canSendEmails: true,
 			logoUrl: '',
 		};
@@ -351,7 +351,7 @@ describe( 'ApplicantDetail Status', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.rpApplicant = {
-			listUrl: '/wp-admin/admin.php?page=rp-applications',
+			listUrl: '/wp-admin/admin.php?page=recruiting-playbook',
 			canSendEmails: true,
 			logoUrl: '',
 		};

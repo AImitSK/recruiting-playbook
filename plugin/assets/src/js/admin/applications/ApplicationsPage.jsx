@@ -767,7 +767,7 @@ export function ApplicationsPage() {
 													</a>
 													{ app.status === 'new' && (
 														<a
-															href={ `${ adminUrl }admin.php?page=rp-applications&action=set_status&id=${ app.id }&status=screening&_wpnonce=${ initialData.nonce }` }
+															href={ `${ adminUrl }admin.php?page=recruiting-playbook&action=set_status&id=${ app.id }&status=screening&_wpnonce=${ initialData.nonce }` }
 															style={ {
 																display: 'inline-flex',
 																alignItems: 'center',
