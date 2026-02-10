@@ -73,10 +73,6 @@ class IntegrationController extends WP_REST_Controller {
 		'teams_event_job_published'     => false,
 		'teams_event_deadline_reminder' => false,
 
-		// Kalender ICS (Pro).
-		'ics_enabled'                   => true,
-		'ics_default_duration'          => 60,
-		'ics_default_location'          => '',
 	];
 
 	/**
@@ -182,7 +178,6 @@ class IntegrationController extends WP_REST_Controller {
 			'teams_event_status_changed',
 			'teams_event_job_published',
 			'teams_event_deadline_reminder',
-			'ics_enabled',
 		];
 
 		foreach ( $bool_fields as $field ) {
@@ -203,15 +198,6 @@ class IntegrationController extends WP_REST_Controller {
 		if ( isset( $data['xml_feed_max_items'] ) ) {
 			$sanitized['xml_feed_max_items'] = max( 1, min( 500, (int) $data['xml_feed_max_items'] ) );
 		}
-		if ( isset( $data['ics_default_duration'] ) ) {
-			$sanitized['ics_default_duration'] = max( 15, min( 480, (int) $data['ics_default_duration'] ) );
-		}
-
-		// String-Felder.
-		if ( isset( $data['ics_default_location'] ) ) {
-			$sanitized['ics_default_location'] = sanitize_text_field( $data['ics_default_location'] );
-		}
-
 		// Merge mit bestehenden Werten.
 		$merged = array_merge(
 			is_array( $current ) ? $current : [],

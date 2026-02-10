@@ -39,10 +39,6 @@ const DEFAULTS = {
 	teams_event_job_published: false,
 	teams_event_deadline_reminder: false,
 
-	// Kalender ICS (Pro)
-	ics_enabled: true,
-	ics_default_duration: 60,
-	ics_default_location: '',
 };
 
 /**

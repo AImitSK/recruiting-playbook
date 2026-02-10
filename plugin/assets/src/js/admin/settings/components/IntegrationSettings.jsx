@@ -2,7 +2,7 @@
  * IntegrationSettings Component
  *
  * Settings-Tab "Integrationen" mit Google for Jobs, XML Feed,
- * Slack, Teams und Kalender-Einstellungen.
+ * Slack und Teams Einstellungen.
  *
  * @package RecruitingPlaybook
  */
@@ -17,7 +17,6 @@ import { Label } from '../../components/ui/label';
 import { Badge } from '../../components/ui/badge';
 import { Switch } from '../../components/ui/switch';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { Select } from '../../components/ui/select';
 import { Spinner } from '../../components/ui/spinner';
 
 import { useIntegrations } from '../hooks';
@@ -442,74 +441,6 @@ export function IntegrationSettings() {
 						<Alert>
 							<AlertDescription>
 								{ __( 'Teams-Benachrichtigungen sind ein Pro-Feature.', 'recruiting-playbook' ) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
-			</Card>
-
-			{ /* ═══════════ Kalender (ICS) ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
-				<CardHeader>
-					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<div>
-							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-								{ __( 'Kalender (ICS)', 'recruiting-playbook' ) }
-								<Badge variant="outline" style={ { fontSize: '11px' } }>Pro</Badge>
-							</CardTitle>
-							<CardDescription>
-								{ __( 'Fugt Interview-Einladungen automatisch eine Kalender-Datei hinzu (Google Calendar, Outlook, Apple).', 'recruiting-playbook' ) }
-							</CardDescription>
-						</div>
-						<Switch
-							checked={ settings.ics_enabled }
-							onCheckedChange={ ( val ) => updateSetting( 'ics_enabled', val ) }
-							disabled={ ! isPro }
-						/>
-					</div>
-				</CardHeader>
-				{ settings.ics_enabled && isPro && (
-					<CardContent>
-						<SettingsSection title={ __( 'Optionen', 'recruiting-playbook' ) }>
-							<div style={ { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' } }>
-								<Label style={ { whiteSpace: 'nowrap' } }>
-									{ __( 'Standard-Dauer:', 'recruiting-playbook' ) }
-								</Label>
-								<select
-									value={ settings.ics_default_duration }
-									onChange={ ( e ) => updateSetting( 'ics_default_duration', parseInt( e.target.value, 10 ) ) }
-									style={ {
-										padding: '6px 12px',
-										borderRadius: '6px',
-										border: '1px solid #d1d5db',
-										fontSize: '14px',
-									} }
-								>
-									<option value={ 30 }>30 { __( 'Minuten', 'recruiting-playbook' ) }</option>
-									<option value={ 45 }>45 { __( 'Minuten', 'recruiting-playbook' ) }</option>
-									<option value={ 60 }>60 { __( 'Minuten', 'recruiting-playbook' ) }</option>
-									<option value={ 90 }>90 { __( 'Minuten', 'recruiting-playbook' ) }</option>
-									<option value={ 120 }>120 { __( 'Minuten', 'recruiting-playbook' ) }</option>
-								</select>
-							</div>
-							<div>
-								<Label style={ { marginBottom: '6px', display: 'block' } }>
-									{ __( 'Standard-Ort', 'recruiting-playbook' ) }
-								</Label>
-								<Input
-									placeholder={ __( 'z.B. "Zoom" oder Buroadresse', 'recruiting-playbook' ) }
-									value={ settings.ics_default_location }
-									onChange={ ( e ) => updateSetting( 'ics_default_location', e.target.value ) }
-								/>
-							</div>
-						</SettingsSection>
-					</CardContent>
-				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription>
-								{ __( 'Kalender-Integration ist ein Pro-Feature.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>

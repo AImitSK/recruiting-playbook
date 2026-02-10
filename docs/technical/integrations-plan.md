@@ -228,52 +228,7 @@ den Jobborsen automatisch einlesen konnen.
 
 ---
 
-### 1.5 Kalender-Integration (ICS)
-
-| | |
-|---|---|
-| **Prioritat** | Mittel |
-| **Tier** | Pro |
-| **Komplexitat** | Niedrig |
-| **Aufwand** | ~0.5 Tage |
-
-**Was:** ICS-Datei als E-Mail-Attachment bei Interview-Einladungen.
-Funktioniert mit Google Calendar, Outlook, Apple Calendar, etc.
-
-**ICS-Format:**
-```
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Recruiting Playbook//Interview//DE
-METHOD:REQUEST
-BEGIN:VEVENT
-UID:rp-interview-{application_id}@{domain}
-DTSTAMP:20260210T120000Z
-DTSTART:20260215T140000Z
-DTEND:20260215T150000Z
-SUMMARY:Interview: {vorname} {nachname} - {stelle}
-DESCRIPTION:Vorstellungsgesprach mit {vorname} {nachname}
-LOCATION:{standort_oder_meeting_link}
-ORGANIZER;CN={firma}:mailto:{hr_email}
-ATTENDEE;CN={vorname} {nachname}:mailto:{bewerber_email}
-STATUS:CONFIRMED
-SEQUENCE:0
-END:VEVENT
-END:VCALENDAR
-```
-
-**Implementierung:**
-- ICS-Generierung als Methode im `EmailService`
-- Automatisch als Attachment an Interview-Einladungs-E-Mail
-- Bei Anderung: Neue ICS mit gleicher UID + erhohter SEQUENCE
-- Kein OAuth, keine API-Keys, keine externe Abhangigkeit
-
-> **Spatere Erweiterung (optional):** Direkte Google Calendar / Outlook API
-> Integration mit OAuth. Aktuell nicht empfohlen wegen Komplexitat.
-
----
-
-### 1.6 Personio Sync (Add-on)
+### 1.5 Personio Sync (Add-on)
 
 | | |
 |---|---|
@@ -302,7 +257,7 @@ END:VCALENDAR
 
 ---
 
-### 1.7 Zvoove Integration (Add-on)
+### 1.6 Zvoove Integration (Add-on)
 
 | | |
 |---|---|
@@ -328,7 +283,7 @@ END:VCALENDAR
 | **Indeed XML Feed** | Wird am 1. April 2026 von Indeed eingestellt |
 | **Glassdoor** | Keine offentliche API verfugbar |
 | **Bundesagentur fur Arbeit** | Keine Job-Posting-API, nur Jobsuche |
-| **Google/Outlook Calendar API** | Zu komplex (OAuth), ICS-Dateien reichen |
+| **Google/Outlook Calendar API** | Zu komplex (OAuth) |
 
 ---
 
@@ -340,11 +295,10 @@ END:VCALENDAR
 |---|------------|------|---------|--------|
 | 1 | Google for Jobs (JSON-LD) | Free | ~1 Tag | Sehr hoch - kostenlose Reichweite |
 | 2 | XML Job Feed | Free | ~1-2 Tage | Hoch - universeller Jobborsen-Connector |
-| 3 | ICS Kalender-Dateien | Pro | ~0.5 Tage | Mittel - Interview-Workflow |
-| 4 | Slack Benachrichtigungen | Pro | ~1 Tag | Mittel - Team-Kommunikation |
-| 5 | Teams Benachrichtigungen | Pro | ~1-2 Tage | Mittel - Team-Kommunikation |
+| 3 | Slack Benachrichtigungen | Pro | ~1 Tag | Mittel - Team-Kommunikation |
+| 4 | Teams Benachrichtigungen | Pro | ~1-2 Tage | Mittel - Team-Kommunikation |
 
-**Gesamt: ~5-6 Tage Entwicklung**
+**Gesamt: ~4-5 Tage Entwicklung**
 
 ### Spater (Add-ons, bei Nachfrage)
 
@@ -488,20 +442,6 @@ Jede Integration ist eine eigene Card mit Header, Toggle und Einstellungen.
 │  │                          [Test-Nachricht senden]              │  │
 │  └───────────────────────────────────────────────────────────────┘  │
 │                                                                      │
-│  ┌───────────────────────────────────────────────────────────────┐  │
-│  │ 📅 Kalender (ICS)                               🔒 Pro [ON] │  │
-│  │ ─────────────────────────────────────────────────────────     │  │
-│  │ Fugt Interview-Einladungen automatisch eine Kalender-Datei   │  │
-│  │ hinzu (kompatibel mit Google Calendar, Outlook, Apple).      │  │
-│  │                                                               │  │
-│  │ ┌─ Optionen ─────────────────────────────────────────────┐  │  │
-│  │ │ [x] ICS-Datei an Interview-E-Mails anhangen             │  │  │
-│  │ │ Standard-Dauer: [60 Minuten  ▼]                         │  │  │
-│  │ │ Standard-Ort:   [________________________]               │  │  │
-│  │ │                  z.B. "Zoom" oder Buroadresse            │  │  │
-│  │ └────────────────────────────────────────────────────────┘  │  │
-│  └───────────────────────────────────────────────────────────────┘  │
-│                                                                      │
 │                                          [Speichern]                │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
@@ -520,7 +460,6 @@ plugin/assets/src/js/admin/settings/
 │   │   ├── XmlFeedCard.jsx            ← XML Job Feed Card
 │   │   ├── SlackCard.jsx              ← Slack Card
 │   │   ├── TeamsCard.jsx              ← Teams Card
-│   │   └── CalendarIcsCard.jsx        ← Kalender/ICS Card
 │   └── index.js
 ├── hooks/
 │   └── useIntegrations.js             ← Settings laden/speichern
@@ -572,10 +511,6 @@ $defaults = [
     'teams_event_job_published'     => false,
     'teams_event_deadline_reminder' => false,
 
-    // Kalender ICS (Pro)
-    'ics_enabled'                   => true,
-    'ics_default_duration'          => 60,
-    'ics_default_location'          => '',
 ];
 ```
 
@@ -604,7 +539,6 @@ plugin/src/
 │   │   ├── SlackNotifier.php          ← Slack Webhook POST
 │   │   └── TeamsNotifier.php          ← Teams Adaptive Card POST
 │   └── Calendar/
-│       └── IcsGenerator.php           ← ICS-Datei generieren
 ├── Api/
 │   └── IntegrationController.php      ← REST Endpoints fur Settings + Test
 ```
@@ -655,7 +589,6 @@ class IntegrationManager {
 | XML Job Feed | **Free** | Immer verfugbar |
 | Slack Benachrichtigungen | **Pro** | `rp_can('integrations')` |
 | Teams Benachrichtigungen | **Pro** | `rp_can('integrations')` |
-| Kalender ICS | **Pro** | `rp_can('integrations')` |
 
 Free-User sehen den Tab, aber Pro-Features sind ausgegraut mit Lock-Badge
 und Upgrade-Hinweis (wie bei anderen Pro-Features).
@@ -672,7 +605,6 @@ und Upgrade-Hinweis (wie bei anderen Pro-Features).
 | 4 | XML Job Feed | `XmlJobFeed.php` |
 | 5 | Slack Notifier + Test-Endpoint | `SlackNotifier.php`, `SlackCard.jsx` |
 | 6 | Teams Notifier + Test-Endpoint | `TeamsNotifier.php`, `TeamsCard.jsx` |
-| 7 | ICS Generator | `IcsGenerator.php`, `CalendarIcsCard.jsx` |
 
 ---
 
