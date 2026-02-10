@@ -174,6 +174,7 @@ WICHTIG:
 - Gib für jede Stelle spezifische Gründe an
 - Sortiere nach Score (absteigend)
 - Gib nur die Top-${limit} besten Matches zurück
+- Die Antwort ist für den Bewerber selbst bestimmt. Sprich den Bewerber direkt mit "Sie" an (z.B. "Sie erfüllen...", "Ihre Erfahrung..."). Sprich NICHT über "den Kandidaten" in der dritten Person.
 
 EXTRAKTIONS-SCHRITTE:
 1. Extrahiere aus dem CV: Fähigkeiten, Erfahrungsjahre, Ausbildung
@@ -192,7 +193,7 @@ ANTWORT-FORMAT (JSON):
       "jobId": 123,
       "score": 85,
       "category": "high",
-      "message": "Kurze Erklärung warum dieses Match passt",
+      "message": "Kurze Erklärung in Sie-Form warum diese Stelle zu Ihnen passt",
       "matchedSkills": ["Skill A", "Skill B"],
       "missingSkills": ["Skill C"]
     }
@@ -293,17 +294,19 @@ ${cvSection}
 
 ## Aufgabe
 
-Analysiere, wie gut der Kandidat zur Stelle passt. Beachte:
+Analysiere, wie gut der Lebenslauf zur Stelle passt. Beachte:
 1. MUSS-Anforderungen sind wichtiger als KANN-Anforderungen
 2. Berufserfahrung in ähnlichen Positionen ist ein Plus
 3. Fehlende Anforderungen sind nicht automatisch ein Ausschluss
+
+WICHTIG: Die Antwort ist für den Bewerber selbst bestimmt. Sprich den Bewerber direkt mit "Sie" an (z.B. "Sie erfüllen..." oder "Ihre Erfahrung..."). Sprich NICHT über "den Kandidaten" in der dritten Person.
 
 Antworte NUR mit einem validen JSON-Objekt in diesem Format:
 
 {
   "score": <Zahl 0-100>,
   "category": "<low|medium|high>",
-  "message": "<Kurze Begründung auf Deutsch, max 2 Sätze>",
+  "message": "<Kurze Begründung auf Deutsch in Sie-Form, max 2 Sätze>",
   "matchedSkills": ["<Erfüllte Anforderung 1>", "<Erfüllte Anforderung 2>"],
   "missingSkills": ["<Fehlende Anforderung 1>"],
   "recommendations": ["<Tipp für Bewerbung>"]
