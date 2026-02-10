@@ -41,6 +41,22 @@ jobs:
         working-directory: plugin
         run: npm run build
 
+      - name: Verify no uninstall.php exists
+        working-directory: plugin
+        run: |
+          echo "=== Checking for uninstall.php files ==="
+          if find . -name "uninstall.php" -type f | grep -q .; then
+            echo "WARNING: uninstall.php found!"
+            find . -name "uninstall.php" -type f
+            echo "Removing uninstall.php files..."
+            find . -name "uninstall.php" -type f -delete
+          else
+            echo "OK: No uninstall.php found"
+          fi
+          echo ""
+          echo "=== Checking for register_uninstall_hook calls (excluding vendor/freemius) ==="
+          grep -r "register_uninstall_hook" --include="*.php" -l . | grep -v "vendor/freemius" | grep -v "vendor/php-stubs" || echo "OK: No register_uninstall_hook calls found"
+
       - name: Create plugin ZIP
         run: |
           cd plugin
@@ -54,10 +70,25 @@ jobs:
             -x ".eslintrc*" \
             -x ".stylelintrc*" \
             -x "assets/src/*" \
-            -x "*.map"
+            -x "*.map" \
+            -x "uninstall.php"
           cd ..
           echo "Created ZIP:"
           ls -la recruiting-playbook.zip
+
+      - name: Debug ZIP contents
+        run: |
+          echo "=== Root-level PHP files in ZIP ==="
+          unzip -l recruiting-playbook.zip | grep "\.php$" | grep -v "/" | head -20
+          echo ""
+          echo "=== All root-level files ==="
+          unzip -l recruiting-playbook.zip | grep -E "^\s+[0-9]+" | awk '{print $NF}' | grep -v "/" | sort
+          echo ""
+          echo "=== Searching for uninstall in ZIP ==="
+          unzip -l recruiting-playbook.zip | grep -i "uninstall" || echo "No uninstall files found in ZIP"
+          echo ""
+          echo "=== Total files ==="
+          unzip -l recruiting-playbook.zip | tail -1
 
       - name: Deploy to Freemius
         uses: buttonizer/freemius-deploy@v0.1.3
