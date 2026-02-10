@@ -21,7 +21,7 @@ export function mdxComponents(highlighter) {
     h2: ({ children }) => (
       <h2
         id={headingId(children)}
-        className="mt-10 scroll-mt-24 text-xl font-semibold tracking-tight text-slate-900 first:mt-0"
+        className="mt-14 scroll-mt-24 border-t border-slate-200 pt-10 text-2xl font-bold tracking-tight text-slate-900 first:mt-0 first:border-t-0 first:pt-0"
       >
         {children}
       </h2>
