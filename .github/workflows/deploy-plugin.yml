@@ -1,0 +1,74 @@
+name: Deploy Plugin to Freemius
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggered by tags like v1.1.0, v1.2.0 (NOT ki-v*)
+      - '!ki-v*'  # Exclude KI-Addon tags
+
+jobs:
+  deploy:
+    name: Build, Package & Deploy to Freemius
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Composer dependencies (production)
+        working-directory: plugin
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Install npm dependencies
+        working-directory: plugin
+        run: npm ci
+
+      - name: Build assets
+        working-directory: plugin
+        run: npm run build
+
+      - name: Create plugin ZIP
+        run: |
+          cd plugin
+          zip -r ../recruiting-playbook.zip . \
+            -x "node_modules/*" \
+            -x ".git/*" \
+            -x "tests/*" \
+            -x "*.lock" \
+            -x "phpunit.xml*" \
+            -x "phpcs.xml*" \
+            -x ".eslintrc*" \
+            -x ".stylelintrc*" \
+            -x "assets/src/*" \
+            -x "*.map"
+          cd ..
+          echo "Created ZIP:"
+          ls -la recruiting-playbook.zip
+
+      - name: Deploy to Freemius
+        uses: buttonizer/freemius-deploy@v0.1.3
+        with:
+          file_name: recruiting-playbook.zip
+          version: ${{ steps.version.outputs.VERSION }}
+          release_mode: pending
+          sandbox: false
+        env:
+          DEV_ID: ${{ secrets.FREEMIUS_DEV_ID }}
+          PUBLIC_KEY: ${{ secrets.FREEMIUS_PUBLIC_KEY }}
+          SECRET_KEY: ${{ secrets.FREEMIUS_SECRET_KEY }}
+          PLUGIN_SLUG: recruiting-playbook
+          PLUGIN_ID: '23533'
