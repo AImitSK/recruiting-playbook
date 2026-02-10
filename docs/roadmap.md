@@ -390,10 +390,9 @@ Design & Branding │                   │
   - [x] E-Mail-Versand über Queue
   - [x] Webhook-Delivery über Queue
   - [x] Retry-Mechanismus (Exponential Backoff, max. 3 Versuche)
-- [ ] **REST API (vollständig)**
+- [x] **REST API (vollständig)** ✅
   - [x] Endpoints: Jobs (CRUD, JobController)
   - [x] Endpoints: Applications (Read, inkl. Kandidaten-Daten)
-  - [ ] Endpoints: Candidates
   - [x] Pagination, Filter, Suche
   - [x] API-Key Management (ApiKeyService, rp_api_keys Tabelle, SHA256-Hash, granulare Berechtigungen)
   - [x] Rate Limiting (pro API-Key, Rate-Limit-Headers)
