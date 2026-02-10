@@ -6,35 +6,35 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import clsx from 'clsx'
 
 import { Container } from '@/components/Container'
-import screenshotJobDetail from '@/images/screenshots/screenshot-2.png'
-import screenshotForm from '@/images/screenshots/screenshot-3.png'
-import screenshotApplications from '@/images/screenshots/screenshot-4.png'
-import screenshotAdmin from '@/images/screenshots/screenshot-5.png'
+import screenshotKanban from '../../public/screenshots/kanban-board.png'
+import screenshotAI from '../../public/screenshots/frontend-details.png'
+import screenshotGoogle from '../../public/screenshots/frontend-grid.png'
+import screenshotFormBuilder from '../../public/screenshots/formular-builder.png'
 
 const features = [
   {
-    title: 'Stellenanzeigen',
+    title: 'Kanban-Board',
     description:
-      'Erstellen Sie professionelle Stellenanzeigen mit Google for Jobs Schema. Automatisch optimiert für maximale Sichtbarkeit in Suchmaschinen.',
-    image: screenshotJobDetail,
+      'Bewerbungen visuell managen wie in Trello. Per Drag & Drop durch die Pipeline ziehen — von Eingang bis Einstellung.',
+    image: screenshotKanban,
   },
   {
-    title: 'Bewerbungsformular',
+    title: 'KI-Analyse',
     description:
-      'Mehrstufiges, mobil-optimiertes Formular mit Drag & Drop Upload für Lebenslauf und Dokumente. Eingebautem Spam-Schutz.',
-    image: screenshotForm,
+      'Lebenslauf hochladen, KI-Matching starten. Automatische Bewertung, wie gut Bewerber zur Stelle passen.',
+    image: screenshotAI,
   },
   {
-    title: 'Bewerberverwaltung',
+    title: 'Google for Jobs',
     description:
-      'Alle Bewerbungen auf einen Blick. Filtern nach Status, Stelle und Zeitraum. Mit Pro: Kanban-Board für visuelles Tracking.',
-    image: screenshotApplications,
+      'Ihre Stellen erscheinen direkt in der Google-Suche. Automatisches Schema-Markup ohne technisches Wissen.',
+    image: screenshotGoogle,
   },
   {
-    title: 'WordPress Admin',
+    title: 'Formular-Builder',
     description:
-      'Nahtlos in WordPress integriert. Stellen verwalten, Bewerbungen bearbeiten, Einstellungen konfigurieren. Alles im vertrauten Backend.',
-    image: screenshotAdmin,
+      'Bewerbungsformulare per Drag & Drop bauen. Mehrstufig, mit Datei-Upload und eingebautem Spam-Schutz.',
+    image: screenshotFormBuilder,
   },
 ]
 
