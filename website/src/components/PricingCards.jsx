@@ -154,7 +154,7 @@ export function PricingCards() {
             ]}
             extras={[
               'Ideal für Einzelunternehmer und kleine Teams',
-              'Kein Kreditkarte nötig',
+              'Keine Kreditkarte nötig',
             ]}
           />
           <Plan
@@ -175,31 +175,57 @@ export function PricingCards() {
               '1 Jahr Updates & Support',
             ]}
             extras={[
-              'Agency-Lizenz (5 Websites): 249 €',
               'Wartungsverlängerung: 49 €/Jahr',
               '14-Tage-Geld-zurück-Garantie',
             ]}
           />
           <Plan
-            name="KI-Addon"
-            price="19 €/M"
-            priceDetail="oder 179 €/Jahr (2 Monate gratis)"
-            description="Intelligente Bewerberanalyse mit Claude AI. Benötigt Pro."
-            href="/ai"
-            cta="Mehr erfahren"
+            name="Agentur"
+            price="249 €"
+            priceDetail="Einmalig. Lifetime-Lizenz (3 Websites)"
+            description="Für Agenturen und Unternehmen mit mehreren Standorten."
+            href="#"
+            cta="Agentur kaufen"
             features={[
-              'Benötigt Pro-Lizenz',
-              'Job-Match Score (0-100%)',
-              'Job-Finder für Bewerber',
-              'Chancen-Check',
-              'KI-Stellentexte generieren',
-              '100 Analysen/Monat inkl.',
+              'Alles aus Pro',
+              '3 Website-Lizenzen',
+              'Zentrale Lizenzverwaltung',
+              'Prioritäts-Support',
+              'Erweiterte API-Limits',
+              '1 Jahr Updates & Support',
             ]}
             extras={[
-              'Extra-Paket: 9 € / 50 Analysen',
-              'Analysen werden monatlich zurückgesetzt',
+              'Wartungsverlängerung: 79 €/Jahr',
+              '14-Tage-Geld-zurück-Garantie',
             ]}
           />
+        </div>
+
+        {/* KI-Addon Box */}
+        <div className="mt-16 rounded-3xl bg-gradient-to-r from-[#2fac66]/10 to-[#36a9e1]/10 ring-1 ring-white/10 px-8 py-10 md:flex md:items-center md:justify-between md:gap-x-12">
+          <div className="flex-1">
+            <div className="flex items-center gap-x-3">
+              <svg className="h-8 w-8 text-[#2fac66]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+              </svg>
+              <h3 className="font-display text-xl text-white">KI-Addon</h3>
+              <span className="inline-flex items-center rounded-full bg-[#2fac66] px-2.5 py-0.5 text-xs font-semibold text-white">
+                Benötigt Pro
+              </span>
+            </div>
+            <p className="mt-3 text-base text-slate-300">
+              Intelligente Bewerberanalyse mit Claude AI. Job-Match Score, Chancen-Check,
+              KI-Stellentexte und mehr — ab 19 €/Monat oder 179 €/Jahr.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-col items-start gap-3 md:mt-0 md:flex-shrink-0 md:items-end">
+            <p className="font-display text-3xl font-light tracking-tight text-white">
+              ab 19 €<span className="text-lg text-slate-400">/Monat</span>
+            </p>
+            <Button href="/ai" variant="solid" color="white">
+              Mehr erfahren
+            </Button>
+          </div>
         </div>
       </Container>
     </section>
