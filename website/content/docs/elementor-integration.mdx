@@ -1,0 +1,210 @@
+---
+title: Elementor
+description: Native Elementor Widgets für den visuellen Page Builder mit Live-Vorschau im Editor.
+---
+
+Recruiting Playbook bietet native Elementor Widgets für alle wichtigen Funktionen. Die Widgets sind als **Pro-Feature** verfügbar und integrieren sich nahtlos in den Elementor Editor mit serverseitiger Live-Vorschau.
+
+## Voraussetzungen
+
+- **Elementor** Plugin (ab Version 3.0)
+- **Recruiting Playbook Pro** Lizenz
+
+## Verfügbare Widgets
+
+Alle Widgets befinden sich in der Kategorie **Recruiting Playbook** im Widget-Picker.
+
+![Widget-Picker mit allen Recruiting Playbook Widgets](/screenshots/elementor.png)
+
+### Seiten-Widgets
+
+Diese Widgets können auf jeder Seite verwendet werden:
+
+| Widget | Shortcode | Beschreibung | Feature |
+|--------|-----------|--------------|---------|
+| RP: Stellenliste | `rp_jobs` | Stellenanzeigen im Grid-Layout | Pro |
+| RP: Stellensuche | `rp_job_search` | Suchformular mit Filtern | Pro |
+| RP: Stellen-Zähler | `rp_job_count` | Dynamischer Zähler für Headlines | Pro |
+| RP: Featured Jobs | `rp_featured_jobs` | Hervorgehobene Stellen | Pro |
+| RP: Neueste Stellen | `rp_latest_jobs` | Aktuellste Stellenanzeigen | Pro |
+| RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten | Pro |
+| RP: KI-Job-Finder | `rp_ai_job_finder` | Lebenslauf-Upload mit KI-Matching | AI-Addon |
+
+### Stellen-Widgets
+
+Diese Widgets sind für Stellen-Einzelseiten gedacht und erkennen die aktuelle Stelle automatisch:
+
+| Widget | Shortcode | Beschreibung | Feature |
+|--------|-----------|--------------|---------|
+| RP: Bewerbungsformular | `rp_application_form` | Mehrstufiges Bewerbungsformular | Pro |
+| RP: KI-Job-Match | `rp_ai_job_match` | "Passe ich zu diesem Job?" Button | AI-Addon |
+
+<Callout type="info">
+Die Stellen-Widgets erkennen die aktuelle Stelle automatisch, wenn sie auf einer Stellen-Einzelseite platziert werden. Sie können aber auch eine Stelle manuell auswählen.
+</Callout>
+
+## Widgets einfügen
+
+1. Seite mit **Elementor bearbeiten**
+2. Im Widget-Panel links nach "RP:" suchen oder die Kategorie **Recruiting Playbook** aufklappen
+3. Widget per Drag & Drop in die Seite ziehen
+4. Einstellungen im linken Panel anpassen
+5. Die **Live-Vorschau** zeigt sofort den gerenderten Inhalt
+
+<Callout type="info">
+Alle Widgets nutzen serverseitiges Rendering. Nach dem Einfügen oder Ändern von Einstellungen wird die Vorschau automatisch per AJAX aktualisiert.
+</Callout>
+
+## RP: Stellenliste
+
+Zeigt Stellenanzeigen in einem konfigurierbaren Grid-Layout.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Anzahl Stellen | Wie viele Stellen angezeigt werden (1-50) | `10` |
+| Spalten | Grid-Spalten (1-4) | `2` |
+| Kategorie | Filter nach Job-Kategorie | Alle |
+| Standort | Filter nach Standort | Alle |
+| Beschäftigungsart | Filter nach Art | Alle |
+| Nur Featured | Nur hervorgehobene Stellen | Nein |
+| Sortieren nach | Datum, Titel oder Zufall | Datum |
+| Reihenfolge | Aufsteigend oder Absteigend | Absteigend |
+
+## RP: Stellensuche
+
+Suchformular mit Filtern und Ergebnisliste.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Suchfeld anzeigen | Freitext-Suche aktivieren | Ja |
+| Kategorie-Filter | Dropdown für Kategorien | Ja |
+| Standort-Filter | Dropdown für Standorte | Ja |
+| Beschäftigungsart-Filter | Dropdown für Arten | Ja |
+| Stellen pro Seite | Anzahl der Ergebnisse (1-50) | `10` |
+| Spalten | Grid-Spalten (1-3) | `1` |
+
+## RP: Stellen-Zähler
+
+Dynamischer Zähler für Headlines wie "Aktuell 12 offene Stellen".
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Kategorie | Nur Stellen dieser Kategorie zählen | Alle |
+| Standort | Nur Stellen an diesem Standort zählen | Alle |
+| Format (Mehrzahl) | Text mit `{count}` Platzhalter | `{count} offene Stellen` |
+| Format (Einzahl) | Text für eine Stelle | `{count} offene Stelle` |
+| Format (Null) | Text für keine Stellen | `Keine offenen Stellen` |
+
+## RP: Featured Jobs
+
+Zeigt als "Featured" markierte Stellen prominent an.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Anzahl | Anzahl der Featured Jobs (1-12) | `3` |
+| Spalten | Grid-Spalten (1-4) | `3` |
+| Überschrift | Optionale Überschrift | - |
+| Auszug anzeigen | Teaser-Text anzeigen | Ja |
+
+## RP: Neueste Stellen
+
+Zeigt die neuesten Stellenanzeigen an.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Anzahl | Anzahl der Stellen (1-20) | `5` |
+| Spalten | Grid-Spalten (0 = Listenansicht) | `0` |
+| Überschrift | Optionale Überschrift | - |
+| Kategorie | Filter nach Kategorie | Alle |
+| Auszug anzeigen | Teaser-Text anzeigen | Nein |
+
+## RP: Job-Kategorien
+
+Zeigt alle Kategorien als klickbare Karten an.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Spalten | Grid-Spalten (2-6) | `4` |
+| Anzahl anzeigen | Jobs pro Kategorie anzeigen | Ja |
+| Leere verstecken | Kategorien ohne Jobs ausblenden | Ja |
+| Sortierung | Nach Name oder Anzahl | Name |
+
+## RP: Bewerbungsformular
+
+Mehrstufiges Bewerbungsformular mit Datei-Upload.
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
+| Überschrift | Formular-Überschrift | "Jetzt bewerben" |
+| Stellentitel anzeigen | Name der Stelle über dem Formular | Ja |
+| Fortschrittsanzeige | Schritt-Anzeige bei mehrstufigem Formular | Ja |
+
+## RP: KI-Job-Finder
+
+Lebenslauf-Upload mit KI-gestützter Stellenempfehlung.
+
+<Callout type="warning">
+Erfordert das AI-Addon.
+</Callout>
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Überschrift | Titel des Bereichs | "Finde deinen Traumjob" |
+| Untertitel | Erklärungstext | - |
+| Max. Vorschläge | Anzahl der KI-Empfehlungen (1-10) | `5` |
+
+## RP: KI-Job-Match
+
+"Passe ich zu diesem Job?" Button mit KI-Analyse.
+
+<Callout type="warning">
+Erfordert das AI-Addon.
+</Callout>
+
+### Einstellungen
+
+| Einstellung | Beschreibung | Standard |
+|-------------|--------------|----------|
+| Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
+| Button-Text | Beschriftung des Buttons | "Passe ich zu diesem Job?" |
+| Button-Stil | Normal (gefüllt) oder Outline | Normal |
+
+## Design & Branding
+
+Die Widgets übernehmen automatisch die Einstellungen aus dem **Design & Branding** Bereich des Plugins:
+
+- Farben und Buttons
+- Card-Layouts (Standard, Kompakt, Featured)
+- Grid-Einstellungen
+
+Das CSS wird automatisch geladen, sobald ein Widget auf der Seite verwendet wird.
+
+## Elementor Template für Stellenanzeigen
+
+Um das Bewerbungsformular und den KI-Job-Match-Button auf allen Stellen-Einzelseiten zu platzieren:
+
+1. **Templates** → **Theme Builder** → **Single** → Neu erstellen
+2. Bedingung: Post-Typ = **Stellenanzeige** (`job_listing`)
+3. Die Stellen-Widgets (Bewerbungsformular, KI-Job-Match) im Template platzieren
+4. Template veröffentlichen
+
+<Callout type="info">
+Die Stellen-Widgets erkennen die aktuelle Stelle automatisch im Template-Kontext. Eine manuelle Stellen-Auswahl ist nicht nötig.
+</Callout>

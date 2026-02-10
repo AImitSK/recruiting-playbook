@@ -1,0 +1,392 @@
+/**
+ * CV Matching Modal Styles
+ *
+ * Verwendet Tailwind CSS Utilities mit rp- Prefix.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Modal Overlay */
+.rp-match-modal-overlay {
+    @apply rp-fixed rp-inset-0 rp-z-50 rp-flex rp-items-center rp-justify-center rp-p-4;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+/* Modal Container - nutzt Design-System Card-Variablen */
+.rp-match-modal {
+    @apply rp-w-full rp-max-w-lg rp-max-h-[90vh] rp-overflow-hidden rp-flex rp-flex-col;
+    background-color: var(--rp-card-bg, #ffffff);
+    border-radius: var(--rp-card-radius, 12px);
+    box-shadow: var(--rp-card-shadow, 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1));
+    border: var(--rp-card-border, none);
+}
+
+/* Modal Header */
+.rp-match-modal__header {
+    @apply rp-flex rp-items-center rp-justify-between rp-px-6 rp-py-4 rp-border-b;
+    border-color: var(--rp-card-border-color, #e5e7eb);
+}
+
+.rp-match-modal__title {
+    @apply rp-text-lg rp-font-semibold rp-text-gray-900 rp-m-0;
+}
+
+.rp-match-modal__close {
+    @apply rp-p-2 rp-text-gray-400 hover:rp-text-gray-600 rp-rounded-full hover:rp-bg-gray-100 rp-transition-colors;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.rp-match-modal__close svg {
+    @apply rp-w-5 rp-h-5;
+}
+
+/* Modal Body */
+.rp-match-modal__body {
+    @apply rp-px-6 rp-py-5 rp-overflow-y-auto rp-flex-1;
+}
+
+.rp-match-modal__job-title {
+    @apply rp-text-sm rp-text-gray-600 rp-mb-4 rp-pb-4 rp-border-b rp-border-gray-100;
+}
+
+/* Info Box (Datenschutz-Hinweis) - nutzt Primärfarbe statt hardcodiertem Blau */
+.rp-match-info-box {
+    @apply rp-flex rp-gap-3 rp-p-4 rp-border rp-mb-6;
+    background-color: var(--rp-color-primary-light, rgba(59, 130, 246, 0.15));
+    border-color: var(--rp-color-primary, #3b82f6);
+    border-radius: var(--rp-card-radius, 12px);
+}
+
+.rp-match-info-box svg {
+    @apply rp-w-5 rp-h-5 rp-flex-shrink-0 rp-mt-0.5;
+    color: var(--rp-color-primary, #3b82f6);
+}
+
+.rp-match-info-box strong {
+    @apply rp-block rp-text-sm rp-font-semibold rp-mb-1;
+    color: var(--rp-color-primary-hover, #1d4ed8);
+}
+
+.rp-match-info-box p {
+    @apply rp-text-xs rp-m-0 rp-leading-relaxed;
+    color: var(--rp-color-primary-hover, #1d4ed8);
+}
+
+/* Upload Zone - nutzt Card-Radius */
+.rp-match-upload-zone {
+    @apply rp-border-2 rp-border-dashed rp-p-6 rp-text-center rp-transition-colors rp-cursor-pointer rp-mb-4;
+    border-color: var(--rp-card-border-color, #e5e7eb);
+    border-radius: var(--rp-card-radius, 12px);
+}
+
+.rp-match-upload-zone--dragging {
+    @apply rp-border-primary rp-bg-primary-light;
+}
+
+.rp-match-upload-zone--has-file {
+    @apply rp-border-success rp-bg-success-light;
+}
+
+.rp-match-upload-zone__empty {
+    @apply rp-space-y-2;
+}
+
+.rp-match-upload-zone__icon {
+    @apply rp-w-12 rp-h-12 rp-text-gray-400 rp-mx-auto;
+}
+
+.rp-match-upload-zone__text {
+    @apply rp-text-gray-600 rp-font-medium rp-m-0;
+}
+
+.rp-match-upload-zone__hint {
+    @apply rp-text-sm rp-text-gray-400 rp-m-0;
+}
+
+.rp-match-upload-zone__formats {
+    @apply rp-text-xs rp-text-gray-400 rp-m-0;
+}
+
+/* File Preview */
+.rp-match-upload-zone__file {
+    @apply rp-flex rp-items-center rp-justify-between rp-text-left;
+}
+
+.rp-match-upload-zone__file-icon {
+    @apply rp-w-8 rp-h-8 rp-text-success rp-flex-shrink-0;
+}
+
+.rp-match-upload-zone__file-info {
+    @apply rp-flex-1 rp-ml-3 rp-min-w-0;
+}
+
+.rp-match-upload-zone__file-name {
+    @apply rp-block rp-font-medium rp-text-gray-900 rp-truncate;
+}
+
+.rp-match-upload-zone__file-size {
+    @apply rp-block rp-text-xs rp-text-gray-500;
+}
+
+.rp-match-upload-zone__remove {
+    @apply rp-p-2 rp-text-gray-400 hover:rp-text-error rp-rounded-full hover:rp-bg-gray-100 rp-transition-colors;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.rp-match-upload-zone__remove svg {
+    @apply rp-w-5 rp-h-5;
+}
+
+/* Error Box */
+.rp-match-error-box {
+    @apply rp-p-4 rp-bg-error-light rp-border rp-border-error rp-text-sm rp-text-error rp-mb-4;
+    border-radius: var(--rp-card-radius, 12px);
+}
+
+/* Submit Button - nutzt Button-Variablen aus Design-System */
+.rp-match-submit-btn {
+    @apply rp-w-full rp-py-3 rp-px-4 rp-font-semibold rp-transition-colors;
+    @apply rp-text-white;
+    @apply disabled:rp-opacity-50 disabled:rp-cursor-not-allowed;
+    background-color: var(--rp-btn-bg, var(--rp-color-primary));
+    border-radius: var(--rp-btn-radius, var(--rp-card-radius, 12px));
+    border: var(--rp-btn-border, none);
+    box-shadow: var(--rp-btn-shadow, none);
+    color: var(--rp-btn-text, #ffffff);
+    padding: var(--rp-btn-padding, 0.75rem 1rem);
+    cursor: pointer;
+}
+
+.rp-match-submit-btn:hover {
+    background-color: var(--rp-btn-bg-hover, var(--rp-color-primary-hover));
+    color: var(--rp-btn-text-hover, #ffffff);
+    box-shadow: var(--rp-btn-shadow-hover, none);
+}
+
+/* Processing State */
+.rp-match-processing {
+    @apply rp-text-center rp-py-8;
+}
+
+.rp-match-processing__spinner {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    border: 4px solid var(--rp-card-border-color, #e5e7eb);
+    border-top-color: var(--rp-color-primary, #3b82f6);
+    border-radius: 9999px;
+    animation: rp-spin 1s linear infinite;
+}
+
+@keyframes rp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rp-match-processing__text {
+    @apply rp-text-gray-700 rp-font-medium rp-mb-4 rp-m-0;
+}
+
+.rp-match-processing__hint {
+    @apply rp-text-sm rp-text-gray-500 rp-m-0;
+}
+
+/* Progress Bar */
+.rp-match-progress {
+    @apply rp-h-2 rp-bg-gray-200 rp-overflow-hidden rp-mb-4;
+    border-radius: 9999px;
+}
+
+.rp-match-progress__bar {
+    height: 100%;
+    background-color: var(--rp-color-primary, #3b82f6);
+    transition: all 300ms ease;
+    border-radius: 9999px;
+}
+
+/* Result Display */
+.rp-match-result {
+    @apply rp-text-center rp-py-4;
+}
+
+.rp-match-result--low {
+    --rp-result-color: var(--rp-error, #dc2626);
+    --rp-result-bg: var(--rp-error-light, #fef2f2);
+}
+
+.rp-match-result--medium {
+    --rp-result-color: var(--rp-warning, #f59e0b);
+    --rp-result-bg: var(--rp-warning-light, #fffbeb);
+}
+
+.rp-match-result--high {
+    --rp-result-color: var(--rp-success, #10b981);
+    --rp-result-bg: var(--rp-success-light, #ecfdf5);
+}
+
+.rp-match-result__score {
+    @apply rp-mb-4;
+}
+
+.rp-match-result__score-value {
+    @apply rp-text-4xl rp-font-bold;
+    color: var(--rp-result-color);
+}
+
+.rp-match-result__score-bar {
+    @apply rp-h-2 rp-bg-gray-200 rp-overflow-hidden rp-mt-3 rp-max-w-xs rp-mx-auto;
+    border-radius: 9999px;
+}
+
+.rp-match-result__score-fill {
+    @apply rp-h-full rp-rounded-full rp-transition-all rp-duration-500;
+    background-color: var(--rp-result-color);
+}
+
+.rp-match-result__category {
+    @apply rp-text-lg rp-font-semibold rp-mb-2;
+    color: var(--rp-result-color);
+}
+
+.rp-match-result__message {
+    @apply rp-text-gray-600 rp-mb-6 rp-leading-relaxed;
+}
+
+.rp-match-result__actions {
+    @apply rp-flex rp-flex-col sm:rp-flex-row rp-gap-3 rp-justify-center;
+}
+
+/* Primär-Button im Ergebnis: Nutzt wp-element-button (Design-System) */
+.rp-match-result__actions .wp-element-button {
+    @apply rp-px-6 rp-py-2.5 rp-font-semibold rp-transition-colors rp-no-underline;
+    cursor: pointer;
+}
+
+/* Sekundär-Button im Ergebnis */
+.rp-match-result__actions .rp-btn--secondary {
+    @apply rp-px-6 rp-py-2.5 rp-font-semibold rp-transition-colors rp-no-underline;
+    @apply rp-bg-gray-100 rp-text-gray-700 hover:rp-bg-gray-200;
+    border-radius: var(--rp-btn-radius, var(--rp-card-radius, 12px));
+    border: none;
+    cursor: pointer;
+}
+
+/* Error State */
+.rp-match-error {
+    @apply rp-text-center rp-py-8;
+}
+
+.rp-match-error__icon {
+    @apply rp-w-16 rp-h-16 rp-text-error rp-mx-auto rp-mb-4;
+}
+
+.rp-match-error__text {
+    @apply rp-text-gray-700 rp-mb-6;
+}
+
+/* Body Lock when Modal Open */
+body.rp-modal-open {
+    overflow: hidden;
+}
+
+/* Screen Reader Only */
+.rp-sr-only {
+    @apply rp-absolute rp-w-px rp-h-px rp-p-0 rp--m-px rp-overflow-hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* File Input Hidden */
+.rp-match-file-input {
+    @apply rp-absolute rp-w-px rp-h-px rp-p-0 rp--m-px rp-overflow-hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* File Select Label - nutzt Button-Radius */
+.rp-match-file-label {
+    @apply rp-inline-block rp-px-4 rp-py-2 rp-text-sm rp-font-medium rp-text-primary hover:rp-text-primary-hover rp-bg-white rp-border rp-border-gray-300 rp-cursor-pointer rp-transition-colors;
+    border-radius: var(--rp-btn-radius, var(--rp-card-radius, 12px));
+}
+
+.rp-match-file-label:hover {
+    @apply rp-bg-gray-50;
+}
+
+/* ===== Trigger Button (Shortcode) - nutzt Button-Variablen ===== */
+.rp-match-trigger-btn {
+    @apply rp-inline-flex rp-items-center rp-gap-2;
+    @apply rp-font-semibold rp-border-0 rp-cursor-pointer;
+    @apply rp-transition-all rp-duration-200;
+    @apply focus:rp-outline-none focus:rp-ring-2 focus:rp-ring-primary focus:rp-ring-offset-2;
+    background-color: var(--rp-btn-bg, var(--rp-color-primary));
+    color: var(--rp-btn-text, #ffffff);
+    border-radius: var(--rp-btn-radius, var(--rp-card-radius, 12px));
+    padding: var(--rp-btn-padding, 0.75rem 1.25rem);
+    box-shadow: var(--rp-btn-shadow, none);
+}
+
+.rp-match-trigger-btn:hover {
+    background-color: var(--rp-btn-bg-hover, var(--rp-color-primary-hover));
+    color: var(--rp-btn-text-hover, #ffffff);
+    box-shadow: var(--rp-btn-shadow-hover, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.rp-match-trigger-btn__icon {
+    @apply rp-w-5 rp-h-5 rp-flex-shrink-0;
+}
+
+/* Button Varianten */
+.rp-match-trigger-btn--secondary {
+    @apply rp-bg-white rp-text-gray-700 rp-border rp-border-gray-300;
+    background-color: #ffffff;
+    color: var(--rp-color-primary-hover, #374151);
+}
+
+.rp-match-trigger-btn--secondary:hover {
+    @apply rp-bg-gray-50;
+    border-color: var(--rp-color-primary, #9ca3af);
+}
+
+.rp-match-trigger-btn--outline {
+    background: transparent;
+    color: var(--rp-color-primary, #8b5cf6);
+    border: 2px solid var(--rp-color-primary, #8b5cf6);
+}
+
+.rp-match-trigger-btn--outline:hover {
+    background-color: var(--rp-color-primary, #8b5cf6);
+    color: #ffffff;
+    box-shadow: none;
+}
+
+.rp-match-trigger-btn--small {
+    @apply rp-px-3 rp-py-2 rp-text-sm;
+}
+
+.rp-match-trigger-btn--small .rp-match-trigger-btn__icon {
+    @apply rp-w-4 rp-h-4;
+}
+
+.rp-match-trigger-btn--large {
+    @apply rp-px-6 rp-py-4 rp-text-lg;
+}
+
+.rp-match-trigger-btn--large .rp-match-trigger-btn__icon {
+    @apply rp-w-6 rp-h-6;
+}
+
+/* Full Width */
+.rp-match-trigger-btn--full {
+    @apply rp-w-full rp-justify-center;
+}

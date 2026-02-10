@@ -22,568 +22,135 @@ namespace RecruitingPlaybook\Frontend;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\SpamProtection;
+use RecruitingPlaybook\Services\FormRenderService;
+use RecruitingPlaybook\Repositories\FormConfigRepository;
+use RecruitingPlaybook\Frontend\Shortcodes\JobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobSearchShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCountShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\FeaturedJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\LatestJobsShortcode;
+use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
 
 /**
  * Shortcode-Handler
  *
- * Verfügbare Shortcodes:
- * - [rp_jobs] - Stellenliste
+ * Öffentliche Shortcodes:
+ * - [rp_jobs] - Stellenliste mit Grid-Layout
  * - [rp_job_search] - Stellensuche mit Filtern
- * - [rp_application_form] - Bewerbungsformular
+ * - [rp_job_count] - Stellen-Zähler für Headlines
+ * - [rp_featured_jobs] - Hervorgehobene Stellen
+ * - [rp_latest_jobs] - Neueste Stellen
+ * - [rp_job_categories] - Kategorie-Übersicht
+ * - [rp_application_form] - Bewerbungsformular (Auto-Detection Form Builder)
+ * - [rp_ai_job_finder] - KI-Job-Finder (AI-Addon)
+ *
+ * Interne Shortcodes (nicht für Endanwender):
+ * - [rp_custom_application_form] - Alias für rp_application_form (deprecated)
+ * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (AI-Addon)
  */
 class Shortcodes {
+
+	/**
+	 * FormRenderService
+	 *
+	 * @var FormRenderService|null
+	 */
+	private ?FormRenderService $form_render_service = null;
+
+	/**
+	 * FormConfigRepository für Auto-Detection
+	 *
+	 * @var FormConfigRepository|null
+	 */
+	private ?FormConfigRepository $form_config_repository = null;
+
+	/**
+	 * Flag ob Match-Modal bereits für Footer registriert wurde
+	 *
+	 * @var bool
+	 */
+	private bool $match_modal_registered = false;
+
 
 	/**
 	 * Shortcodes registrieren
 	 */
 	public function register(): void {
-		add_shortcode( 'rp_jobs', [ $this, 'renderJobList' ] );
-		add_shortcode( 'rp_job_search', [ $this, 'renderJobSearch' ] );
+		// Job-Listen Shortcodes (modulare Klassen).
+		( new JobsShortcode() )->register();
+		( new JobSearchShortcode() )->register();
+		( new JobCountShortcode() )->register();
+		( new FeaturedJobsShortcode() )->register();
+		( new LatestJobsShortcode() )->register();
+		( new JobCategoriesShortcode() )->register();
+
+		// Bewerbungsformular Shortcodes.
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
+		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
+
+		// KI-Matching Shortcode (AI-Addon Feature).
+		add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
+
+		// KI-Job-Finder Shortcode (AI-Addon Feature).
+		add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
 	}
 
 	/**
-	 * Stellenliste rendern
+	 * FormRenderService lazy laden
 	 *
-	 * Attribute:
-	 * - limit: Anzahl Stellen (default: 10)
-	 * - category: Filter nach Kategorie-Slug
-	 * - location: Filter nach Standort-Slug
-	 * - type: Filter nach Beschäftigungsart-Slug
-	 * - orderby: Sortierung (date, title, rand)
-	 * - order: ASC oder DESC
-	 * - columns: Spalten im Grid (1-4, default: 1)
-	 * - show_excerpt: Auszug anzeigen (true/false)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
+	 * @return FormRenderService
 	 */
-	public function renderJobList( $atts ): string {
-		$this->enqueueAssets();
-
-		$atts = shortcode_atts(
-			[
-				'limit'        => 10,
-				'category'     => '',
-				'location'     => '',
-				'type'         => '',
-				'orderby'      => 'date',
-				'order'        => 'DESC',
-				'columns'      => 1,
-				'show_excerpt' => 'true',
-			],
-			$atts,
-			'rp_jobs'
-		);
-
-		// Query-Argumente aufbauen
-		$args = [
-			'post_type'      => 'job_listing',
-			'post_status'    => 'publish',
-			'posts_per_page' => absint( $atts['limit'] ),
-			'orderby'        => sanitize_key( $atts['orderby'] ),
-			'order'          => 'ASC' === strtoupper( $atts['order'] ) ? 'ASC' : 'DESC',
-		];
-
-		// Taxonomie-Filter
-		$tax_query = [];
-
-		if ( ! empty( $atts['category'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_category',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['category'] ) ),
-			];
+	private function getFormRenderService(): FormRenderService {
+		if ( null === $this->form_render_service ) {
+			$this->form_render_service = new FormRenderService();
 		}
-
-		if ( ! empty( $atts['location'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_location',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['location'] ) ),
-			];
-		}
-
-		if ( ! empty( $atts['type'] ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'employment_type',
-				'field'    => 'slug',
-				'terms'    => array_map( 'trim', explode( ',', $atts['type'] ) ),
-			];
-		}
-
-		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query;
-		}
-
-		$query = new \WP_Query( $args );
-
-		if ( ! $query->have_posts() ) {
-			return '<div class="rp-plugin">
-				<div class="rp-text-center rp-py-12 rp-bg-gray-50 rp-rounded-lg">
-					<p class="rp-text-gray-500">' . esc_html__( 'Aktuell keine offenen Stellen verfügbar.', 'recruiting-playbook' ) . '</p>
-				</div>
-			</div>';
-		}
-
-		$columns      = max( 1, min( 4, absint( $atts['columns'] ) ) );
-		$show_excerpt = filter_var( $atts['show_excerpt'], FILTER_VALIDATE_BOOLEAN );
-
-		// Grid-Klasse basierend auf Spaltenanzahl
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
-		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
-		}
-
-		ob_start();
-		?>
-		<div class="rp-plugin">
-			<div class="<?php echo esc_attr( $grid_class ); ?>">
-				<?php
-				while ( $query->have_posts() ) :
-					$query->the_post();
-					$locations  = get_the_terms( get_the_ID(), 'job_location' );
-					$types      = get_the_terms( get_the_ID(), 'employment_type' );
-					$categories = get_the_terms( get_the_ID(), 'job_category' );
-					$remote     = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-					?>
-					<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
-						<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
-							<span class="rp-sr-only"><?php the_title(); ?></span>
-						</a>
-
-						<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs">
-							<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="rp-text-gray-500">
-								<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
-							</time>
-
-							<?php if ( $categories && ! is_wp_error( $categories ) ) : ?>
-								<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
-									<?php echo esc_html( $categories[0]->name ); ?>
-								</span>
-							<?php endif; ?>
-						</div>
-
-						<div>
-							<h3 class="rp-mt-3 rp-text-lg rp-leading-6 rp-font-semibold rp-text-gray-900">
-								<?php the_title(); ?>
-							</h3>
-
-							<?php if ( $show_excerpt && has_excerpt() ) : ?>
-								<p class="rp-mt-5 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-									<?php echo esc_html( wp_trim_words( get_the_excerpt(), 30, '...' ) ); ?>
-								</p>
-							<?php endif; ?>
-						</div>
-
-						<div class="rp-relative rp-mt-8 rp-flex rp-items-center rp-justify-between rp-text-xs">
-							<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-								<?php if ( $locations && ! is_wp_error( $locations ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-										</svg>
-										<?php echo esc_html( $locations[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $types && ! is_wp_error( $types ) ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-										</svg>
-										<?php echo esc_html( $types[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-
-								<?php if ( $remote && 'no' !== $remote ) : ?>
-									<span class="rp-badge rp-badge-gray">
-										<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-										</svg>
-										<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
-									</span>
-								<?php endif; ?>
-							</div>
-
-							<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
-								<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
-							</a>
-						</div>
-					</article>
-				<?php endwhile; ?>
-			</div>
-		</div>
-		<?php
-		wp_reset_postdata();
-
-		return ob_get_clean();
+		return $this->form_render_service;
 	}
 
 	/**
-	 * Stellensuche mit Filtern rendern
+	 * FormConfigRepository lazy laden
 	 *
-	 * Attribute:
-	 * - show_search: Suchfeld anzeigen (true/false, default: true)
-	 * - show_category: Kategorie-Filter anzeigen (true/false, default: true)
-	 * - show_location: Standort-Filter anzeigen (true/false, default: true)
-	 * - show_type: Beschäftigungsart-Filter anzeigen (true/false, default: true)
-	 * - limit: Stellen pro Seite (default: 10)
-	 * - columns: Spalten im Grid (1-4, default: 1)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
+	 * @return FormConfigRepository
 	 */
-	public function renderJobSearch( $atts ): string {
-		$this->enqueueAssets();
-
-		$atts = shortcode_atts(
-			[
-				'show_search'   => 'true',
-				'show_category' => 'true',
-				'show_location' => 'true',
-				'show_type'     => 'true',
-				'limit'         => 10,
-				'columns'       => 1,
-			],
-			$atts,
-			'rp_job_search'
-		);
-
-		$show_search   = filter_var( $atts['show_search'], FILTER_VALIDATE_BOOLEAN );
-		$show_category = filter_var( $atts['show_category'], FILTER_VALIDATE_BOOLEAN );
-		$show_location = filter_var( $atts['show_location'], FILTER_VALIDATE_BOOLEAN );
-		$show_type     = filter_var( $atts['show_type'], FILTER_VALIDATE_BOOLEAN );
-		$columns       = max( 1, min( 4, absint( $atts['columns'] ) ) );
-		$per_page      = absint( $atts['limit'] );
-
-		// Filter-Werte aus GET-Parametern.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only search form
-		$search   = isset( $_GET['rp_search'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_search'] ) ) : '';
-		$category = isset( $_GET['rp_category'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_category'] ) ) : '';
-		$location = isset( $_GET['rp_location'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_location'] ) ) : '';
-		$type     = isset( $_GET['rp_type'] ) ? sanitize_text_field( wp_unslash( $_GET['rp_type'] ) ) : '';
-		$paged    = isset( $_GET['rp_page'] ) ? absint( $_GET['rp_page'] ) : 1;
-		// phpcs:enable
-
-		// Taxonomien laden.
-		$categories = get_terms(
-			[
-				'taxonomy'   => 'job_category',
-				'hide_empty' => true,
-			]
-		);
-
-		$locations = get_terms(
-			[
-				'taxonomy'   => 'job_location',
-				'hide_empty' => true,
-			]
-		);
-
-		$types = get_terms(
-			[
-				'taxonomy'   => 'employment_type',
-				'hide_empty' => true,
-			]
-		);
-
-		// Query aufbauen.
-		$args = [
-			'post_type'      => 'job_listing',
-			'post_status'    => 'publish',
-			'posts_per_page' => $per_page,
-			'paged'          => $paged,
-		];
-
-		// Suche.
-		if ( ! empty( $search ) ) {
-			$args['s'] = $search;
+	private function getFormConfigRepository(): FormConfigRepository {
+		if ( null === $this->form_config_repository ) {
+			$this->form_config_repository = new FormConfigRepository();
 		}
-
-		// Taxonomie-Filter.
-		$tax_query = [];
-
-		if ( ! empty( $category ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_category',
-				'field'    => 'slug',
-				'terms'    => $category,
-			];
-		}
-
-		if ( ! empty( $location ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'job_location',
-				'field'    => 'slug',
-				'terms'    => $location,
-			];
-		}
-
-		if ( ! empty( $type ) ) {
-			$tax_query[] = [
-				'taxonomy' => 'employment_type',
-				'field'    => 'slug',
-				'terms'    => $type,
-			];
-		}
-
-		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query;
-		}
-
-		$query = new \WP_Query( $args );
-
-		// Grid-Klasse
-		$grid_class = 'rp-grid rp-gap-6';
-		if ( $columns >= 2 ) {
-			$grid_class .= ' md:rp-grid-cols-2';
-		}
-		if ( $columns >= 3 ) {
-			$grid_class .= ' lg:rp-grid-cols-3';
-		}
-		if ( $columns >= 4 ) {
-			$grid_class .= ' xl:rp-grid-cols-4';
-		}
-
-		ob_start();
-		?>
-		<div class="rp-plugin">
-			<!-- Suchformular -->
-			<form class="rp-bg-gray-50 rp-p-6 rp-rounded-lg rp-mb-6 rp-border rp-border-gray-200" method="get" action="">
-				<div class="rp-grid rp-gap-4 sm:rp-grid-cols-2 lg:rp-grid-cols-4">
-					<?php if ( $show_search ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Suche', 'recruiting-playbook' ); ?></label>
-							<input
-								type="text"
-								name="rp_search"
-								value="<?php echo esc_attr( $search ); ?>"
-								placeholder="<?php esc_attr_e( 'Stichwort, Jobtitel...', 'recruiting-playbook' ); ?>"
-								class="rp-input"
-							>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_category && ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Berufsfeld', 'recruiting-playbook' ); ?></label>
-							<select name="rp_category" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Berufsfelder', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $categories as $cat ) : ?>
-									<option value="<?php echo esc_attr( $cat->slug ); ?>" <?php selected( $category, $cat->slug ); ?>>
-										<?php echo esc_html( $cat->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_location && ! empty( $locations ) && ! is_wp_error( $locations ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Standort', 'recruiting-playbook' ); ?></label>
-							<select name="rp_location" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Standorte', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $locations as $loc ) : ?>
-									<option value="<?php echo esc_attr( $loc->slug ); ?>" <?php selected( $location, $loc->slug ); ?>>
-										<?php echo esc_html( $loc->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-
-					<?php if ( $show_type && ! empty( $types ) && ! is_wp_error( $types ) ) : ?>
-						<div>
-							<label class="rp-label"><?php esc_html_e( 'Beschäftigungsart', 'recruiting-playbook' ); ?></label>
-							<select name="rp_type" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Arten', 'recruiting-playbook' ); ?></option>
-								<?php foreach ( $types as $t ) : ?>
-									<option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $type, $t->slug ); ?>>
-										<?php echo esc_html( $t->name ); ?>
-									</option>
-								<?php endforeach; ?>
-							</select>
-						</div>
-					<?php endif; ?>
-				</div>
-
-				<div class="rp-mt-4 rp-flex rp-gap-3 rp-flex-wrap">
-					<button type="submit" class="wp-element-button">
-						<?php esc_html_e( 'Suchen', 'recruiting-playbook' ); ?>
-					</button>
-					<?php if ( $search || $category || $location || $type ) : ?>
-						<a href="<?php echo esc_url( remove_query_arg( [ 'rp_search', 'rp_category', 'rp_location', 'rp_type', 'rp_page' ] ) ); ?>" class="wp-element-button is-style-outline">
-							<?php esc_html_e( 'Filter zurücksetzen', 'recruiting-playbook' ); ?>
-						</a>
-					<?php endif; ?>
-				</div>
-			</form>
-
-			<!-- Ergebniszähler -->
-			<div class="rp-mb-4 rp-text-gray-500 rp-text-sm">
-				<?php
-				printf(
-					/* translators: %d: Number of jobs found */
-					esc_html( _n( '%d Stelle gefunden', '%d Stellen gefunden', $query->found_posts, 'recruiting-playbook' ) ),
-					$query->found_posts
-				);
-				?>
-			</div>
-
-			<!-- Ergebnisse -->
-			<?php if ( $query->have_posts() ) : ?>
-				<div class="<?php echo esc_attr( $grid_class ); ?>">
-					<?php
-					while ( $query->have_posts() ) :
-						$query->the_post();
-						$job_locations = get_the_terms( get_the_ID(), 'job_location' );
-						$job_types     = get_the_terms( get_the_ID(), 'employment_type' );
-						$job_cats      = get_the_terms( get_the_ID(), 'job_category' );
-						$remote        = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-						$deadline      = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
-						?>
-						<article class="rp-card rp-relative rp-transition-all hover:rp-shadow-lg">
-							<a href="<?php the_permalink(); ?>" class="rp-absolute rp-inset-0 rp-rounded-xl" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
-								<span class="rp-sr-only"><?php the_title(); ?></span>
-							</a>
-
-							<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs">
-								<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="rp-text-gray-500">
-									<?php echo esc_html( get_the_date( 'M d, Y' ) ); ?>
-								</time>
-
-								<?php if ( $job_cats && ! is_wp_error( $job_cats ) ) : ?>
-									<span class="rp-badge rp-badge-gray rp-relative rp-z-10">
-										<?php echo esc_html( $job_cats[0]->name ); ?>
-									</span>
-								<?php endif; ?>
-							</div>
-
-							<div>
-								<h3 class="rp-mt-3 rp-text-lg rp-leading-6 rp-font-semibold rp-text-gray-900">
-									<?php the_title(); ?>
-								</h3>
-
-								<?php if ( $deadline ) : ?>
-									<p class="rp-mt-2 rp-text-xs rp-text-gray-400">
-										<?php
-										printf(
-											/* translators: %s: Application deadline date */
-											esc_html__( 'Bewerbungsfrist: %s', 'recruiting-playbook' ),
-											esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) )
-										);
-										?>
-									</p>
-								<?php endif; ?>
-
-								<?php if ( has_excerpt() ) : ?>
-									<p class="rp-mt-4 rp-line-clamp-3 rp-text-sm rp-leading-6 rp-text-gray-600">
-										<?php echo esc_html( wp_trim_words( get_the_excerpt(), 25, '...' ) ); ?>
-									</p>
-								<?php endif; ?>
-							</div>
-
-							<div class="rp-relative rp-mt-6 rp-flex rp-items-center rp-justify-between rp-text-xs">
-								<div class="rp-flex rp-items-center rp-gap-2 rp-flex-wrap">
-									<?php if ( $job_locations && ! is_wp_error( $job_locations ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-											</svg>
-											<?php echo esc_html( $job_locations[0]->name ); ?>
-										</span>
-									<?php endif; ?>
-
-									<?php if ( $job_types && ! is_wp_error( $job_types ) ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-											</svg>
-											<?php echo esc_html( $job_types[0]->name ); ?>
-										</span>
-									<?php endif; ?>
-
-									<?php if ( $remote && 'no' !== $remote ) : ?>
-										<span class="rp-badge rp-badge-gray">
-											<svg class="rp-h-3 rp-w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-											</svg>
-											<?php echo 'full' === $remote ? esc_html__( 'Remote', 'recruiting-playbook' ) : esc_html__( 'Hybrid', 'recruiting-playbook' ); ?>
-										</span>
-									<?php endif; ?>
-								</div>
-
-								<a href="<?php the_permalink(); ?>" class="wp-element-button rp-relative rp-z-20">
-									<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
-								</a>
-							</div>
-						</article>
-					<?php endwhile; ?>
-				</div>
-
-				<?php
-				// Pagination.
-				$total_pages = $query->max_num_pages;
-				if ( $total_pages > 1 ) :
-					$current_url = remove_query_arg( 'rp_page' );
-					?>
-					<nav class="rp-mt-8 rp-flex rp-justify-center rp-gap-2 rp-flex-wrap">
-						<?php if ( $paged > 1 ) : ?>
-							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged - 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								&laquo; <?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
-							</a>
-						<?php endif; ?>
-
-						<?php for ( $i = 1; $i <= $total_pages; $i++ ) : ?>
-							<?php if ( $i === $paged ) : ?>
-								<span class="wp-element-button"><?php echo esc_html( $i ); ?></span>
-							<?php else : ?>
-								<a href="<?php echo esc_url( add_query_arg( 'rp_page', $i, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-									<?php echo esc_html( $i ); ?>
-								</a>
-							<?php endif; ?>
-						<?php endfor; ?>
-
-						<?php if ( $paged < $total_pages ) : ?>
-							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged + 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?> &raquo;
-							</a>
-						<?php endif; ?>
-					</nav>
-				<?php endif; ?>
-			<?php else : ?>
-				<div class="rp-text-center rp-py-12 rp-bg-gray-50 rp-rounded-lg">
-					<svg class="rp-mx-auto rp-h-12 rp-w-12 rp-text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-					</svg>
-					<p class="rp-mt-4 rp-text-gray-500">
-						<?php esc_html_e( 'Keine passenden Stellen gefunden. Bitte versuchen Sie andere Suchkriterien.', 'recruiting-playbook' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
-		</div>
-		<?php
-		wp_reset_postdata();
-
-		return ob_get_clean();
+		return $this->form_config_repository;
 	}
+
+	/**
+	 * Prüfen ob Form Builder aktiv ist (Pro + veröffentlichte Konfiguration)
+	 *
+	 * @return bool True wenn Form Builder verwendet werden soll.
+	 */
+	private function shouldUseFormBuilder(): bool {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			return false;
+		}
+
+		// Prüfen ob eine veröffentlichte Konfiguration existiert.
+		$repository = $this->getFormConfigRepository();
+		$published  = $repository->getPublished();
+
+		return null !== $published;
+	}
+
 
 	/**
 	 * Bewerbungsformular rendern
 	 *
+	 * Erkennt automatisch ob der Form Builder (Pro) verwendet werden soll:
+	 * - Wenn Pro-Lizenz aktiv UND veröffentlichte Form Builder Konfiguration existiert
+	 *   → Dynamisches Multi-Step Formular mit Custom Fields
+	 * - Sonst → Standard 3-Step Formular
+	 *
 	 * Attribute:
-	 * - job_id: ID der Stelle (required)
+	 * - job_id: ID der Stelle (required oder aktueller Job)
 	 * - title: Überschrift (default: "Jetzt bewerben")
 	 * - show_job_title: Job-Titel anzeigen (true/false)
+	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
 	 *
 	 * @param array|string $atts Shortcode-Attribute.
 	 * @return string HTML-Ausgabe.
@@ -594,6 +161,7 @@ class Shortcodes {
 				'job_id'         => 0,
 				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
 				'show_job_title' => 'true',
+				'show_progress'  => 'true',
 			],
 			$atts,
 			'rp_application_form'
@@ -601,12 +169,12 @@ class Shortcodes {
 
 		$job_id = absint( $atts['job_id'] );
 
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
 		if ( ! $job_id && is_singular( 'job_listing' ) ) {
 			$job_id = get_the_ID();
 		}
 
-		// Validieren
+		// Validieren.
 		if ( ! $job_id ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
@@ -624,11 +192,31 @@ class Shortcodes {
 			</div>';
 		}
 
-		// Assets laden
+		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
+		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
+
+		// Auto-Detection: Form Builder verwenden?
+		if ( $this->shouldUseFormBuilder() ) {
+			return $this->renderFormBuilderForm( $job_id, $job, $atts, $show_job_title, $show_progress );
+		}
+
+		// Standard-Formular rendern.
+		return $this->renderStandardForm( $job_id, $job, $atts, $show_job_title );
+	}
+
+	/**
+	 * Standard 3-Step Formular rendern
+	 *
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @return string HTML-Ausgabe.
+	 */
+	private function renderStandardForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title ): string {
+		// Assets laden.
 		$this->enqueueAssets();
 		$this->enqueueFormAssets();
-
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
 
 		ob_start();
 		?>
@@ -655,6 +243,160 @@ class Shortcodes {
 		</div>
 		<?php
 
+		return ob_get_clean();
+	}
+
+	/**
+	 * Form Builder Formular rendern (Pro)
+	 *
+	 * @param int      $job_id         Job ID.
+	 * @param \WP_Post $job            Job Post Object.
+	 * @param array    $atts           Shortcode Attribute.
+	 * @param bool     $show_job_title Job-Titel anzeigen.
+	 * @param bool     $show_progress  Fortschrittsanzeige.
+	 * @return string HTML-Ausgabe.
+	 */
+	private function renderFormBuilderForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title, bool $show_progress ): string {
+		// Custom Fields Assets laden.
+		$this->enqueueCustomFieldsAssets();
+
+		ob_start();
+		?>
+		<div class="rp-plugin">
+			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( $job_id ); ?>" data-rp-custom-application-form>
+				<?php if ( ! empty( $atts['title'] ) ) : ?>
+					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php echo esc_html( $atts['title'] ); ?></h2>
+				<?php endif; ?>
+
+				<?php if ( $show_job_title ) : ?>
+					<p class="rp-text-gray-600 rp-mb-6">
+						<?php
+						printf(
+							/* translators: %s: Job title */
+							esc_html__( 'Bewerbung für: %s', 'recruiting-playbook' ),
+							'<strong>' . esc_html( $job->post_title ) . '</strong>'
+						);
+						?>
+					</p>
+				<?php endif; ?>
+
+				<?php echo $this->getCustomFormHtml( $job_id, $show_progress ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Custom Application Form Shortcode (Alias für rp_application_form)
+	 *
+	 * DEPRECATED: Dieser Shortcode wird in einer zukünftigen Version entfernt.
+	 * Bitte [rp_application_form] verwenden - erkennt automatisch ob Form Builder aktiv ist.
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderCustomApplicationForm( $atts ): string {
+		// Direkt an renderApplicationForm delegieren.
+		// Die Auto-Detection dort entscheidet ob Form Builder verwendet wird.
+		return $this->renderApplicationForm( $atts );
+	}
+
+	/**
+	 * Custom Form HTML mit dynamischen Feldern generieren
+	 *
+	 * @param int  $job_id        Job ID.
+	 * @param bool $show_progress Fortschrittsanzeige anzeigen.
+	 * @return string HTML.
+	 */
+	private function getCustomFormHtml( int $job_id, bool $show_progress = true ): string {
+		$form_service = $this->getFormRenderService();
+
+		// Konfiguration für rpCustomFieldsForm vorbereiten.
+		$config = $form_service->getCustomFieldsConfig( $job_id );
+
+		ob_start();
+		?>
+		<script>window.rpCustomFieldsConfig = <?php echo wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE ); ?>;</script>
+		<div x-data="rpCustomFieldsForm()" x-cloak>
+			<!-- Erfolgs-Meldung -->
+			<template x-if="submitted">
+				<div class="rp-text-center rp-py-12">
+					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
+					<p class="rp-text-gray-600"><?php esc_html_e( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ); ?></p>
+				</div>
+			</template>
+
+			<!-- Formular -->
+			<template x-if="!submitted">
+				<div>
+					<!-- Fehler-Meldung -->
+					<div x-show="error" x-cloak class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-mb-6">
+						<p class="rp-text-error rp-text-sm" x-text="error"></p>
+					</div>
+
+					<?php if ( $show_progress ) : ?>
+					<!-- Fortschrittsanzeige (Multi-Step) -->
+					<div x-show="totalSteps > 1" class="rp-mb-8">
+						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
+							<span><?php esc_html_e( 'Schritt', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'von', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span x-text="progress + '%'"></span>
+						</div>
+						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
+							<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
+						</div>
+					</div>
+					<?php endif; ?>
+
+					<form x-on:submit.prevent="submit">
+						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+						<input type="hidden" name="job_id" :value="formData.job_id">
+
+						<!-- Dynamische Felder (nur Steps, ohne Wrapper) -->
+						<?php echo $form_service->render( $job_id, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+
+						<!-- Navigation -->
+						<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">
+							<button
+								type="button"
+								x-show="step > 1"
+								@click="prevStep"
+								class="wp-element-button is-style-outline"
+							>
+								<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
+							</button>
+							<div x-show="step === 1 || totalSteps === 1"></div>
+
+							<button
+								x-show="step < totalSteps && totalSteps > 1"
+								type="button"
+								@click="nextStep"
+								class="wp-element-button"
+							>
+								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+							</button>
+
+							<button
+								x-show="step === totalSteps || totalSteps === 1"
+								type="submit"
+								:disabled="loading"
+								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
+							>
+								<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
+								<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</template>
+		</div>
+		<?php
 		return ob_get_clean();
 	}
 
@@ -698,7 +440,7 @@ class Shortcodes {
 						</div>
 					</div>
 
-					<form @submit.prevent="submit">
+					<form x-on:submit.prevent="submit">
 						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
@@ -773,9 +515,9 @@ class Shortcodes {
 							<div class="rp-mb-6">
 								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
 								<div
-									@dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
-									@dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
-									@drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
+									x-on:dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
+									x-on:dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
+									x-on:drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
 									:class="files.resume ? 'rp-border-success rp-bg-success-light' : ''"
 								>
@@ -787,7 +529,7 @@ class Shortcodes {
 											<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?></p>
 											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 												<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
-												<input type="file" @change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
+												<input type="file" x-on:change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
 											</label>
 											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' ); ?></p>
 										</div>
@@ -803,7 +545,7 @@ class Shortcodes {
 													<p class="rp-text-xs rp-text-gray-500" x-text="formatFileSize(files.resume.size)"></p>
 												</div>
 											</div>
-											<button type="button" @click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
+											<button type="button" x-on:click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
 												<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 												</svg>
@@ -818,13 +560,13 @@ class Shortcodes {
 							<div class="rp-mb-6">
 								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
 								<div
-									@dragover.prevent
-									@drop.prevent="handleDrop($event, 'documents')"
+									x-on:dragover.prevent
+									x-on:drop.prevent="handleDrop($event, 'documents')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
 								>
 									<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
 										<?php esc_html_e( 'Dateien auswählen', 'recruiting-playbook' ); ?>
-										<input type="file" @change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
+										<input type="file" x-on:change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
 									</label>
 									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Mehrere Dateien möglich (max. 5 Dateien, je 10 MB)', 'recruiting-playbook' ); ?></p>
 								</div>
@@ -835,7 +577,7 @@ class Shortcodes {
 										<template x-for="(file, index) in files.documents" :key="index">
 											<li class="rp-flex rp-items-center rp-justify-between rp-px-3 rp-py-2 rp-border rp-border-gray-200 rp-rounded">
 												<span class="rp-text-sm rp-text-gray-700" x-text="file.name"></span>
-												<button type="button" @click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
+												<button type="button" x-on:click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
 													<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
 													</svg>
@@ -970,6 +712,436 @@ class Shortcodes {
 	}
 
 	/**
+	 * KI-Job-Match rendern (Mode A - Einzelstelle)
+	 *
+	 * Shortcode: [rp_ai_job_match]
+	 *
+	 * Attribute:
+	 * - job_id: ID der Stelle (default: aktuelle Stelle)
+	 * - title: Button-Text (default: "Passe ich zu diesem Job?")
+	 * - display: Darstellung - "button" (default), "inline", "modal"
+	 * - class: Zusätzliche CSS-Klassen für den Button
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderAiJobMatch( $atts ): string {
+		// Feature-Check.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return $this->renderUpgradePrompt(
+				'ai_cv_matching',
+				__( 'KI-Job-Match', 'recruiting-playbook' ),
+				'KI'
+			);
+		}
+
+		$atts = shortcode_atts(
+			[
+				'job_id'  => 0,
+				'title'   => __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
+				'display' => 'button',
+				'style'   => '',        // primary (default), secondary, outline.
+				'size'    => '',        // small, large.
+				'class'   => '',
+			],
+			$atts,
+			'rp_ai_job_match'
+		);
+
+		$job_id = absint( $atts['job_id'] );
+
+		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
+		if ( ! $job_id && is_singular( 'job_listing' ) ) {
+			$job_id = get_the_ID();
+		}
+
+		// Validieren.
+		if ( ! $job_id ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
+					' . esc_html__( 'Hinweis: Keine Stelle angegeben. Bitte job_id Attribut setzen oder auf einer Stellenseite verwenden.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		$job = get_post( $job_id );
+		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error rp-text-sm">
+					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		// Assets laden.
+		$this->enqueueMatchModalAssets();
+
+		// Modal im Footer registrieren (nur einmal).
+		$this->registerMatchModal();
+
+		// Design-Settings für KI-Button laden.
+		$design_settings = get_option( 'rp_design_settings', [] );
+		$ai_button_style = $design_settings['ai_button_style'] ?? 'preset';
+
+		// Button-Text: Shortcode-Attribut hat Priorität, dann Design-Setting, dann Default.
+		$default_text = $design_settings['ai_match_button_text'] ?? __( 'Passe ich zu diesem Job?', 'recruiting-playbook' );
+		$button_text  = ( $atts['title'] !== __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ) )
+			? esc_html( $atts['title'] )
+			: esc_html( $default_text );
+
+		// Icon aus Design-Settings.
+		$icon_type = $design_settings['ai_match_button_icon'] ?? 'sparkles';
+		$icon_svg  = $this->getAiButtonIcon( $icon_type );
+
+		$job_title = esc_attr( $job->post_title );
+
+		// Button-Klassen basierend auf ai_button_style.
+		$btn_classes = [];
+
+		if ( 'theme' === $ai_button_style ) {
+			// Theme-Styling: wp-element-button.
+			$btn_classes[] = 'wp-element-button';
+		} else {
+			// Preset oder Manual: rp-btn-ai für Custom-Styling via CSS-Variablen.
+			$btn_classes[] = 'rp-btn';
+			$btn_classes[] = 'rp-btn-ai';
+		}
+
+		// Style-Variante (outline verwendet WordPress is-style-outline).
+		if ( 'outline' === $atts['style'] ) {
+			$btn_classes[] = 'is-style-outline';
+		}
+
+		// Extra-Klassen vom User.
+		if ( ! empty( $atts['class'] ) ) {
+			$btn_classes[] = esc_attr( $atts['class'] );
+		}
+
+		$btn_class_string = implode( ' ', $btn_classes );
+
+		ob_start();
+		?>
+		<div class="rp-plugin rp-ai-job-match" x-data>
+			<button
+				type="button"
+				class="<?php echo esc_attr( $btn_class_string ); ?>"
+				x-on:click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
+			>
+				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+					<?php echo $icon_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span><?php echo $button_text; ?></span>
+				</span>
+			</button>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Icon-SVG für KI-Button generieren
+	 *
+	 * @param string $icon_type Icon-Typ (sparkles, checkmark, star, lightning, target, user).
+	 * @return string SVG-HTML.
+	 */
+	private function getAiButtonIcon( string $icon_type ): string {
+		$icons = [
+			'sparkles'  => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>',
+			'checkmark' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+			'star'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>',
+			'lightning' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
+			'target'    => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+			'user'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+		];
+
+		return $icons[ $icon_type ] ?? $icons['sparkles'];
+	}
+
+	/**
+	 * Match-Modal im Footer registrieren
+	 *
+	 * Fügt das Modal-Template einmalig im Footer ein.
+	 */
+	private function registerMatchModal(): void {
+		if ( $this->match_modal_registered ) {
+			return;
+		}
+
+		$this->match_modal_registered = true;
+
+		add_action(
+			'wp_footer',
+			function () {
+				$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+				if ( file_exists( $template ) ) {
+					include $template;
+				}
+			},
+			20
+		);
+	}
+
+	/**
+	 * KI-Job-Finder rendern (Mode B - Alle Stellen)
+	 *
+	 * Shortcode: [rp_ai_job_finder]
+	 *
+	 * Attribute:
+	 * - title: Überschrift (default: "Finde deinen Traumjob")
+	 * - subtitle: Untertitel
+	 * - limit: Max. Anzahl Matches (1-10, default: 5)
+	 * - class: Zusätzliche CSS-Klassen
+	 *
+	 * @param array|string $atts Shortcode-Attribute.
+	 * @return string HTML-Ausgabe.
+	 */
+	public function renderAiJobFinder( $atts ): string {
+		// Feature-Check.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return $this->renderUpgradePrompt(
+				'ai_cv_matching',
+				__( 'KI-Job-Finder', 'recruiting-playbook' ),
+				'KI'
+			);
+		}
+
+		$atts = shortcode_atts(
+			[
+				'title'    => __( 'Finde deinen Traumjob', 'recruiting-playbook' ),
+				'subtitle' => __( 'Lade deinen Lebenslauf hoch und entdecke passende Stellen.', 'recruiting-playbook' ),
+				'limit'    => 5,
+				'class'    => '',
+			],
+			$atts,
+			'rp_ai_job_finder'
+		);
+
+		// Aktive Jobs zählen.
+		$job_count = wp_count_posts( 'job_listing' )->publish ?? 0;
+
+		if ( 0 === $job_count ) {
+			return '<div class="rp-plugin">
+				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
+					' . esc_html__( 'Aktuell sind keine offenen Stellen verfügbar.', 'recruiting-playbook' ) . '
+				</div>
+			</div>';
+		}
+
+		// Assets laden.
+		$this->enqueueJobFinderAssets();
+
+		$limit        = max( 1, min( 10, absint( $atts['limit'] ) ) );
+		$show_profile = true;
+		$show_skills  = true;
+
+		ob_start();
+
+		// Template direkt einbinden mit Variablen.
+		$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
+		if ( file_exists( $template ) ) {
+			include $template;
+		}
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Job-Finder Assets laden
+	 *
+	 * Lädt CSS und JS für den KI-Job-Finder.
+	 */
+	private function enqueueJobFinderAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Job-Finder CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-job-finder', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-job-finder',
+				RP_PLUGIN_URL . 'assets/dist/css/job-finder.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Job-Finder JS - muss VOR Alpine.js geladen werden.
+		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/job-finder.js';
+		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-job-finder',
+				RP_PLUGIN_URL . 'assets/src/js/components/job-finder.js',
+				[],
+				RP_VERSION,
+				true
+			);
+
+			// Konfiguration für den Job-Finder.
+			wp_localize_script(
+				'rp-job-finder',
+				'rpJobFinderConfig',
+				[
+					'endpoints' => [
+						'analyze' => rest_url( 'recruiting/v1/match/job-finder' ),
+						'status'  => rest_url( 'recruiting/v1/match/status' ),
+					],
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'i18n'      => [
+						'uploading'       => __( 'Lebenslauf wird hochgeladen...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
+						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
+						'noMatches'       => __( 'Leider wurden keine passenden Stellen gefunden.', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+						'matchHigh'       => __( 'Sehr gut geeignet', 'recruiting-playbook' ),
+						'matchMedium'     => __( 'Gut geeignet', 'recruiting-playbook' ),
+						'matchLow'        => __( 'Bedingt geeignet', 'recruiting-playbook' ),
+						'viewJob'         => __( 'Stelle ansehen', 'recruiting-playbook' ),
+						'applyNow'        => __( 'Jetzt bewerben', 'recruiting-playbook' ),
+						'matchedSkills'   => __( 'Passende Skills', 'recruiting-playbook' ),
+						'missingSkills'   => __( 'Fehlende Skills', 'recruiting-playbook' ),
+						'tryAgain'        => __( 'Erneut versuchen', 'recruiting-playbook' ),
+						'newSearch'       => __( 'Neue Suche', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js laden.
+		$this->enqueueAlpine( [ 'rp-job-finder' ] );
+	}
+
+	/**
+	 * Match-Modal Assets laden
+	 *
+	 * Lädt CSS und JS für das KI-Matching Modal.
+	 */
+	private function enqueueMatchModalAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Match-Modal CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-match-modal', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-match-modal',
+				RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Match-Modal JS - muss VOR Alpine.js geladen werden.
+		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-match-modal',
+				RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+				[],
+				RP_VERSION,
+				true
+			);
+
+			// Konfiguration für das Match-Modal.
+			wp_localize_script(
+				'rp-match-modal',
+				'rpMatchConfig',
+				[
+					'endpoints' => [
+						'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
+						'status'  => rest_url( 'recruiting/v1/match/status' ),
+					],
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'i18n'      => [
+						'uploading'       => __( 'Dokument wird hochgeladen...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
+						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
+						'resultHigh'      => __( 'Gute Übereinstimmung', 'recruiting-playbook' ),
+						'resultMedium'    => __( 'Teilweise passend', 'recruiting-playbook' ),
+						'resultLow'       => __( 'Eher nicht passend', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js laden.
+		$this->enqueueAlpine( [ 'rp-match-modal' ] );
+	}
+
+	/**
+	 * Alpine.js laden mit optionalen Abhängigkeiten
+	 *
+	 * @param array $additional_deps Zusätzliche Script-Abhängigkeiten.
+	 */
+	private function enqueueAlpine( array $additional_deps = [] ): void {
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+
+		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+			wp_enqueue_script(
+				'rp-alpine',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				$additional_deps,
+				'3.14.3',
+				true
+			);
+
+			// Defer-Attribut hinzufügen.
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+						return str_replace( ' src', ' defer src', $tag );
+					}
+					return $tag;
+				},
+				10,
+				2
+			);
+		}
+	}
+
+	/**
+	 * Upgrade-Prompt für nicht verfügbare Features
+	 *
+	 * @param string $feature       Feature-Name.
+	 * @param string $feature_name  Anzeige-Name.
+	 * @param string $required_tier Benötigter Tier.
+	 * @return string HTML.
+	 */
+	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
+		$tier_labels = [
+			'PRO' => 'Pro',
+			'KI'  => 'KI-Addon',
+		];
+
+		$label = $tier_labels[ $required_tier ] ?? $required_tier;
+
+		return '<div class="rp-plugin">
+			<div class="rp-bg-gray-50 rp-rounded-lg rp-p-6 rp-text-center">
+				<svg class="rp-w-12 rp-h-12 rp-mx-auto rp-text-gray-400 rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+				<h3 class="rp-font-semibold rp-text-gray-900 rp-mb-2">' .
+				esc_html( $feature_name ) . '</h3>
+				<p class="rp-text-gray-600 rp-mb-4">' .
+				sprintf(
+					/* translators: %s: Required tier name */
+					esc_html__( 'Dieses Feature ist Teil von %s.', 'recruiting-playbook' ),
+					'<strong>' . esc_html( $label ) . '</strong>'
+				) . '</p>
+				<a href="' . esc_url( admin_url( 'admin.php?page=recruiting-playbook-license' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
+				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
+			</div>
+		</div>';
+	}
+
+	/**
 	 * Basis-Assets laden (CSS)
 	 */
 	private function enqueueAssets(): void {
@@ -988,6 +1160,112 @@ class Shortcodes {
 
 		// x-cloak CSS für Alpine.js.
 		wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
+	}
+
+	/**
+	 * Custom Fields Form Assets laden
+	 *
+	 * Lädt CSS und JS für dynamische Formulare mit Custom Fields.
+	 */
+	public function enqueueCustomFieldsAssets(): void {
+		// Basis-Assets.
+		$this->enqueueAssets();
+
+		// Custom Fields CSS.
+		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
+		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-custom-fields', 'enqueued' ) ) {
+			wp_enqueue_style(
+				'rp-custom-fields',
+				RP_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
+				[ 'rp-frontend' ],
+				RP_VERSION . '-' . filemtime( $css_file )
+			);
+		}
+
+		// Tracking JS.
+		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-tracking',
+				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				[],
+				RP_VERSION,
+				true
+			);
+		}
+
+		// Custom Fields Form JS.
+		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
+		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+			wp_enqueue_script(
+				'rp-custom-fields-form',
+				RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
+				[ 'rp-tracking' ],
+				RP_VERSION . '-' . filemtime( $form_file ),
+				true
+			);
+
+			// Lokalisierung.
+			wp_localize_script(
+				'rp-custom-fields-form',
+				'rpForm',
+				[
+					'apiUrl' => rest_url( 'recruiting/v1/' ),
+					'nonce'  => wp_create_nonce( 'wp_rest' ),
+					'i18n'   => [
+						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
+						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
+						'invalidUrl'      => __( 'Bitte geben Sie eine gültige URL ein', 'recruiting-playbook' ),
+						'invalidPhone'    => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
+						'invalidNumber'   => __( 'Bitte geben Sie eine gültige Zahl ein', 'recruiting-playbook' ),
+						'invalidDate'     => __( 'Bitte geben Sie ein gültiges Datum ein', 'recruiting-playbook' ),
+						'minLength'       => __( 'Mindestens {min} Zeichen erforderlich', 'recruiting-playbook' ),
+						'maxLength'       => __( 'Maximal {max} Zeichen erlaubt', 'recruiting-playbook' ),
+						'numberMin'       => __( 'Mindestwert: {min}', 'recruiting-playbook' ),
+						'numberMax'       => __( 'Maximalwert: {max}', 'recruiting-playbook' ),
+						'dateMin'         => __( 'Datum muss nach {date} liegen', 'recruiting-playbook' ),
+						'dateMax'         => __( 'Datum muss vor {date} liegen', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. {size} MB)', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Dateityp nicht erlaubt', 'recruiting-playbook' ),
+						'fileRequired'    => __( 'Bitte laden Sie eine Datei hoch', 'recruiting-playbook' ),
+						'maxFilesReached' => __( 'Maximal {max} Dateien erlaubt', 'recruiting-playbook' ),
+						'minSelections'   => __( 'Bitte wählen Sie mindestens {min} Optionen', 'recruiting-playbook' ),
+						'maxSelections'   => __( 'Bitte wählen Sie maximal {max} Optionen', 'recruiting-playbook' ),
+						'patternMismatch' => __( 'Das Format ist ungültig', 'recruiting-playbook' ),
+						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+					],
+				]
+			);
+		}
+
+		// Alpine.js.
+		$alpine_deps = [ 'rp-tracking' ];
+		if ( wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+			$alpine_deps[] = 'rp-custom-fields-form';
+		}
+
+		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+			wp_enqueue_script(
+				'rp-alpine',
+				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				$alpine_deps,
+				'3.14.3',
+				true
+			);
+
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+						return str_replace( ' src', ' defer src', $tag );
+					}
+					return $tag;
+				},
+				10,
+				2
+			);
+		}
 	}
 
 	/**

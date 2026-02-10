@@ -333,6 +333,12 @@ class DocumentService {
 		add_filter( 'wp_unique_filename', $filename_filter, 10, 3 );
 
 		// WordPress Upload-Handler verwenden.
+		// Die Funktion wp_handle_upload ist in wp-admin/includes/file.php definiert
+		// und muss im Frontend-Kontext erst geladen werden.
+		if ( ! function_exists( 'wp_handle_upload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		$upload_overrides = [
 			'test_form'   => false,
 			'test_type'   => false, // Wir validieren MIME-Type selbst.
@@ -538,7 +544,22 @@ class DocumentService {
 			ARRAY_A
 		);
 
-		return $results ?: [];
+		if ( ! $results ) {
+			return [];
+		}
+
+		// Download- und View-URLs für jedes Dokument hinzufügen.
+		foreach ( $results as &$doc ) {
+			$doc_id = (int) $doc['id'];
+			$download_url = DocumentDownloadService::generateDownloadUrl( $doc_id );
+			$doc['download_url'] = $download_url;
+
+			// View-URL ist die gleiche wie Download-URL (Browser zeigt PDFs/Bilder an).
+			// Für inline-Anzeige könnte später ein separater Handler implementiert werden.
+			$doc['view_url'] = $download_url;
+		}
+
+		return $results;
 	}
 
 	/**

@@ -35,11 +35,30 @@ class ApplicationService {
 	private EmailService $email_service;
 
 	/**
+	 * Custom Fields Service
+	 *
+	 * @var CustomFieldsService|null
+	 */
+	private ?CustomFieldsService $custom_fields_service = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->document_service = new DocumentService();
 		$this->email_service    = new EmailService();
+	}
+
+	/**
+	 * Custom Fields Service lazy-loading
+	 *
+	 * @return CustomFieldsService
+	 */
+	private function getCustomFieldsService(): CustomFieldsService {
+		if ( null === $this->custom_fields_service ) {
+			$this->custom_fields_service = new CustomFieldsService();
+		}
+		return $this->custom_fields_service;
 	}
 
 	/**
@@ -62,16 +81,17 @@ class ApplicationService {
 		$has_consent = ! empty( $data['privacy_consent'] );
 
 		$application_data = [
-			'job_id'              => (int) $data['job_id'],
-			'candidate_id'        => $candidate_id,
-			'status'              => ApplicationStatus::NEW,
-			'cover_letter'        => $data['cover_letter'] ?? '',
-			'source'              => 'website',
-			'consent_privacy'     => $has_consent ? 1 : 0,
-			'consent_privacy_at'  => $has_consent ? current_time( 'mysql' ) : null,
-			'consent_ip'          => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
-			'created_at'          => current_time( 'mysql' ),
-			'updated_at'          => current_time( 'mysql' ),
+			'job_id'                   => (int) $data['job_id'],
+			'candidate_id'             => $candidate_id,
+			'status'                   => ApplicationStatus::NEW,
+			'cover_letter'             => $data['cover_letter'] ?? '',
+			'source'                   => 'website',
+			'consent_privacy'          => $has_consent ? 1 : 0,
+			'consent_privacy_at'       => $has_consent ? current_time( 'mysql' ) : null,
+			'consent_privacy_version'  => $has_consent ? get_option( 'rp_privacy_policy_version', '1.0' ) : '',
+			'consent_ip'               => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
+			'created_at'               => current_time( 'mysql' ),
+			'updated_at'               => current_time( 'mysql' ),
 		];
 
 		$table = $wpdb->prefix . 'rp_applications';
@@ -97,6 +117,25 @@ class ApplicationService {
 			if ( is_wp_error( $file_result ) ) {
 				// Bewerbung wurde erstellt, aber Dateien fehlgeschlagen
 				$this->logActivity( $application_id, 'file_upload_failed', $file_result->get_error_message() );
+			}
+		}
+
+		// 3b. Custom Fields verarbeiten (Pro-Feature).
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) && ! empty( $data['custom_fields'] ) ) {
+			$custom_fields_result = $this->processCustomFields(
+				(int) $data['job_id'],
+				$application_id,
+				$data['custom_fields'],
+				$data['custom_files'] ?? []
+			);
+
+			if ( is_wp_error( $custom_fields_result ) ) {
+				// Custom Fields Validierung fehlgeschlagen - Bewerbung entfernen und Fehler zurückgeben.
+				global $wpdb;
+				$table = $wpdb->prefix . 'rp_applications';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->delete( $table, [ 'id' => $application_id ], [ '%d' ] );
+				return $custom_fields_result;
 			}
 		}
 
@@ -149,6 +188,19 @@ class ApplicationService {
 		// Dokumente laden
 		$application['documents'] = $this->document_service->getByApplication( $id );
 
+		// Custom Fields laden (Pro-Feature).
+		$application['custom_fields'] = [];
+		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+			$application['custom_fields'] = $this->getCustomFields( $id, (int) $application['job_id'] );
+		}
+
+		// Talent-Pool Status laden (Pro-Feature).
+		$application['in_talent_pool'] = false;
+		if ( function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' ) ) {
+			$talent_pool_service = new TalentPoolService();
+			$application['in_talent_pool'] = $talent_pool_service->isInPool( (int) $application['candidate_id'] );
+		}
+
 		return $application;
 	}
 
@@ -166,6 +218,13 @@ class ApplicationService {
 
 		$where = [ '1=1' ];
 		$values = [];
+
+		// Filter: Zugewiesene Stellen (Rollen-basiert).
+		if ( ! empty( $args['assigned_job_ids'] ) && is_array( $args['assigned_job_ids'] ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $args['assigned_job_ids'] ), '%d' ) );
+			$where[]      = "a.job_id IN ({$placeholders})";
+			$values       = array_merge( $values, array_map( 'intval', $args['assigned_job_ids'] ) );
+		}
 
 		// Filter: Job ID
 		if ( ! empty( $args['job_id'] ) ) {
@@ -233,10 +292,28 @@ class ApplicationService {
 			ARRAY_A
 		);
 
-		// Job-Titel hinzufügen
+		// Job-Titel in einem Batch laden (verhindert N+1 Query Problem).
+		$job_ids = array_unique( array_filter( array_column( $results, 'job_id' ) ) );
+		$jobs    = [];
+
+		if ( ! empty( $job_ids ) ) {
+			$job_posts = get_posts(
+				[
+					'post_type'      => 'job_listing',
+					'include'        => $job_ids,
+					'posts_per_page' => count( $job_ids ),
+					'post_status'    => 'any',
+				]
+			);
+
+			foreach ( $job_posts as $post ) {
+				$jobs[ $post->ID ] = $post->post_title;
+			}
+		}
+
+		// Job-Titel hinzufügen.
 		foreach ( $results as &$row ) {
-			$job = get_post( (int) $row['job_id'] );
-			$row['job_title'] = $job ? $job->post_title : '';
+			$row['job_title'] = $jobs[ (int) $row['job_id'] ] ?? '';
 		}
 
 		return [
@@ -251,14 +328,164 @@ class ApplicationService {
 	}
 
 	/**
+	 * Bewerbungen für Kanban-Board auflisten
+	 *
+	 * Optimiert für Kanban-Board: Flache Struktur mit allen für die Anzeige
+	 * benötigten Daten (documents_count, notes_count, average_rating, in_talent_pool).
+	 *
+	 * @param array $args Filter-Argumente.
+	 * @return array Mit 'items' Array für Frontend.
+	 */
+	public function listForKanban( array $args = [] ): array {
+		global $wpdb;
+
+		$table             = $wpdb->prefix . 'rp_applications';
+		$candidates_table  = $wpdb->prefix . 'rp_candidates';
+		$documents_table   = $wpdb->prefix . 'rp_documents';
+		$activity_table    = $wpdb->prefix . 'rp_activity_log';
+		$ratings_table     = $wpdb->prefix . 'rp_ratings';
+		$talent_pool_table = $wpdb->prefix . 'rp_talent_pool';
+
+		$where  = [ '1=1', 'a.deleted_at IS NULL' ];
+		$values = [];
+
+		// Filter: Zugewiesene Stellen (Rollen-basiert).
+		if ( ! empty( $args['assigned_job_ids'] ) && is_array( $args['assigned_job_ids'] ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $args['assigned_job_ids'] ), '%d' ) );
+			$where[]      = "a.job_id IN ({$placeholders})";
+			$values       = array_merge( $values, array_map( 'intval', $args['assigned_job_ids'] ) );
+		}
+
+		// Filter: Job ID.
+		if ( ! empty( $args['job_id'] ) ) {
+			$where[]  = 'a.job_id = %d';
+			$values[] = (int) $args['job_id'];
+		}
+
+		// Filter: Status.
+		if ( ! empty( $args['status'] ) ) {
+			$where[]  = 'a.status = %s';
+			$values[] = $args['status'];
+		}
+
+		// Filter: Suche.
+		if ( ! empty( $args['search'] ) ) {
+			$search   = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$where[]  = '(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)';
+			$values[] = $search;
+			$values[] = $search;
+			$values[] = $search;
+		}
+
+		$where_clause = implode( ' AND ', $where );
+
+		// Sortierung für Kanban: Status + Position.
+		$allowed_orderby = [
+			'date'            => 'a.created_at',
+			'name'            => 'c.last_name',
+			'status'          => 'a.status',
+			'kanban_position' => 'a.kanban_position',
+		];
+		$orderby_key = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
+		$orderby     = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
+		$order       = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
+
+		// Pagination - Kanban kann mehr anzeigen.
+		$per_page = min( max( (int) ( $args['per_page'] ?? 200 ), 1 ), 500 );
+		$page     = max( (int) ( $args['page'] ?? 1 ), 1 );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		// Query mit documents_count, notes_count, average_rating, in_talent_pool
+		// Verwendet LEFT JOINs und Subqueries für optimale Performance.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT
+					a.id,
+					a.job_id,
+					a.candidate_id,
+					a.status,
+					a.kanban_position,
+					a.created_at,
+					c.first_name,
+					c.last_name,
+					c.email,
+					COUNT(DISTINCT d.id) AS documents_count,
+					(
+						SELECT COUNT(*)
+						FROM {$activity_table} al
+						WHERE al.object_id = a.id
+						AND al.object_type = 'application'
+						AND al.action = 'note_added'
+					) AS notes_count,
+					(
+						SELECT ROUND(AVG(r.rating), 1)
+						FROM {$ratings_table} r
+						WHERE r.application_id = a.id
+					) AS average_rating,
+					CASE WHEN tp.id IS NOT NULL THEN 1 ELSE 0 END AS in_talent_pool
+				FROM {$table} a
+				LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id
+				LEFT JOIN {$documents_table} d ON d.application_id = a.id
+				LEFT JOIN {$talent_pool_table} tp ON tp.candidate_id = a.candidate_id
+				WHERE {$where_clause}
+				GROUP BY a.id, a.job_id, a.candidate_id, a.status, a.kanban_position, a.created_at,
+				         c.first_name, c.last_name, c.email, tp.id
+				ORDER BY {$orderby} {$order}
+				LIMIT %d OFFSET %d",
+				...array_merge( $values, [ $per_page, $offset ] )
+			),
+			ARRAY_A
+		);
+
+		// Job-Titel in einem Batch laden (verhindert N+1 Query Problem).
+		$job_ids = array_unique( array_filter( array_column( $results, 'job_id' ) ) );
+		$jobs    = [];
+
+		if ( ! empty( $job_ids ) ) {
+			$job_posts = get_posts(
+				[
+					'post_type'      => 'job_listing',
+					'include'        => $job_ids,
+					'posts_per_page' => count( $job_ids ),
+					'post_status'    => 'any',
+				]
+			);
+
+			foreach ( $job_posts as $post ) {
+				$jobs[ $post->ID ] = $post->post_title;
+			}
+		}
+
+		// Job-Titel und Typen konvertieren.
+		foreach ( $results as &$row ) {
+			$row['job_title']       = $jobs[ (int) $row['job_id'] ] ?? '';
+			$row['id']              = (int) $row['id'];
+			$row['job_id']          = (int) $row['job_id'];
+			$row['candidate_id']    = (int) $row['candidate_id'];
+			$row['kanban_position'] = (int) $row['kanban_position'];
+			$row['documents_count'] = (int) $row['documents_count'];
+			$row['notes_count']     = (int) $row['notes_count'];
+			$row['average_rating']  = null !== $row['average_rating'] ? (float) $row['average_rating'] : null;
+			$row['in_talent_pool']  = (bool) $row['in_talent_pool'];
+		}
+
+		return [
+			'items' => $results,
+		];
+	}
+
+	/**
 	 * Status einer Bewerbung ändern
 	 *
-	 * @param int    $id     Application ID.
-	 * @param string $status Neuer Status.
-	 * @param string $note   Optionale Notiz.
+	 * @param int      $id              Application ID.
+	 * @param string   $status          Neuer Status.
+	 * @param string   $note            Optionale Notiz.
+	 * @param int|null $kanban_position Optionale Kanban-Position.
 	 * @return bool|WP_Error
 	 */
-	public function updateStatus( int $id, string $status, string $note = '' ): bool|WP_Error {
+	public function updateStatus( int $id, string $status, string $note = '', ?int $kanban_position = null ): bool|WP_Error {
 		global $wpdb;
 
 		// Validieren
@@ -293,15 +520,24 @@ class ApplicationService {
 		// Status aktualisieren
 		$table = $wpdb->prefix . 'rp_applications';
 
+		$update_data = [
+			'status'     => $status,
+			'updated_at' => current_time( 'mysql' ),
+		];
+		$update_format = [ '%s', '%s' ];
+
+		// Kanban-Position aktualisieren wenn übergeben.
+		if ( null !== $kanban_position ) {
+			$update_data['kanban_position'] = $kanban_position;
+			$update_format[]                = '%d';
+		}
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$updated = $wpdb->update(
 			$table,
-			[
-				'status'     => $status,
-				'updated_at' => current_time( 'mysql' ),
-			],
+			$update_data,
 			[ 'id' => $id ],
-			[ '%s', '%s' ],
+			$update_format,
 			[ '%d' ]
 		);
 
@@ -331,13 +567,9 @@ class ApplicationService {
 			[ 'status' => $status ]
 		);
 
-		// E-Mails bei bestimmten Status-Änderungen
-		if ( ApplicationStatus::REJECTED === $status ) {
-			$this->email_service->sendRejectionEmail( $id );
-		}
-
-		// Hook für Erweiterungen
-		do_action( 'rp_application_status_changed', $id, $status, $old_status );
+		// Hook für Auto-E-Mail und andere Erweiterungen.
+		// Parameter: $application_id, $old_status, $new_status (chronologische Reihenfolge).
+		do_action( 'rp_application_status_changed', $id, $old_status, $status );
 
 		return true;
 	}
@@ -353,6 +585,7 @@ class ApplicationService {
 
 		$table = $wpdb->prefix . 'rp_candidates';
 		$email = strtolower( trim( $data['email'] ) );
+		$email_hash = hash( 'sha256', $email );
 
 		// Prüfen ob Kandidat bereits existiert
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -364,11 +597,12 @@ class ApplicationService {
 		);
 
 		if ( $existing ) {
-			// Kandidaten-Daten aktualisieren
+			// Kandidaten-Daten aktualisieren (inkl. email_hash für Konsistenz)
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update(
 				$table,
 				[
+					'email_hash'  => $email_hash,
 					'salutation'  => $data['salutation'] ?? '',
 					'first_name'  => $data['first_name'],
 					'last_name'   => $data['last_name'],
@@ -376,7 +610,7 @@ class ApplicationService {
 					'updated_at'  => current_time( 'mysql' ),
 				],
 				[ 'id' => $existing ],
-				[ '%s', '%s', '%s', '%s', '%s' ],
+				[ '%s', '%s', '%s', '%s', '%s', '%s' ],
 				[ '%d' ]
 			);
 
@@ -386,6 +620,7 @@ class ApplicationService {
 		// Neuen Kandidaten erstellen
 		$candidate_data = [
 			'email'      => $email,
+			'email_hash' => $email_hash,
 			'salutation' => $data['salutation'] ?? '',
 			'first_name' => $data['first_name'],
 			'last_name'  => $data['last_name'],
@@ -462,6 +697,49 @@ class ApplicationService {
 	}
 
 	/**
+	 * Custom Fields verarbeiten und speichern
+	 *
+	 * @param int   $job_id         Job-ID.
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param array $data           Custom Field Daten.
+	 * @param array $files          Custom Field Dateien.
+	 * @return array|WP_Error Verarbeitete Custom Fields oder Fehler.
+	 */
+	private function processCustomFields( int $job_id, int $application_id, array $data, array $files = [] ): array|WP_Error {
+		$service = $this->getCustomFieldsService();
+
+		// Verarbeiten.
+		$result = $service->processCustomFields( $job_id, $application_id, $data, $files );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		// Speichern.
+		$saved = $service->saveCustomFields( $application_id, $result );
+
+		if ( ! $saved ) {
+			return new WP_Error(
+				'save_failed',
+				__( 'Custom Fields konnten nicht gespeichert werden.', 'recruiting-playbook' )
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Custom Fields einer Bewerbung abrufen
+	 *
+	 * @param int $application_id Bewerbungs-ID.
+	 * @param int $job_id         Job-ID.
+	 * @return array
+	 */
+	public function getCustomFields( int $application_id, int $job_id ): array {
+		return $this->getCustomFieldsService()->getFormattedCustomFields( $application_id, $job_id );
+	}
+
+	/**
 	 * Status-Label abrufen
 	 *
 	 * @param string $status Status.
@@ -479,5 +757,69 @@ class ApplicationService {
 		];
 
 		return $labels[ $status ] ?? $status;
+	}
+
+	/**
+	 * Kanban-Positionen in einer Spalte neu sortieren
+	 *
+	 * @param string $status    Status/Spalte.
+	 * @param array  $positions Array mit ['id' => int, 'kanban_position' => int].
+	 * @return int|WP_Error Anzahl aktualisierter Einträge oder Fehler.
+	 */
+	public function reorderPositions( string $status, array $positions ): int|WP_Error {
+		global $wpdb;
+
+		$table   = $wpdb->prefix . 'rp_applications';
+		$updated = 0;
+
+		// Validieren
+		$valid_statuses = [
+			ApplicationStatus::NEW,
+			ApplicationStatus::SCREENING,
+			ApplicationStatus::INTERVIEW,
+			ApplicationStatus::OFFER,
+			ApplicationStatus::HIRED,
+			ApplicationStatus::REJECTED,
+			ApplicationStatus::WITHDRAWN,
+		];
+
+		if ( ! in_array( $status, $valid_statuses, true ) ) {
+			return new WP_Error(
+				'invalid_status',
+				__( 'Ungültiger Status.', 'recruiting-playbook' )
+			);
+		}
+
+		// Jede Position aktualisieren
+		foreach ( $positions as $position ) {
+			if ( ! isset( $position['id'], $position['kanban_position'] ) ) {
+				continue;
+			}
+
+			$id              = (int) $position['id'];
+			$kanban_position = (int) $position['kanban_position'];
+
+			// Nur aktualisieren wenn Bewerbung im richtigen Status ist
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$result = $wpdb->update(
+				$table,
+				[
+					'kanban_position' => $kanban_position,
+					'updated_at'      => current_time( 'mysql' ),
+				],
+				[
+					'id'     => $id,
+					'status' => $status,
+				],
+				[ '%d', '%s' ],
+				[ '%d', '%s' ]
+			);
+
+			if ( false !== $result && $result > 0 ) {
+				++$updated;
+			}
+		}
+
+		return $updated;
 	}
 }

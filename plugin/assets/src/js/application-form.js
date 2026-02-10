@@ -13,19 +13,14 @@ document.addEventListener('alpine:init', () => {
         submitted: false,
         error: null,
 
-        // Form data
-        formData: {
-            job_id: 0,
-            salutation: '',
-            first_name: '',
-            last_name: '',
-            email: '',
-            phone: '',
-            cover_letter: '',
-            privacy_consent: false,
-            _hp_field: '', // Honeypot
-            _form_timestamp: 0
-        },
+        // Form data - initialized from config or defaults
+        formData: {},
+
+        // Validation rules from config
+        validationRules: {},
+
+        // i18n strings from config
+        i18n: {},
 
         // Files
         files: {
@@ -45,10 +40,35 @@ document.addEventListener('alpine:init', () => {
          * Initialize form
          */
         init() {
-            // Get job_id from data attribute
-            const form = this.$el.closest('[data-job-id]');
-            if (form) {
-                this.formData.job_id = parseInt(form.dataset.jobId, 10);
+            // Load configuration from PHP-generated window.rpFormConfig
+            const config = window.rpFormConfig || {};
+
+            // Set total steps from config
+            this.totalSteps = config.steps || 3;
+
+            // Initialize form data from config or use defaults
+            this.formData = config.formData || {
+                job_id: 0,
+                first_name: '',
+                last_name: '',
+                email: '',
+                phone: '',
+                message: '',
+                privacy_consent: false
+            };
+
+            // Load validation rules
+            this.validationRules = config.validation || {};
+
+            // Load i18n strings
+            this.i18n = config.i18n || {};
+
+            // Fallback: Get job_id from data attribute if not in config
+            if (!this.formData.job_id) {
+                const form = this.$el.closest('[data-job-id]');
+                if (form) {
+                    this.formData.job_id = parseInt(form.dataset.jobId, 10);
+                }
             }
 
             // Note: Timestamp is read from PHP-generated hidden field on submit
@@ -73,69 +93,123 @@ document.addEventListener('alpine:init', () => {
 
         /**
          * Validate current step
+         *
+         * Uses dynamic validation based on fields visible in the current step.
          */
         validateCurrentStep() {
             this.errors = {};
-
-            switch (this.step) {
-                case 1:
-                    return this.validatePersonalData();
-                case 2:
-                    return this.validateDocuments();
-                case 3:
-                    return this.validateConsent();
-                default:
-                    return true;
-            }
-        },
-
-        /**
-         * Validate personal data (step 1)
-         */
-        validatePersonalData() {
             let valid = true;
 
-            if (!this.formData.first_name.trim()) {
-                this.errors.first_name = window.rpForm?.i18n?.required || 'Dieses Feld ist erforderlich';
-                valid = false;
+            // Get fields for current step from DOM
+            const stepContainer = this.$el.querySelector(`[x-show="step === ${this.step}"]`);
+            if (!stepContainer) {
+                return true;
             }
 
-            if (!this.formData.last_name.trim()) {
-                this.errors.last_name = window.rpForm?.i18n?.required || 'Dieses Feld ist erforderlich';
-                valid = false;
-            }
+            // Find all field containers in current step
+            const fieldContainers = stepContainer.querySelectorAll('[data-field]');
 
-            if (!this.formData.email.trim()) {
-                this.errors.email = window.rpForm?.i18n?.required || 'Dieses Feld ist erforderlich';
-                valid = false;
-            } else if (!this.isValidEmail(this.formData.email)) {
-                this.errors.email = window.rpForm?.i18n?.invalidEmail || 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
-                valid = false;
-            }
+            fieldContainers.forEach(container => {
+                const fieldKey = container.dataset.field;
+                const rules = this.validationRules[fieldKey] || {};
+
+                if (!this.validateField(fieldKey, rules)) {
+                    valid = false;
+                }
+            });
 
             return valid;
         },
 
         /**
-         * Validate documents (step 2)
+         * Validate a single field against its rules
+         *
+         * @param {string} fieldKey - Field identifier
+         * @param {object} rules - Validation rules for the field
+         * @returns {boolean} - Validation result
          */
-        validateDocuments() {
-            // Documents are optional, but if provided, must be valid
+        validateField(fieldKey, rules) {
+            const value = this.formData[fieldKey];
+
+            // Required check
+            if (rules.required) {
+                if (typeof value === 'boolean') {
+                    if (!value) {
+                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        return false;
+                    }
+                } else if (typeof value === 'string') {
+                    if (!value.trim()) {
+                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        return false;
+                    }
+                } else if (Array.isArray(value)) {
+                    if (value.length === 0) {
+                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        return false;
+                    }
+                } else if (value === null || value === undefined) {
+                    this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                    return false;
+                }
+            }
+
+            // Skip further validation if empty and not required
+            if (!value || (typeof value === 'string' && !value.trim())) {
+                return true;
+            }
+
+            // Email validation
+            if (rules.email && !this.isValidEmail(value)) {
+                this.errors[fieldKey] = this.i18n.invalidEmail || 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                return false;
+            }
+
+            // Phone validation
+            if (rules.phone && !this.isValidPhone(value)) {
+                this.errors[fieldKey] = this.i18n.invalidPhone || 'Bitte geben Sie eine gültige Telefonnummer ein';
+                return false;
+            }
+
+            // URL validation
+            if (rules.url && !this.isValidUrl(value)) {
+                this.errors[fieldKey] = this.i18n.invalidUrl || 'Bitte geben Sie eine gültige URL ein';
+                return false;
+            }
+
+            // Min length
+            if (rules.minLength && typeof value === 'string' && value.length < rules.minLength) {
+                this.errors[fieldKey] = (this.i18n.minLength || 'Mindestens %d Zeichen erforderlich').replace('%d', rules.minLength);
+                return false;
+            }
+
+            // Max length
+            if (rules.maxLength && typeof value === 'string' && value.length > rules.maxLength) {
+                this.errors[fieldKey] = (this.i18n.maxLength || 'Maximal %d Zeichen erlaubt').replace('%d', rules.maxLength);
+                return false;
+            }
+
             return true;
         },
 
         /**
-         * Validate consent (step 3)
+         * Check if field has error
+         *
+         * @param {string} fieldKey - Field identifier
+         * @returns {boolean}
          */
-        validateConsent() {
-            let valid = true;
+        hasError(fieldKey) {
+            return !!this.errors[fieldKey];
+        },
 
-            if (!this.formData.privacy_consent) {
-                this.errors.privacy_consent = window.rpForm?.i18n?.privacyRequired || 'Bitte stimmen Sie der Datenschutzerklärung zu';
-                valid = false;
-            }
-
-            return valid;
+        /**
+         * Get error message for field
+         *
+         * @param {string} fieldKey - Field identifier
+         * @returns {string}
+         */
+        getError(fieldKey) {
+            return this.errors[fieldKey] || '';
         },
 
         /**
@@ -144,6 +218,27 @@ document.addEventListener('alpine:init', () => {
         isValidEmail(email) {
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return regex.test(email);
+        },
+
+        /**
+         * Phone validation
+         */
+        isValidPhone(phone) {
+            // Allow digits, spaces, dashes, parentheses, and + sign
+            const regex = /^[+]?[\d\s\-().]{6,20}$/;
+            return regex.test(phone);
+        },
+
+        /**
+         * URL validation
+         */
+        isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
         },
 
         /**
@@ -220,18 +315,31 @@ document.addEventListener('alpine:init', () => {
             if (file.size > this.maxFileSize) {
                 return {
                     valid: false,
-                    message: window.rpForm?.i18n?.fileTooLarge || 'Die Datei ist zu groß (max. 10 MB)'
+                    message: this.getI18nString('fileTooLarge', 'Die Datei ist zu groß (max. 10 MB)')
                 };
             }
 
             if (!this.allowedTypes.includes(file.type)) {
                 return {
                     valid: false,
-                    message: window.rpForm?.i18n?.invalidFileType || 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG'
+                    message: this.getI18nString('invalidFileType', 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG')
                 };
             }
 
             return { valid: true };
+        },
+
+        /**
+         * Get i18n string with fallback
+         *
+         * Checks rpFormConfig.i18n first, then rpForm.i18n, then uses default.
+         *
+         * @param {string} key - Translation key
+         * @param {string} defaultValue - Default value if not found
+         * @returns {string}
+         */
+        getI18nString(key, defaultValue) {
+            return this.i18n[key] || window.rpForm?.i18n?.[key] || defaultValue;
         },
 
         /**
@@ -255,10 +363,43 @@ document.addEventListener('alpine:init', () => {
         },
 
         /**
+         * Validate all steps before submit
+         */
+        validateAllSteps() {
+            this.errors = {};
+            let valid = true;
+            let firstErrorStep = null;
+
+            // Validate all fields from all steps
+            for (const [fieldKey, rules] of Object.entries(this.validationRules)) {
+                if (!this.validateField(fieldKey, rules)) {
+                    valid = false;
+                    // Find which step this field is in
+                    if (firstErrorStep === null) {
+                        for (let s = 1; s <= this.totalSteps; s++) {
+                            const stepContainer = this.$el.querySelector(`[x-show="step === ${s}"]`);
+                            if (stepContainer && stepContainer.querySelector(`[data-field="${fieldKey}"]`)) {
+                                firstErrorStep = s;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Navigate to first step with error
+            if (!valid && firstErrorStep !== null) {
+                this.step = firstErrorStep;
+            }
+
+            return valid;
+        },
+
+        /**
          * Submit form
          */
         async submit() {
-            if (!this.validateCurrentStep()) {
+            if (!this.validateAllSteps()) {
                 return;
             }
 
@@ -267,6 +408,13 @@ document.addEventListener('alpine:init', () => {
 
             try {
                 const formData = new FormData();
+
+                // System-Felder, die direkt gesendet werden (nicht als custom_fields)
+                const systemFields = [
+                    'job_id', 'salutation', 'first_name', 'last_name', 'email', 'phone',
+                    'cover_letter', 'message', 'privacy_consent', 'resume',
+                    '_hp_field', '_form_timestamp'
+                ];
 
                 // Read honeypot field from DOM (bot detection)
                 const honeypotField = this.$el.querySelector('input[name="_hp_field"]');
@@ -280,14 +428,36 @@ document.addEventListener('alpine:init', () => {
                     this.formData._form_timestamp = parseInt(timestampField.value, 10);
                 }
 
+                // Collect custom fields separately
+                const customFieldsData = {};
+
                 // Add form fields
                 for (const [key, value] of Object.entries(this.formData)) {
-                    if (typeof value === 'boolean') {
-                        // REST API expects 'true'/'false' strings for boolean validation
-                        formData.append(key, value ? 'true' : 'false');
+                    // Check if this is a system field or custom field
+                    const isSystemField = systemFields.includes(key) || key.startsWith('_');
+
+                    if (isSystemField) {
+                        // System fields go directly into FormData
+                        if (typeof value === 'boolean') {
+                            formData.append(key, value ? 'true' : 'false');
+                        } else {
+                            formData.append(key, value);
+                        }
                     } else {
-                        formData.append(key, value);
+                        // Non-system fields are custom fields (e.g., field_123456789)
+                        if (typeof value === 'boolean') {
+                            customFieldsData[key] = value;
+                        } else if (Array.isArray(value)) {
+                            customFieldsData[key] = value;
+                        } else {
+                            customFieldsData[key] = value;
+                        }
                     }
+                }
+
+                // Add custom_fields as JSON object if there are any
+                if (Object.keys(customFieldsData).length > 0) {
+                    formData.append('custom_fields', JSON.stringify(customFieldsData));
                 }
 
                 // Add files
@@ -300,17 +470,21 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 // Send request
+                // WICHTIG: Keine Nonce für öffentliche Bewerbungen senden!
+                // WordPress REST API gibt 403 zurück wenn Nonce ungültig ist (z.B. durch Caching).
+                // Spam-Schutz wird stattdessen durch Honeypot und Timestamp gewährleistet.
                 const response = await fetch(window.rpForm.apiUrl + 'applications', {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-WP-Nonce': window.rpForm.nonce
-                    }
+                    body: formData
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
+                    // Handle field-specific validation errors from backend.
+                    if (data.data?.field_errors) {
+                        this.errors = { ...this.errors, ...data.data.field_errors };
+                    }
                     throw new Error(data.message || data.error?.message || 'Ein Fehler ist aufgetreten');
                 }
 

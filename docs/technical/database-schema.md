@@ -11,6 +11,7 @@ Das Plugin verwendet einen **Hybrid-Ansatz**:
 | Kandidaten | Custom Table | DSGVO, Talent-Pool, Wiederbewerber |
 | Dokumente | Custom Table + Dateisystem | Datenschutz, nicht in Media Library |
 | Aktivitäts-Log | Custom Table | Audit-Trail, Historie |
+| Form Builder | Custom Tables | rp_form_config, rp_field_definitions, rp_form_templates |
 | Einstellungen | wp_options | WordPress-Standard |
 
 ```
@@ -50,6 +51,21 @@ Das Plugin verwendet einen **Hybrid-Ansatz**:
 │                                                                 │
 │                                 ┌─────────────────────┐        │
 │                                 │ rp_webhooks         │        │
+│                                 │                     │        │
+│                                 └─────────────────────┘        │
+│                                                                 │
+│                                 ┌─────────────────────┐        │
+│                                 │ rp_form_config      │        │
+│                                 │                     │        │
+│                                 └─────────────────────┘        │
+│                                                                 │
+│                                 ┌─────────────────────┐        │
+│                                 │ rp_field_definitions│        │
+│                                 │                     │        │
+│                                 └─────────────────────┘        │
+│                                                                 │
+│                                 ┌─────────────────────┐        │
+│                                 │ rp_form_templates   │        │
 │                                 │                     │        │
 │                                 └─────────────────────┘        │
 │                                                                 │
@@ -601,7 +617,207 @@ CREATE TABLE {prefix}rp_webhook_deliveries (
 
 ---
 
-## 8. E-Mail-Templates – wp_options + Custom Table
+## 8. Form Builder – Custom Tables
+
+### Tabelle: `{prefix}rp_form_config`
+
+Speichert die Formular-Konfiguration mit Draft/Publish-Workflow.
+
+```sql
+CREATE TABLE {prefix}rp_form_config (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    -- Versionierung
+    published_version INT UNSIGNED DEFAULT 0,
+    draft_version INT UNSIGNED DEFAULT 0,
+
+    -- Konfiguration (JSON)
+    config_data LONGTEXT NOT NULL,              -- Aktuelle Draft-Konfiguration
+    published_config_data LONGTEXT,             -- Veröffentlichte Konfiguration
+
+    -- Metadaten
+    last_published_at DATETIME,
+    last_published_by BIGINT UNSIGNED,
+
+    -- Timestamps
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Tabelle: `{prefix}rp_field_definitions`
+
+Speichert alle Feld-Definitionen (System, Global, Template, Job-spezifisch).
+
+```sql
+CREATE TABLE {prefix}rp_field_definitions (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    -- Identifikation
+    field_key VARCHAR(50) NOT NULL,             -- Eindeutiger Schlüssel (z.B. "first_name")
+    field_type VARCHAR(30) NOT NULL,            -- Feldtyp (z.B. "text", "email")
+
+    -- Anzeige
+    label VARCHAR(255) NOT NULL,
+    placeholder VARCHAR(255),
+    description TEXT,
+
+    -- Konfiguration
+    is_required TINYINT(1) DEFAULT 0,
+    is_system TINYINT(1) DEFAULT 0,             -- System-Feld (nicht löschbar)
+    is_active TINYINT(1) DEFAULT 1,
+
+    -- Optionen (für Select/Radio/Checkbox)
+    options JSON,                               -- { choices: [...] }
+
+    -- Validierung
+    validation JSON,                            -- { min_length, max_length, pattern, ... }
+
+    -- Bedingte Logik
+    conditional JSON,                           -- { action, logic, conditions }
+
+    -- Einstellungen
+    settings JSON,                              -- Feldtyp-spezifische Einstellungen
+
+    -- Sortierung
+    position INT UNSIGNED DEFAULT 0,
+
+    -- Zugehörigkeit
+    template_id BIGINT UNSIGNED,                -- NULL = Global
+    job_id BIGINT UNSIGNED,                     -- NULL = Nicht job-spezifisch
+
+    -- Timestamps
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at DATETIME,                        -- Soft Delete
+
+    PRIMARY KEY (id),
+    UNIQUE KEY field_key_scope (field_key, template_id, job_id),
+    KEY field_type (field_type),
+    KEY template_id (template_id),
+    KEY job_id (job_id),
+    KEY is_system (is_system),
+    KEY position (position)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Tabelle: `{prefix}rp_form_templates`
+
+Speichert Formular-Templates (Pro).
+
+```sql
+CREATE TABLE {prefix}rp_form_templates (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    -- Identifikation
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+
+    -- Status
+    is_default TINYINT(1) DEFAULT 0,
+
+    -- Einstellungen
+    settings JSON,                              -- Template-spezifische Einstellungen
+
+    -- Verknüpfung
+    created_by BIGINT UNSIGNED NOT NULL,        -- wp_users.ID
+
+    -- Timestamps
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at DATETIME,                        -- Soft Delete
+
+    PRIMARY KEY (id),
+    KEY is_default (is_default),
+    KEY created_by (created_by)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Formular-Konfiguration (config_data JSON-Struktur)
+
+```json
+{
+  "version": 2,
+  "settings": {
+    "showStepIndicator": true,
+    "showStepTitles": true,
+    "animateSteps": true
+  },
+  "steps": [
+    {
+      "id": "step_personal",
+      "title": "Persönliche Daten",
+      "position": 1,
+      "deletable": false,
+      "fields": [
+        {
+          "field_key": "first_name",
+          "is_visible": true,
+          "is_required": true,
+          "is_removable": false,
+          "width": "half",
+          "settings": { "label": "Vorname", "placeholder": "Max" }
+        }
+      ]
+    },
+    {
+      "id": "step_documents",
+      "title": "Dokumente",
+      "position": 2,
+      "deletable": true,
+      "fields": [],
+      "system_fields": [
+        {
+          "field_key": "file_upload",
+          "type": "file_upload",
+          "settings": { "max_file_size": 10, "max_files": 5 }
+        }
+      ]
+    },
+    {
+      "id": "step_finale",
+      "title": "Abschluss",
+      "position": 999,
+      "deletable": false,
+      "is_finale": true,
+      "fields": [],
+      "system_fields": [
+        { "field_key": "summary", "type": "summary" },
+        { "field_key": "privacy_consent", "type": "privacy_consent", "is_removable": false }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## 9. E-Mail-Templates – wp_options + Custom Tables
+
+> ⚠️ **Ergänzung (Januar 2025):** Siehe [email-signature-specification.md](email-signature-specification.md) für:
+> - Neue Tabelle `rp_signatures` (Signaturen pro User + Firmen-Signatur)
+> - Erweiterte Firmendaten unter `rp_settings['company']`
+
+### Neue Tabelle: rp_signatures (Pro)
+
+```sql
+CREATE TABLE {prefix}rp_signatures (
+    id              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    user_id         bigint(20) unsigned NOT NULL,      -- Signaturen sind immer user-spezifisch
+    name            varchar(100) NOT NULL,
+    content         text NOT NULL,                     -- Signatur-Inhalt (HTML)
+    is_default      tinyint(1) DEFAULT 0,              -- Default für diesen User?
+    created_at      datetime DEFAULT CURRENT_TIMESTAMP,
+    updated_at      datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY user_id (user_id),
+    KEY is_default (user_id, is_default)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+```
+
+> **Hinweis:** Signaturen sind immer user-spezifisch. Es gibt keine "Firmen-Signatur" als Datenbank-Eintrag. Wenn ein User keine Signatur hat, wird automatisch eine professionelle Signatur aus den Firmendaten (`rp_settings['company']`) generiert.
 
 ### Einstellungen in wp_options
 
@@ -698,6 +914,13 @@ CREATE TABLE {prefix}rp_email_log (
         'admin_email' => 'hr@example.com',
         'notify_on_application' => true,
         'notify_on_status_change' => false,
+    ],
+
+    // PRO: E-Mail-Einstellungen
+    'email' => [
+        'sender_name'          => 'HR Team',        // Standard-Absender Name
+        'sender_email'         => 'hr@example.com', // Standard-Absender E-Mail
+        'hide_email_branding'  => false,            // Copyright-Zeile in E-Mails verstecken
     ],
     'api' => [
         'enabled' => true,
@@ -951,6 +1174,10 @@ class BackupExporter {
         'rp_webhooks',
         'rp_webhook_deliveries',
         'rp_email_log',
+        'rp_signatures',
+        'rp_form_config',
+        'rp_field_definitions',
+        'rp_form_templates',
     ];
 
     /**
@@ -1629,4 +1856,4 @@ function rp_export_candidate_data($candidate_id) {
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: 4. Februar 2026*

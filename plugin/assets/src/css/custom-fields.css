@@ -1,0 +1,741 @@
+/**
+ * Recruiting Playbook - Custom Fields Form Styles
+ *
+ * Extends main.css with styles for dynamic custom fields forms.
+ * Uses design tokens from main.css.
+ *
+ * @package RecruitingPlaybook
+ */
+
+/* =============================================================================
+   FORM LAYOUT - Grid & Widths
+   ============================================================================= */
+
+/* Form Container */
+.rp-plugin .rp-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rp-space-6);
+}
+
+/* Form Grid for Field Layout */
+.rp-plugin .rp-form__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--rp-space-4);
+}
+
+/* Field Wrapper */
+.rp-plugin .rp-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rp-space-1);
+}
+
+/* Width Classes */
+.rp-plugin .rp-form__field--full {
+    grid-column: span 12;
+}
+
+.rp-plugin .rp-form__field--half {
+    grid-column: span 6;
+}
+
+.rp-plugin .rp-form__field--third {
+    grid-column: span 4;
+}
+
+.rp-plugin .rp-form__field--two-thirds {
+    grid-column: span 8;
+}
+
+/* Responsive: Stack on mobile */
+@media (max-width: 640px) {
+    .rp-plugin .rp-form__field--half,
+    .rp-plugin .rp-form__field--third,
+    .rp-plugin .rp-form__field--two-thirds {
+        grid-column: span 12;
+    }
+}
+
+/* =============================================================================
+   FORM SECTIONS
+   ============================================================================= */
+
+/* Section/Group Heading */
+.rp-plugin .rp-form__heading {
+    margin: 0;
+    padding-bottom: var(--rp-space-2);
+    border-bottom: 1px solid var(--rp-color-border);
+}
+
+.rp-plugin .rp-form__heading-description {
+    margin-top: var(--rp-space-1);
+}
+
+/* Section Divider */
+.rp-plugin .rp-form__divider {
+    height: 1px;
+    background-color: var(--rp-color-border);
+    margin: var(--rp-space-4) 0;
+}
+
+/* =============================================================================
+   FIELD DESCRIPTIONS
+   ============================================================================= */
+
+.rp-plugin .rp-field-description {
+    font-size: var(--rp-text-xs);
+    color: var(--rp-color-text-muted);
+    margin-top: var(--rp-space-1);
+    line-height: var(--rp-leading-relaxed);
+}
+
+/* =============================================================================
+   FILE UPLOAD
+   ============================================================================= */
+
+/* File Upload Container */
+.rp-plugin .rp-file-upload {
+    position: relative;
+}
+
+/* Dropzone */
+.rp-plugin .rp-file-upload .rp-border-dashed {
+    border: 2px dashed var(--rp-color-border-dark);
+    border-radius: var(--rp-radius-lg);
+    padding: var(--rp-space-6);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--rp-transition);
+    background-color: var(--rp-color-surface);
+}
+
+.rp-plugin .rp-file-upload .rp-border-dashed:hover {
+    border-color: var(--rp-color-primary);
+    background-color: var(--rp-color-primary-light);
+}
+
+/* Drag state */
+.rp-plugin .rp-file-upload .rp-border-primary {
+    border-color: var(--rp-color-primary) !important;
+}
+
+.rp-plugin .rp-file-upload .rp-bg-primary-light {
+    background-color: var(--rp-color-primary-light) !important;
+}
+
+/* Success state (files uploaded) */
+.rp-plugin .rp-file-upload .rp-border-success {
+    border-color: var(--rp-color-success) !important;
+}
+
+.rp-plugin .rp-file-upload .rp-bg-success-light {
+    background-color: var(--rp-color-success-light) !important;
+}
+
+/* File List */
+.rp-plugin .rp-file-upload .rp-space-y-2 > * + * {
+    margin-top: var(--rp-space-2);
+}
+
+/* File Item */
+.rp-plugin .rp-file-upload .rp-flex {
+    display: flex;
+}
+
+.rp-plugin .rp-file-upload .rp-items-center {
+    align-items: center;
+}
+
+.rp-plugin .rp-file-upload .rp-justify-between {
+    justify-content: space-between;
+}
+
+.rp-plugin .rp-file-upload .rp-gap-3 {
+    gap: var(--rp-space-3);
+}
+
+/* File Item Card */
+.rp-plugin .rp-file-upload .rp-bg-white {
+    background-color: var(--rp-color-surface);
+}
+
+.rp-plugin .rp-file-upload .rp-rounded {
+    border-radius: var(--rp-radius);
+}
+
+.rp-plugin .rp-file-upload .rp-px-3 {
+    padding-left: var(--rp-space-3);
+    padding-right: var(--rp-space-3);
+}
+
+.rp-plugin .rp-file-upload .rp-py-2 {
+    padding-top: var(--rp-space-2);
+    padding-bottom: var(--rp-space-2);
+}
+
+.rp-plugin .rp-file-upload .rp-border {
+    border: 1px solid;
+}
+
+.rp-plugin .rp-file-upload .rp-border-gray-200 {
+    border-color: var(--rp-color-border);
+}
+
+/* File Remove Button */
+.rp-plugin .rp-file-upload button.rp-p-1 {
+    padding: var(--rp-space-1);
+    border-radius: var(--rp-radius);
+    background: transparent;
+    cursor: pointer;
+    transition: background-color var(--rp-transition);
+}
+
+.rp-plugin .rp-file-upload button.rp-text-error {
+    color: var(--rp-color-error);
+}
+
+.rp-plugin .rp-file-upload button.rp-text-error:hover {
+    background-color: var(--rp-color-error-light);
+}
+
+/* File Icons */
+.rp-plugin .rp-file-upload .rp-text-success {
+    color: var(--rp-color-success);
+}
+
+.rp-plugin .rp-file-upload .rp-text-gray-400 {
+    color: var(--rp-color-text-light);
+}
+
+/* Upload Link */
+.rp-plugin .rp-file-upload .rp-text-primary {
+    color: var(--rp-color-primary);
+}
+
+.rp-plugin .rp-file-upload .rp-text-primary:hover {
+    color: var(--rp-color-primary-hover);
+}
+
+.rp-plugin .rp-file-upload .rp-font-medium {
+    font-weight: 500;
+}
+
+/* Hidden File Input */
+.rp-plugin .rp-file-upload .rp-hidden {
+    display: none !important;
+}
+
+/* =============================================================================
+   MULTI-STEP FORM
+   ============================================================================= */
+
+/* Step Container */
+.rp-plugin .rp-form-steps {
+    margin-bottom: var(--rp-space-6);
+}
+
+/* Progress Bar */
+.rp-plugin .rp-form-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--rp-space-2);
+    margin-bottom: var(--rp-space-4);
+}
+
+.rp-plugin .rp-form-progress__bar {
+    flex: 1;
+    height: 4px;
+    background-color: var(--rp-color-border);
+    border-radius: var(--rp-radius-full);
+    overflow: hidden;
+}
+
+.rp-plugin .rp-form-progress__fill {
+    height: 100%;
+    background-color: var(--rp-color-primary);
+    transition: width var(--rp-transition-slow);
+}
+
+.rp-plugin .rp-form-progress__text {
+    font-size: var(--rp-text-sm);
+    color: var(--rp-color-text-muted);
+    white-space: nowrap;
+}
+
+/* Step Indicators */
+.rp-plugin .rp-form-steps__nav {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+/* Connection Line */
+.rp-plugin .rp-form-steps__nav::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    background-color: var(--rp-color-border);
+    z-index: 0;
+}
+
+/* Step Item */
+.rp-plugin .rp-form-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rp-space-2);
+    position: relative;
+    z-index: 1;
+}
+
+/* Step Circle */
+.rp-plugin .rp-form-step__circle {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--rp-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--rp-text-sm);
+    font-weight: 600;
+    background-color: var(--rp-color-surface);
+    border: 2px solid var(--rp-color-border);
+    color: var(--rp-color-text-muted);
+    transition: all var(--rp-transition);
+}
+
+.rp-plugin .rp-form-step--active .rp-form-step__circle {
+    border-color: var(--rp-color-primary);
+    background-color: var(--rp-color-primary);
+    color: var(--rp-color-primary-contrast);
+}
+
+.rp-plugin .rp-form-step--completed .rp-form-step__circle {
+    border-color: var(--rp-color-success);
+    background-color: var(--rp-color-success);
+    color: var(--rp-color-primary-contrast);
+}
+
+/* Step Label */
+.rp-plugin .rp-form-step__label {
+    font-size: var(--rp-text-xs);
+    color: var(--rp-color-text-muted);
+    text-align: center;
+    max-width: 100px;
+}
+
+.rp-plugin .rp-form-step--active .rp-form-step__label {
+    color: var(--rp-color-text);
+    font-weight: 500;
+}
+
+/* Step Content Area */
+.rp-plugin .rp-form-step__content {
+    display: none;
+}
+
+.rp-plugin .rp-form-step__content--active {
+    display: block;
+}
+
+/* Step Navigation Buttons */
+.rp-plugin .rp-form-steps__actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--rp-space-4);
+    margin-top: var(--rp-space-6);
+    padding-top: var(--rp-space-4);
+    border-top: 1px solid var(--rp-color-border);
+}
+
+/* =============================================================================
+   SELECT WITH "OTHER" OPTION
+   ============================================================================= */
+
+.rp-plugin .rp-select-other {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rp-space-2);
+}
+
+.rp-plugin .rp-select-other__input {
+    margin-top: var(--rp-space-2);
+}
+
+/* =============================================================================
+   RADIO & CHECKBOX GROUPS
+   ============================================================================= */
+
+/* Group Layout */
+.rp-plugin .rp-option-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rp-space-2);
+    margin-top: var(--rp-space-2);
+}
+
+.rp-plugin .rp-option-group--inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--rp-space-4);
+}
+
+/* Option Item */
+.rp-plugin .rp-option-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rp-space-2);
+    cursor: pointer;
+}
+
+.rp-plugin .rp-option-item__label {
+    font-size: var(--rp-text-sm);
+    color: var(--rp-color-text);
+}
+
+/* =============================================================================
+   FORM STATES
+   ============================================================================= */
+
+/* Loading State */
+.rp-plugin .rp-form--loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.rp-plugin .rp-form--loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 10;
+}
+
+/* Loading Spinner */
+.rp-plugin .rp-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--rp-color-border);
+    border-top-color: var(--rp-color-primary);
+    border-radius: var(--rp-radius-full);
+    animation: rp-spin 0.8s linear infinite;
+}
+
+@keyframes rp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success State */
+.rp-plugin .rp-form-success {
+    text-align: center;
+    padding: var(--rp-space-8);
+    background-color: var(--rp-color-success-light);
+    border-radius: var(--rp-radius-xl);
+}
+
+.rp-plugin .rp-form-success__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--rp-space-4);
+    color: var(--rp-color-success);
+}
+
+.rp-plugin .rp-form-success__title {
+    font-size: var(--rp-text-2xl);
+    font-weight: 600;
+    color: var(--rp-color-text);
+    margin-bottom: var(--rp-space-2);
+}
+
+.rp-plugin .rp-form-success__message {
+    font-size: var(--rp-text-base);
+    color: var(--rp-color-text-muted);
+}
+
+/* Error State */
+.rp-plugin .rp-form-error {
+    padding: var(--rp-space-4);
+    background-color: var(--rp-color-error-light);
+    border: 1px solid var(--rp-color-error);
+    border-radius: var(--rp-radius-lg);
+    margin-bottom: var(--rp-space-4);
+}
+
+.rp-plugin .rp-form-error__title {
+    font-size: var(--rp-text-sm);
+    font-weight: 600;
+    color: var(--rp-color-error);
+    display: flex;
+    align-items: center;
+    gap: var(--rp-space-2);
+}
+
+.rp-plugin .rp-form-error__message {
+    font-size: var(--rp-text-sm);
+    color: var(--rp-color-text);
+    margin-top: var(--rp-space-2);
+}
+
+/* =============================================================================
+   CONDITIONAL VISIBILITY
+   ============================================================================= */
+
+/* Hidden by conditional logic */
+.rp-plugin .rp-form__field[x-show="false"],
+.rp-plugin .rp-form__field[style*="display: none"] {
+    display: none !important;
+}
+
+/* Smooth transitions for conditional fields */
+.rp-plugin .rp-form__field {
+    transition: opacity var(--rp-transition), transform var(--rp-transition);
+}
+
+/* =============================================================================
+   TEXT UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-text-xs {
+    font-size: var(--rp-text-xs);
+}
+
+.rp-plugin .rp-text-sm {
+    font-size: var(--rp-text-sm);
+}
+
+.rp-plugin .rp-text-base {
+    font-size: var(--rp-text-base);
+}
+
+.rp-plugin .rp-text-lg {
+    font-size: var(--rp-text-lg);
+}
+
+.rp-plugin .rp-text-xl {
+    font-size: var(--rp-text-xl);
+}
+
+.rp-plugin .rp-text-gray-400 {
+    color: var(--rp-color-text-light);
+}
+
+.rp-plugin .rp-text-gray-500 {
+    color: var(--rp-color-text-muted);
+}
+
+.rp-plugin .rp-text-gray-600 {
+    color: var(--rp-color-text-muted);
+}
+
+.rp-plugin .rp-text-gray-900 {
+    color: var(--rp-color-text);
+}
+
+.rp-plugin .rp-text-error {
+    color: var(--rp-color-error);
+}
+
+.rp-plugin .rp-text-left {
+    text-align: left;
+}
+
+.rp-plugin .rp-text-center {
+    text-align: center;
+}
+
+/* =============================================================================
+   SPACING UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-mb-2 {
+    margin-bottom: var(--rp-space-2);
+}
+
+.rp-plugin .rp-mb-3 {
+    margin-bottom: var(--rp-space-3);
+}
+
+.rp-plugin .rp-mt-1 {
+    margin-top: var(--rp-space-1);
+}
+
+.rp-plugin .rp-mt-2 {
+    margin-top: var(--rp-space-2);
+}
+
+.rp-plugin .rp-mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rp-plugin .rp-p-1 {
+    padding: var(--rp-space-1);
+}
+
+.rp-plugin .rp-p-6 {
+    padding: var(--rp-space-6);
+}
+
+/* =============================================================================
+   SIZING UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-w-4 {
+    width: 1rem;
+}
+
+.rp-plugin .rp-w-5 {
+    width: 1.25rem;
+}
+
+.rp-plugin .rp-w-10 {
+    width: 2.5rem;
+}
+
+.rp-plugin .rp-h-4 {
+    height: 1rem;
+}
+
+.rp-plugin .rp-h-5 {
+    height: 1.25rem;
+}
+
+.rp-plugin .rp-h-10 {
+    height: 2.5rem;
+}
+
+/* =============================================================================
+   LAYOUT UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-flex {
+    display: flex;
+}
+
+.rp-plugin .rp-flex-wrap {
+    flex-wrap: wrap;
+}
+
+.rp-plugin .rp-items-center {
+    align-items: center;
+}
+
+.rp-plugin .rp-items-start {
+    align-items: flex-start;
+}
+
+.rp-plugin .rp-justify-between {
+    justify-content: space-between;
+}
+
+.rp-plugin .rp-gap-2 {
+    gap: var(--rp-space-2);
+}
+
+.rp-plugin .rp-gap-3 {
+    gap: var(--rp-space-3);
+}
+
+.rp-plugin .rp-gap-4 {
+    gap: var(--rp-space-4);
+}
+
+.rp-plugin .rp-space-y-2 > * + * {
+    margin-top: var(--rp-space-2);
+}
+
+/* =============================================================================
+   FONT UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-font-medium {
+    font-weight: 500;
+}
+
+.rp-plugin .rp-font-semibold {
+    font-weight: 600;
+}
+
+.rp-plugin .rp-font-bold {
+    font-weight: 700;
+}
+
+.rp-plugin .rp-leading-relaxed {
+    line-height: var(--rp-leading-relaxed);
+}
+
+/* =============================================================================
+   MISC UTILITIES
+   ============================================================================= */
+
+.rp-plugin .rp-cursor-pointer {
+    cursor: pointer;
+}
+
+.rp-plugin .rp-inline-block {
+    display: inline-block;
+}
+
+.rp-plugin .rp-rounded-lg {
+    border-radius: var(--rp-radius-lg);
+}
+
+.rp-plugin .rp-border-2 {
+    border-width: 2px;
+}
+
+.rp-plugin .rp-border-dashed {
+    border-style: dashed;
+}
+
+.rp-plugin .rp-border-gray-300 {
+    border-color: var(--rp-color-border);
+}
+
+.rp-plugin .rp-transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-duration: 200ms;
+}
+
+/* =============================================================================
+   ACCESSIBILITY
+   ============================================================================= */
+
+/* Focus visible styles */
+.rp-plugin .rp-form__field:focus-within .rp-label {
+    color: var(--rp-color-primary);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .rp-plugin * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .rp-plugin .rp-input,
+    .rp-plugin .rp-select,
+    .rp-plugin .rp-textarea {
+        border-width: 2px;
+    }
+
+    .rp-plugin .rp-form-error {
+        border-width: 2px;
+    }
+}

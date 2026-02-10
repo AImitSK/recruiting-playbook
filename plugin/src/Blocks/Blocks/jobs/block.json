@@ -1,0 +1,68 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/jobs",
+	"version": "1.0.0",
+	"title": "Stellenliste",
+	"category": "recruiting-playbook",
+	"description": "Zeigt eine Liste von Stellenanzeigen an.",
+	"keywords": ["jobs", "stellen", "karriere", "recruiting", "stellenanzeigen"],
+	"textdomain": "recruiting-playbook",
+	"icon": "businessman",
+	"attributes": {
+		"limit": {
+			"type": "number",
+			"default": 10
+		},
+		"columns": {
+			"type": "number",
+			"default": 2
+		},
+		"category": {
+			"type": "string",
+			"default": ""
+		},
+		"location": {
+			"type": "string",
+			"default": ""
+		},
+		"type": {
+			"type": "string",
+			"default": ""
+		},
+		"featured": {
+			"type": "boolean",
+			"default": false
+		},
+		"orderby": {
+			"type": "string",
+			"default": "date",
+			"enum": ["date", "title", "rand"]
+		},
+		"order": {
+			"type": "string",
+			"default": "DESC",
+			"enum": ["ASC", "DESC"]
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"limit": 6,
+			"columns": 2
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

@@ -154,7 +154,7 @@ while ( have_posts() ) :
 					</header>
 
 					<!-- Stellenbeschreibung -->
-					<div class="rp-job-description rp-prose rp-max-w-none">
+					<div class="rp-job-description rp-job-content rp-prose rp-max-w-none">
 						<?php the_content(); ?>
 					</div>
 
@@ -180,6 +180,13 @@ while ( have_posts() ) :
 							</p>
 						<?php endif; ?>
 					</div>
+
+					<!-- KI-Job-Match Button (automatisch, wenn Feature aktiv) -->
+					<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+						<div class="rp-mt-4">
+							<?php echo do_shortcode( '[rp_ai_job_match style="outline" class="rp-w-full"]' ); ?>
+						</div>
+					<?php endif; ?>
 
 					<!-- Details -->
 					<div>
@@ -251,309 +258,15 @@ while ( have_posts() ) :
 
 			</div>
 
-			<!-- Bewerbungsformular -->
-			<div id="apply-form" class="rp-mt-12 rp-rounded-lg rp-p-4 sm:rp-p-6 md:rp-p-8 rp-border rp-border-gray-200 rp-bg-white rp-overflow-hidden" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
+			<!-- Bewerbungsformular - verwendet .rp-card für Design-System-Konsistenz -->
+			<div id="apply-form" class="rp-card rp-mt-12 rp-overflow-hidden" data-job-id="<?php echo esc_attr( get_the_ID() ); ?>" data-rp-application-form>
 				<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?></h2>
 
-				<div x-data="applicationForm" x-cloak>
-					<!-- Erfolgs-Meldung -->
-					<template x-if="submitted">
-						<div class="rp-text-center rp-py-12">
-							<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-							</svg>
-							<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
-							<p class="rp-text-gray-600"><?php esc_html_e( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ); ?></p>
-						</div>
-					</template>
-
-					<!-- Formular -->
-					<template x-if="!submitted">
-						<div>
-							<!-- Fehler-Meldung -->
-							<div x-show="error" x-cloak class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-mb-6">
-								<p class="rp-text-error rp-text-sm" x-text="error"></p>
-							</div>
-
-							<!-- Fortschrittsanzeige -->
-							<div class="rp-mb-8">
-								<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-									<span><?php esc_html_e( 'Schritt', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'von', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
-									<span x-text="progress + '%'"></span>
-								</div>
-								<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
-									<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
-								</div>
-							</div>
-
-							<form @submit.prevent="submit">
-								<?php echo \RecruitingPlaybook\Services\SpamProtection::getHoneypotField(); ?>
-								<?php echo \RecruitingPlaybook\Services\SpamProtection::getTimestampField(); ?>
-
-								<!-- Schritt 1: Persönliche Daten -->
-								<div x-show="step === 1" x-transition>
-									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Persönliche Daten', 'recruiting-playbook' ); ?></h3>
-
-									<div class="rp-space-y-4">
-										<!-- Anrede, Vorname & Nachname -->
-										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-5 rp-gap-4">
-											<!-- Anrede (1/5) -->
-											<div class="sm:rp-col-span-1">
-												<label class="rp-label"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
-												<select x-model="formData.salutation" class="rp-input rp-select">
-													<option value=""><?php esc_html_e( 'Bitte wählen', 'recruiting-playbook' ); ?></option>
-													<option value="Herr"><?php esc_html_e( 'Herr', 'recruiting-playbook' ); ?></option>
-													<option value="Frau"><?php esc_html_e( 'Frau', 'recruiting-playbook' ); ?></option>
-													<option value="Divers"><?php esc_html_e( 'Divers', 'recruiting-playbook' ); ?></option>
-												</select>
-											</div>
-											<!-- Vorname (2/5) -->
-											<div class="sm:rp-col-span-2">
-												<label class="rp-label">
-													<?php esc_html_e( 'Vorname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
-												</label>
-												<input type="text" x-model="formData.first_name"
-													class="rp-input"
-													:class="errors.first_name ? 'rp-input-error' : ''"
-													required>
-												<p x-show="errors.first_name" x-text="errors.first_name" class="rp-error-text"></p>
-											</div>
-											<!-- Nachname (2/5) -->
-											<div class="sm:rp-col-span-2">
-												<label class="rp-label">
-													<?php esc_html_e( 'Nachname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
-												</label>
-												<input type="text" x-model="formData.last_name"
-													class="rp-input"
-													:class="errors.last_name ? 'rp-input-error' : ''"
-													required>
-												<p x-show="errors.last_name" x-text="errors.last_name" class="rp-error-text"></p>
-											</div>
-										</div>
-
-										<!-- E-Mail & Telefon -->
-										<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 rp-gap-4">
-											<!-- E-Mail -->
-											<div>
-												<label class="rp-label">
-													<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
-												</label>
-												<input type="email" x-model="formData.email"
-													class="rp-input"
-													:class="errors.email ? 'rp-input-error' : ''"
-													required>
-												<p x-show="errors.email" x-text="errors.email" class="rp-error-text"></p>
-											</div>
-											<!-- Telefon -->
-											<div>
-												<label class="rp-label"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
-												<input type="tel" x-model="formData.phone" class="rp-input">
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<!-- Schritt 2: Dokumente -->
-								<div x-show="step === 2" x-transition>
-									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Bewerbungsunterlagen', 'recruiting-playbook' ); ?></h3>
-
-									<!-- Lebenslauf -->
-									<div class="rp-mb-6">
-										<label class="rp-label rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
-										<div
-											@dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
-											@dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
-											@drop.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light'); handleDrop($event, 'resume')"
-											class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center rp-cursor-pointer rp-transition-colors"
-											:class="files.resume ? 'rp-border-success rp-bg-success-light' : ''"
-										>
-											<template x-if="!files.resume">
-												<div>
-													<svg class="rp-w-10 rp-h-10 rp-text-gray-400 rp-mx-auto rp-mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-													</svg>
-													<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?></p>
-													<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-														<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
-														<input type="file" @change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
-													</label>
-													<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' ); ?></p>
-												</div>
-											</template>
-											<template x-if="files.resume">
-												<div class="rp-flex rp-items-center rp-justify-between">
-													<div class="rp-flex rp-items-center rp-gap-3">
-														<svg class="rp-w-6 rp-h-6 rp-text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-														</svg>
-														<div class="rp-text-left">
-															<p class="rp-font-medium rp-text-gray-900" x-text="files.resume.name"></p>
-															<p class="rp-text-xs rp-text-gray-500" x-text="formatFileSize(files.resume.size)"></p>
-														</div>
-													</div>
-													<button type="button" @click="removeFile('resume')" class="rp-p-1 rp-text-error hover:rp-text-error">
-														<svg class="rp-w-5 rp-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-														</svg>
-													</button>
-												</div>
-											</template>
-										</div>
-										<p x-show="errors.resume" x-text="errors.resume" class="rp-error-text"></p>
-									</div>
-
-									<!-- Weitere Dokumente -->
-									<div class="rp-mb-6">
-										<label class="rp-label rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
-										<div
-											@dragover.prevent
-											@drop.prevent="handleDrop($event, 'documents')"
-											class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
-										>
-											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-												<?php esc_html_e( 'Dateien auswählen', 'recruiting-playbook' ); ?>
-												<input type="file" @change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
-											</label>
-											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Mehrere Dateien möglich (max. 5 Dateien, je 10 MB)', 'recruiting-playbook' ); ?></p>
-										</div>
-
-										<!-- Hochgeladene Dateien -->
-										<template x-if="files.documents.length > 0">
-											<ul class="rp-mt-3 rp-space-y-2">
-												<template x-for="(file, index) in files.documents" :key="index">
-													<li class="rp-flex rp-items-center rp-justify-between rp-px-3 rp-py-2 rp-border rp-border-gray-200 rp-rounded">
-														<span class="rp-text-sm rp-text-gray-700" x-text="file.name"></span>
-														<button type="button" @click="removeFile('documents', index)" class="rp-p-1 rp-text-error hover:rp-text-error">
-															<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-																<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-															</svg>
-														</button>
-													</li>
-												</template>
-											</ul>
-										</template>
-									</div>
-
-									<!-- Anschreiben -->
-									<div>
-										<label class="rp-label"><?php esc_html_e( 'Anschreiben / Nachricht', 'recruiting-playbook' ); ?></label>
-										<textarea x-model="formData.cover_letter" rows="4"
-											class="rp-input rp-textarea"
-											placeholder="<?php esc_attr_e( 'Optional: Fügen Sie ein kurzes Anschreiben hinzu...', 'recruiting-playbook' ); ?>"></textarea>
-									</div>
-								</div>
-
-								<!-- Schritt 3: Datenschutz & Absenden -->
-								<div x-show="step === 3" x-transition>
-									<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Datenschutz & Absenden', 'recruiting-playbook' ); ?></h3>
-
-									<!-- Zusammenfassung -->
-									<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-4 sm:rp-p-5 rp-mb-6 rp-overflow-hidden">
-										<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Ihre Angaben', 'recruiting-playbook' ); ?></h4>
-										<dl class="rp-text-sm rp-space-y-2">
-											<div class="rp-flex rp-flex-wrap">
-												<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Name:', 'recruiting-playbook' ); ?></dt>
-												<dd class="rp-text-gray-900 rp-break-words" x-text="formData.salutation + ' ' + formData.first_name + ' ' + formData.last_name"></dd>
-											</div>
-											<div class="rp-flex rp-flex-wrap">
-												<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?></dt>
-												<dd class="rp-text-gray-900 rp-break-all" x-text="formData.email"></dd>
-											</div>
-											<template x-if="formData.phone">
-												<div class="rp-flex rp-flex-wrap">
-													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?></dt>
-													<dd class="rp-text-gray-900" x-text="formData.phone"></dd>
-												</div>
-											</template>
-											<template x-if="files.resume">
-												<div class="rp-flex rp-flex-wrap">
-													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Lebenslauf:', 'recruiting-playbook' ); ?></dt>
-													<dd class="rp-text-gray-900 rp-break-all" x-text="files.resume.name"></dd>
-												</div>
-											</template>
-											<template x-if="files.documents.length > 0">
-												<div class="rp-flex rp-flex-wrap">
-													<dt class="rp-w-full sm:rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Dokumente:', 'recruiting-playbook' ); ?></dt>
-													<dd class="rp-text-gray-900" x-text="files.documents.length + ' Datei(en)'"></dd>
-												</div>
-											</template>
-										</dl>
-									</div>
-
-									<!-- Datenschutz-Checkbox -->
-									<div class="rp-mb-6">
-										<label class="rp-flex rp-items-start rp-gap-3 rp-cursor-pointer">
-											<input type="checkbox" x-model="formData.privacy_consent" class="rp-checkbox rp-mt-1">
-											<span class="rp-text-sm rp-leading-relaxed">
-												<span class="rp-text-error">*</span>
-												<?php
-												$privacy_url = get_privacy_policy_url();
-												if ( $privacy_url ) {
-													$privacy_link = sprintf(
-														'<a href="%s" target="_blank" class="rp-underline">%s</a>',
-														esc_url( $privacy_url ),
-														esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
-													);
-												} else {
-													$privacy_link = esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' );
-												}
-												// XSS-sicher: wp_kses erlaubt nur sichere HTML-Tags im Link.
-												echo wp_kses(
-													sprintf(
-														/* translators: %s: privacy policy link */
-														__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu.', 'recruiting-playbook' ),
-														$privacy_link
-													),
-													[
-														'a' => [
-															'href'   => [],
-															'target' => [],
-															'class'  => [],
-														],
-													]
-												);
-												?>
-											</span>
-										</label>
-										<p x-show="errors.privacy_consent" x-text="errors.privacy_consent" class="rp-error-text rp-mt-2"></p>
-									</div>
-								</div>
-
-								<!-- Navigation -->
-								<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">
-									<button
-										type="button"
-										x-show="step > 1"
-										@click="prevStep"
-										class="wp-element-button is-style-outline"
-									>
-										<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
-									</button>
-									<div x-show="step === 1"></div>
-
-									<button
-										x-show="step < totalSteps"
-										type="button"
-										@click="nextStep"
-										class="wp-element-button"
-									>
-										<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
-									</button>
-
-									<button
-										x-show="step === totalSteps"
-										type="submit"
-										:disabled="loading"
-										class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
-									>
-										<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
-										<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
-									</button>
-								</div>
-							</form>
-						</div>
-					</template>
-				</div>
+				<?php
+				// Formular dynamisch aus FormConfigService rendern.
+				$form_render_service = new \RecruitingPlaybook\Services\FormRenderService();
+				echo $form_render_service->render( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				?>
 			</div>
 
 		</div>

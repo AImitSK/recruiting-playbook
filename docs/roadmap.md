@@ -316,58 +316,69 @@ Design & Branding │                   │
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### M2.1: Kanban-Board (React)
+### M2.1: Kanban-Board (React) ✅
 
-- [ ] React Kanban-Komponente
-- [ ] Drag & Drop (Status-Änderung)
-- [ ] Spalten: Neu → Screening → Interview → Angebot → Eingestellt/Abgelehnt
-- [ ] Quick-Actions (E-Mail, Notiz, Ablehnen)
-- [ ] Filter & Suche
-- [ ] Keyboard Navigation
-- [ ] Optimistic Updates
+- [x] React Kanban-Komponente (@dnd-kit)
+- [x] Drag & Drop (Status-Änderung)
+- [x] Spalten: Neu → Screening → Interview → Angebot → Eingestellt/Abgelehnt
+- [x] Quick-Actions (Klick → Detail-Seite mit E-Mail, Notiz, Status)
+- [x] Filter & Suche
+- [x] Keyboard Navigation (Pfeiltasten, Leertaste)
+- [x] Optimistic Updates
+- [x] Screen Reader Support (ARIA Live-Region)
 
-### M2.2: Erweitertes Bewerbermanagement
+### M2.2: Erweitertes Bewerbermanagement ✅
 
-- [ ] Notizen-System pro Bewerber
-- [ ] Bewertungen (Sterne)
-- [ ] Activity Log (Statusänderungen, E-Mails)
-- [ ] Bewerber-Timeline
-- [ ] Talent-Pool (Interessenten für später, 24 Monate)
+- [x] Notizen-System pro Bewerber (NoteEditor, NotesPanel, NoteService)
+- [x] Bewertungen (Sterne) (RatingStars, RatingService)
+- [x] Activity Log (Statusänderungen, E-Mails) (ActivityService, ActivityController)
+- [x] Bewerber-Timeline (Timeline.jsx, TimelineItem.jsx)
+- [x] Talent-Pool (TalentPoolPage, TalentPoolService, 24 Monate Aufbewahrung)
 
-### M2.3: E-Mail-System (Pro)
+### M2.3: E-Mail-System (Pro) ✅
 
-- [ ] Template-Editor (WYSIWYG)
-- [ ] Platzhalter ({vorname}, {stelle}, {firma})
-- [ ] Templates: Eingangsbestätigung, Absage, Interview-Einladung
-- [ ] Manueller Versand aus Backend
-- [ ] E-Mail-Historie pro Bewerber
-- [ ] **Queued Delivery via Action Scheduler**
+> Siehe [email-signature-specification.md](technical/email-signature-specification.md) und [email-implementation-plan.md](technical/email-implementation-plan.md)
 
-### M2.4: Benutzerrollen
+- [x] Template-Editor (WYSIWYG mit TipTap)
+- [x] Platzhalter (17 echte: {vorname}, {nachname}, {stelle}, {firma}, etc.)
+- [x] Automatische Templates: Eingangsbestätigung, Absage, Zurückgezogen
+- [x] Manuelle Templates: Interview-Einladung, Angebot, etc. (mit Lücken `___`)
+- [x] Signaturen-Verwaltung (pro User, auto-generierte Fallback-Signatur aus Firmendaten)
+- [x] Firmendaten-Einstellungen (React + shadcn/ui)
+- [x] Manueller Versand aus Backend mit Signatur-Auswahl
+- [x] E-Mail-Historie pro Bewerber
+- [x] **Queued Delivery via Action Scheduler**
 
-- [ ] Custom Capabilities
-- [ ] Rolle: Administrator (alles)
-- [ ] Rolle: Recruiter (Bewerbungen verwalten)
-- [ ] Rolle: Hiring Manager (nur Lesen, Kommentieren)
-- [ ] Stellen-Zuweisung pro User
+### M2.4: Benutzerrollen ✅
 
-### M2.5: Reporting & Dashboard
+- [x] Custom Capabilities
+- [x] Rolle: Administrator (alles)
+- [x] Rolle: Recruiter (Bewerbungen verwalten)
+- [x] Rolle: Hiring Manager (nur Lesen, Kommentieren)
+- [x] Stellen-Zuweisung pro User
 
-- [ ] Dashboard-Widget
-- [ ] Bewerbungen pro Stelle
-- [ ] Bewerbungen pro Zeitraum
-- [ ] Time-to-Hire Berechnung
-- [ ] Conversion-Rate (Besucher → Bewerbung)
-- [ ] CSV-Export
-- [ ] **Systemstatus-Widget (Integritäts-Check)**
+### M2.5: Reporting & Dashboard ✅
 
-### M2.6: Erweiterte Formulare
+- [x] **Stats-Dashboard** (React-Seite mit Übersichtskarten)
+- [x] Bewerbungen pro Stelle (JobStatsTable)
+- [x] Bewerbungen pro Zeitraum (TrendChart mit Periodenauswahl)
+- [x] Time-to-Hire Berechnung (TimeToHireService)
+- [x] CSV-Export (Bewerbungen & Statistiken)
+- [x] **Systemstatus-Widget (Integritäts-Check)**
+- [ ] ~~Conversion-Rate (Besucher → Bewerbung)~~ - View-Tracking nicht implementiert, entfernt
 
-- [ ] Custom Fields Builder
-- [ ] Feldtypen: Text, Textarea, Select, Checkbox, Radio, Date
-- [ ] Pflichtfeld-Option
-- [ ] Conditional Logic (Feld X zeigen wenn Y)
-- [ ] Mehrfach-Uploads
+### M2.6: Erweiterte Formulare ✅
+
+- [x] Custom Fields Builder (React-basiert mit Drag & Drop)
+- [x] Feldtypen: Text, Textarea, Email, Phone, Number, Select, Radio, Checkbox, Date, File, URL, Heading, HTML
+- [x] Pflichtfeld-Option
+- [x] Conditional Logic (Feld X zeigen wenn Y)
+- [x] Mehrfach-Uploads
+- [x] Step-basiertes Multi-Step Formular System
+- [x] Draft/Publish Workflow für sichere Änderungen
+- [x] Formular-Templates (Pro)
+- [x] Live-Vorschau (Desktop/Tablet/Mobile)
+- [x] System-Felder: Datei-Upload, Zusammenfassung, Datenschutz
 
 ### M2.7: Hintergrund-Infrastruktur ⚡ NEU
 
@@ -403,11 +414,18 @@ Design & Branding │                   │
   - [ ] Export-Format
   - [ ] Dokumentation
 
-### M2.9: Page Builder Pro
+### M2.9: Page Builder Integration
 
-- [ ] Gutenberg Blocks (alle Elemente)
-- [ ] Elementor Widgets (alle Elemente)
-- [ ] Divi Modules (Basis)
+- [x] **Gutenberg Blocks (Free)** ✅
+  - [x] 9 native Blöcke (jobs, job-search, job-count, featured-jobs, latest-jobs, job-categories, application-form, ai-job-finder, ai-job-match)
+  - [x] Block-Kategorie "Recruiting Playbook"
+  - [x] InspectorControls für alle Attribute
+  - [x] Placeholder-Vorschau im Editor (statt ServerSideRender)
+  - [x] Block-Patterns (5 vorgefertigte Layouts)
+  - [x] Example-Attribute für Inserter-Vorschau
+  - [x] Dokumentation auf Website
+- [ ] Elementor Widgets (Pro) - alle Elemente
+- [ ] Divi Modules (Pro) - Basis
 
 ### M2.10: Lizenz-System & Launch
 
@@ -428,52 +446,72 @@ Design & Branding │                   │
   - [ ] Landing Page
   - [ ] Support-Kanal einrichten
 
-### M2.11: Design & Branding (Admin-Seite)
+### M2.11: Design & Branding (Admin-Seite) ✅
 
 > Einstellungen → Design: Umfangreiche Anpassungsmöglichkeiten für das Frontend
 
-- [ ] **Branding**
-  - [ ] Firmenlogo (Upload oder Theme-Logo)
-  - [ ] Primärfarbe (Custom oder Theme-Farbe)
-  - [ ] "Powered by Recruiting Playbook" verstecken
-- [ ] **Typografie**
-  - [ ] Schriftart (Theme erben oder Custom)
-  - [ ] Überschriften H1–H6 (Größe in rem)
-  - [ ] Fließtext-Größe
-  - [ ] Kleine Texte (Labels, Hinweise)
-- [ ] **Cards & Container**
-  - [ ] Eckenradius (Slider 0–24px)
-  - [ ] Schattenstärke (Keine / Leicht / Mittel / Stark / Extra)
-  - [ ] Rahmen anzeigen (ja/nein)
-  - [ ] Rahmenfarbe
-- [ ] **Buttons**
-  - [ ] Theme-Button verwenden (WordPress .wp-element-button)
-  - [ ] Custom Button-Design:
-    - [ ] Hintergrundfarbe (Normal + Hover)
-    - [ ] Textfarbe (Normal + Hover)
-    - [ ] Rahmen anzeigen (ja/nein)
-    - [ ] Rahmenfarbe (Normal + Hover)
-    - [ ] Schatten (Normal + Hover)
-    - [ ] Eckenradius
-  - [ ] Live-Vorschau im Admin
-- [ ] **Job-Liste**
-  - [ ] Spaltenanzahl (2/3/4)
-  - [ ] Badges anzeigen
-  - [ ] Gehalt anzeigen
-  - [ ] Standort anzeigen
-- [ ] **CSS-Variable-Output**
-  - [ ] Dynamisches Inline-CSS oder separates Stylesheet
-  - [ ] Caching der generierten Styles
+- [x] **Branding**
+  - [x] Firmenlogo (Upload oder Theme-Logo)
+  - [x] Primärfarbe (Custom oder Theme-Farbe)
+  - [x] "Powered by Recruiting Playbook" verstecken
+- [x] **Typografie**
+  - [x] Schriftart (Theme erben oder Custom)
+  - [x] Überschriften H1–H6 (Größe in rem)
+  - [x] Fließtext-Größe
+  - [x] Kleine Texte (Labels, Hinweise)
+  - [x] Zeilenabstand (Überschriften + Fließtext)
+  - [x] Link-Styling (Farbe, Unterstreichung)
+- [x] **Cards & Container**
+  - [x] Layout-Preset (Kompakt / Standard / Großzügig)
+  - [x] Eckenradius (Slider 0–24px)
+  - [x] Schattenstärke (Keine / Leicht / Mittel / Stark)
+  - [x] Rahmen anzeigen (ja/nein)
+  - [x] Rahmenfarbe + Rahmenstärke
+  - [x] Hintergrundfarbe
+  - [x] Hover-Effekt (Keiner / Hochheben / Leuchten / Rahmen)
+- [x] **Buttons**
+  - [x] Theme-Button verwenden (WordPress .wp-element-button)
+  - [x] Custom Button-Design:
+    - [x] Hintergrundfarbe (Normal + Hover)
+    - [x] Textfarbe (Normal + Hover)
+    - [x] Rahmen anzeigen (ja/nein)
+    - [x] Rahmenfarbe + Rahmenbreite
+    - [x] Schatten (Normal + Hover)
+    - [x] Eckenradius
+    - [x] Größe (Klein / Mittel / Groß)
+  - [x] Live-Vorschau im Admin
+- [x] **KI-Button**
+  - [x] Stil-Modus (Theme / Preset / Manuell)
+  - [x] 5 Presets (Gradient, Outline, Minimal, Glow, Soft)
+  - [x] Manuelle Farben (Gradient, Textfarbe, Radius)
+  - [x] Button-Text + Icon-Auswahl
+- [x] **Job-Liste**
+  - [x] Darstellung (Grid / Liste)
+  - [x] Spaltenanzahl (2/3/4)
+  - [x] Badges anzeigen + Badge-Stil (Hell / Ausgefüllt)
+  - [x] Badge-Farben (Neu, Remote, Kategorie, Gehalt)
+  - [x] Gehalt anzeigen
+  - [x] Standort anzeigen
+  - [x] Beschäftigungsart anzeigen
+  - [x] Bewerbungsfrist anzeigen
+- [x] **CSS-Variable-Output**
+  - [x] Dynamisches Inline-CSS über CssGeneratorService
+  - [x] CSS-Variablen für alle Einstellungen
+  - [x] Card-Presets mit CSS-Variable-Overrides
 
 ### Deliverables Phase 2
 
 | Deliverable | Status |
 |-------------|--------|
 | Pro-Version verkaufsfertig | ⬜ |
-| Kanban-Board funktioniert | ⬜ |
-| E-Mail-Templates | ⬜ |
-| Design & Branding Admin-Seite | ⬜ |
-| Action Scheduler integriert | ⬜ |
+| Kanban-Board funktioniert | ✅ |
+| E-Mail-Templates | ✅ |
+| Bewerbermanagement (Notizen, Ratings, Timeline) | ✅ |
+| Talent-Pool | ✅ |
+| Reporting & Dashboard | ✅ |
+| Benutzerrollen & Stellen-Zuweisung | ✅ |
+| Design & Branding Admin-Seite | ✅ |
+| Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
 | Lizenz-System mit klarer Definition | ⬜ |
@@ -662,4 +700,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: Januar 2025*
+*Letzte Aktualisierung: 7. Februar 2026*

@@ -127,7 +127,36 @@
         --rp-z-dropdown: 50;
         --rp-z-modal: 100;
         --rp-z-tooltip: 150;
+
+        /* ─────────────────────────────────────────────────────────────────────
+           SHADCN/UI VARIABLEN - Für Tailwind Kompatibilität
+           Diese Variablen werden von Tailwind-generierten Klassen wie
+           rp-bg-primary verwendet. Sie verweisen auf unsere --rp-color-* Tokens.
+           ───────────────────────────────────────────────────────────────────── */
+
+        /* Primärfarbe als HSL für Tailwind (z.B. rp-bg-primary) */
+        --primary: 217 91% 60%;  /* ~#2563eb - Fallback HSL-Wert */
+        --primary-foreground: 0 0% 100%;
     }
+}
+
+/* =============================================================================
+   TAILWIND HSL VARIABLE OVERRIDES
+
+   Tailwind generiert Klassen wie rp-bg-primary mit hsl(var(--primary)).
+   Das funktioniert im Frontend nicht, weil --primary als HSL-Wert erwartet wird.
+   Diese Overrides setzen die Farbe direkt mit unseren --rp-color-* Tokens.
+   ============================================================================= */
+.rp-plugin .rp-bg-primary {
+    background-color: var(--rp-color-primary) !important;
+}
+
+.rp-plugin .rp-text-primary {
+    color: var(--rp-color-primary) !important;
+}
+
+.rp-plugin .rp-border-primary {
+    border-color: var(--rp-color-primary) !important;
 }
 
 /* =============================================================================
@@ -231,13 +260,29 @@
         box-shadow: none;
     }
 
-    /* Focus Reset */
-    .rp-plugin button:focus,
-    .rp-plugin [role="button"]:focus,
-    .rp-plugin input:focus,
-    .rp-plugin select:focus,
-    .rp-plugin textarea:focus {
+    /* Focus Reset - nur bei Maus-Klick, nicht bei Tastatur */
+    .rp-plugin button:focus:not(:focus-visible),
+    .rp-plugin [role="button"]:focus:not(:focus-visible),
+    .rp-plugin input:focus:not(:focus-visible),
+    .rp-plugin select:focus:not(:focus-visible),
+    .rp-plugin textarea:focus:not(:focus-visible) {
         outline: none;
+    }
+
+    /* Focus-Visible - Tastatur-Navigation (Barrierefreiheit) */
+    .rp-plugin button:focus-visible,
+    .rp-plugin [role="button"]:focus-visible,
+    .rp-plugin a:focus-visible {
+        outline: 2px solid var(--rp-color-primary);
+        outline-offset: 2px;
+    }
+
+    .rp-plugin input:focus-visible,
+    .rp-plugin select:focus-visible,
+    .rp-plugin textarea:focus-visible {
+        outline: none;
+        border-color: var(--rp-color-primary);
+        box-shadow: 0 0 0 3px var(--rp-color-primary-light);
     }
 
     /* Table Reset */
@@ -300,29 +345,53 @@
     font-weight: inherit;
 }
 
+/* Headings - Pro-Override via CssGeneratorService */
 .rp-plugin h1 {
-    font-size: var(--rp-text-4xl);  /* 36px */
-    line-height: var(--rp-leading-tight);
+    font-size: var(--rp-font-size-h1, var(--rp-text-4xl));  /* Default: 36px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
 }
 
 .rp-plugin h2 {
-    font-size: var(--rp-text-3xl);  /* 30px */
-    line-height: var(--rp-leading-tight);
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));  /* Default: 30px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
 }
 
 .rp-plugin h3 {
-    font-size: var(--rp-text-2xl);  /* 24px */
-    line-height: var(--rp-leading-snug);
+    font-size: var(--rp-font-size-h3, var(--rp-text-2xl));  /* Default: 24px */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-snug));
+    color: var(--rp-color-primary);  /* Akzentfarbe laut Farbkaskade */
 }
 
 .rp-plugin h4 {
-    font-size: var(--rp-text-xl);   /* 20px */
-    line-height: var(--rp-leading-snug);
+    font-size: var(--rp-text-xl);   /* 20px - nicht konfigurierbar */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-snug));
 }
 
 .rp-plugin h5 {
-    font-size: var(--rp-text-lg);   /* 18px */
-    line-height: var(--rp-leading-normal);
+    font-size: var(--rp-text-lg);   /* 18px - nicht konfigurierbar */
+    line-height: var(--rp-line-height-heading, var(--rp-leading-normal));
+}
+
+/* Body Text - Pro-Override via CssGeneratorService */
+.rp-plugin .rp-job-content p,
+.rp-plugin .rp-job-content li,
+.rp-plugin .rp-prose p,
+.rp-plugin .rp-prose li {
+    font-size: var(--rp-font-size-body, var(--rp-text-base));  /* Default: 16px */
+    line-height: var(--rp-line-height-body, var(--rp-leading-relaxed));
+}
+
+/* Small Text - Pro-Override via CssGeneratorService */
+.rp-plugin small,
+.rp-plugin .rp-text-small,
+.rp-plugin .rp-job-content small {
+    font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
+}
+
+/* Card Teaser/Excerpt - Pro-Override */
+.rp-plugin .rp-card p {
+    font-size: var(--rp-font-size-small, var(--rp-text-sm));  /* Default: 14px */
+    line-height: var(--rp-line-height-body, var(--rp-leading-relaxed));
 }
 
 /* Sidebar Definition Lists - kleiner als Basis */
@@ -357,32 +426,65 @@
 }
 
 /* Prose/Content Bereich - List-Styles wiederherstellen */
-.rp-plugin .rp-prose ul {
+.rp-plugin .rp-prose ul,
+.rp-plugin .rp-job-content ul {
     list-style-type: disc;
     padding-left: 1.5rem;
     margin: 1rem 0;
 }
 
-.rp-plugin .rp-prose ol {
+.rp-plugin .rp-prose ol,
+.rp-plugin .rp-job-content ol {
     list-style-type: decimal;
     padding-left: 1.5rem;
     margin: 1rem 0;
 }
 
-.rp-plugin .rp-prose li {
+.rp-plugin .rp-prose li,
+.rp-plugin .rp-job-content li {
     margin: 0.5rem 0;
 }
 
-.rp-plugin .rp-prose p {
-    margin: 1rem 0;
+.rp-plugin .rp-prose p,
+.rp-plugin .rp-job-content p {
+    margin-bottom: var(--rp-paragraph-spacing, 1em);
+    line-height: var(--rp-line-height-body, 1.6);
 }
 
 .rp-plugin .rp-prose h1,
 .rp-plugin .rp-prose h2,
 .rp-plugin .rp-prose h3,
-.rp-plugin .rp-prose h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+.rp-plugin .rp-prose h4,
+.rp-plugin .rp-job-content h1,
+.rp-plugin .rp-job-content h2,
+.rp-plugin .rp-job-content h3,
+.rp-plugin .rp-job-content h4 {
+    margin-top: var(--rp-heading-margin-top, 1.5em);
+    margin-bottom: var(--rp-heading-margin-bottom, 0.5em);
+    line-height: var(--rp-line-height-heading, 1.2);
+}
+
+/* Erste Überschrift im Content ohne Top-Margin */
+.rp-plugin .rp-prose > h1:first-child,
+.rp-plugin .rp-prose > h2:first-child,
+.rp-plugin .rp-prose > h3:first-child,
+.rp-plugin .rp-prose > h4:first-child,
+.rp-plugin .rp-job-content > h1:first-child,
+.rp-plugin .rp-job-content > h2:first-child,
+.rp-plugin .rp-job-content > h3:first-child,
+.rp-plugin .rp-job-content > h4:first-child {
+    margin-top: 0;
+}
+
+/* Job Content Links - Design-Variablen (erhöhte Spezifität für Theme-Override) */
+.rp-plugin .rp-job-content a,
+.rp-plugin .rp-job-content ul a,
+.rp-plugin .rp-job-content ol a,
+.rp-plugin .rp-job-content li a,
+.rp-plugin .rp-job-content p a,
+.rp-plugin .rp-prose a {
+    color: var(--rp-link-color, var(--rp-color-primary)) !important;
+    text-decoration: var(--rp-link-decoration, underline);
 }
 
 /* =============================================================================
@@ -397,11 +499,13 @@
         align-items: center;
         justify-content: center;
         gap: var(--rp-space-2);
-        padding: var(--rp-space-2) var(--rp-space-4);
+        padding: var(--rp-btn-padding, var(--rp-space-2) var(--rp-space-4));
         font-size: var(--rp-text-sm);
         font-weight: 500;
         line-height: var(--rp-leading-normal);
-        border-radius: var(--rp-radius-md);
+        border-radius: var(--rp-btn-radius, var(--rp-radius-md));
+        border: var(--rp-btn-border, none);
+        box-shadow: var(--rp-btn-shadow, none);
         transition: all var(--rp-transition);
         cursor: pointer;
     }
@@ -412,12 +516,14 @@
     }
 
     .rp-plugin .rp-btn-primary {
-        background-color: var(--rp-color-primary);
-        color: var(--rp-color-primary-contrast);
+        background-color: var(--rp-btn-bg, var(--rp-color-primary));
+        color: var(--rp-btn-text, var(--rp-color-primary-contrast));
     }
 
     .rp-plugin .rp-btn-primary:hover:not(:disabled) {
-        background-color: var(--rp-color-primary-hover);
+        background-color: var(--rp-btn-bg-hover, var(--rp-color-primary-hover));
+        color: var(--rp-btn-text-hover, var(--rp-color-primary-contrast));
+        box-shadow: var(--rp-btn-shadow-hover, none);
     }
 
     .rp-plugin .rp-btn-secondary {
@@ -429,6 +535,25 @@
     .rp-plugin .rp-btn-secondary:hover:not(:disabled) {
         background-color: var(--rp-color-primary-light);
         border-color: var(--rp-color-primary);
+    }
+
+    /* AI/KI Button - spezielles Styling für KI-Features */
+    /* Verwendet --rp-btn-padding für gleiche Höhe wie normale Buttons */
+    .rp-plugin .rp-btn-ai {
+        background: var(--rp-ai-btn-bg, linear-gradient(135deg, #8b5cf6, #ec4899));
+        color: var(--rp-ai-btn-text, #ffffff);
+        border-radius: var(--rp-ai-btn-radius, var(--rp-radius-lg));
+        border: var(--rp-ai-btn-border, none);
+        box-shadow: var(--rp-ai-btn-shadow, 0 4px 15px rgba(139, 92, 246, 0.3));
+        padding: var(--rp-btn-padding, 0.75rem 1.5rem);
+        font-size: var(--rp-text-sm);
+        font-weight: 500;
+        line-height: var(--rp-leading-normal);
+    }
+
+    .rp-plugin .rp-btn-ai:hover:not(:disabled) {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
     }
 
     /* ─────────────────────────────────────────────────────────────────────
@@ -524,17 +649,255 @@
        Cards
        ───────────────────────────────────────────────────────────────────── */
     .rp-plugin .rp-card {
-        background-color: var(--rp-color-surface);
-        border: 1px solid var(--rp-color-border);
-        border-radius: var(--rp-radius-xl);
-        padding: var(--rp-space-6);
-        box-shadow: var(--rp-shadow-md);
-        transition: box-shadow var(--rp-transition), border-color var(--rp-transition);
+        /* Design & Branding: Überschreibbar via CssGeneratorService */
+        background-color: var(--rp-card-bg, var(--rp-color-surface));
+        border: var(--rp-card-border, 1px solid var(--rp-color-border));
+        border-radius: var(--rp-card-radius, var(--rp-radius-xl));
+        padding: var(--rp-card-padding, var(--rp-space-6));
+        box-shadow: var(--rp-card-shadow, var(--rp-shadow-md));
+        transition: box-shadow var(--rp-transition), border-color var(--rp-transition), transform var(--rp-transition);
     }
 
+    /* Card Hover - Standard, wird durch card_hover_effect Setting überschrieben */
     .rp-plugin .rp-card:hover {
-        box-shadow: var(--rp-shadow-lg);
+        box-shadow: var(--rp-card-shadow-hover, var(--rp-shadow-lg));
         border-color: var(--rp-color-border-dark);
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────
+       Card Layout Presets
+       Gemäß Design & Branding Spec v2: Kompakt / Standard / Großzügig
+
+       Diese Presets steuern:
+       - Padding & Abstände
+       - Border-Radius & Schatten
+       - Beschreibungslänge (line-clamp)
+       - Button-Layout & -Größe
+       - Badge-Größe
+       ───────────────────────────────────────────────────────────────────── */
+
+    /* ─────────────────────────────────────────────────────────────────────
+       Grid für Cards - WICHTIG für height: 100% der Cards
+       ───────────────────────────────────────────────────────────────────── */
+    .rp-plugin .rp-grid {
+        align-items: stretch !important;
+    }
+
+    /* KOMPAKT: Minimalistisch, horizontal, Badges oben, Icon-Buttons rechts */
+    .rp-plugin .rp-card.rp-card--compact {
+        padding: 12px 16px !important;
+        border-radius: var(--rp-card-radius, 6px) !important;
+        box-shadow: var(--rp-card-shadow, 0 1px 2px 0 rgb(0 0 0 / 0.05)) !important;
+        border: var(--rp-card-border, 1px solid #e5e7eb) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
+        /* Flexbox für horizontales Layout */
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 8px 16px !important;
+        height: auto !important;
+    }
+
+    /* Badges-Bereich (Datum + alle Badges) - ganz links, umbrechen erlaubt */
+    .rp-plugin .rp-card--compact .rp-flex.rp-items-center.rp-gap-4 {
+        order: 1;
+        flex: 1 1 auto;
+        flex-wrap: wrap !important;
+        gap: 0.5rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* Tags-Bereich (Standort, Art, Remote) - nach Badges, umbrechen erlaubt */
+    .rp-plugin .rp-card--compact .rp-flex.rp-flex-wrap.rp-items-center.rp-gap-2.rp-text-xs {
+        order: 2;
+        flex: 1 1 auto;
+        flex-wrap: wrap !important;
+        margin-top: 0 !important;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* Titel-Bereich - nimmt verfügbaren Platz */
+    .rp-plugin .rp-card--compact > div:has(h3) {
+        order: 3;
+        flex: 1 1 auto;
+        min-width: 150px;
+    }
+
+    .rp-plugin .rp-card--compact h3 {
+        font-size: 0.95rem;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* Beschreibung ausblenden */
+    .rp-plugin .rp-card--compact p.rp-line-clamp-3,
+    .rp-plugin .rp-card--compact > div > p {
+        display: none !important;
+    }
+
+    /* Buttons rechts ausgerichtet */
+    .rp-plugin .rp-card--compact .rp-card-buttons {
+        order: 4;
+        flex: 0 0 auto;
+        margin-left: auto !important;
+        margin-top: 0 !important;
+        padding-top: 0;
+        gap: 0.25rem;
+    }
+
+    /* Badges kleiner */
+    .rp-plugin .rp-card--compact .rp-badge {
+        padding: 2px 6px;
+        font-size: 0.65rem;
+    }
+
+    /* Buttons als Icons - Text verstecken */
+    .rp-plugin .rp-card--compact .wp-element-button,
+    .rp-plugin .rp-card--compact .rp-btn {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 6px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        color: transparent !important;
+    }
+
+    /* Pfeil-Icon für den "Mehr erfahren" Button - absolut zentriert */
+    .rp-plugin .rp-card--compact .rp-card-buttons > a.wp-element-button:first-child::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 20px !important;
+        height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M14 5l7 7m0 0l-7 7m7-7H3'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* KI-Icon für den KI-Match Button (Glühbirne/Sparkles) - absolut zentriert */
+    .rp-plugin .rp-card--compact .rp-card-buttons > div button::before,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div .wp-element-button::before,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div a::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 20px !important;
+        height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* KI-Button im div auch als Icon-Button stylen */
+    .rp-plugin .rp-card--compact .rp-card-buttons > div button,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div .wp-element-button,
+    .rp-plugin .rp-card--compact .rp-card-buttons > div a {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 6px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        color: transparent !important;
+        padding: 0 !important;
+    }
+
+    /* KI-Button Icon (falls vorhanden) */
+    .rp-plugin .rp-card--compact .rp-btn-ai::before {
+        content: "" !important;
+        display: block !important;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/%3E%3C/svg%3E") !important;
+        background-size: 20px 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
+    /* STANDARD: Ausgewogenes Design (default) */
+    .rp-plugin .rp-card.rp-card--standard {
+        padding: 20px 24px !important;
+        border-radius: var(--rp-card-radius, 12px) !important;
+        box-shadow: var(--rp-card-shadow, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)) !important;
+        border: var(--rp-card-border, none) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
+        /* Flexbox für Button-Ausrichtung unten */
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+
+    .rp-plugin .rp-card--standard p.rp-line-clamp-3,
+    .rp-plugin .rp-card--standard > div > p {
+        -webkit-line-clamp: 3;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .rp-plugin .rp-card--standard .rp-card-buttons {
+        margin-top: auto !important;
+        padding-top: 1rem;
+    }
+
+    /* GROSSZÜGIG: Prominent, viel Raum, volle Beschreibung */
+    .rp-plugin .rp-card.rp-card--spacious {
+        padding: 32px 40px !important;
+        border-radius: var(--rp-card-radius, 16px) !important;
+        box-shadow: var(--rp-card-shadow, 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)) !important;
+        border: var(--rp-card-border, none) !important;
+        background-color: var(--rp-card-bg, #ffffff) !important;
+        /* Flexbox für Button-Ausrichtung unten */
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+
+    .rp-plugin .rp-card--spacious h3 {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .rp-plugin .rp-card--spacious p.rp-line-clamp-3,
+    .rp-plugin .rp-card--spacious > div > p {
+        -webkit-line-clamp: 5;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .rp-plugin .rp-card--spacious .rp-card-buttons {
+        /* Button-Container: Gestapelt und nach unten ausgerichtet */
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: auto !important;
+        padding-top: 1.5rem;
+    }
+
+    .rp-plugin .rp-card--spacious .wp-element-button,
+    .rp-plugin .rp-card--spacious .rp-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 24px !important;
+    }
+
+    .rp-plugin .rp-card--spacious .rp-badge {
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
 
     /* ─────────────────────────────────────────────────────────────────────
@@ -551,9 +914,10 @@
         border-radius: var(--rp-radius-full);
     }
 
+    /* Badge-Farben: Überschreibbar via CssGeneratorService */
     .rp-plugin .rp-badge-gray {
-        background-color: #f1f5f9;
-        color: #475569;
+        background-color: var(--rp-badge-category-bg, #f1f5f9);
+        color: var(--rp-badge-category-text, #475569);
     }
 
     .rp-plugin .rp-badge-primary {
@@ -561,9 +925,28 @@
         color: var(--rp-color-primary);
     }
 
-    .rp-plugin .rp-badge-success {
-        background-color: var(--rp-color-success-light);
-        color: #166534;
+    .rp-plugin .rp-badge-success,
+    .rp-plugin .rp-badge-new {
+        background-color: var(--rp-badge-new-bg, var(--rp-color-success-light));
+        color: var(--rp-badge-new-text, #166534);
+    }
+
+    .rp-plugin .rp-badge-featured {
+        background-color: var(--rp-badge-featured-bg, #fef3c7);
+        color: var(--rp-badge-featured-text, #92400e);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .rp-plugin .rp-badge-remote {
+        background-color: var(--rp-badge-remote-bg, #ede9fe);
+        color: var(--rp-badge-remote-text, #7c3aed);
+    }
+
+    .rp-plugin .rp-badge-salary {
+        background-color: var(--rp-badge-salary-bg, var(--rp-color-primary-light));
+        color: var(--rp-badge-salary-text, var(--rp-color-primary));
     }
 
     .rp-plugin .rp-badge-warning {
@@ -605,41 +988,30 @@
 }
 
 /* =============================================================================
-   BUTTON FALLBACK - Für Classic Themes (Avada etc.)
+   BUTTON - Strukturelle Styles (für alle Themes)
 
-   WordPress Block Themes stylen .wp-element-button automatisch.
-   Classic Themes kennen diese Klasse nicht, daher eigene Styles.
+   Block Themes (FSE) stylen .wp-element-button vollständig.
+   Classic Themes brauchen minimale Fallbacks.
+
+   WICHTIG: Keine Farben/Radius hier - das kommt vom Theme oder Custom Design.
+   Custom Design CSS wird von CssGeneratorService mit !important eingefügt.
    ============================================================================= */
+
+/* Strukturelle Basis (überschreibt nichts Visuelles) */
 .rp-plugin .wp-element-button,
 .rp-plugin a.wp-element-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--rp-space-2);
-    padding: var(--rp-space-3) var(--rp-space-6);
-    font-size: var(--rp-text-base);
-    font-weight: 600;
-    line-height: var(--rp-leading-normal);
-    color: var(--rp-color-primary-contrast);
-    background-color: var(--rp-color-primary);
-    border: none;
-    border-radius: var(--rp-radius-md);
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--rp-transition), transform var(--rp-transition);
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .rp-plugin .wp-element-button:hover,
 .rp-plugin a.wp-element-button:hover {
-    background-color: var(--rp-color-primary-hover);
-    color: var(--rp-color-primary-contrast);
     text-decoration: none;
-}
-
-.rp-plugin .wp-element-button:focus,
-.rp-plugin a.wp-element-button:focus {
-    outline: 2px solid var(--rp-color-primary);
-    outline-offset: 2px;
 }
 
 .rp-plugin .wp-element-button:disabled {
@@ -647,16 +1019,76 @@
     cursor: not-allowed;
 }
 
-/* Outline/Secondary Button Variant */
-.rp-plugin .wp-element-button.is-style-outline,
-.rp-plugin a.wp-element-button.is-style-outline {
-    background-color: transparent;
-    color: var(--rp-color-primary);
-    border: 2px solid var(--rp-color-primary);
+/* =============================================================================
+   SHORTCODE COMPONENTS - Stile für Shortcode-Ausgaben
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_job_count] - Stellen-Zähler
+   ───────────────────────────────────────────────────────────────────── */
+.rp-job-count {
+    font-weight: 600;
+    color: inherit;
 }
 
-.rp-plugin .wp-element-button.is-style-outline:hover,
-.rp-plugin a.wp-element-button.is-style-outline:hover {
-    background-color: var(--rp-color-primary);
-    color: var(--rp-color-primary-contrast);
+.rp-job-count--zero {
+    color: var(--rp-color-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_featured_jobs] - Hervorgehobene Stellen
+   ───────────────────────────────────────────────────────────────────── */
+.rp-featured-jobs {
+    /* Wrapper für featured jobs - erbt Plugin-Container Styles */
+}
+
+.rp-plugin .rp-featured-jobs__title {
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));
+    font-weight: 700;
+    color: inherit;
+    margin-bottom: var(--rp-space-6);
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_latest_jobs] - Neueste Stellen
+   ───────────────────────────────────────────────────────────────────── */
+.rp-latest-jobs {
+    /* Wrapper für latest jobs - erbt Plugin-Container Styles */
+}
+
+.rp-plugin .rp-latest-jobs__title {
+    font-size: var(--rp-font-size-h2, var(--rp-text-3xl));
+    font-weight: 700;
+    color: inherit;
+    margin-bottom: var(--rp-space-6);
+    line-height: var(--rp-line-height-heading, var(--rp-leading-tight));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_job_categories] - Kategorie-Übersicht
+   ───────────────────────────────────────────────────────────────────── */
+.rp-job-categories {
+    /* Grid wird über rp-grid Klassen gesteuert */
+}
+
+.rp-plugin .rp-job-category-card {
+    /* Erbt von .rp-card, zusätzliche Anpassungen */
+    text-decoration: none;
+    color: inherit;
+}
+
+.rp-plugin .rp-job-category-card:hover {
+    text-decoration: none;
+    border-color: var(--rp-color-primary);
+}
+
+.rp-plugin .rp-job-category-card__name {
+    font-size: var(--rp-text-base);
+    font-weight: 500;
+    color: var(--rp-color-text);
+}
+
+.rp-plugin .rp-job-category-card__count {
+    /* Nutzt .rp-badge Styles */
 }

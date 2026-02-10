@@ -1,0 +1,14 @@
+# Local Development Variables
+# Kopiere diese Datei zu .dev.vars für lokale Entwicklung
+# .dev.vars wird NICHT in Git committed
+
+# Development mode aktiviert Test-Auth (X-Test-Mode: true Header)
+ENVIRONMENT=development
+
+# Optional: Lokale Presidio-Instanz
+# PRESIDIO_URL=http://localhost:5000
+
+# Secrets müssen separat gesetzt werden (wrangler secret put ...)
+# - OPENROUTER_API_KEY
+# - FREEMIUS_BEARER_TOKEN (Product-scope Bearer Token from Freemius Dashboard)
+# - FREEMIUS_WEBHOOK_SECRET

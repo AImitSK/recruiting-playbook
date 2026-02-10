@@ -12,6 +12,7 @@ namespace RecruitingPlaybook\Core;
 
 defined( 'ABSPATH' ) || exit;
 
+use RecruitingPlaybook\Core\RoleManager;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\PostTypes\JobListing;
 
@@ -38,8 +39,8 @@ class Activator {
 		// 4. Standard-Optionen setzen.
 		self::setDefaultOptions();
 
-		// 5. Capabilities hinzufügen.
-		self::addCapabilities();
+		// 5. Custom Rollen und Capabilities registrieren.
+		RoleManager::register();
 
 		// 6. Aktivierungs-Marker setzen (für Setup-Wizard).
 		update_option( 'rp_activation_redirect', true );
@@ -68,40 +69,11 @@ class Activator {
 				add_option( $option, $value );
 			}
 		}
-	}
 
-	/**
-	 * Custom Capabilities hinzufügen
-	 */
-	private static function addCapabilities(): void {
-		$admin = get_role( 'administrator' );
-
-		if ( $admin ) {
-			// Job Listing Capabilities.
-			$capabilities = [
-				'edit_job_listing',
-				'read_job_listing',
-				'delete_job_listing',
-				'edit_job_listings',
-				'edit_others_job_listings',
-				'publish_job_listings',
-				'read_private_job_listings',
-				'delete_job_listings',
-				'delete_private_job_listings',
-				'delete_published_job_listings',
-				'delete_others_job_listings',
-				'edit_private_job_listings',
-				'edit_published_job_listings',
-				// Recruiting Capabilities.
-				'manage_recruiting',
-				'view_applications',
-				'edit_applications',
-				'delete_applications',
-			];
-
-			foreach ( $capabilities as $cap ) {
-				$admin->add_cap( $cap );
-			}
+		// DSGVO: Datenschutzrichtlinien-Version (für Consent-Tracking).
+		if ( false === get_option( 'rp_privacy_policy_version' ) ) {
+			add_option( 'rp_privacy_policy_version', '1.0' );
 		}
 	}
+
 }

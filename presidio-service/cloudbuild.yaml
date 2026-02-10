@@ -1,0 +1,44 @@
+steps:
+  # Docker Image bauen
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/presidio/presidio-service', '.']
+
+  # Image pushen
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/presidio/presidio-service']
+
+  # Cloud Run deployen
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'presidio-service'
+      - '--image'
+      - 'europe-west3-docker.pkg.dev/$PROJECT_ID/presidio/presidio-service'
+      - '--region'
+      - 'europe-west3'
+      - '--platform'
+      - 'managed'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+      - '--timeout'
+      - '300'
+      - '--concurrency'
+      - '10'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '5'
+      - '--cpu-boost'
+      - '--startup-probe-path'
+      - '/ready'
+      - '--startup-probe-initial-delay'
+      - '10'
+      - '--startup-probe-timeout'
+      - '240'
+
+images:
+  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/presidio/presidio-service'

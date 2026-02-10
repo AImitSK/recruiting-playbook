@@ -40,7 +40,7 @@ class ApplicationStatusTest extends TestCase {
 		$all = ApplicationStatus::getAll();
 
 		$this->assertIsArray( $all );
-		$this->assertCount( 7, $all );
+		$this->assertCount( 8, $all ); // Inkl. DELETED Status.
 		$this->assertArrayHasKey( 'new', $all );
 		$this->assertArrayHasKey( 'hired', $all );
 		$this->assertArrayHasKey( 'rejected', $all );

@@ -63,7 +63,8 @@ Das Plugin folgt einer **objektorientierten Architektur** mit klarer Schichtentr
 |--------|--------------|
 | Architektur | OOP ohne Framework |
 | Autoloading | Composer PSR-4 |
-| Admin-UI | React (@wordpress/scripts) |
+| Admin-UI | React + shadcn/ui (siehe [admin-ui-architecture.md](./admin-ui-architecture.md)) |
+| Frontend-UI | Alpine.js + Tailwind CSS |
 | Namespace | `RecruitingPlaybook` |
 | Coding Standards | WordPress Coding Standards |
 | PHP-Version | 8.0+ |

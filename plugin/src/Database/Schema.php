@@ -26,10 +26,25 @@ class Schema {
 		global $wpdb;
 
 		return [
-			'candidates'   => $wpdb->prefix . 'rp_candidates',
-			'applications' => $wpdb->prefix . 'rp_applications',
-			'documents'    => $wpdb->prefix . 'rp_documents',
-			'activity_log' => $wpdb->prefix . 'rp_activity_log',
+			'candidates'        => $wpdb->prefix . 'rp_candidates',
+			'applications'      => $wpdb->prefix . 'rp_applications',
+			'documents'         => $wpdb->prefix . 'rp_documents',
+			'activity_log'      => $wpdb->prefix . 'rp_activity_log',
+			'notes'             => $wpdb->prefix . 'rp_notes',
+			'ratings'           => $wpdb->prefix . 'rp_ratings',
+			'talent_pool'       => $wpdb->prefix . 'rp_talent_pool',
+			'email_templates'   => $wpdb->prefix . 'rp_email_templates',
+			'email_log'         => $wpdb->prefix . 'rp_email_log',
+			'signatures'        => $wpdb->prefix . 'rp_signatures',
+			'job_assignments'   => $wpdb->prefix . 'rp_user_job_assignments',
+			'stats_cache'       => $wpdb->prefix . 'rp_stats_cache',
+			'field_definitions' => $wpdb->prefix . 'rp_field_definitions',
+			'form_templates'    => $wpdb->prefix . 'rp_form_templates',
+			'form_config'       => $wpdb->prefix . 'rp_form_config',
+			'webhooks'          => $wpdb->prefix . 'rp_webhooks',
+			'webhook_deliveries' => $wpdb->prefix . 'rp_webhook_deliveries',
+			'api_keys'          => $wpdb->prefix . 'rp_api_keys',
+			'ai_analyses'       => $wpdb->prefix . 'rp_ai_analyses',
 		];
 	}
 
@@ -46,6 +61,7 @@ class Schema {
 		return "CREATE TABLE {$table} (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			email varchar(255) NOT NULL,
+			email_hash varchar(64) NOT NULL DEFAULT '',
 			salutation varchar(20) DEFAULT '',
 			first_name varchar(100) DEFAULT '',
 			last_name varchar(100) DEFAULT '',
@@ -82,22 +98,27 @@ class Schema {
 			candidate_id bigint(20) unsigned NOT NULL,
 			job_id bigint(20) unsigned NOT NULL,
 			status varchar(50) DEFAULT 'new',
+			kanban_position int(11) DEFAULT 0,
 			cover_letter longtext DEFAULT '',
 			custom_fields longtext DEFAULT '',
 			source varchar(50) DEFAULT 'website',
 			source_url varchar(500) DEFAULT '',
 			consent_privacy tinyint(1) DEFAULT 0,
 			consent_privacy_at datetime DEFAULT NULL,
+			consent_privacy_version varchar(20) DEFAULT '',
 			consent_ip varchar(45) DEFAULT '',
 			ip_address varchar(45) DEFAULT '',
 			user_agent varchar(500) DEFAULT '',
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			deleted_at datetime DEFAULT NULL,
 			PRIMARY KEY (id),
 			KEY candidate_id (candidate_id),
 			KEY job_id (job_id),
 			KEY status (status),
-			KEY created_at (created_at)
+			KEY kanban_sort (status, kanban_position),
+			KEY created_at (created_at),
+			KEY deleted_at (deleted_at)
 		) {$charset};";
 	}
 
@@ -154,6 +175,7 @@ class Schema {
 			old_value longtext DEFAULT NULL,
 			new_value longtext DEFAULT NULL,
 			message longtext DEFAULT NULL,
+			meta longtext DEFAULT NULL,
 			ip_address varchar(45) DEFAULT NULL,
 			user_agent varchar(500) DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -162,6 +184,481 @@ class Schema {
 			KEY user_id (user_id),
 			KEY action (action),
 			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_notes
+	 *
+	 * @return string
+	 */
+	public static function getNotesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['notes'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned DEFAULT NULL,
+			candidate_id bigint(20) unsigned NOT NULL,
+			user_id bigint(20) unsigned NOT NULL,
+			content longtext NOT NULL,
+			is_private tinyint(1) DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY application_id (application_id),
+			KEY candidate_id (candidate_id),
+			KEY user_id (user_id),
+			KEY created_at (created_at),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_ratings
+	 *
+	 * @return string
+	 */
+	public static function getRatingsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['ratings'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned NOT NULL,
+			user_id bigint(20) unsigned NOT NULL,
+			rating tinyint(1) unsigned NOT NULL,
+			category varchar(50) DEFAULT 'overall',
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_application_category (user_id, application_id, category),
+			KEY application_id (application_id),
+			KEY rating (rating),
+			KEY category (category)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_talent_pool
+	 *
+	 * @return string
+	 */
+	public static function getTalentPoolTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['talent_pool'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			candidate_id bigint(20) unsigned NOT NULL,
+			added_by bigint(20) unsigned NOT NULL,
+			reason longtext DEFAULT NULL,
+			tags varchar(255) DEFAULT NULL,
+			expires_at datetime NOT NULL,
+			reminder_sent tinyint(1) DEFAULT 0,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY candidate_id (candidate_id),
+			KEY added_by (added_by),
+			KEY expires_at (expires_at),
+			KEY tags (tags),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_email_templates
+	 *
+	 * @return string
+	 */
+	public static function getEmailTemplatesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['email_templates'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			slug varchar(100) NOT NULL,
+			name varchar(255) NOT NULL,
+			subject varchar(255) NOT NULL,
+			body_html longtext NOT NULL,
+			body_text longtext DEFAULT NULL,
+			category varchar(50) DEFAULT 'custom',
+			is_active tinyint(1) DEFAULT 1,
+			is_default tinyint(1) DEFAULT 0,
+			is_system tinyint(1) DEFAULT 0,
+			variables longtext DEFAULT NULL,
+			settings longtext DEFAULT NULL,
+			created_by bigint(20) unsigned DEFAULT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY slug (slug),
+			KEY category (category),
+			KEY is_active (is_active),
+			KEY is_default (is_default),
+			KEY is_system (is_system),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_email_log
+	 *
+	 * @return string
+	 */
+	public static function getEmailLogTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['email_log'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			application_id bigint(20) unsigned DEFAULT NULL,
+			candidate_id bigint(20) unsigned DEFAULT NULL,
+			template_id bigint(20) unsigned DEFAULT NULL,
+			recipient_email varchar(255) NOT NULL,
+			recipient_name varchar(255) DEFAULT NULL,
+			sender_email varchar(255) NOT NULL,
+			sender_name varchar(255) DEFAULT NULL,
+			subject varchar(255) NOT NULL,
+			body_html longtext NOT NULL,
+			body_text longtext DEFAULT NULL,
+			status varchar(20) DEFAULT 'pending',
+			error_message text DEFAULT NULL,
+			opened_at datetime DEFAULT NULL,
+			clicked_at datetime DEFAULT NULL,
+			metadata longtext DEFAULT NULL,
+			sent_by bigint(20) unsigned DEFAULT NULL,
+			scheduled_at datetime DEFAULT NULL,
+			sent_at datetime DEFAULT NULL,
+			created_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			KEY application_id (application_id),
+			KEY candidate_id (candidate_id),
+			KEY template_id (template_id),
+			KEY recipient_email (recipient_email),
+			KEY status (status),
+			KEY sent_at (sent_at),
+			KEY scheduled_at (scheduled_at),
+			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_signatures
+	 *
+	 * @return string
+	 */
+	public static function getSignaturesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['signatures'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			user_id bigint(20) unsigned DEFAULT NULL,
+			name varchar(100) NOT NULL,
+			greeting varchar(255) DEFAULT NULL,
+			content text NOT NULL,
+			is_default tinyint(1) DEFAULT 0,
+			include_company tinyint(1) DEFAULT 1,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY user_id (user_id),
+			KEY is_default (user_id, is_default)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_user_job_assignments
+	 *
+	 * Speichert Zuweisungen von Benutzern zu Stellen.
+	 * Ermöglicht Recruitern nur ihre zugewiesenen Bewerbungen zu sehen.
+	 *
+	 * @return string
+	 */
+	public static function getJobAssignmentsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['job_assignments'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			user_id bigint(20) unsigned NOT NULL,
+			job_id bigint(20) unsigned NOT NULL,
+			assigned_by bigint(20) unsigned NOT NULL,
+			assigned_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_job (user_id, job_id),
+			KEY user_id (user_id),
+			KEY job_id (job_id),
+			KEY assigned_by (assigned_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_stats_cache
+	 *
+	 * Caching-Tabelle für berechnete Statistiken.
+	 *
+	 * @return string
+	 */
+	public static function getStatsCacheTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['stats_cache'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			cache_key varchar(100) NOT NULL,
+			cache_value longtext NOT NULL,
+			expires_at datetime NOT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY cache_key (cache_key),
+			KEY expires_at (expires_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_field_definitions
+	 *
+	 * Speichert benutzerdefinierte Feld-Definitionen für Bewerbungsformulare.
+	 * Pro-Feature: Custom Fields Builder.
+	 *
+	 * @return string
+	 */
+	public static function getFieldDefinitionsTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['field_definitions'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			template_id bigint(20) unsigned DEFAULT NULL,
+			job_id bigint(20) unsigned DEFAULT NULL,
+			field_key varchar(100) NOT NULL,
+			field_type varchar(50) NOT NULL,
+			label varchar(255) NOT NULL,
+			placeholder varchar(255) DEFAULT NULL,
+			description text DEFAULT NULL,
+			options longtext DEFAULT NULL,
+			validation longtext DEFAULT NULL,
+			conditional longtext DEFAULT NULL,
+			settings longtext DEFAULT NULL,
+			position int(11) NOT NULL DEFAULT 0,
+			is_required tinyint(1) DEFAULT 0,
+			is_system tinyint(1) DEFAULT 0,
+			is_active tinyint(1) DEFAULT 1,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY field_key_template (field_key, template_id),
+			UNIQUE KEY field_key_job (field_key, job_id),
+			KEY template_id (template_id),
+			KEY job_id (job_id),
+			KEY field_type (field_type),
+			KEY position (position),
+			KEY is_active (is_active),
+			KEY is_system (is_system),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_form_templates
+	 *
+	 * Speichert Formular-Templates für wiederverwendbare Feld-Konfigurationen.
+	 * Pro-Feature: Custom Fields Builder.
+	 *
+	 * @return string
+	 */
+	public static function getFormTemplatesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['form_templates'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(255) NOT NULL,
+			description text DEFAULT NULL,
+			is_default tinyint(1) DEFAULT 0,
+			settings longtext DEFAULT NULL,
+			created_by bigint(20) unsigned NOT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			deleted_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY is_default (is_default),
+			KEY created_by (created_by),
+			KEY deleted_at (deleted_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_form_config
+	 *
+	 * Speichert die Step-basierte Formular-Konfiguration.
+	 * Zwei Einträge: 'draft' (Arbeitsversion) und 'published' (Live-Version).
+	 *
+	 * @return string
+	 */
+	public static function getFormConfigTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['form_config'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			config_type varchar(20) NOT NULL,
+			config_data longtext NOT NULL,
+			version int(11) unsigned NOT NULL DEFAULT 1,
+			created_by bigint(20) unsigned DEFAULT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY config_type (config_type),
+			KEY version (version),
+			KEY created_by (created_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_webhooks
+	 *
+	 * @return string
+	 */
+	public static function getWebhooksTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['webhooks'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL,
+			url varchar(500) NOT NULL,
+			secret varchar(255) NOT NULL,
+			events longtext NOT NULL,
+			is_active tinyint(1) DEFAULT 1,
+			last_triggered_at datetime DEFAULT NULL,
+			last_success_at datetime DEFAULT NULL,
+			last_failure_at datetime DEFAULT NULL,
+			failure_count int(10) unsigned DEFAULT 0,
+			success_count int(10) unsigned DEFAULT 0,
+			created_by bigint(20) unsigned NOT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY is_active (is_active),
+			KEY created_by (created_by)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_webhook_deliveries
+	 *
+	 * @return string
+	 */
+	public static function getWebhookDeliveriesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['webhook_deliveries'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			webhook_id bigint(20) unsigned NOT NULL,
+			event varchar(50) NOT NULL,
+			request_url varchar(500) NOT NULL,
+			request_headers longtext DEFAULT NULL,
+			request_body longtext DEFAULT NULL,
+			response_code smallint(5) unsigned DEFAULT NULL,
+			response_headers longtext DEFAULT NULL,
+			response_body text DEFAULT NULL,
+			response_time_ms int(10) unsigned DEFAULT NULL,
+			status varchar(20) NOT NULL,
+			error_message text DEFAULT NULL,
+			retry_count tinyint(3) unsigned DEFAULT 0,
+			next_retry_at datetime DEFAULT NULL,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY webhook_id (webhook_id),
+			KEY status (status),
+			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_ai_analyses
+	 *
+	 * @return string
+	 */
+	public static function getAiAnalysesTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['ai_analyses'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			external_job_id varchar(100) DEFAULT NULL,
+			analysis_type varchar(20) DEFAULT 'job_match',
+			job_id bigint(20) unsigned DEFAULT NULL,
+			job_title varchar(255) DEFAULT '',
+			file_type varchar(20) DEFAULT '',
+			file_size bigint(20) unsigned DEFAULT 0,
+			score smallint(5) unsigned DEFAULT NULL,
+			category varchar(50) DEFAULT NULL,
+			status varchar(20) DEFAULT 'pending',
+			error_message text DEFAULT NULL,
+			result_summary text DEFAULT NULL,
+			ip_address varchar(45) DEFAULT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			completed_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			KEY analysis_type (analysis_type),
+			KEY status (status),
+			KEY created_at (created_at)
+		) {$charset};";
+	}
+
+	/**
+	 * SQL für rp_api_keys
+	 *
+	 * @return string
+	 */
+	public static function getApiKeysTableSql(): string {
+		global $wpdb;
+		$table   = self::getTables()['api_keys'];
+		$charset = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL,
+			key_prefix varchar(10) NOT NULL,
+			key_hash varchar(64) NOT NULL,
+			key_hint varchar(10) NOT NULL,
+			permissions longtext NOT NULL,
+			rate_limit int(10) unsigned DEFAULT 1000,
+			last_used_at datetime DEFAULT NULL,
+			request_count bigint(20) unsigned DEFAULT 0,
+			created_by bigint(20) unsigned NOT NULL,
+			is_active tinyint(1) DEFAULT 1,
+			created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			expires_at datetime DEFAULT NULL,
+			revoked_at datetime DEFAULT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY key_hash (key_hash),
+			KEY created_by (created_by),
+			KEY is_active (is_active)
 		) {$charset};";
 	}
 }

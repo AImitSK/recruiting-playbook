@@ -36,11 +36,12 @@ test.describe('Stellenanzeigen', () => {
         if (await jobLink.isVisible()) {
             await jobLink.click();
 
-            // Prüfe Stellenseite
-            await expect(page.locator('h1.rp-job-title')).toBeVisible();
+            // Prüfe Stellenseite (h1 mit Job-Titel)
+            const jobTitle = page.locator('h1').first();
+            await expect(jobTitle).toBeVisible();
 
             // Prüfe "Jetzt bewerben" Button
-            const applyButton = page.locator('a[href="#rp-apply-form"], button:has-text("bewerben")').first();
+            const applyButton = page.getByText('Jetzt bewerben').first();
             await expect(applyButton).toBeVisible();
         }
     });

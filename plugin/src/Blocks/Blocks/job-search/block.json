@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rp/job-search",
+	"version": "1.0.0",
+	"title": "Stellensuche",
+	"category": "recruiting-playbook",
+	"description": "Suchformular mit Filtern und Ergebnisliste.",
+	"keywords": ["suche", "search", "filter", "jobs", "stellen"],
+	"textdomain": "recruiting-playbook",
+	"icon": "search",
+	"attributes": {
+		"showSearch": {
+			"type": "boolean",
+			"default": true
+		},
+		"showCategory": {
+			"type": "boolean",
+			"default": true
+		},
+		"showLocation": {
+			"type": "boolean",
+			"default": true
+		},
+		"showType": {
+			"type": "boolean",
+			"default": true
+		},
+		"limit": {
+			"type": "number",
+			"default": 10
+		},
+		"columns": {
+			"type": "number",
+			"default": 1
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"showSearch": true,
+			"showCategory": true,
+			"showLocation": true,
+			"showType": false
+		}
+	},
+	"editorScript": "file:../../../../assets/dist/js/blocks.js",
+	"editorStyle": "file:../../../../assets/dist/css/blocks-editor.css",
+	"render": "file:./render.php"
+}

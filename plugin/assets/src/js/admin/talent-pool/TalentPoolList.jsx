@@ -1,0 +1,318 @@
+/**
+ * Talent Pool List Component
+ *
+ * Hauptkomponente für die Talent-Pool Übersichtsseite
+ *
+ * @package RecruitingPlaybook
+ */
+
+import { useState, useEffect, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import {
+	Search,
+	Users,
+	ChevronLeft,
+	ChevronRight,
+	Info,
+	X,
+} from 'lucide-react';
+import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { useTalentPoolList } from '../applicant/hooks/useTalentPool';
+import { TalentPoolCard } from './TalentPoolCard';
+
+/**
+ * Talent-Pool Liste Komponente
+ */
+export function TalentPoolList() {
+	const [ allTags, setAllTags ] = useState( [] );
+	const [ selectedTag, setSelectedTag ] = useState( '' );
+	const [ searchInput, setSearchInput ] = useState( '' );
+
+	const config = window.rpTalentPool || {};
+	const i18n = config.i18n || {};
+	const logoUrl = config.logoUrl || '';
+
+	const {
+		items,
+		loading,
+		error,
+		total,
+		totalPages,
+		page,
+		setSearch,
+		setTags,
+		setPage,
+		refetch,
+	} = useTalentPoolList();
+
+	/**
+	 * Verfügbare Tags laden
+	 */
+	const loadTags = useCallback( async () => {
+		try {
+			const response = await fetch(
+				`${ config.apiUrl }talent-pool/tags`,
+				{
+					headers: {
+						'X-WP-Nonce': config.nonce,
+					},
+				}
+			);
+			if ( response.ok ) {
+				const tags = await response.json();
+				setAllTags( tags || [] );
+			}
+		} catch ( err ) {
+			console.error( 'Error loading tags:', err );
+		}
+	}, [ config.apiUrl, config.nonce ] );
+
+	// Tags initial laden
+	useEffect( () => {
+		loadTags();
+	}, [ loadTags ] );
+
+	/**
+	 * Suche mit Debounce
+	 */
+	useEffect( () => {
+		const timeoutId = setTimeout( () => {
+			setSearch( searchInput );
+		}, 300 );
+
+		return () => clearTimeout( timeoutId );
+	}, [ searchInput, setSearch ] );
+
+	/**
+	 * Tag-Filter ändern
+	 */
+	const handleTagChange = ( e ) => {
+		const tag = e.target.value;
+		setSelectedTag( tag );
+		setTags( tag );
+	};
+
+	/**
+	 * Kandidat entfernt Handler
+	 */
+	const handleCandidateRemoved = () => {
+		refetch();
+		loadTags();
+	};
+
+	// Error State (Loading wird vom PHP-Placeholder gehandhabt)
+	if ( error && items.length === 0 ) {
+		return (
+			<div className="rp-admin" style={ { padding: '20px 0' } }>
+				<Card>
+					<CardContent style={ { padding: '3rem', textAlign: 'center' } }>
+						<p style={ { color: '#d63638', marginBottom: '1.5rem' } }>{ error }</p>
+						<Button onClick={ refetch }>
+							{ i18n.retry || __( 'Erneut versuchen', 'recruiting-playbook' ) }
+						</Button>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
+
+	return (
+		<div className="rp-admin" style={ { padding: '20px 0' } }>
+			<div style={ { maxWidth: '1400px' } }>
+				{ /* Header: Logo links, Titel rechts */ }
+				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
+					{ logoUrl && (
+						<img
+							src={ logoUrl }
+							alt="Recruiting Playbook"
+							style={ { width: '150px', height: 'auto' } }
+						/>
+					) }
+					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
+						{ i18n.title || __( 'Talent-Pool', 'recruiting-playbook' ) }
+					</h1>
+				</div>
+
+				{ /* Filter Card */ }
+				<Card style={ { marginBottom: '1rem' } }>
+					<CardContent style={ { padding: '0.75rem 1rem' } }>
+						<div style={ { display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' } }>
+							{ /* Search */ }
+							<div style={ { position: 'relative' } }>
+								<Search
+									style={ {
+										position: 'absolute',
+										left: '0.75rem',
+										top: '50%',
+										transform: 'translateY(-50%)',
+										width: '1rem',
+										height: '1rem',
+										color: '#9ca3af',
+									} }
+								/>
+								<input
+									type="text"
+									placeholder={ i18n.search || __( 'Kandidaten suchen...', 'recruiting-playbook' ) }
+									value={ searchInput }
+									onChange={ ( e ) => setSearchInput( e.target.value ) }
+									style={ {
+										paddingLeft: '2.5rem',
+										paddingRight: searchInput ? '2rem' : '1rem',
+										paddingTop: '0.5rem',
+										paddingBottom: '0.5rem',
+										border: '1px solid #e5e7eb',
+										borderRadius: '0.375rem',
+										fontSize: '0.875rem',
+										width: '280px',
+										outline: 'none',
+									} }
+								/>
+								{ searchInput && (
+									<button
+										type="button"
+										onClick={ () => setSearchInput( '' ) }
+										style={ {
+											position: 'absolute',
+											right: '0.5rem',
+											top: '50%',
+											transform: 'translateY(-50%)',
+											background: 'none',
+											border: 'none',
+											cursor: 'pointer',
+											padding: '0.25rem',
+											color: '#9ca3af',
+										} }
+									>
+										<X style={ { width: '0.875rem', height: '0.875rem' } } />
+									</button>
+								) }
+							</div>
+
+							{ /* Tag Filter */ }
+							<select
+								value={ selectedTag }
+								onChange={ handleTagChange }
+								style={ {
+									padding: '0.5rem 2rem 0.5rem 0.75rem',
+									border: '1px solid #e5e7eb',
+									borderRadius: '0.375rem',
+									fontSize: '0.875rem',
+									backgroundColor: '#fff',
+									cursor: 'pointer',
+									minWidth: '150px',
+								} }
+							>
+								<option value="">{ i18n.allTags || __( 'Alle Tags', 'recruiting-playbook' ) }</option>
+								{ allTags.map( ( tag ) => (
+									<option key={ tag } value={ tag }>
+										{ tag }
+									</option>
+								) ) }
+							</select>
+
+							{ /* Spacer */ }
+							<div style={ { flexGrow: 1 } } />
+
+							{ /* Total Count */ }
+							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
+								{ total } { total === 1 ? ( i18n.candidate || __( 'Kandidat', 'recruiting-playbook' ) ) : ( i18n.candidates || __( 'Kandidaten', 'recruiting-playbook' ) ) }
+							</span>
+						</div>
+					</CardContent>
+				</Card>
+
+				{ /* GDPR Notice */ }
+				<div
+					style={ {
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0.5rem',
+						padding: '0.75rem 1rem',
+						backgroundColor: '#fef3c7',
+						borderRadius: '0.375rem',
+						marginBottom: '1.5rem',
+						fontSize: '0.875rem',
+						color: '#92400e',
+					} }
+				>
+					<Info style={ { width: '1rem', height: '1rem', flexShrink: 0 } } />
+					{ i18n.gdprNotice || __( 'DSGVO-Hinweis: Kandidaten werden nach Ablauf automatisch aus dem Pool entfernt.', 'recruiting-playbook' ) }
+				</div>
+
+				{ /* Content */ }
+				{ items.length === 0 ? (
+					<Card>
+						<CardContent style={ { padding: '4rem 2rem', textAlign: 'center' } }>
+							<Users style={ { width: '4rem', height: '4rem', color: '#d1d5db', marginBottom: '1rem' } } />
+							<h2 style={ { margin: '0 0 0.5rem 0', fontSize: '1.25rem', fontWeight: 600, color: '#1f2937' } }>
+								{ i18n.emptyPool || __( 'Der Talent-Pool ist noch leer.', 'recruiting-playbook' ) }
+							</h2>
+							<p style={ { margin: '0 0 1.5rem 0', color: '#6b7280' } }>
+								{ i18n.emptyPoolHint || __( 'Fügen Sie vielversprechende Kandidaten aus der Bewerbungsdetailseite zum Talent-Pool hinzu.', 'recruiting-playbook' ) }
+							</p>
+							<Button asChild>
+								<a href={ config.applicationsUrl || '#' }>
+									{ i18n.goToApplications || __( 'Zu den Bewerbungen', 'recruiting-playbook' ) }
+								</a>
+							</Button>
+						</CardContent>
+					</Card>
+				) : (
+					<>
+						{ /* Kandidaten Grid */ }
+						<div
+							style={ {
+								display: 'grid',
+								gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+								gap: '1rem',
+								marginBottom: '1.5rem',
+							} }
+						>
+							{ items.map( ( entry ) => (
+								<TalentPoolCard
+									key={ entry.id }
+									entry={ entry }
+									onRemoved={ handleCandidateRemoved }
+								/>
+							) ) }
+						</div>
+
+						{ /* Pagination */ }
+						{ totalPages > 1 && (
+							<Card>
+								<CardContent style={ { padding: '0.75rem 1rem' } }>
+									<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+										<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
+											{ i18n.page || __( 'Seite', 'recruiting-playbook' ) } { page } { i18n.of || __( 'von', 'recruiting-playbook' ) } { totalPages }
+										</span>
+										<div style={ { display: 'flex', gap: '0.5rem' } }>
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={ () => setPage( page - 1 ) }
+												disabled={ page <= 1 || loading }
+											>
+												<ChevronLeft style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
+												{ i18n.previous || __( 'Vorherige', 'recruiting-playbook' ) }
+											</Button>
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={ () => setPage( page + 1 ) }
+												disabled={ page >= totalPages || loading }
+											>
+												{ i18n.next || __( 'Nächste', 'recruiting-playbook' ) }
+												<ChevronRight style={ { width: '1rem', height: '1rem', marginLeft: '0.25rem' } } />
+											</Button>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						) }
+					</>
+				) }
+			</div>
+		</div>
+	);
+}

@@ -13,6 +13,7 @@ namespace RecruitingPlaybook\Api;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\ApplicationService;
+use RecruitingPlaybook\Services\CapabilityService;
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\GdprService;
@@ -126,20 +127,25 @@ class ApplicationController extends WP_REST_Controller {
 					'callback'            => [ $this, 'update_status' ],
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
-						'id'     => [
+						'id'              => [
 							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
-						'status' => [
+						'status'          => [
 							'description' => __( 'Neuer Status', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
 						],
-						'note'   => [
+						'note'            => [
 							'description' => __( 'Notiz zur Statusänderung', 'recruiting-playbook' ),
 							'type'        => 'string',
+							'required'    => false,
+						],
+						'kanban_position' => [
+							'description' => __( 'Position im Kanban-Board', 'recruiting-playbook' ),
+							'type'        => 'integer',
 							'required'    => false,
 						],
 					],
@@ -224,6 +230,45 @@ class ApplicationController extends WP_REST_Controller {
 				],
 			]
 		);
+
+		// Kanban: Positionen neu sortieren (Batch-Update)
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/reorder',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'reorder_applications' ],
+					'permission_callback' => [ $this, 'update_item_permissions_check' ],
+					'args'                => [
+						'status'    => [
+							'description' => __( 'Status/Spalte der zu sortierenden Bewerbungen', 'recruiting-playbook' ),
+							'type'        => 'string',
+							'required'    => true,
+							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
+						],
+						'positions' => [
+							'description' => __( 'Array mit ID und neuer Position', 'recruiting-playbook' ),
+							'type'        => 'array',
+							'required'    => true,
+							'items'       => [
+								'type'       => 'object',
+								'properties' => [
+									'id'              => [
+										'type'     => 'integer',
+										'required' => true,
+									],
+									'kanban_position' => [
+										'type'     => 'integer',
+										'required' => true,
+									],
+								],
+							],
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -279,6 +324,12 @@ class ApplicationController extends WP_REST_Controller {
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
+			'message'          => [
+				'description'       => __( 'Anschreiben (Alias)', 'recruiting-playbook' ),
+				'type'              => 'string',
+				'required'          => false,
+				'sanitize_callback' => 'wp_kses_post',
+			],
 			'privacy_consent'  => [
 				'description'       => __( 'Datenschutz-Einwilligung', 'recruiting-playbook' ),
 				'type'              => 'boolean',
@@ -297,6 +348,13 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'integer',
 				'required'    => false,
 			],
+			// Custom Fields (Pro) - akzeptiert JSON-String oder Objekt
+			'custom_fields'    => [
+				'description'       => __( 'Custom Field Werte (Pro-Feature)', 'recruiting-playbook' ),
+				'required'          => false,
+				'default'           => [],
+				'sanitize_callback' => [ $this, 'sanitize_custom_fields' ],
+			],
 		];
 	}
 
@@ -307,15 +365,18 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function create_item( $request ) {
-		// CSRF-Schutz: Nonce validieren.
-		// Das Nonce wird vom Frontend im X-WP-Nonce Header gesendet.
+		// HINWEIS: Für öffentliche Bewerbungsformulare verzichten wir auf strikte Nonce-Prüfung.
+		// Grund: Seiten-Caching macht Nonces schnell ungültig.
+		// Sicherheit wird stattdessen durch Spam-Schutz (Honeypot, Timestamp) gewährleistet.
+		// Optional: Nonce prüfen falls vorhanden (zusätzliche Sicherheit ohne Caching-Probleme).
 		$nonce = $request->get_header( 'X-WP-Nonce' );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-			return new WP_Error(
-				'rest_cookie_invalid_nonce',
-				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
+		if ( $nonce && ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			// Nonce wurde gesendet aber ist ungültig - wahrscheinlich gecacht/abgelaufen.
+			// Wir loggen dies, aber blockieren nicht (Spam-Schutz ist primäre Sicherheit).
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( 'Recruiting Playbook: Ungültiges Nonce bei Bewerbung - möglicherweise gecachte Seite.' );
+			}
 		}
 
 		// Spam-Schutz prüfen
@@ -327,6 +388,22 @@ class ApplicationController extends WP_REST_Controller {
 		// Dateien verarbeiten
 		$files = $request->get_file_params();
 
+		// Custom Fields extrahieren (alle Dateien die mit custom_ beginnen).
+		$custom_files = [];
+		foreach ( $files as $key => $file ) {
+			if ( str_starts_with( $key, 'custom_' ) ) {
+				$custom_files[ $key ] = $file;
+				unset( $files[ $key ] );
+			}
+		}
+
+		// Custom Fields: JSON-String dekodieren falls nötig (FormData sendet Strings).
+		$custom_fields = $request->get_param( 'custom_fields' ) ?: [];
+		if ( is_string( $custom_fields ) ) {
+			$decoded = json_decode( $custom_fields, true );
+			$custom_fields = is_array( $decoded ) ? $decoded : [];
+		}
+
 		// Bewerbung erstellen
 		$result = $this->application_service->create( [
 			'job_id'          => $request->get_param( 'job_id' ),
@@ -335,11 +412,13 @@ class ApplicationController extends WP_REST_Controller {
 			'last_name'       => $request->get_param( 'last_name' ),
 			'email'           => $request->get_param( 'email' ),
 			'phone'           => $request->get_param( 'phone' ) ?: '',
-			'cover_letter'    => $request->get_param( 'cover_letter' ) ?: '',
+			'cover_letter'    => $request->get_param( 'cover_letter' ) ?: $request->get_param( 'message' ) ?: '',
 			'privacy_consent' => $request->get_param( 'privacy_consent' ),
 			'ip_address'      => $this->get_client_ip(),
 			'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
 			'files'           => $files,
+			'custom_fields'   => $custom_fields,
+			'custom_files'    => $custom_files,
 		] );
 
 		if ( is_wp_error( $result ) ) {
@@ -368,6 +447,8 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) {
+		$context = $request->get_param( 'context' ) ?: 'view';
+
 		$args = [
 			'job_id'   => $request->get_param( 'job_id' ),
 			'status'   => $request->get_param( 'status' ),
@@ -376,9 +457,21 @@ class ApplicationController extends WP_REST_Controller {
 			'page'     => $request->get_param( 'page' ) ?: 1,
 			'orderby'  => $request->get_param( 'orderby' ) ?: 'date',
 			'order'    => $request->get_param( 'order' ) ?: 'desc',
+			'context'  => $context,
 		];
 
-		$result = $this->application_service->list( $args );
+		// Rollen-basierter Filter: Nicht-Admins sehen nur zugewiesene Stellen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$capability_service        = new CapabilityService();
+			$args['assigned_job_ids']  = $capability_service->getAssignedJobIds( get_current_user_id() );
+		}
+
+		// Kanban-Kontext: Spezielle Methode mit Dokumentenanzahl.
+		if ( 'kanban' === $context ) {
+			$result = $this->application_service->listForKanban( $args );
+		} else {
+			$result = $this->application_service->list( $args );
+		}
 
 		return new WP_REST_Response( $result, 200 );
 	}
@@ -412,11 +505,12 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_status( $request ) {
-		$id     = (int) $request->get_param( 'id' );
-		$status = $request->get_param( 'status' );
-		$note   = $request->get_param( 'note' ) ?: '';
+		$id              = (int) $request->get_param( 'id' );
+		$status          = $request->get_param( 'status' );
+		$note            = $request->get_param( 'note' ) ?: '';
+		$kanban_position = $request->get_param( 'kanban_position' );
 
-		$result = $this->application_service->updateStatus( $id, $status, $note );
+		$result = $this->application_service->updateStatus( $id, $status, $note, $kanban_position );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -438,7 +532,20 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
-		if ( ! current_user_can( 'view_applications' ) ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
+		// Prüfe rp_view_applications ODER manage_options (Admin-Fallback).
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, Bewerbungen anzuzeigen.', 'recruiting-playbook' ),
@@ -465,7 +572,20 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'edit_applications' ) ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
+		// Prüfe edit_applications ODER manage_options (Admin-Fallback).
+		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, Bewerbungen zu bearbeiten.', 'recruiting-playbook' ),
@@ -500,7 +620,7 @@ class ApplicationController extends WP_REST_Controller {
 				'type'        => 'integer',
 				'default'     => 20,
 				'minimum'     => 1,
-				'maximum'     => 100,
+				'maximum'     => 200,
 			],
 			'page'     => [
 				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
@@ -511,7 +631,7 @@ class ApplicationController extends WP_REST_Controller {
 			'orderby'  => [
 				'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
 				'type'        => 'string',
-				'enum'        => [ 'date', 'name', 'status' ],
+				'enum'        => [ 'date', 'name', 'status', 'kanban_position' ],
 				'default'     => 'date',
 			],
 			'order'    => [
@@ -520,7 +640,30 @@ class ApplicationController extends WP_REST_Controller {
 				'enum'        => [ 'asc', 'desc' ],
 				'default'     => 'desc',
 			],
+			'context'  => [
+				'description' => __( 'Kontext für die Abfrage (kanban: mit Dokumentenanzahl)', 'recruiting-playbook' ),
+				'type'        => 'string',
+				'enum'        => [ 'view', 'kanban' ],
+				'default'     => 'view',
+			],
 		];
+	}
+
+	/**
+	 * Custom Fields sanitize
+	 *
+	 * Dekodiert JSON-Strings und stellt sicher, dass ein Array zurückgegeben wird.
+	 *
+	 * @param mixed $value Wert (JSON-String oder Array).
+	 * @return array
+	 */
+	public function sanitize_custom_fields( $value ): array {
+		// JSON-String dekodieren falls nötig.
+		if ( is_string( $value ) ) {
+			$decoded = json_decode( $value, true );
+			return is_array( $decoded ) ? $decoded : [];
+		}
+		return is_array( $value ) ? $value : [];
 	}
 
 	/**
@@ -679,7 +822,20 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'delete_applications' ) ) {
+		// Pro-Feature: API-Zugang prüfen.
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+			return new WP_Error(
+				'rest_api_access_required',
+				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				[
+					'status'      => 403,
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				]
+			);
+		}
+
+		// Prüfe delete_applications ODER manage_options (Admin-Fallback).
+		if ( ! current_user_can( 'delete_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Sie haben keine Berechtigung, Bewerbungen zu löschen.', 'recruiting-playbook' ),
@@ -786,6 +942,62 @@ class ApplicationController extends WP_REST_Controller {
 				'daily_counts'  => $daily_counts,
 				'top_jobs'      => $top_jobs,
 				'total'         => $total,
+			],
+			200
+		);
+	}
+
+	/**
+	 * Kanban: Positionen neu sortieren
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reorder_applications( $request ) {
+		// CSRF-Schutz: Nonce validieren (Defense in Depth).
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return new WP_Error(
+				'rest_cookie_invalid_nonce',
+				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		// Rate Limiting: Max 1 Request pro Sekunde pro User (DoS-Schutz).
+		$user_id       = get_current_user_id();
+		$transient_key = "rp_reorder_limit_{$user_id}";
+		if ( get_transient( $transient_key ) ) {
+			return new WP_Error(
+				'too_many_requests',
+				__( 'Zu viele Anfragen. Bitte warten Sie kurz.', 'recruiting-playbook' ),
+				[ 'status' => 429 ]
+			);
+		}
+		set_transient( $transient_key, true, 1 );
+
+		$status    = $request->get_param( 'status' );
+		$positions = $request->get_param( 'positions' );
+
+		if ( empty( $positions ) || ! is_array( $positions ) ) {
+			return new WP_Error(
+				'invalid_positions',
+				__( 'Ungültige Positionen.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$result = $this->application_service->reorderPositions( $status, $positions );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'message' => __( 'Positionen wurden aktualisiert.', 'recruiting-playbook' ),
+				'updated' => $result,
 			],
 			200
 		);

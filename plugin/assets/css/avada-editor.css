@@ -1,0 +1,92 @@
+/**
+ * Avada Fusion Builder Editor Styles
+ *
+ * Styles für die Recruiting Playbook Elements im Fusion Builder Editor.
+ *
+ * @package RecruitingPlaybook
+ * @since 1.2.0
+ */
+
+/* Element-Vorschau im Editor */
+.rp-avada-preview {
+	padding: 20px;
+	background: #f8f9fa;
+	border: 1px solid #e2e4e7;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.rp-avada-preview-icon {
+	font-size: 32px;
+	color: #1d71b8;
+	margin-bottom: 10px;
+}
+
+.rp-avada-preview-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #1e1e1e;
+	margin-bottom: 5px;
+}
+
+.rp-avada-preview-info {
+	font-size: 12px;
+	color: #757575;
+}
+
+/* Element-Picker Kategorie-Icon */
+.fusion-builder-all-elements .recruiting_playbook .fusion-builder-element-icon::before {
+	content: "\e836"; /* fusiona-users */
+}
+
+/* Anpassungen für RP-Elements im Live Builder */
+.fusion-builder-live .rp-jobs-grid,
+.fusion-builder-live .rp-job-search,
+.fusion-builder-live .rp-application-form {
+	pointer-events: none;
+}
+
+/* Element-Platzhalter wenn keine Daten */
+.rp-avada-no-data {
+	padding: 40px 20px;
+	background: #fff3cd;
+	border: 1px dashed #ffc107;
+	border-radius: 4px;
+	text-align: center;
+	color: #856404;
+}
+
+.rp-avada-no-data-icon {
+	font-size: 24px;
+	margin-bottom: 10px;
+}
+
+.rp-avada-no-data-text {
+	font-size: 14px;
+}
+
+/* Hover-Effekt im Element-Picker */
+.fusion-builder-all-elements .recruiting_playbook .fusion-builder-element:hover {
+	border-color: #1d71b8;
+}
+
+/* Badge für Pro/AI-Features */
+.rp-avada-badge {
+	display: inline-block;
+	padding: 2px 6px;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	border-radius: 3px;
+	margin-left: 5px;
+}
+
+.rp-avada-badge--pro {
+	background: #1d71b8;
+	color: #fff;
+}
+
+.rp-avada-badge--ai {
+	background: #7c3aed;
+	color: #fff;
+}

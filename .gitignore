@@ -46,36 +46,59 @@ yarn-error.log*
 *.bak
 
 # =============================================================
-# Website (Next.js)
-# =============================================================
-website/node_modules/
-website/.next/
-
-# =============================================================
-# Plugin-specific (handled in plugin/.gitignore, but also here)
+# Plugin-specific
 # =============================================================
 
 # Dependencies
 plugin/node_modules/
 plugin/vendor/
 
+# Build Artifacts
+plugin/assets/dist/
+
+# PHPUnit Cache
+plugin/.phpunit.cache/
+
+# Dev Screenshots (NOT website/public/screenshots/ - those are docs!)
+docs/screenshot/
+plugin/screenshots/
+*.screenshot.png
+
+# Test artifacts
+plugin/tests/e2e/test-cv.pdf
+**/test-results/
+**/playwright-report/
+
+# Dev Tools (not for production)
+plugin/tools/
+
 # =============================================================
-# Template / Reference files (not deployed)
+# Website (Next.js)
+# =============================================================
+website/node_modules/
+website/.next/
+website/.vercel/
+
+# =============================================================
+# Template / Reference files
 # =============================================================
 docs/website/salient-template/
 docs/website/salient.zip
-nul
 
 # =============================================================
-# Temporary / Local files
+# Misc
+# =============================================================
+nul
+docs/website/
+*.zip
+
+# =============================================================
+# Avada Theme (temp files for development/analysis)
 # =============================================================
 .avada-temp/
-*.ps1
-plugin/tests/e2e/*.pdf
-docs/screenshot/
-plugin/screenshots/
-plugin/tools/
-.devcontainer/mu-plugins/
+extract-avada.ps1
+find-zips.ps1
+list-zip.ps1
 
 # =============================================================
 # Dev Container (do not ignore - needed for development)

@@ -15,26 +15,60 @@ if ( ! class_exists( 'WP_Error' ) ) {
 	 * WordPress Error Stub
 	 */
 	class WP_Error {
-		private string $code;
-		private string $message;
-		private array $data;
+		private array $errors = [];
+		private array $error_data = [];
 
-		public function __construct( string $code = '', string $message = '', $data = [] ) {
-			$this->code    = $code;
-			$this->message = $message;
-			$this->data    = (array) $data;
+		public function __construct( string $code = '', string $message = '', $data = '' ) {
+			if ( empty( $code ) ) {
+				return;
+			}
+			$this->add( $code, $message, $data );
+		}
+
+		public function add( string $code, string $message, $data = '' ): void {
+			$this->errors[ $code ][] = $message;
+			if ( ! empty( $data ) ) {
+				$this->error_data[ $code ] = $data;
+			}
 		}
 
 		public function get_error_code(): string {
-			return $this->code;
+			$codes = $this->get_error_codes();
+			return $codes[0] ?? '';
 		}
 
-		public function get_error_message(): string {
-			return $this->message;
+		public function get_error_codes(): array {
+			return array_keys( $this->errors );
 		}
 
-		public function get_error_data(): array {
-			return $this->data;
+		public function get_error_message( string $code = '' ): string {
+			if ( empty( $code ) ) {
+				$code = $this->get_error_code();
+			}
+			$messages = $this->errors[ $code ] ?? [];
+			return $messages[0] ?? '';
+		}
+
+		public function get_error_messages( string $code = '' ): array {
+			if ( empty( $code ) ) {
+				$all_messages = [];
+				foreach ( $this->errors as $messages ) {
+					$all_messages = array_merge( $all_messages, $messages );
+				}
+				return $all_messages;
+			}
+			return $this->errors[ $code ] ?? [];
+		}
+
+		public function get_error_data( string $code = '' ) {
+			if ( empty( $code ) ) {
+				$code = $this->get_error_code();
+			}
+			return $this->error_data[ $code ] ?? null;
+		}
+
+		public function has_errors(): bool {
+			return ! empty( $this->errors );
 		}
 	}
 }
@@ -77,9 +111,98 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 	}
 }
 
+// WP_REST_Response Stub.
+if ( ! class_exists( 'WP_REST_Response' ) ) {
+	/**
+	 * WordPress REST Response Stub
+	 */
+	class WP_REST_Response {
+		private $data;
+		private int $status;
+		private array $headers = [];
+
+		public function __construct( $data = null, int $status = 200, array $headers = [] ) {
+			$this->data    = $data;
+			$this->status  = $status;
+			$this->headers = $headers;
+		}
+
+		public function get_data() {
+			return $this->data;
+		}
+
+		public function set_data( $data ): void {
+			$this->data = $data;
+		}
+
+		public function get_status(): int {
+			return $this->status;
+		}
+
+		public function set_status( int $status ): void {
+			$this->status = $status;
+		}
+
+		public function get_headers(): array {
+			return $this->headers;
+		}
+
+		public function header( string $key, string $value, bool $replace = true ): void {
+			$this->headers[ $key ] = $value;
+		}
+	}
+}
+
+// WP_REST_Controller Stub.
+if ( ! class_exists( 'WP_REST_Controller' ) ) {
+	/**
+	 * WordPress REST Controller Stub
+	 */
+	abstract class WP_REST_Controller {
+		protected string $namespace = '';
+		protected string $rest_base = '';
+
+		public function register_routes(): void {}
+	}
+}
+
+// WP_REST_Server Konstanten.
+if ( ! class_exists( 'WP_REST_Server' ) ) {
+	/**
+	 * WordPress REST Server Stub
+	 */
+	class WP_REST_Server {
+		const READABLE   = 'GET';
+		const CREATABLE  = 'POST';
+		const EDITABLE   = 'POST, PUT, PATCH';
+		const DELETABLE  = 'DELETE';
+		const ALLMETHODS = 'GET, POST, PUT, PATCH, DELETE';
+	}
+}
+
 // HOUR_IN_SECONDS Konstante.
 if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
+}
+
+// MINUTE_IN_SECONDS Konstante.
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+	define( 'MINUTE_IN_SECONDS', 60 );
+}
+
+// ARRAY_A Konstante (für $wpdb->get_row()).
+if ( ! defined( 'ARRAY_A' ) ) {
+	define( 'ARRAY_A', 'ARRAY_A' );
+}
+
+// ARRAY_N Konstante.
+if ( ! defined( 'ARRAY_N' ) ) {
+	define( 'ARRAY_N', 'ARRAY_N' );
+}
+
+// OBJECT Konstante.
+if ( ! defined( 'OBJECT' ) ) {
+	define( 'OBJECT', 'OBJECT' );
 }
 
 // Plugin-Konstanten für Tests.

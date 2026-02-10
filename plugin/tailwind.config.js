@@ -10,6 +10,47 @@ module.exports = {
         './templates/**/*.php',
         './src/**/*.php',
         './assets/src/js/**/*.js',
+        './assets/src/js/**/*.jsx',
+        './assets/src/css/**/*.css',
+    ],
+
+    /*
+     * Safelist: Klassen die NIE gepurgt werden
+     * Dynamische Klassen die via PHP/Settings generiert werden
+     */
+    safelist: [
+        // Card Layout Presets
+        'rp-card--compact',
+        'rp-card--standard',
+        'rp-card--spacious',
+        // Grid Columns (dynamisch generiert via columns Attribut)
+        'rp-grid',
+        'rp-grid-cols-1',
+        'rp-grid-cols-2',
+        'rp-grid-cols-3',
+        'rp-grid-cols-4',
+        'rp-grid-cols-5',
+        'rp-grid-cols-6',
+        // Responsive Grid (sm, md, lg breakpoints)
+        'sm:rp-grid-cols-2',
+        'sm:rp-grid-cols-3',
+        'sm:rp-grid-cols-4',
+        'md:rp-grid-cols-2',
+        'md:rp-grid-cols-3',
+        'md:rp-grid-cols-4',
+        'md:rp-grid-cols-5',
+        'md:rp-grid-cols-6',
+        'lg:rp-grid-cols-2',
+        'lg:rp-grid-cols-3',
+        'lg:rp-grid-cols-4',
+        'lg:rp-grid-cols-5',
+        'lg:rp-grid-cols-6',
+        // List Layout
+        'rp-flex',
+        'rp-flex-col',
+        // Gap utilities
+        'rp-gap-4',
+        'rp-gap-6',
     ],
 
     theme: {
@@ -21,10 +62,11 @@ module.exports = {
             colors: {
                 // Primärfarbe - vom Theme/Admin überschreibbar
                 primary: {
-                    DEFAULT: 'var(--rp-color-primary)',
+                    DEFAULT: 'hsl(var(--primary))',
                     hover: 'var(--rp-color-primary-hover)',
                     light: 'var(--rp-color-primary-light)',
                     contrast: 'var(--rp-color-primary-contrast)',
+                    foreground: 'hsl(var(--primary-foreground))',
                 },
                 // Status-Farben - fest
                 success: {
@@ -46,9 +88,38 @@ module.exports = {
                 // Neutral-Farben
                 surface: 'var(--rp-color-surface)',
                 border: {
-                    DEFAULT: 'var(--rp-color-border)',
+                    DEFAULT: 'hsl(var(--border))',
                     dark: 'var(--rp-color-border-dark)',
                 },
+                // shadcn/ui semantic colors
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
+                card: {
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))',
+                },
+                popover: {
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
+                },
+                secondary: {
+                    DEFAULT: 'hsl(var(--secondary))',
+                    foreground: 'hsl(var(--secondary-foreground))',
+                },
+                muted: {
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
+                },
+                accent: {
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))',
+                },
+                destructive: {
+                    DEFAULT: 'hsl(var(--destructive))',
+                    foreground: 'hsl(var(--destructive-foreground))',
+                },
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
             },
 
             /*

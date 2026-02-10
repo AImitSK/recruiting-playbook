@@ -3,7 +3,7 @@
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Stefan Kühne
@@ -23,21 +23,30 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Plugin-Konstanten
-define('RP_VERSION', '1.0.0');
-define('RP_PLUGIN_FILE', __FILE__);
-define('RP_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('RP_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('RP_PLUGIN_BASENAME', plugin_basename(__FILE__));
+// Freemius SDK: Premium/Free Version Handling
+if ( function_exists( '\rp_fs' ) ) {
+    \rp_fs()->set_basename( true, __FILE__ );
+} else {
+    // Plugin-Konstanten
+    define('RP_VERSION', '1.1.0');
+    define('RP_PLUGIN_FILE', __FILE__);
+    define('RP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+    define('RP_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('RP_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
-// Minimum Requirements
-define('RP_MIN_PHP_VERSION', '8.0');
-define('RP_MIN_WP_VERSION', '6.0');
+    // Minimum Requirements
+    define('RP_MIN_PHP_VERSION', '8.0');
+    define('RP_MIN_WP_VERSION', '6.0');
 
-// Autoloader
-if (file_exists(RP_PLUGIN_DIR . 'vendor/autoload.php')) {
-    require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
-}
+    // Autoloader
+    if (file_exists(RP_PLUGIN_DIR . 'vendor/autoload.php')) {
+        require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
+    }
+
+    // Freemius SDK initialisieren (für Lizenzierung & Updates).
+    if (file_exists(RP_PLUGIN_DIR . 'freemius.php')) {
+        require_once RP_PLUGIN_DIR . 'freemius.php';
+    }
 
 /**
  * Requirements prüfen
@@ -93,6 +102,28 @@ register_deactivation_hook(__FILE__, function() {
     Core\Deactivator::deactivate();
 });
 
+// Avada/Fusion Builder Integration FRÜH registrieren.
+// MUSS vor 'after_setup_theme' Priority 10 laufen, wo FusionBuilder startet!
+add_action('after_setup_theme', function() {
+    // Nur wenn Autoloader verfügbar ist.
+    if (!class_exists('RecruitingPlaybook\\Integrations\\Avada\\AvadaIntegration')) {
+        return;
+    }
+
+    // Taxonomien VOR Fusion Builder registrieren, damit getTaxonomyOptions()
+    // in den Element-Konfigurationen die Terms laden kann.
+    // (Normalerweise erst bei init:10, aber Fusion Builder braucht sie bei after_setup_theme:10.)
+    if (class_exists('FusionBuilder')) {
+        (new \RecruitingPlaybook\Taxonomies\JobCategory())->register();
+        (new \RecruitingPlaybook\Taxonomies\JobLocation())->register();
+        (new \RecruitingPlaybook\Taxonomies\EmploymentType())->register();
+    }
+
+    // Avada Integration registrieren (Hook auf fusion_builder_before_init).
+    $avada_integration = new \RecruitingPlaybook\Integrations\Avada\AvadaIntegration();
+    $avada_integration->register();
+}, 5); // Priority 5 = VOR FusionBuilder (Priority 10)
+
 // Plugin initialisieren (im init Hook mit Priorität 5 - vor Standard-Hooks)
 add_action('init', function() {
     if (!rp_check_requirements()) {
@@ -109,5 +140,7 @@ add_action('init', function() {
         return;
     }
 
-    Core\Plugin::getInstance()->init();
+    Core\Plugin::get_instance();
 }, 5);
+
+} // End else block for Freemius SDK

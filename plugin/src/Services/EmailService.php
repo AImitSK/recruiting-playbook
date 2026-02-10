@@ -7,10 +7,11 @@
 
 declare(strict_types=1);
 
-
 namespace RecruitingPlaybook\Services;
 
 defined( 'ABSPATH' ) || exit;
+
+use RecruitingPlaybook\Repositories\EmailLogRepository;
 
 /**
  * Service für E-Mail-Versand
@@ -32,6 +33,41 @@ class EmailService {
 	private string $from_name;
 
 	/**
+	 * Template Service
+	 *
+	 * @var EmailTemplateService|null
+	 */
+	private ?EmailTemplateService $templateService = null;
+
+	/**
+	 * Queue Service
+	 *
+	 * @var EmailQueueService|null
+	 */
+	private ?EmailQueueService $queueService = null;
+
+	/**
+	 * Placeholder Service
+	 *
+	 * @var PlaceholderService|null
+	 */
+	private ?PlaceholderService $placeholderService = null;
+
+	/**
+	 * Log Repository
+	 *
+	 * @var EmailLogRepository|null
+	 */
+	private ?EmailLogRepository $logRepository = null;
+
+	/**
+	 * Signature Service
+	 *
+	 * @var SignatureService|null
+	 */
+	private ?SignatureService $signatureService = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -39,6 +75,66 @@ class EmailService {
 
 		$this->from_email = $settings['notification_email'] ?? get_option( 'admin_email' );
 		$this->from_name  = $settings['company_name'] ?? get_bloginfo( 'name' );
+	}
+
+	/**
+	 * Template Service lazy-laden
+	 *
+	 * @return EmailTemplateService
+	 */
+	private function getTemplateService(): EmailTemplateService {
+		if ( null === $this->templateService ) {
+			$this->templateService = new EmailTemplateService();
+		}
+		return $this->templateService;
+	}
+
+	/**
+	 * Queue Service lazy-laden
+	 *
+	 * @return EmailQueueService
+	 */
+	private function getQueueService(): EmailQueueService {
+		if ( null === $this->queueService ) {
+			$this->queueService = new EmailQueueService();
+		}
+		return $this->queueService;
+	}
+
+	/**
+	 * Placeholder Service lazy-laden
+	 *
+	 * @return PlaceholderService
+	 */
+	private function getPlaceholderService(): PlaceholderService {
+		if ( null === $this->placeholderService ) {
+			$this->placeholderService = new PlaceholderService();
+		}
+		return $this->placeholderService;
+	}
+
+	/**
+	 * Log Repository lazy-laden
+	 *
+	 * @return EmailLogRepository
+	 */
+	private function getLogRepository(): EmailLogRepository {
+		if ( null === $this->logRepository ) {
+			$this->logRepository = new EmailLogRepository();
+		}
+		return $this->logRepository;
+	}
+
+	/**
+	 * Signature Service lazy-laden
+	 *
+	 * @return SignatureService
+	 */
+	private function getSignatureService(): SignatureService {
+		if ( null === $this->signatureService ) {
+			$this->signatureService = new SignatureService();
+		}
+		return $this->signatureService;
 	}
 
 	/**
@@ -98,23 +194,23 @@ class EmailService {
 			'job_url'      => get_permalink( $application['job_id'] ),
 		] );
 
+		// AUSNAHME: Eingangsbestätigung nutzt IMMER die Firmen-Signatur aus Einstellungen.
+		// Ignoriert benutzerdefinierte Signaturen - es gibt keinen User-Kontext.
+		$message = $this->appendMinimalCompanySignature( $message );
+
 		return $this->send( $to, $subject, $message );
 	}
 
 	/**
 	 * E-Mail an Bewerber senden: Absage
 	 *
+	 * Automatische Absage-E-Mail verwendet die Firmen-Signatur,
+	 * da kein konkreter Absender-User existiert.
+	 *
 	 * @param int $application_id Application ID.
 	 * @return bool
 	 */
 	public function sendRejectionEmail( int $application_id ): bool {
-		$settings = get_option( 'rp_settings', [] );
-
-		// Prüfen ob automatische Absage-E-Mails aktiviert sind
-		if ( empty( $settings['auto_rejection_email'] ) ) {
-			return false;
-		}
-
 		$application = $this->getApplicationData( $application_id );
 		if ( ! $application ) {
 			return false;
@@ -132,6 +228,9 @@ class EmailService {
 			'application'  => $application,
 			'company_name' => $this->from_name,
 		] );
+
+		// Signatur mit Fallback-Kette: User-Default → Firmen-Default → Minimal.
+		$message = $this->appendSignature( $message );
 
 		return $this->send( $to, $subject, $message );
 	}
@@ -167,6 +266,251 @@ class EmailService {
 	}
 
 	/**
+	 * E-Mail mit Template senden (Pro-Feature)
+	 *
+	 * @param int      $template_id    Template-ID.
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param array    $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			return false;
+		}
+
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter aufbauen.
+		$context = $this->buildContext( $application, $custom_data );
+
+		// Template rendern.
+		$rendered = $this->getTemplateService()->render( $template_id, $context );
+		if ( ! $rendered ) {
+			return false;
+		}
+
+		// Signatur anhängen (außer wenn explizit 0 = keine Signatur).
+		$body_html = $rendered['body_html'];
+		if ( 0 !== $signature_id ) {
+			$body_html = $this->appendSignature( $body_html, $signature_id );
+		}
+
+		$email_data = [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'template_id'     => $template_id,
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $rendered['subject'],
+			'body_html'       => $body_html,
+			'body_text'       => wp_strip_all_tags( $body_html ),
+		];
+
+		if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+			return $this->getQueueService()->enqueue( $email_data );
+		}
+
+		// Direkt senden.
+		$sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+
+		// In Log speichern.
+		if ( $sent ) {
+			$email_data['status'] = 'sent';
+			$email_data['sent_at'] = current_time( 'mysql' );
+		} else {
+			$email_data['status'] = 'failed';
+		}
+		$this->getLogRepository()->create( $email_data );
+
+		return $sent;
+	}
+
+	/**
+	 * E-Mail mit Template-Slug senden
+	 *
+	 * @param string   $template_slug  Template-Slug.
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param array    $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendWithTemplateSlug( string $template_slug, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
+		$template = $this->getTemplateService()->findBySlug( $template_slug );
+
+		if ( ! $template ) {
+			return false;
+		}
+
+		return $this->sendWithTemplate( (int) $template['id'], $application_id, $custom_data, $use_queue, $signature_id );
+	}
+
+	/**
+	 * Benutzerdefinierte E-Mail senden (ohne Template)
+	 *
+	 * @param int      $application_id Bewerbungs-ID.
+	 * @param string   $subject        Betreff.
+	 * @param string   $body_html      HTML-Inhalt.
+	 * @param bool     $use_queue      Queue verwenden.
+	 * @param int|null $signature_id   Signatur-ID (null = automatisch, 0 = keine).
+	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
+	 */
+	public function sendCustomEmail( int $application_id, string $subject, string $body_html, bool $use_queue = true, ?int $signature_id = null ): int|bool {
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter.
+		$context = $this->buildContext( $application, [] );
+
+		// Platzhalter ersetzen.
+		$subject   = $this->getPlaceholderService()->replace( $subject, $context );
+		$body_html = $this->getPlaceholderService()->replace( $body_html, $context );
+
+		// Signatur anhängen (außer wenn explizit 0 = keine Signatur).
+		if ( 0 !== $signature_id ) {
+			$body_html = $this->appendSignature( $body_html, $signature_id );
+		}
+
+		$email_data = [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $subject,
+			'body_html'       => $body_html,
+			'body_text'       => wp_strip_all_tags( $body_html ),
+		];
+
+		if ( $use_queue && $this->getQueueService()->isActionSchedulerAvailable() ) {
+			return $this->getQueueService()->enqueue( $email_data );
+		}
+
+		// Direkt senden.
+		$sent = $this->send( $email_data['recipient_email'], $email_data['subject'], $email_data['body_html'] );
+
+		// In Log speichern.
+		$email_data['status'] = $sent ? 'sent' : 'failed';
+		if ( $sent ) {
+			$email_data['sent_at'] = current_time( 'mysql' );
+		}
+		$this->getLogRepository()->create( $email_data );
+
+		return $sent;
+	}
+
+	/**
+	 * E-Mail für späteren Versand planen
+	 *
+	 * @param int    $template_id    Template-ID.
+	 * @param int    $application_id Bewerbungs-ID.
+	 * @param string $scheduled_at   Geplanter Zeitpunkt (Y-m-d H:i:s).
+	 * @param array  $custom_data    Zusätzliche Platzhalter-Daten.
+	 * @return int|false Log-ID oder false bei Fehler.
+	 */
+	public function scheduleEmail( int $template_id, int $application_id, string $scheduled_at, array $custom_data = [] ): int|false {
+		// Pro-Feature Check.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			return false;
+		}
+
+		$application = $this->getApplicationData( $application_id );
+		if ( ! $application ) {
+			return false;
+		}
+
+		// Kontext für Platzhalter.
+		$context = $this->buildContext( $application, $custom_data );
+
+		// Template rendern.
+		$rendered = $this->getTemplateService()->render( $template_id, $context );
+		if ( ! $rendered ) {
+			return false;
+		}
+
+		return $this->getQueueService()->schedule( [
+			'application_id'  => $application_id,
+			'candidate_id'    => (int) $application['candidate_id'],
+			'template_id'     => $template_id,
+			'recipient_email' => $application['email'],
+			'recipient_name'  => $application['candidate_name'],
+			'sender_email'    => $this->from_email,
+			'sender_name'     => $this->from_name,
+			'subject'         => $rendered['subject'],
+			'body_html'       => $rendered['body_html'],
+			'body_text'       => $rendered['body_text'],
+		], $scheduled_at );
+	}
+
+	/**
+	 * E-Mail-Historie für Bewerbung abrufen
+	 *
+	 * @param int   $application_id Bewerbungs-ID.
+	 * @param array $args           Query-Argumente.
+	 * @return array
+	 */
+	public function getHistory( int $application_id, array $args = [] ): array {
+		return $this->getLogRepository()->findByApplication( $application_id, $args );
+	}
+
+	/**
+	 * E-Mail-Historie für Kandidaten abrufen
+	 *
+	 * @param int   $candidate_id Kandidaten-ID.
+	 * @param array $args         Query-Argumente.
+	 * @return array
+	 */
+	public function getHistoryByCandidate( int $candidate_id, array $args = [] ): array {
+		return $this->getLogRepository()->findByCandidate( $candidate_id, $args );
+	}
+
+	/**
+	 * Kontext für Platzhalter aufbauen
+	 *
+	 * @param array $application Bewerbungs-Daten.
+	 * @param array $custom_data Zusätzliche Daten.
+	 * @return array
+	 */
+	private function buildContext( array $application, array $custom_data ): array {
+		$job = null;
+		if ( ! empty( $application['job_id'] ) ) {
+			$job_post = get_post( (int) $application['job_id'] );
+			if ( $job_post ) {
+				$job = [
+					'title'           => $job_post->post_title,
+					'url'             => get_permalink( $job_post ),
+					'location'        => get_post_meta( $job_post->ID, '_job_location', true ) ?: '',
+					'employment_type' => get_post_meta( $job_post->ID, '_employment_type', true ) ?: '',
+				];
+			}
+		}
+
+		return [
+			'application' => $application,
+			'candidate'   => [
+				'salutation'  => $application['salutation'] ?? '',
+				'first_name'  => $application['first_name'] ?? '',
+				'last_name'   => $application['last_name'] ?? '',
+				'email'       => $application['email'] ?? '',
+				'phone'       => $application['phone'] ?? '',
+			],
+			'job'         => $job ?? [],
+			'custom'      => $custom_data,
+		];
+	}
+
+	/**
 	 * Bewerbungsdaten für E-Mail abrufen
 	 *
 	 * @param int $application_id Application ID.
@@ -199,8 +543,10 @@ class EmailService {
 
 		return [
 			'id'             => $application_id,
+			'candidate_id'   => $row['candidate_id'],
 			'job_id'         => $row['job_id'],
 			'job_title'      => $job ? $job->post_title : '',
+			'status'         => $row['status'] ?? 'new',
 			'salutation'     => $row['salutation'] ?? '',
 			'first_name'     => $row['first_name'],
 			'last_name'      => $row['last_name'],
@@ -247,11 +593,15 @@ class EmailService {
 		$company = $data['company_name'] ?? '';
 
 		$styles = '
-			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }
-			.container { max-width: 600px; margin: 0 auto; padding: 20px; }
-			.header { border-bottom: 2px solid #2271b1; padding-bottom: 20px; margin-bottom: 20px; }
-			.footer { border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; }
-			.btn { display: inline-block; padding: 12px 24px; background: #2271b1; color: #fff; text-decoration: none; border-radius: 4px; }
+			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+			.container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: left; }
+			.header { border-bottom: 2px solid #2271b1; padding-bottom: 20px; margin-bottom: 20px; text-align: left; }
+			.content { padding: 20px 0; text-align: left; }
+			.footer { padding-top: 20px; margin-top: 30px; font-size: 12px; color: #6b7280; text-align: left; }
+			a { color: #2271b1; }
+			.btn { display: inline-block; padding: 12px 24px; background: #2271b1; color: #fff !important; text-decoration: none; border-radius: 4px; }
+			table { border-collapse: collapse; }
+			td { padding: 8px; }
 		';
 
 		switch ( $template ) {
@@ -293,23 +643,21 @@ class EmailService {
 					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
+				// Signatur wird via appendSignature() in sendApplicantConfirmation() hinzugefügt.
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
 					<p>%s</p>
 					<p><strong>%s:</strong> %s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Bewerbungseingang bestätigt', 'recruiting-playbook' ),
 					$greeting,
 					__( 'vielen Dank für Ihre Bewerbung! Wir haben Ihre Unterlagen erhalten und werden diese sorgfältig prüfen.', 'recruiting-playbook' ),
 					__( 'Stelle', 'recruiting-playbook' ),
 					esc_html( $app['job_title'] ?? '' ),
 					__( 'Sie erhalten von uns Rückmeldung, sobald wir Ihre Bewerbung geprüft haben.', 'recruiting-playbook' ),
-					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -320,13 +668,13 @@ class EmailService {
 					/* translators: %s: First name */
 					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
 
+				// Signatur wird via appendSignature() in sendRejectionEmail() hinzugefügt.
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
 					<p>%s</p>
 					<p>%s</p>
-					<p>%s</p>
-					<p>%s<br>%s</p>',
+					<p>%s</p>',
 					__( 'Ihre Bewerbung', 'recruiting-playbook' ),
 					$greeting,
 					sprintf(
@@ -335,9 +683,7 @@ class EmailService {
 						esc_html( $app['job_title'] ?? '' )
 					),
 					__( 'Nach sorgfältiger Prüfung müssen wir Ihnen leider mitteilen, dass wir uns für andere Kandidaten entschieden haben, deren Profil besser zu unseren aktuellen Anforderungen passt.', 'recruiting-playbook' ),
-					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' ),
-					__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
-					esc_html( $company )
+					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -345,33 +691,48 @@ class EmailService {
 				$content = '';
 		}
 
+		// Branding-Hinweis (Pro-User können es abschalten).
+		$settings      = get_option( 'rp_settings', [] );
+		$hide_branding = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$footer_html   = '';
+
+		if ( ! $hide_branding ) {
+			$footer_html = sprintf(
+				'<p>%s</p>',
+				sprintf(
+					/* translators: %s: Link to Recruiting Playbook website */
+					__( 'Versand über %s', 'recruiting-playbook' ),
+					'<a href="https://recruiting-playbook.de" style="color: #6b7280; text-decoration: underline;">Recruiting Playbook</a>'
+				)
+			);
+		}
+
 		return sprintf(
 			'<!DOCTYPE html>
-			<html>
-			<head>
-				<meta charset="UTF-8">
-				<style>%s</style>
-			</head>
-			<body>
-				<div class="container">
-					<div class="header">
-						<strong>%s</strong>
-					</div>
-					%s
-					<div class="footer">
-						<p>%s</p>
-					</div>
-				</div>
-			</body>
-			</html>',
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>%s</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<strong>%s</strong>
+		</div>
+		<div class="content">
+			%s
+		</div>
+		<div class="footer">
+			%s
+		</div>
+	</div>
+</body>
+</html>',
 			$styles,
 			esc_html( $company ),
 			$content,
-			sprintf(
-				/* translators: %s: Company name */
-				__( 'Diese E-Mail wurde automatisch von %s versendet.', 'recruiting-playbook' ),
-				esc_html( $company )
-			)
+			$footer_html
 		);
 	}
 
@@ -397,6 +758,107 @@ class EmailService {
 
 		// Hook für optionales DB-Logging (Pro-Feature)
 		do_action( 'rp_email_sent', $to, $subject, $sent );
+	}
+
+	/**
+	 * Signatur an E-Mail-Body anhängen
+	 *
+	 * Verwendet die Fallback-Kette:
+	 * 1. Explizit angegebene Signatur (wenn $signature_id gesetzt)
+	 * 2. User-Default-Signatur (für aktuellen User)
+	 * 3. Firmen-Signatur
+	 * 4. Minimale Signatur
+	 *
+	 * @param string   $body_html     E-Mail-Body ohne Signatur.
+	 * @param int|null $signature_id  Signatur-ID (null = automatisch).
+	 * @param int|null $user_id       User-ID für Fallback (null = aktueller User).
+	 * @return string E-Mail-Body mit Signatur.
+	 */
+	private function appendSignature( string $body_html, ?int $signature_id = null, ?int $user_id = null ): string {
+		// User-ID für Fallback bestimmen.
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id() ?: null;
+		}
+
+		// Signatur mit Fallback-Kette rendern.
+		$signature = $this->getSignatureService()->renderWithFallback( $signature_id, $user_id );
+
+		if ( empty( $signature ) ) {
+			return $body_html;
+		}
+
+		// Signatur innerhalb des Content-Containers einfügen (vor dem schließenden </div> des Content).
+		// Suche nach </div> vor dem Footer und füge Signatur davor ein.
+		if ( preg_match( '/<\/div>\s*<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<\/div>)(\s*<div class="footer">)/i',
+				$signature . "\n\t\t$1$2",
+				$body_html,
+				1
+			);
+		}
+
+		// Alternative: Vor dem Footer-Div einfügen.
+		if ( preg_match( '/<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<div class="footer">)/i',
+				$signature . "\n\t\t$1",
+				$body_html,
+				1
+			);
+		}
+
+		// Fallback: Vor </body> einfügen.
+		if ( stripos( $body_html, '</body>' ) !== false ) {
+			return str_ireplace( '</body>', $signature . "\n</body>", $body_html );
+		}
+
+		// Letzter Fallback: Am Ende anhängen.
+		return $body_html . $signature;
+	}
+
+	/**
+	 * Firmen-Signatur aus Einstellungen anhängen (KEINE Datenbank-Signatur)
+	 *
+	 * Verwendet IMMER die automatisch generierte Signatur aus den Plugin-Einstellungen.
+	 * Diese Methode ignoriert benutzerdefinierte Signaturen in der Datenbank.
+	 *
+	 * Verwendung: Eingangsbestätigung (kein User-Kontext, immer gleiche Signatur)
+	 *
+	 * @param string $body_html E-Mail-Body ohne Signatur.
+	 * @return string E-Mail-Body mit Firmen-Signatur aus Einstellungen.
+	 */
+	private function appendMinimalCompanySignature( string $body_html ): string {
+		$signature = $this->getSignatureService()->renderMinimalSignature();
+
+		if ( empty( $signature ) ) {
+			return $body_html;
+		}
+
+		// Signatur innerhalb des Content-Containers einfügen.
+		if ( preg_match( '/<\/div>\s*<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<\/div>)(\s*<div class="footer">)/i',
+				$signature . "\n\t\t$1$2",
+				$body_html,
+				1
+			);
+		}
+
+		if ( preg_match( '/<div class="footer">/i', $body_html ) ) {
+			return preg_replace(
+				'/(<div class="footer">)/i',
+				$signature . "\n\t\t$1",
+				$body_html,
+				1
+			);
+		}
+
+		if ( stripos( $body_html, '</body>' ) !== false ) {
+			return str_ireplace( '</body>', $signature . "\n</body>", $body_html );
+		}
+
+		return $body_html . $signature;
 	}
 
 	/**

@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Sprache
+
+Die gesamte Kommunikation mit dem Benutzer erfolgt auf **Deutsch**. Code, Variablennamen und technische Bezeichner bleiben auf Englisch.
+
 ## Project Overview
 
 **Recruiting Playbook** is a WordPress plugin specification for professional job listing and applicant management with AI-powered candidate analysis. This repository contains comprehensive documentation and specifications - the actual plugin code is ready to be developed.
@@ -26,10 +30,10 @@ This repository uses VS Code Dev Containers for a consistent development environ
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| WordPress | http://localhost:8080 | admin / admin |
-| WP Admin | http://localhost:8080/wp-admin | admin / admin |
+| WordPress | http://localhost:8082 | admin / admin |
+| WP Admin | http://localhost:8082/wp-admin | admin / admin |
 | phpMyAdmin | http://localhost:8081 | wordpress / wordpress |
-| MailHog | http://localhost:8025 | - |
+| Mailpit | http://localhost:8025 | - |
 
 ### Repository Structure
 
