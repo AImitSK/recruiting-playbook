@@ -48,7 +48,7 @@ private function canUseBlocks(): bool {
 ```
 
 > **Hinweis:** Die Blöcke wurden von Pro auf Free geändert. Nur die Page Builder
-> Integrationen (Elementor, Divi, Avada) bleiben Pro-Features.
+> Integrationen (Elementor, Avada) bleiben Pro-Features.
 
 ### Block-Übersicht
 
@@ -1038,7 +1038,7 @@ class JobsBlockTest extends TestCase {
 
 | Frage | Entscheidung |
 |-------|--------------|
-| Sollen Blöcke auch in Free verfügbar sein? | ✅ **Ja** - Gutenberg Blocks sind FREE, nur Page Builder (Avada, Elementor, Divi) sind Pro |
+| Sollen Blöcke auch in Free verfügbar sein? | ✅ **Ja** - Gutenberg Blocks sind FREE, nur Page Builder (Avada, Elementor) sind Pro |
 | Wie mit Block-Transforms umgehen? | Offen - kann später hinzugefügt werden |
 | Server-Side Render im Editor? | ✅ **Nein** - Placeholder-Komponente für bessere UX |
 | Innerblocks für Job-Cards? | ✅ **Nein** - Server-Render ist konsistenter |

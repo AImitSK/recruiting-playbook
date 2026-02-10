@@ -45,6 +45,8 @@ use RecruitingPlaybook\Api\FormConfigController;
 use RecruitingPlaybook\Api\WebhookController;
 use RecruitingPlaybook\Api\ApiKeyController;
 use RecruitingPlaybook\Api\AiAnalysisController;
+use RecruitingPlaybook\Api\IntegrationController;
+use RecruitingPlaybook\Integrations\Feed\XmlJobFeed;
 use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\WebhookService;
@@ -122,6 +124,9 @@ final class Plugin {
 
 		// Elementor Integration (Pro-Feature).
 		$this->initElementorIntegration();
+
+		// XML Job Feed (Free-Feature).
+		$this->initXmlJobFeed();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -517,6 +522,24 @@ final class Plugin {
 	}
 
 	/**
+	 * XML Job Feed initialisieren
+	 *
+	 * Free-Feature: Stellt einen XML-Feed unter /feed/jobs/ bereit,
+	 * den Jobbörsen automatisch einlesen können.
+	 */
+	private function initXmlJobFeed(): void {
+		$settings = get_option( 'rp_integrations', [] );
+
+		// Feed nur registrieren wenn aktiviert (Default: true).
+		if ( isset( $settings['xml_feed_enabled'] ) && ! $settings['xml_feed_enabled'] ) {
+			return;
+		}
+
+		$xml_feed = new XmlJobFeed();
+		$xml_feed->register();
+	}
+
+	/**
 	 * Avada / Fusion Builder Integration initialisieren
 	 *
 	 * Pro-Feature: Registriert native Fusion Builder Elements für Avada.
@@ -724,6 +747,10 @@ final class Plugin {
 		// AI Analysis Controller (KI-Addon Feature).
 		$ai_analysis_controller = new AiAnalysisController();
 		$ai_analysis_controller->register_routes();
+
+		// Integration Settings Controller (Free + Pro Features).
+		$integration_controller = new IntegrationController();
+		$integration_controller->register_routes();
 	}
 
 	/**

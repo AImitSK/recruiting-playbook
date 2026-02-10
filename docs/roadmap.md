@@ -27,9 +27,9 @@ Pilot-Kunde     │ Launch          │    Feature      │ Push
 | **Admin Framework** | React (@wordpress/scripts) |
 | **Frontend Framework** | Alpine.js (~15kb) + Tailwind CSS |
 | **Notifications** | react-hot-toast (Admin), Alpine Store (Frontend) |
-| **Page Builder MVP** | Avada / Fusion Builder (Priorität!) |
-| **Page Builder Pro** | + Gutenberg Blocks, Elementor Widgets |
-| **Lizenzierung** | Eigener Server, Domain-gebunden, täglicher Remote-Check |
+| **Page Builder MVP** | Avada / Fusion Builder (Priorität!) ✅ |
+| **Page Builder Pro** | + Gutenberg Blocks, Elementor Widgets ✅ |
+| **Lizenzierung** | Freemius SDK (Plan-basiert, Checkout integriert) ✅ |
 | **AI-Provider** | Anthropic Claude (Primary), OpenAI (Fallback) |
 | **KI-Feature** | Job-Match, Job-Finder, Chancen-Check |
 | **AI-Limit** | 100 Analysen/Monat + Extra-Pakete (9€/50 Stück) |
@@ -384,22 +384,27 @@ Design & Branding │                   │
 
 > Vorbereitung für KI-Features in Phase 3
 
-- [ ] **Action Scheduler Integration**
-  - [ ] Composer: woocommerce/action-scheduler
-  - [ ] Queue-Manager Klasse
-  - [ ] E-Mail-Versand über Queue
-  - [ ] Webhook-Delivery über Queue
-  - [ ] Retry-Mechanismus
-- [ ] **REST API (vollständig)**
-  - [ ] Endpoints: Jobs, Applications, Candidates
-  - [ ] Pagination, Filter, Suche
-  - [ ] API-Key Management
-  - [ ] Rate Limiting
-- [ ] **Webhooks**
-  - [ ] Events: application.received, application.status_changed, etc.
-  - [ ] Webhook-Editor im Admin
-  - [ ] Delivery-Log mit Retry
-  - [ ] Signatur-Validierung
+- [x] **Action Scheduler Integration** ✅
+  - [x] Composer: woocommerce/action-scheduler
+  - [x] Queue-Manager Klasse
+  - [x] E-Mail-Versand über Queue
+  - [x] Webhook-Delivery über Queue
+  - [x] Retry-Mechanismus (Exponential Backoff, max. 3 Versuche)
+- [x] **REST API (vollständig)** ✅
+  - [x] Endpoints: Jobs (CRUD, JobController)
+  - [x] Endpoints: Applications (Read, inkl. Kandidaten-Daten)
+  - [x] Pagination, Filter, Suche
+  - [x] API-Key Management (ApiKeyService, rp_api_keys Tabelle, SHA256-Hash, granulare Berechtigungen)
+  - [x] Rate Limiting (pro API-Key, Rate-Limit-Headers)
+  - [x] Auth-Middleware (X-Recruiting-API-Key Header)
+  - [x] Settings-Tab "API" (React, Pro-gated)
+- [x] **Webhooks** ✅
+  - [x] Events: application.received, application.status_changed, etc.
+  - [x] WebhookController: 6 Endpoints (CRUD + Deliveries-Log + Test-Ping)
+  - [x] Delivery-Log mit Retry (Exponential Backoff, Auto-Deaktivierung)
+  - [x] Signatur-Validierung (HMAC-SHA256)
+  - [x] Async Dispatch via Action Scheduler
+  - [x] DB-Schema: rp_webhooks + rp_webhook_deliveries
 
 ### M2.8: Kritische Integrationen ⚡ VORGEZOGEN
 
@@ -414,7 +419,7 @@ Design & Branding │                   │
   - [ ] Export-Format
   - [ ] Dokumentation
 
-### M2.9: Page Builder Integration
+### M2.9: Page Builder Integration ✅
 
 - [x] **Gutenberg Blocks (Free)** ✅
   - [x] 9 native Blöcke (jobs, job-search, job-count, featured-jobs, latest-jobs, job-categories, application-form, ai-job-finder, ai-job-match)
@@ -424,23 +429,28 @@ Design & Branding │                   │
   - [x] Block-Patterns (5 vorgefertigte Layouts)
   - [x] Example-Attribute für Inserter-Vorschau
   - [x] Dokumentation auf Website
-- [ ] Elementor Widgets (Pro) - alle Elemente
-- [ ] Divi Modules (Pro) - Basis
+- [x] **Elementor Widgets (Pro)** ✅
+  - [x] 9 native Widgets (Stellenliste, Stellensuche, Stellen-Zähler, Featured Jobs, Neueste Stellen, Job-Kategorien, Bewerbungsformular, KI-Job-Finder, KI-Job-Match)
+  - [x] Widget-Kategorie "Recruiting Playbook"
+  - [x] Shortcode-Wrapper-Architektur (kein doppelter Render-Code)
+  - [x] Editor-Vorschau im Elementor Panel
+  - [x] Design & Branding Integration
+- [x] **Avada / Fusion Builder Elements (Pro)** ✅
+  - [x] 9 native Elements (Stellenliste, Stellensuche, Stellen-Zähler, Featured Jobs, Neueste Stellen, Job-Kategorien, Bewerbungsformular, KI-Job-Finder, KI-Job-Match)
+  - [x] Element-Kategorie "Recruiting Playbook"
+  - [x] Shortcode-Wrapper-Architektur (kein doppelter Render-Code)
+  - [x] Live Builder + Backend Builder Vorschau
+  - [x] Alpine.js diffDOM-kompatibel (x-on: statt @-Shorthand)
+  - [x] Design & Branding Integration
 
 ### M2.10: Lizenz-System & Launch
 
-- [ ] **Lizenz-Server**
-  - [ ] API aufsetzen
-  - [ ] Domain-Validierung
-  - [ ] Täglicher Remote-Check
-  - [ ] Integritäts-Signatur
+- [x] **Lizenzierung via Freemius** ✅
+  - [x] Freemius SDK Integration (Parent + KI-Addon)
+  - [x] Plan-basierte Feature-Gates (Free / Pro / Bundle)
+  - [x] Checkout & Payment über Freemius
 - [ ] **Lizenz-Definition (klar kommuniziert)**
-  - [ ] "Lifetime = Version 1.x + 12 Monate Updates"
-  - [ ] Wartungsverlängerung 49€/Jahr
   - [ ] FAQ auf Website
-- [ ] **Checkout & Payment**
-  - [ ] Stripe oder Paddle Integration
-  - [ ] Automatische Lizenz-Generierung
 - [ ] **Launch**
   - [ ] wordpress.org Submission (Free-Version)
   - [ ] Landing Page
@@ -511,10 +521,13 @@ Design & Branding │                   │
 | Reporting & Dashboard | ✅ |
 | Benutzerrollen & Stellen-Zuweisung | ✅ |
 | Design & Branding Admin-Seite | ✅ |
+| Page Builder (Gutenberg, Elementor, Avada) | ✅ |
+| REST API (Jobs CRUD, API-Keys, Rate Limiting) | ✅ |
+| Webhooks (CRUD, Delivery, HMAC-Signatur) | ✅ |
 | Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
-| Lizenz-System mit klarer Definition | ⬜ |
+| Lizenz-System (Freemius) | ✅ |
 | Verkaufsseite live | ⬜ |
 | Erste zahlende Kunden | ⬜ |
 | Test-Coverage: 60%+ | ⬜ |
@@ -526,32 +539,39 @@ Design & Branding │                   │
 **Zeitraum:** Q3 2025 (Juli – September)
 **Ziel:** KI-Bewerber-Analyse live, Recurring Revenue
 
-### M3.1: AI-Backend Infrastruktur
+### M3.1: AI-Backend Infrastruktur ✅
 
-- [ ] Anthropic Claude API Integration
-- [ ] API-Key Verwaltung (Admin)
-- [ ] Proxy-Server für sichere API-Calls
-- [ ] Token-Tracking pro Kunde
-- [ ] Rate Limiting
-- [ ] Fallback bei API-Ausfall
+- [x] Anthropic Claude API Integration (via OpenRouter)
+- [x] Freemius KI-Addon Lizenzierung (recruiting-playbook-ki)
+- [x] Worker-basierte API-Calls (Proxy-Server)
+- [x] Token-Tracking pro Kunde (rp_ai_analyses Tabelle)
+- [x] Budget-Limit & Warn-Schwelle (konfigurierbar)
+- [x] Health-Check Endpoint
+- [x] Settings-Tab "KI-Analyse" (Lizenzstatus, Verbrauch, Health-Check, Analyse-Verlauf)
+- [x] AiAnalysisController (Stats, History, Settings, Health)
+- [x] Presidio Anonymisierung (PII-Schutz)
 
-### M3.2: Document Parser
+### M3.2: Document Parser ✅
 
-- [ ] PDF Text-Extraktion (pdftotext / PdfParser)
+- [x] PDF Text-Extraktion
+- [x] Strukturierte Daten-Extraktion
+- [x] Job-Anforderungen aus post_content als Fallback
 - [ ] Word Text-Extraktion (PhpWord)
-- [ ] Strukturierte Daten-Extraktion
 - [ ] Fehlerbehandlung bei unlesbaren Dokumenten
 
-### M3.3: 🔥 KI-Job-Match (Modus A)
+### M3.3: 🔥 KI-Job-Match (Modus A) ✅
 
-- [ ] Upload-Komponente (Alpine.js, Drag & Drop)
-- [ ] Prompt Engineering für Job-Match
-- [ ] Match-Score Berechnung (0-100%)
-- [ ] Erfüllte/Teilweise/Fehlende Anforderungen
-- [ ] Empfehlung & Tipps
-- [ ] Formular-Vorausfüllung mit erkannten Daten
-- [ ] Shortcode: `[rp_ai_job_match]`
-- [ ] Avada Element: AI Job-Match
+- [x] Upload-Komponente (Alpine.js, Drag & Drop)
+- [x] Prompt Engineering für Job-Match
+- [x] Match-Score Berechnung (0-100%)
+- [x] Erfüllte/Teilweise/Fehlende Anforderungen
+- [x] Empfehlung & Tipps
+- [x] Match-Modal mit Design System CSS-Variablen
+- [x] Shortcode: `[rp_ai_job_match]`
+- [x] Avada Element: AI Job-Match
+- [x] Elementor Widget: AI Job-Match
+- [x] Gutenberg Block: AI Job-Match
+- [x] Analyse-Logging (MatchController)
 
 ### M3.4: 🔥 KI-Job-Finder (Modus B)
 
@@ -700,4 +720,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: 7. Februar 2026*
+*Letzte Aktualisierung: 10. Februar 2026*

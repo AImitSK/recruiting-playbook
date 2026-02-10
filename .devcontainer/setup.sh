@@ -57,6 +57,9 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     wp config set WP_DEBUG_DISPLAY true --raw --allow-root
     wp config set SCRIPT_DEBUG true --raw --allow-root
 
+    # Recruiting Playbook Dev-Modus: Alle Pro-Features aktiviert
+    wp config set RP_DEV_MODE true --raw --allow-root
+
     # Freemius SDK Dev-Konstanten
     wp config set WP_FS__DEV_MODE true --raw --allow-root
     wp config set WP_FS__SKIP_EMAIL_ACTIVATION true --raw --allow-root
@@ -66,6 +69,9 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     echo -e "${GREEN}✓ wp-config.php erstellt${NC}"
 else
     echo -e "${YELLOW}✓ wp-config.php bereits vorhanden${NC}"
+
+    # Recruiting Playbook Dev-Modus (falls noch nicht vorhanden)
+    wp config set RP_DEV_MODE true --raw --allow-root 2>/dev/null || true
 
     # Freemius SDK Dev-Konstanten (falls noch nicht vorhanden)
     wp config set WP_FS__DEV_MODE true --raw --allow-root 2>/dev/null || true

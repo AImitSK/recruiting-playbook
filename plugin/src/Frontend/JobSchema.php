@@ -37,10 +37,18 @@ class JobSchema {
 			return;
 		}
 
-		// Prüfen ob Schema aktiviert ist.
-		$settings = get_option( 'rp_settings', [] );
-		if ( isset( $settings['enable_schema'] ) && ! $settings['enable_schema'] ) {
-			return;
+		// Prüfen ob Schema aktiviert ist (Integrations-Settings > Legacy-Fallback).
+		$integrations = get_option( 'rp_integrations', [] );
+		if ( isset( $integrations['google_jobs_enabled'] ) ) {
+			if ( ! $integrations['google_jobs_enabled'] ) {
+				return;
+			}
+		} else {
+			// Legacy-Fallback: rp_settings.enable_schema.
+			$settings = get_option( 'rp_settings', [] );
+			if ( isset( $settings['enable_schema'] ) && ! $settings['enable_schema'] ) {
+				return;
+			}
 		}
 
 		$post   = get_post();
@@ -63,7 +71,8 @@ class JobSchema {
 	 * @return array Schema data.
 	 */
 	public function buildSchema( \WP_Post $post ): array {
-		$settings = get_option( 'rp_settings', [] );
+		$settings     = get_option( 'rp_settings', [] );
+		$integrations = get_option( 'rp_integrations', [] );
 
 		// Pflichtfelder.
 		$schema = [
@@ -80,10 +89,13 @@ class JobSchema {
 			'hiringOrganization' => $this->getOrganization( $settings ),
 		];
 
-		// Bewerbungsfrist.
-		$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
-		if ( $deadline ) {
-			$schema['validThrough'] = gmdate( 'c', strtotime( $deadline . ' 23:59:59' ) );
+		// Bewerbungsfrist (steuerbar über google_jobs_show_deadline).
+		$show_deadline = $integrations['google_jobs_show_deadline'] ?? true;
+		if ( $show_deadline ) {
+			$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
+			if ( $deadline ) {
+				$schema['validThrough'] = gmdate( 'c', strtotime( $deadline . ' 23:59:59' ) );
+			}
 		}
 
 		// Beschäftigungsart.
@@ -98,16 +110,22 @@ class JobSchema {
 			$schema['jobLocation'] = $location;
 		}
 
-		// Remote-Option.
-		$remote = get_post_meta( $post->ID, '_rp_remote_option', true );
-		if ( 'full' === $remote ) {
-			$schema['jobLocationType'] = 'TELECOMMUTE';
+		// Remote-Option (steuerbar über google_jobs_show_remote).
+		$show_remote = $integrations['google_jobs_show_remote'] ?? true;
+		if ( $show_remote ) {
+			$remote = get_post_meta( $post->ID, '_rp_remote_option', true );
+			if ( 'full' === $remote ) {
+				$schema['jobLocationType'] = 'TELECOMMUTE';
+			}
 		}
 
-		// Gehalt.
-		$salary = $this->getSalary( $post->ID );
-		if ( $salary ) {
-			$schema['baseSalary'] = $salary;
+		// Gehalt (steuerbar über google_jobs_show_salary).
+		$show_salary = $integrations['google_jobs_show_salary'] ?? true;
+		if ( $show_salary ) {
+			$salary = $this->getSalary( $post->ID );
+			if ( $salary ) {
+				$schema['baseSalary'] = $salary;
+			}
 		}
 
 		// Direktbewerbung URL.
