@@ -3,6 +3,7 @@ export const docsNav = [
   { slug: 'shortcodes', title: 'Shortcodes' },
   { slug: 'gutenberg-blocks', title: 'Gutenberg Blocks' },
   { slug: 'avada-integration', title: 'Avada / Fusion Builder' },
+  { slug: 'elementor-integration', title: 'Elementor' },
   { slug: 'hooks', title: 'Hooks & Filter' },
   { slug: 'email', title: 'E-Mail-Konfiguration' },
   { slug: 'spam-protection', title: 'Spam-Schutz' },
