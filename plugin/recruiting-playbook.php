@@ -6,7 +6,7 @@
  * Version: 1.1.0
  * Requires at least: 6.0
  * Requires PHP: 8.0
- * Author: Stefan Kühne
+ * Author: Stefan Kühne, Peter Kühne
  * Author URI: https://sk-online-marketing.de
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
