@@ -6,82 +6,93 @@ const categories = [
   {
     name: 'Stellenanzeigen',
     features: [
-      { name: 'Unbegrenzte aktive Stellen', free: true, pro: true, ai: true },
-      { name: 'Custom Post Type', free: true, pro: true, ai: true },
-      { name: 'Google for Jobs Schema', free: true, pro: true, ai: true },
-      { name: 'SEO-Meta-Felder', free: 'Basic', pro: true, ai: true },
-      { name: 'Stellen-Templates', free: '2', pro: '5+', ai: '5+' },
-      { name: 'Custom Fields', free: false, pro: true, ai: true },
-      { name: 'Archivieren & Duplizieren', free: false, pro: true, ai: true },
+      { name: 'Unbegrenzte aktive Stellen', free: true, pro: true, agentur: true },
+      { name: 'Google for Jobs Schema', free: true, pro: true, agentur: true },
+      { name: 'SEO-Meta-Felder', free: 'Basic', pro: true, agentur: true },
+      { name: 'Custom Fields für Stellen', free: false, pro: true, agentur: true },
+      { name: 'Stellen archivieren & duplizieren', free: false, pro: true, agentur: true },
     ],
   },
   {
     name: 'Bewerbungsformular',
     features: [
-      { name: 'Standard-Formular', free: true, pro: true, ai: true },
-      { name: 'Lebenslauf-Upload', free: true, pro: true, ai: true },
-      { name: 'DSGVO-Checkboxen', free: true, pro: true, ai: true },
-      { name: 'Mehrere Dokumente', free: false, pro: true, ai: true },
-      { name: 'Custom Fields', free: false, pro: true, ai: true },
-      { name: 'Conditional Logic', free: false, pro: true, ai: true },
+      { name: 'Bewerbungsformular', free: true, pro: true, agentur: true },
+      { name: 'Lebenslauf-Upload', free: true, pro: true, agentur: true },
+      { name: 'DSGVO-Consent-Checkboxen', free: true, pro: true, agentur: true },
+      { name: 'Formular-Builder mit Custom Fields', free: false, pro: true, agentur: true },
     ],
   },
   {
     name: 'Bewerbermanagement',
     features: [
-      { name: 'Bewerber-Liste', free: 'Basic', pro: true, ai: true },
-      { name: 'E-Mail-Benachrichtigung', free: true, pro: true, ai: true },
-      { name: 'Kanban-Board', free: false, pro: true, ai: true },
-      { name: 'Bewerber-Detailansicht', free: false, pro: true, ai: true },
-      { name: 'Status-Tracking', free: false, pro: true, ai: true },
-      { name: 'Notizen & Bewertungen', free: false, pro: true, ai: true },
-      { name: 'Suche & Filter', free: false, pro: true, ai: true },
+      { name: 'Bewerber-Liste im Backend', free: 'Basic', pro: true, agentur: true },
+      { name: 'E-Mail-Benachrichtigung bei neuer Bewerbung', free: true, pro: true, agentur: true },
+      { name: 'Kanban-Board (Drag & Drop)', free: false, pro: true, agentur: true },
+      { name: 'Bewerber-Detailansicht mit Timeline', free: false, pro: true, agentur: true },
+      { name: 'Konfigurierbarer Status-Workflow', free: false, pro: true, agentur: true },
+      { name: 'Notizen & Sterne-Bewertungen', free: false, pro: true, agentur: true },
+      { name: 'Talent-Pool', free: false, pro: true, agentur: true },
     ],
   },
   {
     name: 'E-Mails & Templates',
     features: [
-      { name: 'Benachrichtigung bei Bewerbung', free: true, pro: true, ai: true },
-      { name: 'E-Mail-Templates', free: false, pro: true, ai: true },
-      { name: 'Automatische Eingangsbestätigung', free: false, pro: true, ai: true },
-      { name: 'Manuelle E-Mail an Bewerber', free: false, pro: true, ai: true },
+      { name: 'Benachrichtigung bei neuer Bewerbung', free: true, pro: true, agentur: true },
+      { name: 'Anpassbare E-Mail-Templates', free: false, pro: true, agentur: true },
+      { name: 'Automatische E-Mail Workflows', free: false, pro: true, agentur: true },
+      { name: 'Manueller E-Mail-Versand an Bewerber', free: false, pro: true, agentur: true },
+      { name: 'E-Mail-Historie pro Bewerber', free: false, pro: true, agentur: true },
+    ],
+  },
+  {
+    name: 'Berichte & Analytics',
+    features: [
+      { name: 'Bewerbungen pro Stelle', free: false, pro: true, agentur: true },
+      { name: 'Conversion-Rates', free: false, pro: true, agentur: true },
+      { name: 'Time-to-Hire', free: false, pro: true, agentur: true },
+      { name: 'CSV-Export', free: false, pro: true, agentur: true },
     ],
   },
   {
     name: 'Integrationen & API',
     features: [
-      { name: 'WordPress Shortcodes', free: true, pro: true, ai: true },
-      { name: 'REST API', free: false, pro: true, ai: true },
-      { name: 'Webhooks (Zapier/Make)', free: false, pro: true, ai: true },
-      { name: 'CSV-Export', free: false, pro: true, ai: true },
-    ],
-  },
-  {
-    name: 'KI-Features',
-    features: [
-      { name: 'Job-Match Score', free: false, pro: false, ai: true },
-      { name: 'Job-Finder', free: false, pro: false, ai: true },
-      { name: 'Chancen-Check', free: false, pro: false, ai: true },
-      { name: 'Stellentexte generieren', free: false, pro: false, ai: true },
-      { name: 'SEO-Vorschläge', free: false, pro: false, ai: true },
+      { name: 'WordPress Shortcodes', free: true, pro: true, agentur: true },
+      { name: 'Gutenberg-Blöcke', free: true, pro: true, agentur: true },
+      { name: 'Avada/Fusion Builder Elemente', free: false, pro: true, agentur: true },
+      { name: 'Elementor Builder Elemente', free: false, pro: true, agentur: true },
+      { name: 'REST API', free: false, pro: true, agentur: true },
+      { name: 'Webhooks (Zapier, Make)', free: false, pro: true, agentur: true },
     ],
   },
   {
     name: 'Design & Branding',
     features: [
-      { name: 'Theme-Farben erben', free: true, pro: true, ai: true },
-      { name: 'Custom Primärfarbe', free: false, pro: true, ai: true },
-      { name: 'Typografie anpassen', free: false, pro: true, ai: true },
-      { name: 'Card-Design anpassen', free: false, pro: true, ai: true },
-      { name: 'Branding entfernen', free: false, pro: true, ai: true },
+      { name: 'Theme-Farben automatisch erben', free: true, pro: true, agentur: true },
+      { name: 'Custom Primärfarbe & Buttons', free: false, pro: true, agentur: true },
+      { name: 'Typografie anpassen', free: false, pro: true, agentur: true },
+      { name: 'Card-Design anpassen', free: false, pro: true, agentur: true },
+      { name: '"Powered by" Badge entfernen', free: false, pro: true, agentur: true },
     ],
   },
   {
-    name: 'Support & Updates',
+    name: 'DSGVO & Datenschutz',
     features: [
-      { name: 'Community-Support', free: true, pro: true, ai: true },
-      { name: 'Premium E-Mail-Support', free: false, pro: '1 Jahr', ai: true },
-      { name: 'Updates', free: true, pro: '1 Jahr', ai: true },
+      { name: 'Consent-Checkbox mit Zeitstempel', free: true, pro: true, agentur: true },
+      { name: 'Bewerber manuell löschen', free: true, pro: true, agentur: true },
+      { name: 'Automatische Löschfristen', free: false, pro: true, agentur: true },
+      { name: 'Daten-Export pro Bewerber', free: false, pro: true, agentur: true },
+      { name: 'Anonymisierung (Soft-Delete)', free: false, pro: true, agentur: true },
+    ],
+  },
+  {
+    name: 'Lizenz & Support',
+    features: [
+      { name: 'Community-Support', free: true, pro: true, agentur: true },
+      { name: 'Premium E-Mail-Support', free: false, pro: '1 Jahr', agentur: '1 Jahr' },
+      { name: 'Updates', free: true, pro: '1 Jahr', agentur: '1 Jahr' },
+      { name: 'Anzahl Websites', free: '1', pro: '1', agentur: '3' },
+      { name: 'Zentrale Lizenzverwaltung', free: false, pro: false, agentur: true },
+      { name: 'Prioritäts-Support', free: false, pro: false, agentur: true },
     ],
   },
 ]
@@ -150,8 +161,8 @@ export function FeatureComparisonTable() {
                 <th className="pb-4 text-center text-sm font-semibold text-[#1d71b8]">
                   Pro
                 </th>
-                <th className="pb-4 text-center text-sm font-semibold text-[#2fac66]">
-                  KI-Addon
+                <th className="pb-4 text-center text-sm font-semibold text-slate-600">
+                  Agentur
                 </th>
               </tr>
             </thead>
@@ -181,7 +192,7 @@ export function FeatureComparisonTable() {
                         <CellValue value={feature.pro} />
                       </td>
                       <td className="py-3 text-center">
-                        <CellValue value={feature.ai} />
+                        <CellValue value={feature.agentur} />
                       </td>
                     </tr>
                   ))}

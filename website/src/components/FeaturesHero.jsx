@@ -10,8 +10,8 @@ export function FeaturesHero() {
         brauchen
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
-        Von der Stellenanzeige bis zur Einstellung. Ein Plugin, drei Versionen,
-        unbegrenzte Möglichkeiten.
+        Von der Stellenanzeige bis zur Einstellung. Ein Plugin, das mit Ihren
+        Anforderungen wächst.
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
         <Button href="/recruiting-playbook.zip" color="blue" download>

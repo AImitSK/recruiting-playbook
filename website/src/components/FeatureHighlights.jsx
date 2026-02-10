@@ -1,79 +1,215 @@
+import Image from 'next/image'
+import clsx from 'clsx'
+
 import { Container } from '@/components/Container'
 
-const highlights = [
+import screenshotGrid from '../../public/screenshots/grid.png'
+import screenshotKanban from '../../public/screenshots/kanban-board.png'
+import screenshotDetails from '../../public/screenshots/bewerbungen-details.png'
+import screenshotEmail from '../../public/screenshots/email-templates.png'
+import screenshotFormBuilder from '../../public/screenshots/formular-builder.png'
+import screenshotReports from '../../public/screenshots/berichte-conversion.png'
+import screenshotBranding from '../../public/screenshots/eistellungen-branding-typografie.png'
+
+const sections = [
   {
-    title: 'Stellenanzeigen',
-    description:
-      'Erstellen und verwalten Sie unbegrenzt Stellenanzeigen als WordPress Custom Post Type. Mit Google for Jobs Schema, SEO-Feldern und responsiven Templates.',
-    icon: (
-      <svg className="h-8 w-8 text-[#1d71b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-    ),
+    title: 'Stellenanzeigen, die gefunden werden',
+    text: 'Erstellen Sie unbegrenzt Stellenanzeigen als WordPress Custom Post Type. Automatisches Google for Jobs Schema-Markup sorgt dafür, dass Ihre Stellen direkt in der Google-Suche erscheinen — ohne technisches Wissen.',
+    image: screenshotGrid,
+    imageAlt: 'Stellenanzeigen Grid-Ansicht',
+    imagePosition: 'left',
+    badge: null,
+    bullets: [
+      'Unbegrenzte Stellenanzeigen (auch in Free)',
+      'Google for Jobs Schema automatisch generiert',
+      'Kategorien, Standorte und Beschäftigungsarten als Filter',
+      'Gehalt, Ansprechpartner, Bewerbungsfrist',
+      'Responsive Grid-Layout mit konfigurierbaren Spalten',
+    ],
   },
   {
-    title: 'Bewerbungsformular',
-    description:
-      'Mehrstufige Formulare mit Lebenslauf-Upload, DSGVO-Checkboxen und optionalen Custom Fields. Bewerber können Dokumente direkt hochladen.',
-    icon: (
-      <svg className="h-8 w-8 text-[#1d71b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
-      </svg>
-    ),
+    title: 'Bewerbungen visuell managen',
+    text: 'Behalten Sie den Überblick über alle Bewerbungen mit dem Kanban-Board. Ziehen Sie Bewerber per Drag & Drop durch Ihre Pipeline — von der neuen Bewerbung bis zur Einstellung.',
+    image: screenshotKanban,
+    imageAlt: 'Kanban-Board mit Bewerbungen',
+    imagePosition: 'right',
+    badge: 'Pro',
+    bullets: [
+      'Drag & Drop zwischen Status-Spalten',
+      'Neu → Screening → Interview → Angebot → Eingestellt',
+      'Quick-Actions direkt auf der Karte',
+      'Filter nach Stelle, Zeitraum und Status',
+      'Statusänderungen werden automatisch protokolliert',
+    ],
   },
   {
-    title: 'Bewerbermanagement',
-    description:
-      'Kanban-Board mit Drag & Drop, Bewerber-Detailansicht, Notizen, Bewertungen und konfigurierbarem Status-Workflow. Alles in einem Dashboard.',
-    icon: (
-      <svg className="h-8 w-8 text-[#1d71b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-      </svg>
-    ),
+    title: 'Alle Informationen auf einen Blick',
+    text: 'Jede Bewerbung hat eine eigene Detailseite mit Tabs für Dokumente, Notizen, Verlauf und E-Mails. Bewerten Sie Bewerber mit Sternen und hinterlassen Sie interne Notizen für Ihr Team.',
+    image: screenshotDetails,
+    imageAlt: 'Bewerbung Detailansicht',
+    imagePosition: 'left',
+    badge: 'Pro',
+    bullets: [
+      'Kandidaten-Details mit allen Kontaktdaten',
+      'Dokumente-Tab mit sicheren Download-Links',
+      'Internes Notizen-System mit Autor und Zeitstempel',
+      'Sterne-Bewertung pro Bewerber',
+      'Vollständiger Aktivitäts-Verlauf',
+      'Talent-Pool für vielversprechende Kandidaten',
+    ],
   },
   {
-    title: 'KI-Analyse',
-    description:
-      'Bewerber erhalten einen Match-Score, finden passende Stellen und bekommen eine Chancen-Analyse. KI generiert auch Stellentexte und SEO-Vorschläge.',
-    icon: (
-      <svg className="h-8 w-8 text-[#1d71b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-      </svg>
-    ),
+    title: 'Professionelle E-Mail-Kommunikation',
+    text: 'Versenden Sie Eingangsbestätigungen, Absagen und Interview-Einladungen mit anpassbaren Templates. Platzhalter wie Name, Stelle und Firma werden automatisch ersetzt.',
+    image: screenshotEmail,
+    imageAlt: 'E-Mail Templates Verwaltung',
+    imagePosition: 'right',
+    badge: 'Pro',
+    bullets: [
+      'Anpassbare E-Mail-Templates mit WYSIWYG-Editor',
+      'Platzhalter: {vorname}, {stelle}, {firma} und mehr',
+      'Automatische E-Mail Workflows',
+      'Manueller Versand direkt aus der Bewerbung',
+      'Komplette E-Mail-Historie pro Bewerber',
+      'Queued Delivery für zuverlässigen Versand',
+    ],
+  },
+  {
+    title: 'Formulare nach Ihren Wünschen',
+    text: 'Bauen Sie mehrstufige Bewerbungsformulare per Drag & Drop. Fügen Sie eigene Felder hinzu, definieren Sie Pflichtfelder und nutzen Sie Conditional Logic für dynamische Formulare.',
+    image: screenshotFormBuilder,
+    imageAlt: 'Formular-Builder',
+    imagePosition: 'left',
+    badge: 'Pro',
+    bullets: [
+      'Drag & Drop Formular-Editor',
+      'Feldtypen: Text, Textarea, Select, Checkbox, Radio, Date',
+      'Conditional Logic (Felder ein-/ausblenden)',
+      'Mehrere Dokument-Uploads mit Dateivalidierung',
+      'Vierstufiger Spam-Schutz (Honeypot, Time-Check, Rate Limiting, Captcha)',
+      'DSGVO-Checkboxen mit Consent-Protokollierung',
+    ],
+  },
+  {
+    title: 'Datenbasierte Recruiting-Entscheidungen',
+    text: 'Verstehen Sie, welche Stellen gut laufen und wo Bewerber abspringen. Conversion-Rates, Zeiträume und Trends auf einen Blick.',
+    image: screenshotReports,
+    imageAlt: 'Berichte und Analytics Dashboard',
+    imagePosition: 'right',
+    badge: 'Pro',
+    bullets: [
+      'Bewerbungen pro Stelle und Zeitraum',
+      'Conversion-Rates durch die Pipeline',
+      'Time-to-Hire Berechnung',
+      'Trend-Analyse über Zeiträume',
+      'CSV-Export für eigene Auswertungen',
+    ],
+  },
+  {
+    title: 'Ihr Design. Ihre Marke.',
+    text: 'Passen Sie das Aussehen des Plugins komplett an Ihr Corporate Design an. Farben, Typografie, Cards und Buttons — alles konfigurierbar. Oder nutzen Sie einfach Ihre Theme-Einstellungen.',
+    image: screenshotBranding,
+    imageAlt: 'Design und Branding Einstellungen',
+    imagePosition: 'left',
+    badge: 'Pro',
+    bullets: [
+      'Primärfarbe und Button-Design anpassen',
+      'Typografie (Überschriften, Fließtext, Labels)',
+      'Card-Design (Eckenradius, Schatten, Rahmen)',
+      'Theme-Farben automatisch übernehmen',
+      '"Powered by" Badge entfernen',
+    ],
   },
 ]
+
+function CheckIcon() {
+  return (
+    <svg
+      className="mt-0.5 h-5 w-5 flex-none text-[#2fac66]"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 13l4 4L19 7"
+      />
+    </svg>
+  )
+}
+
+function FeatureSection({ section, index }) {
+  const isImageLeft = section.imagePosition === 'left'
+
+  return (
+    <div
+      className={clsx(
+        'flex flex-col items-center gap-12 lg:flex-row lg:gap-16',
+        index > 0 && 'mt-24 sm:mt-32',
+      )}
+    >
+      {/* Image */}
+      <div
+        className={clsx(
+          'w-full lg:w-1/2',
+          !isImageLeft && 'lg:order-2',
+        )}
+      >
+        <div className="overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-slate-900/10 ring-1 ring-slate-200">
+          <Image
+            className="w-full"
+            src={section.image}
+            alt={section.imageAlt}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
+        </div>
+      </div>
+
+      {/* Text */}
+      <div
+        className={clsx(
+          'w-full lg:w-1/2',
+          !isImageLeft && 'lg:order-1',
+        )}
+      >
+        <div className="flex items-center gap-x-3">
+          <h3 className="font-display text-2xl tracking-tight text-slate-900 sm:text-3xl">
+            {section.title}
+          </h3>
+          {section.badge && (
+            <span className="inline-flex items-center rounded-full bg-[#1d71b8] px-2.5 py-0.5 text-xs font-semibold text-white">
+              {section.badge}
+            </span>
+          )}
+        </div>
+        <p className="mt-4 text-base text-slate-600">
+          {section.text}
+        </p>
+        <ul role="list" className="mt-6 flex flex-col gap-y-2">
+          {section.bullets.map((bullet) => (
+            <li
+              key={bullet}
+              className="flex items-start gap-x-3 text-sm text-slate-700"
+            >
+              <CheckIcon />
+              {bullet}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
 
 export function FeatureHighlights() {
   return (
     <section className="py-20 sm:py-32">
       <Container>
-        <div className="mx-auto max-w-2xl md:text-center">
-          <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            Vier Säulen für Ihr Recruiting
-          </h2>
-          <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Jede Funktion ist darauf ausgelegt, Ihren Recruiting-Prozess
-            einfacher und effizienter zu machen.
-          </p>
-        </div>
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-2">
-          {highlights.map((item) => (
-            <div
-              key={item.title}
-              className="flex flex-col rounded-3xl bg-slate-50 p-8"
-            >
-              <div className="flex items-center gap-x-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1d71b8]/10">
-                  {item.icon}
-                </div>
-                <h3 className="font-display text-lg text-slate-900">
-                  {item.title}
-                </h3>
-              </div>
-              <p className="mt-4 text-sm text-slate-700">{item.description}</p>
-            </div>
-          ))}
-        </div>
+        {sections.map((section, index) => (
+          <FeatureSection key={section.title} section={section} index={index} />
+        ))}
       </Container>
     </section>
   )
