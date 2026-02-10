@@ -28,6 +28,7 @@ export function Footer() {
               <NavLink href="/api">API</NavLink>
               <NavLink href="/changelog">Changelog</NavLink>
               <NavLink href="/support">Support</NavLink>
+              <NavLink href="/account">Kundenportal</NavLink>
             </div>
           </nav>
         </div>

@@ -63,10 +63,11 @@ const supportTiers = [
     ],
   },
   {
-    tier: 'AI-Addon',
+    tier: 'Agentur',
     channels: [
       'Alles aus Pro',
-      'E-Mail-Support für KI-Funktionen',
+      'Prioritäts-Support',
+      'Zentrale Lizenzverwaltung',
     ],
   },
 ]
@@ -153,7 +154,7 @@ export default function SupportPage() {
             </h2>
             <p className="mt-4 text-base text-slate-600">
               Sie haben eine Frage, die in der Dokumentation nicht beantwortet
-              wird? Pro- und AI-Addon-Kunden erreichen uns per E-Mail:
+              wird? Pro- und Agentur-Kunden erreichen uns per E-Mail:
             </p>
             <a
               href="mailto:info@sk-online-marketing.de"
@@ -170,7 +171,7 @@ export default function SupportPage() {
             </p>
           </div>
 
-          {/* LemonSqueezy Kundenportal */}
+          {/* Kundenportal */}
           <div className="mt-12 max-w-2xl">
             <h2 className="font-display text-2xl tracking-tight text-slate-900">
               Lizenzen & Abonnements verwalten
@@ -180,17 +181,15 @@ export default function SupportPage() {
               Abonnements verwalten, Rechnungen herunterladen und das
               Plugin als ZIP-Datei laden.
             </p>
-            <a
-              href="https://recruiting-playbook.lemonsqueezy.com/billing"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/account"
               className="mt-4 inline-flex items-center gap-2 text-base font-medium text-[#1d71b8] hover:text-[#1a63a3]"
             >
               Zum Kundenportal
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
-            </a>
+            </Link>
           </div>
         </Container>
       </main>
