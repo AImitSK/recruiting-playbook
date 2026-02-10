@@ -1,25 +1,29 @@
 ---
 title: Gutenberg Blocks
-description: Native WordPress-Bloecke fuer den Block-Editor mit visueller Vorschau.
+description: Native WordPress-Blöcke für den Block-Editor mit visueller Vorschau.
 ---
 
-Recruiting Playbook bietet native Gutenberg-Bloecke fuer alle wichtigen Funktionen. Die Bloecke sind kostenlos verfuegbar und bieten eine komfortable Alternative zu Shortcodes.
+Recruiting Playbook bietet native Gutenberg-Blöcke für alle wichtigen Funktionen. Die Blöcke sind kostenlos verfügbar und bieten eine komfortable Alternative zu [Shortcodes](/docs/shortcodes).
 
-## Vorteile der Gutenberg-Bloecke
+## Vorteile der Gutenberg-Blöcke
 
 - **Visuelles Editing** direkt im Block-Editor
 - **Einfache Bedienung** per Drag & Drop
-- **Einstellungen** ueber die Sidebar (Inspector Controls)
-- **Block-Patterns** fuer haeufige Layouts
+- **Einstellungen** über die Sidebar (Inspector Controls)
+- **Block-Patterns** für häufige Layouts
 - **Theme-Integration** mit automatischem Styling
 
-## Verfuegbare Bloecke
+## Verfügbare Blöcke
+
+Alle Blöcke befinden sich in der Kategorie **Recruiting Playbook** im Block-Inserter.
+
+![Block-Inserter mit allen Recruiting Playbook Blöcken und Sidebar-Einstellungen](/screenshots/gutenbergeditor-02.png)
 
 | Block | Beschreibung | Feature |
 |-------|--------------|---------|
 | Stellenliste | Liste der Stellenanzeigen | Free |
 | Stellensuche | Suchformular mit Filtern | Free |
-| Stellen-Zaehler | Dynamischer Zaehler fuer Headlines | Free |
+| Stellen-Zähler | Dynamischer Zähler für Headlines | Free |
 | Featured Jobs | Hervorgehobene Stellen | Free |
 | Neueste Stellen | Aktuellste Stellenanzeigen | Free |
 | Job-Kategorien | Klickbare Kategorie-Karten | Free |
@@ -39,17 +43,10 @@ Der Hauptblock zur Anzeige von Stellenanzeigen.
 | Spalten | Grid-Spalten (1-4) | `2` |
 | Kategorie | Filter nach Kategorie | - |
 | Standort | Filter nach Standort | - |
-| Beschaeftigungsart | Filter nach Art | - |
+| Beschäftigungsart | Filter nach Art | - |
 | Nur Featured | Nur hervorgehobene Stellen | Nein |
 | Sortieren nach | Datum, Titel oder Zufall | Datum |
 | Reihenfolge | Aufsteigend oder Absteigend | Absteigend |
-
-### Beispiel
-
-1. Block hinzufuegen (+ Symbol)
-2. Nach "Stellenliste" suchen
-3. Block einfuegen
-4. In der Sidebar Einstellungen anpassen
 
 ## Stellensuche (rp/job-search)
 
@@ -60,15 +57,15 @@ Suchformular mit Filtern und Live-Ergebnissen.
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
 | Suchfeld anzeigen | Freitext-Suche aktivieren | Ja |
-| Kategorie-Filter | Dropdown fuer Kategorien | Ja |
-| Standort-Filter | Dropdown fuer Standorte | Ja |
-| Beschaeftigungsart-Filter | Dropdown fuer Arten | Ja |
+| Kategorie-Filter | Dropdown für Kategorien | Ja |
+| Standort-Filter | Dropdown für Standorte | Ja |
+| Beschäftigungsart-Filter | Dropdown für Arten | Ja |
 | Stellen pro Seite | Anzahl der Ergebnisse | `10` |
 | Spalten | Grid-Spalten | `1` |
 
-## Stellen-Zaehler (rp/job-count)
+## Stellen-Zähler (rp/job-count)
 
-Dynamischer Zaehler fuer Headlines wie "Aktuell 12 offene Stellen".
+Dynamischer Zähler für Headlines wie "Aktuell 12 offene Stellen".
 
 ### Einstellungen
 
@@ -76,17 +73,17 @@ Dynamischer Zaehler fuer Headlines wie "Aktuell 12 offene Stellen".
 |-------------|--------------|----------|
 | Kategorie | Filter nach Kategorie | - |
 | Standort | Filter nach Standort | - |
-| Beschaeftigungsart | Filter nach Art | - |
-| Format (Mehrzahl) | Text mit Platzhalter fuer Anzahl | "X offene Stellen" |
-| Format (Einzahl) | Text fuer 1 Stelle | "X offene Stelle" |
-| Format (Null) | Text fuer 0 Stellen | "Keine offenen Stellen" |
+| Beschäftigungsart | Filter nach Art | - |
+| Format (Mehrzahl) | Text mit Platzhalter für Anzahl | "X offene Stellen" |
+| Format (Einzahl) | Text für 1 Stelle | "X offene Stelle" |
+| Format (Null) | Text für 0 Stellen | "Keine offenen Stellen" |
 
 ### Beispiel
 
-Der Zaehler kann in Ueberschriften eingefuegt werden:
+Der Zähler kann in Überschriften eingefügt werden:
 
 ```
-Willkommen! Aktuell [Stellen-Zaehler] bei uns.
+Willkommen! Aktuell [Stellen-Zähler] bei uns.
 ```
 
 Ergebnis: "Willkommen! Aktuell 12 offene Stellen bei uns."
@@ -101,12 +98,12 @@ Zeigt als "Featured" markierte Stellen prominent an.
 |-------------|--------------|----------|
 | Anzahl | Anzahl der Featured Jobs | `3` |
 | Spalten | Grid-Spalten (1-4) | `3` |
-| Ueberschrift | Optionale Ueberschrift | - |
+| Überschrift | Optionale Überschrift | - |
 | Auszug anzeigen | Teaser-Text anzeigen | Ja |
 
 ## Neueste Stellen (rp/latest-jobs)
 
-Zeigt die neuesten Stellenanzeigen an - ideal fuer Sidebars.
+Zeigt die neuesten Stellenanzeigen an — ideal für Sidebars.
 
 ### Einstellungen
 
@@ -114,7 +111,7 @@ Zeigt die neuesten Stellenanzeigen an - ideal fuer Sidebars.
 |-------------|--------------|----------|
 | Anzahl | Anzahl der Stellen | `5` |
 | Spalten | Grid-Spalten (0 = Liste) | `0` |
-| Ueberschrift | Optionale Ueberschrift | - |
+| Überschrift | Optionale Überschrift | - |
 | Kategorie | Filter nach Kategorie | - |
 | Auszug anzeigen | Teaser-Text anzeigen | Nein |
 
@@ -139,8 +136,8 @@ Mehrstufiges Bewerbungsformular mit Datei-Upload.
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Stellen-ID | Fuer welche Stelle (0 = automatisch) | `0` |
-| Ueberschrift | Formular-Ueberschrift | "Jetzt bewerben" |
+| Stellen-ID | Für welche Stelle (0 = automatisch) | `0` |
+| Überschrift | Formular-Überschrift | "Jetzt bewerben" |
 | Stellentitel anzeigen | Name der Stelle anzeigen | Ja |
 | Fortschritt anzeigen | Schritt-Anzeige aktivieren | Ja |
 
@@ -150,7 +147,7 @@ Auf Stellendetail-Seiten wird die Stelle automatisch erkannt. Auf anderen Seiten
 
 ## KI-Job-Finder (rp/ai-job-finder)
 
-Lebenslauf-Upload mit KI-gestuetzter Stellenempfehlung.
+Lebenslauf-Upload mit KI-gestützter Stellenempfehlung.
 
 <Callout type="warning">
 Dieses Feature erfordert das AI-Addon.
@@ -160,13 +157,13 @@ Dieses Feature erfordert das AI-Addon.
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Ueberschrift | Titel des Bereichs | "Finde deinen Traumjob" |
-| Untertitel | Erklaerungstext | - |
-| Max. Vorschlaege | Anzahl der Empfehlungen (1-10) | `5` |
+| Überschrift | Titel des Bereichs | "Finde deinen Traumjob" |
+| Untertitel | Erklärungstext | - |
+| Max. Vorschläge | Anzahl der Empfehlungen (1-10) | `5` |
 
 ## KI-Job-Match (rp/ai-job-match)
 
-Button fuer "Passe ich zu diesem Job?" Analyse.
+Button für "Passe ich zu diesem Job?" Analyse.
 
 <Callout type="warning">
 Dieses Feature erfordert das AI-Addon.
@@ -176,9 +173,15 @@ Dieses Feature erfordert das AI-Addon.
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Stellen-ID | Fuer welche Stelle | Automatisch |
+| Stellen-ID | Für welche Stelle | Automatisch |
 | Button-Text | Beschriftung des Buttons | "Passe ich zu diesem Job?" |
 | Style | Button-Variante (normal, outline) | Normal |
+
+## Stellen bearbeiten
+
+Stellenanzeigen werden direkt im Block-Editor erstellt. Unterhalb des Inhaltsbereichs finden Sie die Meta-Boxen für Stellen-Details wie Gehalt, Ansprechpartner und Standort. In der Sidebar können Berufsfelder und Standorte zugewiesen werden.
+
+![Stellen-Editor mit Meta-Boxen und Taxonomien](/screenshots/gutenbergeditor-01.png)
 
 ## Block-Patterns
 
@@ -186,34 +189,23 @@ Recruiting Playbook stellt vorgefertigte Block-Patterns bereit:
 
 ### Karriereseite
 
-Komplettes Layout mit Ueberschrift, Zaehler, Featured Jobs und Suche.
+Komplettes Layout mit Überschrift, Zähler, Featured Jobs und Suche.
 
 ### Stellen-Sidebar
 
-Kompakte Liste der neuesten Stellen fuer Sidebars.
+Kompakte Liste der neuesten Stellen für Sidebars.
 
 ### Job-Finder Hero
 
 Hero-Bereich mit KI-Job-Finder (erfordert AI-Addon).
 
-## Bloecke einfuegen
-
-1. Im Block-Editor auf das **+** Symbol klicken
-2. Nach "Recruiting" oder dem Block-Namen suchen
-3. Block auswaehlen und einfuegen
-4. Einstellungen in der rechten Sidebar anpassen
-
-<Callout type="info">
-Die Bloecke befinden sich in der Kategorie "Recruiting Playbook" im Block-Inserter.
-</Callout>
-
 ## Design & Branding
 
-Die Bloecke uebernehmen automatisch die Einstellungen aus dem Design & Branding Bereich:
+Die Blöcke übernehmen automatisch die Einstellungen aus dem Design & Branding Bereich:
 
-- Farben (Primaerfarbe, Buttons)
-- Typografie (Schriftgroessen)
+- Farben (Primärfarbe, Buttons)
+- Typografie (Schriftgrößen)
 - Card-Layouts (Standard, Kompakt, Featured)
 - Grid-Einstellungen
 
-Individuelle Anpassungen koennen pro Block in der Sidebar vorgenommen werden.
+Individuelle Anpassungen können pro Block in der Sidebar vorgenommen werden.

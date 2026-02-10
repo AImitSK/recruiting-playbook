@@ -35,7 +35,7 @@ const faqs = [
     {
       question: 'Kann ich die Domain meiner Lizenz wechseln?',
       answer:
-        'Ja. Sie können eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agency-Lizenz bis zu 5 gleichzeitig.',
+        'Ja. Sie können eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agentur-Lizenz bis zu 3 gleichzeitig.',
     },
   ],
   [

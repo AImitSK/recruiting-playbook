@@ -5,17 +5,17 @@ const faqs = [
     {
       question: 'Was bedeutet "Lifetime-Lizenz"?',
       answer:
-        'Sie zahlen einmalig 149 € und erhalten die aktuelle Version dauerhaft plus 12 Monate Updates und Support. Danach funktioniert Ihr Plugin weiter — Sie erhalten nur keine neuen Updates mehr. Optional: 49 €/Jahr für weitere Updates.',
+        'Sie zahlen einmalig und erhalten die aktuelle Version dauerhaft plus 12 Monate Updates und Support. Danach funktioniert Ihr Plugin weiter — Sie erhalten nur keine neuen Updates mehr. Optional können Sie die Wartung verlängern.',
     },
     {
-      question: 'Brauche ich Pro für das KI-Addon?',
+      question: 'Was ist der Unterschied zwischen Pro und Agentur?',
       answer:
-        'Ja, das KI-Addon setzt eine aktive Pro-Lizenz voraus. Die KI-Analyse nutzt die erweiterten Datenstrukturen der Pro-Version.',
+        'Pro ist für eine einzelne Website. Die Agentur-Lizenz enthält alle Pro-Features für bis zu 3 Websites, eine zentrale Lizenzverwaltung und Prioritäts-Support.',
     },
     {
       question: 'Kann ich die Domain meiner Lizenz wechseln?',
       answer:
-        'Ja. Sie können eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agency-Lizenz bis zu 5 gleichzeitig.',
+        'Ja. Sie können eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agentur-Lizenz können Sie bis zu 3 Domains gleichzeitig nutzen.',
     },
   ],
   [
@@ -27,29 +27,29 @@ const faqs = [
     {
       question: 'Was passiert nach den 12 Monaten Updates?',
       answer:
-        'Ihr Plugin funktioniert weiterhin ohne Einschränkungen. Sie erhalten nur keine neuen Features und Sicherheitsupdates mehr. Die Wartungsverlängerung für 49 €/Jahr gibt Ihnen Zugang zu allen Updates.',
+        'Ihr Plugin funktioniert weiterhin ohne Einschränkungen. Sie erhalten nur keine neuen Features und Sicherheitsupdates mehr. Die Wartungsverlängerung gibt Ihnen wieder Zugang zu allen Updates.',
     },
     {
-      question: 'Wie funktioniert die Agency-Lizenz?',
+      question: 'Brauche ich Pro für das KI-Addon?',
       answer:
-        'Die Agency-Lizenz für 249 € erlaubt die Installation auf bis zu 5 Websites. Ideal für Agenturen, die das Plugin für mehrere Kunden einsetzen.',
+        'Ja, das KI-Addon setzt eine aktive Pro- oder Agentur-Lizenz voraus. Die KI-Analyse nutzt die erweiterten Datenstrukturen der Pro-Version. Details finden Sie auf der KI-Addon-Seite.',
     },
   ],
   [
     {
-      question: 'Was passiert wenn meine KI-Analysen aufgebraucht sind?',
+      question: 'Wie funktioniert das KI-Addon?',
       answer:
-        'Sie werden bei 80% Verbrauch benachrichtigt. Danach können Sie jederzeit Extra-Pakete (9 € / 50 Analysen) nachbuchen. Ungenutzte Extra-Analysen verfallen nicht.',
+        'Das KI-Addon ist ein separates Abonnement ab 19 €/Monat (oder 179 €/Jahr). Sie erhalten 100 Analysen pro Monat. Extra-Pakete können jederzeit nachgebucht werden.',
     },
     {
       question: 'Welche Zahlungsmethoden werden akzeptiert?',
       answer:
-        'Wir akzeptieren Kreditkarte, PayPal und SEPA-Lastschrift. Für das KI-Addon wird monatlich oder jährlich abgerechnet.',
+        'Wir akzeptieren Kreditkarte, PayPal und SEPA-Lastschrift. Pro und Agentur sind Einmalzahlungen, das KI-Addon wird monatlich oder jährlich abgerechnet.',
     },
     {
       question: 'Gibt es Rabatte für gemeinnützige Organisationen?',
       answer:
-        'Ja, gemeinnützige Organisationen und Bildungseinrichtungen erhalten 30% Rabatt auf Pro und Agency-Lizenzen. Kontaktieren Sie uns mit einem Nachweis.',
+        'Ja, gemeinnützige Organisationen und Bildungseinrichtungen erhalten 30% Rabatt auf Pro- und Agentur-Lizenzen. Kontaktieren Sie uns mit einem Nachweis.',
     },
   ],
 ]

@@ -1,9 +1,9 @@
 ---
 title: Avada / Fusion Builder
-description: Native Fusion Builder Elements fuer das Avada Theme mit Live-Preview im visuellen Editor.
+description: Native Fusion Builder Elemente für das Avada Theme mit Live-Preview im visuellen Editor.
 ---
 
-Recruiting Playbook bietet native Fusion Builder Elements fuer Avada-Nutzer. Die Elemente sind als **Pro-Feature** verfuegbar und integrieren sich nahtlos in den Backend- und Live-Builder.
+Recruiting Playbook bietet native Fusion Builder Elemente für Avada-Nutzer. Die Elemente sind als **Pro-Feature** verfügbar und integrieren sich nahtlos in den Backend- und Live-Builder.
 
 ## Voraussetzungen
 
@@ -11,17 +11,21 @@ Recruiting Playbook bietet native Fusion Builder Elements fuer Avada-Nutzer. Die
 - **Fusion Builder** Plugin (wird mit Avada mitgeliefert)
 - **Recruiting Playbook Pro** Lizenz
 
-## Verfuegbare Elemente
+## Verfügbare Elemente
+
+Alle Elemente befinden sich in der Kategorie **Recruiting Playbook** im Element-Picker.
+
+![Element-Picker mit allen Recruiting Playbook Elementen](/screenshots/avada-01.png)
 
 ### Seiten-Elemente
 
-Diese Elemente koennen auf jeder Seite verwendet werden:
+Diese Elemente können auf jeder Seite verwendet werden:
 
 | Element | Shortcode | Beschreibung | Feature |
 |---------|-----------|--------------|---------|
 | RP: Stellenliste | `rp_jobs` | Stellenanzeigen im Grid-Layout | Pro |
 | RP: Stellensuche | `rp_job_search` | Suchformular mit Filtern | Pro |
-| RP: Stellen-Zaehler | `rp_job_count` | Dynamischer Zaehler fuer Headlines | Pro |
+| RP: Stellen-Zähler | `rp_job_count` | Dynamischer Zähler für Headlines | Pro |
 | RP: Featured Jobs | `rp_featured_jobs` | Hervorgehobene Stellen | Pro |
 | RP: Neueste Stellen | `rp_latest_jobs` | Aktuellste Stellenanzeigen | Pro |
 | RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten | Pro |
@@ -29,7 +33,7 @@ Diese Elemente koennen auf jeder Seite verwendet werden:
 
 ### Layout-Komponenten (Template Builder)
 
-Diese Elemente sind nur im **Template Builder** (Layout Sections) verfuegbar und fuer Stellen-Einzelseiten gedacht:
+Diese Elemente sind nur im **Template Builder** (Layout Sections) verfügbar und für Stellen-Einzelseiten gedacht:
 
 | Element | Shortcode | Beschreibung | Feature |
 |---------|-----------|--------------|---------|
@@ -37,25 +41,27 @@ Diese Elemente sind nur im **Template Builder** (Layout Sections) verfuegbar und
 | RP: KI-Job-Match | `rp_ai_job_match` | "Passe ich zu diesem Job?" Button | AI-Addon |
 
 <Callout type="info">
-Layout-Komponenten erkennen die aktuelle Stelle automatisch. Sie funktionieren nur in Layout Sections fuer den Post-Typ "Stellenanzeige".
+Layout-Komponenten erkennen die aktuelle Stelle automatisch. Sie funktionieren nur in Layout Sections für den Post-Typ "Stellenanzeige".
 </Callout>
 
-## Elemente einfuegen
+## Elemente einfügen
 
 ### Backend Builder
 
 1. Seite bearbeiten → **Fusion Builder** aktivieren
 2. Auf **Element** klicken
-3. Kategorie **Recruiting Playbook** waehlen
-4. Element auswaehlen und konfigurieren
+3. Kategorie **Recruiting Playbook** wählen
+4. Element auswählen und konfigurieren
 
 ### Live Builder
 
 1. Seite bearbeiten → **Live Builder** starten
 2. Auf das **+** Symbol klicken
-3. Nach "RP:" suchen oder Kategorie **Recruiting Playbook** waehlen
+3. Nach "RP:" suchen oder Kategorie **Recruiting Playbook** wählen
 4. Element per Drag & Drop platzieren
 5. Parameter werden sofort in der Live-Vorschau angezeigt
+
+![Live Builder mit RP: Stellensuche und Element Options](/screenshots/avada-02.png)
 
 ## RP: Stellenliste
 
@@ -69,7 +75,7 @@ Zeigt Stellenanzeigen in einem konfigurierbaren Grid-Layout.
 | Spalten | Grid-Spalten (1-4) | `2` |
 | Kategorie | Filter nach Job-Kategorie | Alle |
 | Standort | Filter nach Standort | Alle |
-| Beschaeftigungsart | Filter nach Art | Alle |
+| Beschäftigungsart | Filter nach Art | Alle |
 | Nur Featured | Nur hervorgehobene Stellen | Nein |
 | Sortieren nach | Datum, Titel oder Zufall | Datum |
 | Reihenfolge | Aufsteigend oder Absteigend | Absteigend |
@@ -83,25 +89,25 @@ Suchformular mit Filtern und Ergebnisliste.
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
 | Suchfeld anzeigen | Freitext-Suche aktivieren | Ja |
-| Kategorie-Filter | Dropdown fuer Kategorien | Ja |
-| Standort-Filter | Dropdown fuer Standorte | Ja |
-| Beschaeftigungsart-Filter | Dropdown fuer Arten | Ja |
+| Kategorie-Filter | Dropdown für Kategorien | Ja |
+| Standort-Filter | Dropdown für Standorte | Ja |
+| Beschäftigungsart-Filter | Dropdown für Arten | Ja |
 | Stellen pro Seite | Anzahl der Ergebnisse (1-50) | `10` |
 | Spalten | Grid-Spalten (1-3) | `1` |
 
-## RP: Stellen-Zaehler
+## RP: Stellen-Zähler
 
-Dynamischer Zaehler fuer Headlines wie "Aktuell 12 offene Stellen".
+Dynamischer Zähler für Headlines wie "Aktuell 12 offene Stellen".
 
 ### Einstellungen
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Kategorie | Nur Stellen dieser Kategorie zaehlen | Alle |
-| Standort | Nur Stellen an diesem Standort zaehlen | Alle |
+| Kategorie | Nur Stellen dieser Kategorie zählen | Alle |
+| Standort | Nur Stellen an diesem Standort zählen | Alle |
 | Format (Mehrzahl) | Text mit `{count}` Platzhalter | `{count} offene Stellen` |
-| Format (Einzahl) | Text fuer eine Stelle | `{count} offene Stelle` |
-| Format (Null) | Text fuer keine Stellen | `Keine offenen Stellen` |
+| Format (Einzahl) | Text für eine Stelle | `{count} offene Stelle` |
+| Format (Null) | Text für keine Stellen | `Keine offenen Stellen` |
 
 ## RP: Featured Jobs
 
@@ -113,7 +119,7 @@ Zeigt als "Featured" markierte Stellen prominent an.
 |-------------|--------------|----------|
 | Anzahl | Anzahl der Featured Jobs (1-12) | `3` |
 | Spalten | Grid-Spalten (1-4) | `3` |
-| Ueberschrift | Optionale Ueberschrift | - |
+| Überschrift | Optionale Überschrift | - |
 | Auszug anzeigen | Teaser-Text anzeigen | Ja |
 
 ## RP: Neueste Stellen
@@ -126,9 +132,9 @@ Zeigt die neuesten Stellenanzeigen an.
 |-------------|--------------|----------|
 | Anzahl | Anzahl der Stellen (1-20) | `5` |
 | Spalten | Grid-Spalten (0 = Listenansicht) | `0` |
-| Ueberschrift | Optionale Ueberschrift | - |
+| Überschrift | Optionale Überschrift | - |
 | Kategorie | Filter nach Kategorie | Alle |
-| Datum anzeigen | Veroeffentlichungsdatum anzeigen | Ja |
+| Datum anzeigen | Veröffentlichungsdatum anzeigen | Ja |
 | Auszug anzeigen | Teaser-Text anzeigen | Nein |
 
 ## RP: Job-Kategorien
@@ -149,7 +155,7 @@ Zeigt alle Kategorien als klickbare Karten an.
 Mehrstufiges Bewerbungsformular mit Datei-Upload.
 
 <Callout type="info">
-Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfuegbar. Auf Stellen-Einzelseiten wird die Stelle automatisch erkannt.
+Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfügbar. Auf Stellen-Einzelseiten wird die Stelle automatisch erkannt.
 </Callout>
 
 ### Einstellungen
@@ -157,13 +163,13 @@ Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfue
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
 | Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
-| Ueberschrift | Formular-Ueberschrift | "Jetzt bewerben" |
-| Stellentitel anzeigen | Name der Stelle ueber dem Formular | Ja |
+| Überschrift | Formular-Überschrift | "Jetzt bewerben" |
+| Stellentitel anzeigen | Name der Stelle über dem Formular | Ja |
 | Fortschrittsanzeige | Schritt-Anzeige bei mehrstufigem Formular | Ja |
 
 ## RP: KI-Job-Finder
 
-Lebenslauf-Upload mit KI-gestuetzter Stellenempfehlung.
+Lebenslauf-Upload mit KI-gestützter Stellenempfehlung.
 
 <Callout type="warning">
 Erfordert das AI-Addon.
@@ -173,10 +179,10 @@ Erfordert das AI-Addon.
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Ueberschrift | Titel des Bereichs | "Finde deinen Traumjob" |
-| Untertitel | Erklaerungstext | "Lade deinen Lebenslauf hoch..." |
-| Max. Vorschlaege | Anzahl der KI-Empfehlungen (1-10) | `5` |
-| CSS-Klassen | Zusaetzliche CSS-Klassen | - |
+| Überschrift | Titel des Bereichs | "Finde deinen Traumjob" |
+| Untertitel | Erklärungstext | "Lade deinen Lebenslauf hoch..." |
+| Max. Vorschläge | Anzahl der KI-Empfehlungen (1-10) | `5` |
+| CSS-Klassen | Zusätzliche CSS-Klassen | - |
 
 ## RP: KI-Job-Match
 
@@ -187,7 +193,7 @@ Erfordert das AI-Addon.
 </Callout>
 
 <Callout type="info">
-Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfuegbar. Auf Stellen-Einzelseiten wird die Stelle automatisch erkannt.
+Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfügbar. Auf Stellen-Einzelseiten wird die Stelle automatisch erkannt.
 </Callout>
 
 ### Einstellungen
@@ -196,20 +202,20 @@ Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfue
 |-------------|--------------|----------|
 | Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
 | Button-Text | Beschriftung des Buttons | "Passe ich zu diesem Job?" |
-| Button-Stil | Normal (gefuellt) oder Outline | Normal |
-| CSS-Klassen | Zusaetzliche CSS-Klassen | - |
+| Button-Stil | Normal (gefüllt) oder Outline | Normal |
+| CSS-Klassen | Zusätzliche CSS-Klassen | - |
 
 ## Design & Branding
 
-Die Elemente uebernehmen automatisch die Einstellungen aus dem **Design & Branding** Bereich des Plugins:
+Die Elemente übernehmen automatisch die Einstellungen aus dem **Design & Branding** Bereich des Plugins:
 
 - Farben und Buttons
 - Card-Layouts (Standard, Kompakt, Featured)
 - Grid-Einstellungen
 
-Zusaetzlich werden bei aktivem Avada Theme die **Button-Styles aus den Avada Global Options** automatisch auf die Plugin-Buttons uebertragen.
+Zusätzlich werden bei aktivem Avada Theme die **Button-Styles aus den Avada Global Options** automatisch auf die Plugin-Buttons übertragen.
 
-## Layout Section fuer Stellenanzeigen
+## Layout Section für Stellenanzeigen
 
 Um das Bewerbungsformular und den KI-Job-Match-Button auf Stellen-Einzelseiten zu platzieren:
 
@@ -217,7 +223,7 @@ Um das Bewerbungsformular und den KI-Job-Match-Button auf Stellen-Einzelseiten z
 2. Bedingung: Post-Typ = **Stellenanzeige** (`job_listing`)
 3. **Content Layout Section** erstellen
 4. Im Builder die Layout-Komponenten (Bewerbungs-Formular, KI-Job-Match) platzieren
-5. Layout veroeffentlichen
+5. Layout veröffentlichen
 
 <Callout type="info">
 Die Layout-Komponenten sind nur im Template Builder sichtbar, nicht beim Bearbeiten normaler Seiten. So wird versehentliches Platzieren auf unpassenden Seiten verhindert.

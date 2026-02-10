@@ -18,7 +18,7 @@ export default function DocsLayout({ children }) {
       <Header />
       <main className="flex-1">
         <Container>
-          <div className="flex gap-10 py-10 lg:py-16">
+          <div className="flex flex-col lg:flex-row lg:gap-10 py-10 lg:py-16">
             <DocsSidebar />
             <div className="min-w-0 flex-1">{children}</div>
           </div>
