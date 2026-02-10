@@ -41,24 +41,30 @@ jobs:
         working-directory: plugin
         run: npm run build
 
-      - name: Verify no uninstall.php exists
-        working-directory: plugin
+      - name: Clean up and create plugin ZIP
         run: |
-          echo "=== Checking for uninstall.php files ==="
-          if find . -name "uninstall.php" -type f | grep -q .; then
-            echo "WARNING: uninstall.php found!"
-            find . -name "uninstall.php" -type f
-            echo "Removing uninstall.php files..."
-            find . -name "uninstall.php" -type f -delete
-          else
-            echo "OK: No uninstall.php found"
-          fi
-          echo ""
-          echo "=== Checking for register_uninstall_hook calls (excluding vendor/freemius) ==="
-          grep -r "register_uninstall_hook" --include="*.php" -l . | grep -v "vendor/freemius" | grep -v "vendor/php-stubs" || echo "OK: No register_uninstall_hook calls found"
+          cd plugin
 
-      - name: Create plugin ZIP
-        run: |
+          # Forcefully remove any uninstall.php (Freemius requires after_uninstall hook instead)
+          find . -name "uninstall.php" -type f -exec rm -f {} \; 2>/dev/null || true
+          rm -f uninstall.php 2>/dev/null || true
+
+          echo "=== PHP files at root level ==="
+          ls -la *.php
+
+          echo ""
+          echo "=== Checking for uninstall.php ==="
+          if [ -f "uninstall.php" ]; then
+            echo "ERROR: uninstall.php still exists after deletion!"
+            exit 1
+          else
+            echo "OK: No uninstall.php"
+          fi
+
+          # Create fresh ZIP (delete old one first)
+          cd ..
+          rm -f recruiting-playbook.zip
+
           cd plugin
           zip -r ../recruiting-playbook.zip . \
             -x "node_modules/*" \
@@ -71,21 +77,30 @@ jobs:
             -x ".stylelintrc*" \
             -x "assets/src/*" \
             -x "*.map" \
+            -x "*/uninstall.php" \
+            -x "./uninstall.php" \
             -x "uninstall.php"
+
           cd ..
-          echo "Created ZIP:"
+          echo ""
+          echo "=== Created ZIP ==="
           ls -la recruiting-playbook.zip
 
-      - name: Debug ZIP contents
-        run: |
+          echo ""
+          echo "=== Verify no uninstall.php in ZIP ==="
+          if unzip -l recruiting-playbook.zip | grep -qi "uninstall\.php"; then
+            echo "ERROR: uninstall.php found in ZIP! Removing it..."
+            zip -d recruiting-playbook.zip "uninstall.php" "*/uninstall.php" "./uninstall.php" 2>/dev/null || true
+            echo "After removal:"
+            unzip -l recruiting-playbook.zip | grep -i "uninstall" || echo "OK: Removed successfully"
+          else
+            echo "OK: No uninstall.php in ZIP"
+          fi
+
+          echo ""
           echo "=== Root-level PHP files in ZIP ==="
           unzip -l recruiting-playbook.zip | grep "\.php$" | grep -v "/" | head -20
-          echo ""
-          echo "=== All root-level files ==="
-          unzip -l recruiting-playbook.zip | grep -E "^\s+[0-9]+" | awk '{print $NF}' | grep -v "/" | sort
-          echo ""
-          echo "=== Searching for uninstall in ZIP ==="
-          unzip -l recruiting-playbook.zip | grep -i "uninstall" || echo "No uninstall files found in ZIP"
+
           echo ""
           echo "=== Total files ==="
           unzip -l recruiting-playbook.zip | tail -1
