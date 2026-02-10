@@ -26,6 +26,16 @@ abstract class AbstractWidget extends Widget_Base {
 	}
 
 	/**
+	 * CSS-Abhängigkeiten für dieses Widget
+	 *
+	 * Elementor lädt diese Styles automatisch wenn das Widget verwendet wird,
+	 * auch im Editor-Preview.
+	 */
+	public function get_style_depends(): array {
+		return [ 'rp-frontend' ];
+	}
+
+	/**
 	 * Shortcode-Name (wird von Subklassen definiert)
 	 */
 	abstract protected function get_shortcode_name(): string;
@@ -85,24 +95,10 @@ abstract class AbstractWidget extends Widget_Base {
 	/**
 	 * Editor-Vorschau (JS-Template)
 	 *
-	 * Zeigt eine Platzhalter-Box im Editor.
-	 * Override in Subklassen für spezifische Vorschau.
+	 * Leer lassen → Elementor nutzt serverseitiges Rendering via AJAX.
+	 * So wird der echte Shortcode-Output im Editor angezeigt.
 	 */
-	protected function content_template(): void {
-		?>
-		<div class="rp-elementor-preview">
-			<div class="rp-elementor-preview-icon">
-				<i class="<?php echo esc_attr( $this->get_icon() ); ?>"></i>
-			</div>
-			<div class="rp-elementor-preview-title">
-				<?php echo esc_html( $this->get_title() ); ?>
-			</div>
-			<div class="rp-elementor-preview-info">
-				<?php esc_html_e( 'Vorschau wird im Frontend angezeigt.', 'recruiting-playbook' ); ?>
-			</div>
-		</div>
-		<?php
-	}
+	protected function content_template(): void {}
 
 	/**
 	 * Taxonomie-Optionen laden (für Controls)

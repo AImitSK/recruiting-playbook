@@ -621,8 +621,9 @@ final class Plugin {
 			wp_enqueue_style( 'rp-frontend' );
 		}
 
-		// Im Elementor Editor immer laden (Widgets nutzen do_shortcode() für Render).
-		if ( did_action( 'elementor/loaded' ) && \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
+		// Im Elementor Editor/Preview immer laden (Widgets nutzen do_shortcode() für Render).
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['elementor-preview'] ) || isset( $_GET['elementor_library'] ) ) {
 			wp_enqueue_style( 'rp-frontend' );
 		}
 
