@@ -287,7 +287,7 @@ export function IntegrationSettings() {
 						<div>
 							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
 								{ __( 'Slack', 'recruiting-playbook' ) }
-								<Badge variant="outline" style={ { fontSize: '11px' } }>Pro</Badge>
+								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
 								{ __( 'Benachrichtigungen bei neuen Bewerbungen und Statuswechseln in einem Slack-Channel.', 'recruiting-playbook' ) }
@@ -368,7 +368,7 @@ export function IntegrationSettings() {
 						<div>
 							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
 								{ __( 'Microsoft Teams', 'recruiting-playbook' ) }
-								<Badge variant="outline" style={ { fontSize: '11px' } }>Pro</Badge>
+								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
 								{ __( 'Benachrichtigungen in einem Microsoft Teams Channel.', 'recruiting-playbook' ) }
@@ -454,7 +454,7 @@ export function IntegrationSettings() {
 						<div>
 							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
 								{ __( 'Google Ads Conversion', 'recruiting-playbook' ) }
-								<Badge variant="outline" style={ { fontSize: '11px' } }>Pro</Badge>
+								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
 								{ __( 'Conversion-Tracking direkt mit Google Ads – ohne Google Tag Manager.', 'recruiting-playbook' ) }
