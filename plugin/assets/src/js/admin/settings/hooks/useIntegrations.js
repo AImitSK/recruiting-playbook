@@ -39,6 +39,11 @@ const DEFAULTS = {
 	teams_event_job_published: false,
 	teams_event_deadline_reminder: false,
 
+	// Google Ads Conversion (Pro)
+	google_ads_enabled: false,
+	google_ads_conversion_id: '',
+	google_ads_conversion_label: '',
+	google_ads_conversion_value: '',
 };
 
 /**

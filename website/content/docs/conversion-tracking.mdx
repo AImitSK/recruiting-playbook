@@ -10,10 +10,8 @@ Das Plugin trackt den gesamten Bewerbungsfunnel ueber DataLayer Events, die mit 
 | Feature | FREE | Pro |
 |---------|------|-----|
 | DataLayer Events (GTM) | Ja | Ja |
-| Google Ads Conversion ID | - | Ja |
-| Custom JavaScript Events | - | Ja |
-| PHP Hooks (Server-Side) | - | Ja |
-| Tracking-Einstellungen Tab | - | Ja |
+| Google Ads Conversion (direkt) | - | Ja |
+| PHP Hooks (Server-Side) | Ja | Ja |
 
 ## DataLayer Events
 
@@ -133,29 +131,25 @@ In GTM einen **Custom Event Trigger** anlegen:
 
 ### Direkte Google Ads Integration
 
-Ohne GTM: Im Admin unter **Einstellungen &rarr; Recruiting &rarr; Tracking** direkt die Google Ads Conversion-ID (`AW-XXXXXXXXX`) und das Conversion Label eintragen. Das Plugin feuert den Conversion-Tag automatisch.
+Ohne GTM: Im Admin unter **Einstellungen &rarr; Integrationen &rarr; Google Ads Conversion** direkt die Conversion-ID (`AW-XXXXXXXXX`) und das Conversion Label eintragen. Das Plugin feuert den Conversion-Tag automatisch bei jeder erfolgreichen Bewerbung.
 
-### Custom JavaScript Events
+| Einstellung | Beschreibung |
+|-------------|--------------|
+| Conversion-ID | Format: `AW-XXXXXXXXX` |
+| Conversion Label | Aus Google Ads kopieren |
+| Conversion Value (EUR) | Optionaler Wert pro Bewerbung |
 
-Zusaetzlich zu DataLayer-Events werden DOM Custom Events gefeuert:
-
-```javascript
-document.addEventListener('rp:application:submitted', function(e) {
-    console.log('Bewerbung:', e.detail);
-    // e.detail: job_id, job_title, application_id, ...
-});
-
-document.addEventListener('rp:job:viewed', function(e) {
-    console.log('Job angesehen:', e.detail);
-});
-```
+<Callout type="info">
+Voraussetzung: Das Google Ads Global Site Tag (`gtag.js`) muss auf Ihrer Website geladen sein &ndash; entweder ueber Google Tag Manager oder direkt im Theme.
+</Callout>
 
 ### PHP Hooks (Server-Side Tracking)
 
-Fuer DSGVO-konforme Server-Side-Implementierungen:
+Fuer DSGVO-konforme Server-Side-Implementierungen stehen Action Hooks zur Verfuegung:
 
 ```php
-add_action('rp_application_submitted', function($application_id, $data) {
+// Nach erfolgreicher Bewerbung
+add_action('rp_application_created', function($application_id, $data) {
     $job = get_post($data['job_id']);
 
     wp_remote_post('https://your-tracking-endpoint.com/conversion', [
@@ -167,17 +161,12 @@ add_action('rp_application_submitted', function($application_id, $data) {
         ]
     ]);
 }, 10, 2);
+
+// Nach Statuswechsel einer Bewerbung
+add_action('rp_application_status_changed', function($id, $old_status, $new_status) {
+    // z.B. bei Status "hired" eine Conversion melden
+}, 10, 3);
 ```
-
-### Tracking-Einstellungen (Pro)
-
-| Einstellung | Beschreibung |
-|-------------|--------------|
-| Google Ads Conversion ID | Format: `AW-XXXXXXXXX` |
-| Google Ads Conversion Label | Aus Google Ads kopieren |
-| Conversion Value | Optionaler Wert pro Bewerbung |
-| Custom Tracking Code | Eigener JavaScript-Code |
-| Server-Side Tracking | Aktiviert PHP Hooks |
 
 ## Best Practices
 

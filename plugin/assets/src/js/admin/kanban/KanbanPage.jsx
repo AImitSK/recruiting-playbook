@@ -150,7 +150,7 @@ export function KanbanPage() {
 								</Button>
 
 								<a
-									href={ `${ adminUrl }admin.php?page=rp-applications` }
+									href={ `${ adminUrl }admin.php?page=recruiting-playbook` }
 									style={ {
 										display: 'inline-flex',
 										alignItems: 'center',

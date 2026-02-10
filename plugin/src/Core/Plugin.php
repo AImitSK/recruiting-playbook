@@ -20,6 +20,7 @@ use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
 use RecruitingPlaybook\Admin\MetaBoxes\JobCustomFieldsMeta;
 use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
 use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
+use RecruitingPlaybook\Admin\DashboardWidget;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\JobController;
@@ -580,6 +581,10 @@ final class Plugin {
 		add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
 		add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
 
+		// Dashboard-Widget registrieren.
+		$dashboard_widget = new DashboardWidget();
+		$dashboard_widget->register();
+
 		// Aktivierungs-Redirect (Setup-Wizard).
 		add_action( 'admin_init', [ $this, 'activationRedirect' ] );
 	}
@@ -838,6 +843,17 @@ final class Plugin {
 			// Debug-Modus für Tracking.
 			if ( defined( 'RP_DEBUG_TRACKING' ) && RP_DEBUG_TRACKING ) {
 				wp_add_inline_script( 'rp-tracking', 'window.RP_DEBUG_TRACKING = true;', 'before' );
+			}
+
+			// Google Ads Conversion Config (Pro).
+			$integrations = get_option( 'rp_integrations', [] );
+			if ( ! empty( $integrations['google_ads_enabled'] ) && ! empty( $integrations['google_ads_conversion_id'] ) ) {
+				$ads_config = wp_json_encode( [
+					'conversionId'    => sanitize_text_field( $integrations['google_ads_conversion_id'] ),
+					'conversionLabel' => sanitize_text_field( $integrations['google_ads_conversion_label'] ?? '' ),
+					'conversionValue' => $integrations['google_ads_conversion_value'] ?? '',
+				] );
+				wp_add_inline_script( 'rp-tracking', 'window.rpGoogleAdsConfig = ' . $ads_config . ';', 'before' );
 			}
 		}
 

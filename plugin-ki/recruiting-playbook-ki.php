@@ -12,28 +12,46 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: recruiting-playbook-ki
  * Domain Path: /languages
+ *
+ * @package RecruitingPlaybookKi
  */
 
 // Direkten Zugriff verhindern.
 defined( 'ABSPATH' ) || exit;
 
+// Plugin-Konstanten.
+define( 'RPK_VERSION', '1.0.0' );
+define( 'RPK_PLUGIN_FILE', __FILE__ );
+define( 'RPK_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'RPK_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'RPK_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
 if ( ! function_exists( 'rpk_fs' ) ) {
-	// Create a helper function for easy SDK access.
+	/**
+	 * Freemius SDK Helper für das KI-Addon
+	 *
+	 * @return \Freemius
+	 */
 	function rpk_fs() {
 		global $rpk_fs;
 
 		if ( ! isset( $rpk_fs ) ) {
-			// Include Freemius SDK.
-			// Use WP_PLUGIN_DIR to avoid symlink path resolution issues.
-			if ( file_exists( WP_PLUGIN_DIR . '/recruiting-playbook/freemius/start.php' ) ) {
-				// Try to load SDK from parent plugin folder.
+			// Freemius SDK vom Parent-Plugin laden.
+			if ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php' ) ) {
+				// Standard: SDK aus Parent-Plugin-Ordner (gleiche Ebene).
+				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook/freemius/start.php';
+			} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php' ) ) {
+				// Premium-Parent-Plugin-Ordner.
+				require_once dirname( dirname( __FILE__ ) ) . '/recruiting-playbook-premium/freemius/start.php';
+			} elseif ( defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/recruiting-playbook/freemius/start.php' ) ) {
+				// Fallback für Symlink-Setups: WP_PLUGIN_DIR nutzen.
 				require_once WP_PLUGIN_DIR . '/recruiting-playbook/freemius/start.php';
-			} elseif ( file_exists( WP_PLUGIN_DIR . '/recruiting-playbook-premium/freemius/start.php' ) ) {
-				// Try to load SDK from premium parent plugin folder.
+			} elseif ( defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/recruiting-playbook-premium/freemius/start.php' ) ) {
 				require_once WP_PLUGIN_DIR . '/recruiting-playbook-premium/freemius/start.php';
 			} elseif ( function_exists( 'fs_dynamic_init' ) ) {
-				// SDK already loaded by parent plugin (e.g. via Composer).
-			} else {
+				// SDK bereits vom Parent geladen.
+			} elseif ( file_exists( dirname( __FILE__ ) . '/vendor/freemius/start.php' ) ) {
+				// Eigene SDK-Kopie.
 				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
 			}
 
@@ -54,7 +72,11 @@ if ( ! function_exists( 'rpk_fs' ) ) {
 						'name'       => 'Recruiting Playbook',
 					),
 					'menu'              => array(
+						'slug'    => 'recruiting-playbook-ki',
 						'support' => false,
+						'parent'  => array(
+							'slug' => 'options-general.php',
+						),
 					),
 				)
 			);
@@ -64,11 +86,22 @@ if ( ! function_exists( 'rpk_fs' ) ) {
 	}
 }
 
+/**
+ * Prüft ob das Parent-Plugin geladen und initialisiert ist
+ *
+ * @return bool
+ */
 function rpk_fs_is_parent_active_and_loaded() {
-	// Check if the parent's init SDK method exists.
 	return function_exists( 'rp_fs' );
 }
 
+/**
+ * Prüft ob das Parent-Plugin aktiviert ist (auch wenn noch nicht geladen)
+ *
+ * Berücksichtigt Multisite-Netzwerkaktivierung.
+ *
+ * @return bool
+ */
 function rpk_fs_is_parent_active() {
 	$active_plugins = get_option( 'active_plugins', array() );
 
@@ -88,31 +121,95 @@ function rpk_fs_is_parent_active() {
 	return false;
 }
 
+/**
+ * Freemius SDK initialisieren
+ *
+ * Wird aufgerufen wenn das Parent-Plugin bereit ist.
+ */
 function rpk_fs_init() {
 	if ( rpk_fs_is_parent_active_and_loaded() ) {
-		// Init Freemius.
+		// Freemius initialisieren.
 		rpk_fs();
 
 		// Default-Währung auf EUR setzen (DACH-Markt).
-		rpk_fs()->add_filter( 'default_currency', function ( $currency ) {
-			return 'eur';
-		} );
+		rpk_fs()->add_filter(
+			'default_currency',
+			function ( $currency ) {
+				return 'eur';
+			}
+		);
 
-		// Signal that the add-on's SDK was initiated.
+		// Deutsche Übersetzungen für Freemius SDK.
+		rpk_fs()->override_i18n(
+			array(
+				'activate'         => 'Aktivieren',
+				'activate-license' => 'Lizenz aktivieren',
+				'upgrade'          => 'Upgrade',
+				'license'          => 'Lizenz',
+				'cancel'           => 'Abbrechen',
+				'ok'               => 'OK',
+				'yes'              => 'Ja',
+				'no'               => 'Nein',
+			)
+		);
+
+		// Uninstall-Hook: Addon-spezifische Daten bereinigen.
+		rpk_fs()->add_action( 'after_uninstall', 'rpk_fs_uninstall_cleanup' );
+
+		// Signal, dass das Addon-SDK initialisiert wurde.
 		do_action( 'rpk_fs_loaded' );
 
 	} else {
-		// Parent is inactive, add your error handling here.
+		// Parent-Plugin ist nicht aktiv — Admin-Hinweis anzeigen.
+		add_action( 'admin_notices', 'rpk_fs_parent_inactive_notice' );
 	}
 }
 
+/**
+ * Admin-Hinweis: Parent-Plugin nicht aktiv
+ */
+function rpk_fs_parent_inactive_notice() {
+	if ( ! is_admin() ) {
+		return;
+	}
+
+	$message = sprintf(
+		/* translators: 1: Addon name, 2: Parent plugin name, 3: link URL */
+		__( '<strong>%1$s</strong> benötigt das Plugin <strong>%2$s</strong>. Bitte <a href="%3$s">installieren und aktivieren</a> Sie es zuerst.', 'recruiting-playbook-ki' ),
+		'Recruiting Playbook KI',
+		'Recruiting Playbook',
+		esc_url( admin_url( 'plugins.php' ) )
+	);
+
+	echo '<div class="notice notice-error"><p>' . wp_kses( $message, array( 'strong' => array(), 'a' => array( 'href' => array() ) ) ) . '</p></div>';
+}
+
+/**
+ * Addon-Daten bei Deinstallation bereinigen
+ *
+ * Löscht nur Addon-spezifische Daten, nicht die des Parent-Plugins.
+ */
+function rpk_fs_uninstall_cleanup() {
+	global $wpdb;
+
+	// KI-Analyse-Tabelle leeren (gehört zum Addon).
+	$table = $wpdb->prefix . 'rp_ai_analyses';
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
+	$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
+
+	// Addon-spezifische Options löschen.
+	delete_option( 'rp_ai_settings' );
+}
+
+// ─── Lade-Reihenfolge steuern ────────────────────────────────────────────────
+
 if ( rpk_fs_is_parent_active_and_loaded() ) {
-	// If parent already included, init add-on.
+	// Parent bereits geladen → Addon sofort initialisieren.
 	rpk_fs_init();
 } elseif ( rpk_fs_is_parent_active() ) {
-	// Init add-on only after the parent is loaded.
+	// Parent aktiv aber noch nicht geladen → auf rp_fs_loaded warten.
 	add_action( 'rp_fs_loaded', 'rpk_fs_init' );
 } else {
-	// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
+	// Parent nicht aktiviert → trotzdem initialisieren für Aktivierung/Deinstallation.
 	rpk_fs_init();
 }

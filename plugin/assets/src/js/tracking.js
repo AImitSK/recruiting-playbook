@@ -12,6 +12,9 @@
     // DataLayer initialisieren falls nicht vorhanden.
     window.dataLayer = window.dataLayer || [];
 
+    // Google Ads Config (von PHP via wp_add_inline_script bereitgestellt).
+    var googleAdsConfig = window.rpGoogleAdsConfig || null;
+
     // Observer-Referenz für Cleanup (Memory Leak Prevention).
     var formObserver = null;
 
@@ -117,6 +120,43 @@
     }
 
     /**
+     * Google Ads Conversion feuern (Pro)
+     */
+    function fireGoogleAdsConversion() {
+        try {
+            if (!googleAdsConfig || !googleAdsConfig.conversionId || !googleAdsConfig.conversionLabel) {
+                return;
+            }
+
+            if (typeof gtag !== 'function') {
+                if (window.RP_DEBUG_TRACKING) {
+                    console.warn('[RP Tracking] gtag() not found – Google Ads Conversion skipped');
+                }
+                return;
+            }
+
+            var conversionData = {
+                'send_to': googleAdsConfig.conversionId + '/' + googleAdsConfig.conversionLabel
+            };
+
+            if (googleAdsConfig.conversionValue) {
+                conversionData.value = parseFloat(googleAdsConfig.conversionValue);
+                conversionData.currency = 'EUR';
+            }
+
+            gtag('event', 'conversion', conversionData);
+
+            if (window.RP_DEBUG_TRACKING) {
+                console.log('[RP Tracking] Google Ads Conversion fired', conversionData);
+            }
+        } catch (e) {
+            if (window.RP_DEBUG_TRACKING) {
+                console.error('[RP Tracking] Error in fireGoogleAdsConversion:', e);
+            }
+        }
+    }
+
+    /**
      * Observer aufräumen (Memory Leak Prevention)
      */
     function cleanupObserver() {
@@ -196,6 +236,9 @@
                 job_location: jobData ? jobData.job_location : '',
                 application_id: data.application_id
             });
+
+            // Google Ads Conversion (Pro).
+            fireGoogleAdsConversion();
         } catch (e) {
             if (window.RP_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in rpTrackApplicationSubmitted:', e);

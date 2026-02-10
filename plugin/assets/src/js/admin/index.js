@@ -10,8 +10,6 @@ import { createRoot } from '@wordpress/element';
 import { KanbanPage } from './kanban/KanbanPage';
 import { ApplicantDetail } from './applicant/ApplicantDetail';
 import { TalentPoolList } from './talent-pool/TalentPoolList';
-// LicensePage entfernt - Freemius bietet eigene Account-Seite
-import { DashboardPage } from './dashboard/DashboardPage';
 import { ApplicationsPage } from './applications/ApplicationsPage';
 import { SettingsPage } from './settings/SettingsPage';
 import { ReportingPage } from './reporting/ReportingPage';
@@ -57,18 +55,6 @@ function initTalentPool() {
 }
 
 /**
- * Initialisiert das Dashboard
- */
-function initDashboard() {
-	const container = document.getElementById( 'rp-dashboard-root' );
-
-	if ( container ) {
-		const root = createRoot( container );
-		root.render( <DashboardPage /> );
-	}
-}
-
-/**
  * Initialisiert die Bewerbungsliste
  */
 function initApplications() {
@@ -108,7 +94,6 @@ function initReporting() {
  * Initialisiert alle Admin-Komponenten
  */
 function initAdmin() {
-	initDashboard();
 	initApplications();
 	initKanban();
 	initApplicantDetail();
