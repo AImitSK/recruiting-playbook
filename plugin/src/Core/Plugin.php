@@ -53,6 +53,7 @@ use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
 use RecruitingPlaybook\Blocks\BlockLoader;
 use RecruitingPlaybook\Integrations\Avada\AvadaIntegration;
+use RecruitingPlaybook\Integrations\Elementor\ElementorIntegration;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -118,6 +119,9 @@ final class Plugin {
 
 		// Avada Integration wird FRÜHER in recruiting-playbook.php registriert
 		// (auf after_setup_theme, Priority 5, VOR FusionBuilder).
+
+		// Elementor Integration (Pro-Feature).
+		$this->initElementorIntegration();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -497,6 +501,22 @@ final class Plugin {
 	}
 
 	/**
+	 * Elementor Integration initialisieren
+	 *
+	 * Pro-Feature: Registriert native Elementor Widgets.
+	 * Widgets werden nur geladen wenn Pro-Lizenz und Elementor aktiv sind.
+	 */
+	private function initElementorIntegration(): void {
+		// Nur laden wenn Elementor verfügbar ist.
+		if ( ! did_action( 'elementor/loaded' ) ) {
+			return;
+		}
+
+		$elementor_integration = new ElementorIntegration();
+		$elementor_integration->register();
+	}
+
+	/**
 	 * Avada / Fusion Builder Integration initialisieren
 	 *
 	 * Pro-Feature: Registriert native Fusion Builder Elements für Avada.
@@ -768,6 +788,12 @@ final class Plugin {
 		// Im Fusion Builder Editor immer laden (Shortcodes werden per AJAX gerendert).
 		// Parent-Frame hat ?fb-edit, Preview-iframe hat ?builder=true.
 		if ( isset( $_GET['fb-edit'] ) || isset( $_GET['builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			wp_enqueue_style( 'rp-frontend' );
+		}
+
+		// Im Elementor Editor/Preview immer laden (Widgets nutzen do_shortcode() für Render).
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['elementor-preview'] ) || isset( $_GET['elementor_library'] ) ) {
 			wp_enqueue_style( 'rp-frontend' );
 		}
 
