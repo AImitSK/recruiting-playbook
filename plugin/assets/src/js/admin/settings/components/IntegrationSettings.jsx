@@ -447,6 +447,83 @@ export function IntegrationSettings() {
 				) }
 			</Card>
 
+			{ /* ═══════════ Google Ads Conversion ═══════════ */ }
+			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
+				<CardHeader>
+					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
+						<div>
+							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+								{ __( 'Google Ads Conversion', 'recruiting-playbook' ) }
+								<Badge variant="outline" style={ { fontSize: '11px' } }>Pro</Badge>
+							</CardTitle>
+							<CardDescription>
+								{ __( 'Conversion-Tracking direkt mit Google Ads – ohne Google Tag Manager.', 'recruiting-playbook' ) }
+							</CardDescription>
+						</div>
+						<Switch
+							checked={ settings.google_ads_enabled }
+							onCheckedChange={ ( val ) => updateSetting( 'google_ads_enabled', val ) }
+							disabled={ ! isPro }
+						/>
+					</div>
+				</CardHeader>
+				{ settings.google_ads_enabled && isPro && (
+					<CardContent>
+						<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
+							<div>
+								<Label style={ { marginBottom: '6px', display: 'block' } }>
+									{ __( 'Conversion-ID', 'recruiting-playbook' ) }
+								</Label>
+								<Input
+									placeholder="AW-XXXXXXXXX"
+									value={ settings.google_ads_conversion_id }
+									onChange={ ( e ) => updateSetting( 'google_ads_conversion_id', e.target.value ) }
+								/>
+							</div>
+							<div>
+								<Label style={ { marginBottom: '6px', display: 'block' } }>
+									{ __( 'Conversion Label', 'recruiting-playbook' ) }
+								</Label>
+								<Input
+									placeholder={ __( 'Aus Google Ads kopieren', 'recruiting-playbook' ) }
+									value={ settings.google_ads_conversion_label }
+									onChange={ ( e ) => updateSetting( 'google_ads_conversion_label', e.target.value ) }
+								/>
+							</div>
+							<div>
+								<Label style={ { marginBottom: '6px', display: 'block' } }>
+									{ __( 'Conversion Value (EUR)', 'recruiting-playbook' ) }
+								</Label>
+								<Input
+									type="number"
+									min="0"
+									step="0.01"
+									placeholder="0.00"
+									value={ settings.google_ads_conversion_value }
+									onChange={ ( e ) => updateSetting( 'google_ads_conversion_value', e.target.value ) }
+									style={ { width: '150px' } }
+								/>
+							</div>
+						</div>
+
+						<Alert style={ { marginTop: '16px' } }>
+							<AlertDescription style={ { fontSize: '13px' } }>
+								{ __( 'Wird bei jeder erfolgreichen Bewerbung automatisch als Conversion an Google Ads gemeldet.', 'recruiting-playbook' ) }
+							</AlertDescription>
+						</Alert>
+					</CardContent>
+				) }
+				{ ! isPro && (
+					<CardContent>
+						<Alert>
+							<AlertDescription>
+								{ __( 'Google Ads Conversion ist ein Pro-Feature.', 'recruiting-playbook' ) }
+							</AlertDescription>
+						</Alert>
+					</CardContent>
+				) }
+			</Card>
+
 			{ /* ═══════════ Speichern ═══════════ */ }
 			<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
 				<Button onClick={ handleSave } disabled={ saving }>

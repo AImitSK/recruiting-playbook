@@ -73,6 +73,11 @@ class IntegrationController extends WP_REST_Controller {
 		'teams_event_job_published'     => false,
 		'teams_event_deadline_reminder' => false,
 
+		// Google Ads Conversion (Pro).
+		'google_ads_enabled'            => false,
+		'google_ads_conversion_id'      => '',
+		'google_ads_conversion_label'   => '',
+		'google_ads_conversion_value'   => '',
 	];
 
 	/**
@@ -178,6 +183,7 @@ class IntegrationController extends WP_REST_Controller {
 			'teams_event_status_changed',
 			'teams_event_job_published',
 			'teams_event_deadline_reminder',
+			'google_ads_enabled',
 		];
 
 		foreach ( $bool_fields as $field ) {
@@ -192,6 +198,22 @@ class IntegrationController extends WP_REST_Controller {
 		}
 		if ( isset( $data['teams_webhook_url'] ) ) {
 			$sanitized['teams_webhook_url'] = esc_url_raw( $data['teams_webhook_url'] );
+		}
+
+		// Google Ads Felder.
+		if ( isset( $data['google_ads_conversion_id'] ) ) {
+			$id = sanitize_text_field( $data['google_ads_conversion_id'] );
+			// Nur AW- Prefix oder leer erlauben.
+			if ( '' === $id || str_starts_with( $id, 'AW-' ) ) {
+				$sanitized['google_ads_conversion_id'] = $id;
+			}
+		}
+		if ( isset( $data['google_ads_conversion_label'] ) ) {
+			$sanitized['google_ads_conversion_label'] = sanitize_text_field( $data['google_ads_conversion_label'] );
+		}
+		if ( isset( $data['google_ads_conversion_value'] ) ) {
+			$value = $data['google_ads_conversion_value'];
+			$sanitized['google_ads_conversion_value'] = '' === $value ? '' : (string) max( 0, (float) $value );
 		}
 
 		// Integer-Felder.

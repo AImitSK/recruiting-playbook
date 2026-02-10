@@ -1,8 +1,13 @@
 # Conversion Tracking: Planungsdokument
 
-> **Status:** Planung
+> **Status:** Umgesetzt (vereinfacht)
 > **Erstellt:** 10. Februar 2026
-> **Ziel:** Fehlende Pro-Features implementieren, bestehende Free-Features konfigurierbar machen
+> **Ziel:** Google Ads Conversion als Pro-Feature im Integrationen-Tab
+>
+> **Entscheidung:** Kein eigener Tracking-Tab. DataLayer Events (Free) funktionieren
+> automatisch ohne Konfiguration. Nur Google Ads Conversion als 5. Card im
+> bestehenden Integrationen-Tab. Custom Events, Custom Code und granulare
+> Event-Steuerung gestrichen (Overkill — alles ueber GTM machbar).
 
 ---
 
