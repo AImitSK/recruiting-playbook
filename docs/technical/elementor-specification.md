@@ -3,7 +3,7 @@
 > **Pro-Feature: Native Elementor Widgets**
 > Alle Recruiting Playbook Shortcodes als native Elementor Widgets
 >
-> **Status:** Geplant
+> **Status:** Vollständig implementiert (Februar 2026)
 > **Priorität:** Hoch (zweitwichtigster Page Builder nach Avada)
 > **Branch:** `feature/elementor-integration`
 

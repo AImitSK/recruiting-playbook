@@ -8,10 +8,9 @@ Das Plugin bietet flexible Integrationsmöglichkeiten für verschiedene Themes u
 |---------|--------------|-----------|
 | **Automatische Seiten** | /jobs/ Archiv, /jobs/{slug}/ Einzelseite | MVP |
 | **Shortcodes** | Universell, funktioniert überall | MVP |
-| **Avada / Fusion Builder** | Native Elements | MVP (Priorität!) |
-| **Gutenberg Blocks** | WordPress Block Editor | Pro |
-| **Elementor Widgets** | Elementor Page Builder | Pro |
-| **Divi Modules** | Divi Theme Builder | Pro |
+| **Avada / Fusion Builder** | Native Elements | Pro ✅ |
+| **Gutenberg Blocks** | WordPress Block Editor | Free ✅ |
+| **Elementor Widgets** | Elementor Page Builder | Pro ✅ |
 | **PHP Functions** | Für Theme-Entwickler | MVP |
 
 ```
@@ -21,13 +20,13 @@ Das Plugin bietet flexible Integrationsmöglichkeiten für verschiedene Themes u
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │                    PAGE BUILDERS                         │   │
-│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │   │
-│  │  │  Avada  │ │Elementor│ │  Divi   │ │Gutenberg│       │   │
-│  │  │ Fusion  │ │ Widget  │ │ Module  │ │  Block  │       │   │
-│  │  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘       │   │
-│  └───────┼───────────┼───────────┼───────────┼─────────────┘   │
-│          │           │           │           │                  │
-│          └───────────┴─────┬─────┴───────────┘                  │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐                     │   │
+│  │  │  Avada  │ │Elementor│ │Gutenberg│                     │   │
+│  │  │ Fusion  │ │ Widget  │ │  Block  │                     │   │
+│  │  └────┬────┘ └────┬────┘ └────┬────┘                     │   │
+│  └───────┼───────────┼───────────┼───────────────────────────┘   │
+│          │           │           │                               │
+│          └───────────┴─────┬─────┘                               │
 │                            │                                    │
 │                            ▼                                    │
 │  ┌─────────────────────────────────────────────────────────┐   │

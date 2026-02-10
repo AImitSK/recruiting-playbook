@@ -27,8 +27,8 @@ Pilot-Kunde     │ Launch          │    Feature      │ Push
 | **Admin Framework** | React (@wordpress/scripts) |
 | **Frontend Framework** | Alpine.js (~15kb) + Tailwind CSS |
 | **Notifications** | react-hot-toast (Admin), Alpine Store (Frontend) |
-| **Page Builder MVP** | Avada / Fusion Builder (Priorität!) |
-| **Page Builder Pro** | + Gutenberg Blocks, Elementor Widgets |
+| **Page Builder MVP** | Avada / Fusion Builder (Priorität!) ✅ |
+| **Page Builder Pro** | + Gutenberg Blocks, Elementor Widgets ✅ |
 | **Lizenzierung** | Eigener Server, Domain-gebunden, täglicher Remote-Check |
 | **AI-Provider** | Anthropic Claude (Primary), OpenAI (Fallback) |
 | **KI-Feature** | Job-Match, Job-Finder, Chancen-Check |
@@ -414,7 +414,7 @@ Design & Branding │                   │
   - [ ] Export-Format
   - [ ] Dokumentation
 
-### M2.9: Page Builder Integration
+### M2.9: Page Builder Integration ✅
 
 - [x] **Gutenberg Blocks (Free)** ✅
   - [x] 9 native Blöcke (jobs, job-search, job-count, featured-jobs, latest-jobs, job-categories, application-form, ai-job-finder, ai-job-match)
@@ -424,8 +424,19 @@ Design & Branding │                   │
   - [x] Block-Patterns (5 vorgefertigte Layouts)
   - [x] Example-Attribute für Inserter-Vorschau
   - [x] Dokumentation auf Website
-- [ ] Elementor Widgets (Pro) - alle Elemente
-- [ ] Divi Modules (Pro) - Basis
+- [x] **Elementor Widgets (Pro)** ✅
+  - [x] 9 native Widgets (Stellenliste, Stellensuche, Stellen-Zähler, Featured Jobs, Neueste Stellen, Job-Kategorien, Bewerbungsformular, KI-Job-Finder, KI-Job-Match)
+  - [x] Widget-Kategorie "Recruiting Playbook"
+  - [x] Shortcode-Wrapper-Architektur (kein doppelter Render-Code)
+  - [x] Editor-Vorschau im Elementor Panel
+  - [x] Design & Branding Integration
+- [x] **Avada / Fusion Builder Elements (Pro)** ✅
+  - [x] 9 native Elements (Stellenliste, Stellensuche, Stellen-Zähler, Featured Jobs, Neueste Stellen, Job-Kategorien, Bewerbungsformular, KI-Job-Finder, KI-Job-Match)
+  - [x] Element-Kategorie "Recruiting Playbook"
+  - [x] Shortcode-Wrapper-Architektur (kein doppelter Render-Code)
+  - [x] Live Builder + Backend Builder Vorschau
+  - [x] Alpine.js diffDOM-kompatibel (x-on: statt @-Shorthand)
+  - [x] Design & Branding Integration
 
 ### M2.10: Lizenz-System & Launch
 
@@ -511,6 +522,7 @@ Design & Branding │                   │
 | Reporting & Dashboard | ✅ |
 | Benutzerrollen & Stellen-Zuweisung | ✅ |
 | Design & Branding Admin-Seite | ✅ |
+| Page Builder (Gutenberg, Elementor, Avada) | ✅ |
 | Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
@@ -700,4 +712,4 @@ Design & Branding │                   │
 
 ---
 
-*Letzte Aktualisierung: 7. Februar 2026*
+*Letzte Aktualisierung: 10. Februar 2026*
