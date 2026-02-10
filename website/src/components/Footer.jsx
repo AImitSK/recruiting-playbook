@@ -20,7 +20,7 @@ export function Footer() {
             unoptimized
           />
           <nav className="mt-10 text-sm" aria-label="Schnelllinks">
-            <div className="-my-1 flex justify-center gap-x-6">
+            <div className="-my-1 flex flex-wrap justify-center gap-x-6 gap-y-2">
               <NavLink href="/features">Features</NavLink>
               <NavLink href="/pricing">Preise</NavLink>
               <NavLink href="/ai">KI-Addon</NavLink>
