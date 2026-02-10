@@ -103,6 +103,22 @@ export function mdxComponents(highlighter) {
         {children}
       </td>
     ),
+    img: ({ src, alt, ...props }) => (
+      <figure className="my-6">
+        <img
+          src={src}
+          alt={alt || ''}
+          className="w-full rounded-lg border border-slate-200 shadow-sm"
+          loading="lazy"
+          {...props}
+        />
+        {alt && (
+          <figcaption className="mt-2 text-center text-sm text-slate-500">
+            {alt}
+          </figcaption>
+        )}
+      </figure>
+    ),
     hr: () => <hr className="my-8 border-slate-200" />,
     blockquote: ({ children }) => (
       <blockquote className="mt-4 border-l-2 border-slate-300 pl-4 italic text-slate-600">

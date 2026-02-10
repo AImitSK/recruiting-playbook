@@ -3,8 +3,7 @@
 /vendor/
 
 # Build output (wird bei Bedarf neu generiert)
-# Hinweis: Für Releases sollten dist/ Dateien committed werden
-# /assets/dist/
+/assets/dist/
 
 # IDE
 .idea/

@@ -67,6 +67,17 @@ docs/website/salient.zip
 nul
 
 # =============================================================
+# Temporary / Local files
+# =============================================================
+.avada-temp/
+*.ps1
+plugin/tests/e2e/*.pdf
+docs/screenshot/
+plugin/screenshots/
+plugin/tools/
+.devcontainer/mu-plugins/
+
+# =============================================================
 # Dev Container (do not ignore - needed for development)
 # =============================================================
 # .devcontainer/ is tracked!
