@@ -1,0 +1,119 @@
+---
+title: Google for Jobs
+description: Stellenanzeigen automatisch in der Google-Jobsuche anzeigen – kostenlos und ohne Zusatzaufwand.
+---
+
+Recruiting Playbook fügt auf jeder veröffentlichten Stellenanzeige automatisch ein strukturiertes JSON-LD Schema ein. Google erkennt dieses Format und zeigt Ihre Stellen prominent in der Google-Jobsuche an – noch vor den normalen Suchergebnissen.
+
+<Callout type="info">
+Google for Jobs ist in der **kostenlosen Version** enthalten und sofort nach der Plugin-Installation aktiv. Sie müssen nichts konfigurieren.
+</Callout>
+
+## Was Google anzeigt
+
+Folgende Informationen werden automatisch an Google übermittelt:
+
+| Information | Datenquelle | Ausgabe |
+|-------------|-------------|---------|
+| Jobtitel | Stellentitel | Immer |
+| Beschreibung | Stellenbeschreibung (HTML) | Immer |
+| Unternehmen | Plugin-Einstellungen → Firmendaten | Immer |
+| Veröffentlichungsdatum | WordPress Post-Datum | Immer |
+| Standort | Taxonomy "Standort" | Wenn vorhanden |
+| Beschäftigungsart | Taxonomy "Beschäftigungsart" | Wenn vorhanden |
+| Gehaltsspanne | Gehaltsfelder der Stelle | Wenn vorhanden + aktiviert |
+| Bewerbungsfrist | Meta-Feld "Bewerbungsfrist" | Wenn vorhanden + aktiviert |
+| Remote-Option | Meta-Feld "Remote" | Wenn vorhanden + aktiviert |
+| Direktbewerbung | Immer `true` | Immer |
+
+## Einstellungen
+
+Die Google for Jobs Integration finden Sie unter **Einstellungen → Integrationen**.
+
+| Einstellung | Standard | Beschreibung |
+|-------------|----------|--------------|
+| Aktiviert | An | Schema-Ausgabe ein/aus |
+| Gehalt anzeigen | An | Gehaltsspanne im Schema ausgeben |
+| Remote kennzeichnen | An | Remote-Option als TELECOMMUTE kennzeichnen |
+| Bewerbungsfrist | An | Ablaufdatum der Stelle übermitteln |
+
+<Callout type="info">
+Google bevorzugt Stellenanzeigen mit Gehaltsangaben. Stellen mit Gehalt werden deutlich häufiger angeklickt.
+</Callout>
+
+## Optimale Stellenanzeigen
+
+Damit Ihre Stellen in Google for Jobs optimal ranken, achten Sie auf:
+
+### Pflichtfelder
+
+- **Jobtitel** – klar und präzise, z.B. "Pflegefachkraft (m/w/d)"
+- **Stellenbeschreibung** – mindestens 100 Zeichen
+- **Firmendaten** – unter Einstellungen → Firmendaten hinterlegen
+
+### Empfohlene Felder
+
+- **Standort** – der Stelle einen Standort zuweisen
+- **Beschäftigungsart** – Vollzeit, Teilzeit, etc.
+- **Gehalt** – Gehaltsspanne angeben (min/max)
+- **Bewerbungsfrist** – bis wann kann man sich bewerben?
+- **Remote-Option** – bei Remote- oder Hybrid-Stellen
+
+## Beschäftigungsarten
+
+Das Plugin übersetzt deutsche Beschäftigungsarten automatisch in das von Google erwartete Format:
+
+| Ihre Angabe | Google-Format |
+|-------------|---------------|
+| Vollzeit | FULL_TIME |
+| Teilzeit | PART_TIME |
+| Minijob | PART_TIME |
+| Ausbildung | INTERN |
+| Praktikum | INTERN |
+| Werkstudent | PART_TIME |
+| Freiberuflich | CONTRACTOR |
+
+## Schema validieren
+
+So prüfen Sie, ob das Schema korrekt ausgegeben wird:
+
+1. Öffnen Sie den [Google Rich Results Test](https://search.google.com/test/rich-results)
+2. Geben Sie die URL einer veröffentlichten Stelle ein
+3. Klicken Sie auf "URL testen"
+4. Unter "Erkannte strukturierte Daten" sollte **JobPosting** erscheinen
+
+### Häufige Warnungen
+
+| Warnung | Lösung |
+|---------|--------|
+| Empfohlenes Feld fehlt: baseSalary | Gehaltsspanne in der Stelle hinterlegen |
+| Empfohlenes Feld fehlt: employmentType | Beschäftigungsart zuweisen |
+| validThrough liegt in der Vergangenheit | Bewerbungsfrist aktualisieren oder entfernen |
+
+## Indexierung
+
+Nach der Aktivierung dauert es in der Regel **2–5 Tage**, bis Google Ihre Stellen indexiert hat. In der [Google Search Console](https://search.google.com/search-console) können Sie den Status unter **Verbesserungen → Stellenangebote** verfolgen.
+
+### Tipps für schnellere Indexierung
+
+- Sitemap in der Search Console einreichen
+- URL-Prüfung für einzelne Stellen nutzen
+- Stellen aktuell halten (abgelaufene Stellen entfernen)
+
+## Häufige Fragen
+
+### Muss ich etwas bei Google anmelden?
+
+Nein. Google crawlt Ihre Website automatisch und erkennt das Schema-Markup. Eine Google Search Console ist empfohlen (zur Kontrolle), aber nicht erforderlich.
+
+### Kostet Google for Jobs etwas?
+
+Nein, komplett kostenlos – sowohl die Google-Funktion als auch die Integration im Plugin.
+
+### Werden abgelaufene Stellen automatisch entfernt?
+
+Ja. Wenn die Bewerbungsfrist abgelaufen ist oder die Stelle auf "Entwurf" gesetzt wird, wird das Schema nicht mehr ausgegeben. Google entfernt die Stelle dann automatisch.
+
+### Funktioniert das auch mit WPML/Polylang?
+
+Ja. Das Schema wird für jede Sprachversion der Stelle separat generiert.

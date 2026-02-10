@@ -1,0 +1,130 @@
+---
+title: XML Job Feed
+description: Stellenanzeigen automatisch an Jobbörsen wie Jooble, Talent.com und Adzuna verteilen.
+---
+
+Der XML Job Feed stellt alle veröffentlichten Stellenanzeigen als standardisierte XML-Datei bereit. Jobbörsen können diesen Feed automatisch einlesen und Ihre Stellen auf ihren Plattformen listen – ohne dass Sie jede Stelle einzeln einstellen müssen.
+
+<Callout type="info">
+Der XML Job Feed ist in der **kostenlosen Version** enthalten und sofort nach der Plugin-Installation verfügbar.
+</Callout>
+
+## Feed-URL
+
+Nach der Installation ist der Feed unter dieser URL erreichbar:
+
+```
+https://ihre-domain.de/feed/jobs/
+```
+
+Diese URL geben Sie bei der jeweiligen Jobbörse als Feed-URL an.
+
+## Unterstützte Jobbörsen
+
+| Jobbörse | Kompatibel | Anmerkung |
+|----------|-----------|-----------|
+| **Jooble** | Ja | Format basiert auf Jooble-Spezifikation |
+| **Talent.com** | Ja | Akzeptiert Standard-XML |
+| **Adzuna** | Ja | Akzeptiert Standard-XML |
+| **Regionale Portale** | Ja | Standard-XML wird weitgehend akzeptiert |
+
+## Enthaltene Felder
+
+Jede Stelle im Feed enthält:
+
+| Feld | Beschreibung |
+|------|-------------|
+| Titel | Stellentitel |
+| Link | Direktlink zur Stelle auf Ihrer Website |
+| Standort | Stadt/Region |
+| Beschreibung | Vollständige Stellenbeschreibung (HTML oder Plain Text) |
+| Veröffentlichungsdatum | Wann die Stelle erstellt wurde |
+| Letzte Änderung | Wann die Stelle zuletzt bearbeitet wurde |
+| Bewerbungsfrist | Ablaufdatum (wenn gesetzt) |
+| Beschäftigungsart | full-time, part-time, internship, freelance |
+| Gehalt | Formatierte Gehaltsspanne + Einzelwerte |
+| Firma | Ihr Unternehmensname |
+| Kategorie | Stellenkategorie |
+| Remote | full, hybrid oder no |
+| Kontakt | Kontakt-E-Mail-Adresse |
+
+## Einstellungen
+
+Die Feed-Einstellungen finden Sie unter **Einstellungen → Integrationen → XML Job Feed**.
+
+| Einstellung | Standard | Beschreibung |
+|-------------|----------|--------------|
+| Feed aktiviert | An | Feed ein-/ausschalten |
+| Gehalt anzeigen | An | Gehaltsinformationen im Feed |
+| HTML-Beschreibung | An | Formatierte Beschreibung (empfohlen) |
+| Max. Stellen | 50 | Maximale Anzahl Stellen im Feed (1–500) |
+
+Im Integrationen-Tab sehen Sie auch die Feed-URL mit einem **Kopieren-Button**.
+
+## Einrichtung bei Jobbörsen
+
+### Jooble
+
+1. Als Arbeitgeber auf [jooble.org](https://jooble.org) registrieren
+2. "Feed hinzufügen" aufrufen
+3. Feed-URL einfügen: `https://ihre-domain.de/feed/jobs/`
+4. Jooble prüft den Feed und beginnt mit der Indexierung
+
+### Talent.com
+
+1. Auf [talent.com](https://www.talent.com) registrieren
+2. Support mit Ihrer Feed-URL kontaktieren
+3. Talent.com richtet den automatischen Import ein
+
+### Adzuna
+
+1. Als Arbeitgeber auf [adzuna.de](https://www.adzuna.de) registrieren
+2. Feed-URL einreichen
+3. Adzuna beginnt mit dem regelmäßigen Abruf
+
+### Andere Jobbörsen
+
+Die meisten Jobbörsen akzeptieren Standard-XML-Feeds. Geben Sie einfach Ihre Feed-URL an.
+
+## Beschäftigungsarten im Feed
+
+Deutsche Beschäftigungsarten werden automatisch ins englische Standard-Format übersetzt:
+
+| Ihre Angabe | Im Feed |
+|-------------|---------|
+| Vollzeit | full-time |
+| Teilzeit | part-time |
+| Minijob | part-time |
+| Ausbildung | internship |
+| Praktikum | internship |
+| Werkstudent | part-time |
+| Freiberuflich | freelance |
+
+## Automatische Aktualisierung
+
+- Neue Stellen erscheinen sofort im Feed
+- Geänderte Stellen werden automatisch aktualisiert
+- Abgelaufene oder deaktivierte Stellen verschwinden automatisch
+- Der Feed wird für **1 Stunde** gecacht (Performance)
+
+## Häufige Fragen
+
+### Muss ich den Feed manuell aktualisieren?
+
+Nein. Der Feed wird bei jedem Abruf automatisch aus Ihren aktuellen Stellenanzeigen generiert.
+
+### Wie viele Stellen kann der Feed enthalten?
+
+Standardmäßig 50. Sie können den Wert in den Einstellungen auf bis zu 500 erhöhen.
+
+### Wie oft rufen Jobbörsen den Feed ab?
+
+Das hängt von der Jobbörse ab – in der Regel alle 1–24 Stunden.
+
+### Kann ich den Feed deaktivieren?
+
+Ja, unter **Einstellungen → Integrationen → XML Job Feed** den Schalter auf "Aus" setzen. Die URL gibt dann einen 404-Fehler zurück.
+
+### Was ist mit Indeed?
+
+Indeed stellt XML-Feeds zum 1. April 2026 ein und migriert auf eine neue API. Der Feed ist daher nicht für Indeed konzipiert, funktioniert aber mit allen anderen genannten Plattformen.
