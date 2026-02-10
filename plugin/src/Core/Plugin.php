@@ -46,6 +46,7 @@ use RecruitingPlaybook\Api\WebhookController;
 use RecruitingPlaybook\Api\ApiKeyController;
 use RecruitingPlaybook\Api\AiAnalysisController;
 use RecruitingPlaybook\Api\IntegrationController;
+use RecruitingPlaybook\Integrations\Feed\XmlJobFeed;
 use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
 use RecruitingPlaybook\Services\WebhookService;
@@ -123,6 +124,9 @@ final class Plugin {
 
 		// Elementor Integration (Pro-Feature).
 		$this->initElementorIntegration();
+
+		// XML Job Feed (Free-Feature).
+		$this->initXmlJobFeed();
 
 		// REST API.
 		add_action( 'rest_api_init', [ $this, 'registerRestRoutes' ] );
@@ -515,6 +519,24 @@ final class Plugin {
 
 		$elementor_integration = new ElementorIntegration();
 		$elementor_integration->register();
+	}
+
+	/**
+	 * XML Job Feed initialisieren
+	 *
+	 * Free-Feature: Stellt einen XML-Feed unter /feed/jobs/ bereit,
+	 * den Jobbörsen automatisch einlesen können.
+	 */
+	private function initXmlJobFeed(): void {
+		$settings = get_option( 'rp_integrations', [] );
+
+		// Feed nur registrieren wenn aktiviert (Default: true).
+		if ( isset( $settings['xml_feed_enabled'] ) && ! $settings['xml_feed_enabled'] ) {
+			return;
+		}
+
+		$xml_feed = new XmlJobFeed();
+		$xml_feed->register();
 	}
 
 	/**
