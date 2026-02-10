@@ -139,19 +139,19 @@ export function Pricing() {
             ]}
           />
           <Plan
-            name="KI-Addon"
-            price="19 €/Monat"
-            priceDetail="oder 179 €/Jahr (2 Monate gratis)"
-            description="Intelligente Bewerberanalyse mit Claude AI. Benötigt Pro."
+            name="Agentur"
+            price="249 €"
+            priceDetail="Einmalig. Lifetime-Lizenz (3 Websites)"
+            description="Für Agenturen und Unternehmen mit mehreren Standorten."
             href="#"
-            cta="Addon aktivieren"
+            cta="Agentur kaufen"
             features={[
-              'Benötigt Pro-Lizenz',
-              'Job-Match Score (0-100%)',
-              'Job-Finder für Bewerber',
-              'Chancen-Check',
-              'KI-Stellentexte generieren',
-              '100 Analysen/Monat inkl.',
+              'Alles aus Pro',
+              '3 Website-Lizenzen',
+              'Zentrale Lizenzverwaltung',
+              'Prioritäts-Support',
+              'Erweiterte API-Limits',
+              '1 Jahr Updates & Support',
             ]}
           />
         </div>
