@@ -31,6 +31,26 @@ app.use(
 // Health Check (ohne Auth)
 app.get('/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
 
+// Warm-Up: Presidio (Cloud Run) aufwecken um Cold Starts zu vermeiden.
+// Wird vom WordPress-Plugin aufgerufen wenn User das Match-Modal öffnet.
+app.get('/warmup', async (c) => {
+  const presidioUrl = c.env.PRESIDIO_URL;
+  const start = Date.now();
+
+  // Presidio Health-Check im Background, sofort antworten
+  c.executionCtx.waitUntil(
+    fetch(`${presidioUrl}/health`, { signal: AbortSignal.timeout(45000) })
+      .then((res) => {
+        console.log(`[warmup] Presidio responded: ${res.status} in ${Date.now() - start}ms`);
+      })
+      .catch((err) => {
+        console.warn(`[warmup] Presidio ping failed: ${err.message}`);
+      })
+  );
+
+  return c.json({ status: 'warming', timestamp: Date.now() });
+});
+
 // Webhooks (eigene Auth via Signatur)
 app.route('/webhooks', webhookRoutes);
 

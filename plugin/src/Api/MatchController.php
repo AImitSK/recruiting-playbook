@@ -280,7 +280,7 @@ class MatchController extends WP_REST_Controller {
 	/**
 	 * GET /match/status/warmup - Backend-Services aufwecken
 	 *
-	 * Sendet einen leichtgewichtigen Health-Check an den Worker,
+	 * Sendet einen Warm-Up-Request an den Worker,
 	 * der wiederum Presidio (Google Cloud Run) aufweckt.
 	 * Wird beim Öffnen des Match-Modals aufgerufen,
 	 * um Cold-Start-Verzögerungen zu vermeiden.
@@ -288,8 +288,10 @@ class MatchController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function warmup(): WP_REST_Response {
+		// /warmup Endpoint auf dem Worker pingt Presidio (Cloud Run) im Background.
+		// Kurzes Timeout reicht — der Worker antwortet sofort, Presidio-Ping läuft async.
 		$response = wp_remote_get(
-			str_replace( '/v1', '', self::API_BASE_URL ) . '/health',
+			str_replace( '/v1', '', self::API_BASE_URL ) . '/warmup',
 			[
 				'timeout' => 5,
 				'headers' => [ 'Accept' => 'application/json' ],
