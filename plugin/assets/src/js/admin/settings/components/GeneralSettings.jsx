@@ -38,7 +38,6 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 			privacy_page_id: settings?.privacy_page_id,
 			jobs_per_page: settings?.jobs_per_page,
 			jobs_slug: settings?.jobs_slug,
-			enable_schema: settings?.enable_schema,
 		} );
 	};
 
@@ -165,21 +164,6 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 								</div>
 							</div>
 
-							<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem' } }>
-								<div>
-									<Label htmlFor="enable_schema" style={ { marginBottom: 0 } }>
-										{ i18n.googleForJobs || __( 'Google for Jobs Schema', 'recruiting-playbook' ) }
-									</Label>
-									<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-										{ i18n.googleForJobsDesc || __( 'JSON-LD Schema für bessere Sichtbarkeit in Google', 'recruiting-playbook' ) }
-									</p>
-								</div>
-								<Switch
-									id="enable_schema"
-									checked={ settings.enable_schema ?? true }
-									onCheckedChange={ ( checked ) => onUpdate( 'enable_schema', checked ) }
-								/>
-							</div>
 						</div>
 					</CardContent>
 				</Card>
