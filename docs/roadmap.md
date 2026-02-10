@@ -29,7 +29,7 @@ Pilot-Kunde     │ Launch          │    Feature      │ Push
 | **Notifications** | react-hot-toast (Admin), Alpine Store (Frontend) |
 | **Page Builder MVP** | Avada / Fusion Builder (Priorität!) ✅ |
 | **Page Builder Pro** | + Gutenberg Blocks, Elementor Widgets ✅ |
-| **Lizenzierung** | Eigener Server, Domain-gebunden, täglicher Remote-Check |
+| **Lizenzierung** | Freemius SDK (Plan-basiert, Checkout integriert) ✅ |
 | **AI-Provider** | Anthropic Claude (Primary), OpenAI (Fallback) |
 | **KI-Feature** | Job-Match, Job-Finder, Chancen-Check |
 | **AI-Limit** | 100 Analysen/Monat + Extra-Pakete (9€/50 Stück) |
@@ -445,18 +445,12 @@ Design & Branding │                   │
 
 ### M2.10: Lizenz-System & Launch
 
-- [ ] **Lizenz-Server**
-  - [ ] API aufsetzen
-  - [ ] Domain-Validierung
-  - [ ] Täglicher Remote-Check
-  - [ ] Integritäts-Signatur
+- [x] **Lizenzierung via Freemius** ✅
+  - [x] Freemius SDK Integration (Parent + KI-Addon)
+  - [x] Plan-basierte Feature-Gates (Free / Pro / Bundle)
+  - [x] Checkout & Payment über Freemius
 - [ ] **Lizenz-Definition (klar kommuniziert)**
-  - [ ] "Lifetime = Version 1.x + 12 Monate Updates"
-  - [ ] Wartungsverlängerung 49€/Jahr
   - [ ] FAQ auf Website
-- [ ] **Checkout & Payment**
-  - [ ] Stripe oder Paddle Integration
-  - [ ] Automatische Lizenz-Generierung
 - [ ] **Launch**
   - [ ] wordpress.org Submission (Free-Version)
   - [ ] Landing Page
@@ -533,7 +527,7 @@ Design & Branding │                   │
 | Action Scheduler integriert | ✅ |
 | Zvoove/DATEV Addons (Basis) | ⬜ |
 | Free-Version auf wordpress.org | ⬜ |
-| Lizenz-System mit klarer Definition | ⬜ |
+| Lizenz-System (Freemius) | ✅ |
 | Verkaufsseite live | ⬜ |
 | Erste zahlende Kunden | ⬜ |
 | Test-Coverage: 60%+ | ⬜ |

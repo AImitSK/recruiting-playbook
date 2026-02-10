@@ -11,4 +11,5 @@ export { RolesSettings } from './RolesSettings';
 export { RolesList } from './RolesList';
 export { JobAssignments } from './JobAssignments';
 export { ApiKeySettings } from './ApiKeySettings';
+export { IntegrationSettings } from './IntegrationSettings';
 export { AiAnalysisSettings } from './AiAnalysisSettings';
