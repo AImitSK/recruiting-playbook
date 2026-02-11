@@ -17,10 +17,6 @@ msgstr ""
 "X-Domain: recruiting-playbook\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-
-msgid ""
-msgstr ""
-
 #: src/Admin/DashboardWidget.php:37, src/Admin/Menu.php:60, src/Blocks/BlockLoader.php:140, src/Blocks/Patterns/PatternLoader.php:39, src/Integrations/Avada/AvadaIntegration.php:92, src/Integrations/Elementor/ElementorIntegration.php:57
 msgid "Recruiting Playbook"
 msgstr "Recruiting Playbook"
@@ -274,7 +270,7 @@ msgstr "Slug URL"
 
 #: src/Admin/Settings.php:238
 msgid "URL path for the jobs overview (e.g., \"jobs\" for /jobs/)."
-msgstr ""
+msgstr "Percorso URL per la panoramica delle offerte (es. \"lavoro\" per /lavoro/)."
 
 #: src/Admin/Settings.php:245, src/Admin/Settings.php:466
 msgid "Google for Jobs Schema"
@@ -298,7 +294,7 @@ msgstr "E-mail white-label"
 
 #: src/Admin/Settings.php:274, src/Admin/Settings.php:510
 msgid "Hide \"Sent via Recruiting Playbook\" notice in emails"
-msgstr ""
+msgstr "Nascondi avviso \"Inviato tramite Recruiting Playbook\" nelle email"
 
 #: src/Admin/Settings.php:275
 msgid "Removes the branding notice from the footer of all emails."
@@ -2503,1759 +2499,1759 @@ msgstr "Promemoria: il suo colloquio il ___"
 
 #: src/Database/Migrator.php:940, src/Services/EmailRenderer.php:238
 msgid "Job Offer"
-msgstr ""
+msgstr "Offerta di lavoro"
 
 #: src/Database/Migrator.php:941, src/Services/EmailTemplateService.php:669
 msgid "Job offer: {stelle} at {firma}"
-msgstr ""
+msgstr "Offerta di lavoro: {stelle} presso {firma}"
 
 #: src/Database/Migrator.php:948
 msgid "Contract Documents"
-msgstr ""
+msgstr "Documenti contrattuali"
 
 #: src/Database/Migrator.php:949, src/Services/EmailTemplateService.php:689
 msgid "Your contract documents for {stelle}"
-msgstr ""
+msgstr "I tuoi documenti contrattuali per {stelle}"
 
 #: src/Database/Migrator.php:956
 msgid "Matching Job Found"
-msgstr ""
+msgstr "Offerta corrispondente trovata"
 
 #: src/Database/Migrator.php:957
 msgid "New job at {firma}: {stelle}"
-msgstr ""
+msgstr "Nuova offerta presso {firma}: {stelle}"
 
 #. translators: %s: Field label
 #: src/FieldTypes/AbstractFieldType.php:133, src/FieldTypes/FileField.php:149, src/Services/CustomFieldFileService.php:232, src/Services/CustomFieldsService.php:215
 msgid "%s is a required field."
-msgstr ""
+msgstr "%s è un campo obbligatorio."
 
 #. translators: 1: Field label, 2: Minimum length
 #: src/FieldTypes/AbstractFieldType.php:156
 msgid "%1$s must be at least %2$d characters long."
-msgstr ""
+msgstr "%1$s deve contenere almeno %2$d caratteri."
 
 #. translators: 1: Field label, 2: Maximum length
 #: src/FieldTypes/AbstractFieldType.php:180
 msgid "%1$s must not exceed %2$d characters."
-msgstr ""
+msgstr "%1$s non deve superare %2$d caratteri."
 
 #. translators: %s: Field label
 #: src/FieldTypes/AbstractFieldType.php:205
 msgid "%s has an invalid format."
-msgstr ""
+msgstr "%s ha un formato non valido."
 
 #: src/FieldTypes/CheckboxField.php:35, src/Services/FieldDefinitionService.php:578
 msgid "Checkbox"
-msgstr ""
+msgstr "Casella di controllo"
 
 #: src/FieldTypes/CheckboxField.php:77
 msgid "Minimum Selection"
-msgstr ""
+msgstr "Selezione minima"
 
 #: src/FieldTypes/CheckboxField.php:81, src/FieldTypes/CheckboxField.php:89
 msgid "Only for multi-checkbox"
-msgstr ""
+msgstr "Solo per caselle multiple"
 
 #: src/FieldTypes/CheckboxField.php:85
 msgid "Maximum Selection"
-msgstr ""
+msgstr "Selezione massima"
 
 #. translators: %s: Field label
 #: src/FieldTypes/CheckboxField.php:142, src/FieldTypes/RadioField.php:106, src/FieldTypes/SelectField.php:105
 msgid "%s contains an invalid value."
-msgstr ""
+msgstr "%s contiene un valore non valido."
 
 #. translators: 1: Field label, 2: Minimum count
 #: src/FieldTypes/CheckboxField.php:155
 msgid "Please select at least %2$d options for %1$s."
-msgstr ""
+msgstr "Seleziona almeno %2$d opzioni per %1$s."
 
 #. translators: 1: Field label, 2: Maximum count
 #: src/FieldTypes/CheckboxField.php:168
 msgid "Please select no more than %2$d options for %1$s."
-msgstr ""
+msgstr "Seleziona al massimo %2$d opzioni per %1$s."
 
 #: src/FieldTypes/CheckboxField.php:212, src/Models/FieldValue.php:289, src/Integrations/Avada/Elements/ApplicationForm.php:57, src/Integrations/Avada/Elements/ApplicationForm.php:68, src/Integrations/Avada/Elements/FeaturedJobs.php:71, src/Integrations/Avada/Elements/JobCategories.php:55, src/Integrations/Avada/Elements/JobCategories.php:66, src/Integrations/Avada/Elements/JobGrid.php:112, src/Integrations/Avada/Elements/JobSearch.php:41, src/Integrations/Avada/Elements/JobSearch.php:52, src/Integrations/Avada/Elements/JobSearch.php:63, src/Integrations/Avada/Elements/JobSearch.php:74, src/Integrations/Avada/Elements/LatestJobs.php:79, src/Integrations/Avada/Elements/LatestJobs.php:90, src/Integrations/Elementor/Widgets/ApplicationForm.php:82, src/Integrations/Elementor/Widgets/ApplicationForm.php:94, src/Integrations/Elementor/Widgets/FeaturedJobs.php:98, src/Integrations/Elementor/Widgets/JobCategories.php:79, src/Integrations/Elementor/Widgets/JobCategories.php:92, src/Integrations/Elementor/Widgets/JobGrid.php:135, src/Integrations/Elementor/Widgets/JobSearch.php:64, src/Integrations/Elementor/Widgets/JobSearch.php:76, src/Integrations/Elementor/Widgets/JobSearch.php:88, src/Integrations/Elementor/Widgets/JobSearch.php:100, src/Integrations/Elementor/Widgets/LatestJobs.php:108
 msgid "Yes"
-msgstr ""
+msgstr "Sì"
 
 #: src/FieldTypes/CheckboxField.php:214, src/Models/FieldValue.php:290, src/Integrations/Avada/Elements/ApplicationForm.php:58, src/Integrations/Avada/Elements/ApplicationForm.php:69, src/Integrations/Avada/Elements/FeaturedJobs.php:72, src/Integrations/Avada/Elements/JobCategories.php:56, src/Integrations/Avada/Elements/JobCategories.php:67, src/Integrations/Avada/Elements/JobGrid.php:113, src/Integrations/Avada/Elements/JobSearch.php:42, src/Integrations/Avada/Elements/JobSearch.php:53, src/Integrations/Avada/Elements/JobSearch.php:64, src/Integrations/Avada/Elements/JobSearch.php:75, src/Integrations/Avada/Elements/LatestJobs.php:80, src/Integrations/Avada/Elements/LatestJobs.php:91, src/Integrations/Elementor/Widgets/ApplicationForm.php:83, src/Integrations/Elementor/Widgets/ApplicationForm.php:95, src/Integrations/Elementor/Widgets/FeaturedJobs.php:99, src/Integrations/Elementor/Widgets/JobCategories.php:80, src/Integrations/Elementor/Widgets/JobCategories.php:93, src/Integrations/Elementor/Widgets/JobGrid.php:136, src/Integrations/Elementor/Widgets/JobSearch.php:65, src/Integrations/Elementor/Widgets/JobSearch.php:77, src/Integrations/Elementor/Widgets/JobSearch.php:89, src/Integrations/Elementor/Widgets/JobSearch.php:101, src/Integrations/Elementor/Widgets/LatestJobs.php:109
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: src/FieldTypes/DateField.php:68
 msgid "Earliest Date"
-msgstr ""
+msgstr "Data minima"
 
 #: src/FieldTypes/DateField.php:71
 msgid "Relative date (e.g. \"today\", \"-18 years\") or absolute (YYYY-MM-DD)"
-msgstr ""
+msgstr "Data relativa (es. \"today\", \"-18 years\") o assoluta (AAAA-MM-GG)"
 
 #: src/FieldTypes/DateField.php:75
 msgid "Latest Date"
-msgstr ""
+msgstr "Data massima"
 
 #: src/FieldTypes/DateField.php:78
 msgid "Relative date (e.g. \"today\", \"+1 year\") or absolute (YYYY-MM-DD)"
-msgstr ""
+msgstr "Data relativa (es. \"today\", \"+1 year\") o assoluta (AAAA-MM-GG)"
 
 #. translators: %s: Field label
 #: src/FieldTypes/DateField.php:106
 msgid "%s must be a valid date."
-msgstr ""
+msgstr "%s deve essere una data valida."
 
 #. translators: 1: Field label, 2: Minimum date
 #: src/FieldTypes/DateField.php:122
 msgid "%1$s must be on or after %2$s."
-msgstr ""
+msgstr "%1$s deve essere uguale o successiva a %2$s."
 
 #. translators: 1: Field label, 2: Maximum date
 #: src/FieldTypes/DateField.php:138
 msgid "%1$s must be on or before %2$s."
-msgstr ""
+msgstr "%1$s deve essere uguale o precedente a %2$s."
 
 #. translators: %s: Field label
 #: src/FieldTypes/EmailField.php:88
 msgid "%s must be a valid email address."
-msgstr ""
+msgstr "%s deve essere un indirizzo email valido."
 
 #: src/FieldTypes/FieldTypeRegistry.php:219
 msgid "Text"
-msgstr ""
+msgstr "Testo"
 
 #: src/FieldTypes/FieldTypeRegistry.php:220
 msgid "Choice"
-msgstr ""
+msgstr "Scelta"
 
 #: src/FieldTypes/FieldTypeRegistry.php:221
 msgid "Special"
-msgstr ""
+msgstr "Speciale"
 
 #: src/FieldTypes/FieldTypeRegistry.php:222
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: src/FieldTypes/FileField.php:53
 msgid "File Upload"
-msgstr ""
+msgstr "Caricamento file"
 
 #: src/FieldTypes/FileField.php:95
 msgid "Max. file size (MB)"
-msgstr ""
+msgstr "Dimensione massima file (MB)"
 
 #: src/FieldTypes/FileField.php:103
 msgid "Min. files"
-msgstr ""
+msgstr "File minimi"
 
 #: src/FieldTypes/FileField.php:107, src/FieldTypes/FileField.php:115
 msgid "For multi-upload only"
-msgstr ""
+msgstr "Solo per caricamento multiplo"
 
 #: src/FieldTypes/FileField.php:111
 msgid "Max. files"
-msgstr ""
+msgstr "File massimi"
 
 #. translators: %s: Field label
 #: src/FieldTypes/FileField.php:176, src/Services/CustomFieldFileService.php:209
 msgid "Only one file is allowed for %s."
-msgstr ""
+msgstr "È consentito un solo file per %s."
 
 #. translators: 1: Field label, 2: Maximum count
 #. translators: 1: Field label, 2: Max count
 #: src/FieldTypes/FileField.php:187, src/Services/CustomFieldFileService.php:220
 msgid "A maximum of %2$d files are allowed for %1$s."
-msgstr ""
+msgstr "Sono consentiti massimo %2$d file per %1$s."
 
 #. translators: %s: File name
 #: src/FieldTypes/FileField.php:202, src/Services/CustomFieldFileService.php:246
 msgid "Error uploading %s."
-msgstr ""
+msgstr "Errore durante il caricamento di %s."
 
 #. translators: 1: File name, 2: Maximum size in MB
 #. translators: 1: File name, 2: Max size
 #: src/FieldTypes/FileField.php:214, src/Services/CustomFieldFileService.php:258
 msgid "The file %1$s is too large. Maximum: %2$d MB."
-msgstr ""
+msgstr "Il file %1$s è troppo grande. Massimo: %2$d MB."
 
 #. translators: 1: File name, 2: Allowed extensions
 #. translators: 1: File name, 2: Allowed types
 #: src/FieldTypes/FileField.php:248, src/Services/CustomFieldFileService.php:271
 msgid "The file type of %1$s is not allowed. Allowed: %2$s."
-msgstr ""
+msgstr "Il tipo di file %1$s non è consentito. Consentiti: %2$s."
 
 #: src/FieldTypes/FileField.php:434
 msgid "Drop files here or click to select"
-msgstr ""
+msgstr "Trascina i file qui o clicca per selezionare"
 
 #: src/FieldTypes/FileField.php:438
 msgid "Allowed formats"
-msgstr ""
+msgstr "Formati consentiti"
 
 #: src/FieldTypes/FileField.php:452
 msgid "Remove"
-msgstr ""
+msgstr "Rimuovi"
 
 #: src/FieldTypes/FileField.php:460
 msgid "Already uploaded"
-msgstr ""
+msgstr "Già caricato"
 
 #: src/FieldTypes/HeadingField.php:35, src/Services/FieldDefinitionService.php:596, src/Integrations/Avada/Elements/AiJobFinder.php:39, src/Integrations/Avada/Elements/ApplicationForm.php:45, src/Integrations/Avada/Elements/FeaturedJobs.php:59, src/Integrations/Elementor/Widgets/ApplicationForm.php:71, src/Integrations/Elementor/Widgets/FeaturedJobs.php:86, src/Integrations/Elementor/Widgets/LatestJobs.php:87
 msgid "Heading"
-msgstr ""
+msgstr "Intestazione"
 
 #: src/FieldTypes/HtmlField.php:36
 msgid "HTML / Text Block"
-msgstr ""
+msgstr "Blocco HTML / Testo"
 
 #: src/FieldTypes/NumberField.php:35, src/Services/FieldDefinitionService.php:554, src/Integrations/Elementor/Widgets/FeaturedJobs.php:60
 msgid "Number"
-msgstr ""
+msgstr "Numero"
 
 #: src/FieldTypes/NumberField.php:70
 msgid "Minimum value"
-msgstr ""
+msgstr "Valore minimo"
 
 #: src/FieldTypes/NumberField.php:76
 msgid "Maximum value"
-msgstr ""
+msgstr "Valore massimo"
 
 #: src/FieldTypes/NumberField.php:82, src/Frontend/Shortcodes.php:346, src/Frontend/Shortcodes.php:435, src/Services/FormRenderService.php:159
 msgid "Step"
-msgstr ""
+msgstr "Incremento"
 
 #. translators: %s: Field label
 #: src/FieldTypes/NumberField.php:109
 msgid "%s must be a number."
-msgstr ""
+msgstr "%s deve essere un numero."
 
 #. translators: 1: Field label, 2: Minimum value
 #: src/FieldTypes/NumberField.php:125
 msgid "%1$s must be at least %2$s."
-msgstr ""
+msgstr "%1$s deve essere almeno %2$s."
 
 #. translators: 1: Field label, 2: Maximum value
 #: src/FieldTypes/NumberField.php:138
 msgid "%1$s must not exceed %2$s."
-msgstr ""
+msgstr "%1$s non deve superare %2$s."
 
 #: src/FieldTypes/PhoneField.php:68, src/FieldTypes/TextareaField.php:68
 msgid "Minimum length"
-msgstr ""
+msgstr "Lunghezza minima"
 
 #: src/FieldTypes/PhoneField.php:75, src/FieldTypes/TextareaField.php:75
 msgid "Maximum length"
-msgstr ""
+msgstr "Lunghezza massima"
 
 #. translators: %s: Field label
 #: src/FieldTypes/PhoneField.php:107
 msgid "%s must be a valid phone number."
-msgstr ""
+msgstr "%s deve essere un numero di telefono valido."
 
 #: src/FieldTypes/RadioField.php:35
 msgid "Radio Buttons"
-msgstr ""
+msgstr "Pulsanti radio"
 
 #: src/FieldTypes/RadioField.php:218, src/FieldTypes/SelectField.php:225
 msgid "Please specify..."
-msgstr ""
+msgstr "Specifica..."
 
 #: src/FieldTypes/SelectField.php:35, src/Services/FieldDefinitionService.php:566
 msgid "Dropdown"
-msgstr ""
+msgstr "Menu a discesa"
 
 #: src/FieldTypes/SelectField.php:192
 msgid "Please select..."
-msgstr ""
+msgstr "Seleziona..."
 
 #: src/FieldTypes/SelectField.php:214
 msgid "Other..."
-msgstr ""
+msgstr "Altro..."
 
 #: src/FieldTypes/TextareaField.php:35
 msgid "Textarea"
-msgstr ""
+msgstr "Area di testo"
 
 #: src/FieldTypes/TextField.php:35
 msgid "Text Field"
-msgstr ""
+msgstr "Campo di testo"
 
 #: src/FieldTypes/TextField.php:68, src/Admin/Pages/FormBuilderPage.php:174
 msgid "Minimum Length"
-msgstr ""
+msgstr "Lunghezza minima"
 
 #: src/FieldTypes/TextField.php:75, src/Admin/Pages/FormBuilderPage.php:175
 msgid "Maximum Length"
-msgstr ""
+msgstr "Lunghezza massima"
 
 #: src/FieldTypes/TextField.php:82, src/Admin/Pages/FormBuilderPage.php:178
 msgid "Regex Pattern"
-msgstr ""
+msgstr "Pattern regex"
 
 #: src/FieldTypes/TextField.php:88
 msgid "Pattern Error Message"
-msgstr ""
+msgstr "Messaggio di errore del pattern"
 
 #: src/FieldTypes/TextField.php:90
 msgid "Invalid format"
-msgstr ""
+msgstr "Formato non valido"
 
 #: src/FieldTypes/UrlField.php:35, src/Services/FieldDefinitionService.php:560
 msgid "URL/Link"
-msgstr ""
+msgstr "URL/Link"
 
 #. translators: %s: Field label
 #: src/FieldTypes/UrlField.php:89
 msgid "%s must be a valid URL."
-msgstr ""
+msgstr "%s deve essere un URL valido."
 
 #: src/Frontend/JobSchema.php:267
 msgid "Invalid post"
-msgstr ""
+msgstr "Post non valido"
 
 #: src/Frontend/JobSchema.php:279
 msgid "Job title is missing"
-msgstr ""
+msgstr "Titolo dell'offerta mancante"
 
 #: src/Frontend/JobSchema.php:286
 msgid "Job description is very short (minimum 100 characters recommended)"
-msgstr ""
+msgstr "Descrizione dell'offerta molto breve (consigliati almeno 100 caratteri)"
 
 #: src/Frontend/JobSchema.php:284
 msgid "Job description is missing"
-msgstr ""
+msgstr "Descrizione dell'offerta mancante"
 
 #: src/Frontend/JobSchema.php:293
 msgid "Company name is missing (in plugin settings or WordPress settings)"
-msgstr ""
+msgstr "Nome dell'azienda mancante (nelle impostazioni del plugin o di WordPress)"
 
 #: src/Frontend/JobSchema.php:302
 msgid "Location is missing (recommended for better ranking)"
-msgstr ""
+msgstr "Località mancante (consigliata per un migliore posizionamento)"
 
 #: src/Frontend/JobSchema.php:308
 msgid "Employment type is missing (full-time, part-time, etc.)"
-msgstr ""
+msgstr "Tipo di impiego mancante (tempo pieno, part-time, ecc.)"
 
 #: src/Frontend/JobSchema.php:317
 msgid "Salary is missing (important for Google for Jobs ranking)"
-msgstr ""
+msgstr "Retribuzione mancante (importante per il posizionamento su Google for Jobs)"
 
 #: src/Frontend/JobSchema.php:325
 msgid "Application deadline has expired"
-msgstr ""
+msgstr "Scadenza per candidarsi scaduta"
 
 #: src/Frontend/JobSchema.php:323
 msgid "Application deadline is missing"
-msgstr ""
+msgstr "Scadenza per candidarsi mancante"
 
 #: src/Frontend/Shortcodes.php:162
 msgid "Apply Now"
-msgstr ""
+msgstr "Candidati ora"
 
 #: src/Frontend/Shortcodes.php:181
 msgid "Error: No job specified. Please set the job_id attribute."
-msgstr ""
+msgstr "Errore: Nessuna offerta specificata. Imposta l'attributo job_id."
 
 #: src/Frontend/Shortcodes.php:190, src/Frontend/Shortcodes.php:771
 msgid "Error: The specified job does not exist or is not available."
-msgstr ""
+msgstr "Errore: L'offerta specificata non esiste o non è disponibile."
 
 #. translators: %s: Job title
 #: src/Frontend/Shortcodes.php:234, src/Frontend/Shortcodes.php:276
 msgid "Application for: %s"
-msgstr ""
+msgstr "Candidatura per: %s"
 
 #: src/Frontend/Shortcodes.php:329, src/Frontend/Shortcodes.php:419
 msgid "Application submitted successfully!"
-msgstr ""
+msgstr "Candidatura inviata con successo!"
 
 #: src/Frontend/Shortcodes.php:330, src/Frontend/Shortcodes.php:420, src/Services/FormRenderService.php:134
 msgid "Thank you for your application. You will receive a confirmation email shortly."
-msgstr ""
+msgstr "Grazie per la tua candidatura. Riceverai a breve un'email di conferma."
 
 #: src/Frontend/Shortcodes.php:346, src/Frontend/Shortcodes.php:435, src/Services/FormRenderService.php:159, src/Admin/Pages/TalentPoolPage.php:83
 msgid "of"
-msgstr ""
+msgstr "di"
 
 #: src/Frontend/Shortcodes.php:372, src/Frontend/Shortcodes.php:683, src/Services/FormRenderService.php:757, src/Admin/SetupWizard/SetupWizard.php:383, src/Admin/SetupWizard/SetupWizard.php:502, src/Admin/SetupWizard/SetupWizard.php:588
 msgid "Back"
-msgstr ""
+msgstr "Indietro"
 
 #: src/Frontend/Shortcodes.php:382, src/Frontend/Shortcodes.php:693, src/Services/FormRenderService.php:766, src/Admin/Pages/TalentPoolPage.php:85, src/Frontend/Shortcodes/JobSearchShortcode.php:307
 msgid "Next"
-msgstr ""
+msgstr "Avanti"
 
 #: src/Frontend/Shortcodes.php:391, src/Frontend/Shortcodes.php:702
 msgid "Submit Application"
-msgstr ""
+msgstr "Invia candidatura"
 
 #: src/Frontend/Shortcodes.php:392, src/Frontend/Shortcodes.php:703, src/Services/FormRenderService.php:776
 msgid "Submitting..."
-msgstr ""
+msgstr "Invio in corso..."
 
 #: src/Frontend/Shortcodes.php:456, src/Integrations/Avada/Elements/JobGrid.php:133, src/Integrations/Avada/Elements/LatestJobs.php:59, src/Integrations/Elementor/Widgets/AiJobFinder.php:61, src/Integrations/Elementor/Widgets/JobGrid.php:161
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: src/Frontend/Shortcodes.php:458
 msgid "Please select"
-msgstr ""
+msgstr "Seleziona"
 
 #: src/Frontend/Shortcodes.php:459, src/Services/PlaceholderService.php:266
 msgid "Mr."
-msgstr ""
+msgstr "Sig."
 
 #: src/Frontend/Shortcodes.php:460, src/Services/PlaceholderService.php:272
 msgid "Ms."
-msgstr ""
+msgstr "Sig.ra"
 
 #: src/Frontend/Shortcodes.php:461
 msgid "Mx."
-msgstr ""
+msgstr "Mx."
 
 #: src/Frontend/Shortcodes.php:493, src/Services/FormConfigService.php:517
 msgid "Email Address"
-msgstr ""
+msgstr "Indirizzo email"
 
 #: src/Frontend/Shortcodes.php:529, src/Services/FormRenderService.php:319
 msgid "Drag file here or"
-msgstr ""
+msgstr "Trascina il file qui o"
 
 #: src/Frontend/Shortcodes.php:531, src/Services/FormRenderService.php:322
 msgid "Select file"
-msgstr ""
+msgstr "Seleziona file"
 
 #: src/Frontend/Shortcodes.php:534
 msgid "PDF, DOC, DOCX, JPG, PNG (max. 10 MB)"
-msgstr ""
+msgstr "PDF, DOC, DOCX, JPG, PNG (max. 10 MB)"
 
 #: src/Frontend/Shortcodes.php:561
 msgid "Additional Documents (References, Certificates)"
-msgstr ""
+msgstr "Documenti aggiuntivi (Referenze, Certificati)"
 
 #: src/Frontend/Shortcodes.php:568
 msgid "Select files"
-msgstr ""
+msgstr "Seleziona file"
 
 #: src/Frontend/Shortcodes.php:571
 msgid "Multiple files allowed (max. 5 files, 10 MB each)"
-msgstr ""
+msgstr "Più file consentiti (max. 5 file, 10 MB ciascuno)"
 
 #: src/Frontend/Shortcodes.php:593, src/Services/FormConfigService.php:547
 msgid "Cover Letter / Message"
-msgstr ""
+msgstr "Lettera di presentazione / Messaggio"
 
 #: src/Frontend/Shortcodes.php:596
 msgid "Optional: Add a brief cover letter..."
-msgstr ""
+msgstr "Facoltativo: Aggiungi una breve lettera di presentazione..."
 
 #: src/Frontend/Shortcodes.php:602
 msgid "Privacy & Submit"
-msgstr ""
+msgstr "Privacy e invio"
 
 #: src/Frontend/Shortcodes.php:606, src/Services/FormRenderService.php:561
 msgid "Your Information"
-msgstr ""
+msgstr "I tuoi dati"
 
 #: src/Frontend/Shortcodes.php:609
 msgid "Name:"
-msgstr ""
+msgstr "Nome:"
 
 #: src/Frontend/Shortcodes.php:613
 msgid "Email:"
-msgstr ""
+msgstr "Email:"
 
 #: src/Frontend/Shortcodes.php:618
 msgid "Phone:"
-msgstr ""
+msgstr "Telefono:"
 
 #: src/Frontend/Shortcodes.php:624
 msgid "Resume:"
-msgstr ""
+msgstr "Curriculum:"
 
 #: src/Frontend/Shortcodes.php:630
 msgid "Documents:"
-msgstr ""
+msgstr "Documenti:"
 
 #. translators: %s: privacy policy link
 #: src/Frontend/Shortcodes.php:657
 msgid "I have read the %s and agree to the processing of my data for the purpose of this application."
-msgstr ""
+msgstr "Ho letto %s e acconsento al trattamento dei miei dati per le finalità della candidatura."
 
 #: src/Frontend/Shortcodes.php:733
 msgid "AI Job Match"
-msgstr ""
+msgstr "AI Job Match"
 
 #: src/Frontend/Shortcodes.php:741, src/Frontend/Shortcodes.php:787, src/Blocks/Blocks/ai-job-match/render.php:17
 msgid "Am I a good fit for this job?"
-msgstr ""
+msgstr "Sono adatto per questa posizione?"
 
 #: src/Frontend/Shortcodes.php:762
 msgid "Note: No job specified. Please set the job_id attribute or use on a job listing page."
-msgstr ""
+msgstr "Nota: Nessuna offerta specificata. Imposta l'attributo job_id o usa su una pagina di offerta."
 
 #: src/Frontend/Shortcodes.php:903
 msgid "AI Job Finder"
-msgstr ""
+msgstr "AI Job Finder"
 
 #: src/Frontend/Shortcodes.php:910
 msgid "Find Your Dream Job"
-msgstr ""
+msgstr "Trova il tuo lavoro ideale"
 
 #: src/Frontend/Shortcodes.php:911
 msgid "Upload your resume and discover matching positions."
-msgstr ""
+msgstr "Carica il tuo curriculum e scopri le posizioni corrispondenti."
 
 #: src/Frontend/Shortcodes.php:925
 msgid "Currently no open positions available."
-msgstr ""
+msgstr "Attualmente non ci sono posizioni aperte disponibili."
 
 #: src/Frontend/Shortcodes.php:990
 msgid "Uploading resume..."
-msgstr ""
+msgstr "Caricamento curriculum..."
 
 #: src/Frontend/Shortcodes.php:991, src/Frontend/Shortcodes.php:1059
 msgid "Analysis running..."
-msgstr ""
+msgstr "Analisi in corso..."
 
 #: src/Frontend/Shortcodes.php:995
 msgid "Unfortunately, no matching positions were found."
-msgstr ""
+msgstr "Purtroppo non sono state trovate posizioni corrispondenti."
 
 #: src/Frontend/Shortcodes.php:998
 msgid "Excellent fit"
-msgstr ""
+msgstr "Ottima corrispondenza"
 
 #: src/Frontend/Shortcodes.php:999
 msgid "Good fit"
-msgstr ""
+msgstr "Buona corrispondenza"
 
 #: src/Frontend/Shortcodes.php:1000
 msgid "Conditional fit"
-msgstr ""
+msgstr "Corrispondenza parziale"
 
 #: src/Frontend/Shortcodes.php:1001
 msgid "View job"
-msgstr ""
+msgstr "Visualizza offerta"
 
 #: src/Frontend/Shortcodes.php:1002, src/Blocks/Blocks/application-form/render.php:17
 msgid "Apply now"
-msgstr ""
+msgstr "Candidati ora"
 
 #: src/Frontend/Shortcodes.php:1003
 msgid "Matched skills"
-msgstr ""
+msgstr "Competenze corrispondenti"
 
 #: src/Frontend/Shortcodes.php:1004
 msgid "Missing skills"
-msgstr ""
+msgstr "Competenze mancanti"
 
 #: src/Frontend/Shortcodes.php:1005, src/Admin/Pages/KanbanBoard.php:193
 msgid "Try again"
-msgstr ""
+msgstr "Riprova"
 
 #: src/Frontend/Shortcodes.php:1006
 msgid "New search"
-msgstr ""
+msgstr "Nuova ricerca"
 
 #: src/Frontend/Shortcodes.php:1058
 msgid "Uploading document..."
-msgstr ""
+msgstr "Caricamento documento..."
 
 #. translators: %s: Required tier name
 #: src/Frontend/Shortcodes.php:1135
 msgid "This feature is part of %s."
-msgstr ""
+msgstr "Questa funzionalità fa parte di %s."
 
 #: src/Frontend/Shortcodes.php:1139
 msgid "Upgrade Info"
-msgstr ""
+msgstr "Info aggiornamento"
 
 #: src/Frontend/Shortcodes.php:1218
 msgid "Please enter a valid URL"
-msgstr ""
+msgstr "Inserisci un URL valido"
 
 #: src/Frontend/Shortcodes.php:1219, src/Services/FormRenderService.php:975
 msgid "Please enter a valid phone number"
-msgstr ""
+msgstr "Inserisci un numero di telefono valido"
 
 #: src/Frontend/Shortcodes.php:1220
 msgid "Please enter a valid number"
-msgstr ""
+msgstr "Inserisci un numero valido"
 
 #: src/Frontend/Shortcodes.php:1221
 msgid "Please enter a valid date"
-msgstr ""
+msgstr "Inserisci una data valida"
 
 #: src/Frontend/Shortcodes.php:1222
 msgid "At least {min} characters required"
-msgstr ""
+msgstr "Richiesti almeno {min} caratteri"
 
 #: src/Frontend/Shortcodes.php:1223
 msgid "Maximum {max} characters allowed"
-msgstr ""
+msgstr "Consentiti massimo {max} caratteri"
 
 #: src/Frontend/Shortcodes.php:1224
 msgid "Minimum value: {min}"
-msgstr ""
+msgstr "Valore minimo: {min}"
 
 #: src/Frontend/Shortcodes.php:1225
 msgid "Maximum value: {max}"
-msgstr ""
+msgstr "Valore massimo: {max}"
 
 #: src/Frontend/Shortcodes.php:1226
 msgid "Date must be after {date}"
-msgstr ""
+msgstr "La data deve essere successiva a {date}"
 
 #: src/Frontend/Shortcodes.php:1227
 msgid "Date must be before {date}"
-msgstr ""
+msgstr "La data deve essere precedente a {date}"
 
 #: src/Frontend/Shortcodes.php:1228
 msgid "The file is too large (max. {size} MB)"
-msgstr ""
+msgstr "Il file è troppo grande (max. {size} MB)"
 
 #: src/Frontend/Shortcodes.php:1229
 msgid "File type not allowed"
-msgstr ""
+msgstr "Tipo di file non consentito"
 
 #: src/Frontend/Shortcodes.php:1230
 msgid "Please upload a file"
-msgstr ""
+msgstr "Carica un file"
 
 #: src/Frontend/Shortcodes.php:1231
 msgid "Maximum {max} files allowed"
-msgstr ""
+msgstr "Consentiti massimo {max} file"
 
 #: src/Frontend/Shortcodes.php:1232
 msgid "Please select at least {min} options"
-msgstr ""
+msgstr "Seleziona almeno {min} opzioni"
 
 #: src/Frontend/Shortcodes.php:1233
 msgid "Please select at most {max} options"
-msgstr ""
+msgstr "Seleziona al massimo {max} opzioni"
 
 #: src/Frontend/Shortcodes.php:1234
 msgid "The format is invalid"
-msgstr ""
+msgstr "Il formato non è valido"
 
 #: src/Frontend/Shortcodes.php:1311
 msgid "The file is too large (max. 10 MB)"
-msgstr ""
+msgstr "Il file è troppo grande (max. 10 MB)"
 
 #: src/Licensing/helpers.php:268
 msgid "Free version"
-msgstr ""
+msgstr "Versione gratuita"
 
 #. translators: %s: tier name
 #. translators: %s: License tier
 #: src/Licensing/helpers.php:283, src/Services/SystemStatusService.php:278
 msgid "%s license active"
-msgstr ""
+msgstr "Licenza %s attiva"
 
 #: src/Licensing/helpers.php:286
 msgid "License invalid or expired."
-msgstr ""
+msgstr "Licenza non valida o scaduta."
 
 #: src/Licensing/helpers.php:361
 msgid "This feature requires the AI Addon."
-msgstr ""
+msgstr "Questa funzionalità richiede AI Addon."
 
 #: src/Licensing/helpers.php:362, src/Admin/Pages/ReportingPage.php:118
 msgid "This feature requires Pro."
-msgstr ""
+msgstr "Questa funzionalità richiede Pro."
 
 #. translators: 1: feature name, 2: tier name
 #: src/Licensing/helpers.php:431
 msgid "%1$s requires %2$s"
-msgstr ""
+msgstr "%1$s richiede %2$s"
 
 #: src/Licensing/helpers.php:436
 msgid "Upgrade to unlock this feature."
-msgstr ""
+msgstr "Effettua l'upgrade per sbloccare questa funzionalità."
 
 #: src/Licensing/helpers.php:438
 msgid "Learn more"
-msgstr ""
+msgstr "Scopri di più"
 
 #: src/PostTypes/JobListing.php:31
 msgid "Add New"
-msgstr ""
+msgstr "Aggiungi nuova"
 
 #: src/PostTypes/JobListing.php:32
 msgid "Add New Job"
-msgstr ""
+msgstr "Aggiungi nuova offerta"
 
 #: src/PostTypes/JobListing.php:33
 msgid "New Job"
-msgstr ""
+msgstr "Nuova offerta"
 
 #: src/PostTypes/JobListing.php:34
 msgid "Edit Job"
-msgstr ""
+msgstr "Modifica offerta"
 
 #: src/PostTypes/JobListing.php:35
 msgid "View Job"
-msgstr ""
+msgstr "Visualizza offerta"
 
 #: src/PostTypes/JobListing.php:36, src/Admin/Pages/ApplicationList.php:481
 msgid "All Jobs"
-msgstr ""
+msgstr "Tutte le offerte"
 
 #: src/PostTypes/JobListing.php:37
 msgid "Search Jobs"
-msgstr ""
+msgstr "Cerca offerte"
 
 #: src/PostTypes/JobListing.php:38
 msgid "Parent Job:"
-msgstr ""
+msgstr "Offerta principale:"
 
 #: src/PostTypes/JobListing.php:39
 msgid "No jobs found."
-msgstr ""
+msgstr "Nessuna offerta trovata."
 
 #: src/PostTypes/JobListing.php:40
 msgid "No jobs found in trash."
-msgstr ""
+msgstr "Nessuna offerta trovata nel cestino."
 
 #: src/PostTypes/JobListing.php:41
 msgid "Job Image"
-msgstr ""
+msgstr "Immagine offerta"
 
 #: src/PostTypes/JobListing.php:42
 msgid "Set job image"
-msgstr ""
+msgstr "Imposta immagine offerta"
 
 #: src/PostTypes/JobListing.php:43
 msgid "Remove job image"
-msgstr ""
+msgstr "Rimuovi immagine offerta"
 
 #: src/PostTypes/JobListing.php:44
 msgid "Use as job image"
-msgstr ""
+msgstr "Usa come immagine offerta"
 
 #: src/PostTypes/JobListing.php:45
 msgid "Job Archives"
-msgstr ""
+msgstr "Archivio offerte"
 
 #: src/PostTypes/JobListing.php:46
 msgid "Insert into job"
-msgstr ""
+msgstr "Inserisci nell'offerta"
 
 #: src/PostTypes/JobListing.php:47
 msgid "Uploaded to this job"
-msgstr ""
+msgstr "Caricato per questa offerta"
 
 #: src/PostTypes/JobListing.php:48
 msgid "Filter jobs list"
-msgstr ""
+msgstr "Filtra elenco offerte"
 
 #: src/PostTypes/JobListing.php:49
 msgid "Jobs list navigation"
-msgstr ""
+msgstr "Navigazione elenco offerte"
 
 #: src/PostTypes/JobListing.php:50
 msgid "Jobs list"
-msgstr ""
+msgstr "Elenco offerte"
 
 #: src/Repositories/EmailLogRepository.php:603, src/Admin/Pages/ApplicationDetail.php:849
 msgid "Pending"
-msgstr ""
+msgstr "In sospeso"
 
 #: src/Repositories/EmailLogRepository.php:607, src/Admin/Pages/ApplicationDetail.php:851
 msgid "Sent"
-msgstr ""
+msgstr "Inviato"
 
 #: src/Repositories/EmailLogRepository.php:611, src/Admin/Pages/ApplicationDetail.php:852
 msgid "Failed"
-msgstr ""
+msgstr "Fallito"
 
 #: src/Repositories/EmailLogRepository.php:615, src/Admin/Pages/ApplicationDetail.php:853
 msgid "Cancelled"
-msgstr ""
+msgstr "Annullato"
 
 #: src/Repositories/EmailTemplateRepository.php:315
 msgid "(Copy)"
-msgstr ""
+msgstr "(Copia)"
 
 #. translators: %s: Original template name
 #: src/Repositories/FormTemplateRepository.php:299, src/Services/FormTemplateService.php:374
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s (Copia)"
 
 #: src/Services/ApiKeyService.php:67
 msgid "Name is a required field."
-msgstr ""
+msgstr "Nome è un campo obbligatorio."
 
 #. translators: %s: comma-separated list of invalid permissions
 #: src/Services/ApiKeyService.php:79, src/Services/ApiKeyService.php:324
 msgid "Invalid permissions: %s"
-msgstr ""
+msgstr "Permessi non validi: %s"
 
 #: src/Services/ApiKeyService.php:89
 msgid "At least one permission must be selected."
-msgstr ""
+msgstr "Deve essere selezionato almeno un permesso."
 
 #: src/Services/ApiKeyService.php:126
 msgid "API key could not be created."
-msgstr ""
+msgstr "Impossibile creare la chiave API."
 
 #: src/Services/ApiKeyService.php:302, src/Services/ApiKeyService.php:393
 msgid "API key not found."
-msgstr ""
+msgstr "Chiave API non trovata."
 
 #: src/Services/ApplicationService.php:103
 msgid "Application could not be saved."
-msgstr ""
+msgstr "Impossibile salvare la candidatura."
 
 #: src/Services/ApplicationService.php:505, src/Services/ApplicationService.php:789
 msgid "Invalid status."
-msgstr ""
+msgstr "Stato non valido."
 
 #: src/Services/ApplicationService.php:547
 msgid "Status could not be updated."
-msgstr ""
+msgstr "Impossibile aggiornare lo stato."
 
 #. translators: 1: old status, 2: new status
 #: src/Services/ApplicationService.php:554
 msgid "Status changed from \"%1$s\" to \"%2$s\""
-msgstr ""
+msgstr "Stato cambiato da \"%1$s\" a \"%2$s\""
 
 #: src/Services/ApplicationService.php:637
 msgid "Candidate could not be created."
-msgstr ""
+msgstr "Impossibile creare il candidato."
 
 #: src/Services/ApplicationService.php:724
 msgid "Custom fields could not be saved."
-msgstr ""
+msgstr "Impossibile salvare i campi personalizzati."
 
 #. translators: %s: File name
 #: src/Services/CustomFieldFileService.php:398
 msgid "The file %s could not be saved."
-msgstr ""
+msgstr "Impossibile salvare il file %s."
 
 #: src/Services/CustomFieldFileService.php:457
 msgid "Document could not be saved in the database."
-msgstr ""
+msgstr "Impossibile salvare il documento nel database."
 
 #: src/Services/CustomFieldsService.php:225
 msgid "Please correct the errors in the form."
-msgstr ""
+msgstr "Correggi gli errori nel modulo."
 
 #: src/Services/DocumentDownloadService.php:136
 msgid "Document not found."
-msgstr ""
+msgstr "Documento non trovato."
 
 #: src/Services/DocumentDownloadService.php:149, src/Services/DocumentDownloadService.php:159
 msgid "Invalid file path."
-msgstr ""
+msgstr "Percorso file non valido."
 
 #: src/Services/DocumentDownloadService.php:153
 msgid "File not found."
-msgstr ""
+msgstr "File non trovato."
 
 #: src/Services/DocumentDownloadService.php:166
 msgid "Invalid file type."
-msgstr ""
+msgstr "Tipo di file non valido."
 
 #: src/Services/DocumentDownloadService.php:273
 msgid "Invalid request."
-msgstr ""
+msgstr "Richiesta non valida."
 
 #: src/Services/DocumentDownloadService.php:279
 msgid "Download link expired or invalid."
-msgstr ""
+msgstr "Link di download scaduto o non valido."
 
 #: src/Services/DocumentDownloadService.php:296
 msgid "Download limit reached. Please try again later."
-msgstr ""
+msgstr "Limite di download raggiunto. Riprova più tardi."
 
 #: src/Services/DocumentService.php:184
 msgid "Document protection configured. Please test direct access to documents."
-msgstr ""
+msgstr "Protezione documenti configurata. Verifica l'accesso diretto ai documenti."
 
 #: src/Services/DocumentService.php:182
 msgid "Apache server with .htaccess protection detected."
-msgstr ""
+msgstr "Rilevato server Apache con protezione .htaccess."
 
 #: src/Services/DocumentService.php:180
 msgid "Nginx server detected: Please ensure that the Nginx configuration includes document protection."
-msgstr ""
+msgstr "Rilevato server Nginx: Assicurati che la configurazione Nginx includa la protezione documenti."
 
 #: src/Services/DocumentService.php:178
 msgid "Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt)."
-msgstr ""
+msgstr "Rilevato server Nginx: Configura manualmente la protezione documenti (vedi NGINX_SECURITY.txt)."
 
 #. translators: %s: max file size
 #: src/Services/DocumentService.php:298
 msgid "File is too large. Maximum size: %s"
-msgstr ""
+msgstr "File troppo grande. Dimensione massima: %s"
 
 #: src/Services/DocumentService.php:315
 msgid "Invalid application ID."
-msgstr ""
+msgstr "ID candidatura non valido."
 
 #. translators: %s: mime type
 #: src/Services/DocumentService.php:423
 msgid "File type \"%s\" is not allowed. Allowed types: PDF, DOC, DOCX, JPG, PNG"
-msgstr ""
+msgstr "Tipo di file \"%s\" non consentito. Tipi consentiti: PDF, DOC, DOCX, JPG, PNG"
 
 #: src/Services/DocumentService.php:445
 msgid "File extension does not match file content."
-msgstr ""
+msgstr "L'estensione del file non corrisponde al contenuto."
 
 #: src/Services/DocumentService.php:517
 msgid "Document could not be saved to the database."
-msgstr ""
+msgstr "Impossibile salvare il documento nel database."
 
 #: src/Services/DocumentService.php:627, src/Services/DocumentService.php:628
 msgid "File exceeds the maximum allowed size."
-msgstr ""
+msgstr "Il file supera la dimensione massima consentita."
 
 #: src/Services/DocumentService.php:629
 msgid "File was only partially uploaded."
-msgstr ""
+msgstr "Il file è stato caricato solo parzialmente."
 
 #: src/Services/DocumentService.php:630
 msgid "No file was uploaded."
-msgstr ""
+msgstr "Nessun file caricato."
 
 #: src/Services/DocumentService.php:631
 msgid "Temporary directory is missing."
-msgstr ""
+msgstr "Directory temporanea mancante."
 
 #: src/Services/DocumentService.php:632
 msgid "File could not be written."
-msgstr ""
+msgstr "Impossibile scrivere il file."
 
 #: src/Services/DocumentService.php:633
 msgid "Upload stopped by PHP extension."
-msgstr ""
+msgstr "Caricamento interrotto dall'estensione PHP."
 
 #: src/Services/DocumentService.php:636
 msgid "Unknown upload error."
-msgstr ""
+msgstr "Errore di caricamento sconosciuto."
 
 #: src/Services/EmailQueueService.php:210
 msgid "Maximum retries reached"
-msgstr ""
+msgstr "Numero massimo di tentativi raggiunto"
 
 #. translators: %s: Email subject
 #: src/Services/EmailQueueService.php:363
 msgid "Email sent: %s"
-msgstr ""
+msgstr "Email inviata: %s"
 
 #: src/Services/EmailRenderer.php:239
 msgid "HR: New Application"
-msgstr ""
+msgstr "HR: Nuova candidatura"
 
 #. translators: 1: Applicant name, 2: Job title
 #: src/Services/EmailService.php:157
 msgid "[New Application] %1$s for %2$s"
-msgstr ""
+msgstr "[Nuova candidatura] %1$s per %2$s"
 
 #. translators: %s: Job title
 #: src/Services/EmailService.php:187
 msgid "Application received: %s"
-msgstr ""
+msgstr "Candidatura ricevuta: %s"
 
 #. translators: %s: Job title
 #: src/Services/EmailService.php:223
 msgid "Your Application: %s"
-msgstr ""
+msgstr "La tua candidatura: %s"
 
 #: src/Services/EmailService.php:619
 msgid "New application received"
-msgstr ""
+msgstr "Nuova candidatura ricevuta"
 
 #. translators: %s: Job title
 #: src/Services/EmailService.php:622
 msgid "A new application for the position \"%s\" has been received."
-msgstr ""
+msgstr "È stata ricevuta una nuova candidatura per la posizione \"%s\"."
 
 #: src/Services/EmailService.php:632
 msgid "Received on"
-msgstr ""
+msgstr "Ricevuta il"
 
 #: src/Services/EmailService.php:635, src/Admin/Pages/TalentPoolPage.php:70
 msgid "View application"
-msgstr ""
+msgstr "Visualizza candidatura"
 
 #. translators: 1: Salutation (e.g. Mr./Ms.), 2: Last name
 #: src/Services/EmailService.php:642, src/Services/EmailService.php:667
 msgid "Dear %1$s %2$s"
-msgstr ""
+msgstr "Gentile %1$s %2$s"
 
 #. translators: %s: First name
 #: src/Services/EmailService.php:644, src/Services/EmailService.php:669
 msgid "Dear %s"
-msgstr ""
+msgstr "Gentile %s"
 
 #: src/Services/EmailService.php:654, src/Admin/Pages/ApplicationDetail.php:545
 msgid "Application received"
-msgstr ""
+msgstr "Candidatura ricevuta"
 
 #: src/Services/EmailService.php:656
 msgid "Thank you for your application! We have received your documents and will carefully review them."
-msgstr ""
+msgstr "Grazie per la tua candidatura! Abbiamo ricevuto i tuoi documenti e li esamineremo attentamente."
 
 #: src/Services/EmailService.php:659
 msgid "We will get back to you as soon as we have reviewed your application."
-msgstr ""
+msgstr "Ti ricontatteremo non appena avremo esaminato la tua candidatura."
 
 #: src/Services/EmailService.php:660
 msgid "If you have any questions, please feel free to contact us."
-msgstr ""
+msgstr "Per qualsiasi domanda, non esitare a contattarci."
 
 #: src/Services/EmailService.php:678
 msgid "Your Application"
-msgstr ""
+msgstr "La tua candidatura"
 
 #. translators: %s: Job title
 #: src/Services/EmailService.php:682
 msgid "Thank you for your interest in the position \"%s\" and the time you invested in your application."
-msgstr ""
+msgstr "Grazie per il tuo interesse nella posizione \"%s\" e per il tempo dedicato alla tua candidatura."
 
 #: src/Services/EmailService.php:685
 msgid "After careful consideration, we regret to inform you that we have decided to move forward with other candidates whose profile better matches our current requirements."
-msgstr ""
+msgstr "Dopo un'attenta valutazione, ci dispiace informarti che abbiamo deciso di proseguire con altri candidati il cui profilo corrisponde meglio alle nostre attuali esigenze."
 
 #: src/Services/EmailService.php:686
 msgid "We wish you all the best and much success in your future career."
-msgstr ""
+msgstr "Ti auguriamo tutto il meglio e molto successo per la tua futura carriera."
 
 #. translators: %s: Link to Recruiting Playbook website
 #: src/Services/EmailService.php:704, src/Services/EmailTemplateService.php:446
 msgid "Sent via %s"
-msgstr ""
+msgstr "Inviata tramite %s"
 
 #: src/Services/EmailService.php:886
 msgid "SMTP plugin detected. Emails should be delivered reliably."
-msgstr ""
+msgstr "Plugin SMTP rilevato. Le email dovrebbero essere consegnate in modo affidabile."
 
 #: src/Services/EmailService.php:894
 msgid "Email configuration detected."
-msgstr ""
+msgstr "Configurazione email rilevata."
 
 #: src/Services/EmailService.php:899
 msgid "No SMTP configuration detected. We recommend installing an SMTP plugin for reliable email delivery."
-msgstr ""
+msgstr "Nessuna configurazione SMTP rilevata. Consigliamo di installare un plugin SMTP per una consegna affidabile delle email."
 
 #: src/Services/EmailTemplateService.php:348
 msgid "Templates for application process"
-msgstr ""
+msgstr "Modelli per il processo di candidatura"
 
 #: src/Services/EmailTemplateService.php:352
 msgid "Templates for interview invitations"
-msgstr ""
+msgstr "Modelli per gli inviti ai colloqui"
 
 #: src/Services/EmailTemplateService.php:356
 msgid "Templates for job offers"
-msgstr ""
+msgstr "Modelli per le offerte di lavoro"
 
 #: src/Services/EmailTemplateService.php:360
 msgid "Custom templates"
-msgstr ""
+msgstr "Modelli personalizzati"
 
 #: src/Services/EmailTemplateService.php:493
 msgid "Name is required."
-msgstr ""
+msgstr "Il nome è obbligatorio."
 
 #: src/Services/EmailTemplateService.php:498
 msgid "Subject is required."
-msgstr ""
+msgstr "L'oggetto è obbligatorio."
 
 #: src/Services/EmailTemplateService.php:503
 msgid "Content is required."
-msgstr ""
+msgstr "Il contenuto è obbligatorio."
 
 #: src/Services/EmailTemplateService.php:509
 msgid "This slug already exists."
-msgstr ""
+msgstr "Questo slug esiste già."
 
 #: src/Services/EmailTemplateService.php:516
 msgid "Invalid category."
-msgstr ""
+msgstr "Categoria non valida."
 
 #: src/Services/EmailTemplateService.php:556
 msgid "Your application as {stelle}"
-msgstr ""
+msgstr "La tua candidatura come {stelle}"
 
 #: src/Services/EmailTemplateService.php:580
 msgid "Welcome to the talent pool of {firma}"
-msgstr ""
+msgstr "Benvenuto nel talent pool di {firma}"
 
 #: src/Services/EmailTemplateService.php:601
 msgid "Interview invitation: {stelle}"
-msgstr ""
+msgstr "Invito al colloquio: {stelle}"
 
 #: src/Services/EmailTemplateService.php:637
 msgid "Reminder: Your interview on ____"
-msgstr ""
+msgstr "Promemoria: Il tuo colloquio il ____"
 
 #: src/Services/EmailTemplateService.php:712
 msgid "New position at {firma}: {stelle}"
-msgstr ""
+msgstr "Nuova posizione presso {firma}: {stelle}"
 
 #: src/Services/ExportService.php:180
 msgid "SUMMARY"
-msgstr ""
+msgstr "RIEPILOGO"
 
 #: src/Services/ExportService.php:184
 msgid "Metric"
-msgstr ""
+msgstr "Metrica"
 
 #: src/Services/ExportService.php:185, src/Admin/Pages/FormBuilderPage.php:184, src/Admin/Pages/FormBuilderPage.php:198
 msgid "Value"
-msgstr ""
+msgstr "Valore"
 
 #: src/Services/ExportService.php:188
 msgid "Applications (total)"
-msgstr ""
+msgstr "Candidature (totali)"
 
 #: src/Services/ExportService.php:189, src/Admin/Pages/ReportingPage.php:71
 msgid "New applications"
-msgstr ""
+msgstr "Nuove candidature"
 
 #: src/Services/ExportService.php:190, src/Admin/Pages/ReportingPage.php:72
 msgid "In progress"
-msgstr ""
+msgstr "In corso"
 
 #: src/Services/ExportService.php:193, src/Admin/Pages/ReportingPage.php:75
 msgid "Active jobs"
-msgstr ""
+msgstr "Posizioni attive"
 
 #: src/Services/ExportService.php:196
 msgid "Avg. Time-to-Hire (days)"
-msgstr ""
+msgstr "Tempo medio assunzione (giorni)"
 
 #: src/Services/ExportService.php:200
 msgid "Conversion Rate (%)"
-msgstr ""
+msgstr "Tasso di conversione (%)"
 
 #: src/Services/ExportService.php:207
 msgid "TOP JOBS BY APPLICATIONS"
-msgstr ""
+msgstr "TOP POSIZIONI PER CANDIDATURE"
 
 #: src/Services/ExportService.php:223
 msgid "Exported on: %s"
-msgstr ""
+msgstr "Esportato il: %s"
 
 #: src/Services/ExportService.php:250, src/Services/ExportService.php:435
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: src/Services/ExportService.php:257, src/Services/ExportService.php:471
 msgid "Source"
-msgstr ""
+msgstr "Fonte"
 
 #: src/Services/ExportService.php:258, src/Services/ExportService.php:477
 msgid "Application date"
-msgstr ""
+msgstr "Data candidatura"
 
 #: src/Services/ExportService.php:259, src/Services/ExportService.php:483
 msgid "Last modified"
-msgstr ""
+msgstr "Ultima modifica"
 
 #: src/Services/ExportService.php:260, src/Services/ExportService.php:489
 msgid "Hired date"
-msgstr ""
+msgstr "Data assunzione"
 
 #: src/Services/ExportService.php:261, src/Services/ExportService.php:495
 msgid "Days in process"
-msgstr ""
+msgstr "Giorni in elaborazione"
 
 #: src/Services/ExportService.php:338
 msgid "Direct"
-msgstr ""
+msgstr "Diretto"
 
 #: src/Services/FieldDefinitionService.php:240
 msgid "Invalid field key. Only lowercase letters, numbers, and underscores are allowed."
-msgstr ""
+msgstr "Chiave campo non valida. Sono consentite solo lettere minuscole, numeri e underscore."
 
 #: src/Services/FieldDefinitionService.php:252, src/Services/FieldDefinitionService.php:339
 msgid "A field with this key already exists."
-msgstr ""
+msgstr "Un campo con questa chiave esiste già."
 
 #: src/Services/FieldDefinitionService.php:268
 msgid "Field could not be created."
-msgstr ""
+msgstr "Impossibile creare il campo."
 
 #: src/Services/FieldDefinitionService.php:325
 msgid "Invalid field key."
-msgstr ""
+msgstr "Chiave campo non valida."
 
 #: src/Services/FieldDefinitionService.php:349, src/Services/FieldDefinitionService.php:639
 msgid "Invalid field type."
-msgstr ""
+msgstr "Tipo di campo non valido."
 
 #: src/Services/FieldDefinitionService.php:359
 msgid "Field could not be updated."
-msgstr ""
+msgstr "Impossibile aggiornare il campo."
 
 #: src/Services/FieldDefinitionService.php:388
 msgid "System fields cannot be deleted."
-msgstr ""
+msgstr "I campi di sistema non possono essere eliminati."
 
 #: src/Services/FieldDefinitionService.php:403
 msgid "Field could not be deleted."
-msgstr ""
+msgstr "Impossibile eliminare il campo."
 
 #: src/Services/FieldDefinitionService.php:482
 msgid "No positions specified."
-msgstr ""
+msgstr "Nessuna posizione specificata."
 
 #: src/Services/FieldDefinitionService.php:492
 msgid "Order could not be changed."
-msgstr ""
+msgstr "Impossibile modificare l'ordine."
 
 #: src/Services/FieldDefinitionService.php:530
 msgid "Text field"
-msgstr ""
+msgstr "Campo di testo"
 
 #: src/Services/FieldDefinitionService.php:536
 msgid "Text area"
-msgstr ""
+msgstr "Area di testo"
 
 #: src/Services/FieldDefinitionService.php:572
 msgid "Radio buttons"
-msgstr ""
+msgstr "Pulsanti radio"
 
 #: src/Services/FieldDefinitionService.php:590
 msgid "File upload"
-msgstr ""
+msgstr "Caricamento file"
 
 #: src/Services/FieldDefinitionService.php:614
 msgid "Field key is required."
-msgstr ""
+msgstr "La chiave del campo è obbligatoria."
 
 #: src/Services/FieldDefinitionService.php:622
 msgid "Field type is required."
-msgstr ""
+msgstr "Il tipo di campo è obbligatorio."
 
 #: src/Services/FieldDefinitionService.php:630
 msgid "Label is required."
-msgstr ""
+msgstr "L'etichetta è obbligatoria."
 
 #: src/Services/FormConfigService.php:130
 msgid "Configuration could not be saved."
-msgstr ""
+msgstr "Impossibile salvare la configurazione."
 
 #: src/Services/FormConfigService.php:157
 msgid "No changes to publish."
-msgstr ""
+msgstr "Nessuna modifica da pubblicare."
 
 #: src/Services/FormConfigService.php:170
 msgid "Configuration could not be published."
-msgstr ""
+msgstr "Impossibile pubblicare la configurazione."
 
 #: src/Services/FormConfigService.php:189
 msgid "No changes to discard."
-msgstr ""
+msgstr "Nessuna modifica da scartare."
 
 #: src/Services/FormConfigService.php:199
 msgid "Changes could not be discarded."
-msgstr ""
+msgstr "Impossibile scartare le modifiche."
 
 #: src/Services/FormConfigService.php:221
 msgid "Configuration could not be reset."
-msgstr ""
+msgstr "Impossibile ripristinare la configurazione."
 
 #: src/Services/FormConfigService.php:242
 msgid "Default configuration could not be published."
-msgstr ""
+msgstr "Impossibile pubblicare la configurazione predefinita."
 
 #: src/Services/FormConfigService.php:279
 msgid "Form configuration must contain steps."
-msgstr ""
+msgstr "La configurazione del modulo deve contenere passaggi."
 
 #: src/Services/FormConfigService.php:288
 msgid "At least one step is required."
-msgstr ""
+msgstr "È necessario almeno un passaggio."
 
 #: src/Services/FormConfigService.php:305
 msgid "A finale step is required."
-msgstr ""
+msgstr "È necessario un passaggio finale."
 
 #: src/Services/FormConfigService.php:328
 msgid "The privacy consent field is required and must be visible."
-msgstr ""
+msgstr "Il campo consenso privacy è obbligatorio e deve essere visibile."
 
 #. translators: %s: Field name
 #: src/Services/FormConfigService.php:340
 msgid "The field \"%s\" is required and must be visible."
-msgstr ""
+msgstr "Il campo \"%s\" è obbligatorio e deve essere visibile."
 
 #. translators: %d: Step number
 #: src/Services/FormConfigService.php:365
 msgid "Step %d: ID is required."
-msgstr ""
+msgstr "Passaggio %d: l'ID è obbligatorio."
 
 #. translators: %d: Step number
 #: src/Services/FormConfigService.php:378
 msgid "Step %d: Title is required."
-msgstr ""
+msgstr "Passaggio %d: il titolo è obbligatorio."
 
 #. translators: %d: Step number
 #: src/Services/FormConfigService.php:391
 msgid "Step %d: Fields must be an array."
-msgstr ""
+msgstr "Passaggio %d: i campi devono essere un array."
 
 #: src/Services/FormConfigService.php:578, src/Services/FormConfigService.php:650, src/Services/FormConfigService.php:746
 msgid "Your Information Overview"
-msgstr ""
+msgstr "Riepilogo delle tue informazioni"
 
 #: src/Services/FormConfigService.php:589, src/Services/FormConfigService.php:661, src/Services/FormConfigService.php:771, src/Services/FormRenderService.php:427
 msgid "I have read the {datenschutz_link} and agree to the processing of my data."
-msgstr ""
+msgstr "Ho letto la {datenschutz_link} e acconsento al trattamento dei miei dati."
 
 #: src/Services/FormRenderService.php:133
 msgid "Application successfully submitted!"
-msgstr ""
+msgstr "Candidatura inviata con successo!"
 
 #: src/Services/FormRenderService.php:282
 msgid "Maximum %d files allowed"
-msgstr ""
+msgstr "Massimo %d file consentiti"
 
 #: src/Services/FormRenderService.php:283
 msgid "Invalid file type. Allowed: %s"
-msgstr ""
+msgstr "Tipo di file non valido. Consentiti: %s"
 
 #: src/Services/FormRenderService.php:284
 msgid "File too large (max. %d MB)"
-msgstr ""
+msgstr "File troppo grande (max. %d MB)"
 
 #. translators: 1: allowed types, 2: max file size
 #: src/Services/FormRenderService.php:335
 msgid "%1$s (max. %2$d MB per file)"
-msgstr ""
+msgstr "%1$s (max. %2$d MB per file)"
 
 #. translators: %d: max number of files
 #: src/Services/FormRenderService.php:344
 msgid "Maximum %d files"
-msgstr ""
+msgstr "Massimo %d file"
 
 #: src/Services/FormRenderService.php:370
 msgid "Remove file"
-msgstr ""
+msgstr "Rimuovi file"
 
 #: src/Services/FormRenderService.php:380
 msgid "Add another file"
-msgstr ""
+msgstr "Aggiungi un altro file"
 
 #: src/Services/FormRenderService.php:430
 msgid "You must agree to the Privacy Policy."
-msgstr ""
+msgstr "Devi accettare l'Informativa sulla Privacy."
 
 #: src/Services/FormRenderService.php:775
 msgid "Submit application"
-msgstr ""
+msgstr "Invia candidatura"
 
 #: src/Services/FormRenderService.php:976
 msgid "At least %d characters required"
-msgstr ""
+msgstr "Richiesti almeno %d caratteri"
 
 #: src/Services/FormRenderService.php:977
 msgid "Maximum %d characters allowed"
-msgstr ""
+msgstr "Massimo %d caratteri consentiti"
 
 #: src/Services/FormRenderService.php:978
 msgid "File is too large (max. %d MB)"
-msgstr ""
+msgstr "Il file è troppo grande (max. %d MB)"
 
 #: src/Services/FormRenderService.php:979
 msgid "This file type is not allowed"
-msgstr ""
+msgstr "Questo tipo di file non è consentito"
 
 #: src/Services/FormRenderService.php:992
 msgid "Form could not be loaded. Please contact the administrator."
-msgstr ""
+msgstr "Impossibile caricare il modulo. Contatta l'amministratore."
 
 #: src/Services/FormTemplateService.php:119
 msgid "A template with this name already exists."
-msgstr ""
+msgstr "Un modello con questo nome esiste già."
 
 #: src/Services/FormTemplateService.php:169, src/Services/FormTemplateService.php:276
 msgid "Ein Template mit diesem Namen existiert bereits."
-msgstr ""
+msgstr "Un modello con questo nome esiste già."
 
 #. translators: %d: Number of jobs using the template
 #: src/Services/FormTemplateService.php:217
 msgid "Template cannot be deleted. It is used by %d job(s)."
-msgstr ""
+msgstr "Impossibile eliminare il modello. È utilizzato da %d posizione/i."
 
 #: src/Services/FormTemplateService.php:230
 msgid "The default template cannot be deleted. Set another template as default first."
-msgstr ""
+msgstr "Il modello predefinito non può essere eliminato. Imposta prima un altro modello come predefinito."
 
 #: src/Services/FormTemplateService.php:241
 msgid "Template could not be deleted."
-msgstr ""
+msgstr "Impossibile eliminare il modello."
 
 #: src/Services/FormTemplateService.php:349
 msgid "Template name is required."
-msgstr ""
+msgstr "Il nome del modello è obbligatorio."
 
 #: src/Services/FormTemplateService.php:357
 msgid "Template name may not exceed 255 characters."
-msgstr ""
+msgstr "Il nome del modello non può superare i 255 caratteri."
 
 #. translators: 1: Original template name, 2: Copy number
 #: src/Services/FormTemplateService.php:383
 msgid "%1$s (Copy %2$d)"
-msgstr ""
+msgstr "%1$s (Copia %2$d)"
 
 #: src/Services/FormValidationService.php:82
 msgid "Validation failed."
-msgstr ""
+msgstr "Validazione fallita."
 
 #: src/Services/FormValidationService.php:305, src/Admin/Pages/FormBuilderPage.php:206
 msgid "equals"
-msgstr ""
+msgstr "uguale a"
 
 #: src/Services/FormValidationService.php:306, src/Admin/Pages/FormBuilderPage.php:207
 msgid "does not equal"
-msgstr ""
+msgstr "diverso da"
 
 #: src/Services/FormValidationService.php:307, src/Admin/Pages/FormBuilderPage.php:208
 msgid "contains"
-msgstr ""
+msgstr "contiene"
 
 #: src/Services/FormValidationService.php:308
 msgid "is filled"
-msgstr ""
+msgstr "è compilato"
 
 #: src/Services/FormValidationService.php:309, src/Admin/Pages/FormBuilderPage.php:210
 msgid "is empty"
-msgstr ""
+msgstr "è vuoto"
 
 #: src/Services/FormValidationService.php:310
 msgid "is greater than"
-msgstr ""
+msgstr "è maggiore di"
 
 #: src/Services/FormValidationService.php:311
 msgid "is less than"
-msgstr ""
+msgstr "è minore di"
 
 #: src/Services/FormValidationService.php:312
 msgid "is one of"
-msgstr ""
+msgstr "è uno di"
 
 #: src/Services/JobAssignmentService.php:54
 msgid "User not found."
-msgstr ""
+msgstr "Utente non trovato."
 
 #: src/Services/JobAssignmentService.php:63
 msgid "Invalid job."
-msgstr ""
+msgstr "Posizione non valida."
 
 #: src/Services/JobAssignmentService.php:72
 msgid "User is already assigned to this job."
-msgstr ""
+msgstr "L'utente è già assegnato a questa posizione."
 
 #: src/Services/JobAssignmentService.php:86
 msgid "Assignment could not be created."
-msgstr ""
+msgstr "Impossibile creare l'assegnazione."
 
 #: src/Services/JobAssignmentService.php:108
 msgid "Assignment not found."
-msgstr ""
+msgstr "Assegnazione non trovata."
 
 #. translators: %s: user display name
 #: src/Services/JobAssignmentService.php:282
 msgid "%s assigned to job"
-msgstr ""
+msgstr "%s assegnato alla posizione"
 
 #: src/Services/JobAssignmentService.php:283
 msgid "%s removed from job"
-msgstr ""
+msgstr "%s rimosso dalla posizione"
 
 #: src/Services/JobAssignmentService.php:284, src/Services/TalentPoolService.php:276, src/Services/TimeToHireService.php:244, src/Admin/Pages/ApplicationsPage.php:240
 msgid "Unknown"
-msgstr ""
+msgstr "Sconosciuto"
 
 #: src/Services/NoteService.php:73
 msgid "Note could not be created"
-msgstr ""
+msgstr "Impossibile creare la nota"
 
 #: src/Services/NoteService.php:82
 msgid "Note added"
-msgstr ""
+msgstr "Nota aggiunta"
 
 #: src/Services/NoteService.php:144, src/Services/NoteService.php:174, src/Services/NoteService.php:217
 msgid "Note not found"
-msgstr ""
+msgstr "Nota non trovata"
 
 #: src/Services/NoteService.php:153, src/Services/NoteService.php:183, src/Services/NoteService.php:226
 msgid "No permission"
-msgstr ""
+msgstr "Nessun permesso"
 
 #: src/Services/NoteService.php:197
 msgid "Note edited"
-msgstr ""
+msgstr "Nota modificata"
 
 #: src/Services/NoteService.php:238
 msgid "Note deleted"
-msgstr ""
+msgstr "Nota eliminata"
 
 #: src/Services/PlaceholderService.php:178, src/Services/PlaceholderService.php:343
 msgid "Under Review"
-msgstr ""
+msgstr "In revisione"
 
 #: src/Services/PlaceholderService.php:289
 msgid "Hello"
-msgstr ""
+msgstr "Ciao"
 
 #: src/Services/PlaceholderService.php:296
 msgid "Dear Mr. %s"
-msgstr ""
+msgstr "Gentile Sig. %s"
 
 #: src/Services/PlaceholderService.php:302
 msgid "Dear Ms. %s"
-msgstr ""
+msgstr "Gentile Sig.ra %s"
 
 #: src/Services/PlaceholderService.php:304
 msgid "Hello %s"
-msgstr ""
+msgstr "Ciao %s"
 
 #: src/Services/PlaceholderService.php:373
 msgid "Mr. / Ms."
-msgstr ""
+msgstr "Sig./Sig.ra"
 
 #: src/Services/PlaceholderService.php:376
 msgid "Formal Salutation"
-msgstr ""
+msgstr "Formula di cortesia"
 
 #: src/Services/PlaceholderService.php:378
 msgid "Dear Mr. Doe"
-msgstr ""
+msgstr "Gentile Sig. Rossi"
 
 #: src/Services/PlaceholderService.php:383
 msgid "Candidate's first name"
-msgstr ""
+msgstr "Nome del candidato"
 
 #: src/Services/PlaceholderService.php:388
 msgid "Candidate's last name"
-msgstr ""
+msgstr "Cognome del candidato"
 
 #: src/Services/PlaceholderService.php:391
 msgid "Full Name"
-msgstr ""
+msgstr "Nome completo"
 
 #: src/Services/PlaceholderService.php:393
 msgid "First and last name"
-msgstr ""
+msgstr "Nome e cognome"
 
 #: src/Services/PlaceholderService.php:398
 msgid "Candidate's email address"
-msgstr ""
+msgstr "Indirizzo email del candidato"
 
 #: src/Services/PlaceholderService.php:403
 msgid "Candidate's phone number"
-msgstr ""
+msgstr "Numero di telefono del candidato"
 
 #: src/Services/PlaceholderService.php:410
 msgid "Application reference number"
-msgstr ""
+msgstr "Numero di riferimento candidatura"
 
 #: src/Services/PlaceholderService.php:413
 msgid "Application Date"
-msgstr ""
+msgstr "Data candidatura"
 
 #: src/Services/PlaceholderService.php:415
 msgid "Application submission date"
-msgstr ""
+msgstr "Data di invio candidatura"
 
 #: src/Services/PlaceholderService.php:418
 msgid "Application Status"
-msgstr ""
+msgstr "Stato candidatura"
 
 #: src/Services/PlaceholderService.php:420
 msgid "Current application status"
-msgstr ""
+msgstr "Stato attuale della candidatura"
 
 #: src/Services/PlaceholderService.php:425, src/Admin/SetupWizard/SetupWizard.php:545
 msgid "Job Title"
-msgstr ""
+msgstr "Titolo posizione"
 
 #: src/Services/PlaceholderService.php:427
 msgid "Title of the job"
-msgstr ""
+msgstr "Titolo della posizione"
 
 #: src/Services/PlaceholderService.php:430
 msgid "Job Location"
-msgstr ""
+msgstr "Sede di lavoro"
 
 #: src/Services/PlaceholderService.php:432
 msgid "Location of the job"
-msgstr ""
+msgstr "Luogo della posizione"
 
 #: src/Services/PlaceholderService.php:435, src/Taxonomies/EmploymentType.php:30, src/Admin/SetupWizard/SetupWizard.php:569, src/Frontend/Shortcodes/JobSearchShortcode.php:232, src/Integrations/Avada/Elements/JobGrid.php:99, src/Integrations/Elementor/Widgets/JobGrid.php:123
 msgid "Employment Type"
-msgstr ""
+msgstr "Tipo di impiego"
 
 #: src/Services/PlaceholderService.php:437
 msgid "Full-time, part-time, etc."
-msgstr ""
+msgstr "Tempo pieno, part-time, ecc."
 
 #: src/Services/PlaceholderService.php:440
 msgid "Job URL"
-msgstr ""
+msgstr "URL posizione"
 
 #: src/Services/PlaceholderService.php:442
 msgid "Link to job listing"
-msgstr ""
+msgstr "Link all'annuncio di lavoro"
 
 #: src/Services/PlaceholderService.php:449
 msgid "Name of the company"
-msgstr ""
+msgstr "Nome dell'azienda"
 
 #: src/Services/PlaceholderService.php:452
 msgid "Company Address"
-msgstr ""
+msgstr "Indirizzo azienda"
 
 #: src/Services/PlaceholderService.php:454
 msgid "Address of the company"
-msgstr ""
+msgstr "Indirizzo dell'azienda"
 
 #: src/Services/PlaceholderService.php:457
 msgid "Company Website"
-msgstr ""
+msgstr "Sito web azienda"
 
 #: src/Services/PlaceholderService.php:459
 msgid "Website of the company"
-msgstr ""
+msgstr "Sito web dell'azienda"
 
 #: src/Services/RatingService.php:80
 msgid "Rating could not be saved"
-msgstr ""
+msgstr "Impossibile salvare la valutazione"
 
 #: src/Services/RatingService.php:101
 msgid "Rating submitted"
-msgstr ""
+msgstr "Valutazione inviata"
 
 #: src/Services/RatingService.php:90
 msgid "Rating changed"
-msgstr ""
+msgstr "Valutazione modificata"
 
 #: src/Services/RatingService.php:175
 msgid "Rating not found"
-msgstr ""
+msgstr "Valutazione non trovata"
 
 #: src/Services/SignatureService.php:204
 msgid "Kind regards"
-msgstr ""
+msgstr "Cordiali saluti"
 
 #. translators: %s: Company name
 #: src/Services/SignatureService.php:210
 msgid "Your %s Team"
-msgstr ""
+msgstr "Il tuo Team %s"
 
 #: src/Services/SignatureService.php:275
 msgid "(Company)"
-msgstr ""
+msgstr "(Azienda)"
 
 #: src/Services/SignatureService.php:284
 msgid "No signature"
-msgstr ""
+msgstr "Nessuna firma"
 
 #: src/Services/SpamProtection.php:89
 msgid "Your request was detected as potential spam."
-msgstr ""
+msgstr "La tua richiesta è stata rilevata come potenziale spam."
 
 #: src/Services/SpamProtection.php:120
 msgid "Please take a bit more time to fill out the form."
-msgstr ""
+msgstr "Per favore dedica più tempo alla compilazione del modulo."
 
 #: src/Services/SpamProtection.php:149
 msgid "You have reached the maximum number of applications. Please try again later."
-msgstr ""
+msgstr "Hai raggiunto il numero massimo di candidature. Riprova più tardi."
 
 #: src/Services/SpamProtection.php:227
 msgid "Website (do not fill out)"
-msgstr ""
+msgstr "Sito web (non compilare)"
 
 #: src/Services/SystemStatusService.php:94
 msgid "All tables present"
-msgstr ""
+msgstr "Tutte le tabelle presenti"
 
 #. translators: %d: Number of missing tables
 #: src/Services/SystemStatusService.php:106
 msgid "%d table(s) missing"
-msgstr ""
+msgstr "%d tabella/e mancante/i"
 
 #: src/Services/SystemStatusService.php:151
 msgid "Upload directory is writable"
-msgstr ""
+msgstr "La directory di caricamento è scrivibile"
 
 #: src/Services/SystemStatusService.php:152
 msgid "Upload directory is not writable"
-msgstr ""
+msgstr "La directory di caricamento non è scrivibile"
 
 #: src/Services/SystemStatusService.php:176
 msgid "Cron jobs active"
-msgstr ""
+msgstr "Cron job attivi"
 
 #: src/Services/SystemStatusService.php:177
 msgid "Cron jobs not scheduled"
-msgstr ""
+msgstr "Cron job non programmati"
 
 #: src/Services/SystemStatusService.php:219
 msgid "No orphaned data"
-msgstr ""
+msgstr "Nessun dato orfano"
 
 #. translators: %d: Number of orphaned entries
 #: src/Services/SystemStatusService.php:231
 msgid "%d orphaned entries found"
-msgstr ""
+msgstr "%d voci orfane trovate"
 
 #: src/Services/SystemStatusService.php:251, src/Services/SystemStatusService.php:263
 msgid "Free version active"
-msgstr ""
+msgstr "Versione gratuita attiva"
 
 #: src/Services/SystemStatusService.php:281
 msgid "License invalid or expired"
-msgstr ""
+msgstr "Licenza non valida o scaduta"
 
 #: src/Services/SystemStatusService.php:300
 msgid "Action Scheduler not available"
-msgstr ""
+msgstr "Action Scheduler non disponibile"
 
 #: src/Services/SystemStatusService.php:342
 msgid "Action Scheduler running"
-msgstr ""
+msgstr "Action Scheduler in esecuzione"
 
 #. translators: %d: Number of failed actions
 #: src/Services/SystemStatusService.php:348
 msgid "%d failed actions"
-msgstr ""
+msgstr "%d azioni fallite"
 
 #: src/Services/SystemStatusService.php:407
 msgid "Please deactivate and reactivate the plugin to create missing tables."
-msgstr ""
+msgstr "Disattiva e riattiva il plugin per creare le tabelle mancanti."
 
 #: src/Services/SystemStatusService.php:416
 msgid "Please set write permissions for the upload directory."
-msgstr ""
+msgstr "Imposta i permessi di scrittura per la directory di caricamento."
 
 #. translators: %d: Number of orphaned documents
 #: src/Services/SystemStatusService.php:431
 msgid "%d orphaned documents can be deleted"
-msgstr ""
+msgstr "%d documenti orfani possono essere eliminati"
 
 #. translators: %d: Number of orphaned applications
 #: src/Services/SystemStatusService.php:443
 msgid "%d orphaned applications can be deleted"
-msgstr ""
+msgstr "%d candidature orfane possono essere eliminate"
 
 #: src/Services/SystemStatusService.php:455
 msgid "Please review the failed background jobs."
-msgstr ""
+msgstr "Rivedi i processi in background falliti."
 
 #: src/Services/TalentPoolService.php:61
 msgid "Candidate is already in the talent pool"
-msgstr ""
+msgstr "Il candidato è già nel talent pool"
 
 #: src/Services/TalentPoolService.php:81
 msgid "Candidate not found"
@@ -4263,20 +4259,20 @@ msgstr "Candidato non trovato"
 
 #: src/Services/TalentPoolService.php:114
 msgid "Error adding to talent pool"
-msgstr ""
+msgstr "Errore nell'aggiunta al talent pool"
 
 #: src/Services/TalentPoolService.php:123
 msgid "Added to talent pool"
-msgstr ""
+msgstr "Aggiunto al talent pool"
 
 #: src/Services/TalentPoolService.php:156
 msgid "Removed from talent pool"
-msgstr ""
+msgstr "Rimosso dal talent pool"
 
 #. translators: %s: Candidate name
 #: src/Services/TalentPoolService.php:281
 msgid "[Recruiting Playbook] Talent pool entry expiring: %s"
-msgstr ""
+msgstr "[Recruiting Playbook] Voce talent pool in scadenza: %s"
 
 #. translators: 1: Candidate name, 2: Expiry date
 #: src/Services/TalentPoolService.php:287
@@ -4289,34 +4285,41 @@ msgid ""
 "- Email: %3$s\n"
 "- Added on: %4$s"
 msgstr ""
+"La voce nel talent pool per %1$s scade il %2$s.\n"
+"\n"
+"Verifica se desideri estendere la voce.\n"
+"\n"
+"Informazioni di base:\n"
+"- Email: %3$s\n"
+"- Aggiunto il: %4$s"
 
 #: src/Taxonomies/EmploymentType.php:29, src/Taxonomies/EmploymentType.php:37
 msgid "Employment Types"
-msgstr ""
+msgstr "Tipi di impiego"
 
 #: src/Taxonomies/EmploymentType.php:31
 msgid "Search Employment Types"
-msgstr ""
+msgstr "Cerca tipi di impiego"
 
 #: src/Taxonomies/EmploymentType.php:32
 msgid "All Employment Types"
-msgstr ""
+msgstr "Tutti i tipi di impiego"
 
 #: src/Taxonomies/EmploymentType.php:33
 msgid "Edit Employment Type"
-msgstr ""
+msgstr "Modifica tipo di impiego"
 
 #: src/Taxonomies/EmploymentType.php:34
 msgid "Update Employment Type"
-msgstr ""
+msgstr "Aggiorna tipo di impiego"
 
 #: src/Taxonomies/EmploymentType.php:35
 msgid "New Employment Type"
-msgstr ""
+msgstr "Nuovo tipo di impiego"
 
 #: src/Taxonomies/EmploymentType.php:36
 msgid "New Name"
-msgstr ""
+msgstr "Nuovo nome"
 
 #: src/Taxonomies/EmploymentType.php:66, src/Admin/SetupWizard/SetupWizard.php:573
 msgid "Full-time"
@@ -4328,67 +4331,67 @@ msgstr "Part-time"
 
 #: src/Taxonomies/EmploymentType.php:68
 msgid "Minijob"
-msgstr ""
+msgstr "Lavoro marginale"
 
 #: src/Taxonomies/EmploymentType.php:69
 msgid "Apprenticeship"
-msgstr ""
+msgstr "Apprendistato"
 
 #: src/Taxonomies/EmploymentType.php:70, src/Admin/SetupWizard/SetupWizard.php:576
 msgid "Internship"
-msgstr ""
+msgstr "Stage"
 
 #: src/Taxonomies/EmploymentType.php:71
 msgid "Working Student"
-msgstr ""
+msgstr "Studente lavoratore"
 
 #: src/Taxonomies/EmploymentType.php:72
 msgid "Freelance"
-msgstr ""
+msgstr "Freelance"
 
 #: src/Taxonomies/JobCategory.php:29, src/Taxonomies/JobCategory.php:39
 msgid "Job Categories"
-msgstr ""
+msgstr "Categorie posizioni"
 
 #: src/Taxonomies/JobCategory.php:30
 msgid "Job Category"
-msgstr ""
+msgstr "Categoria posizione"
 
 #: src/Taxonomies/JobCategory.php:31
 msgid "Search Job Categories"
-msgstr ""
+msgstr "Cerca categorie posizioni"
 
 #: src/Taxonomies/JobCategory.php:32
 msgid "All Job Categories"
-msgstr ""
+msgstr "Tutte le categorie posizioni"
 
 #: src/Taxonomies/JobCategory.php:33
 msgid "Parent Job Category"
-msgstr ""
+msgstr "Categoria posizione padre"
 
 #: src/Taxonomies/JobCategory.php:34
 msgid "Parent Job Category:"
-msgstr ""
+msgstr "Categoria posizione padre:"
 
 #: src/Taxonomies/JobCategory.php:35
 msgid "Edit Job Category"
-msgstr ""
+msgstr "Modifica categoria posizione"
 
 #: src/Taxonomies/JobCategory.php:36
 msgid "Update Job Category"
-msgstr ""
+msgstr "Aggiorna categoria posizione"
 
 #: src/Taxonomies/JobCategory.php:37
 msgid "New Job Category"
-msgstr ""
+msgstr "Nuova categoria posizione"
 
 #: src/Taxonomies/JobCategory.php:38
 msgid "New Job Category Name"
-msgstr ""
+msgstr "Nome nuova categoria posizione"
 
 #: src/Taxonomies/JobLocation.php:29, src/Taxonomies/JobLocation.php:37
 msgid "Locations"
-msgstr ""
+msgstr "Sedi"
 
 #: src/Taxonomies/JobLocation.php:30, src/Admin/SetupWizard/SetupWizard.php:557, src/Frontend/Shortcodes/JobSearchShortcode.php:218, src/Integrations/Avada/Elements/JobCount.php:44, src/Integrations/Avada/Elements/JobGrid.php:91, src/Integrations/Elementor/Widgets/JobCount.php:71, src/Integrations/Elementor/Widgets/JobGrid.php:113
 msgid "Location"
@@ -4396,84 +4399,84 @@ msgstr "Sede"
 
 #: src/Taxonomies/JobLocation.php:31
 msgid "Search Locations"
-msgstr ""
+msgstr "Cerca sedi"
 
 #: src/Taxonomies/JobLocation.php:32, src/Frontend/Shortcodes/JobSearchShortcode.php:220
 msgid "All Locations"
-msgstr ""
+msgstr "Tutte le sedi"
 
 #: src/Taxonomies/JobLocation.php:33
 msgid "Edit Location"
-msgstr ""
+msgstr "Modifica sede"
 
 #: src/Taxonomies/JobLocation.php:34
 msgid "Update Location"
-msgstr ""
+msgstr "Aggiorna sede"
 
 #: src/Taxonomies/JobLocation.php:35
 msgid "New Location"
-msgstr ""
+msgstr "Nuova sede"
 
 #: src/Taxonomies/JobLocation.php:36
 msgid "New Location Name"
-msgstr ""
+msgstr "Nome nuova sede"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:54
 msgid "Application Form"
-msgstr ""
+msgstr "Modulo di candidatura"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:117
 msgid "No custom fields configured."
-msgstr ""
+msgstr "Nessun campo personalizzato configurato."
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:119
 msgid "Go to Form Builder"
-msgstr ""
+msgstr "Vai al Form Builder"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:134
 msgid "Customize fields for this job"
-msgstr ""
+msgstr "Personalizza i campi per questa posizione"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:140
 msgid "Enabled fields will be displayed in the application form for this job."
-msgstr ""
+msgstr "I campi abilitati saranno visualizzati nel modulo di candidatura per questa posizione."
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:165
 msgid "Edit Fields"
-msgstr ""
+msgstr "Modifica campi"
 
 #. translators: %d: number of enabled fields
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:178
 msgid "Default configuration: %d fields active"
-msgstr ""
+msgstr "Configurazione predefinita: %d campi attivi"
 
 #: src/Admin/MetaBoxes/JobMeta.php:102
 msgid "Job Details"
-msgstr ""
+msgstr "Dettagli posizione"
 
 #: src/Admin/MetaBoxes/JobMeta.php:135
 msgid "Salary"
-msgstr ""
+msgstr "Retribuzione"
 
 #: src/Admin/MetaBoxes/JobMeta.php:147
 msgid "Contact Person"
-msgstr ""
+msgstr "Persona di contatto"
 
 #: src/Admin/MetaBoxes/JobMeta.php:157
 msgid "Additional Details"
-msgstr ""
+msgstr "Dettagli aggiuntivi"
 
 #: src/Admin/Pages/ApplicationDetail.php:84
 msgid "Loading application..."
-msgstr ""
+msgstr "Caricamento candidatura..."
 
 #: src/Admin/Pages/ApplicationDetail.php:85
 msgid "Error loading application"
-msgstr ""
+msgstr "Errore nel caricamento della candidatura"
 
 #: src/Admin/Pages/ApplicationDetail.php:87
 msgid "Error changing status"
-msgstr ""
+msgstr "Errore nel cambio di stato"
 
 #: src/Admin/Pages/ApplicationDetail.php:91
 msgid "Rating"
@@ -4481,32 +4484,32 @@ msgstr "Valutazione"
 
 #: src/Admin/Pages/ApplicationDetail.php:93, src/Admin/Pages/ApplicationDetail.php:324, src/Admin/Pages/ApplicationList.php:405, src/Admin/Pages/FormBuilderPage.php:244
 msgid "View"
-msgstr ""
+msgstr "Visualizza"
 
 #: src/Admin/Pages/ApplicationDetail.php:94, src/Admin/Pages/ApplicationDetail.php:238
 msgid "Download"
-msgstr ""
+msgstr "Scarica"
 
 #: src/Admin/Pages/ApplicationDetail.php:95
 msgid "Applied on"
-msgstr ""
+msgstr "Candidato il"
 
 #: src/Admin/Pages/ApplicationDetail.php:96, src/Admin/Pages/ReportingPage.php:127, src/Admin/Pages/TalentPoolPage.php:76
 msgid "Retry"
-msgstr ""
+msgstr "Riprova"
 
 #: src/Admin/Pages/ApplicationDetail.php:111
 msgid "No application specified."
-msgstr ""
+msgstr "Nessuna candidatura specificata."
 
 #. translators: %s: Applicant name
 #: src/Admin/Pages/ApplicationDetail.php:147
 msgid "Application from %s"
-msgstr ""
+msgstr "Candidatura di %s"
 
 #: src/Admin/Pages/ApplicationDetail.php:161
 msgid "Contact information"
-msgstr ""
+msgstr "Informazioni di contatto"
 
 #: src/Admin/Pages/ApplicationDetail.php:217
 msgid "Document"
@@ -4514,51 +4517,51 @@ msgstr "Documento"
 
 #: src/Admin/Pages/ApplicationDetail.php:218
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: src/Admin/Pages/ApplicationDetail.php:219
 msgid "Size"
-msgstr ""
+msgstr "Dimensione"
 
 #: src/Admin/Pages/ApplicationDetail.php:220
 msgid "Action"
-msgstr ""
+msgstr "Azione"
 
 #: src/Admin/Pages/ApplicationDetail.php:211
 msgid "No documents uploaded."
-msgstr ""
+msgstr "Nessun documento caricato."
 
 #: src/Admin/Pages/ApplicationDetail.php:251
 msgid "Activity log"
-msgstr ""
+msgstr "Registro attività"
 
 #: src/Admin/Pages/ApplicationDetail.php:255
 msgid "No activities recorded."
-msgstr ""
+msgstr "Nessuna attività registrata."
 
 #: src/Admin/Pages/ApplicationDetail.php:302
 msgid "Update status"
-msgstr ""
+msgstr "Aggiorna stato"
 
 #: src/Admin/Pages/ApplicationDetail.php:329
 msgid "Job was deleted."
-msgstr ""
+msgstr "La posizione è stata eliminata."
 
 #: src/Admin/Pages/ApplicationDetail.php:337
 msgid "Details"
-msgstr ""
+msgstr "Dettagli"
 
 #: src/Admin/Pages/ApplicationDetail.php:340
 msgid "Received:"
-msgstr ""
+msgstr "Ricevuto:"
 
 #: src/Admin/Pages/ApplicationDetail.php:344
 msgid "Last updated:"
-msgstr ""
+msgstr "Ultimo aggiornamento:"
 
 #: src/Admin/Pages/ApplicationDetail.php:349
 msgid "Source:"
-msgstr ""
+msgstr "Fonte:"
 
 #: src/Admin/Pages/ApplicationDetail.php:358
 msgid "GDPR"
@@ -4566,334 +4569,334 @@ msgstr "GDPR"
 
 #: src/Admin/Pages/ApplicationDetail.php:366
 msgid "Really delete this application?"
-msgstr ""
+msgstr "Eliminare davvero questa candidatura?"
 
 #: src/Admin/Pages/ApplicationDetail.php:367
 msgid "Delete application"
-msgstr ""
+msgstr "Elimina candidatura"
 
 #: src/Admin/Pages/ApplicationDetail.php:517
 msgid "Status was updated."
-msgstr ""
+msgstr "Lo stato è stato aggiornato."
 
 #. translators: 1: Old status, 2: New status
 #: src/Admin/Pages/ApplicationDetail.php:539
 msgid "Status changed: %1$s → %2$s"
-msgstr ""
+msgstr "Stato modificato: %1$s → %2$s"
 
 #: src/Admin/Pages/ApplicationDetail.php:548
 msgid "Document downloaded"
-msgstr ""
+msgstr "Documento scaricato"
 
 #: src/Admin/Pages/ApplicationDetail.php:551
 msgid "Email sent"
-msgstr ""
+msgstr "Email inviata"
 
 #: src/Admin/Pages/ApplicationDetail.php:554
 msgid "Application deleted"
-msgstr ""
+msgstr "Candidatura eliminata"
 
 #: src/Admin/Pages/ApplicationDetail.php:658, src/Admin/Pages/ApplicationDetail.php:679, src/Admin/Pages/ApplicationDetail.php:699, src/Admin/Pages/ApplicationDetail.php:757
 msgid "Send email"
-msgstr ""
+msgstr "Invia email"
 
 #: src/Admin/Pages/ApplicationDetail.php:661
 msgid "Email sending is a Pro feature."
-msgstr ""
+msgstr "L'invio di email è una funzionalità Pro."
 
 #: src/Admin/Pages/ApplicationDetail.php:666, src/Admin/Pages/EmailSettingsPage.php:412, src/Admin/Pages/FormBuilderPage.php:284, src/Admin/Pages/ReportingPage.php:119
 msgid "Upgrade to Pro"
-msgstr ""
+msgstr "Passa a Pro"
 
 #: src/Admin/Pages/ApplicationDetail.php:707
 msgid "To:"
-msgstr ""
+msgstr "A:"
 
 #: src/Admin/Pages/ApplicationDetail.php:712
 msgid "Template:"
-msgstr ""
+msgstr "Modello:"
 
 #: src/Admin/Pages/ApplicationDetail.php:730
 msgid "Signature:"
-msgstr ""
+msgstr "Firma:"
 
 #: src/Admin/Pages/ApplicationDetail.php:732
 msgid "— No signature —"
-msgstr ""
+msgstr "— Nessuna firma —"
 
 #: src/Admin/Pages/ApplicationDetail.php:735
 msgid "Company signature"
-msgstr ""
+msgstr "Firma aziendale"
 
 #: src/Admin/Pages/ApplicationDetail.php:750
 msgid "Subject:"
-msgstr ""
+msgstr "Oggetto:"
 
 #: src/Admin/Pages/ApplicationDetail.php:802
 msgid "Email history"
-msgstr ""
+msgstr "Cronologia email"
 
 #: src/Admin/Pages/ApplicationDetail.php:808
 msgid "No emails sent to this applicant yet."
-msgstr ""
+msgstr "Nessuna email inviata a questo candidato."
 
 #: src/Admin/Pages/ApplicationDetail.php:850
 msgid "Queued"
-msgstr ""
+msgstr "In coda"
 
 #: src/Admin/Pages/ApplicationDetail.php:954
 msgid "Email was sent."
-msgstr ""
+msgstr "L'email è stata inviata."
 
 #: src/Admin/Pages/ApplicationList.php:52
 msgid "Received"
-msgstr ""
+msgstr "Ricevuto"
 
 #: src/Admin/Pages/ApplicationList.php:78
 msgid "Status: Screening"
-msgstr ""
+msgstr "Stato: Screening"
 
 #: src/Admin/Pages/ApplicationList.php:79
 msgid "Status: Rejected"
-msgstr ""
+msgstr "Stato: Rifiutato"
 
 #: src/Admin/Pages/ApplicationList.php:85
 msgid "✉️ Send Email"
-msgstr ""
+msgstr "✉️ Invia Email"
 
 #. translators: %s: Human time difference
 #: src/Admin/Pages/ApplicationList.php:383
 msgid "%s ago"
-msgstr ""
+msgstr "%s fa"
 
 #: src/Admin/Pages/ApplicationList.php:422
 msgid "Screen"
-msgstr ""
+msgstr "Screening"
 
 #: src/Admin/Pages/ApplicationList.php:433
 msgid "No applications found."
-msgstr ""
+msgstr "Nessuna candidatura trovata."
 
 #: src/Admin/Pages/ApplicationList.php:451
 msgid "All Statuses"
-msgstr ""
+msgstr "Tutti gli stati"
 
 #: src/Admin/Pages/ApplicationList.php:464
 msgid "🗑️ Deleted"
-msgstr ""
+msgstr "🗑️ Eliminato"
 
 #: src/Admin/Pages/ApplicationList.php:499
 msgid "From"
-msgstr ""
+msgstr "Da"
 
 #: src/Admin/Pages/ApplicationList.php:504
 msgid "To"
-msgstr ""
+msgstr "A"
 
 #: src/Admin/Pages/ApplicationList.php:507, src/Integrations/Elementor/Widgets/JobGrid.php:95
 msgid "Filter"
-msgstr ""
+msgstr "Filtra"
 
 #: src/Admin/Pages/EmailSettingsPage.php:38, src/Admin/Pages/EmailSettingsPage.php:52, src/Admin/Pages/EmailSettingsPage.php:405
 msgid "Email Templates"
-msgstr ""
+msgstr "Modelli Email"
 
 #: src/Admin/Pages/EmailSettingsPage.php:193
 msgid "Automatic Emails"
-msgstr ""
+msgstr "Email Automatiche"
 
 #: src/Admin/Pages/EmailSettingsPage.php:226
 msgid "Template created."
-msgstr ""
+msgstr "Modello creato."
 
 #: src/Admin/Pages/EmailSettingsPage.php:227
 msgid "Template updated."
-msgstr ""
+msgstr "Modello aggiornato."
 
 #: src/Admin/Pages/EmailSettingsPage.php:292
 msgid "System templates cannot be renamed."
-msgstr ""
+msgstr "I modelli di sistema non possono essere rinominati."
 
 #: src/Admin/Pages/EmailSettingsPage.php:300
 msgid "Slug"
-msgstr ""
+msgstr "Slug"
 
 #: src/Admin/Pages/EmailSettingsPage.php:305
 msgid "Unique identifier (optional, will be auto-generated)."
-msgstr ""
+msgstr "Identificativo univoco (facoltativo, sarà generato automaticamente)."
 
 #: src/Admin/Pages/EmailSettingsPage.php:332
 msgid "Placeholders like {first_name} or {job_title} can be used."
-msgstr ""
+msgstr "Possono essere utilizzati segnaposto come {first_name} o {job_title}."
 
 #: src/Admin/Pages/EmailSettingsPage.php:338
 msgid "Content (HTML)"
-msgstr ""
+msgstr "Contenuto (HTML)"
 
 #: src/Admin/Pages/EmailSettingsPage.php:352
 msgid "HTML content of the email. Placeholders will be automatically replaced."
-msgstr ""
+msgstr "Contenuto HTML dell'email. I segnaposto verranno sostituiti automaticamente."
 
 #: src/Admin/Pages/EmailSettingsPage.php:361
 msgid "Template is active"
-msgstr ""
+msgstr "Il modello è attivo"
 
 #: src/Admin/Pages/EmailSettingsPage.php:368
 msgid "Save Template"
-msgstr ""
+msgstr "Salva Modello"
 
 #: src/Admin/Pages/EmailSettingsPage.php:374
 msgid "Insert Placeholders"
-msgstr ""
+msgstr "Inserisci Segnaposto"
 
 #: src/Admin/Pages/EmailSettingsPage.php:391
 msgid "Click to copy"
-msgstr ""
+msgstr "Clicca per copiare"
 
 #: src/Admin/Pages/EmailSettingsPage.php:408
 msgid "Email Templates are a Pro feature. Upgrade to create and manage custom email templates."
-msgstr ""
+msgstr "I Modelli Email sono una funzionalità Pro. Passa a Pro per creare e gestire modelli email personalizzati."
 
 #: src/Admin/Pages/EmailSettingsPage.php:433
 msgid "Automatic Emails on Status Changes"
-msgstr ""
+msgstr "Email Automatiche al Cambio di Stato"
 
 #: src/Admin/Pages/EmailSettingsPage.php:435
 msgid "Configure which emails are sent automatically when an application status changes."
-msgstr ""
+msgstr "Configura quali email vengono inviate automaticamente quando lo stato di una candidatura cambia."
 
 #: src/Admin/Pages/EmailSettingsPage.php:445
 msgid "On Status"
-msgstr ""
+msgstr "Su Stato"
 
 #: src/Admin/Pages/EmailSettingsPage.php:447
 msgid "Delay"
-msgstr ""
+msgstr "Ritardo"
 
 #. translators: %s: status name
 #: src/Admin/Pages/EmailSettingsPage.php:471
 msgid "When status is set to \"%s\""
-msgstr ""
+msgstr "Quando lo stato è impostato su \"%s\""
 
 #: src/Admin/Pages/EmailSettingsPage.php:479
 msgid "— No Template —"
-msgstr ""
+msgstr "— Nessun Modello —"
 
 #: src/Admin/Pages/EmailSettingsPage.php:490
 msgid "Immediately"
-msgstr ""
+msgstr "Immediatamente"
 
 #: src/Admin/Pages/EmailSettingsPage.php:491
 msgid "5 minutes"
-msgstr ""
+msgstr "5 minuti"
 
 #: src/Admin/Pages/EmailSettingsPage.php:492
 msgid "15 minutes"
-msgstr ""
+msgstr "15 minuti"
 
 #: src/Admin/Pages/EmailSettingsPage.php:493
 msgid "30 minutes"
-msgstr ""
+msgstr "30 minuti"
 
 #: src/Admin/Pages/EmailSettingsPage.php:494
 msgid "1 hour"
-msgstr ""
+msgstr "1 ora"
 
 #: src/Admin/Pages/EmailSettingsPage.php:495
 msgid "2 hours"
-msgstr ""
+msgstr "2 ore"
 
 #: src/Admin/Pages/EmailSettingsPage.php:496
 msgid "24 hours"
-msgstr ""
+msgstr "24 ore"
 
 #: src/Admin/Pages/EmailSettingsPage.php:499
 msgid "Wait time before sending"
-msgstr ""
+msgstr "Tempo di attesa prima dell'invio"
 
 #: src/Admin/Pages/EmailSettingsPage.php:509
 msgid "Tip:"
-msgstr ""
+msgstr "Suggerimento:"
 
 #: src/Admin/Pages/EmailSettingsPage.php:510
 msgid "A delay gives you time to correct accidental status changes before the email is sent."
-msgstr ""
+msgstr "Un ritardo ti dà tempo per correggere cambi di stato accidentali prima che l'email venga inviata."
 
 #: src/Admin/Pages/EmailSettingsPage.php:527
 msgid "Create a template first."
-msgstr ""
+msgstr "Crea prima un modello."
 
 #: src/Admin/Pages/FormBuilderPage.php:134
 msgid "Manage application form fields and templates"
-msgstr ""
+msgstr "Gestisci campi e modelli del form di candidatura"
 
 #: src/Admin/Pages/FormBuilderPage.php:137
 msgid "Fields"
-msgstr ""
+msgstr "Campi"
 
 #: src/Admin/Pages/FormBuilderPage.php:143
 msgid "Field List"
-msgstr ""
+msgstr "Elenco Campi"
 
 #: src/Admin/Pages/FormBuilderPage.php:144
 msgid "System Fields"
-msgstr ""
+msgstr "Campi di Sistema"
 
 #: src/Admin/Pages/FormBuilderPage.php:145
 msgid "Custom Fields"
-msgstr ""
+msgstr "Campi Personalizzati"
 
 #: src/Admin/Pages/FormBuilderPage.php:146
 msgid "Add Field"
-msgstr ""
+msgstr "Aggiungi Campo"
 
 #: src/Admin/Pages/FormBuilderPage.php:147
 msgid "No fields available"
-msgstr ""
+msgstr "Nessun campo disponibile"
 
 #: src/Admin/Pages/FormBuilderPage.php:148
 msgid "Drag to reorder"
-msgstr ""
+msgstr "Trascina per riordinare"
 
 #: src/Admin/Pages/FormBuilderPage.php:151
 msgid "Select field type"
-msgstr ""
+msgstr "Seleziona tipo di campo"
 
 #: src/Admin/Pages/FormBuilderPage.php:152
 msgid "Basic Fields"
-msgstr ""
+msgstr "Campi Base"
 
 #: src/Admin/Pages/FormBuilderPage.php:153
 msgid "Choice Fields"
-msgstr ""
+msgstr "Campi di Scelta"
 
 #: src/Admin/Pages/FormBuilderPage.php:154
 msgid "Advanced Fields"
-msgstr ""
+msgstr "Campi Avanzati"
 
 #: src/Admin/Pages/FormBuilderPage.php:155
 msgid "Layout Elements"
-msgstr ""
+msgstr "Elementi di Layout"
 
 #: src/Admin/Pages/FormBuilderPage.php:158
 msgid "Edit Field"
-msgstr ""
+msgstr "Modifica Campo"
 
 #: src/Admin/Pages/FormBuilderPage.php:159
 msgid "Field Key"
-msgstr ""
+msgstr "Chiave Campo"
 
 #: src/Admin/Pages/FormBuilderPage.php:160
 msgid "Unique identifier (no special characters)"
-msgstr ""
+msgstr "Identificativo univoco (senza caratteri speciali)"
 
 #: src/Admin/Pages/FormBuilderPage.php:161, src/Admin/Pages/FormBuilderPage.php:185
 msgid "Label"
-msgstr ""
+msgstr "Etichetta"
 
 #: src/Admin/Pages/FormBuilderPage.php:162
 msgid "Placeholder"
-msgstr ""
+msgstr "Placeholder"
 
 #: src/Admin/Pages/FormBuilderPage.php:164
 msgid "Required"
@@ -4901,83 +4904,83 @@ msgstr "Obbligatorio"
 
 #: src/Admin/Pages/FormBuilderPage.php:165
 msgid "Enabled"
-msgstr ""
+msgstr "Abilitato"
 
 #: src/Admin/Pages/FormBuilderPage.php:166
 msgid "Width"
-msgstr ""
+msgstr "Larghezza"
 
 #: src/Admin/Pages/FormBuilderPage.php:167
 msgid "Full Width"
-msgstr ""
+msgstr "Larghezza Intera"
 
 #: src/Admin/Pages/FormBuilderPage.php:168
 msgid "Half Width"
-msgstr ""
+msgstr "Metà Larghezza"
 
 #: src/Admin/Pages/FormBuilderPage.php:169
 msgid "One Third"
-msgstr ""
+msgstr "Un Terzo"
 
 #: src/Admin/Pages/FormBuilderPage.php:170
 msgid "Two Thirds"
-msgstr ""
+msgstr "Due Terzi"
 
 #: src/Admin/Pages/FormBuilderPage.php:173
 msgid "Validation"
-msgstr ""
+msgstr "Validazione"
 
 #: src/Admin/Pages/FormBuilderPage.php:176
 msgid "Minimum Value"
-msgstr ""
+msgstr "Valore Minimo"
 
 #: src/Admin/Pages/FormBuilderPage.php:177
 msgid "Maximum Value"
-msgstr ""
+msgstr "Valore Massimo"
 
 #: src/Admin/Pages/FormBuilderPage.php:179
 msgid "Error Message"
-msgstr ""
+msgstr "Messaggio di Errore"
 
 #: src/Admin/Pages/FormBuilderPage.php:182
 msgid "Options"
-msgstr ""
+msgstr "Opzioni"
 
 #: src/Admin/Pages/FormBuilderPage.php:183
 msgid "Add Option"
-msgstr ""
+msgstr "Aggiungi Opzione"
 
 #: src/Admin/Pages/FormBuilderPage.php:186
 msgid "Remove Option"
-msgstr ""
+msgstr "Rimuovi Opzione"
 
 #: src/Admin/Pages/FormBuilderPage.php:187
 msgid "Default Value"
-msgstr ""
+msgstr "Valore Predefinito"
 
 #: src/Admin/Pages/FormBuilderPage.php:188
 msgid "Allow \"Other\""
-msgstr ""
+msgstr "Consenti \"Altro\""
 
 #: src/Admin/Pages/FormBuilderPage.php:191
 msgid "Conditional Display"
-msgstr ""
+msgstr "Visualizzazione Condizionale"
 
 #: src/Admin/Pages/FormBuilderPage.php:192
 msgid "Enable conditional display"
-msgstr ""
+msgstr "Abilita visualizzazione condizionale"
 
 #: src/Admin/Pages/FormBuilderPage.php:193
 msgid "Show this field only when..."
-msgstr ""
+msgstr "Mostra questo campo solo quando..."
 
 #: src/Admin/Pages/FormBuilderPage.php:194
 msgid "Show when"
-msgstr ""
+msgstr "Mostra quando"
 
 #: src/Admin/Pages/FormBuilderPage.php:195
 msgid "Hide when"
-msgstr ""
+msgstr "Nascondi quando"
 
 #: src/Admin/Pages/FormBuilderPage.php:196
 msgid "Field"
@@ -4985,159 +4988,159 @@ msgstr "Campo"
 
 #: src/Admin/Pages/FormBuilderPage.php:197
 msgid "Operator"
-msgstr ""
+msgstr "Operatore"
 
 #: src/Admin/Pages/FormBuilderPage.php:199
 msgid "Logic"
-msgstr ""
+msgstr "Logica"
 
 #: src/Admin/Pages/FormBuilderPage.php:200
 msgid "AND"
-msgstr ""
+msgstr "AND"
 
 #: src/Admin/Pages/FormBuilderPage.php:201
 msgid "OR"
-msgstr ""
+msgstr "OR"
 
 #: src/Admin/Pages/FormBuilderPage.php:202
 msgid "Add Condition"
-msgstr ""
+msgstr "Aggiungi Condizione"
 
 #: src/Admin/Pages/FormBuilderPage.php:203
 msgid "Remove Condition"
-msgstr ""
+msgstr "Rimuovi Condizione"
 
 #: src/Admin/Pages/FormBuilderPage.php:209
 msgid "does not contain"
-msgstr ""
+msgstr "non contiene"
 
 #: src/Admin/Pages/FormBuilderPage.php:211
 msgid "is not empty"
-msgstr ""
+msgstr "non è vuoto"
 
 #: src/Admin/Pages/FormBuilderPage.php:212
 msgid "is checked"
-msgstr ""
+msgstr "è selezionato"
 
 #: src/Admin/Pages/FormBuilderPage.php:213
 msgid "is not checked"
-msgstr ""
+msgstr "non è selezionato"
 
 #: src/Admin/Pages/FormBuilderPage.php:214
 msgid "greater than"
-msgstr ""
+msgstr "maggiore di"
 
 #: src/Admin/Pages/FormBuilderPage.php:215
 msgid "less than"
-msgstr ""
+msgstr "minore di"
 
 #: src/Admin/Pages/FormBuilderPage.php:216
 msgid "starts with"
-msgstr ""
+msgstr "inizia con"
 
 #: src/Admin/Pages/FormBuilderPage.php:217
 msgid "ends with"
-msgstr ""
+msgstr "termina con"
 
 #: src/Admin/Pages/FormBuilderPage.php:220
 msgid "File Settings"
-msgstr ""
+msgstr "Impostazioni File"
 
 #: src/Admin/Pages/FormBuilderPage.php:221
 msgid "Allowed File Types"
-msgstr ""
+msgstr "Tipi di File Consentiti"
 
 #: src/Admin/Pages/FormBuilderPage.php:222
 msgid "Maximum File Size (MB)"
-msgstr ""
+msgstr "Dimensione Massima File (MB)"
 
 #: src/Admin/Pages/FormBuilderPage.php:223
 msgid "Maximum Number of Files"
-msgstr ""
+msgstr "Numero Massimo di File"
 
 #: src/Admin/Pages/FormBuilderPage.php:224
 msgid "Drag files here"
-msgstr ""
+msgstr "Trascina i file qui"
 
 #: src/Admin/Pages/FormBuilderPage.php:227
 msgid "Form Templates"
-msgstr ""
+msgstr "Modelli Form"
 
 #: src/Admin/Pages/FormBuilderPage.php:228
 msgid "Create Template"
-msgstr ""
+msgstr "Crea Modello"
 
 #: src/Admin/Pages/FormBuilderPage.php:230
 msgid "Duplicate Template"
-msgstr ""
+msgstr "Duplica Modello"
 
 #: src/Admin/Pages/FormBuilderPage.php:231
 msgid "Delete Template"
-msgstr ""
+msgstr "Elimina Modello"
 
 #: src/Admin/Pages/FormBuilderPage.php:232
 msgid "Template Name"
-msgstr ""
+msgstr "Nome Modello"
 
 #: src/Admin/Pages/FormBuilderPage.php:234
 msgid "Default Template"
-msgstr ""
+msgstr "Modello Predefinito"
 
 #: src/Admin/Pages/FormBuilderPage.php:236
 msgid "The default template will be used for new jobs"
-msgstr ""
+msgstr "Il modello predefinito sarà utilizzato per le nuove posizioni"
 
 #: src/Admin/Pages/FormBuilderPage.php:237
 msgid "No templates available"
-msgstr ""
+msgstr "Nessun modello disponibile"
 
 #: src/Admin/Pages/FormBuilderPage.php:238
 msgid "Template Fields"
-msgstr ""
+msgstr "Campi Modello"
 
 #: src/Admin/Pages/FormBuilderPage.php:239
 msgid "Select Fields"
-msgstr ""
+msgstr "Seleziona Campi"
 
 #: src/Admin/Pages/FormBuilderPage.php:242
 msgid "Form Preview"
-msgstr ""
+msgstr "Anteprima Form"
 
 #: src/Admin/Pages/FormBuilderPage.php:243
 msgid "This is how the application form will look"
-msgstr ""
+msgstr "Ecco come apparirà il form di candidatura"
 
 #: src/Admin/Pages/FormBuilderPage.php:245
 msgid "Desktop"
-msgstr ""
+msgstr "Desktop"
 
 #: src/Admin/Pages/FormBuilderPage.php:246
 msgid "Tablet"
-msgstr ""
+msgstr "Tablet"
 
 #: src/Admin/Pages/FormBuilderPage.php:247
 msgid "Mobile"
-msgstr ""
+msgstr "Mobile"
 
 #: src/Admin/Pages/FormBuilderPage.php:253
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplica"
 
 #: src/Admin/Pages/FormBuilderPage.php:255
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: src/Admin/Pages/FormBuilderPage.php:256
 msgid "Really delete?"
-msgstr ""
+msgstr "Eliminare davvero?"
 
 #: src/Admin/Pages/FormBuilderPage.php:257
 msgid "Do you really want to delete this field? Existing data will be preserved."
-msgstr ""
+msgstr "Vuoi davvero eliminare questo campo? I dati esistenti verranno conservati."
 
 #: src/Admin/Pages/FormBuilderPage.php:262
 msgid "Saved"
-msgstr ""
+msgstr "Salvato"
 
 #: src/Admin/Pages/FormBuilderPage.php:265
 msgid "Error"
@@ -5145,335 +5148,335 @@ msgstr "Errore"
 
 #: src/Admin/Pages/FormBuilderPage.php:266
 msgid "Success"
-msgstr ""
+msgstr "Successo"
 
 #: src/Admin/Pages/FormBuilderPage.php:267
 msgid "Field created"
-msgstr ""
+msgstr "Campo creato"
 
 #: src/Admin/Pages/FormBuilderPage.php:268
 msgid "Field updated"
-msgstr ""
+msgstr "Campo aggiornato"
 
 #: src/Admin/Pages/FormBuilderPage.php:269
 msgid "Field deleted"
-msgstr ""
+msgstr "Campo eliminato"
 
 #: src/Admin/Pages/FormBuilderPage.php:270
 msgid "Order updated"
-msgstr ""
+msgstr "Ordine aggiornato"
 
 #: src/Admin/Pages/FormBuilderPage.php:271
 msgid "Template created"
-msgstr ""
+msgstr "Modello creato"
 
 #: src/Admin/Pages/FormBuilderPage.php:272
 msgid "Template updated"
-msgstr ""
+msgstr "Modello aggiornato"
 
 #: src/Admin/Pages/FormBuilderPage.php:273
 msgid "Template deleted"
-msgstr ""
+msgstr "Modello eliminato"
 
 #: src/Admin/Pages/FormBuilderPage.php:276
 msgid "System fields cannot be deleted"
-msgstr ""
+msgstr "I campi di sistema non possono essere eliminati"
 
 #: src/Admin/Pages/FormBuilderPage.php:277
 msgid "Required fields must be filled out"
-msgstr ""
+msgstr "I campi obbligatori devono essere compilati"
 
 #: src/Admin/Pages/FormBuilderPage.php:278
 msgid "This field key already exists"
-msgstr ""
+msgstr "Questa chiave campo esiste già"
 
 #: src/Admin/Pages/FormBuilderPage.php:279
 msgid "Invalid field key (only letters, numbers, underscores)"
-msgstr ""
+msgstr "Chiave campo non valida (solo lettere, numeri, underscore)"
 
 #: src/Admin/Pages/FormBuilderPage.php:282
 msgid "Pro Feature"
-msgstr ""
+msgstr "Funzionalità Pro"
 
 #: src/Admin/Pages/FormBuilderPage.php:283
 msgid "This feature requires Pro"
-msgstr ""
+msgstr "Questa funzionalità richiede Pro"
 
 #: src/Admin/Pages/FormBuilderPage.php:285
 msgid "Conditional Logic (Pro)"
-msgstr ""
+msgstr "Logica Condizionale (Pro)"
 
 #: src/Admin/Pages/FormBuilderPage.php:286
 msgid "Advanced Field Types (Pro)"
-msgstr ""
+msgstr "Tipi di Campo Avanzati (Pro)"
 
 #: src/Admin/Pages/FormBuilderPage.php:287
 msgid "Multiple Templates (Pro)"
-msgstr ""
+msgstr "Modelli Multipli (Pro)"
 
 #: src/Admin/Pages/FormBuilderPage.php:290
 msgid "Help"
-msgstr ""
+msgstr "Aiuto"
 
 #: src/Admin/Pages/FormBuilderPage.php:291
 msgid "Documentation"
-msgstr ""
+msgstr "Documentazione"
 
 #: src/Admin/Pages/FormBuilderPage.php:292
 msgid "The field key is used for the API and export"
-msgstr ""
+msgstr "La chiave campo è utilizzata per l'API e l'esportazione"
 
 #: src/Admin/Pages/FormBuilderPage.php:293
 msgid "Conditional display allows you to show/hide fields based on other field values"
-msgstr ""
+msgstr "La visualizzazione condizionale permette di mostrare/nascondere campi in base ai valori di altri campi"
 
 #: src/Admin/Pages/FormBuilderPage.php:294
 msgid "Templates enable different form configurations for different jobs"
-msgstr ""
+msgstr "I modelli consentono diverse configurazioni del form per diverse posizioni"
 
 #: src/Admin/Pages/KanbanBoard.php:29
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "Non hai i permessi per visualizzare questa pagina."
 
 #: src/Admin/Pages/KanbanBoard.php:30
 msgid "Access denied"
-msgstr ""
+msgstr "Accesso negato"
 
 #: src/Admin/Pages/KanbanBoard.php:48
 msgid "Loading Kanban board..."
-msgstr ""
+msgstr "Caricamento bacheca Kanban..."
 
 #: src/Admin/Pages/KanbanBoard.php:65
 msgid "The Kanban board is a Pro feature."
-msgstr ""
+msgstr "La bacheca Kanban è una funzionalità Pro."
 
 #: src/Admin/Pages/KanbanBoard.php:191
 msgid "Loading applications..."
-msgstr ""
+msgstr "Caricamento candidature..."
 
 #: src/Admin/Pages/KanbanBoard.php:194
 msgid "No applications"
-msgstr ""
+msgstr "Nessuna candidatura"
 
 #: src/Admin/Pages/KanbanBoard.php:195, src/Admin/Pages/ReportingPage.php:81
 msgid "Today"
-msgstr ""
+msgstr "Oggi"
 
 #: src/Admin/Pages/KanbanBoard.php:196
 msgid "Yesterday"
-msgstr ""
+msgstr "Ieri"
 
 #: src/Admin/Pages/KanbanBoard.php:197
 msgid "%d days ago"
-msgstr ""
+msgstr "%d giorni fa"
 
 #: src/Admin/Pages/KanbanBoard.php:198
 msgid "Expand"
-msgstr ""
+msgstr "Espandi"
 
 #: src/Admin/Pages/KanbanBoard.php:199
 msgid "Collapse"
-msgstr ""
+msgstr "Comprimi"
 
 #: src/Admin/Pages/KanbanBoard.php:200
 msgid "Drag to change status"
-msgstr ""
+msgstr "Trascina per cambiare stato"
 
 #: src/Admin/Pages/KanbanBoard.php:201
 msgid "Status changed"
-msgstr ""
+msgstr "Stato modificato"
 
 #: src/Admin/Pages/KanbanBoard.php:202
 msgid "Update failed"
-msgstr ""
+msgstr "Aggiornamento fallito"
 
 #: src/Admin/Pages/ReportingPage.php:59
 msgid "Reports & Statistics"
-msgstr ""
+msgstr "Report e Statistiche"
 
 #: src/Admin/Pages/ReportingPage.php:60
 msgid "Overview of applications, jobs and recruiting metrics"
-msgstr ""
+msgstr "Panoramica di candidature, posizioni e metriche di recruiting"
 
 #: src/Admin/Pages/ReportingPage.php:63
 msgid "Overview"
-msgstr ""
+msgstr "Panoramica"
 
 #: src/Admin/Pages/ReportingPage.php:66
 msgid "Trends"
-msgstr ""
+msgstr "Tendenze"
 
 #: src/Admin/Pages/ReportingPage.php:70
 msgid "Total applications"
-msgstr ""
+msgstr "Candidature totali"
 
 #: src/Admin/Pages/ReportingPage.php:76
 msgid "Avg. time-to-hire"
-msgstr ""
+msgstr "Tempo medio assunzione"
 
 #: src/Admin/Pages/ReportingPage.php:77
 msgid "Conversion rate"
-msgstr ""
+msgstr "Tasso di conversione"
 
 #: src/Admin/Pages/ReportingPage.php:78
 msgid "days"
-msgstr ""
+msgstr "giorni"
 
 #: src/Admin/Pages/ReportingPage.php:82
 msgid "Last 7 days"
-msgstr ""
+msgstr "Ultimi 7 giorni"
 
 #: src/Admin/Pages/ReportingPage.php:83
 msgid "Last 30 days"
-msgstr ""
+msgstr "Ultimi 30 giorni"
 
 #: src/Admin/Pages/ReportingPage.php:84
 msgid "Last 90 days"
-msgstr ""
+msgstr "Ultimi 90 giorni"
 
 #: src/Admin/Pages/ReportingPage.php:85
 msgid "This year"
-msgstr ""
+msgstr "Quest'anno"
 
 #: src/Admin/Pages/ReportingPage.php:86
 msgid "All time"
-msgstr ""
+msgstr "Tutto il tempo"
 
 #: src/Admin/Pages/ReportingPage.php:87
 msgid "Custom range"
-msgstr ""
+msgstr "Intervallo personalizzato"
 
 #: src/Admin/Pages/ReportingPage.php:90
 msgid "Applications over time"
-msgstr ""
+msgstr "Candidature nel tempo"
 
 #: src/Admin/Pages/ReportingPage.php:91
 msgid "Status distribution"
-msgstr ""
+msgstr "Distribuzione stati"
 
 #: src/Admin/Pages/ReportingPage.php:92
 msgid "Source distribution"
-msgstr ""
+msgstr "Distribuzione fonti"
 
 #: src/Admin/Pages/ReportingPage.php:93
 msgid "Top jobs"
-msgstr ""
+msgstr "Top posizioni"
 
 #: src/Admin/Pages/ReportingPage.php:94
 msgid "Conversion funnel"
-msgstr ""
+msgstr "Funnel di conversione"
 
 #: src/Admin/Pages/ReportingPage.php:95
 msgid "Time-to-hire trend"
-msgstr ""
+msgstr "Tendenza tempo di assunzione"
 
 #: src/Admin/Pages/ReportingPage.php:98
 msgid "Job views"
-msgstr ""
+msgstr "Visualizzazioni posizione"
 
 #: src/Admin/Pages/ReportingPage.php:99
 msgid "Form started"
-msgstr ""
+msgstr "Form iniziato"
 
 #: src/Admin/Pages/ReportingPage.php:100
 msgid "Form submitted"
-msgstr ""
+msgstr "Form inviato"
 
 #: src/Admin/Pages/ReportingPage.php:106
 msgid "Export applications"
-msgstr ""
+msgstr "Esporta candidature"
 
 #: src/Admin/Pages/ReportingPage.php:107
 msgid "Export statistics report"
-msgstr ""
+msgstr "Esporta report statistiche"
 
 #: src/Admin/Pages/ReportingPage.php:108
 msgid "Select columns"
-msgstr ""
+msgstr "Seleziona colonne"
 
 #: src/Admin/Pages/ReportingPage.php:109
 msgid "Select period"
-msgstr ""
+msgstr "Seleziona periodo"
 
 #: src/Admin/Pages/ReportingPage.php:112
 msgid "All statuses"
-msgstr ""
+msgstr "Tutti gli stati"
 
 #: src/Admin/Pages/ReportingPage.php:113
 msgid "All jobs"
-msgstr ""
+msgstr "Tutte le posizioni"
 
 #: src/Admin/Pages/ReportingPage.php:114
 msgid "Download CSV"
-msgstr ""
+msgstr "Scarica CSV"
 
 #: src/Admin/Pages/ReportingPage.php:117
 msgid "Pro feature"
-msgstr ""
+msgstr "Funzione Pro"
 
 #: src/Admin/Pages/ReportingPage.php:120
 msgid "Advanced reports"
-msgstr ""
+msgstr "Report avanzati"
 
 #: src/Admin/Pages/ReportingPage.php:121
 msgid "CSV export"
-msgstr ""
+msgstr "Esportazione CSV"
 
 #: src/Admin/Pages/ReportingPage.php:125
 msgid "Error loading data"
-msgstr ""
+msgstr "Errore nel caricamento dei dati"
 
 #: src/Admin/Pages/ReportingPage.php:126
 msgid "No data available"
-msgstr ""
+msgstr "Nessun dato disponibile"
 
 #: src/Admin/Pages/ReportingPage.php:130
 msgid "Compared to previous month"
-msgstr ""
+msgstr "Rispetto al mese precedente"
 
 #: src/Admin/Pages/ReportingPage.php:131
 msgid "Increase"
-msgstr ""
+msgstr "Aumento"
 
 #: src/Admin/Pages/ReportingPage.php:132
 msgid "Decrease"
-msgstr ""
+msgstr "Diminuzione"
 
 #: src/Admin/Pages/ReportingPage.php:133
 msgid "No change"
-msgstr ""
+msgstr "Nessuna variazione"
 
 #: src/Admin/Pages/TalentPoolPage.php:55
 msgid "Promising candidates for future positions"
-msgstr ""
+msgstr "Candidati promettenti per posizioni future"
 
 #: src/Admin/Pages/TalentPoolPage.php:56, src/Admin/Pages/TalentPoolPage.php:114
 msgid "Loading talent pool..."
-msgstr ""
+msgstr "Caricamento talent pool..."
 
 #: src/Admin/Pages/TalentPoolPage.php:57
 msgid "The talent pool is still empty."
-msgstr ""
+msgstr "Il talent pool è ancora vuoto."
 
 #: src/Admin/Pages/TalentPoolPage.php:58
 msgid "Add promising candidates from the application detail page to the talent pool."
-msgstr ""
+msgstr "Aggiungi candidati promettenti dalla pagina di dettaglio della candidatura al talent pool."
 
 #: src/Admin/Pages/TalentPoolPage.php:59
 msgid "Go to Applications"
-msgstr ""
+msgstr "Vai alle Candidature"
 
 #: src/Admin/Pages/TalentPoolPage.php:60
 msgid "Search candidates..."
-msgstr ""
+msgstr "Cerca candidati..."
 
 #: src/Admin/Pages/TalentPoolPage.php:61
 msgid "Filter by tags"
-msgstr ""
+msgstr "Filtra per tag"
 
 #: src/Admin/Pages/TalentPoolPage.php:62
 msgid "All tags"
-msgstr ""
+msgstr "Tutti i tag"
 
 #: src/Admin/Pages/TalentPoolPage.php:63
 msgid "Candidate"
@@ -5481,323 +5484,323 @@ msgstr "Candidato"
 
 #: src/Admin/Pages/TalentPoolPage.php:65
 msgid "Added on"
-msgstr ""
+msgstr "Aggiunto il"
 
 #: src/Admin/Pages/TalentPoolPage.php:66
 msgid "Expires on"
-msgstr ""
+msgstr "Scade il"
 
 #: src/Admin/Pages/TalentPoolPage.php:67
 msgid "Reason"
-msgstr ""
+msgstr "Motivo"
 
 #: src/Admin/Pages/TalentPoolPage.php:68
 msgid "Tags"
-msgstr ""
+msgstr "Tag"
 
 #: src/Admin/Pages/TalentPoolPage.php:69
 msgid "No tags"
-msgstr ""
+msgstr "Nessun tag"
 
 #: src/Admin/Pages/TalentPoolPage.php:71
 msgid "Remove from pool"
-msgstr ""
+msgstr "Rimuovi dal pool"
 
 #: src/Admin/Pages/TalentPoolPage.php:72
 msgid "Really remove candidate from talent pool?"
-msgstr ""
+msgstr "Rimuovere davvero il candidato dal talent pool?"
 
 #: src/Admin/Pages/TalentPoolPage.php:73
 msgid "Candidate has been removed from talent pool."
-msgstr ""
+msgstr "Il candidato è stato rimosso dal talent pool."
 
 #: src/Admin/Pages/TalentPoolPage.php:74
 msgid "Error removing from talent pool."
-msgstr ""
+msgstr "Errore nella rimozione dal talent pool."
 
 #: src/Admin/Pages/TalentPoolPage.php:75
 msgid "Error loading talent pool."
-msgstr ""
+msgstr "Errore nel caricamento del talent pool."
 
 #: src/Admin/Pages/TalentPoolPage.php:77
 msgid "Expires soon"
-msgstr ""
+msgstr "Scade presto"
 
 #: src/Admin/Pages/TalentPoolPage.php:78
 msgid "Expired"
-msgstr ""
+msgstr "Scaduto"
 
 #: src/Admin/Pages/TalentPoolPage.php:79
 msgid "Expires in %d days"
-msgstr ""
+msgstr "Scade tra %d giorni"
 
 #: src/Admin/Pages/TalentPoolPage.php:80
 msgid "Total"
-msgstr ""
+msgstr "Totale"
 
 #: src/Admin/Pages/TalentPoolPage.php:81
 msgid "per page"
-msgstr ""
+msgstr "per pagina"
 
 #: src/Admin/Pages/TalentPoolPage.php:84, src/Frontend/Shortcodes/JobSearchShortcode.php:291
 msgid "Previous"
-msgstr ""
+msgstr "Precedente"
 
 #: src/Admin/Pages/TalentPoolPage.php:89
 msgid "Changes saved."
-msgstr ""
+msgstr "Modifiche salvate."
 
 #: src/Admin/Pages/TalentPoolPage.php:90
 msgid "Error saving."
-msgstr ""
+msgstr "Errore nel salvataggio."
 
 #: src/Admin/Pages/TalentPoolPage.php:91
 msgid "GDPR notice: Candidates are automatically removed from the pool after expiration."
-msgstr ""
+msgstr "Avviso GDPR: I candidati vengono rimossi automaticamente dal pool dopo la scadenza."
 
 #: src/Admin/Pages/TalentPoolPage.php:133
 msgid "Talent Pool is a Pro feature"
-msgstr ""
+msgstr "Il Talent Pool è una funzione Pro"
 
 #: src/Admin/Pages/TalentPoolPage.php:136
 msgid "With the Talent Pool you can save promising candidates for future positions. This way you always have access to qualified talent when a new position needs to be filled."
-msgstr ""
+msgstr "Con il Talent Pool puoi salvare candidati promettenti per posizioni future. In questo modo hai sempre accesso a talenti qualificati quando una nuova posizione deve essere coperta."
 
 #: src/Admin/Pages/TalentPoolPage.php:145
 msgid "Organize candidates with tags"
-msgstr ""
+msgstr "Organizza i candidati con i tag"
 
 #: src/Admin/Pages/TalentPoolPage.php:149
 msgid "GDPR-compliant storage with automatic expiration"
-msgstr ""
+msgstr "Archiviazione conforme al GDPR con scadenza automatica"
 
 #: src/Admin/Pages/TalentPoolPage.php:153
 msgid "Fast search and filtering"
-msgstr ""
+msgstr "Ricerca e filtri veloci"
 
 #: src/Admin/Pages/TalentPoolPage.php:157
 msgid "Add notes and reasons"
-msgstr ""
+msgstr "Aggiungi note e motivazioni"
 
 #: src/Admin/Pages/TalentPoolPage.php:162
 msgid "Upgrade to Pro now"
-msgstr ""
+msgstr "Passa a Pro ora"
 
 #: src/Admin/SetupWizard/SetupWizard.php:42
 msgid "Welcome"
-msgstr ""
+msgstr "Benvenuto"
 
 #: src/Admin/SetupWizard/SetupWizard.php:47, src/Admin/SetupWizard/SetupWizard.php:277
 msgid "Company Details"
-msgstr ""
+msgstr "Dettagli Azienda"
 
 #: src/Admin/SetupWizard/SetupWizard.php:57
 msgid "First Job"
-msgstr ""
+msgstr "Prima Offerta"
 
 #: src/Admin/SetupWizard/SetupWizard.php:62
 msgid "Complete"
-msgstr ""
+msgstr "Completo"
 
 #: src/Admin/SetupWizard/SetupWizard.php:137, src/Admin/SetupWizard/SetupWizard.php:138
 msgid "Setup Wizard"
-msgstr ""
+msgstr "Procedura Guidata"
 
 #: src/Admin/SetupWizard/SetupWizard.php:192
 msgid "Saved!"
-msgstr ""
+msgstr "Salvato!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:193
 msgid "An error occurred."
-msgstr ""
+msgstr "Si è verificato un errore."
 
 #: src/Admin/SetupWizard/SetupWizard.php:194
 msgid "Sending email..."
-msgstr ""
+msgstr "Invio email..."
 
 #: src/Admin/SetupWizard/SetupWizard.php:195, src/Admin/SetupWizard/SetupWizard.php:822
 msgid "Test email sent!"
-msgstr ""
+msgstr "Email di test inviata!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:235
 msgid "Welcome to Recruiting Playbook!"
-msgstr ""
+msgstr "Benvenuto su Recruiting Playbook!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:237
 msgid "This wizard will help you set up the plugin in just a few minutes."
-msgstr ""
+msgstr "Questa procedura guidata ti aiuterà a configurare il plugin in pochi minuti."
 
 #: src/Admin/SetupWizard/SetupWizard.php:243
 msgid "Manage job listings"
-msgstr ""
+msgstr "Gestisci offerte di lavoro"
 
 #: src/Admin/SetupWizard/SetupWizard.php:244
 msgid "Create and manage your job listings directly in WordPress."
-msgstr ""
+msgstr "Crea e gestisci le tue offerte di lavoro direttamente in WordPress."
 
 #: src/Admin/SetupWizard/SetupWizard.php:248
 msgid "Receive applications"
-msgstr ""
+msgstr "Ricevi candidature"
 
 #: src/Admin/SetupWizard/SetupWizard.php:249
 msgid "Candidates can apply directly on your website."
-msgstr ""
+msgstr "I candidati possono candidarsi direttamente sul tuo sito web."
 
 #: src/Admin/SetupWizard/SetupWizard.php:253
 msgid "Manage applications"
-msgstr ""
+msgstr "Gestisci candidature"
 
 #: src/Admin/SetupWizard/SetupWizard.php:254
 msgid "Keep track of all applications."
-msgstr ""
+msgstr "Tieni traccia di tutte le candidature."
 
 #: src/Admin/SetupWizard/SetupWizard.php:260
 msgid "Let's go!"
-msgstr ""
+msgstr "Iniziamo!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:263
 msgid "Set up later"
-msgstr ""
+msgstr "Configura più tardi"
 
 #: src/Admin/SetupWizard/SetupWizard.php:279
 msgid "This information will be used in emails and in the Google for Jobs schema."
-msgstr ""
+msgstr "Queste informazioni verranno utilizzate nelle email e nello schema Google for Jobs."
 
 #: src/Admin/SetupWizard/SetupWizard.php:299
 msgid "Company Logo URL"
-msgstr ""
+msgstr "URL Logo Aziendale"
 
 #: src/Admin/SetupWizard/SetupWizard.php:308
 msgid "URL to your company logo (recommended for Google for Jobs)."
-msgstr ""
+msgstr "URL del logo aziendale (consigliato per Google for Jobs)."
 
 #: src/Admin/SetupWizard/SetupWizard.php:314
 msgid "Street"
-msgstr ""
+msgstr "Via"
 
 #: src/Admin/SetupWizard/SetupWizard.php:350
 msgid "Country"
-msgstr ""
+msgstr "Paese"
 
 #: src/Admin/SetupWizard/SetupWizard.php:362
 msgid "Privacy Policy URL"
-msgstr ""
+msgstr "URL Informativa Privacy"
 
 #: src/Admin/SetupWizard/SetupWizard.php:372
 msgid "Link to the privacy policy for the application form."
-msgstr ""
+msgstr "Link all'informativa sulla privacy per il modulo di candidatura."
 
 #: src/Admin/SetupWizard/SetupWizard.php:386, src/Admin/SetupWizard/SetupWizard.php:505
 msgid "Continue"
-msgstr ""
+msgstr "Continua"
 
 #: src/Admin/SetupWizard/SetupWizard.php:424
 msgid "Email Settings"
-msgstr ""
+msgstr "Impostazioni Email"
 
 #: src/Admin/SetupWizard/SetupWizard.php:426
 msgid "Configure how email notifications will be sent."
-msgstr ""
+msgstr "Configura come verranno inviate le notifiche email."
 
 #: src/Admin/SetupWizard/SetupWizard.php:437
 msgid "No SMTP configured"
-msgstr ""
+msgstr "SMTP non configurato"
 
 #: src/Admin/SetupWizard/SetupWizard.php:443
 msgid "Install SMTP plugin"
-msgstr ""
+msgstr "Installa plugin SMTP"
 
 #: src/Admin/SetupWizard/SetupWizard.php:433
 msgid "SMTP configured"
-msgstr ""
+msgstr "SMTP configurato"
 
 #: src/Admin/SetupWizard/SetupWizard.php:463
 msgid "Notifications about new applications will be sent to this address."
-msgstr ""
+msgstr "Le notifiche sulle nuove candidature verranno inviate a questo indirizzo."
 
 #: src/Admin/SetupWizard/SetupWizard.php:483
 msgid "Send test email"
-msgstr ""
+msgstr "Invia email di test"
 
 #: src/Admin/SetupWizard/SetupWizard.php:491
 msgid "Send test"
-msgstr ""
+msgstr "Invia test"
 
 #: src/Admin/SetupWizard/SetupWizard.php:536, src/Admin/SetupWizard/SetupWizard.php:683
 msgid "Create first job"
-msgstr ""
+msgstr "Crea prima offerta"
 
 #: src/Admin/SetupWizard/SetupWizard.php:538
 msgid "Create your first job listing now or skip this step."
-msgstr ""
+msgstr "Crea la tua prima offerta di lavoro ora o salta questo passaggio."
 
 #: src/Admin/SetupWizard/SetupWizard.php:551
 msgid "e.g. Senior Developer (m/f/d)"
-msgstr ""
+msgstr "es. Senior Developer (m/f/d)"
 
 #: src/Admin/SetupWizard/SetupWizard.php:563
 msgid "e.g. Berlin"
-msgstr ""
+msgstr "es. Milano"
 
 #: src/Admin/SetupWizard/SetupWizard.php:575
 msgid "Temporary"
-msgstr ""
+msgstr "Temporaneo"
 
 #: src/Admin/SetupWizard/SetupWizard.php:591
 msgid "Skip"
-msgstr ""
+msgstr "Salta"
 
 #: src/Admin/SetupWizard/SetupWizard.php:594
 msgid "Create job & Continue"
-msgstr ""
+msgstr "Crea offerta e Continua"
 
 #: src/Admin/SetupWizard/SetupWizard.php:666
 msgid "Setup complete!"
-msgstr ""
+msgstr "Configurazione completata!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:668
 msgid "Recruiting Playbook is now ready to use."
-msgstr ""
+msgstr "Recruiting Playbook è ora pronto all'uso."
 
 #: src/Admin/SetupWizard/SetupWizard.php:672
 msgid "Next steps:"
-msgstr ""
+msgstr "Prossimi passi:"
 
 #: src/Admin/SetupWizard/SetupWizard.php:677
 msgid "Complete your first job"
-msgstr ""
+msgstr "Completa la tua prima offerta"
 
 #: src/Admin/SetupWizard/SetupWizard.php:689
 msgid "Configure additional settings"
-msgstr ""
+msgstr "Configura impostazioni aggiuntive"
 
 #: src/Admin/SetupWizard/SetupWizard.php:694, src/Admin/SetupWizard/SetupWizard.php:720
 msgid "Go to Dashboard"
-msgstr ""
+msgstr "Vai alla Dashboard"
 
 #: src/Admin/SetupWizard/SetupWizard.php:701
 msgid "Shortcodes for your pages:"
-msgstr ""
+msgstr "Shortcode per le tue pagine:"
 
 #: src/Admin/SetupWizard/SetupWizard.php:705
 msgid "Displays all job listings"
-msgstr ""
+msgstr "Mostra tutte le offerte di lavoro"
 
 #: src/Admin/SetupWizard/SetupWizard.php:709
 msgid "Search form for jobs"
-msgstr ""
+msgstr "Modulo di ricerca offerte"
 
 #: src/Admin/SetupWizard/SetupWizard.php:713
 msgid "Application form (on job page)"
-msgstr ""
+msgstr "Modulo di candidatura (sulla pagina offerta)"
 
 #: src/Admin/SetupWizard/SetupWizard.php:757
 msgid "Invalid step."
-msgstr ""
+msgstr "Passaggio non valido."
 
 #: src/Admin/SetupWizard/SetupWizard.php:812
 msgid "Recruiting Playbook - Test Email"
-msgstr ""
+msgstr "Recruiting Playbook - Email di Test"
 
 #. translators: %s: current date/time
 #: src/Admin/SetupWizard/SetupWizard.php:815
@@ -5808,106 +5811,111 @@ msgid ""
 "\n"
 "Sent at: %s"
 msgstr ""
+"Questa è un'email di test da Recruiting Playbook.\n"
+"\n"
+"Se ricevi questa email, la consegna delle email funziona correttamente.\n"
+"\n"
+"Inviata il: %s"
 
 #: src/Admin/SetupWizard/SetupWizard.php:824
 msgid "Email could not be sent. Please check your SMTP configuration."
-msgstr ""
+msgstr "L'email non può essere inviata. Controlla la configurazione SMTP."
 
 #: src/Blocks/Patterns/PatternLoader.php:40
 msgid "Pre-made layouts for career pages"
-msgstr ""
+msgstr "Layout predefiniti per pagine carriere"
 
 #: src/Blocks/Patterns/PatternLoader.php:63
 msgid "Career Page"
-msgstr ""
+msgstr "Pagina Carriere"
 
 #: src/Blocks/Patterns/PatternLoader.php:64
 msgid "Complete career page with hero, featured jobs and job search."
-msgstr ""
+msgstr "Pagina carriere completa con hero, offerte in evidenza e ricerca offerte."
 
 #: src/Blocks/Patterns/PatternLoader.php:72
 msgid "Careers at our company"
-msgstr ""
+msgstr "Carriere nella nostra azienda"
 
 #: src/Blocks/Patterns/PatternLoader.php:76
 msgid "Join our team and shape the future with us."
-msgstr ""
+msgstr "Entra nel nostro team e costruisci il futuro con noi."
 
 #: src/Blocks/Patterns/PatternLoader.php:86
 msgid "Top Job Listings"
-msgstr ""
+msgstr "Migliori Offerte"
 
 #: src/Blocks/Patterns/PatternLoader.php:96
 msgid "All Job Listings"
-msgstr ""
+msgstr "Tutte le Offerte"
 
 #: src/Blocks/Patterns/PatternLoader.php:114
 msgid "Job Sidebar"
-msgstr ""
+msgstr "Sidebar Offerte"
 
 #: src/Blocks/Patterns/PatternLoader.php:115
 msgid "Compact job list for sidebars and widgets."
-msgstr ""
+msgstr "Elenco offerte compatto per sidebar e widget."
 
 #: src/Blocks/Patterns/PatternLoader.php:123
 msgid "Current Positions"
-msgstr ""
+msgstr "Posizioni Attuali"
 
 #: src/Blocks/Patterns/PatternLoader.php:141
 msgid "Featured Jobs Hero"
-msgstr ""
+msgstr "Hero Offerte in Evidenza"
 
 #: src/Blocks/Patterns/PatternLoader.php:142
 msgid "Large display of top job listings."
-msgstr ""
+msgstr "Visualizzazione grande delle migliori offerte di lavoro."
 
 #: src/Blocks/Patterns/PatternLoader.php:151
 msgid "Our Top Job Listings"
-msgstr ""
+msgstr "Le Nostre Migliori Offerte"
 
 #: src/Blocks/Patterns/PatternLoader.php:155
 msgid "Discover our outstanding career opportunities."
-msgstr ""
+msgstr "Scopri le nostre eccellenti opportunità di carriera."
 
 #: src/Blocks/Patterns/PatternLoader.php:178
 msgid "Complete Job Search"
-msgstr ""
+msgstr "Ricerca Offerte Completa"
 
 #: src/Blocks/Patterns/PatternLoader.php:179
 msgid "Job search with all filters and job counter."
-msgstr ""
+msgstr "Ricerca offerte con tutti i filtri e contatore offerte."
 
 #: src/Blocks/Patterns/PatternLoader.php:186
 msgid "Open Positions"
-msgstr ""
+msgstr "Posizioni Aperte"
 
 #: src/Blocks/Patterns/PatternLoader.php:208
 msgid "Category Overview"
-msgstr ""
+msgstr "Panoramica Categorie"
 
 #: src/Blocks/Patterns/PatternLoader.php:209
 msgid "Overview of all job categories as cards."
-msgstr ""
+msgstr "Panoramica di tutte le categorie di offerte come card."
 
 #: src/Blocks/Patterns/PatternLoader.php:216
 msgid "Discover Career Fields"
-msgstr ""
+msgstr "Scopri i Settori Professionali"
 
 #: src/Blocks/Patterns/PatternLoader.php:220
 msgid "Find positions in your field."
-msgstr ""
+msgstr "Trova posizioni nel tuo settore."
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:58, src/Blocks/Blocks/job-count/render.php:19
 msgid "{count} open positions"
-msgstr ""
+msgstr "{count} posizioni aperte"
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:61, src/Blocks/Blocks/job-count/render.php:20
 msgid "{count} open position"
-msgstr ""
+msgstr "{count} posizione aperta"
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:64, src/Blocks/Blocks/job-count/render.php:21
 msgid "No open positions"
-msgstr ""
+msgstr "Nessuna posizione aperta"
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:191, src/Frontend/Shortcodes/JobSearchShortcode.php:247
 msgid "Search"
@@ -5915,439 +5923,439 @@ msgstr "Cerca"
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:196
 msgid "Keyword, job title..."
-msgstr ""
+msgstr "Parola chiave, titolo offerta..."
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:234
 msgid "All Types"
-msgstr ""
+msgstr "Tutti i Tipi"
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:251
 msgid "Reset filters"
-msgstr ""
+msgstr "Reimposta filtri"
 
 #. translators: %d: Number of jobs found
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:262
 msgid "%d job found"
 msgid_plural "%d jobs found"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d offerta trovata"
+msgstr[1] "%d offerte trovate"
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:318
 msgid "No matching jobs found. Please try different search criteria."
-msgstr ""
+msgstr "Nessuna offerta corrispondente trovata. Prova criteri di ricerca diversi."
 
 #: src/Frontend/Shortcodes/JobsShortcode.php:189
 msgid "No open positions at the moment"
-msgstr ""
+msgstr "Nessuna posizione aperta al momento"
 
 #: src/Frontend/Shortcodes/JobsShortcode.php:192
 msgid "Please check back later or contact us for unsolicited applications."
-msgstr ""
+msgstr "Ricontrolla più tardi o contattaci per candidature spontanee."
 
 #: src/Admin/SetupWizard/views/wizard.php:15
 msgid "Recruiting Playbook Setup"
-msgstr ""
+msgstr "Configurazione Recruiting Playbook"
 
 #: src/Blocks/Blocks/ai-job-finder/render.php:16
 msgid "Find your dream job"
-msgstr ""
+msgstr "Trova il tuo lavoro ideale"
 
 #: src/Blocks/Blocks/ai-job-finder/render.php:17
 msgid "Upload your resume and discover matching jobs."
-msgstr ""
+msgstr "Carica il tuo CV e scopri le offerte corrispondenti."
 
 #: src/Blocks/Blocks/job-categories/render.php:28
 msgid "No categories available."
-msgstr ""
+msgstr "Nessuna categoria disponibile."
 
 #: src/Integrations/Avada/Elements/AbstractElement.php:66, src/Integrations/Elementor/Widgets/AbstractWidget.php:111
 msgid "— All —"
-msgstr ""
+msgstr "— Tutte —"
 
 #: src/Integrations/Avada/Elements/AbstractElement.php:93, src/Integrations/Elementor/Widgets/AbstractWidget.php:136
 msgid "— Automatic —"
-msgstr ""
+msgstr "— Automatico —"
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:29, src/Integrations/Elementor/Widgets/AiJobFinder.php:25
 msgid "RP: AI Job Finder"
-msgstr ""
+msgstr "RP: AI Job Finder"
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:40
 msgid "Heading of the job finder."
-msgstr ""
+msgstr "Intestazione del job finder."
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:46, src/Integrations/Elementor/Widgets/AiJobFinder.php:70
 msgid "Subtitle"
-msgstr ""
+msgstr "Sottotitolo"
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:47
 msgid "Explanatory text below the heading."
-msgstr ""
+msgstr "Testo esplicativo sotto l'intestazione."
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:53
 msgid "Max. Suggestions"
-msgstr ""
+msgstr "Max. Suggerimenti"
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:54, src/Integrations/Elementor/Widgets/AiJobFinder.php:80
 msgid "Maximum number of AI suggestions."
-msgstr ""
+msgstr "Numero massimo di suggerimenti AI."
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:63, src/Integrations/Avada/Elements/AiJobMatch.php:66
 msgid "CSS Classes"
-msgstr ""
+msgstr "Classi CSS"
 
 #: src/Integrations/Avada/Elements/AiJobFinder.php:64, src/Integrations/Avada/Elements/AiJobMatch.php:67
 msgid "Additional CSS classes for custom styling."
-msgstr ""
+msgstr "Classi CSS aggiuntive per uno stile personalizzato."
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:29, src/Integrations/Elementor/Widgets/AiJobMatch.php:25
 msgid "RP: AI Job Match"
-msgstr ""
+msgstr "RP: AI Job Match"
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:41, src/Integrations/Avada/Elements/ApplicationForm.php:38
 msgid "Empty = auto-detect (on job pages)."
-msgstr ""
+msgstr "Vuoto = rilevamento automatico (sulle pagine offerte)."
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:48, src/Integrations/Elementor/Widgets/AiJobMatch.php:72
 msgid "Button Text"
-msgstr ""
+msgstr "Testo Pulsante"
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:49
 msgid "Text displayed on the button."
-msgstr ""
+msgstr "Testo visualizzato sul pulsante."
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:55, src/Integrations/Elementor/Widgets/AiJobMatch.php:81
 msgid "Button Style"
-msgstr ""
+msgstr "Stile Pulsante"
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:56
 msgid "Visual style of the button."
-msgstr ""
+msgstr "Stile visivo del pulsante."
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:60
 msgid "Default (filled)"
-msgstr ""
+msgstr "Predefinito (pieno)"
 
 #: src/Integrations/Avada/Elements/AiJobMatch.php:61
 msgid "Outline (border only)"
-msgstr ""
+msgstr "Outline (solo bordo)"
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:26, src/Integrations/Elementor/Widgets/ApplicationForm.php:23
 msgid "RP: Application Form"
-msgstr ""
+msgstr "RP: Modulo Candidatura"
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:46
 msgid "Heading of the form."
-msgstr ""
+msgstr "Intestazione del modulo."
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:52
 msgid "Show job title"
-msgstr ""
+msgstr "Mostra titolo offerta"
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:53
 msgid "Display job title above the form."
-msgstr ""
+msgstr "Visualizza il titolo dell'offerta sopra il modulo."
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:63
 msgid "Progress indicator"
-msgstr ""
+msgstr "Indicatore di avanzamento"
 
 #: src/Integrations/Avada/Elements/ApplicationForm.php:64
 msgid "Display progress bar for multi-step form."
-msgstr ""
+msgstr "Visualizza barra di avanzamento per moduli multi-step."
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:26, src/Integrations/Elementor/Widgets/FeaturedJobs.php:23
 msgid "RP: Featured Jobs"
-msgstr ""
+msgstr "RP: Offerte in Evidenza"
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:36, src/Integrations/Avada/Elements/JobCategories.php:78, src/Integrations/Elementor/Widgets/JobCategories.php:107
 msgid "Count"
-msgstr ""
+msgstr "Conteggio"
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:37
 msgid "Number of featured jobs."
-msgstr ""
+msgstr "Numero di offerte in evidenza."
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:46, src/Integrations/Avada/Elements/JobCategories.php:36, src/Integrations/Avada/Elements/JobGrid.php:60, src/Integrations/Avada/Elements/JobSearch.php:90, src/Integrations/Avada/Elements/LatestJobs.php:46, src/Integrations/Elementor/Widgets/FeaturedJobs.php:71, src/Integrations/Elementor/Widgets/JobCategories.php:60, src/Integrations/Elementor/Widgets/JobGrid.php:77, src/Integrations/Elementor/Widgets/JobSearch.php:122, src/Integrations/Elementor/Widgets/LatestJobs.php:72
 msgid "Columns"
-msgstr ""
+msgstr "Colonne"
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:47, src/Integrations/Avada/Elements/JobCategories.php:37, src/Integrations/Avada/Elements/JobGrid.php:61
 msgid "Number of columns in the grid."
-msgstr ""
+msgstr "Numero di colonne nella griglia."
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:60, src/Integrations/Elementor/Widgets/FeaturedJobs.php:87
 msgid "Optional: Heading above the featured jobs."
-msgstr ""
+msgstr "Facoltativo: Intestazione sopra le offerte in evidenza."
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:66, src/Integrations/Avada/Elements/LatestJobs.php:85
 msgid "Show Excerpt"
-msgstr ""
+msgstr "Mostra Estratto"
 
 #: src/Integrations/Avada/Elements/FeaturedJobs.php:67
 msgid "Show job description as short text."
-msgstr ""
+msgstr "Mostra la descrizione dell'offerta come testo breve."
 
 #: src/Integrations/Avada/Elements/JobCategories.php:26, src/Integrations/Elementor/Widgets/JobCategories.php:23
 msgid "RP: Job Categories"
-msgstr ""
+msgstr "RP: Categorie Offerte"
 
 #: src/Integrations/Avada/Elements/JobCategories.php:50
 msgid "Show Count"
-msgstr ""
+msgstr "Mostra Conteggio"
 
 #: src/Integrations/Avada/Elements/JobCategories.php:51, src/Integrations/Elementor/Widgets/JobCategories.php:77
 msgid "Display the number of jobs per category."
-msgstr ""
+msgstr "Visualizza il numero di offerte per categoria."
 
 #: src/Integrations/Avada/Elements/JobCategories.php:61
 msgid "Hide Empty"
-msgstr ""
+msgstr "Nascondi Vuote"
 
 #: src/Integrations/Avada/Elements/JobCategories.php:62, src/Integrations/Elementor/Widgets/JobCategories.php:90
 msgid "Hide categories without jobs."
-msgstr ""
+msgstr "Nascondi categorie senza offerte."
 
 #: src/Integrations/Avada/Elements/JobCategories.php:72
 msgid "Order By"
-msgstr ""
+msgstr "Ordina Per"
 
 #: src/Integrations/Avada/Elements/JobCategories.php:73
 msgid "Sort order for categories."
-msgstr ""
+msgstr "Ordinamento per le categorie."
 
 #: src/Integrations/Avada/Elements/JobCount.php:26
 msgid "RP: Job Count"
-msgstr ""
+msgstr "RP: Contatore Offerte"
 
 #: src/Integrations/Avada/Elements/JobCount.php:37
 msgid "Optional: Count only jobs in this category."
-msgstr ""
+msgstr "Facoltativo: Conta solo le offerte in questa categoria."
 
 #: src/Integrations/Avada/Elements/JobCount.php:45
 msgid "Optional: Count only jobs at this location."
-msgstr ""
+msgstr "Facoltativo: Conta solo le offerte in questa località."
 
 #: src/Integrations/Avada/Elements/JobCount.php:52, src/Integrations/Elementor/Widgets/JobCount.php:81
 msgid "Format (Plural)"
-msgstr ""
+msgstr "Formato (Plurale)"
 
 #: src/Integrations/Avada/Elements/JobCount.php:53
 msgid "Empty = Default. Placeholder: {count}. Example: {count} open positions"
-msgstr ""
+msgstr "Vuoto = Predefinito. Segnaposto: {count}. Esempio: {count} posizioni aperte"
 
 #: src/Integrations/Avada/Elements/JobCount.php:59, src/Integrations/Elementor/Widgets/JobCount.php:92
 msgid "Format (Singular)"
-msgstr ""
+msgstr "Formato (Singolare)"
 
 #: src/Integrations/Avada/Elements/JobCount.php:60
 msgid "Empty = Default. Placeholder: {count}. Example: {count} open position"
-msgstr ""
+msgstr "Vuoto = Predefinito. Segnaposto: {count}. Esempio: {count} posizione aperta"
 
 #: src/Integrations/Avada/Elements/JobCount.php:66, src/Integrations/Elementor/Widgets/JobCount.php:101
 msgid "Format (Zero)"
-msgstr ""
+msgstr "Formato (Zero)"
 
 #: src/Integrations/Avada/Elements/JobCount.php:67
 msgid "Empty = \"No open positions\"."
-msgstr ""
+msgstr "Vuoto = \"Nessuna posizione aperta\"."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:26
 msgid "RP: Job List"
-msgstr ""
+msgstr "RP: Elenco Offerte"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:50, src/Integrations/Elementor/Widgets/JobGrid.php:65
 msgid "Number of Jobs"
-msgstr ""
+msgstr "Numero di Offerte"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:51
 msgid "How many jobs should be displayed?"
-msgstr ""
+msgstr "Quante offerte devono essere visualizzate?"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:84
 msgid "Filter by category."
-msgstr ""
+msgstr "Filtra per categoria."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:92
 msgid "Filter by location."
-msgstr ""
+msgstr "Filtra per località."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:100
 msgid "Filter by employment type."
-msgstr ""
+msgstr "Filtra per tipo di impiego."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:107, src/Integrations/Elementor/Widgets/JobGrid.php:133
 msgid "Featured Only"
-msgstr ""
+msgstr "Solo in Evidenza"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:108
 msgid "Show only featured jobs."
-msgstr ""
+msgstr "Mostra solo offerte in evidenza."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:128, src/Integrations/Elementor/Widgets/JobGrid.php:156
 msgid "Sort By"
-msgstr ""
+msgstr "Ordina Per"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:134, src/Integrations/Elementor/Widgets/JobGrid.php:162
 msgid "Random"
-msgstr ""
+msgstr "Casuale"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:139, src/Integrations/Elementor/Widgets/JobGrid.php:170
 msgid "Order"
-msgstr ""
+msgstr "Ordine"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:143, src/Integrations/Elementor/Widgets/JobGrid.php:174
 msgid "Descending"
-msgstr ""
+msgstr "Decrescente"
 
 #: src/Integrations/Avada/Elements/JobGrid.php:144, src/Integrations/Elementor/Widgets/JobGrid.php:175
 msgid "Ascending"
-msgstr ""
+msgstr "Crescente"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:26, src/Integrations/Elementor/Widgets/JobSearch.php:23
 msgid "RP: Job Search"
-msgstr ""
+msgstr "RP: Ricerca Offerte"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:36, src/Integrations/Elementor/Widgets/JobSearch.php:62
 msgid "Show search field"
-msgstr ""
+msgstr "Mostra campo ricerca"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:37
 msgid "Text search for job title and description."
-msgstr ""
+msgstr "Ricerca testuale per titolo e descrizione offerta."
 
 #: src/Integrations/Avada/Elements/JobSearch.php:47, src/Integrations/Elementor/Widgets/JobSearch.php:74
 msgid "Category filter"
-msgstr ""
+msgstr "Filtro categoria"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:48
 msgid "Dropdown to select category."
-msgstr ""
+msgstr "Menu a tendina per selezionare la categoria."
 
 #: src/Integrations/Avada/Elements/JobSearch.php:58, src/Integrations/Elementor/Widgets/JobSearch.php:86
 msgid "Location filter"
-msgstr ""
+msgstr "Filtro località"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:59
 msgid "Dropdown to select location."
-msgstr ""
+msgstr "Menu a tendina per selezionare la località."
 
 #: src/Integrations/Avada/Elements/JobSearch.php:69, src/Integrations/Elementor/Widgets/JobSearch.php:98
 msgid "Employment type filter"
-msgstr ""
+msgstr "Filtro tipo impiego"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:70
 msgid "Dropdown to select employment type."
-msgstr ""
+msgstr "Menu a tendina per selezionare il tipo di impiego."
 
 #: src/Integrations/Avada/Elements/JobSearch.php:80, src/Integrations/Elementor/Widgets/JobSearch.php:110
 msgid "Jobs per page"
-msgstr ""
+msgstr "Offerte per pagina"
 
 #: src/Integrations/Avada/Elements/JobSearch.php:81
 msgid "Number of jobs per page."
-msgstr ""
+msgstr "Numero di offerte per pagina."
 
 #: src/Integrations/Avada/Elements/JobSearch.php:91
 msgid "Number of columns for the results list."
-msgstr ""
+msgstr "Numero di colonne per l'elenco dei risultati."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:26, src/Integrations/Elementor/Widgets/LatestJobs.php:23
 msgid "RP: Latest Jobs"
-msgstr ""
+msgstr "RP: Ultime Offerte"
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:36
 msgid "Limit"
-msgstr ""
+msgstr "Limite"
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:37
 msgid "Number of latest jobs to display."
-msgstr ""
+msgstr "Numero di ultime offerte da visualizzare."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:47
 msgid "0 = List view without grid."
-msgstr ""
+msgstr "0 = Vista elenco senza griglia."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:51
 msgid "List"
-msgstr ""
+msgstr "Elenco"
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:60
 msgid "Optional: Heading above the latest jobs."
-msgstr ""
+msgstr "Facoltativo: Intestazione sopra le ultime offerte."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:67
 msgid "Optional: Show only jobs in this category."
-msgstr ""
+msgstr "Facoltativo: Mostra solo offerte in questa categoria."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:74
 msgid "Show Date"
-msgstr ""
+msgstr "Mostra Data"
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:75
 msgid "Display publication date."
-msgstr ""
+msgstr "Visualizza data di pubblicazione."
 
 #: src/Integrations/Avada/Elements/LatestJobs.php:86
 msgid "Display job description as short text."
-msgstr ""
+msgstr "Visualizza la descrizione dell'offerta come testo breve."
 
 #: src/Integrations/Elementor/Widgets/AiJobFinder.php:79
 msgid "Max. suggestions"
-msgstr ""
+msgstr "Max. suggerimenti"
 
 #: src/Integrations/Elementor/Widgets/AiJobMatch.php:62
 msgid "Empty = auto-detect."
-msgstr ""
+msgstr "Vuoto = rilevamento automatico."
 
 #: src/Integrations/Elementor/Widgets/AiJobMatch.php:86
 msgid "Outline"
-msgstr ""
+msgstr "Outline"
 
 #: src/Integrations/Elementor/Widgets/ApplicationForm.php:61
 msgid "Empty = auto-detect (on job listing pages)."
-msgstr ""
+msgstr "Vuoto = rilevamento automatico (sulle pagine elenco offerte)."
 
 #: src/Integrations/Elementor/Widgets/ApplicationForm.php:80
 msgid "Show Job Title"
-msgstr ""
+msgstr "Mostra Titolo Offerta"
 
 #: src/Integrations/Elementor/Widgets/ApplicationForm.php:92
 msgid "Show Progress Indicator"
-msgstr ""
+msgstr "Mostra Indicatore Avanzamento"
 
 #: src/Integrations/Elementor/Widgets/FeaturedJobs.php:96, src/Integrations/Elementor/Widgets/LatestJobs.php:106
 msgid "Show excerpt"
-msgstr ""
+msgstr "Mostra estratto"
 
 #: src/Integrations/Elementor/Widgets/JobCategories.php:76
 msgid "Show count"
-msgstr ""
+msgstr "Mostra conteggio"
 
 #: src/Integrations/Elementor/Widgets/JobCategories.php:89
 msgid "Hide empty"
-msgstr ""
+msgstr "Nascondi vuote"
 
 #: src/Integrations/Elementor/Widgets/JobCount.php:23
 msgid "RP: Job Counter"
-msgstr ""
+msgstr "RP: Contatore Offerte"
 
 #: src/Integrations/Elementor/Widgets/JobCount.php:82
 msgid "Use {count} as placeholder."
-msgstr ""
+msgstr "Usa {count} come segnaposto."
 
 #: src/Integrations/Elementor/Widgets/JobGrid.php:23
 msgid "RP: Job Listing"
-msgstr ""
+msgstr "RP: Elenco Offerte"
 
 #: src/Integrations/Elementor/Widgets/JobGrid.php:148
 msgid "Sorting"
-msgstr ""
+msgstr "Ordinamento"
 
 #: src/Integrations/Elementor/Widgets/LatestJobs.php:61
 msgid "Number of jobs"
-msgstr ""
+msgstr "Numero di offerte"
 
 #: src/Integrations/Elementor/Widgets/LatestJobs.php:73
 msgid "1 = List view"
-msgstr ""
+msgstr "1 = Vista elenco"

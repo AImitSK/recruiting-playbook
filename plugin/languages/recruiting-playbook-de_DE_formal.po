@@ -1,4 +1,4 @@
-# German translations for Recruiting Playbook
+# German (formal) translations for Recruiting Playbook
 # Copyright (C) 2026 Recruiting Playbook
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
@@ -7,7 +7,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/AImitSK/recruiting-playbook/issues\n"
 "Last-Translator: Recruiting Playbook Team <info@recruiting-playbook.de>\n"
 "Language-Team: German\n"
-"Language: de_DE\n"
+"Language: de_DE_formal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -43,7 +43,7 @@ msgstr "Bewerber"
 
 #: src/Admin/DashboardWidget.php:150, src/PostTypes/JobListing.php:28, src/PostTypes/JobListing.php:30, src/Services/EmailService.php:627, src/Services/EmailService.php:657, src/Services/ExportService.php:211, src/Services/ExportService.php:255, src/Services/ExportService.php:459, src/Admin/Pages/ApplicationDetail.php:313, src/Admin/Pages/ApplicationList.php:49, src/Integrations/Avada/Elements/AiJobMatch.php:40, src/Integrations/Avada/Elements/ApplicationForm.php:37, src/Integrations/Elementor/Widgets/AiJobMatch.php:61, src/Integrations/Elementor/Widgets/ApplicationForm.php:60
 msgid "Job"
-msgstr "Stelle"
+msgstr "Stellen Sie"
 
 #: src/Admin/DashboardWidget.php:151, src/Core/Plugin.php:1129, src/Services/ExportService.php:256, src/Services/ExportService.php:465, src/Admin/Pages/ApplicationDetail.php:90, src/Admin/Pages/ApplicationDetail.php:284, src/Admin/Pages/ApplicationDetail.php:816, src/Admin/Pages/ApplicationList.php:50, src/Admin/Pages/EmailSettingsPage.php:357
 msgid "Status"
@@ -120,7 +120,7 @@ msgstr "%1$d E-Mails erfolgreich gesendet, %2$d fehlgeschlagen."
 
 #: src/Admin/Menu.php:632, src/Admin/Pages/ApplicationDetail.php:908
 msgid "Please select a template."
-msgstr "Bitte wähle eine Vorlage aus."
+msgstr "Bitte wählen Sie eine Vorlage aus."
 
 #: src/Admin/Menu.php:696
 msgid "Send Bulk Email"
@@ -302,7 +302,7 @@ msgstr "Entfernens the branding notice from the footer von all emails."
 
 #: src/Admin/Settings.php:380
 msgid "Loading settings..."
-msgstr "Lade Einstellungen..."
+msgstr "Laden Sie Einstellungen..."
 
 #: src/Admin/Settings.php:449, src/Integrations/Elementor/Widgets/AiJobFinder.php:53, src/Integrations/Elementor/Widgets/AiJobMatch.php:53, src/Integrations/Elementor/Widgets/ApplicationForm.php:52, src/Integrations/Elementor/Widgets/FeaturedJobs.php:52, src/Integrations/Elementor/Widgets/JobCategories.php:52, src/Integrations/Elementor/Widgets/JobCount.php:53, src/Integrations/Elementor/Widgets/JobGrid.php:57, src/Integrations/Elementor/Widgets/JobSearch.php:54, src/Integrations/Elementor/Widgets/LatestJobs.php:53
 msgid "General"
@@ -679,7 +679,7 @@ msgstr "You do not have permission to edit Bewerbungen."
 
 #: src/Api/ApplicationController.php:606, src/Api/ExportController.php:76, src/Api/StatsController.php:96, src/Api/StatsController.php:216, src/Api/StatsController.php:249, src/Admin/Pages/ReportingPage.php:111
 msgid "Filter by job"
-msgstr "Filter by Stelle"
+msgstr "Filter by Stellen Sie"
 
 #: src/Api/ApplicationController.php:610, src/Api/EmailLogController.php:409, src/Api/JobController.php:835, src/Admin/Pages/ReportingPage.php:110
 msgid "Filter by status"
@@ -759,7 +759,7 @@ msgstr "Gelöscht"
 
 #: src/Api/ApplicationController.php:962
 msgid "Invalid security token. Please reload the page."
-msgstr "Ungültiges Sicherheits-Token. Bitte lade die Seite neu."
+msgstr "Ungültiges Sicherheits-Token. Bitte laden Sie die Seite neu."
 
 #: src/Api/ApplicationController.php:973
 msgid "Too many requests. Please wait a moment."
@@ -836,7 +836,7 @@ msgstr "%1$d E-Mails in Warteschlange, %2$d fehlgeschlagen."
 
 #: src/Api/EmailController.php:549, src/Api/EmailController.php:558
 msgid "You do not have permission to send emails."
-msgstr "Du hast keine Berechtigung, E-Mails zu senden."
+msgstr "Sie haben keine Berechtigung, E-Mails zu senden."
 
 #: src/Api/EmailController.php:567, src/Admin/Pages/ApplicationDetail.php:893
 msgid "Email sending requires Pro."
@@ -900,7 +900,7 @@ msgstr "E-Mail has been queued for sending again."
 
 #: src/Api/EmailLogController.php:315, src/Api/EmailLogController.php:324
 msgid "You do not have permission to view the email history."
-msgstr "Du hast keine Berechtigung, den E-Mail-Verlauf anzusehen."
+msgstr "Sie haben keine Berechtigung, den E-Mail-Verlauf anzusehen."
 
 #: src/Api/EmailLogController.php:333
 msgid "Email history requires Pro."
@@ -908,7 +908,7 @@ msgstr "E-Mail-Verlauf requires Pro."
 
 #: src/Api/EmailLogController.php:359, src/Api/EmailLogController.php:368
 msgid "You do not have permission to resend emails."
-msgstr "Du hast keine Berechtigung, E-Mails erneut zu senden."
+msgstr "Sie haben keine Berechtigung, E-Mails erneut zu senden."
 
 #: src/Api/EmailLogController.php:377
 msgid "Resending emails requires Pro."
@@ -1004,7 +1004,7 @@ msgstr "Vorlage has been set as default."
 
 #: src/Api/EmailTemplateController.php:536, src/Api/EmailTemplateController.php:545
 msgid "You do not have permission to view email templates."
-msgstr "Du hast keine Berechtigung, E-Mail-Templates anzusehen."
+msgstr "Sie haben keine Berechtigung, E-Mail-Templates anzusehen."
 
 #: src/Api/EmailTemplateController.php:554, src/Api/EmailTemplateController.php:596, src/Api/EmailTemplateController.php:638, src/Api/EmailTemplateController.php:680
 msgid "Email templates require Pro."
@@ -1012,15 +1012,15 @@ msgstr "E-Mail-Vorlagen require Pro."
 
 #: src/Api/EmailTemplateController.php:580, src/Api/EmailTemplateController.php:588
 msgid "You do not have permission to create email templates."
-msgstr "Du hast keine Berechtigung, E-Mail-Templates zu erstellen."
+msgstr "Sie haben keine Berechtigung, E-Mail-Templates zu erstellen."
 
 #: src/Api/EmailTemplateController.php:622, src/Api/EmailTemplateController.php:630
 msgid "You do not have permission to edit email templates."
-msgstr "Du hast keine Berechtigung, E-Mail-Templates zu bearbeiten."
+msgstr "Sie haben keine Berechtigung, E-Mail-Templates zu bearbeiten."
 
 #: src/Api/EmailTemplateController.php:664, src/Api/EmailTemplateController.php:672
 msgid "You do not have permission to delete email templates."
-msgstr "Du hast keine Berechtigung, E-Mail-Templates zu löschen."
+msgstr "Sie haben keine Berechtigung, E-Mail-Templates zu löschen."
 
 #: src/Api/EmailTemplateController.php:699
 msgid "Filter by category"
@@ -1088,7 +1088,7 @@ msgstr "Zeit period"
 
 #: src/Api/ExportController.php:189, src/Api/SignatureController.php:510, src/Api/SignatureController.php:530, src/Api/SignatureController.php:576, src/Api/SignatureController.php:597, src/Api/SignatureController.php:651, src/Api/StatsController.php:455, src/Api/SystemStatusController.php:147, src/Api/SystemStatusController.php:174
 msgid "You must be logged in."
-msgstr "Du musst angemeldet sein."
+msgstr "Sie müssen angemeldet sein."
 
 #: src/Api/ExportController.php:203
 msgid "No permission for export."
@@ -1108,15 +1108,15 @@ msgstr "Reihenfolgeed list von field IDs"
 
 #: src/Api/FieldDefinitionController.php:212
 msgid "List of field IDs for this job"
-msgstr "List von field IDs for this Stelle"
+msgstr "List von field IDs for this Stellen Sie"
 
 #: src/Api/FieldDefinitionController.php:238
 msgid "You do not have permission to manage form fields."
-msgstr "Du hast keine Berechtigung, Formularfelder zu verwalten."
+msgstr "Sie haben keine Berechtigung, Formularfelder zu verwalten."
 
 #: src/Api/FieldDefinitionController.php:271
 msgid "You do not have permission to create form fields."
-msgstr "Du hast keine Berechtigung, Formularfelder zu erstellen."
+msgstr "Sie haben keine Berechtigung, Formularfelder zu erstellen."
 
 #: src/Api/FieldDefinitionController.php:396, src/Services/FieldDefinitionService.php:289, src/Services/FieldDefinitionService.php:379
 msgid "Field not found."
@@ -1196,7 +1196,7 @@ msgstr "Verknüpfte Template-ID"
 
 #: src/Api/FieldDefinitionController.php:661
 msgid "Job-specific field for this job ID"
-msgstr "Stelle-specific field for this Stelle ID"
+msgstr "Stellen Sie-specific field for this Stelle ID"
 
 #: src/Api/FieldDefinitionController.php:677, src/Api/FormTemplateController.php:523
 msgid "Custom Fields requires a Pro license."
@@ -1212,11 +1212,11 @@ msgstr "Formular settings"
 
 #: src/Api/FormConfigController.php:170
 msgid "You do not have permission to use the form builder."
-msgstr "Du hast keine Berechtigung, den Form Builder zu verwenden."
+msgstr "Sie haben keine Berechtigung, den Form Builder zu verwenden."
 
 #: src/Api/FormConfigController.php:194
 msgid "You do not have permission to edit the form configuration."
-msgstr "Du hast keine Berechtigung, die Formular-Konfiguration zu bearbeiten."
+msgstr "Sie haben keine Berechtigung, die Formular-Konfiguration zu bearbeiten."
 
 #: src/Api/FormConfigController.php:247
 msgid "Draft saved."
@@ -1252,11 +1252,11 @@ msgstr "Name für das neue Template"
 
 #: src/Api/FormTemplateController.php:202
 msgid "You do not have permission to manage form templates."
-msgstr "Du hast keine Berechtigung, Formular-Templates zu verwalten."
+msgstr "Sie haben keine Berechtigung, Formular-Templates zu verwalten."
 
 #: src/Api/FormTemplateController.php:235
 msgid "You do not have permission to create form templates."
-msgstr "Du hast keine Berechtigung, Formular-Templates zu erstellen."
+msgstr "Sie haben keine Berechtigung, Formular-Templates zu erstellen."
 
 #: src/Api/FormTemplateController.php:293
 msgid "No default template defined."
@@ -1354,7 +1354,7 @@ msgstr "Stelle nicht gefunden."
 
 #: src/Api/JobController.php:360
 msgid "You do not have permission to view this job."
-msgstr "You do not have permission to view this Stelle."
+msgstr "You do not have permission to view this Stellen Sie."
 
 #: src/Api/JobController.php:386
 msgid "The title is a required field."
@@ -1474,7 +1474,7 @@ msgstr "Lebenslauf matching requires the AI addon."
 
 #: src/Api/MatchController.php:135
 msgid "Please upload a file."
-msgstr "Bitte lade eine Datei hoch."
+msgstr "Bitte laden Sie eine Datei hoch."
 
 #: src/Api/MatchController.php:146
 msgid "Job ID required."
@@ -1510,7 +1510,7 @@ msgstr "API-Fehler"
 
 #: src/Api/MatchController.php:499, src/Core/Plugin.php:957, src/Frontend/Shortcodes.php:996, src/Frontend/Shortcodes.php:1066
 msgid "Please upload a PDF, JPG, PNG or DOCX file."
-msgstr "Bitte lade eine PDF-, JPG-, PNG- oder DOCX-Datei hoch."
+msgstr "Bitte laden Sie eine PDF-, JPG-, PNG- oder DOCX-Datei hoch."
 
 #: src/Api/MatchController.php:509, src/Frontend/Shortcodes.php:997, src/Frontend/Shortcodes.php:1067
 msgid "The file is too large. Maximum: 10 MB."
@@ -1578,7 +1578,7 @@ msgstr "Rechte-Konfiguration"
 
 #: src/Api/RoleController.php:104
 msgid "You do not have permission to manage roles."
-msgstr "Du hast keine Berechtigung, Rollen zu verwalten."
+msgstr "Sie haben keine Berechtigung, Rollen zu verwalten."
 
 #: src/Api/RoleController.php:127
 msgid "Only administrators can change role permissions."
@@ -1618,11 +1618,11 @@ msgstr "Eine gültige Kontakt-E-Mail ist erforderlich."
 
 #: src/Api/SettingsController.php:406
 msgid "You do not have permission to read company data."
-msgstr "Du hast keine Berechtigung, Firmendaten zu lesen."
+msgstr "Sie haben keine Berechtigung, Firmendaten zu lesen."
 
 #: src/Api/SettingsController.php:425
 msgid "You do not have permission to update company data."
-msgstr "Du hast keine Berechtigung, Firmendaten zu aktualisieren."
+msgstr "Sie haben keine Berechtigung, Firmendaten zu aktualisieren."
 
 #: src/Api/SettingsController.php:490
 msgid "Company name"
@@ -1754,7 +1754,7 @@ msgstr "Firmensignatur created."
 
 #: src/Api/SignatureController.php:559
 msgid "You do not have permission to view this signature."
-msgstr "Du hast keine Berechtigung, diese Signatur anzusehen."
+msgstr "Sie haben keine Berechtigung, diese Signatur anzusehen."
 
 #: src/Api/SignatureController.php:614
 msgid "Only administrators can edit company signatures."
@@ -1762,7 +1762,7 @@ msgstr "Nur Administratoren können Firmen-Signaturen bearbeiten."
 
 #: src/Api/SignatureController.php:633
 msgid "You do not have permission to edit this signature."
-msgstr "Du hast keine Berechtigung, diese Signatur zu bearbeiten."
+msgstr "Sie haben keine Berechtigung, diese Signatur zu bearbeiten."
 
 #: src/Api/SignatureController.php:668
 msgid "Only administrators can delete company signatures."
@@ -1770,7 +1770,7 @@ msgstr "Nur Administratoren können Firmen-Signaturen löschen."
 
 #: src/Api/SignatureController.php:687
 msgid "You do not have permission to delete this signature."
-msgstr "Du hast keine Berechtigung, diese Signatur zu löschen."
+msgstr "Sie haben keine Berechtigung, diese Signatur zu löschen."
 
 #: src/Api/SignatureController.php:702
 msgid "Only administrators have access to this function."
@@ -1913,7 +1913,7 @@ msgstr "Webhooks benötigen Pro."
 
 #: src/Api/WebhookController.php:188
 msgid "You do not have permission to manage webhooks."
-msgstr "Du hast keine Berechtigung, Webhooks zu verwalten."
+msgstr "Sie haben keine Berechtigung, Webhooks zu verwalten."
 
 #: src/Api/WebhookController.php:276
 msgid "Webhook could not be created."
@@ -2055,7 +2055,7 @@ msgstr "Dieses Feld ist erforderlich"
 
 #: src/Core/Plugin.php:907, src/Frontend/Shortcodes.php:1217, src/Frontend/Shortcodes.php:1310, src/Services/FormRenderService.php:974
 msgid "Please enter a valid email address"
-msgstr "Bitte gib eine gültige E-Mail-Adresse ein"
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
 
 #: src/Core/Plugin.php:908
 msgid "File is too large (max. 10 MB)"
@@ -2171,7 +2171,7 @@ msgstr "Vorlage zurückgesetzt."
 
 #: src/Core/Plugin.php:1150, src/Admin/Pages/FormBuilderPage.php:258
 msgid "Do you really want to delete this template?"
-msgstr "Möchtest du diese Vorlage wirklich löschen?"
+msgstr "Möchten Sie diese Vorlage wirklich löschen?"
 
 #: src/Core/Plugin.php:1151
 msgid "No templates found."
@@ -2227,7 +2227,7 @@ msgstr "Nein company signature available."
 
 #: src/Core/Plugin.php:1172
 msgid "Do you really want to delete this signature?"
-msgstr "Möchtest du diese Signatur wirklich löschen?"
+msgstr "Möchten Sie diese Signatur wirklich löschen?"
 
 #: src/Core/Plugin.php:1173
 msgid "Signature Content"
@@ -2235,7 +2235,7 @@ msgstr "Signaturinhalt"
 
 #: src/Core/Plugin.php:1174
 msgid "Design your email signature with your contact details."
-msgstr "Gestalte deine E-Mail-Signatur mit deinen Kontaktdaten."
+msgstr "Gestalte Ihre E-Mail-Signatur mit Ihren Kontaktdaten."
 
 #: src/Core/Plugin.php:1175
 msgid "The company signature is used when a user does not have their own signature."
@@ -2247,7 +2247,7 @@ msgstr "Erstellen your first signature to personalize emails."
 
 #: src/Core/Plugin.php:1177
 msgid "This is how your signature will appear in emails:"
-msgstr "So erscheint deine Signatur in E-Mails:"
+msgstr "So erscheint Ihre Signatur in E-Mails:"
 
 #: src/Core/Plugin.php:1182
 msgid "Status Change"
@@ -2391,11 +2391,11 @@ msgstr "PDF, Word - max. 10 MB pro Datei"
 
 #: src/Database/Migrator.php:391, src/Database/Migrator.php:820, src/Services/FormRenderService.php:410
 msgid "Your Information at a Glance"
-msgstr "Deine Informationen im Überblick"
+msgstr "Ihre Informationen im Überblick"
 
 #: src/Database/Migrator.php:393, src/Database/Migrator.php:822, src/Services/FormConfigService.php:580, src/Services/FormConfigService.php:652, src/Services/FormConfigService.php:748
 msgid "Please review your information before submitting."
-msgstr "Bitte überprüfe deine Angaben vor dem Absenden."
+msgstr "Bitte überprüfe Ihre Angaben vor dem Absenden."
 
 #: src/Database/Migrator.php:415, src/Database/Migrator.php:831
 msgid "I have read the {datenschutz_link} and consent to the processing of my data."
@@ -2439,11 +2439,11 @@ msgstr "+49 123 456789"
 
 #: src/Database/Migrator.php:666, src/Services/FormConfigService.php:548
 msgid "Why do you want to work with us?"
-msgstr "Warum möchtest du mit uns arbeiten?"
+msgstr "Warum möchten Sie mit uns arbeiten?"
 
 #: src/Database/Migrator.php:667
 msgid "Optional: Tell us why you are interested in this position."
-msgstr "Optional: Sag uns, warum du dich für diese Stelle interessierst."
+msgstr "Optional: Sag uns, warum Sie Sie für diese Stelle interessierst."
 
 #: src/Database/Migrator.php:751, src/Frontend/Shortcodes.php:449, src/Services/FormConfigService.php:484
 msgid "Personal Information"
@@ -2511,7 +2511,7 @@ msgstr "Vertragsunterlagen"
 
 #: src/Database/Migrator.php:949, src/Services/EmailTemplateService.php:689
 msgid "Your contract documents for {stelle}"
-msgstr "Deine Vertragsunterlagen für {stelle}"
+msgstr "Ihre Vertragsunterlagen für {stelle}"
 
 #: src/Database/Migrator.php:956
 msgid "Matching Job Found"
@@ -2565,12 +2565,12 @@ msgstr "%s enthält einen ungültigen Wert."
 #. translators: 1: Field label, 2: Minimum count
 #: src/FieldTypes/CheckboxField.php:155
 msgid "Please select at least %2$d options for %1$s."
-msgstr "Bitte wähle mindestens %2$d Optionen für %1$s."
+msgstr "Bitte wählen Sie mindestens %2$d Optionen für %1$s."
 
 #. translators: 1: Field label, 2: Maximum count
 #: src/FieldTypes/CheckboxField.php:168
 msgid "Please select no more than %2$d options for %1$s."
-msgstr "Bitte wähle nicht mehr als %2$d Optionen für %1$s."
+msgstr "Bitte wählen Sie nicht mehr als %2$d Optionen für %1$s."
 
 #: src/FieldTypes/CheckboxField.php:212, src/Models/FieldValue.php:289, src/Integrations/Avada/Elements/ApplicationForm.php:57, src/Integrations/Avada/Elements/ApplicationForm.php:68, src/Integrations/Avada/Elements/FeaturedJobs.php:71, src/Integrations/Avada/Elements/JobCategories.php:55, src/Integrations/Avada/Elements/JobCategories.php:66, src/Integrations/Avada/Elements/JobGrid.php:112, src/Integrations/Avada/Elements/JobSearch.php:41, src/Integrations/Avada/Elements/JobSearch.php:52, src/Integrations/Avada/Elements/JobSearch.php:63, src/Integrations/Avada/Elements/JobSearch.php:74, src/Integrations/Avada/Elements/LatestJobs.php:79, src/Integrations/Avada/Elements/LatestJobs.php:90, src/Integrations/Elementor/Widgets/ApplicationForm.php:82, src/Integrations/Elementor/Widgets/ApplicationForm.php:94, src/Integrations/Elementor/Widgets/FeaturedJobs.php:98, src/Integrations/Elementor/Widgets/JobCategories.php:79, src/Integrations/Elementor/Widgets/JobCategories.php:92, src/Integrations/Elementor/Widgets/JobGrid.php:135, src/Integrations/Elementor/Widgets/JobSearch.php:64, src/Integrations/Elementor/Widgets/JobSearch.php:76, src/Integrations/Elementor/Widgets/JobSearch.php:88, src/Integrations/Elementor/Widgets/JobSearch.php:100, src/Integrations/Elementor/Widgets/LatestJobs.php:108
 msgid "Yes"
@@ -2952,7 +2952,7 @@ msgstr "Datumnschutz & Submit"
 
 #: src/Frontend/Shortcodes.php:606, src/Services/FormRenderService.php:561
 msgid "Your Information"
-msgstr "Deine Informationen"
+msgstr "Ihre Informationen"
 
 #: src/Frontend/Shortcodes.php:609
 msgid "Name:"
@@ -2985,7 +2985,7 @@ msgstr "AI Stelle Match"
 
 #: src/Frontend/Shortcodes.php:741, src/Frontend/Shortcodes.php:787, src/Blocks/Blocks/ai-job-match/render.php:17
 msgid "Am I a good fit for this job?"
-msgstr "Am I a good fit for this Stelle?"
+msgstr "Am I a good fit for this Stellen Sie?"
 
 #: src/Frontend/Shortcodes.php:762
 msgid "Note: No job specified. Please set the job_id attribute or use on a job listing page."
@@ -2997,7 +2997,7 @@ msgstr "AI Stelle Finder"
 
 #: src/Frontend/Shortcodes.php:910
 msgid "Find Your Dream Job"
-msgstr "Find Your Dream Stelle"
+msgstr "Find Your Dream Stellen Sie"
 
 #: src/Frontend/Shortcodes.php:911
 msgid "Upload your resume and discover matching positions."
@@ -3033,7 +3033,7 @@ msgstr "Bedingte Übereinstimmung"
 
 #: src/Frontend/Shortcodes.php:1001
 msgid "View job"
-msgstr "Ansehen Stelle"
+msgstr "Ansehen Stellen Sie"
 
 #: src/Frontend/Shortcodes.php:1002, src/Blocks/Blocks/application-form/render.php:17
 msgid "Apply now"
@@ -3070,19 +3070,19 @@ msgstr "Upgrade-Info"
 
 #: src/Frontend/Shortcodes.php:1218
 msgid "Please enter a valid URL"
-msgstr "Bitte gib eine gültige URL ein"
+msgstr "Bitte geben Sie eine gültige URL ein"
 
 #: src/Frontend/Shortcodes.php:1219, src/Services/FormRenderService.php:975
 msgid "Please enter a valid phone number"
-msgstr "Bitte gib eine gültige Telefonnummer ein"
+msgstr "Bitte geben Sie eine gültige Telefonnummer ein"
 
 #: src/Frontend/Shortcodes.php:1220
 msgid "Please enter a valid number"
-msgstr "Bitte gib eine gültige Zahl ein"
+msgstr "Bitte geben Sie eine gültige Zahl ein"
 
 #: src/Frontend/Shortcodes.php:1221
 msgid "Please enter a valid date"
-msgstr "Bitte gib ein gültiges Datum ein"
+msgstr "Bitte geben Sie ein gültiges Datum ein"
 
 #: src/Frontend/Shortcodes.php:1222
 msgid "At least {min} characters required"
@@ -3118,7 +3118,7 @@ msgstr "Dateityp nicht erlaubt"
 
 #: src/Frontend/Shortcodes.php:1230
 msgid "Please upload a file"
-msgstr "Bitte lade eine Datei hoch"
+msgstr "Bitte laden Sie eine Datei hoch"
 
 #: src/Frontend/Shortcodes.php:1231
 msgid "Maximum {max} files allowed"
@@ -3126,11 +3126,11 @@ msgstr "Maximal {max} Dateien erlaubt"
 
 #: src/Frontend/Shortcodes.php:1232
 msgid "Please select at least {min} options"
-msgstr "Bitte wähle mindestens {min} Optionen aus"
+msgstr "Bitte wählen Sie mindestens {min} Optionen aus"
 
 #: src/Frontend/Shortcodes.php:1233
 msgid "Please select at most {max} options"
-msgstr "Bitte wähle höchstens {max} Optionen aus"
+msgstr "Bitte wählen Sie höchstens {max} Optionen aus"
 
 #: src/Frontend/Shortcodes.php:1234
 msgid "The format is invalid"
@@ -3185,7 +3185,7 @@ msgstr "Neue Stelle hinzufügen"
 
 #: src/PostTypes/JobListing.php:33
 msgid "New Job"
-msgstr "Neue Stelle"
+msgstr "Neue Stellen Sie"
 
 #: src/PostTypes/JobListing.php:34
 msgid "Edit Job"
@@ -3205,7 +3205,7 @@ msgstr "Stellen suchen"
 
 #: src/PostTypes/JobListing.php:38
 msgid "Parent Job:"
-msgstr "Parent Stelle:"
+msgstr "Parent Stellen Sie:"
 
 #: src/PostTypes/JobListing.php:39
 msgid "No jobs found."
@@ -3237,11 +3237,11 @@ msgstr "Stellen-Archive"
 
 #: src/PostTypes/JobListing.php:46
 msgid "Insert into job"
-msgstr "Insert into Stelle"
+msgstr "Insert into Stellen Sie"
 
 #: src/PostTypes/JobListing.php:47
 msgid "Uploaded to this job"
-msgstr "Hochladened to this Stelle"
+msgstr "Hochladened to this Stellen Sie"
 
 #: src/PostTypes/JobListing.php:48
 msgid "Filter jobs list"
@@ -3381,7 +3381,7 @@ msgstr "Nginx-Server erkannt: Bitte stelle sicher, dass die Nginx-Konfiguration 
 
 #: src/Services/DocumentService.php:178
 msgid "Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt)."
-msgstr "Nginx-Server erkannt: Bitte konfiguriere den Dokumentenschutz manuell (siehe NGINX_SECURITY.txt)."
+msgstr "Nginx-Server erkannt: Bitte konfigurieren Sie den Dokumentenschutz manuell (siehe NGINX_SECURITY.txt)."
 
 #. translators: %s: max file size
 #: src/Services/DocumentService.php:298
@@ -3502,7 +3502,7 @@ msgstr "We will get back to you as soon as we have reviewed your Bewerbung."
 
 #: src/Services/EmailService.php:660
 msgid "If you have any questions, please feel free to contact us."
-msgstr "Bei Fragen stehen wir dir gerne zur Verfügung."
+msgstr "Bei Fragen stehen wir Ihnen gerne zur Verfügung."
 
 #: src/Services/EmailService.php:678
 msgid "Your Application"
@@ -3519,7 +3519,7 @@ msgstr "After careful consideration, we regret to inform you that we have decide
 
 #: src/Services/EmailService.php:686
 msgid "We wish you all the best and much success in your future career."
-msgstr "Wir wünschen dir alles Gute und viel Erfolg für deinen weiteren Karriereweg."
+msgstr "Wir wünschen Ihnen alles Gute und viel Erfolg für Ihren weiteren Karriereweg."
 
 #. translators: %s: Link to Recruiting Playbook website
 #: src/Services/EmailService.php:704, src/Services/EmailTemplateService.php:446
@@ -3879,7 +3879,7 @@ msgstr "Ein Vorlage mit diesem Namen existiert bereits."
 #. translators: %d: Number of jobs using the template
 #: src/Services/FormTemplateService.php:217
 msgid "Template cannot be deleted. It is used by %d job(s)."
-msgstr "Vorlage cannot be deleted. It is used by %d Stelle(s)."
+msgstr "Vorlage cannot be deleted. It is used by %d Stellen Sie(s)."
 
 #: src/Services/FormTemplateService.php:230
 msgid "The default template cannot be deleted. Set another template as default first."
@@ -3944,11 +3944,11 @@ msgstr "Benutzer nicht gefunden."
 
 #: src/Services/JobAssignmentService.php:63
 msgid "Invalid job."
-msgstr "Invalid Stelle."
+msgstr "Invalid Stellen Sie."
 
 #: src/Services/JobAssignmentService.php:72
 msgid "User is already assigned to this job."
-msgstr "User is already assigned to this Stelle."
+msgstr "User is already assigned to this Stellen Sie."
 
 #: src/Services/JobAssignmentService.php:86
 msgid "Assignment could not be created."
@@ -3961,11 +3961,11 @@ msgstr "Zuweisung nicht gefunden."
 #. translators: %s: user display name
 #: src/Services/JobAssignmentService.php:282
 msgid "%s assigned to job"
-msgstr "%s assigned to Stelle"
+msgstr "%s assigned to Stellen Sie"
 
 #: src/Services/JobAssignmentService.php:283
 msgid "%s removed from job"
-msgstr "%s removed from Stelle"
+msgstr "%s removed from Stellen Sie"
 
 #: src/Services/JobAssignmentService.php:284, src/Services/TalentPoolService.php:276, src/Services/TimeToHireService.php:244, src/Admin/Pages/ApplicationsPage.php:240
 msgid "Unknown"
@@ -4077,15 +4077,15 @@ msgstr "Stellentitel"
 
 #: src/Services/PlaceholderService.php:427
 msgid "Title of the job"
-msgstr "Titel von the Stelle"
+msgstr "Titel von the Stellen Sie"
 
 #: src/Services/PlaceholderService.php:430
 msgid "Job Location"
-msgstr "Standort der Stelle"
+msgstr "Standort der Stellen Sie"
 
 #: src/Services/PlaceholderService.php:432
 msgid "Location of the job"
-msgstr "Standort von the Stelle"
+msgstr "Standort von the Stellen Sie"
 
 #: src/Services/PlaceholderService.php:435, src/Taxonomies/EmploymentType.php:30, src/Admin/SetupWizard/SetupWizard.php:569, src/Frontend/Shortcodes/JobSearchShortcode.php:232, src/Integrations/Avada/Elements/JobGrid.php:99, src/Integrations/Elementor/Widgets/JobGrid.php:123
 msgid "Employment Type"
@@ -4158,11 +4158,11 @@ msgstr "Keine Signatur"
 
 #: src/Services/SpamProtection.php:89
 msgid "Your request was detected as potential spam."
-msgstr "Deine Anfrage wurde als möglicher Spam erkannt."
+msgstr "Ihre Anfrage wurde als möglicher Spam erkannt."
 
 #: src/Services/SpamProtection.php:120
 msgid "Please take a bit more time to fill out the form."
-msgstr "Bitte nimm dir etwas mehr Zeit zum Ausfüllen des Formulars."
+msgstr "Bitte nimm Ihnen etwas mehr Zeit zum Ausfüllen des Formulars."
 
 #: src/Services/SpamProtection.php:149
 msgid "You have reached the maximum number of applications. Please try again later."
@@ -4229,7 +4229,7 @@ msgstr "%d fehlgeschlagene Aktionen"
 
 #: src/Services/SystemStatusService.php:407
 msgid "Please deactivate and reactivate the plugin to create missing tables."
-msgstr "Bitte deaktiviere und reaktiviere das Plugin, um fehlende Tabellen zu erstellen."
+msgstr "Bitte deaktivieren Sie und reaktiviere das Plugin, um fehlende Tabellen zu erstellen."
 
 #: src/Services/SystemStatusService.php:416
 msgid "Please set write permissions for the upload directory."
@@ -4287,7 +4287,7 @@ msgid ""
 msgstr ""
 "Der Talentpool-Eintrag für %1$s läuft am %2$s ab.\n"
 "\n"
-"Bitte prüfe, ob du den Eintrag verlängern möchtest.\n"
+"Bitte prüfen Sie, ob Sie den Eintrag verlängern möchten.\n"
 "\n"
 "Grundinformationen:\n"
 "- E-Mail: %3$s\n"
@@ -4435,11 +4435,11 @@ msgstr "Go to Formularular-Builder"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:134
 msgid "Customize fields for this job"
-msgstr "Benutzerdefiniertize fields for this Stelle"
+msgstr "Benutzerdefiniertize fields for this Stellen Sie"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:140
 msgid "Enabled fields will be displayed in the application form for this job."
-msgstr "Aktiviert fields will be displayed in the Bewerbung form for this Stelle."
+msgstr "Aktiviert fields will be displayed in the Bewerbung form for this Stellen Sie."
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:165
 msgid "Edit Fields"
@@ -4468,7 +4468,7 @@ msgstr "Zusätzliche Details"
 
 #: src/Admin/Pages/ApplicationDetail.php:84
 msgid "Loading application..."
-msgstr "Lade Bewerbung..."
+msgstr "Laden Sie Bewerbung..."
 
 #: src/Admin/Pages/ApplicationDetail.php:85
 msgid "Error loading application"
@@ -5136,7 +5136,7 @@ msgstr "Wirklich löschen?"
 
 #: src/Admin/Pages/FormBuilderPage.php:257
 msgid "Do you really want to delete this field? Existing data will be preserved."
-msgstr "Möchtest du dieses Feld wirklich löschen? Vorhandene Daten bleiben erhalten."
+msgstr "Möchten Sie dieses Feld wirklich löschen? Vorhandene Daten bleiben erhalten."
 
 #: src/Admin/Pages/FormBuilderPage.php:262
 msgid "Saved"
@@ -5228,7 +5228,7 @@ msgstr "Der Feldschlüssel wird für die API und den Export verwendet"
 
 #: src/Admin/Pages/FormBuilderPage.php:293
 msgid "Conditional display allows you to show/hide fields based on other field values"
-msgstr "Bedingte Anzeige ermöglicht es dir, Felder basierend auf anderen Feldwerten ein-/auszublenden"
+msgstr "Bedingte Anzeige ermöglicht es Ihnen, Felder basierend auf anderen Feldwerten ein-/auszublenden"
 
 #: src/Admin/Pages/FormBuilderPage.php:294
 msgid "Templates enable different form configurations for different jobs"
@@ -5236,7 +5236,7 @@ msgstr "Vorlagen enable different form configurations for different Stellen"
 
 #: src/Admin/Pages/KanbanBoard.php:29
 msgid "You do not have permission to view this page."
-msgstr "Du hast keine Berechtigung, diese Seite anzuzeigen."
+msgstr "Sie haben keine Berechtigung, diese Seite anzuzeigen."
 
 #: src/Admin/Pages/KanbanBoard.php:30
 msgid "Access denied"
@@ -5596,7 +5596,7 @@ msgstr "Firmendetails"
 
 #: src/Admin/SetupWizard/SetupWizard.php:57
 msgid "First Job"
-msgstr "Erste Stelle"
+msgstr "Erste Stellen Sie"
 
 #: src/Admin/SetupWizard/SetupWizard.php:62
 msgid "Complete"
@@ -5628,7 +5628,7 @@ msgstr "Willkommen to Recruiting Playbook!"
 
 #: src/Admin/SetupWizard/SetupWizard.php:237
 msgid "This wizard will help you set up the plugin in just a few minutes."
-msgstr "Dieser Assistent hilft dir, das Plugin in wenigen Minuten einzurichten."
+msgstr "Dieser Assistent hilft Ihnen, das Plugin in wenigen Minuten einzurichten."
 
 #: src/Admin/SetupWizard/SetupWizard.php:243
 msgid "Manage job listings"
@@ -5700,7 +5700,7 @@ msgstr "E-Mail-Einstellungen"
 
 #: src/Admin/SetupWizard/SetupWizard.php:426
 msgid "Configure how email notifications will be sent."
-msgstr "Konfiguriere, wie E-Mail-Benachrichtigungen versendet werden."
+msgstr "Konfigurieren Sie, wie E-Mail-Benachrichtigungen versendet werden."
 
 #: src/Admin/SetupWizard/SetupWizard.php:437
 msgid "No SMTP configured"
@@ -5728,7 +5728,7 @@ msgstr "Test senden"
 
 #: src/Admin/SetupWizard/SetupWizard.php:536, src/Admin/SetupWizard/SetupWizard.php:683
 msgid "Create first job"
-msgstr "Erstellen first Stelle"
+msgstr "Erstellen first Stellen Sie"
 
 #: src/Admin/SetupWizard/SetupWizard.php:538
 msgid "Create your first job listing now or skip this step."
@@ -5768,7 +5768,7 @@ msgstr "Weiter steps:"
 
 #: src/Admin/SetupWizard/SetupWizard.php:677
 msgid "Complete your first job"
-msgstr "Abgeschlossen your first Stelle"
+msgstr "Abgeschlossen your first Stellen Sie"
 
 #: src/Admin/SetupWizard/SetupWizard.php:689
 msgid "Configure additional settings"
@@ -5780,7 +5780,7 @@ msgstr "Zum Dashboard"
 
 #: src/Admin/SetupWizard/SetupWizard.php:701
 msgid "Shortcodes for your pages:"
-msgstr "Shortcodes für deine Seiten:"
+msgstr "Shortcodes für Ihre Seiten:"
 
 #: src/Admin/SetupWizard/SetupWizard.php:705
 msgid "Displays all job listings"
@@ -5813,7 +5813,7 @@ msgid ""
 msgstr ""
 "Dies ist eine Test-E-Mail von Recruiting Playbook.\n"
 "\n"
-"Wenn du diese E-Mail erhältst, funktioniert der E-Mail-Versand korrekt.\n"
+"Wenn Sie diese E-Mail erhältst, funktioniert der E-Mail-Versand korrekt.\n"
 "\n"
 "Gesendet am: %s"
 
@@ -5903,7 +5903,7 @@ msgstr "Discover Career Felder"
 
 #: src/Blocks/Patterns/PatternLoader.php:220
 msgid "Find positions in your field."
-msgstr "Finde Stellen in deinem Bereich."
+msgstr "Finde Stellen in Ihrem Bereich."
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:58, src/Blocks/Blocks/job-count/render.php:19
 msgid "{count} open positions"
@@ -5911,7 +5911,7 @@ msgstr "{count} offene Stellen"
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:61, src/Blocks/Blocks/job-count/render.php:20
 msgid "{count} open position"
-msgstr "{count} offene Stelle"
+msgstr "{count} offene Stellen Sie"
 
 #: src/Frontend/Shortcodes/JobCountShortcode.php:64, src/Blocks/Blocks/job-count/render.php:21
 msgid "No open positions"
@@ -5958,7 +5958,7 @@ msgstr "Recruiting Playbook Einrichtung"
 
 #: src/Blocks/Blocks/ai-job-finder/render.php:16
 msgid "Find your dream job"
-msgstr "Find your dream Stelle"
+msgstr "Find your dream Stellen Sie"
 
 #: src/Blocks/Blocks/ai-job-finder/render.php:17
 msgid "Upload your resume and discover matching jobs."
@@ -6342,7 +6342,7 @@ msgstr "RP: Stelle Counter"
 
 #: src/Integrations/Elementor/Widgets/JobCount.php:82
 msgid "Use {count} as placeholder."
-msgstr "Verwende {count} als Platzhalter."
+msgstr "Verwenden Sie {count} als Platzhalter."
 
 #: src/Integrations/Elementor/Widgets/JobGrid.php:23
 msgid "RP: Job Listing"

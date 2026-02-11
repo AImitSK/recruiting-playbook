@@ -1,4 +1,4 @@
-# German translations for Recruiting Playbook
+# Swiss German translations for Recruiting Playbook
 # Copyright (C) 2026 Recruiting Playbook
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: Recruiting Playbook 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/AImitSK/recruiting-playbook/issues\n"
 "Last-Translator: Recruiting Playbook Team <info@recruiting-playbook.de>\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
+"Language-Team: German (Switzerland)\n"
+"Language: de_CH\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -210,7 +210,7 @@ msgstr "Wird in Schema, E-Mails und auf der Karriereseite angezeigt."
 
 #: src/Admin/Settings.php:110, src/Admin/Settings.php:474
 msgid "Street & Number"
-msgstr "Straße & Zahl"
+msgstr "Strasse & Zahl"
 
 #: src/Admin/Settings.php:122
 msgid "Postal Code & City"
@@ -1264,7 +1264,7 @@ msgstr "Nein default template defined."
 
 #: src/Api/FormTemplateController.php:468
 msgid "Include fields in response"
-msgstr "Felder in Antwort einschließen"
+msgstr "Felder in Antwort einschliessen"
 
 #: src/Api/FormTemplateController.php:497, src/Admin/Pages/FormBuilderPage.php:163, src/Admin/Pages/FormBuilderPage.php:233
 msgid "Description"
@@ -1514,7 +1514,7 @@ msgstr "Bitte lade eine PDF-, JPG-, PNG- oder DOCX-Datei hoch."
 
 #: src/Api/MatchController.php:509, src/Frontend/Shortcodes.php:997, src/Frontend/Shortcodes.php:1067
 msgid "The file is too large. Maximum: 10 MB."
-msgstr "Die Datei ist zu groß. Maximum: 10 MB."
+msgstr "Die Datei ist zu gross. Maximum: 10 MB."
 
 #: src/Api/MatchController.php:518
 msgid "Error uploading file."
@@ -1630,7 +1630,7 @@ msgstr "Firmenname"
 
 #: src/Api/SettingsController.php:495
 msgid "Street and number"
-msgstr "Straße and number"
+msgstr "Strasse and number"
 
 #: src/Api/SettingsController.php:500
 msgid "Postal code"
@@ -1658,7 +1658,7 @@ msgstr "Firmenname"
 
 #: src/Api/SettingsController.php:559
 msgid "Straße und Hausnummer"
-msgstr "Straße und Hausnummer"
+msgstr "Strasse und Hausnummer"
 
 #: src/Api/SettingsController.php:563
 msgid "Postleitzahl"
@@ -1782,7 +1782,7 @@ msgstr "Signaturname"
 
 #: src/Api/SignatureController.php:724, src/Api/SignatureController.php:762
 msgid "Greeting"
-msgstr "Grußformel"
+msgstr "Grussformel"
 
 #: src/Api/SignatureController.php:729, src/Api/SignatureController.php:767
 msgid "Signature content"
@@ -1794,7 +1794,7 @@ msgstr "Als Standard festlegen"
 
 #: src/Api/SignatureController.php:740, src/Api/SignatureController.php:778
 msgid "Include company data"
-msgstr "Firmendaten einschließen"
+msgstr "Firmendaten einschliessen"
 
 #: src/Api/SignatureController.php:799
 msgid "Signatur-ID"
@@ -2059,7 +2059,7 @@ msgstr "Bitte gib eine gültige E-Mail-Adresse ein"
 
 #: src/Core/Plugin.php:908
 msgid "File is too large (max. 10 MB)"
-msgstr "Datumi ist zu groß (max. 10 MB)"
+msgstr "Datumi ist zu gross (max. 10 MB)"
 
 #: src/Core/Plugin.php:909, src/Frontend/Shortcodes.php:1312
 msgid "File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG"
@@ -2083,7 +2083,7 @@ msgstr "Die Analyse dauert zu lange. Bitte versuche es später noch einmal."
 
 #: src/Core/Plugin.php:958
 msgid "File is too large. Maximum: 10 MB."
-msgstr "Datumi ist zu groß. Maximum: 10 MB."
+msgstr "Datumi ist zu gross. Maximum: 10 MB."
 
 #: src/Core/Plugin.php:959, src/Frontend/Shortcodes.php:1065
 msgid "Low match"
@@ -2407,7 +2407,7 @@ msgstr "Datenschutzerklärung"
 
 #: src/Database/Migrator.php:590
 msgid "Best regards"
-msgstr "Beste Grüße"
+msgstr "Beste Grüsse"
 
 #: src/Database/Migrator.php:593
 msgid "Your HR Team"
@@ -2638,7 +2638,7 @@ msgstr "Datei-Upload"
 
 #: src/FieldTypes/FileField.php:95
 msgid "Max. file size (MB)"
-msgstr "Max. Dateigröße (MB)"
+msgstr "Max. Dateigrösse (MB)"
 
 #: src/FieldTypes/FileField.php:103
 msgid "Min. files"
@@ -2672,7 +2672,7 @@ msgstr "Fehler uploading %s."
 #. translators: 1: File name, 2: Max size
 #: src/FieldTypes/FileField.php:214, src/Services/CustomFieldFileService.php:258
 msgid "The file %1$s is too large. Maximum: %2$d MB."
-msgstr "Die Datei %1$s ist zu groß. Maximum: %2$d MB."
+msgstr "Die Datei %1$s ist zu gross. Maximum: %2$d MB."
 
 #. translators: 1: File name, 2: Allowed extensions
 #. translators: 1: File name, 2: Allowed types
@@ -3110,7 +3110,7 @@ msgstr "Datum must be before {date}"
 
 #: src/Frontend/Shortcodes.php:1228
 msgid "The file is too large (max. {size} MB)"
-msgstr "Die Datei ist zu groß (max. {size} MB)"
+msgstr "Die Datei ist zu gross (max. {size} MB)"
 
 #: src/Frontend/Shortcodes.php:1229
 msgid "File type not allowed"
@@ -3138,7 +3138,7 @@ msgstr "Das Format ist ungültig"
 
 #: src/Frontend/Shortcodes.php:1311
 msgid "The file is too large (max. 10 MB)"
-msgstr "Die Datei ist zu groß (max. 10 MB)"
+msgstr "Die Datei ist zu gross (max. 10 MB)"
 
 #: src/Licensing/helpers.php:268
 msgid "Free version"
@@ -3386,7 +3386,7 @@ msgstr "Nginx-Server erkannt: Bitte konfiguriere den Dokumentenschutz manuell (s
 #. translators: %s: max file size
 #: src/Services/DocumentService.php:298
 msgid "File is too large. Maximum size: %s"
-msgstr "Datumi ist zu groß. Maximum size: %s"
+msgstr "Datumi ist zu gross. Maximum size: %s"
 
 #: src/Services/DocumentService.php:315
 msgid "Invalid application ID."
@@ -3858,7 +3858,7 @@ msgstr "Maximal %d Zeichen erlaubt"
 
 #: src/Services/FormRenderService.php:978
 msgid "File is too large (max. %d MB)"
-msgstr "Datumi ist zu groß (max. %d MB)"
+msgstr "Datumi ist zu gross (max. %d MB)"
 
 #: src/Services/FormRenderService.php:979
 msgid "This file type is not allowed"
@@ -3928,7 +3928,7 @@ msgstr "ist leer"
 
 #: src/Services/FormValidationService.php:310
 msgid "is greater than"
-msgstr "ist größer als"
+msgstr "ist grösser als"
 
 #: src/Services/FormValidationService.php:311
 msgid "is less than"
@@ -4141,7 +4141,7 @@ msgstr "Bewertung nicht gefunden"
 
 #: src/Services/SignatureService.php:204
 msgid "Kind regards"
-msgstr "Viele Grüße"
+msgstr "Viele Grüsse"
 
 #. translators: %s: Company name
 #: src/Services/SignatureService.php:210
@@ -4521,7 +4521,7 @@ msgstr "Typ"
 
 #: src/Admin/Pages/ApplicationDetail.php:219
 msgid "Size"
-msgstr "Größe"
+msgstr "Grösse"
 
 #: src/Admin/Pages/ApplicationDetail.php:220
 msgid "Action"
@@ -5028,7 +5028,7 @@ msgstr "ist nicht markiert"
 
 #: src/Admin/Pages/FormBuilderPage.php:214
 msgid "greater than"
-msgstr "größer als"
+msgstr "grösser als"
 
 #: src/Admin/Pages/FormBuilderPage.php:215
 msgid "less than"
@@ -5052,7 +5052,7 @@ msgstr "Alleowed Datei Typs"
 
 #: src/Admin/Pages/FormBuilderPage.php:222
 msgid "Maximum File Size (MB)"
-msgstr "Maximum Datei Größe (MB)"
+msgstr "Maximum Datei Grösse (MB)"
 
 #: src/Admin/Pages/FormBuilderPage.php:223
 msgid "Maximum Number of Files"
@@ -5128,7 +5128,7 @@ msgstr "Duplizieren"
 
 #: src/Admin/Pages/FormBuilderPage.php:255
 msgid "Close"
-msgstr "Schließen"
+msgstr "Schliessen"
 
 #: src/Admin/Pages/FormBuilderPage.php:256
 msgid "Really delete?"
@@ -5676,7 +5676,7 @@ msgstr "URL to your company logo (recommended for Google for Stellen)."
 
 #: src/Admin/SetupWizard/SetupWizard.php:314
 msgid "Street"
-msgstr "Straße"
+msgstr "Strasse"
 
 #: src/Admin/SetupWizard/SetupWizard.php:350
 msgid "Country"

@@ -1,4 +1,4 @@
-# German translations for Recruiting Playbook
+# Austrian German translations for Recruiting Playbook
 # Copyright (C) 2026 Recruiting Playbook
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: Recruiting Playbook 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/AImitSK/recruiting-playbook/issues\n"
 "Last-Translator: Recruiting Playbook Team <info@recruiting-playbook.de>\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
+"Language-Team: German (Austria)\n"
+"Language: de_AT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
