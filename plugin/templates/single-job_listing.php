@@ -264,8 +264,15 @@ while ( have_posts() ) :
 
 				<?php
 				// Formular dynamisch aus FormConfigService rendern.
-				$form_render_service = new \RecruitingPlaybook\Services\FormRenderService();
-				echo $form_render_service->render( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				try {
+					$form_render_service = new \RecruitingPlaybook\Services\FormRenderService();
+					echo $form_render_service->render( get_the_ID() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				} catch ( \Throwable $e ) {
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						error_log( '[Recruiting Playbook] Form render error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+					}
+					echo '<p class="rp-text-gray-500">' . esc_html__( 'Das Bewerbungsformular konnte nicht geladen werden.', 'recruiting-playbook' ) . '</p>';
+				}
 				?>
 			</div>
 

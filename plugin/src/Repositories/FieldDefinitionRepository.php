@@ -126,7 +126,7 @@ class FieldDefinitionRepository {
 			ARRAY_A
 		);
 
-		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**
@@ -157,7 +157,7 @@ class FieldDefinitionRepository {
 			ARRAY_A
 		);
 
-		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**
@@ -183,7 +183,7 @@ class FieldDefinitionRepository {
 			ARRAY_A
 		);
 
-		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**
@@ -219,7 +219,7 @@ class FieldDefinitionRepository {
 			ARRAY_A
 		);
 
-		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**
@@ -269,7 +269,7 @@ class FieldDefinitionRepository {
 			? $wpdb->get_results( $sql, ARRAY_A )
 			: $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
 
-		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**

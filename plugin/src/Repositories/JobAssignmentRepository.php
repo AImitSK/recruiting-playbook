@@ -118,7 +118,7 @@ class JobAssignmentRepository {
 			ARRAY_A
 		);
 
-		return array_map( [ $this, 'castTypes' ], $rows );
+		return array_map( [ $this, 'castTypes' ], $rows ?? [] );
 	}
 
 	/**
@@ -139,7 +139,7 @@ class JobAssignmentRepository {
 			ARRAY_A
 		);
 
-		return array_map( [ $this, 'castTypes' ], $rows );
+		return array_map( [ $this, 'castTypes' ], $rows ?? [] );
 	}
 
 	/**

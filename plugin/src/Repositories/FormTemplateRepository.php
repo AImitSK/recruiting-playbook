@@ -113,7 +113,7 @@ class FormTemplateRepository {
 			);
 		}
 
-		return array_map( fn( $row ) => FormTemplate::fromArray( $row ), $rows );
+		return array_map( fn( $row ) => FormTemplate::fromArray( $row ), $rows ?? [] );
 	}
 
 	/**

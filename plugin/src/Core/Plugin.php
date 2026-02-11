@@ -593,8 +593,8 @@ final class Plugin {
 	 * Frontend initialisieren
 	 */
 	private function initFrontend(): void {
-		// Template-Loader für CPT.
-		add_filter( 'template_include', [ $this, 'loadTemplates' ] );
+		// Template-Loader für CPT (hohe Priorität für Avada-Kompatibilität).
+		add_filter( 'template_include', [ $this, 'loadTemplates' ], 99 );
 
 		// Google for Jobs Schema (JSON-LD).
 		$job_schema = new JobSchema();
@@ -654,8 +654,8 @@ final class Plugin {
 			return RP_PLUGIN_DIR . 'templates/archive-job_listing.php';
 		}
 
-		// Einzelseiten für job_listing.
-		if ( is_singular( 'job_listing' ) ) {
+		// Einzelseiten für job_listing (inkl. Vorschau von Entwürfen).
+		if ( is_singular( 'job_listing' ) || $this->isJobListingPreview() ) {
 			$custom = locate_template( 'recruiting-playbook/single-job_listing.php' );
 			if ( $custom ) {
 				return $custom;
@@ -664,6 +664,28 @@ final class Plugin {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Prüft ob eine Vorschau eines job_listing Posts angezeigt wird
+	 *
+	 * Fallback für Themes (z.B. Avada) die is_singular() in Previews
+	 * nicht korrekt auflösen.
+	 *
+	 * @return bool
+	 */
+	private function isJobListingPreview(): bool {
+		if ( ! is_preview() || ! is_user_logged_in() ) {
+			return false;
+		}
+
+		$post_id = get_query_var( 'p' );
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+		return $post && 'job_listing' === $post->post_type && current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
