@@ -77,14 +77,14 @@ function OptionItem( { option, index, onChange, onRemove, i18n } ) {
 			<Input
 				value={ option.value || '' }
 				onChange={ ( e ) => onChange( index, 'value', e.target.value ) }
-				placeholder={ i18n?.optionValue || __( 'Wert', 'recruiting-playbook' ) }
+				placeholder={ i18n?.optionValue || __( 'Value', 'recruiting-playbook' ) }
 				className="flex-1"
 			/>
 
 			<Input
 				value={ option.label || '' }
 				onChange={ ( e ) => onChange( index, 'label', e.target.value ) }
-				placeholder={ i18n?.optionLabel || __( 'Bezeichnung', 'recruiting-playbook' ) }
+				placeholder={ i18n?.optionLabel || __( 'Label', 'recruiting-playbook' ) }
 				className="flex-1"
 			/>
 
@@ -171,16 +171,16 @@ export default function OptionsEditor( { options = [], onChange, fieldType, i18n
 	return (
 		<div className="rp-options-editor" style={ { display: 'flex', flexDirection: 'column', gap: '0.75rem' } }>
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-				<Label>{ i18n?.options || __( 'Optionen', 'recruiting-playbook' ) }</Label>
+				<Label>{ i18n?.options || __( 'Options', 'recruiting-playbook' ) }</Label>
 				<Button variant="outline" size="sm" onClick={ handleAdd }>
 					<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-					{ i18n?.addOption || __( 'Option hinzufügen', 'recruiting-playbook' ) }
+					{ i18n?.addOption || __( 'Add option', 'recruiting-playbook' ) }
 				</Button>
 			</div>
 
 			{ optionsWithIds.length === 0 ? (
 				<div style={ { textAlign: 'center', padding: '1rem 0', color: '#6b7280', fontSize: '0.875rem', border: '2px dashed #e5e7eb', borderRadius: '0.25rem' } }>
-					{ i18n?.noOptions || __( 'Noch keine Optionen. Fügen Sie mindestens eine hinzu.', 'recruiting-playbook' ) }
+					{ i18n?.noOptions || __( 'No options yet. Add at least one.', 'recruiting-playbook' ) }
 				</div>
 			) : (
 				<DndContext
@@ -209,7 +209,7 @@ export default function OptionsEditor( { options = [], onChange, fieldType, i18n
 			) }
 
 			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-				{ i18n?.optionsHelp || __( 'Ziehen Sie Optionen zum Sortieren. Der Wert wird gespeichert, die Bezeichnung wird angezeigt.', 'recruiting-playbook' ) }
+				{ i18n?.optionsHelp || __( 'Drag options to sort. The value is saved, the label is displayed.', 'recruiting-playbook' ) }
 			</p>
 		</div>
 	);

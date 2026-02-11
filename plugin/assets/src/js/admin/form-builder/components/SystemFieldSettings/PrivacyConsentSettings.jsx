@@ -27,18 +27,18 @@ import { X, Shield, ExternalLink } from 'lucide-react';
 export default function PrivacyConsentSettings( { settings = {}, onSave, onClose } ) {
 	// Local state for form values
 	const [ label, setLabel ] = useState(
-		settings.label || __( 'Datenschutz-Zustimmung', 'recruiting-playbook' )
+		settings.label || __( 'Privacy Consent', 'recruiting-playbook' )
 	);
 	const [ consentText, setConsentText ] = useState(
 		settings.consent_text ||
-		__( 'Ich habe die {privacy_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' )
+		__( 'I have read the {privacy_link} and agree to the processing of my data.', 'recruiting-playbook' )
 	);
 	const [ privacyLinkText, setPrivacyLinkText ] = useState(
-		settings.privacy_link_text || __( 'Datenschutzerklärung', 'recruiting-playbook' )
+		settings.privacy_link_text || __( 'Privacy Policy', 'recruiting-playbook' )
 	);
 	const [ privacyUrl, setPrivacyUrl ] = useState( settings.privacy_url || '' );
 	const [ errorMessage, setErrorMessage ] = useState(
-		settings.error_message || __( 'Sie müssen der Datenschutzerklärung zustimmen.', 'recruiting-playbook' )
+		settings.error_message || __( 'You must agree to the privacy policy.', 'recruiting-playbook' )
 	);
 	const [ helpText, setHelpText ] = useState( settings.help_text || '' );
 
@@ -104,8 +104,8 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<Shield style={ { height: '1.25rem', width: '1.25rem', color: '#8b5cf6' } } />
 						<div>
-							<CardTitle>{ __( 'Datenschutz-Zustimmung Einstellungen', 'recruiting-playbook' ) }</CardTitle>
-							<CardDescription>{ __( 'Konfigurieren Sie den Datenschutz-Hinweis', 'recruiting-playbook' ) }</CardDescription>
+							<CardTitle>{ __( 'Privacy Consent Settings', 'recruiting-playbook' ) }</CardTitle>
+							<CardDescription>{ __( 'Configure the privacy notice', 'recruiting-playbook' ) }</CardDescription>
 						</div>
 					</div>
 					<Button variant="ghost" size="sm" onClick={ onClose }>
@@ -116,44 +116,44 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 				<CardContent style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 					{ /* Label */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="privacy-label">{ __( 'Bezeichnung (intern)', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="privacy-label">{ __( 'Label (internal)', 'recruiting-playbook' ) }</Label>
 						<Input
 							id="privacy-label"
 							value={ label }
 							onChange={ ( e ) => setLabel( e.target.value ) }
-							placeholder={ __( 'Datenschutz-Zustimmung', 'recruiting-playbook' ) }
+							placeholder={ __( 'Privacy Consent', 'recruiting-playbook' ) }
 						/>
 					</div>
 
 					{ /* Consent Text */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="consent-text">{ __( 'Zustimmungstext', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="consent-text">{ __( 'Consent Text', 'recruiting-playbook' ) }</Label>
 						<Textarea
 							id="consent-text"
 							value={ consentText }
 							onChange={ ( e ) => setConsentText( e.target.value ) }
-							placeholder={ __( 'Ich habe die {privacy_link} gelesen...', 'recruiting-playbook' ) }
+							placeholder={ __( 'I have read the {privacy_link}...', 'recruiting-playbook' ) }
 							rows={ 3 }
 						/>
 						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-							{ __( 'Verwenden Sie {privacy_link} als Platzhalter für den Link.', 'recruiting-playbook' ) }
+							{ __( 'Use {privacy_link} as a placeholder for the link.', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					{ /* Privacy Link Settings */ }
 					<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-							<Label htmlFor="privacy-link-text">{ __( 'Link-Text', 'recruiting-playbook' ) }</Label>
+							<Label htmlFor="privacy-link-text">{ __( 'Link Text', 'recruiting-playbook' ) }</Label>
 							<Input
 								id="privacy-link-text"
 								value={ privacyLinkText }
 								onChange={ ( e ) => setPrivacyLinkText( e.target.value ) }
-								placeholder={ __( 'Datenschutzerklärung', 'recruiting-playbook' ) }
+								placeholder={ __( 'Privacy Policy', 'recruiting-playbook' ) }
 							/>
 						</div>
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="privacy-url">
-								{ __( 'Link-URL', 'recruiting-playbook' ) }
+								{ __( 'Link URL', 'recruiting-playbook' ) }
 								<ExternalLink style={ { height: '0.75rem', width: '0.75rem', marginLeft: '0.25rem', display: 'inline' } } />
 							</Label>
 							<Input
@@ -161,7 +161,7 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 								type="url"
 								value={ privacyUrl }
 								onChange={ ( e ) => setPrivacyUrl( e.target.value ) }
-								placeholder="https://example.com/datenschutz"
+								placeholder="https://example.com/privacy"
 							/>
 						</div>
 					</div>
@@ -169,7 +169,7 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 					{ /* Preview */ }
 					<div style={ { padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem', border: '1px solid #e5e7eb' } }>
 						<Label style={ { fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem', display: 'block' } }>
-							{ __( 'Vorschau:', 'recruiting-playbook' ) }
+							{ __( 'Preview:', 'recruiting-playbook' ) }
 						</Label>
 						<div style={ { display: 'flex', alignItems: 'flex-start', gap: '0.5rem' } }>
 							<input type="checkbox" disabled style={ { marginTop: '0.25rem' } } />
@@ -181,26 +181,26 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 
 					{ /* Error Message */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="error-message">{ __( 'Fehlermeldung', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="error-message">{ __( 'Error Message', 'recruiting-playbook' ) }</Label>
 						<Input
 							id="error-message"
 							value={ errorMessage }
 							onChange={ ( e ) => setErrorMessage( e.target.value ) }
-							placeholder={ __( 'Sie müssen der Datenschutzerklärung zustimmen.', 'recruiting-playbook' ) }
+							placeholder={ __( 'You must agree to the privacy policy.', 'recruiting-playbook' ) }
 						/>
 						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-							{ __( 'Wird angezeigt, wenn die Checkbox nicht aktiviert ist.', 'recruiting-playbook' ) }
+							{ __( 'Displayed when the checkbox is not checked.', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					{ /* Help Text */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="help-text">{ __( 'Hilfetext (optional)', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="help-text">{ __( 'Help Text (optional)', 'recruiting-playbook' ) }</Label>
 						<Textarea
 							id="help-text"
 							value={ helpText }
 							onChange={ ( e ) => setHelpText( e.target.value ) }
-							placeholder={ __( 'Zusätzlicher Hinweis unter der Checkbox...', 'recruiting-playbook' ) }
+							placeholder={ __( 'Additional note below the checkbox...', 'recruiting-playbook' ) }
 							rows={ 2 }
 						/>
 					</div>
@@ -208,18 +208,18 @@ export default function PrivacyConsentSettings( { settings = {}, onSave, onClose
 					{ /* Info Box */ }
 					<div style={ { padding: '0.75rem', backgroundColor: '#fef3c7', borderRadius: '0.5rem', border: '1px solid #fcd34d' } }>
 						<p style={ { margin: 0, fontSize: '0.875rem', color: '#92400e' } }>
-							<strong>{ __( 'Hinweis:', 'recruiting-playbook' ) }</strong>{ ' ' }
-							{ __( 'Die Datenschutz-Zustimmung ist ein Pflichtfeld und kann nicht entfernt werden. Die Version der Zustimmung wird automatisch gespeichert.', 'recruiting-playbook' ) }
+							<strong>{ __( 'Note:', 'recruiting-playbook' ) }</strong>{ ' ' }
+							{ __( 'Privacy consent is a required field and cannot be removed. The consent version is saved automatically.', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					{ /* Action Buttons */ }
 					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
 						<Button variant="outline" onClick={ onClose }>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button onClick={ handleSave }>
-							{ __( 'Speichern', 'recruiting-playbook' ) }
+							{ __( 'Save', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardContent>

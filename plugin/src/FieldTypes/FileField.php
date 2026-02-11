@@ -50,7 +50,7 @@ class FileField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Datei-Upload', 'recruiting-playbook' );
+		return __( 'File Upload', 'recruiting-playbook' );
 	}
 
 	/**
@@ -92,7 +92,7 @@ class FileField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'max_file_size',
-				'label'       => __( 'Max. Dateigröße (MB)', 'recruiting-playbook' ),
+				'label'       => __( 'Max. file size (MB)', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'max'         => 50,
@@ -100,19 +100,19 @@ class FileField extends AbstractFieldType {
 			],
 			[
 				'key'         => 'min_files',
-				'label'       => __( 'Min. Dateien', 'recruiting-playbook' ),
+				'label'       => __( 'Min. files', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0,
 				'placeholder' => '1',
-				'description' => __( 'Nur für Multi-Upload', 'recruiting-playbook' ),
+				'description' => __( 'For multi-upload only', 'recruiting-playbook' ),
 			],
 			[
 				'key'         => 'max_files',
-				'label'       => __( 'Max. Dateien', 'recruiting-playbook' ),
+				'label'       => __( 'Max. files', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'placeholder' => '5',
-				'description' => __( 'Nur für Multi-Upload', 'recruiting-playbook' ),
+				'description' => __( 'For multi-upload only', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -146,7 +146,7 @@ class FileField extends AbstractFieldType {
 					'required',
 					sprintf(
 						/* translators: %s: Field label */
-						__( '%s ist ein Pflichtfeld.', 'recruiting-playbook' ),
+						__( '%s is a required field.', 'recruiting-playbook' ),
 						$label
 					)
 				);
@@ -173,7 +173,7 @@ class FileField extends AbstractFieldType {
 				'too_many_files',
 				sprintf(
 					/* translators: %s: Field label */
-					__( 'Für %s ist nur eine Datei erlaubt.', 'recruiting-playbook' ),
+					__( 'Only one file is allowed for %s.', 'recruiting-playbook' ),
 					$label
 				)
 			);
@@ -184,7 +184,7 @@ class FileField extends AbstractFieldType {
 				'max_files',
 				sprintf(
 					/* translators: 1: Field label, 2: Maximum count */
-					__( 'Für %1$s sind maximal %2$d Dateien erlaubt.', 'recruiting-playbook' ),
+					__( 'A maximum of %2$d files are allowed for %1$s.', 'recruiting-playbook' ),
 					$label,
 					(int) $validation['max_files']
 				)
@@ -199,7 +199,7 @@ class FileField extends AbstractFieldType {
 					'upload_error',
 					sprintf(
 						/* translators: %s: File name */
-						__( 'Fehler beim Upload von %s.', 'recruiting-playbook' ),
+						__( 'Error uploading %s.', 'recruiting-playbook' ),
 						$file['name']
 					)
 				);
@@ -211,7 +211,7 @@ class FileField extends AbstractFieldType {
 					'file_too_large',
 					sprintf(
 						/* translators: 1: File name, 2: Maximum size in MB */
-						__( 'Die Datei %1$s ist zu groß. Maximum: %2$d MB.', 'recruiting-playbook' ),
+						__( 'The file %1$s is too large. Maximum: %2$d MB.', 'recruiting-playbook' ),
 						$file['name'],
 						$max_size_mb
 					)
@@ -245,7 +245,7 @@ class FileField extends AbstractFieldType {
 				'invalid_file_type',
 				sprintf(
 					/* translators: 1: File name, 2: Allowed extensions */
-					__( 'Der Dateityp von %1$s ist nicht erlaubt. Erlaubt: %2$s.', 'recruiting-playbook' ),
+					__( 'The file type of %1$s is not allowed. Allowed: %2$s.', 'recruiting-playbook' ),
 					$file['name'],
 					$allowed_exts
 				)
@@ -431,11 +431,11 @@ class FileField extends AbstractFieldType {
 		);
 		$html .= sprintf(
 			'<span class="rp-form__file-text">%s</span>',
-			esc_html__( 'Dateien hier ablegen oder klicken zum Auswählen', 'recruiting-playbook' )
+			esc_html__( 'Drop files here or click to select', 'recruiting-playbook' )
 		);
 		$html .= sprintf(
 			'<span class="rp-form__file-hint">%s: %s (max. %d MB)</span>',
-			esc_html__( 'Erlaubte Formate', 'recruiting-playbook' ),
+			esc_html__( 'Allowed formats', 'recruiting-playbook' ),
 			esc_html( strtoupper( implode( ', ', $accepted_mime ) ) ),
 			$max_size_mb
 		);
@@ -449,7 +449,7 @@ class FileField extends AbstractFieldType {
 		$html .= '<span class="rp-form__file-size" x-text="formatSize(file.size)"></span>';
 		$html .= sprintf(
 			'<button type="button" class="rp-form__file-remove" x-on:click="removeFile(index)" aria-label="%s">&times;</button>',
-			esc_attr__( 'Entfernen', 'recruiting-playbook' )
+			esc_attr__( 'Remove', 'recruiting-playbook' )
 		);
 		$html .= '</li></template></ul>';
 		$html .= '</div>'; // .rp-form__file-zone
@@ -457,7 +457,7 @@ class FileField extends AbstractFieldType {
 		// Bereits hochgeladene Dateien anzeigen.
 		if ( ! empty( $value ) ) {
 			$html .= '<div class="rp-form__file-existing">';
-			$html .= sprintf( '<p class="rp-form__file-existing-label">%s:</p>', esc_html__( 'Bereits hochgeladen', 'recruiting-playbook' ) );
+			$html .= sprintf( '<p class="rp-form__file-existing-label">%s:</p>', esc_html__( 'Already uploaded', 'recruiting-playbook' ) );
 			$html .= $this->formatDisplayValue( $value, $field );
 			$html .= '</div>';
 		}

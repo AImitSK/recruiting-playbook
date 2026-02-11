@@ -133,7 +133,7 @@ class DocumentDownloadService {
 		);
 
 		if ( ! $document ) {
-			wp_die( esc_html__( 'Dokument nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
+			wp_die( esc_html__( 'Document not found.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
 		}
 
 		// Path Traversal Protection: Prüfen dass Datei im erlaubten Verzeichnis liegt.
@@ -146,24 +146,24 @@ class DocumentDownloadService {
 
 		if ( ! $real_file || ! $real_allowed || strpos( $real_file, $real_allowed ) !== 0 ) {
 			self::logFailedAccess( $document_id, 'path_traversal_attempt' );
-			wp_die( esc_html__( 'Ungültiger Dateipfad.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+			wp_die( esc_html__( 'Invalid file path.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		if ( ! file_exists( $real_file ) ) {
-			wp_die( esc_html__( 'Datei nicht gefunden.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
+			wp_die( esc_html__( 'File not found.', 'recruiting-playbook' ), '', [ 'response' => 404 ] );
 		}
 
 		// Symlink-Check: Verhindert Path Traversal über Symlinks.
 		if ( is_link( $file_path ) || is_link( $real_file ) ) {
 			self::logFailedAccess( $document_id, 'symlink_detected' );
-			wp_die( esc_html__( 'Ungültiger Dateipfad.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+			wp_die( esc_html__( 'Invalid file path.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		// MIME-Type Whitelist Validierung (Header Injection Schutz).
 		$file_type = $document['file_type'];
 		if ( ! in_array( $file_type, self::ALLOWED_MIME_TYPES, true ) ) {
 			self::logFailedAccess( $document_id, 'invalid_mime_type' );
-			wp_die( esc_html__( 'Ungültiger Dateityp.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+			wp_die( esc_html__( 'Invalid file type.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		// Download-Zähler erhöhen.
@@ -217,7 +217,7 @@ class DocumentDownloadService {
 				'action'      => 'document_downloaded',
 				'user_id'     => $current_user->ID,
 				'user_name'   => $current_user->display_name,
-				'message'     => sprintf( 'Dokument #%d heruntergeladen', $document_id ),
+				'message'     => sprintf( 'Document #%d downloaded', $document_id ),
 				'ip_address'  => self::getClientIp(),
 				'created_at'  => current_time( 'mysql' ),
 			]
@@ -270,19 +270,19 @@ class DocumentDownloadService {
 
 		if ( ! $document_id || ! $token ) {
 			self::logFailedAccess( $document_id, 'missing_params' );
-			wp_die( esc_html__( 'Ungültige Anfrage.', 'recruiting-playbook' ), '', [ 'response' => 400 ] );
+			wp_die( esc_html__( 'Invalid request.', 'recruiting-playbook' ), '', [ 'response' => 400 ] );
 		}
 
 		// Token zuerst validieren (enthält User-ID Prüfung).
 		if ( ! self::validateToken( $document_id, $token ) ) {
 			self::logFailedAccess( $document_id, 'invalid_token' );
-			wp_die( esc_html__( 'Download-Link abgelaufen oder ungültig.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+			wp_die( esc_html__( 'Download link expired or invalid.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		// Dann Berechtigung prüfen (rp_view_applications ODER manage_options als Fallback).
 		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			self::logFailedAccess( $document_id, 'no_permission' );
-			wp_die( esc_html__( 'Keine Berechtigung.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
+			wp_die( esc_html__( 'No permission.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
 		// Rate Limiting: Max Downloads pro Stunde pro User.
@@ -293,7 +293,7 @@ class DocumentDownloadService {
 		if ( $download_count >= self::RATE_LIMIT ) {
 			self::logFailedAccess( $document_id, 'rate_limit_exceeded' );
 			wp_die(
-				esc_html__( 'Download-Limit erreicht. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+				esc_html__( 'Download limit reached. Please try again later.', 'recruiting-playbook' ),
 				'',
 				[ 'response' => 429 ]
 			);

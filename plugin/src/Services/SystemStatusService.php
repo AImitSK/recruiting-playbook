@@ -91,7 +91,7 @@ class SystemStatusService {
 		if ( empty( $missing ) ) {
 			return [
 				'status'  => 'ok',
-				'message' => __( 'Alle Tabellen vorhanden', 'recruiting-playbook' ),
+				'message' => __( 'All tables present', 'recruiting-playbook' ),
 				'details' => [
 					'tables_expected' => count( $required_tables ),
 					'tables_found'    => count( $required_tables ),
@@ -103,7 +103,7 @@ class SystemStatusService {
 			'status'  => 'error',
 			'message' => sprintf(
 				/* translators: %d: Number of missing tables */
-				__( '%d Tabelle(n) fehlen', 'recruiting-playbook' ),
+				__( '%d table(s) missing', 'recruiting-playbook' ),
 				count( $missing )
 			),
 			'details' => [
@@ -148,8 +148,8 @@ class SystemStatusService {
 		return [
 			'status'  => $writable ? 'ok' : 'error',
 			'message' => $writable
-				? __( 'Upload-Verzeichnis beschreibbar', 'recruiting-playbook' )
-				: __( 'Upload-Verzeichnis nicht beschreibbar', 'recruiting-playbook' ),
+				? __( 'Upload directory is writable', 'recruiting-playbook' )
+				: __( 'Upload directory is not writable', 'recruiting-playbook' ),
 			'details' => [
 				'path'        => $rp_dir,
 				'writable'    => $writable,
@@ -173,8 +173,8 @@ class SystemStatusService {
 		return [
 			'status'  => $cron_working ? 'ok' : 'warning',
 			'message' => $cron_working
-				? __( 'Cron-Jobs aktiv', 'recruiting-playbook' )
-				: __( 'Cron-Jobs nicht geplant', 'recruiting-playbook' ),
+				? __( 'Cron jobs active', 'recruiting-playbook' )
+				: __( 'Cron jobs not scheduled', 'recruiting-playbook' ),
 			'details' => [
 				'next_cleanup' => $next_cleanup ? gmdate( 'c', $next_cleanup ) : null,
 				'last_run'     => $last_run ? gmdate( 'c', $last_run ) : null,
@@ -216,7 +216,7 @@ class SystemStatusService {
 		if ( $total_orphaned === 0 ) {
 			return [
 				'status'  => 'ok',
-				'message' => __( 'Keine verwaisten Daten', 'recruiting-playbook' ),
+				'message' => __( 'No orphaned data', 'recruiting-playbook' ),
 				'details' => [
 					'orphaned_documents'    => 0,
 					'orphaned_applications' => 0,
@@ -228,7 +228,7 @@ class SystemStatusService {
 			'status'  => 'warning',
 			'message' => sprintf(
 				/* translators: %d: Number of orphaned entries */
-				__( '%d verwaiste Einträge gefunden', 'recruiting-playbook' ),
+				__( '%d orphaned entries found', 'recruiting-playbook' ),
 				$total_orphaned
 			),
 			'details' => [
@@ -248,7 +248,7 @@ class SystemStatusService {
 		if ( ! function_exists( 'rp_tier' ) ) {
 			return [
 				'status'  => 'ok',
-				'message' => __( 'Free-Version aktiv', 'recruiting-playbook' ),
+				'message' => __( 'Free version active', 'recruiting-playbook' ),
 				'details' => [
 					'type' => 'free',
 				],
@@ -260,7 +260,7 @@ class SystemStatusService {
 		if ( $tier === 'FREE' ) {
 			return [
 				'status'  => 'ok',
-				'message' => __( 'Free-Version aktiv', 'recruiting-playbook' ),
+				'message' => __( 'Free version active', 'recruiting-playbook' ),
 				'details' => [
 					'type' => 'free',
 				],
@@ -275,10 +275,10 @@ class SystemStatusService {
 			'message' => $is_paying
 				? sprintf(
 					/* translators: %s: License tier */
-					__( '%s-Lizenz aktiv', 'recruiting-playbook' ),
+					__( '%s license active', 'recruiting-playbook' ),
 					$tier
 				)
-				: __( 'Lizenz ungültig oder abgelaufen', 'recruiting-playbook' ),
+				: __( 'License invalid or expired', 'recruiting-playbook' ),
 			'details' => [
 				'type'   => strtolower( $tier ),
 				'valid'  => $is_paying,
@@ -297,7 +297,7 @@ class SystemStatusService {
 		if ( ! function_exists( 'as_get_scheduled_actions' ) ) {
 			return [
 				'status'  => 'warning',
-				'message' => __( 'Action Scheduler nicht verfügbar', 'recruiting-playbook' ),
+				'message' => __( 'Action Scheduler not available', 'recruiting-playbook' ),
 				'details' => [
 					'available' => false,
 				],
@@ -339,13 +339,13 @@ class SystemStatusService {
 		$failed_count = is_array( $failed ) ? count( $failed ) : 0;
 
 		$status = 'ok';
-		$message = __( 'Action Scheduler läuft', 'recruiting-playbook' );
+		$message = __( 'Action Scheduler running', 'recruiting-playbook' );
 
 		if ( $failed_count > 0 ) {
 			$status = 'warning';
 			$message = sprintf(
 				/* translators: %d: Number of failed actions */
-				__( '%d fehlgeschlagene Actions', 'recruiting-playbook' ),
+				__( '%d failed actions', 'recruiting-playbook' ),
 				$failed_count
 			);
 		}
@@ -404,7 +404,7 @@ class SystemStatusService {
 		if ( $checks['database']['status'] === 'error' ) {
 			$recommendations[] = [
 				'type'    => 'repair',
-				'message' => __( 'Bitte deaktivieren und reaktivieren Sie das Plugin, um fehlende Tabellen zu erstellen.', 'recruiting-playbook' ),
+				'message' => __( 'Please deactivate and reactivate the plugin to create missing tables.', 'recruiting-playbook' ),
 				'action'  => 'reactivate_plugin',
 			];
 		}
@@ -413,7 +413,7 @@ class SystemStatusService {
 		if ( $checks['uploads']['status'] === 'error' ) {
 			$recommendations[] = [
 				'type'    => 'permission',
-				'message' => __( 'Bitte setzen Sie die Schreibrechte für das Upload-Verzeichnis.', 'recruiting-playbook' ),
+				'message' => __( 'Please set write permissions for the upload directory.', 'recruiting-playbook' ),
 				'action'  => 'fix_permissions',
 			];
 		}
@@ -428,7 +428,7 @@ class SystemStatusService {
 					'type'    => 'cleanup',
 					'message' => sprintf(
 						/* translators: %d: Number of orphaned documents */
-						__( '%d verwaiste Dokumente können gelöscht werden', 'recruiting-playbook' ),
+						__( '%d orphaned documents can be deleted', 'recruiting-playbook' ),
 						$orphaned_docs
 					),
 					'action'  => 'cleanup_orphaned_documents',
@@ -440,7 +440,7 @@ class SystemStatusService {
 					'type'    => 'cleanup',
 					'message' => sprintf(
 						/* translators: %d: Number of orphaned applications */
-						__( '%d verwaiste Bewerbungen können gelöscht werden', 'recruiting-playbook' ),
+						__( '%d orphaned applications can be deleted', 'recruiting-playbook' ),
 						$orphaned_apps
 					),
 					'action'  => 'cleanup_orphaned_applications',
@@ -452,7 +452,7 @@ class SystemStatusService {
 		if ( isset( $checks['action_scheduler']['details']['failed'] ) && $checks['action_scheduler']['details']['failed'] > 0 ) {
 			$recommendations[] = [
 				'type'    => 'review',
-				'message' => __( 'Bitte prüfen Sie die fehlgeschlagenen Hintergrund-Jobs.', 'recruiting-playbook' ),
+				'message' => __( 'Please review the failed background jobs.', 'recruiting-playbook' ),
 				'action'  => 'review_failed_actions',
 			];
 		}

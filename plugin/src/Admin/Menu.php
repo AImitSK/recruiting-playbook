@@ -69,8 +69,8 @@ class Menu {
 		// Bewerbungen (ersetzt Hauptmenü-Eintrag).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Bewerbungen', 'recruiting-playbook' ),
-			__( 'Bewerbungen', 'recruiting-playbook' ),
+			__( 'Applications', 'recruiting-playbook' ),
+			__( 'Applications', 'recruiting-playbook' ),
 			'rp_view_applications',
 			'recruiting-playbook',
 			[ $this, 'renderApplications' ]
@@ -79,7 +79,7 @@ class Menu {
 		// Kanban-Board (Pro-Feature).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Kanban-Board', 'recruiting-playbook' ),
+			__( 'Kanban Board', 'recruiting-playbook' ),
 			$this->getKanbanMenuLabel(),
 			'rp_view_applications',
 			'rp-kanban',
@@ -89,7 +89,7 @@ class Menu {
 		// Talent-Pool (Pro-Feature).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Talent-Pool', 'recruiting-playbook' ),
+			__( 'Talent Pool', 'recruiting-playbook' ),
 			$this->getTalentPoolMenuLabel(),
 			'rp_manage_talent_pool',
 			'rp-talent-pool',
@@ -99,7 +99,7 @@ class Menu {
 		// Reporting & Dashboard.
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Berichte', 'recruiting-playbook' ),
+			__( 'Reports', 'recruiting-playbook' ),
 			$this->getReportingMenuLabel(),
 			'rp_view_stats',
 			'rp-reporting',
@@ -109,7 +109,7 @@ class Menu {
 		// Formular-Builder (Pro-Feature).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Formular-Builder', 'recruiting-playbook' ),
+			__( 'Form Builder', 'recruiting-playbook' ),
 			$this->getFormBuilderMenuLabel(),
 			'rp_manage_forms',
 			'rp-form-builder',
@@ -119,8 +119,8 @@ class Menu {
 		// Einstellungen (Export ist jetzt als Tab integriert).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Einstellungen', 'recruiting-playbook' ),
-			__( 'Einstellungen', 'recruiting-playbook' ),
+			__( 'Settings', 'recruiting-playbook' ),
+			__( 'Settings', 'recruiting-playbook' ),
 			'manage_options',
 			'rp-settings',
 			[ $this, 'renderSettings' ]
@@ -129,8 +129,8 @@ class Menu {
 		// Bewerbung-Detailansicht (unter Parent registriert für Menü-Highlighting).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Bewerbung', 'recruiting-playbook' ),
-			__( 'Bewerbung', 'recruiting-playbook' ),
+			__( 'Application', 'recruiting-playbook' ),
+			__( 'Application', 'recruiting-playbook' ),
 			'rp_view_applications',
 			'rp-application-detail',
 			[ $this, 'renderApplicationDetail' ]
@@ -139,8 +139,8 @@ class Menu {
 		// Bulk-E-Mail-Seite (unter Parent registriert für Menü-Highlighting).
 		add_submenu_page(
 			'recruiting-playbook',
-			__( 'Massen-E-Mail', 'recruiting-playbook' ),
-			__( 'Massen-E-Mail', 'recruiting-playbook' ),
+			__( 'Bulk Email', 'recruiting-playbook' ),
+			__( 'Bulk Email', 'recruiting-playbook' ),
 			'rp_send_emails',
 			'rp-bulk-email',
 			[ $this, 'renderBulkEmail' ]
@@ -478,7 +478,7 @@ class Menu {
 	 * @return string Menü-Label.
 	 */
 	private function getKanbanMenuLabel(): string {
-		$label = __( 'Kanban-Board', 'recruiting-playbook' );
+		$label = __( 'Kanban Board', 'recruiting-playbook' );
 
 		// Lock-Icon für Free-User.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'kanban_board' ) ) {
@@ -494,7 +494,7 @@ class Menu {
 	 * @return string Menü-Label.
 	 */
 	private function getTalentPoolMenuLabel(): string {
-		$label = __( 'Talent-Pool', 'recruiting-playbook' );
+		$label = __( 'Talent Pool', 'recruiting-playbook' );
 
 		// Lock-Icon für Free-User.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
@@ -510,7 +510,7 @@ class Menu {
 	 * @return string Menü-Label.
 	 */
 	private function getReportingMenuLabel(): string {
-		$label = __( 'Berichte', 'recruiting-playbook' );
+		$label = __( 'Reports', 'recruiting-playbook' );
 
 		// Lock-Icon für Free-User (erweiterte Features).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_reporting' ) ) {
@@ -526,7 +526,7 @@ class Menu {
 	 * @return string Menü-Label.
 	 */
 	private function getFormBuilderMenuLabel(): string {
-		$label = __( 'Formular-Builder', 'recruiting-playbook' );
+		$label = __( 'Form Builder', 'recruiting-playbook' );
 
 		// Lock-Icon für Free-User (Custom Fields sind Pro-Feature).
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
@@ -568,8 +568,8 @@ class Menu {
 		// Pro-Feature Check.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			wp_die(
-				esc_html__( 'Massen-E-Mail erfordert Pro.', 'recruiting-playbook' ),
-				esc_html__( 'Pro-Feature erforderlich', 'recruiting-playbook' ),
+				esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
+				esc_html__( 'Pro feature required', 'recruiting-playbook' ),
 				[ 'response' => 403 ]
 			);
 		}
@@ -582,13 +582,13 @@ class Menu {
 		if ( empty( $application_ids ) || ! is_array( $application_ids ) ) {
 			?>
 			<div class="wrap">
-				<h1><?php esc_html_e( 'Massen-E-Mail', 'recruiting-playbook' ); ?></h1>
+				<h1><?php esc_html_e( 'Bulk Email', 'recruiting-playbook' ); ?></h1>
 				<div class="notice notice-error">
-					<p><?php esc_html_e( 'Keine Bewerbungen ausgewählt. Bitte wählen Sie Bewerbungen in der Liste aus.', 'recruiting-playbook' ); ?></p>
+					<p><?php esc_html_e( 'No applications selected. Please select applications from the list.', 'recruiting-playbook' ); ?></p>
 				</div>
 				<p>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button">
-						<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Back to list', 'recruiting-playbook' ); ?>
 					</a>
 				</p>
 			</div>
@@ -629,7 +629,7 @@ class Menu {
 			$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
 
 			if ( ! $template_id ) {
-				echo '<div class="notice notice-error"><p>' . esc_html__( 'Bitte wählen Sie ein Template aus.', 'recruiting-playbook' ) . '</p></div>';
+				echo '<div class="notice notice-error"><p>' . esc_html__( 'Please select a template.', 'recruiting-playbook' ) . '</p></div>';
 			} else {
 				$email_service = new EmailService();
 				$success_count = 0;
@@ -666,13 +666,13 @@ class Menu {
 				// Ergebnis anzeigen.
 				?>
 				<div class="wrap">
-					<h1><?php esc_html_e( 'Massen-E-Mail', 'recruiting-playbook' ); ?></h1>
+					<h1><?php esc_html_e( 'Bulk Email', 'recruiting-playbook' ); ?></h1>
 					<div class="notice notice-success">
 						<p>
 							<?php
 							printf(
 								/* translators: 1: success count, 2: error count */
-								esc_html__( '%1$d E-Mails erfolgreich gesendet, %2$d fehlgeschlagen.', 'recruiting-playbook' ),
+								esc_html__( '%1$d emails sent successfully, %2$d failed.', 'recruiting-playbook' ),
 								$success_count,
 								$error_count
 							);
@@ -681,7 +681,7 @@ class Menu {
 					</div>
 					<p>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button button-primary">
-							<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Back to list', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
 				</div>
@@ -693,14 +693,14 @@ class Menu {
 		// Formular anzeigen.
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Massen-E-Mail senden', 'recruiting-playbook' ); ?></h1>
+			<h1><?php esc_html_e( 'Send Bulk Email', 'recruiting-playbook' ); ?></h1>
 
 			<div class="card" style="max-width: 800px; padding: 20px;">
 				<h2>
 					<?php
 					printf(
 						/* translators: %d: number of recipients */
-						esc_html__( '%d Empfänger ausgewählt', 'recruiting-playbook' ),
+						esc_html__( '%d recipients selected', 'recruiting-playbook' ),
 						count( $recipients )
 					);
 					?>
@@ -710,7 +710,7 @@ class Menu {
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Name', 'recruiting-playbook' ); ?></th>
-							<th><?php esc_html_e( 'E-Mail', 'recruiting-playbook' ); ?></th>
+							<th><?php esc_html_e( 'Email', 'recruiting-playbook' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -726,9 +726,9 @@ class Menu {
 				<?php if ( empty( $templates ) ) : ?>
 					<div class="notice notice-warning inline">
 						<p>
-							<?php esc_html_e( 'Keine E-Mail-Templates vorhanden.', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'No email templates available.', 'recruiting-playbook' ); ?>
 							<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>">
-								<?php esc_html_e( 'Templates erstellen', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Create templates', 'recruiting-playbook' ); ?>
 							</a>
 						</p>
 					</div>
@@ -739,11 +739,11 @@ class Menu {
 						<table class="form-table">
 							<tr>
 								<th scope="row">
-									<label for="template_id"><?php esc_html_e( 'E-Mail-Template', 'recruiting-playbook' ); ?></label>
+									<label for="template_id"><?php esc_html_e( 'Email Template', 'recruiting-playbook' ); ?></label>
 								</th>
 								<td>
 									<select name="template_id" id="template_id" class="regular-text" required>
-										<option value=""><?php esc_html_e( '— Template wählen —', 'recruiting-playbook' ); ?></option>
+										<option value=""><?php esc_html_e( '— Select template —', 'recruiting-playbook' ); ?></option>
 										<?php foreach ( $templates as $template ) : ?>
 											<option value="<?php echo esc_attr( $template['id'] ); ?>">
 												<?php echo esc_html( $template['name'] ); ?>
@@ -753,7 +753,7 @@ class Menu {
 									</select>
 									<p class="description">
 										<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>" target="_blank">
-											<?php esc_html_e( 'Templates verwalten', 'recruiting-playbook' ); ?>
+											<?php esc_html_e( 'Manage templates', 'recruiting-playbook' ); ?>
 										</a>
 									</p>
 								</td>
@@ -762,8 +762,8 @@ class Menu {
 
 						<div class="notice notice-warning inline" style="margin: 15px 0;">
 							<p>
-								<strong><?php esc_html_e( 'Achtung:', 'recruiting-playbook' ); ?></strong>
-								<?php esc_html_e( 'Die E-Mails werden sofort an alle ausgewählten Empfänger gesendet.', 'recruiting-playbook' ); ?>
+								<strong><?php esc_html_e( 'Warning:', 'recruiting-playbook' ); ?></strong>
+								<?php esc_html_e( 'The emails will be sent immediately to all selected recipients.', 'recruiting-playbook' ); ?>
 							</p>
 						</div>
 
@@ -773,13 +773,13 @@ class Menu {
 								<?php
 								printf(
 									/* translators: %d: number of recipients */
-									esc_html__( '%d E-Mails senden', 'recruiting-playbook' ),
+									esc_html__( 'Send %d emails', 'recruiting-playbook' ),
 									count( $recipients )
 								);
 								?>
 							</button>
 							<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button">
-								<?php esc_html_e( 'Abbrechen', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Cancel', 'recruiting-playbook' ); ?>
 							</a>
 						</p>
 					</form>

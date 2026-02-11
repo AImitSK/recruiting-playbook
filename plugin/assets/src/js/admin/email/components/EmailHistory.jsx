@@ -1,5 +1,5 @@
 /**
- * EmailHistory - Liste der versendeten E-Mails (shadcn/ui Dashboard Design)
+ * EmailHistory - List of sent emails (shadcn/ui Dashboard Design)
  *
  * @package RecruitingPlaybook
  */
@@ -40,7 +40,7 @@ import {
 	AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 
-// DOMPurify-Konfiguration: Nur sichere Tags für E-Mail-Inhalte
+// DOMPurify configuration: Only safe tags for email content
 const DOMPURIFY_CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'div', 'span' ],
 	ALLOWED_ATTR: [ 'href', 'target', 'rel', 'class', 'style' ],
@@ -48,15 +48,15 @@ const DOMPURIFY_CONFIG = {
 };
 
 /**
- * Status Badge Komponente - shadcn/ui style
+ * Status Badge Component - shadcn/ui style
  */
 function StatusBadge( { status } ) {
 	const config = {
-		sent: { label: __( 'Gesendet', 'recruiting-playbook' ), variant: 'success' },
-		failed: { label: __( 'Fehlgeschlagen', 'recruiting-playbook' ), variant: 'destructive' },
-		pending: { label: __( 'Ausstehend', 'recruiting-playbook' ), variant: 'warning' },
-		scheduled: { label: __( 'Geplant', 'recruiting-playbook' ), variant: 'secondary' },
-		cancelled: { label: __( 'Storniert', 'recruiting-playbook' ), variant: 'outline' },
+		sent: { label: __( 'Sent', 'recruiting-playbook' ), variant: 'success' },
+		failed: { label: __( 'Failed', 'recruiting-playbook' ), variant: 'destructive' },
+		pending: { label: __( 'Pending', 'recruiting-playbook' ), variant: 'warning' },
+		scheduled: { label: __( 'Scheduled', 'recruiting-playbook' ), variant: 'secondary' },
+		cancelled: { label: __( 'Cancelled', 'recruiting-playbook' ), variant: 'outline' },
 	};
 
 	const statusConfig = config[ status ] || config.pending;
@@ -90,7 +90,7 @@ function StatusBadge( { status } ) {
 }
 
 /**
- * Modal Komponente - shadcn/ui style
+ * Modal Component - shadcn/ui style
  */
 function Modal( { title, children, onClose } ) {
 	return (
@@ -153,7 +153,7 @@ function Modal( { title, children, onClose } ) {
 }
 
 /**
- * EmailHistory Komponente
+ * EmailHistory Component
  */
 export function EmailHistory( {
 	emails = [],
@@ -163,7 +163,7 @@ export function EmailHistory( {
 	onResend,
 	onCancel,
 	onPageChange,
-	action = null, // Button/Action für Header (z.B. "Neue E-Mail")
+	action = null, // Button/Action for Header (e.g. "New Email")
 } ) {
 	const [ statusFilter, setStatusFilter ] = useState( '' );
 	const [ viewingEmail, setViewingEmail ] = useState( null );
@@ -172,7 +172,7 @@ export function EmailHistory( {
 	const [ confirmCancel, setConfirmCancel ] = useState( null );
 
 	/**
-	 * E-Mail-Details laden und Modal öffnen
+	 * Load email details and open modal
 	 */
 	const handleViewEmail = useCallback( async ( email ) => {
 		setViewingLoading( true );
@@ -190,7 +190,7 @@ export function EmailHistory( {
 		}
 	}, [] );
 
-	// Gefilterte E-Mails
+	// Filtered emails
 	const filteredEmails = useMemo( () => {
 		if ( ! statusFilter ) {
 			return emails;
@@ -198,18 +198,18 @@ export function EmailHistory( {
 		return emails.filter( ( email ) => email.status === statusFilter );
 	}, [ emails, statusFilter ] );
 
-	// Status-Optionen
+	// Status options
 	const statusOptions = [
-		{ value: '', label: __( 'Alle Status', 'recruiting-playbook' ) },
-		{ value: 'sent', label: __( 'Gesendet', 'recruiting-playbook' ) },
-		{ value: 'failed', label: __( 'Fehlgeschlagen', 'recruiting-playbook' ) },
-		{ value: 'pending', label: __( 'Ausstehend', 'recruiting-playbook' ) },
-		{ value: 'scheduled', label: __( 'Geplant', 'recruiting-playbook' ) },
-		{ value: 'cancelled', label: __( 'Storniert', 'recruiting-playbook' ) },
+		{ value: '', label: __( 'All Statuses', 'recruiting-playbook' ) },
+		{ value: 'sent', label: __( 'Sent', 'recruiting-playbook' ) },
+		{ value: 'failed', label: __( 'Failed', 'recruiting-playbook' ) },
+		{ value: 'pending', label: __( 'Pending', 'recruiting-playbook' ) },
+		{ value: 'scheduled', label: __( 'Scheduled', 'recruiting-playbook' ) },
+		{ value: 'cancelled', label: __( 'Cancelled', 'recruiting-playbook' ) },
 	];
 
 	/**
-	 * Datum formatieren
+	 * Format date
 	 */
 	const formatDate = ( date ) => {
 		if ( ! date ) {
@@ -225,7 +225,7 @@ export function EmailHistory( {
 	};
 
 	/**
-	 * Erneut senden bestätigen
+	 * Confirm resend
 	 */
 	const handleResendConfirm = () => {
 		if ( confirmResend && onResend ) {
@@ -235,7 +235,7 @@ export function EmailHistory( {
 	};
 
 	/**
-	 * Stornieren bestätigen
+	 * Confirm cancel
 	 */
 	const handleCancelConfirm = () => {
 		if ( confirmCancel && onCancel ) {
@@ -248,7 +248,7 @@ export function EmailHistory( {
 		return (
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem', gap: '0.75rem', color: '#71717a' } }>
 				<Spinner size="default" />
-				<span>{ __( 'Lade E-Mail-Verlauf...', 'recruiting-playbook' ) }</span>
+				<span>{ __( 'Loading email history...', 'recruiting-playbook' ) }</span>
 			</div>
 		);
 	}
@@ -281,12 +281,12 @@ export function EmailHistory( {
 						<div style={ { display: 'flex', alignItems: 'center', gap: '1rem' } }>
 							<div>
 								<CardTitle style={ { fontSize: '1.125rem', fontWeight: 600, color: '#18181b', margin: 0 } }>
-									{ __( 'E-Mail Verlauf', 'recruiting-playbook' ) }
+									{ __( 'Email History', 'recruiting-playbook' ) }
 								</CardTitle>
 								<CardDescription style={ { marginTop: '4px', fontSize: '0.875rem', color: '#71717a' } }>
 									{ emails.length > 0
-										? `${ emails.length } ${ emails.length === 1 ? __( 'E-Mail', 'recruiting-playbook' ) : __( 'E-Mails', 'recruiting-playbook' ) }`
-										: __( 'Keine E-Mails vorhanden', 'recruiting-playbook' )
+										? `${ emails.length } ${ emails.length === 1 ? __( 'email', 'recruiting-playbook' ) : __( 'emails', 'recruiting-playbook' ) }`
+										: __( 'No emails available', 'recruiting-playbook' )
 									}
 								</CardDescription>
 							</div>
@@ -313,7 +313,7 @@ export function EmailHistory( {
 						<div style={ { textAlign: 'center', padding: '4rem 2rem', color: '#71717a' } }>
 							<Mail style={ { width: '3rem', height: '3rem', margin: '0 auto 1rem', opacity: 0.3 } } />
 							<p style={ { margin: 0, fontSize: '0.875rem' } }>
-								{ __( 'Keine E-Mails gefunden.', 'recruiting-playbook' ) }
+								{ __( 'No emails found.', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					) : (
@@ -323,19 +323,19 @@ export function EmailHistory( {
 									<thead>
 										<tr style={ { backgroundColor: '#fafafa', borderBottom: '1px solid #e5e7eb' } }>
 											<th style={ { padding: '12px 16px', paddingLeft: '24px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
-												{ __( 'Datum', 'recruiting-playbook' ) }
+												{ __( 'Date', 'recruiting-playbook' ) }
 											</th>
 											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
-												{ __( 'Empfänger', 'recruiting-playbook' ) }
+												{ __( 'Recipient', 'recruiting-playbook' ) }
 											</th>
 											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
-												{ __( 'Betreff', 'recruiting-playbook' ) }
+												{ __( 'Subject', 'recruiting-playbook' ) }
 											</th>
 											<th style={ { padding: '12px 16px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap' } }>
 												{ __( 'Status', 'recruiting-playbook' ) }
 											</th>
 											<th style={ { padding: '12px 16px', paddingRight: '24px', textAlign: 'left', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', whiteSpace: 'nowrap', width: '100px' } }>
-												{ __( 'Aktionen', 'recruiting-playbook' ) }
+												{ __( 'Actions', 'recruiting-playbook' ) }
 											</th>
 										</tr>
 									</thead>
@@ -399,7 +399,7 @@ export function EmailHistory( {
 															variant="ghost"
 															size="icon"
 															onClick={ () => handleViewEmail( email ) }
-															title={ __( 'Anzeigen', 'recruiting-playbook' ) }
+															title={ __( 'View', 'recruiting-playbook' ) }
 														>
 															<Eye style={ { width: '1rem', height: '1rem' } } />
 														</Button>
@@ -408,7 +408,7 @@ export function EmailHistory( {
 																variant="ghost"
 																size="icon"
 																onClick={ () => setConfirmResend( email ) }
-																title={ __( 'Erneut senden', 'recruiting-playbook' ) }
+																title={ __( 'Resend', 'recruiting-playbook' ) }
 															>
 																<RefreshCw style={ { width: '1rem', height: '1rem' } } />
 															</Button>
@@ -418,7 +418,7 @@ export function EmailHistory( {
 																variant="ghost"
 																size="icon"
 																onClick={ () => setConfirmCancel( email ) }
-																title={ __( 'Stornieren', 'recruiting-playbook' ) }
+																title={ __( 'Cancel', 'recruiting-playbook' ) }
 															>
 																<X style={ { width: '1rem', height: '1rem', color: '#dc2626' } } />
 															</Button>
@@ -443,7 +443,7 @@ export function EmailHistory( {
 									} }
 								>
 									<span style={ { fontSize: '0.875rem', color: '#71717a' } }>
-										{ __( 'Seite', 'recruiting-playbook' ) } { pagination.page } { __( 'von', 'recruiting-playbook' ) } { pagination.pages }
+										{ __( 'Page', 'recruiting-playbook' ) } { pagination.page } { __( 'of', 'recruiting-playbook' ) } { pagination.pages }
 									</span>
 									<div style={ { display: 'flex', gap: '0.5rem' } }>
 										<Button
@@ -453,7 +453,7 @@ export function EmailHistory( {
 											onClick={ () => onPageChange && onPageChange( pagination.page - 1 ) }
 										>
 											<ChevronLeft style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
-											{ __( 'Zurück', 'recruiting-playbook' ) }
+											{ __( 'Previous', 'recruiting-playbook' ) }
 										</Button>
 										<Button
 											variant="outline"
@@ -461,7 +461,7 @@ export function EmailHistory( {
 											disabled={ pagination.page >= pagination.pages }
 											onClick={ () => onPageChange && onPageChange( pagination.page + 1 ) }
 										>
-											{ __( 'Weiter', 'recruiting-playbook' ) }
+											{ __( 'Next', 'recruiting-playbook' ) }
 											<ChevronRight style={ { width: '1rem', height: '1rem', marginLeft: '0.25rem' } } />
 										</Button>
 									</div>
@@ -472,11 +472,11 @@ export function EmailHistory( {
 				</CardContent>
 			</Card>
 
-			{ /* E-Mail Vorschau Modal */ }
+			{ /* Email Preview Modal */ }
 			{ viewingEmail && (
 				<Modal title={ viewingEmail.subject } onClose={ () => setViewingEmail( null ) }>
 					<div style={ { padding: '1.5rem' } }>
-						{ /* Meta-Informationen */ }
+						{ /* Meta information */ }
 						<div
 							style={ {
 								display: 'grid',
@@ -489,10 +489,10 @@ export function EmailHistory( {
 								marginBottom: '1.5rem',
 							} }
 						>
-							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Empfänger', 'recruiting-playbook' ) }:</span>
+							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Recipient', 'recruiting-playbook' ) }:</span>
 							<span style={ { color: '#18181b' } }>{ viewingEmail.recipient?.email || viewingEmail.recipient_email }</span>
 
-							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Datum', 'recruiting-playbook' ) }:</span>
+							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Date', 'recruiting-playbook' ) }:</span>
 							<span style={ { color: '#18181b' } }>{ formatDate( viewingEmail.sent_at || viewingEmail.created_at ) }</span>
 
 							<span style={ { color: '#71717a', fontWeight: 500 } }>{ __( 'Status', 'recruiting-playbook' ) }:</span>
@@ -519,15 +519,15 @@ export function EmailHistory( {
 							</div>
 						) }
 
-						{ /* E-Mail-Inhalt */ }
+						{ /* Email content */ }
 						<div>
 							<h4 style={ { margin: '0 0 0.75rem 0', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a' } }>
-								{ __( 'Nachricht', 'recruiting-playbook' ) }
+								{ __( 'Message', 'recruiting-playbook' ) }
 							</h4>
 							{ viewingLoading ? (
 								<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem', color: '#71717a' } }>
 									<Spinner size="default" />
-									<span style={ { marginLeft: '0.75rem' } }>{ __( 'Lade...', 'recruiting-playbook' ) }</span>
+									<span style={ { marginLeft: '0.75rem' } }>{ __( 'Loading...', 'recruiting-playbook' ) }</span>
 								</div>
 							) : (
 								<div
@@ -550,37 +550,37 @@ export function EmailHistory( {
 				</Modal>
 			) }
 
-			{ /* Erneut senden Bestätigung */ }
+			{ /* Resend confirmation */ }
 			<AlertDialog open={ !! confirmResend } onOpenChange={ () => setConfirmResend( null ) }>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{ __( 'E-Mail erneut senden', 'recruiting-playbook' ) }</AlertDialogTitle>
+						<AlertDialogTitle>{ __( 'Resend email', 'recruiting-playbook' ) }</AlertDialogTitle>
 						<AlertDialogDescription>
-							{ __( 'Möchten Sie diese E-Mail erneut senden?', 'recruiting-playbook' ) }
+							{ __( 'Do you want to resend this email?', 'recruiting-playbook' ) }
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>{ __( 'Abbrechen', 'recruiting-playbook' ) }</AlertDialogCancel>
+						<AlertDialogCancel>{ __( 'Cancel', 'recruiting-playbook' ) }</AlertDialogCancel>
 						<AlertDialogAction onClick={ handleResendConfirm }>
-							{ __( 'Erneut senden', 'recruiting-playbook' ) }
+							{ __( 'Resend', 'recruiting-playbook' ) }
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
 
-			{ /* Stornieren Bestätigung */ }
+			{ /* Cancel confirmation */ }
 			<AlertDialog open={ !! confirmCancel } onOpenChange={ () => setConfirmCancel( null ) }>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{ __( 'E-Mail stornieren', 'recruiting-playbook' ) }</AlertDialogTitle>
+						<AlertDialogTitle>{ __( 'Cancel email', 'recruiting-playbook' ) }</AlertDialogTitle>
 						<AlertDialogDescription>
-							{ __( 'Möchten Sie diese geplante E-Mail stornieren?', 'recruiting-playbook' ) }
+							{ __( 'Do you want to cancel this scheduled email?', 'recruiting-playbook' ) }
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>{ __( 'Abbrechen', 'recruiting-playbook' ) }</AlertDialogCancel>
+						<AlertDialogCancel>{ __( 'Cancel', 'recruiting-playbook' ) }</AlertDialogCancel>
 						<AlertDialogAction onClick={ handleCancelConfirm } variant="destructive">
-							{ __( 'Stornieren', 'recruiting-playbook' ) }
+							{ __( 'Cancel Email', 'recruiting-playbook' ) }
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

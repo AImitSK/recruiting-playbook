@@ -232,11 +232,11 @@ class EmailRenderer {
 	 */
 	private function getTemplateName( string $slug ): string {
 		$names = [
-			'application-received'  => __( 'Eingangsbestätigung', 'recruiting-playbook' ),
-			'interview-invitation'  => __( 'Interview-Einladung', 'recruiting-playbook' ),
-			'rejection'             => __( 'Absage', 'recruiting-playbook' ),
-			'offer-letter'          => __( 'Stellenangebot', 'recruiting-playbook' ),
-			'hr-new-application'    => __( 'HR: Neue Bewerbung', 'recruiting-playbook' ),
+			'application-received'  => __( 'Application Confirmation', 'recruiting-playbook' ),
+			'interview-invitation'  => __( 'Interview Invitation', 'recruiting-playbook' ),
+			'rejection'             => __( 'Rejection', 'recruiting-playbook' ),
+			'offer-letter'          => __( 'Job Offer', 'recruiting-playbook' ),
+			'hr-new-application'    => __( 'HR: New Application', 'recruiting-playbook' ),
 		];
 
 		return $names[ $slug ] ?? $slug;

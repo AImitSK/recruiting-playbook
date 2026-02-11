@@ -31,12 +31,12 @@ class DocumentType {
 	 */
 	public static function getAll(): array {
 		return [
-			self::RESUME       => __( 'Lebenslauf', 'recruiting-playbook' ),
-			self::COVER_LETTER => __( 'Anschreiben', 'recruiting-playbook' ),
-			self::CERTIFICATE  => __( 'Zertifikat/Zeugnis', 'recruiting-playbook' ),
-			self::REFERENCE    => __( 'Referenz', 'recruiting-playbook' ),
+			self::RESUME       => __( 'Resume', 'recruiting-playbook' ),
+			self::COVER_LETTER => __( 'Cover Letter', 'recruiting-playbook' ),
+			self::CERTIFICATE  => __( 'Certificate', 'recruiting-playbook' ),
+			self::REFERENCE    => __( 'Reference', 'recruiting-playbook' ),
 			self::PORTFOLIO    => __( 'Portfolio', 'recruiting-playbook' ),
-			self::OTHER        => __( 'Sonstiges', 'recruiting-playbook' ),
+			self::OTHER        => __( 'Other', 'recruiting-playbook' ),
 		];
 	}
 }

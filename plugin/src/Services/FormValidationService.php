@@ -79,7 +79,7 @@ class FormValidationService {
 		}
 
 		if ( ! empty( $errors ) ) {
-			$wp_error = new WP_Error( 'validation_failed', __( 'Validierung fehlgeschlagen.', 'recruiting-playbook' ) );
+			$wp_error = new WP_Error( 'validation_failed', __( 'Validation failed.', 'recruiting-playbook' ) );
 
 			foreach ( $errors as $field_key => $message ) {
 				$wp_error->add( 'field_error', $message, [ 'field' => $field_key ] );
@@ -302,14 +302,14 @@ class FormValidationService {
 	 */
 	public function getConditionalOperators(): array {
 		return [
-			'equals'       => __( 'ist gleich', 'recruiting-playbook' ),
-			'not_equals'   => __( 'ist nicht gleich', 'recruiting-playbook' ),
-			'contains'     => __( 'enthält', 'recruiting-playbook' ),
-			'not_empty'    => __( 'ist ausgefüllt', 'recruiting-playbook' ),
-			'empty'        => __( 'ist leer', 'recruiting-playbook' ),
-			'greater_than' => __( 'ist größer als', 'recruiting-playbook' ),
-			'less_than'    => __( 'ist kleiner als', 'recruiting-playbook' ),
-			'in'           => __( 'ist einer von', 'recruiting-playbook' ),
+			'equals'       => __( 'equals', 'recruiting-playbook' ),
+			'not_equals'   => __( 'does not equal', 'recruiting-playbook' ),
+			'contains'     => __( 'contains', 'recruiting-playbook' ),
+			'not_empty'    => __( 'is filled', 'recruiting-playbook' ),
+			'empty'        => __( 'is empty', 'recruiting-playbook' ),
+			'greater_than' => __( 'is greater than', 'recruiting-playbook' ),
+			'less_than'    => __( 'is less than', 'recruiting-playbook' ),
+			'in'           => __( 'is one of', 'recruiting-playbook' ),
 		];
 	}
 }

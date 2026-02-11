@@ -100,7 +100,7 @@ class ApplicationService {
 		if ( false === $inserted ) {
 			return new WP_Error(
 				'db_error',
-				__( 'Bewerbung konnte nicht gespeichert werden.', 'recruiting-playbook' ),
+				__( 'Application could not be saved.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -140,7 +140,7 @@ class ApplicationService {
 		}
 
 		// 4. Activity Log
-		$this->logActivity( $application_id, 'application_received', 'Neue Bewerbung eingegangen' );
+		$this->logActivity( $application_id, 'application_received', 'New application received' );
 
 		// 5. E-Mails versenden
 		$this->email_service->sendApplicationReceived( $application_id );
@@ -502,7 +502,7 @@ class ApplicationService {
 		if ( ! in_array( $status, $valid_statuses, true ) ) {
 			return new WP_Error(
 				'invalid_status',
-				__( 'Ungültiger Status.', 'recruiting-playbook' )
+				__( 'Invalid status.', 'recruiting-playbook' )
 			);
 		}
 
@@ -511,7 +511,7 @@ class ApplicationService {
 		if ( ! $application ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' )
+				__( 'Application not found.', 'recruiting-playbook' )
 			);
 		}
 
@@ -544,14 +544,14 @@ class ApplicationService {
 		if ( false === $updated ) {
 			return new WP_Error(
 				'db_error',
-				__( 'Status konnte nicht aktualisiert werden.', 'recruiting-playbook' )
+				__( 'Status could not be updated.', 'recruiting-playbook' )
 			);
 		}
 
 		// Activity Log
 		$message = sprintf(
 			/* translators: 1: old status, 2: new status */
-			__( 'Status geändert von "%1$s" zu "%2$s"', 'recruiting-playbook' ),
+			__( 'Status changed from "%1$s" to "%2$s"', 'recruiting-playbook' ),
 			$this->getStatusLabel( $old_status ),
 			$this->getStatusLabel( $status )
 		);
@@ -634,7 +634,7 @@ class ApplicationService {
 		if ( false === $inserted ) {
 			return new WP_Error(
 				'db_error',
-				__( 'Kandidat konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Candidate could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -721,7 +721,7 @@ class ApplicationService {
 		if ( ! $saved ) {
 			return new WP_Error(
 				'save_failed',
-				__( 'Custom Fields konnten nicht gespeichert werden.', 'recruiting-playbook' )
+				__( 'Custom fields could not be saved.', 'recruiting-playbook' )
 			);
 		}
 
@@ -747,13 +747,13 @@ class ApplicationService {
 	 */
 	private function getStatusLabel( string $status ): string {
 		$labels = [
-			ApplicationStatus::NEW       => __( 'Neu', 'recruiting-playbook' ),
-			ApplicationStatus::SCREENING => __( 'In Prüfung', 'recruiting-playbook' ),
-			ApplicationStatus::INTERVIEW => __( 'Vorstellungsgespräch', 'recruiting-playbook' ),
-			ApplicationStatus::OFFER     => __( 'Angebot', 'recruiting-playbook' ),
-			ApplicationStatus::HIRED     => __( 'Eingestellt', 'recruiting-playbook' ),
-			ApplicationStatus::REJECTED  => __( 'Abgelehnt', 'recruiting-playbook' ),
-			ApplicationStatus::WITHDRAWN => __( 'Zurückgezogen', 'recruiting-playbook' ),
+			ApplicationStatus::NEW       => __( 'New', 'recruiting-playbook' ),
+			ApplicationStatus::SCREENING => __( 'Screening', 'recruiting-playbook' ),
+			ApplicationStatus::INTERVIEW => __( 'Interview', 'recruiting-playbook' ),
+			ApplicationStatus::OFFER     => __( 'Offer', 'recruiting-playbook' ),
+			ApplicationStatus::HIRED     => __( 'Hired', 'recruiting-playbook' ),
+			ApplicationStatus::REJECTED  => __( 'Rejected', 'recruiting-playbook' ),
+			ApplicationStatus::WITHDRAWN => __( 'Withdrawn', 'recruiting-playbook' ),
 		];
 
 		return $labels[ $status ] ?? $status;
@@ -786,7 +786,7 @@ class ApplicationService {
 		if ( ! in_array( $status, $valid_statuses, true ) ) {
 			return new WP_Error(
 				'invalid_status',
-				__( 'Ungültiger Status.', 'recruiting-playbook' )
+				__( 'Invalid status.', 'recruiting-playbook' )
 			);
 		}
 

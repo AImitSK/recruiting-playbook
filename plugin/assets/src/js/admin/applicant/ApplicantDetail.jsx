@@ -1,7 +1,7 @@
 /**
  * Applicant Detail Component
  *
- * Hauptkomponente für die Bewerber-Detailseite
+ * Main component for the applicant detail page
  *
  * @package RecruitingPlaybook
  */
@@ -42,16 +42,16 @@ import { DynamicFieldRenderer } from '../components/shared/DynamicFieldRenderer'
 import { useActiveFields } from '../hooks/useActiveFields';
 
 /**
- * Status-Konfiguration mit Farben
+ * Status configuration with colors
  */
 const STATUS_CONFIG = {
-	new: { label: 'Neu', color: '#2271b1', bg: '#e6f3ff' },
-	screening: { label: 'In Prüfung', color: '#dba617', bg: '#fff8e6' },
+	new: { label: 'New', color: '#2271b1', bg: '#e6f3ff' },
+	screening: { label: 'Screening', color: '#dba617', bg: '#fff8e6' },
 	interview: { label: 'Interview', color: '#9b59b6', bg: '#f5e6ff' },
-	offer: { label: 'Angebot', color: '#1e8cbe', bg: '#e6f5ff' },
-	hired: { label: 'Eingestellt', color: '#2fac66', bg: '#e6f5ec' },
-	rejected: { label: 'Abgelehnt', color: '#d63638', bg: '#ffe6e6' },
-	withdrawn: { label: 'Zurückgezogen', color: '#787c82', bg: '#f0f0f0' },
+	offer: { label: 'Offer', color: '#1e8cbe', bg: '#e6f5ff' },
+	hired: { label: 'Hired', color: '#2fac66', bg: '#e6f5ec' },
+	rejected: { label: 'Rejected', color: '#d63638', bg: '#ffe6e6' },
+	withdrawn: { label: 'Withdrawn', color: '#787c82', bg: '#f0f0f0' },
 };
 
 const STATUS_OPTIONS = Object.entries( STATUS_CONFIG ).map( ( [ value, config ] ) => ( {
@@ -80,7 +80,7 @@ function copyToClipboard( text ) {
 }
 
 /**
- * Bewerber-Detailseite Komponente
+ * Applicant Detail Page Component
  */
 export function ApplicantDetail( { applicationId } ) {
 	const [ application, setApplication ] = useState( null );
@@ -92,7 +92,7 @@ export function ApplicantDetail( { applicationId } ) {
 	const [ timelineCount, setTimelineCount ] = useState( 0 );
 	const [ emailsCount, setEmailsCount ] = useState( 0 );
 
-	// Aktive Felder aus Form-Config laden
+	// Load active fields from form config
 	const { fields: activeFields, loading: fieldsLoading } = useActiveFields();
 
 	const config = window.rpApplicant || {};
@@ -124,7 +124,7 @@ export function ApplicantDetail( { applicationId } ) {
 			setApplication( flatData );
 		} catch ( err ) {
 			console.error( 'Error loading application:', err );
-			setError( err.message || __( 'Fehler beim Laden der Bewerbung', 'recruiting-playbook' ) );
+			setError( err.message || __( 'Error loading application', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -178,7 +178,7 @@ export function ApplicantDetail( { applicationId } ) {
 		} catch ( err ) {
 			console.error( 'Error changing status:', err );
 			setApplication( ( prev ) => ( { ...prev, status: previousStatus } ) );
-			alert( err.message || __( 'Fehler beim Ändern des Status', 'recruiting-playbook' ) );
+			alert( err.message || __( 'Error changing status', 'recruiting-playbook' ) );
 		} finally {
 			setStatusChanging( false );
 		}
@@ -194,7 +194,7 @@ export function ApplicantDetail( { applicationId } ) {
 			<div className="rp-admin" style={ { padding: '20px 0' } }>
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '0.75rem', color: '#6b7280' } }>
 					<Spinner size="default" />
-					<span>{ __( 'Lade Bewerbung...', 'recruiting-playbook' ) }</span>
+					<span>{ __( 'Loading application...', 'recruiting-playbook' ) }</span>
 				</div>
 			</div>
 		);
@@ -208,7 +208,7 @@ export function ApplicantDetail( { applicationId } ) {
 					<CardContent style={ { padding: '3rem', textAlign: 'center' } }>
 						<p style={ { color: '#d63638', marginBottom: '1.5rem' } }>{ error }</p>
 						<Button onClick={ loadApplication }>
-							{ __( 'Erneut versuchen', 'recruiting-playbook' ) }
+							{ __( 'Try again', 'recruiting-playbook' ) }
 						</Button>
 					</CardContent>
 				</Card>
@@ -221,7 +221,7 @@ export function ApplicantDetail( { applicationId } ) {
 			<div className="rp-admin" style={ { padding: '20px 0' } }>
 				<Card>
 					<CardContent style={ { padding: '3rem', textAlign: 'center', color: '#6b7280' } }>
-						{ __( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ) }
+						{ __( 'Application not found.', 'recruiting-playbook' ) }
 					</CardContent>
 				</Card>
 			</div>
@@ -234,13 +234,13 @@ export function ApplicantDetail( { applicationId } ) {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1400px' } }>
-				{ /* Header: Logo links, Titel rechts */ }
+				{ /* Header: Logo left, title right */ }
 				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
 					{ logoUrl && (
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ __( 'Bewerbung', 'recruiting-playbook' ) } #{ applicationId }
+						{ __( 'Application', 'recruiting-playbook' ) } #{ applicationId }
 					</h1>
 				</div>
 
@@ -251,7 +251,7 @@ export function ApplicantDetail( { applicationId } ) {
 						style={ { display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#1d71b8', textDecoration: 'none', fontSize: '0.875rem' } }
 					>
 						<ArrowLeft style={ { width: '1rem', height: '1rem' } } />
-						{ __( 'Zurück zur Liste', 'recruiting-playbook' ) }
+						{ __( 'Back to list', 'recruiting-playbook' ) }
 					</a>
 
 					<div style={ { flex: 1 } } />
@@ -270,17 +270,17 @@ export function ApplicantDetail( { applicationId } ) {
 							{ __( 'Details', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="documents" count={ documentsCount }>
-							{ __( 'Dokumente', 'recruiting-playbook' ) }
+							{ __( 'Documents', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="notes" count={ notesCount }>
-							{ __( 'Notizen', 'recruiting-playbook' ) }
+							{ __( 'Notes', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="timeline" count={ timelineCount }>
-							{ __( 'Verlauf', 'recruiting-playbook' ) }
+							{ __( 'Timeline', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ canSendEmails && (
 							<TabsTrigger value="email" count={ emailsCount }>
-								{ __( 'E-Mail', 'recruiting-playbook' ) }
+								{ __( 'Email', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -290,7 +290,7 @@ export function ApplicantDetail( { applicationId } ) {
 				<div style={ { display: 'grid', gridTemplateColumns: '1fr 380px', gap: '1.5rem' } }>
 					{ /* Main Content */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
-						{ /* Kandidaten-Info Card - kompakt */ }
+						{ /* Candidate Info Card - compact */ }
 						<Card>
 							<CardContent style={ { padding: '1rem 1.5rem' } }>
 								<div style={ { display: 'flex', gap: '1rem', alignItems: 'center' } }>
@@ -313,7 +313,7 @@ export function ApplicantDetail( { applicationId } ) {
 										{ getInitials( application.first_name, application.last_name ) }
 									</div>
 
-									{ /* Name und Meta */ }
+									{ /* Name and meta */ }
 									<div style={ { flex: 1, minWidth: 0 } }>
 										<h2 style={ { margin: '0 0 0.25rem 0', fontSize: '1.125rem', fontWeight: 600, color: '#1f2937' } }>
 											{ application.first_name } { application.last_name }
@@ -327,12 +327,12 @@ export function ApplicantDetail( { applicationId } ) {
 											) }
 											<span style={ { display: 'inline-flex', alignItems: 'center', gap: '0.375rem' } }>
 												<Calendar style={ { width: '0.875rem', height: '0.875rem' } } />
-												{ __( 'Beworben am', 'recruiting-playbook' ) }: { formatDate( application.created_at ) }
+												{ __( 'Applied on', 'recruiting-playbook' ) }: { formatDate( application.created_at ) }
 											</span>
 										</div>
 									</div>
 
-									{ /* Status rechts */ }
+									{ /* Status right */ }
 									<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 } }>
 										<select
 											id="rp-status-select"
@@ -364,13 +364,13 @@ export function ApplicantDetail( { applicationId } ) {
 						{ /* Tab: Details */ }
 						{ activeTab === 'details' && (
 							<>
-								{ /* Kandidaten-Details - dynamisch basierend auf Form-Config */ }
+								{ /* Candidate details - dynamic based on form config */ }
 								<Card>
 									<CardHeader style={ { paddingBottom: 0 } }>
-										<CardTitle>{ __( 'Kandidaten-Details', 'recruiting-playbook' ) }</CardTitle>
+										<CardTitle>{ __( 'Candidate Details', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
 									<CardContent style={ { padding: '1rem 1.5rem' } }>
-										{ /* Dynamische Felder aus Form-Konfiguration */ }
+										{ /* Dynamic fields from form configuration */ }
 										{ activeFields && activeFields.length > 0 ? (
 											<DynamicFieldRenderer
 												fields={ activeFields }
@@ -381,9 +381,9 @@ export function ApplicantDetail( { applicationId } ) {
 													phone: application.phone,
 													salutation: application.salutation,
 													message: application.cover_letter,
-													// Custom Fields aus der Datenbank (als Key-Value-Objekt)
+													// Custom fields from database (as key-value object)
 													...( application.custom_fields_raw || {} ),
-													// Fallback: Custom Fields Array in Objekt umwandeln
+													// Fallback: Convert custom fields array to object
 													...( Array.isArray( application.custom_fields )
 														? application.custom_fields.reduce( ( acc, cf ) => {
 															acc[ cf.key ] = cf.value;
@@ -397,20 +397,20 @@ export function ApplicantDetail( { applicationId } ) {
 												hideEmptyOptional={ true }
 											/>
 										) : (
-											// Fallback: Hardcodierte Felder wenn keine Config geladen
+											// Fallback: Hardcoded fields when no config loaded
 											<div style={ { display: 'grid', gridTemplateColumns: '1fr', gap: '0' } }>
 												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
 													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
 													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
 												</div>
 												<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'E-Mail', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Email', 'recruiting-playbook' ) }</span>
 													{ application.email ? (
 														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.email }</a>
 													) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
 												</div>
 												<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Telefon', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Phone', 'recruiting-playbook' ) }</span>
 													{ application.phone ? (
 														<a href={ `tel:${ application.phone }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.phone }</a>
 													) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
@@ -420,15 +420,15 @@ export function ApplicantDetail( { applicationId } ) {
 									</CardContent>
 								</Card>
 
-								{ /* Custom Fields Fallback (nur wenn keine dynamischen Felder aktiv) */ }
+								{ /* Custom Fields Fallback (only when no dynamic fields active) */ }
 								{ ( ! activeFields || activeFields.length === 0 ) && application.custom_fields && application.custom_fields.length > 0 && (
 									<CustomFieldsPanel customFields={ application.custom_fields } />
 								) }
 
-								{ /* Bewertung */ }
+								{ /* Rating */ }
 								<Card>
 									<CardHeader>
-										<CardTitle>{ __( 'Bewertung', 'recruiting-playbook' ) }</CardTitle>
+										<CardTitle>{ __( 'Rating', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
 									<CardContent>
 										<RatingDetailed applicationId={ applicationId } showDistribution={ true } />
@@ -437,17 +437,17 @@ export function ApplicantDetail( { applicationId } ) {
 							</>
 						) }
 
-						{ /* Tab: Dokumente */ }
+						{ /* Tab: Documents */ }
 						{ activeTab === 'documents' && (
 							<Card>
 								<CardHeader>
-									<CardTitle>{ __( 'Dokumente', 'recruiting-playbook' ) } ({ documentsCount })</CardTitle>
+									<CardTitle>{ __( 'Documents', 'recruiting-playbook' ) } ({ documentsCount })</CardTitle>
 								</CardHeader>
 								<CardContent>
 									{ documentsCount === 0 ? (
 										<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
 											<FileText style={ { width: '3rem', height: '3rem', marginBottom: '0.75rem', opacity: 0.5 } } />
-											<p>{ __( 'Keine Dokumente vorhanden', 'recruiting-playbook' ) }</p>
+											<p>{ __( 'No documents available', 'recruiting-playbook' ) }</p>
 										</div>
 									) : (
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
@@ -472,7 +472,7 @@ export function ApplicantDetail( { applicationId } ) {
 															<Button variant="outline" size="sm" asChild>
 																<a href={ doc.view_url } target="_blank" rel="noopener noreferrer">
 																	<Eye style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-																	{ __( 'Ansehen', 'recruiting-playbook' ) }
+																	{ __( 'View', 'recruiting-playbook' ) }
 																</a>
 															</Button>
 														) }
@@ -493,11 +493,11 @@ export function ApplicantDetail( { applicationId } ) {
 							</Card>
 						) }
 
-						{ /* Tab: Notizen */ }
+						{ /* Tab: Notes */ }
 						{ activeTab === 'notes' && (
 							<Card>
 								<CardHeader>
-									<CardTitle>{ __( 'Notizen', 'recruiting-playbook' ) }</CardTitle>
+									<CardTitle>{ __( 'Notes', 'recruiting-playbook' ) }</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<NotesPanel applicationId={ applicationId } showHeader={ false } />
@@ -509,7 +509,7 @@ export function ApplicantDetail( { applicationId } ) {
 						{ activeTab === 'timeline' && (
 							<Card>
 								<CardHeader>
-									<CardTitle>{ __( 'Verlauf', 'recruiting-playbook' ) }</CardTitle>
+									<CardTitle>{ __( 'Timeline', 'recruiting-playbook' ) }</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<Timeline applicationId={ applicationId } showHeader={ false } />
@@ -517,11 +517,11 @@ export function ApplicantDetail( { applicationId } ) {
 							</Card>
 						) }
 
-						{ /* Tab: E-Mail */ }
+						{ /* Tab: Email */ }
 						{ activeTab === 'email' && canSendEmails && (
 							<Card>
 								<CardHeader>
-									<CardTitle>{ __( 'E-Mail', 'recruiting-playbook' ) }</CardTitle>
+									<CardTitle>{ __( 'Email', 'recruiting-playbook' ) }</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<EmailTab
@@ -542,7 +542,7 @@ export function ApplicantDetail( { applicationId } ) {
 							<CardHeader>
 								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 									<Clock style={ { width: '1rem', height: '1rem' } } />
-									{ __( 'Aktivität', 'recruiting-playbook' ) }
+									{ __( 'Activity', 'recruiting-playbook' ) }
 								</CardTitle>
 							</CardHeader>
 							<CardContent>

@@ -2,7 +2,7 @@
 /**
  * Date Field Type
  *
- * Datums-Eingabefeld.
+ * Date input field.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * Date Feldtyp
+ * Date Field Type
  */
 class DateField extends AbstractFieldType {
 
@@ -32,7 +32,7 @@ class DateField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Datum', 'recruiting-playbook' );
+		return __( 'Date', 'recruiting-playbook' );
 	}
 
 	/**
@@ -65,17 +65,17 @@ class DateField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min_date',
-				'label'       => __( 'Frühestes Datum', 'recruiting-playbook' ),
+				'label'       => __( 'Earliest Date', 'recruiting-playbook' ),
 				'type'        => 'text',
 				'placeholder' => 'today, -18 years, 2000-01-01',
-				'description' => __( 'Relatives Datum (z.B. "today", "-18 years") oder absolut (YYYY-MM-DD)', 'recruiting-playbook' ),
+				'description' => __( 'Relative date (e.g. "today", "-18 years") or absolute (YYYY-MM-DD)', 'recruiting-playbook' ),
 			],
 			[
 				'key'         => 'max_date',
-				'label'       => __( 'Spätestes Datum', 'recruiting-playbook' ),
+				'label'       => __( 'Latest Date', 'recruiting-playbook' ),
 				'type'        => 'text',
 				'placeholder' => 'today, +1 year, 2030-12-31',
-				'description' => __( 'Relatives Datum (z.B. "today", "+1 year") oder absolut (YYYY-MM-DD)', 'recruiting-playbook' ),
+				'description' => __( 'Relative date (e.g. "today", "+1 year") or absolute (YYYY-MM-DD)', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -96,14 +96,14 @@ class DateField extends AbstractFieldType {
 		$value = (string) $value;
 		$label = $field->getLabel();
 
-		// Datumsformat prüfen (YYYY-MM-DD vom HTML5 date input).
+		// Check date format (YYYY-MM-DD from HTML5 date input).
 		$timestamp = strtotime( $value );
 		if ( $timestamp === false ) {
 			return new WP_Error(
 				'invalid_date',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s muss ein gültiges Datum sein.', 'recruiting-playbook' ),
+					__( '%s must be a valid date.', 'recruiting-playbook' ),
 					$label
 				)
 			);
@@ -119,7 +119,7 @@ class DateField extends AbstractFieldType {
 					'min_date',
 					sprintf(
 						/* translators: 1: Field label, 2: Minimum date */
-						__( '%1$s muss am oder nach dem %2$s sein.', 'recruiting-playbook' ),
+						__( '%1$s must be on or after %2$s.', 'recruiting-playbook' ),
 						$label,
 						wp_date( get_option( 'date_format', 'd.m.Y' ), $min_date )
 					)
@@ -135,7 +135,7 @@ class DateField extends AbstractFieldType {
 					'max_date',
 					sprintf(
 						/* translators: 1: Field label, 2: Maximum date */
-						__( '%1$s muss am oder vor dem %2$s sein.', 'recruiting-playbook' ),
+						__( '%1$s must be on or before %2$s.', 'recruiting-playbook' ),
 						$label,
 						wp_date( get_option( 'date_format', 'd.m.Y' ), $max_date )
 					)
@@ -161,7 +161,7 @@ class DateField extends AbstractFieldType {
 			return '';
 		}
 
-		// Als ISO-Datum speichern.
+		// Store as ISO date.
 		return gmdate( 'Y-m-d', $timestamp );
 	}
 
@@ -182,18 +182,18 @@ class DateField extends AbstractFieldType {
 	}
 
 	/**
-	 * Relatives Datum parsen
+	 * Parse relative date
 	 *
-	 * @param string $date_string Datumsstring (z.B. "today", "-18 years", "2000-01-01").
-	 * @return int|false Timestamp oder false.
+	 * @param string $date_string Date string (e.g. "today", "-18 years", "2000-01-01").
+	 * @return int|false Timestamp or false.
 	 */
 	private function parseRelativeDate( string $date_string ): int|false {
-		// Absolutdatum (YYYY-MM-DD).
+		// Absolute date (YYYY-MM-DD).
 		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_string ) ) {
 			return strtotime( $date_string );
 		}
 
-		// Relatives Datum.
+		// Relative date.
 		return strtotime( $date_string );
 	}
 
@@ -209,7 +209,7 @@ class DateField extends AbstractFieldType {
 			$input_attrs .= sprintf( ' value="%s"', esc_attr( $value ) );
 		}
 
-		// Min/Max Date als HTML5-Attribute.
+		// Min/Max Date as HTML5 attributes.
 		if ( ! empty( $validation['min_date'] ) ) {
 			$min_date = $this->parseRelativeDate( $validation['min_date'] );
 			if ( $min_date ) {

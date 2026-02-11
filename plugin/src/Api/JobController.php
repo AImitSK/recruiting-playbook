@@ -76,7 +76,7 @@ class JobController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Job-ID', 'recruiting-playbook' ),
+							'description' => __( 'Job ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -94,12 +94,12 @@ class JobController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id'    => [
-							'description' => __( 'Job-ID', 'recruiting-playbook' ),
+							'description' => __( 'Job ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'force' => [
-							'description' => __( 'Endgültig löschen statt archivieren', 'recruiting-playbook' ),
+							'description' => __( 'Permanently delete instead of archiving', 'recruiting-playbook' ),
 							'type'        => 'boolean',
 							'default'     => false,
 						],
@@ -131,7 +131,7 @@ class JobController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen anzuzeigen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to view jobs.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -161,7 +161,7 @@ class JobController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen zu erstellen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to create jobs.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -191,7 +191,7 @@ class JobController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen zu bearbeiten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to edit jobs.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -221,7 +221,7 @@ class JobController extends WP_REST_Controller {
 		if ( ! current_user_can( 'delete_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen zu löschen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to delete jobs.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -357,7 +357,7 @@ class JobController extends WP_REST_Controller {
 			if ( ! empty( $assigned_job_ids ) && ! in_array( $id, $assigned_job_ids, true ) ) {
 				return new WP_Error(
 					'rest_forbidden',
-					__( 'Sie haben keine Berechtigung, diese Stelle anzuzeigen.', 'recruiting-playbook' ),
+					__( 'You do not have permission to view this job.', 'recruiting-playbook' ),
 					[ 'status' => 403 ]
 				);
 			}
@@ -383,7 +383,7 @@ class JobController extends WP_REST_Controller {
 		if ( empty( $title ) ) {
 			return new WP_Error(
 				'rest_missing_title',
-				__( 'Der Titel ist ein Pflichtfeld.', 'recruiting-playbook' ),
+				__( 'The title is a required field.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -516,7 +516,7 @@ class JobController extends WP_REST_Controller {
 			if ( ! $deleted ) {
 				return new WP_Error(
 					'rest_delete_failed',
-					__( 'Stelle konnte nicht gelöscht werden.', 'recruiting-playbook' ),
+					__( 'Job could not be deleted.', 'recruiting-playbook' ),
 					[ 'status' => 500 ]
 				);
 			}
@@ -524,7 +524,7 @@ class JobController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success' => true,
-					'message' => __( 'Stelle wurde endgültig gelöscht.', 'recruiting-playbook' ),
+					'message' => __( 'Job was permanently deleted.', 'recruiting-playbook' ),
 				],
 				200
 			);
@@ -546,7 +546,7 @@ class JobController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Stelle wurde archiviert.', 'recruiting-playbook' ),
+				'message' => __( 'Job was archived.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -612,9 +612,9 @@ class JobController extends WP_REST_Controller {
 		$salary_display = '';
 		if ( ! $hide_salary && ( $salary_min || $salary_max ) ) {
 			$period_labels = [
-				'hour'  => __( '/Std.', 'recruiting-playbook' ),
-				'month' => __( '/Monat', 'recruiting-playbook' ),
-				'year'  => __( '/Jahr', 'recruiting-playbook' ),
+				'hour'  => __( '/hr', 'recruiting-playbook' ),
+				'month' => __( '/month', 'recruiting-playbook' ),
+				'year'  => __( '/year', 'recruiting-playbook' ),
 			];
 			$period_label  = $period_labels[ $salary_period ] ?? '';
 
@@ -624,11 +624,11 @@ class JobController extends WP_REST_Controller {
 					. number_format( (float) $salary_max, 0, ',', '.' )
 					. ' ' . $salary_currency . $period_label;
 			} elseif ( $salary_min ) {
-				$salary_display = __( 'Ab ', 'recruiting-playbook' )
+				$salary_display = __( 'From ', 'recruiting-playbook' )
 					. number_format( (float) $salary_min, 0, ',', '.' )
 					. ' ' . $salary_currency . $period_label;
 			} elseif ( $salary_max ) {
-				$salary_display = __( 'Bis ', 'recruiting-playbook' )
+				$salary_display = __( 'Up to ', 'recruiting-playbook' )
 					. number_format( (float) $salary_max, 0, ',', '.' )
 					. ' ' . $salary_currency . $period_label;
 			}
@@ -832,44 +832,44 @@ class JobController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'status'          => [
-				'description' => __( 'Nach Status filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by status', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'draft', 'publish', 'archived' ],
 				'default'     => 'publish',
 			],
 			'per_page'        => [
-				'description' => __( 'Ergebnisse pro Seite', 'recruiting-playbook' ),
+				'description' => __( 'Results per page', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 10,
 				'minimum'     => 1,
 				'maximum'     => 100,
 			],
 			'page'            => [
-				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
+				'description' => __( 'Page number', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 1,
 				'minimum'     => 1,
 			],
 			'search'          => [
-				'description' => __( 'Volltextsuche in Titel/Beschreibung', 'recruiting-playbook' ),
+				'description' => __( 'Full-text search in title/description', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'location'        => [
-				'description' => __( 'Filter nach Standort (Slug)', 'recruiting-playbook' ),
+				'description' => __( 'Filter by location (slug)', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'employment_type' => [
-				'description' => __( 'Filter nach Beschäftigungsart (Slug)', 'recruiting-playbook' ),
+				'description' => __( 'Filter by employment type (slug)', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'orderby'         => [
-				'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
+				'description' => __( 'Sort field', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'date', 'title', 'modified' ],
 				'default'     => 'date',
 			],
 			'order'           => [
-				'description' => __( 'Sortierrichtung', 'recruiting-playbook' ),
+				'description' => __( 'Sort direction', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'asc', 'desc' ],
 				'default'     => 'desc',
@@ -885,31 +885,31 @@ class JobController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'title'                => [
-				'description'       => __( 'Stellentitel', 'recruiting-playbook' ),
+				'description'       => __( 'Job title', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'description'          => [
-				'description'       => __( 'Stellenbeschreibung (HTML)', 'recruiting-playbook' ),
+				'description'       => __( 'Job description (HTML)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'excerpt'              => [
-				'description'       => __( 'Kurzbeschreibung', 'recruiting-playbook' ),
+				'description'       => __( 'Short description', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
 			'status'               => [
-				'description' => __( 'Post-Status', 'recruiting-playbook' ),
+				'description' => __( 'Post status', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'draft', 'publish', 'archived' ],
 				'default'     => 'draft',
 			],
 			'location'             => [
-				'description' => __( 'Standort-Objekt', 'recruiting-playbook' ),
+				'description' => __( 'Location object', 'recruiting-playbook' ),
 				'type'        => 'object',
 				'required'    => false,
 				'properties'  => [
@@ -922,13 +922,13 @@ class JobController extends WP_REST_Controller {
 				],
 			],
 			'employment_type'      => [
-				'description'       => __( 'Beschäftigungsart (Slug)', 'recruiting-playbook' ),
+				'description'       => __( 'Employment type (slug)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'salary'               => [
-				'description' => __( 'Gehalt-Objekt', 'recruiting-playbook' ),
+				'description' => __( 'Salary object', 'recruiting-playbook' ),
 				'type'        => 'object',
 				'required'    => false,
 				'properties'  => [
@@ -950,7 +950,7 @@ class JobController extends WP_REST_Controller {
 				],
 			],
 			'contact'              => [
-				'description' => __( 'Ansprechpartner-Objekt', 'recruiting-playbook' ),
+				'description' => __( 'Contact person object', 'recruiting-playbook' ),
 				'type'        => 'object',
 				'required'    => false,
 				'properties'  => [
@@ -967,19 +967,19 @@ class JobController extends WP_REST_Controller {
 				],
 			],
 			'application_deadline' => [
-				'description'       => __( 'Bewerbungsfrist (YYYY-MM-DD)', 'recruiting-playbook' ),
+				'description'       => __( 'Application deadline (YYYY-MM-DD)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'start_date'           => [
-				'description'       => __( 'Eintrittsdatum (YYYY-MM-DD)', 'recruiting-playbook' ),
+				'description'       => __( 'Start date (YYYY-MM-DD)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'categories'           => [
-				'description' => __( 'Kategorien (Array von Namen)', 'recruiting-playbook' ),
+				'description' => __( 'Categories (array of names)', 'recruiting-playbook' ),
 				'type'        => 'array',
 				'required'    => false,
 				'items'       => [
@@ -987,12 +987,12 @@ class JobController extends WP_REST_Controller {
 				],
 			],
 			'hide_salary'          => [
-				'description' => __( 'Gehalt ausblenden', 'recruiting-playbook' ),
+				'description' => __( 'Hide salary', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'required'    => false,
 			],
 			'remote'               => [
-				'description' => __( 'Remote-Arbeit möglich', 'recruiting-playbook' ),
+				'description' => __( 'Remote work possible', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'required'    => false,
 			],
@@ -1011,7 +1011,7 @@ class JobController extends WP_REST_Controller {
 
 		// ID-Parameter hinzufügen.
 		$args['id'] = [
-			'description' => __( 'Job-ID', 'recruiting-playbook' ),
+			'description' => __( 'Job ID', 'recruiting-playbook' ),
 			'type'        => 'integer',
 			'required'    => true,
 		];

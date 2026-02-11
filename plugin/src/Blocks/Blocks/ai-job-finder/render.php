@@ -13,8 +13,8 @@ defined( 'ABSPATH' ) || exit;
 
 // Attribute zu Shortcode-Attributen konvertieren.
 $shortcode_atts = [
-	'title'    => $attributes['title'] ?? __( 'Finde deinen Traumjob', 'recruiting-playbook' ),
-	'subtitle' => $attributes['subtitle'] ?? __( 'Lade deinen Lebenslauf hoch und entdecke passende Stellen.', 'recruiting-playbook' ),
+	'title'    => $attributes['title'] ?? __( 'Find your dream job', 'recruiting-playbook' ),
+	'subtitle' => $attributes['subtitle'] ?? __( 'Upload your resume and discover matching jobs.', 'recruiting-playbook' ),
 	'limit'    => $attributes['limit'] ?? 5,
 ];
 

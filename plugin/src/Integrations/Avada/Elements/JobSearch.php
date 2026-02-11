@@ -6,10 +6,10 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Stellensuche Element für Fusion Builder
+ * RP: Job Search Element for Fusion Builder
  *
- * Zeigt ein Suchformular mit Filtern und Ergebnisliste.
- * Wrapper für den [rp_job_search] Shortcode.
+ * Displays a search form with filters and results list.
+ * Wrapper for the [rp_job_search] shortcode.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -17,13 +17,13 @@ defined( 'ABSPATH' ) || exit;
 class JobSearch extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
 	protected function getConfig(): array {
 		return [
-			'name'            => esc_attr__( 'RP: Stellensuche', 'recruiting-playbook' ),
+			'name'            => esc_attr__( 'RP: Job Search', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_job_search',
 			'icon'            => 'fusiona-search',
 			'help_url'        => $this->getHelpUrl( 'rp_job_search' ),
@@ -33,52 +33,52 @@ class JobSearch extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Suchfeld anzeigen', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Textsuche für Stellentitel und Beschreibung.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Show search field', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Text search for job title and description.', 'recruiting-playbook' ),
 					'param_name'  => 'show_search',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Kategorie-Filter', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Dropdown zur Auswahl der Kategorie.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Category filter', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Dropdown to select category.', 'recruiting-playbook' ),
 					'param_name'  => 'show_category',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Standort-Filter', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Dropdown zur Auswahl des Standorts.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Location filter', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Dropdown to select location.', 'recruiting-playbook' ),
 					'param_name'  => 'show_location',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Beschäftigungsart-Filter', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Dropdown zur Auswahl der Beschäftigungsart.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Employment type filter', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Dropdown to select employment type.', 'recruiting-playbook' ),
 					'param_name'  => 'show_type',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'range',
-					'heading'     => esc_attr__( 'Stellen pro Seite', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Anzahl der Stellen pro Seite.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Jobs per page', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Number of jobs per page.', 'recruiting-playbook' ),
 					'param_name'  => 'limit',
 					'value'       => '10',
 					'min'         => '1',
@@ -87,8 +87,8 @@ class JobSearch extends AbstractElement {
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Spalten', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Anzahl der Spalten für die Ergebnisliste.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Number of columns for the results list.', 'recruiting-playbook' ),
 					'param_name'  => 'columns',
 					'default'     => '1',
 					'value'       => [

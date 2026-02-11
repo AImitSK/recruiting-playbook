@@ -1,7 +1,7 @@
 /**
  * Talent Pool Card Component
  *
- * Einzelne Kandidaten-Karte im Talent-Pool
+ * Individual candidate card in the talent pool
  *
  * @package RecruitingPlaybook
  */
@@ -26,11 +26,11 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 
 /**
- * Initialen aus Namen generieren
+ * Generate initials from name
  *
- * @param {string} firstName Vorname
- * @param {string} lastName  Nachname
- * @return {string} Initialen
+ * @param {string} firstName First name
+ * @param {string} lastName  Last name
+ * @return {string} Initials
  */
 function getInitials( firstName, lastName ) {
 	const first = firstName?.charAt( 0 )?.toUpperCase() || '';
@@ -39,10 +39,10 @@ function getInitials( firstName, lastName ) {
 }
 
 /**
- * Datum formatieren
+ * Format date
  *
- * @param {string} dateString ISO-Datum
- * @return {string} Formatiertes Datum
+ * @param {string} dateString ISO date
+ * @return {string} Formatted date
  */
 function formatDate( dateString ) {
 	if ( ! dateString ) {
@@ -57,10 +57,10 @@ function formatDate( dateString ) {
 }
 
 /**
- * Tage bis Ablauf berechnen
+ * Calculate days until expiry
  *
- * @param {string} expiresAt Ablaufdatum
- * @return {number|null} Tage bis Ablauf
+ * @param {string} expiresAt Expiry date
+ * @return {number|null} Days until expiry
  */
 function getDaysUntilExpiry( expiresAt ) {
 	if ( ! expiresAt ) {
@@ -74,10 +74,10 @@ function getDaysUntilExpiry( expiresAt ) {
 }
 
 /**
- * Tags in Array konvertieren
+ * Convert tags to array
  *
- * @param {string} tagsString Komma-separierte Tags
- * @return {string[]} Tag-Array
+ * @param {string} tagsString Comma-separated tags
+ * @return {string[]} Tag array
  */
 function parseTags( tagsString ) {
 	if ( ! tagsString ) {
@@ -90,12 +90,12 @@ function parseTags( tagsString ) {
 }
 
 /**
- * Talent-Pool Karten-Komponente
+ * Talent Pool Card Component
  *
  * @param {Object}   props           Props
- * @param {Object}   props.entry     Talent-Pool Eintrag
- * @param {Function} props.onRemoved Callback wenn entfernt
- * @return {JSX.Element} Komponente
+ * @param {Object}   props.entry     Talent pool entry
+ * @param {Function} props.onRemoved Callback when removed
+ * @return {JSX.Element} Component
  */
 export function TalentPoolCard( { entry, onRemoved } ) {
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -114,9 +114,9 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 	const tags = parseTags( entry.tags );
 
 	/**
-	 * Expiry-Status ermitteln
+	 * Get expiry status
 	 *
-	 * @return {Object} Status und Styles
+	 * @return {Object} Status and styles
 	 */
 	const getExpiryInfo = () => {
 		if ( daysUntilExpiry === null ) {
@@ -124,7 +124,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 		}
 		if ( daysUntilExpiry <= 0 ) {
 			return {
-				label: i18n.expired || __( 'Abgelaufen', 'recruiting-playbook' ),
+				label: i18n.expired || __( 'Expired', 'recruiting-playbook' ),
 				bgColor: '#fef2f2',
 				textColor: '#dc2626',
 				borderColor: '#fecaca',
@@ -132,7 +132,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 		}
 		if ( daysUntilExpiry <= 30 ) {
 			return {
-				label: i18n.expiresSoon || __( 'Läuft bald ab', 'recruiting-playbook' ),
+				label: i18n.expiresSoon || __( 'Expires soon', 'recruiting-playbook' ),
 				bgColor: '#fffbeb',
 				textColor: '#d97706',
 				borderColor: '#fde68a',
@@ -142,7 +142,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 	};
 
 	/**
-	 * Aus Pool entfernen
+	 * Remove from pool
 	 */
 	const handleRemove = async () => {
 		try {
@@ -161,14 +161,14 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 			}
 		} catch ( err ) {
 			console.error( 'Error removing from pool:', err );
-			setError( err.message || ( i18n.errorRemoving || __( 'Fehler beim Entfernen.', 'recruiting-playbook' ) ) );
+			setError( err.message || ( i18n.errorRemoving || __( 'Error removing from pool.', 'recruiting-playbook' ) ) );
 		} finally {
 			setLoading( false );
 		}
 	};
 
 	/**
-	 * Eintrag speichern
+	 * Save entry
 	 */
 	const handleSave = async () => {
 		try {
@@ -184,21 +184,21 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 				},
 			} );
 
-			// Lokalen State aktualisieren
+			// Update local state
 			entry.reason = editReason;
 			entry.tags = editTags;
 
 			setIsEditing( false );
 		} catch ( err ) {
 			console.error( 'Error saving:', err );
-			setError( err.message || ( i18n.errorSaving || __( 'Fehler beim Speichern.', 'recruiting-playbook' ) ) );
+			setError( err.message || ( i18n.errorSaving || __( 'Error saving.', 'recruiting-playbook' ) ) );
 		} finally {
 			setLoading( false );
 		}
 	};
 
 	/**
-	 * Bearbeitung abbrechen
+	 * Cancel edit
 	 */
 	const handleCancel = () => {
 		setEditReason( entry.reason || '' );
@@ -218,9 +218,9 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 			} }
 		>
 			<CardContent style={ { padding: '1rem' } }>
-				{ /* Header: Avatar, Name, Primary Action */ }
+				{/* Header: Avatar, Name, Primary Action */}
 				<div style={ { display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' } }>
-					{ /* Avatar */ }
+					{/* Avatar */}
 					<div
 						style={ {
 							width: '48px',
@@ -239,7 +239,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						{ getInitials( entry.first_name, entry.last_name ) }
 					</div>
 
-					{ /* Name und E-Mail */ }
+					{/* Name and Email */}
 					<div style={ { flex: 1, minWidth: 0 } }>
 						<h3
 							style={ {
@@ -281,11 +281,11 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						) }
 					</div>
 
-					{ /* Primary Action: View Application */ }
+					{/* Primary Action: View Application */}
 					{ config.applicationUrl && entry.application_id && (
 						<a
 							href={ `${ config.applicationUrl }${ entry.application_id }` }
-							title={ i18n.viewApplication || __( 'Bewerbung anzeigen', 'recruiting-playbook' ) }
+							title={ i18n.viewApplication || __( 'View application', 'recruiting-playbook' ) }
 							style={ {
 								display: 'inline-flex',
 								alignItems: 'center',
@@ -304,7 +304,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 					) }
 				</div>
 
-				{ /* Expiry Badge */ }
+				{/* Expiry Badge */}
 				{ expiryInfo && (
 					<div
 						style={ {
@@ -326,7 +326,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 					</div>
 				) }
 
-				{ /* Error Message */ }
+				{/* Error Message */}
 				{ error && (
 					<div
 						style={ {
@@ -343,7 +343,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 					</div>
 				) }
 
-				{ /* Content Area */ }
+				{/* Content Area */}
 				{ showConfirmRemove ? (
 					// Delete Confirmation (inline)
 					<div
@@ -356,7 +356,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						} }
 					>
 						<p style={ { margin: '0 0 0.75rem 0', color: '#1f2937', fontSize: '0.875rem' } }>
-							{ i18n.confirmRemove || __( 'Kandidat wirklich aus dem Talent-Pool entfernen?', 'recruiting-playbook' ) }
+							{ i18n.confirmRemove || __( 'Really remove candidate from talent pool?', 'recruiting-playbook' ) }
 						</p>
 						<div style={ { display: 'flex', gap: '0.5rem' } }>
 							<Button
@@ -367,7 +367,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								style={ { flex: 1 } }
 							>
 								<X style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-								{ i18n.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+								{ i18n.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								size="sm"
@@ -393,7 +393,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) : (
 									<>
 										<Trash2 style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-										{ i18n.removeFromPool || __( 'Entfernen', 'recruiting-playbook' ) }
+										{ i18n.removeFromPool || __( 'Remove', 'recruiting-playbook' ) }
 									</>
 								) }
 							</Button>
@@ -413,7 +413,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 									marginBottom: '0.25rem',
 								} }
 							>
-								{ i18n.reason || __( 'Begründung', 'recruiting-playbook' ) }
+								{ i18n.reason || __( 'Reason', 'recruiting-playbook' ) }
 							</label>
 							<textarea
 								id={ `reason-${ entry.id }` }
@@ -472,7 +472,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								style={ { flex: 1 } }
 							>
 								<X style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-								{ i18n.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+								{ i18n.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								size="sm"
@@ -494,7 +494,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) : (
 									<>
 										<Check style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-										{ i18n.save || __( 'Speichern', 'recruiting-playbook' ) }
+										{ i18n.save || __( 'Save', 'recruiting-playbook' ) }
 									</>
 								) }
 							</Button>
@@ -503,7 +503,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 				) : (
 					// View Mode
 					<>
-						{ /* Reason */ }
+						{/* Reason */}
 						{ entry.reason && (
 							<p
 								style={ {
@@ -517,7 +517,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 							</p>
 						) }
 
-						{ /* Tags */ }
+						{/* Tags */}
 						<div style={ { display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '0.75rem' } }>
 							{ tags.length > 0 ? (
 								tags.map( ( tag ) => (
@@ -540,14 +540,14 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) )
 							) : (
 								<span style={ { fontSize: '0.75rem', color: '#9ca3af', fontStyle: 'italic' } }>
-									{ i18n.noTags || __( 'Keine Tags', 'recruiting-playbook' ) }
+									{ i18n.noTags || __( 'No tags', 'recruiting-playbook' ) }
 								</span>
 							) }
 						</div>
 					</>
 				) }
 
-				{ /* Footer: Dates and Actions */ }
+				{/* Footer: Dates and Actions */}
 				<div
 					style={ {
 						display: 'flex',
@@ -559,7 +559,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						flexWrap: 'wrap',
 					} }
 				>
-					{ /* Dates */ }
+					{/* Dates */}
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.25rem' } }>
 						<span
 							style={ {
@@ -589,13 +589,13 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						) }
 					</div>
 
-					{ /* Action Buttons */ }
+					{/* Action Buttons */}
 					{ ! isEditing && ! showConfirmRemove && (
 						<div style={ { display: 'flex', gap: '0.25rem' } }>
 							<button
 								type="button"
 								onClick={ () => setIsEditing( true ) }
-								title={ i18n.edit || __( 'Bearbeiten', 'recruiting-playbook' ) }
+								title={ i18n.edit || __( 'Edit', 'recruiting-playbook' ) }
 								style={ {
 									padding: '0.375rem',
 									background: 'none',
@@ -613,7 +613,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 							<button
 								type="button"
 								onClick={ () => setShowConfirmRemove( true ) }
-								title={ i18n.removeFromPool || __( 'Aus Pool entfernen', 'recruiting-playbook' ) }
+								title={ i18n.removeFromPool || __( 'Remove from pool', 'recruiting-playbook' ) }
 								style={ {
 									padding: '0.375rem',
 									background: 'none',

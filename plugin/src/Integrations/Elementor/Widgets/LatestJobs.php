@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Neueste Stellen — Elementor Widget
+ * RP: Latest Jobs — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class LatestJobs extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Neueste Stellen', 'recruiting-playbook' );
+		return esc_html__( 'RP: Latest Jobs', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -28,7 +28,7 @@ class LatestJobs extends AbstractWidget {
 	}
 
 	public function get_keywords(): array {
-		return [ 'neueste', 'latest', 'jobs', 'stellen', 'aktuell' ];
+		return [ 'latest', 'jobs', 'recent', 'new', 'current' ];
 	}
 
 	protected function get_shortcode_name(): string {
@@ -50,7 +50,7 @@ class LatestJobs extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -58,7 +58,7 @@ class LatestJobs extends AbstractWidget {
 		$this->add_control(
 			'limit',
 			[
-				'label'   => esc_html__( 'Anzahl', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Number of jobs', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::NUMBER,
 				'default' => 5,
 				'min'     => 1,
@@ -69,8 +69,8 @@ class LatestJobs extends AbstractWidget {
 		$this->add_control(
 			'columns',
 			[
-				'label'       => esc_html__( 'Spalten', 'recruiting-playbook' ),
-				'description' => esc_html__( '1 = Listendarstellung', 'recruiting-playbook' ),
+				'label'       => esc_html__( 'Columns', 'recruiting-playbook' ),
+				'description' => esc_html__( '1 = List view', 'recruiting-playbook' ),
 				'type'        => Controls_Manager::SELECT,
 				'default'     => '1',
 				'options'     => [
@@ -84,7 +84,7 @@ class LatestJobs extends AbstractWidget {
 		$this->add_control(
 			'title',
 			[
-				'label'   => esc_html__( 'Überschrift', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Heading', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => '',
 			]
@@ -93,7 +93,7 @@ class LatestJobs extends AbstractWidget {
 		$this->add_control(
 			'category',
 			[
-				'label'   => esc_html__( 'Kategorie', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Category', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'job_category' ),
@@ -103,10 +103,10 @@ class LatestJobs extends AbstractWidget {
 		$this->add_control(
 			'show_excerpt',
 			[
-				'label'        => esc_html__( 'Auszug anzeigen', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Show excerpt', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => '',
 			]

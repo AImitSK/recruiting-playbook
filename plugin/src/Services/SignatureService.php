@@ -201,13 +201,13 @@ class SignatureService {
 		$html = '<div class="rp-signature-minimal" style="margin-top: 35px;">';
 
 		// Grußformel.
-		$html .= '<p style="margin: 0;">' . esc_html__( 'Mit freundlichen Grüßen', 'recruiting-playbook' ) . '</p>';
+		$html .= '<p style="margin: 0;">' . esc_html__( 'Kind regards', 'recruiting-playbook' ) . '</p>';
 
 		// "Ihr {Firma} Team".
 		$html .= '<p style="margin: 15px 0 0 0;">';
 		$html .= sprintf(
 			/* translators: %s: Company name */
-			esc_html__( 'Ihr %s Team', 'recruiting-playbook' ),
+			esc_html__( 'Your %s Team', 'recruiting-playbook' ),
 			esc_html( $company_name )
 		);
 		$html .= '</p>';
@@ -272,7 +272,7 @@ class SignatureService {
 		foreach ( $company as $sig ) {
 			$options[] = [
 				'id'         => $sig['id'],
-				'name'       => $sig['name'] . ' ' . __( '(Firma)', 'recruiting-playbook' ),
+				'name'       => $sig['name'] . ' ' . __( '(Company)', 'recruiting-playbook' ),
 				'type'       => 'company',
 				'is_default' => $sig['is_default'],
 			];
@@ -281,7 +281,7 @@ class SignatureService {
 		// Option für "Keine Signatur".
 		$options[] = [
 			'id'         => 0,
-			'name'       => __( 'Keine Signatur', 'recruiting-playbook' ),
+			'name'       => __( 'No signature', 'recruiting-playbook' ),
 			'type'       => 'none',
 			'is_default' => false,
 		];

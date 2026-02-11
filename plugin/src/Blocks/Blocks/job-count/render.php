@@ -16,9 +16,9 @@ $shortcode_atts = [
 	'category' => $attributes['category'] ?? '',
 	'location' => $attributes['location'] ?? '',
 	'type'     => $attributes['type'] ?? '',
-	'format'   => $attributes['format'] ?? __( '{count} offene Stellen', 'recruiting-playbook' ),
-	'singular' => $attributes['singular'] ?? __( '{count} offene Stelle', 'recruiting-playbook' ),
-	'zero'     => $attributes['zero'] ?? __( 'Keine offenen Stellen', 'recruiting-playbook' ),
+	'format'   => $attributes['format'] ?? __( '{count} open positions', 'recruiting-playbook' ),
+	'singular' => $attributes['singular'] ?? __( '{count} open position', 'recruiting-playbook' ),
+	'zero'     => $attributes['zero'] ?? __( 'No open positions', 'recruiting-playbook' ),
 ];
 
 // Shortcode-Klasse nutzen.

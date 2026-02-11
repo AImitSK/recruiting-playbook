@@ -1,7 +1,7 @@
 /**
  * Talent Pool Button Component
  *
- * Toggle-Button zum Hinzufügen/Entfernen aus dem Talent-Pool - shadcn/ui Style
+ * Toggle button for adding/removing from the Talent Pool - shadcn/ui Style
  *
  * @package RecruitingPlaybook
  */
@@ -126,7 +126,7 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 		}
 	};
 
-	// Im Pool
+	// In pool
 	if ( isInPool ) {
 		return (
 			<>
@@ -141,18 +141,18 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 					} }
 				>
 					<Users style={ { width: '1rem', height: '1rem' } } />
-					{ __( 'Im Talent-Pool', 'recruiting-playbook' ) }
+					{ __( 'In Talent Pool', 'recruiting-playbook' ) }
 					{ loading && <Spinner size="0.875rem" /> }
 				</Button>
 
 				{ showConfirmRemove && (
 					<Modal
-						title={ __( 'Aus Talent-Pool entfernen', 'recruiting-playbook' ) }
+						title={ __( 'Remove from Talent Pool', 'recruiting-playbook' ) }
 						onClose={ () => setShowConfirmRemove( false ) }
 					>
 						<div style={ { padding: '1.5rem' } }>
 							<p style={ { margin: '0 0 1rem 0', color: '#374151' } }>
-								{ __( 'Kandidat wirklich aus dem Talent-Pool entfernen?', 'recruiting-playbook' ) }
+								{ __( 'Really remove candidate from the Talent Pool?', 'recruiting-playbook' ) }
 							</p>
 							{ error && (
 								<div style={ { padding: '0.75rem', backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: '0.375rem', marginBottom: '1rem', fontSize: '0.875rem' } }>
@@ -171,14 +171,14 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 							} }
 						>
 							<Button variant="outline" onClick={ () => setShowConfirmRemove( false ) } disabled={ loading }>
-								{ __( 'Abbrechen', 'recruiting-playbook' ) }
+								{ __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								onClick={ handleRemove }
 								disabled={ loading }
 								style={ { backgroundColor: '#d63638' } }
 							>
-								{ loading ? <Spinner size="0.875rem" /> : __( 'Entfernen', 'recruiting-playbook' ) }
+								{ loading ? <Spinner size="0.875rem" /> : __( 'Remove', 'recruiting-playbook' ) }
 							</Button>
 						</div>
 					</Modal>
@@ -189,7 +189,7 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 		);
 	}
 
-	// Nicht im Pool
+	// Not in pool
 	return (
 		<>
 			<Button
@@ -198,12 +198,12 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 				disabled={ loading }
 			>
 				<Plus style={ { width: '1rem', height: '1rem' } } />
-				{ __( 'Talent-Pool', 'recruiting-playbook' ) }
+				{ __( 'Talent Pool', 'recruiting-playbook' ) }
 			</Button>
 
 			{ showModal && (
 				<Modal
-					title={ __( 'Zum Talent-Pool hinzufügen', 'recruiting-playbook' ) }
+					title={ __( 'Add to Talent Pool', 'recruiting-playbook' ) }
 					onClose={ () => setShowModal( false ) }
 				>
 					<div style={ { padding: '1.5rem' } }>
@@ -218,13 +218,13 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 								htmlFor="rp-talent-reason"
 								style={ { display: 'block', marginBottom: '0.375rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' } }
 							>
-								{ __( 'Grund für Aufnahme', 'recruiting-playbook' ) }
+								{ __( 'Reason for inclusion', 'recruiting-playbook' ) }
 							</label>
 							<textarea
 								id="rp-talent-reason"
 								value={ reason }
 								onChange={ ( e ) => setReason( e.target.value ) }
-								placeholder={ __( 'z.B. Sehr guter Kandidat, aber aktuell keine passende Stelle...', 'recruiting-playbook' ) }
+								placeholder={ __( 'e.g. Very good candidate, but currently no suitable position...', 'recruiting-playbook' ) }
 								rows={ 3 }
 								disabled={ loading }
 								style={ {
@@ -244,14 +244,14 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 								htmlFor="rp-talent-tags"
 								style={ { display: 'block', marginBottom: '0.375rem', fontSize: '0.875rem', fontWeight: 500, color: '#374151' } }
 							>
-								{ __( 'Tags (komma-separiert)', 'recruiting-playbook' ) }
+								{ __( 'Tags (comma-separated)', 'recruiting-playbook' ) }
 							</label>
 							<input
 								type="text"
 								id="rp-talent-tags"
 								value={ tags }
 								onChange={ ( e ) => setTags( e.target.value ) }
-								placeholder={ __( 'z.B. php, react, senior, remote', 'recruiting-playbook' ) }
+								placeholder={ __( 'e.g. php, react, senior, remote', 'recruiting-playbook' ) }
 								disabled={ loading }
 								style={ {
 									width: '100%',
@@ -262,7 +262,7 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 								} }
 							/>
 							<p style={ { margin: '0.375rem 0 0 0', fontSize: '0.75rem', color: '#6b7280' } }>
-								{ __( 'Tags helfen, Kandidaten später schneller zu finden.', 'recruiting-playbook' ) }
+								{ __( 'Tags help to find candidates faster later.', 'recruiting-playbook' ) }
 							</p>
 						</div>
 
@@ -279,7 +279,7 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 							} }
 						>
 							<Info style={ { width: '1rem', height: '1rem', flexShrink: 0, marginTop: '0.125rem' } } />
-							<span>{ __( 'Der Eintrag wird nach 24 Monaten automatisch gelöscht (DSGVO).', 'recruiting-playbook' ) }</span>
+							<span>{ __( 'The entry will be automatically deleted after 24 months (GDPR).', 'recruiting-playbook' ) }</span>
 						</div>
 					</div>
 
@@ -294,16 +294,16 @@ export function TalentPoolButton( { candidateId, inPool = false, onStatusChange 
 						} }
 					>
 						<Button variant="outline" onClick={ () => setShowModal( false ) } disabled={ loading }>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button onClick={ handleAdd } disabled={ loading }>
 							{ loading ? (
 								<>
 									<Spinner size="0.875rem" />
-									{ __( 'Hinzufügen...', 'recruiting-playbook' ) }
+									{ __( 'Adding...', 'recruiting-playbook' ) }
 								</>
 							) : (
-								__( 'Hinzufügen', 'recruiting-playbook' )
+								__( 'Add', 'recruiting-playbook' )
 							) }
 						</Button>
 					</div>
@@ -330,7 +330,7 @@ export function TalentPoolBadge( { inPool } ) {
 				borderRadius: '50%',
 				color: '#1d71b8',
 			} }
-			title={ __( 'Im Talent-Pool', 'recruiting-playbook' ) }
+			title={ __( 'In Talent Pool', 'recruiting-playbook' ) }
 		>
 			<Users style={ { width: '0.875rem', height: '0.875rem' } } />
 		</span>

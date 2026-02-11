@@ -32,7 +32,7 @@ class NumberField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Zahl', 'recruiting-playbook' );
+		return __( 'Number', 'recruiting-playbook' );
 	}
 
 	/**
@@ -67,19 +67,19 @@ class NumberField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min',
-				'label'       => __( 'Minimalwert', 'recruiting-playbook' ),
+				'label'       => __( 'Minimum value', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'placeholder' => '0',
 			],
 			[
 				'key'         => 'max',
-				'label'       => __( 'Maximalwert', 'recruiting-playbook' ),
+				'label'       => __( 'Maximum value', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'placeholder' => '100',
 			],
 			[
 				'key'         => 'step',
-				'label'       => __( 'Schrittweite', 'recruiting-playbook' ),
+				'label'       => __( 'Step', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0.01,
 				'step'        => 'any',
@@ -106,7 +106,7 @@ class NumberField extends AbstractFieldType {
 				'not_numeric',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s muss eine Zahl sein.', 'recruiting-playbook' ),
+					__( '%s must be a number.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
@@ -122,7 +122,7 @@ class NumberField extends AbstractFieldType {
 				'min_value',
 				sprintf(
 					/* translators: 1: Field label, 2: Minimum value */
-					__( '%1$s muss mindestens %2$s sein.', 'recruiting-playbook' ),
+					__( '%1$s must be at least %2$s.', 'recruiting-playbook' ),
 					$label,
 					number_format_i18n( (float) $validation['min'] )
 				)
@@ -135,7 +135,7 @@ class NumberField extends AbstractFieldType {
 				'max_value',
 				sprintf(
 					/* translators: 1: Field label, 2: Maximum value */
-					__( '%1$s darf maximal %2$s sein.', 'recruiting-playbook' ),
+					__( '%1$s must not exceed %2$s.', 'recruiting-playbook' ),
 					$label,
 					number_format_i18n( (float) $validation['max'] )
 				)

@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Job-Kategorien — Elementor Widget
+ * RP: Job Categories — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class JobCategories extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Job-Kategorien', 'recruiting-playbook' );
+		return esc_html__( 'RP: Job Categories', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -49,7 +49,7 @@ class JobCategories extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -57,7 +57,7 @@ class JobCategories extends AbstractWidget {
 		$this->add_control(
 			'columns',
 			[
-				'label'   => esc_html__( 'Spalten', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Columns', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '4',
 				'options' => [
@@ -73,11 +73,11 @@ class JobCategories extends AbstractWidget {
 		$this->add_control(
 			'show_count',
 			[
-				'label'        => esc_html__( 'Anzahl anzeigen', 'recruiting-playbook' ),
-				'description'  => esc_html__( 'Zeigt die Anzahl der Jobs pro Kategorie.', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Show count', 'recruiting-playbook' ),
+				'description'  => esc_html__( 'Display the number of jobs per category.', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -86,11 +86,11 @@ class JobCategories extends AbstractWidget {
 		$this->add_control(
 			'hide_empty',
 			[
-				'label'        => esc_html__( 'Leere verstecken', 'recruiting-playbook' ),
-				'description'  => esc_html__( 'Kategorien ohne Jobs ausblenden.', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Hide empty', 'recruiting-playbook' ),
+				'description'  => esc_html__( 'Hide categories without jobs.', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -99,12 +99,12 @@ class JobCategories extends AbstractWidget {
 		$this->add_control(
 			'orderby',
 			[
-				'label'   => esc_html__( 'Sortierung', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Sort by', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'name',
 				'options' => [
 					'name'  => esc_html__( 'Name', 'recruiting-playbook' ),
-					'count' => esc_html__( 'Anzahl', 'recruiting-playbook' ),
+					'count' => esc_html__( 'Count', 'recruiting-playbook' ),
 				],
 			]
 		);

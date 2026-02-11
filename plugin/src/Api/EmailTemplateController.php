@@ -95,7 +95,7 @@ class EmailTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -113,7 +113,7 @@ class EmailTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -133,12 +133,12 @@ class EmailTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'id'   => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'name' => [
-							'description'       => __( 'Neuer Name für das Duplikat', 'recruiting-playbook' ),
+							'description'       => __( 'New name for the duplicate', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_text_field',
 						],
@@ -158,7 +158,7 @@ class EmailTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -178,12 +178,12 @@ class EmailTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id'       => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'category' => [
-							'description' => __( 'Kategorie für Standard-Template', 'recruiting-playbook' ),
+							'description' => __( 'Category for default template', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 							'enum'        => [ 'application', 'interview', 'offer', 'rejection', 'custom' ],
@@ -257,7 +257,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! $template ) {
 			return new WP_Error(
 				'rest_template_not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -282,7 +282,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( 'system' === $category ) {
 			return new WP_Error(
 				'rest_invalid_category',
-				__( 'System-Templates können nicht manuell erstellt werden.', 'recruiting-playbook' ),
+				__( 'System templates cannot be created manually.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -302,7 +302,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( false === $result ) {
 			return new WP_Error(
 				'rest_template_create_failed',
-				__( 'Template konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Template could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -310,7 +310,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'  => true,
-				'message'  => __( 'Template wurde erstellt.', 'recruiting-playbook' ),
+				'message'  => __( 'Template has been created.', 'recruiting-playbook' ),
 				'template' => $result,
 			],
 			201
@@ -343,7 +343,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( empty( $data ) ) {
 			return new WP_Error(
 				'rest_template_no_data',
-				__( 'Keine Daten zum Aktualisieren.', 'recruiting-playbook' ),
+				__( 'No data to update.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -353,7 +353,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( false === $result ) {
 			return new WP_Error(
 				'rest_template_update_failed',
-				__( 'Template konnte nicht aktualisiert werden.', 'recruiting-playbook' ),
+				__( 'Template could not be updated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -361,7 +361,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'  => true,
-				'message'  => __( 'Template wurde aktualisiert.', 'recruiting-playbook' ),
+				'message'  => __( 'Template has been updated.', 'recruiting-playbook' ),
 				'template' => $result,
 			],
 			200
@@ -382,7 +382,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_template_delete_failed',
-				__( 'Template konnte nicht gelöscht werden. System-Templates können nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'Template could not be deleted. System templates cannot be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -390,7 +390,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Template wurde gelöscht.', 'recruiting-playbook' ),
+				'message' => __( 'Template has been deleted.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -411,7 +411,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( false === $result ) {
 			return new WP_Error(
 				'rest_template_duplicate_failed',
-				__( 'Template konnte nicht dupliziert werden.', 'recruiting-playbook' ),
+				__( 'Template could not be duplicated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -419,7 +419,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'  => true,
-				'message'  => __( 'Template wurde dupliziert.', 'recruiting-playbook' ),
+				'message'  => __( 'Template has been duplicated.', 'recruiting-playbook' ),
 				'template' => $result,
 			],
 			201
@@ -440,7 +440,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_template_reset_failed',
-				__( 'Template konnte nicht zurückgesetzt werden. Für dieses Template existiert kein Standard-Inhalt.', 'recruiting-playbook' ),
+				__( 'Template could not be reset. No default content exists for this template.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -450,7 +450,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'  => true,
-				'message'  => __( 'Template wurde auf Standard zurückgesetzt.', 'recruiting-playbook' ),
+				'message'  => __( 'Template has been reset to default.', 'recruiting-playbook' ),
 				'template' => $template,
 			],
 			200
@@ -472,7 +472,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_template_set_default_failed',
-				__( 'Template konnte nicht als Standard gesetzt werden.', 'recruiting-playbook' ),
+				__( 'Template could not be set as default.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -480,7 +480,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Template wurde als Standard gesetzt.', 'recruiting-playbook' ),
+				'message' => __( 'Template has been set as default.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -533,7 +533,7 @@ class EmailTemplateController extends WP_REST_Controller {
 				'email_templates',
 				'rp_read_email_templates',
 				'rest_email_templates_required',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' )
+				__( 'You do not have permission to view email templates.', 'recruiting-playbook' )
 			);
 		}
 
@@ -542,7 +542,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_read_email_templates' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates anzuzeigen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to view email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -551,7 +551,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
-				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -577,7 +577,7 @@ class EmailTemplateController extends WP_REST_Controller {
 				'email_templates',
 				'rp_create_email_templates',
 				'rest_email_templates_required',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu erstellen.', 'recruiting-playbook' )
+				__( 'You do not have permission to create email templates.', 'recruiting-playbook' )
 			);
 		}
 
@@ -585,7 +585,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_create_email_templates' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu erstellen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to create email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -593,7 +593,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
-				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -619,7 +619,7 @@ class EmailTemplateController extends WP_REST_Controller {
 				'email_templates',
 				'rp_edit_email_templates',
 				'rest_email_templates_required',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu bearbeiten.', 'recruiting-playbook' )
+				__( 'You do not have permission to edit email templates.', 'recruiting-playbook' )
 			);
 		}
 
@@ -627,7 +627,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_edit_email_templates' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu bearbeiten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to edit email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -635,7 +635,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
-				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -661,7 +661,7 @@ class EmailTemplateController extends WP_REST_Controller {
 				'email_templates',
 				'rp_delete_email_templates',
 				'rest_email_templates_required',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu löschen.', 'recruiting-playbook' )
+				__( 'You do not have permission to delete email templates.', 'recruiting-playbook' )
 			);
 		}
 
@@ -669,7 +669,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_delete_email_templates' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mail-Templates zu löschen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to delete email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -677,7 +677,7 @@ class EmailTemplateController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
-				__( 'E-Mail-Templates erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -696,28 +696,28 @@ class EmailTemplateController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'category'  => [
-				'description' => __( 'Nach Kategorie filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by category', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'system', 'application', 'interview', 'offer', 'rejection', 'custom' ],
 			],
 			'is_active' => [
-				'description' => __( 'Nur aktive Templates', 'recruiting-playbook' ),
+				'description' => __( 'Only active templates', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 			],
 			'search'    => [
-				'description'       => __( 'Suchbegriff', 'recruiting-playbook' ),
+				'description'       => __( 'Search term', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'per_page'  => [
-				'description' => __( 'Ergebnisse pro Seite', 'recruiting-playbook' ),
+				'description' => __( 'Results per page', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 20,
 				'minimum'     => 1,
 				'maximum'     => 100,
 			],
 			'page'      => [
-				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
+				'description' => __( 'Page number', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 1,
 				'minimum'     => 1,
@@ -733,41 +733,41 @@ class EmailTemplateController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'name'      => [
-				'description'       => __( 'Template-Name', 'recruiting-playbook' ),
+				'description'       => __( 'Template name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'subject'   => [
-				'description'       => __( 'E-Mail-Betreff', 'recruiting-playbook' ),
+				'description'       => __( 'Email subject', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'body_html' => [
-				'description'       => __( 'HTML-Inhalt', 'recruiting-playbook' ),
+				'description'       => __( 'HTML content', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'body_text' => [
-				'description'       => __( 'Text-Inhalt', 'recruiting-playbook' ),
+				'description'       => __( 'Text content', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
 			'category'  => [
-				'description' => __( 'Kategorie', 'recruiting-playbook' ),
+				'description' => __( 'Category', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'default'     => 'custom',
 				'enum'        => [ 'application', 'interview', 'offer', 'rejection', 'custom' ],
 			],
 			'is_active' => [
-				'description' => __( 'Template aktiv', 'recruiting-playbook' ),
+				'description' => __( 'Template active', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => true,
 			],
 			'settings'  => [
-				'description' => __( 'Zusätzliche Einstellungen', 'recruiting-playbook' ),
+				'description' => __( 'Additional settings', 'recruiting-playbook' ),
 				'type'        => 'object',
 			],
 		];
@@ -787,13 +787,13 @@ class EmailTemplateController extends WP_REST_Controller {
 		}
 
 		$args['id'] = [
-			'description' => __( 'Template-ID', 'recruiting-playbook' ),
+			'description' => __( 'Template ID', 'recruiting-playbook' ),
 			'type'        => 'integer',
 			'required'    => true,
 		];
 
 		$args['is_default'] = [
-			'description' => __( 'Als Standard-Template setzen', 'recruiting-playbook' ),
+			'description' => __( 'Set as default template', 'recruiting-playbook' ),
 			'type'        => 'boolean',
 		];
 

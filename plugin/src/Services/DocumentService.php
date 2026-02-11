@@ -175,13 +175,13 @@ class DocumentService {
 		// Warnung für Nginx-Server
 		if ( 'nginx' === $result['server_type'] && ! $result['nginx_note'] ) {
 			$result['protected'] = false;
-			$result['message'] = __( 'Nginx-Server erkannt: Bitte konfigurieren Sie den Dokumentenschutz manuell (siehe NGINX_SECURITY.txt).', 'recruiting-playbook' );
+			$result['message'] = __( 'Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt).', 'recruiting-playbook' );
 		} elseif ( 'nginx' === $result['server_type'] ) {
-			$result['message'] = __( 'Nginx-Server erkannt: Bitte stellen Sie sicher, dass die Nginx-Konfiguration den Dokumentenschutz enthält.', 'recruiting-playbook' );
+			$result['message'] = __( 'Nginx server detected: Please ensure that the Nginx configuration includes document protection.', 'recruiting-playbook' );
 		} elseif ( 'apache' === $result['server_type'] && $result['htaccess'] ) {
-			$result['message'] = __( 'Apache-Server mit .htaccess-Schutz erkannt.', 'recruiting-playbook' );
+			$result['message'] = __( 'Apache server with .htaccess protection detected.', 'recruiting-playbook' );
 		} else {
-			$result['message'] = __( 'Dokumentenschutz eingerichtet. Bitte testen Sie den direkten Zugriff auf Dokumente.', 'recruiting-playbook' );
+			$result['message'] = __( 'Document protection configured. Please test direct access to documents.', 'recruiting-playbook' );
 		}
 
 		return $result;
@@ -295,7 +295,7 @@ class DocumentService {
 				'file_too_large',
 				sprintf(
 					/* translators: %s: max file size */
-					__( 'Die Datei ist zu groß. Maximale Größe: %s', 'recruiting-playbook' ),
+					__( 'File is too large. Maximum size: %s', 'recruiting-playbook' ),
 					size_format( self::MAX_FILE_SIZE )
 				)
 			);
@@ -312,7 +312,7 @@ class DocumentService {
 		if ( $app_id_safe <= 0 ) {
 			return new WP_Error(
 				'invalid_app_id',
-				__( 'Ungültige Bewerbungs-ID.', 'recruiting-playbook' )
+				__( 'Invalid application ID.', 'recruiting-playbook' )
 			);
 		}
 
@@ -420,7 +420,7 @@ class DocumentService {
 				'invalid_file_type',
 				sprintf(
 					/* translators: %s: mime type */
-					__( 'Der Dateityp "%s" ist nicht erlaubt. Erlaubt sind: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+					__( 'File type "%s" is not allowed. Allowed types: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
 					$mime_type
 				)
 			);
@@ -442,7 +442,7 @@ class DocumentService {
 			if ( ! in_array( $extension, $allowed_extensions, true ) ) {
 				return new WP_Error(
 					'extension_mismatch',
-					__( 'Die Dateiendung stimmt nicht mit dem Dateiinhalt überein.', 'recruiting-playbook' )
+					__( 'File extension does not match file content.', 'recruiting-playbook' )
 				);
 			}
 		}
@@ -514,7 +514,7 @@ class DocumentService {
 		if ( false === $inserted ) {
 			return new WP_Error(
 				'db_error',
-				__( 'Dokument konnte nicht in der Datenbank gespeichert werden.', 'recruiting-playbook' )
+				__( 'Document could not be saved to the database.', 'recruiting-playbook' )
 			);
 		}
 
@@ -624,15 +624,15 @@ class DocumentService {
 	 */
 	private function getUploadErrorMessage( int $error_code ): string {
 		$messages = [
-			UPLOAD_ERR_INI_SIZE   => __( 'Die Datei überschreitet die maximal erlaubte Größe.', 'recruiting-playbook' ),
-			UPLOAD_ERR_FORM_SIZE  => __( 'Die Datei überschreitet die maximal erlaubte Größe.', 'recruiting-playbook' ),
-			UPLOAD_ERR_PARTIAL    => __( 'Die Datei wurde nur teilweise hochgeladen.', 'recruiting-playbook' ),
-			UPLOAD_ERR_NO_FILE    => __( 'Es wurde keine Datei hochgeladen.', 'recruiting-playbook' ),
-			UPLOAD_ERR_NO_TMP_DIR => __( 'Temporäres Verzeichnis fehlt.', 'recruiting-playbook' ),
-			UPLOAD_ERR_CANT_WRITE => __( 'Datei konnte nicht geschrieben werden.', 'recruiting-playbook' ),
-			UPLOAD_ERR_EXTENSION  => __( 'Upload durch PHP-Erweiterung gestoppt.', 'recruiting-playbook' ),
+			UPLOAD_ERR_INI_SIZE   => __( 'File exceeds the maximum allowed size.', 'recruiting-playbook' ),
+			UPLOAD_ERR_FORM_SIZE  => __( 'File exceeds the maximum allowed size.', 'recruiting-playbook' ),
+			UPLOAD_ERR_PARTIAL    => __( 'File was only partially uploaded.', 'recruiting-playbook' ),
+			UPLOAD_ERR_NO_FILE    => __( 'No file was uploaded.', 'recruiting-playbook' ),
+			UPLOAD_ERR_NO_TMP_DIR => __( 'Temporary directory is missing.', 'recruiting-playbook' ),
+			UPLOAD_ERR_CANT_WRITE => __( 'File could not be written.', 'recruiting-playbook' ),
+			UPLOAD_ERR_EXTENSION  => __( 'Upload stopped by PHP extension.', 'recruiting-playbook' ),
 		];
 
-		return $messages[ $error_code ] ?? __( 'Unbekannter Upload-Fehler.', 'recruiting-playbook' );
+		return $messages[ $error_code ] ?? __( 'Unknown upload error.', 'recruiting-playbook' );
 	}
 }

@@ -67,8 +67,8 @@ function CopyButton( { text } ) {
 			style={ { whiteSpace: 'nowrap' } }
 		>
 			{ copied
-				? __( 'Kopiert!', 'recruiting-playbook' )
-				: __( 'Kopieren', 'recruiting-playbook' )
+				? __( 'Copied!', 'recruiting-playbook' )
+				: __( 'Copy', 'recruiting-playbook' )
 			}
 		</Button>
 	);
@@ -153,7 +153,7 @@ export function IntegrationSettings() {
 				>
 					<AlertDescription>
 						{ testResult.success
-							? __( 'Test-Nachricht erfolgreich gesendet!', 'recruiting-playbook' )
+							? __( 'Test message sent successfully!', 'recruiting-playbook' )
 							: testResult.message
 						}
 					</AlertDescription>
@@ -172,7 +172,7 @@ export function IntegrationSettings() {
 								</Badge>
 							</CardTitle>
 							<CardDescription>
-								{ __( 'Stellen erscheinen automatisch in der Google-Jobsuche durch strukturierte JSON-LD Daten.', 'recruiting-playbook' ) }
+								{ __( 'Jobs automatically appear in Google Job Search through structured JSON-LD data.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Switch
@@ -191,23 +191,23 @@ export function IntegrationSettings() {
 								backgroundColor: '#22c55e',
 							} } />
 							<span style={ { fontSize: '14px', color: '#374151' } }>
-								{ __( 'Aktiv – Schema-Markup wird auf allen Stellenseiten ausgegeben', 'recruiting-playbook' ) }
+								{ __( 'Active – Schema markup is output on all job pages', 'recruiting-playbook' ) }
 							</span>
 						</div>
 
-						<SettingsSection title={ __( 'Optionale Felder', 'recruiting-playbook' ) }>
+						<SettingsSection title={ __( 'Optional Fields', 'recruiting-playbook' ) }>
 							<CheckboxRow
-								label={ __( 'Gehalt anzeigen (wenn vorhanden)', 'recruiting-playbook' ) }
+								label={ __( 'Show salary (if available)', 'recruiting-playbook' ) }
 								checked={ settings.google_jobs_show_salary }
 								onChange={ ( val ) => updateSetting( 'google_jobs_show_salary', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Remote-Option kennzeichnen', 'recruiting-playbook' ) }
+								label={ __( 'Mark remote option', 'recruiting-playbook' ) }
 								checked={ settings.google_jobs_show_remote }
 								onChange={ ( val ) => updateSetting( 'google_jobs_show_remote', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Bewerbungsfrist als validThrough setzen', 'recruiting-playbook' ) }
+								label={ __( 'Set application deadline as validThrough', 'recruiting-playbook' ) }
 								checked={ settings.google_jobs_show_deadline }
 								onChange={ ( val ) => updateSetting( 'google_jobs_show_deadline', val ) }
 							/>
@@ -228,7 +228,7 @@ export function IntegrationSettings() {
 								</Badge>
 							</CardTitle>
 							<CardDescription>
-								{ __( 'Universeller Feed fur Jobborsen wie Jooble, Talent.com und weitere.', 'recruiting-playbook' ) }
+								{ __( 'Universal feed for job boards like Jooble, Talent.com and more.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Switch
@@ -240,7 +240,7 @@ export function IntegrationSettings() {
 				{ settings.xml_feed_enabled && (
 					<CardContent>
 						<Label style={ { marginBottom: '6px', display: 'block' } }>
-							{ __( 'Feed-URL', 'recruiting-playbook' ) }
+							{ __( 'Feed URL', 'recruiting-playbook' ) }
 						</Label>
 						<div style={ { display: 'flex', gap: '8px', marginBottom: '16px' } }>
 							<Input
@@ -251,20 +251,20 @@ export function IntegrationSettings() {
 							<CopyButton text={ `${ homeUrl }/feed/jobs/` } />
 						</div>
 
-						<SettingsSection title={ __( 'Feed-Optionen', 'recruiting-playbook' ) }>
+						<SettingsSection title={ __( 'Feed Options', 'recruiting-playbook' ) }>
 							<CheckboxRow
-								label={ __( 'Gehalt im Feed anzeigen', 'recruiting-playbook' ) }
+								label={ __( 'Show salary in feed', 'recruiting-playbook' ) }
 								checked={ settings.xml_feed_show_salary }
 								onChange={ ( val ) => updateSetting( 'xml_feed_show_salary', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Beschreibung als HTML (statt Plain Text)', 'recruiting-playbook' ) }
+								label={ __( 'Description as HTML (instead of plain text)', 'recruiting-playbook' ) }
 								checked={ settings.xml_feed_html_description }
 								onChange={ ( val ) => updateSetting( 'xml_feed_html_description', val ) }
 							/>
 							<div style={ { display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' } }>
 								<Label style={ { whiteSpace: 'nowrap' } }>
-									{ __( 'Max. Stellen im Feed:', 'recruiting-playbook' ) }
+									{ __( 'Max. jobs in feed:', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									type="number"
@@ -290,7 +290,7 @@ export function IntegrationSettings() {
 								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
-								{ __( 'Benachrichtigungen bei neuen Bewerbungen und Statuswechseln in einem Slack-Channel.', 'recruiting-playbook' ) }
+								{ __( 'Notifications for new applications and status changes in a Slack channel.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Switch
@@ -303,7 +303,7 @@ export function IntegrationSettings() {
 				{ settings.slack_enabled && isPro && (
 					<CardContent>
 						<Label style={ { marginBottom: '6px', display: 'block' } }>
-							{ __( 'Webhook-URL', 'recruiting-playbook' ) }
+							{ __( 'Webhook URL', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							type="url"
@@ -313,24 +313,24 @@ export function IntegrationSettings() {
 							style={ { marginBottom: '16px' } }
 						/>
 
-						<SettingsSection title={ __( 'Benachrichtigen bei', 'recruiting-playbook' ) }>
+						<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
 							<CheckboxRow
-								label={ __( 'Neue Bewerbung eingegangen', 'recruiting-playbook' ) }
+								label={ __( 'New application received', 'recruiting-playbook' ) }
 								checked={ settings.slack_event_new_application }
 								onChange={ ( val ) => updateSetting( 'slack_event_new_application', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Bewerbungsstatus geandert', 'recruiting-playbook' ) }
+								label={ __( 'Application status changed', 'recruiting-playbook' ) }
 								checked={ settings.slack_event_status_changed }
 								onChange={ ( val ) => updateSetting( 'slack_event_status_changed', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Neue Stelle veroffentlicht', 'recruiting-playbook' ) }
+								label={ __( 'New job published', 'recruiting-playbook' ) }
 								checked={ settings.slack_event_job_published }
 								onChange={ ( val ) => updateSetting( 'slack_event_job_published', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Bewerbungsfrist lauft ab (3 Tage vorher)', 'recruiting-playbook' ) }
+								label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
 								checked={ settings.slack_event_deadline_reminder }
 								onChange={ ( val ) => updateSetting( 'slack_event_deadline_reminder', val ) }
 							/>
@@ -343,8 +343,8 @@ export function IntegrationSettings() {
 								disabled={ ! settings.slack_webhook_url || testing === 'slack' }
 							>
 								{ testing === 'slack'
-									? __( 'Wird gesendet...', 'recruiting-playbook' )
-									: __( 'Test-Nachricht senden', 'recruiting-playbook' )
+									? __( 'Sending...', 'recruiting-playbook' )
+									: __( 'Send test message', 'recruiting-playbook' )
 								}
 							</Button>
 						</div>
@@ -354,7 +354,7 @@ export function IntegrationSettings() {
 					<CardContent>
 						<Alert>
 							<AlertDescription>
-								{ __( 'Slack-Benachrichtigungen sind ein Pro-Feature.', 'recruiting-playbook' ) }
+								{ __( 'Slack notifications are a Pro feature.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -371,7 +371,7 @@ export function IntegrationSettings() {
 								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
-								{ __( 'Benachrichtigungen in einem Microsoft Teams Channel.', 'recruiting-playbook' ) }
+								{ __( 'Notifications in a Microsoft Teams channel.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Switch
@@ -384,7 +384,7 @@ export function IntegrationSettings() {
 				{ settings.teams_enabled && isPro && (
 					<CardContent>
 						<Label style={ { marginBottom: '6px', display: 'block' } }>
-							{ __( 'Workflow-Webhook-URL', 'recruiting-playbook' ) }
+							{ __( 'Workflow Webhook URL', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							type="url"
@@ -395,28 +395,28 @@ export function IntegrationSettings() {
 						/>
 						<Alert style={ { marginBottom: '16px' } }>
 							<AlertDescription style={ { fontSize: '13px' } }>
-								{ __( 'Teams → Channel → ... → Workflows → "Beim Empfang einer Teams-Webhookanforderung"', 'recruiting-playbook' ) }
+								{ __( 'Teams → Channel → ... → Workflows → "When a Teams webhook request is received"', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 
-						<SettingsSection title={ __( 'Benachrichtigen bei', 'recruiting-playbook' ) }>
+						<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
 							<CheckboxRow
-								label={ __( 'Neue Bewerbung eingegangen', 'recruiting-playbook' ) }
+								label={ __( 'New application received', 'recruiting-playbook' ) }
 								checked={ settings.teams_event_new_application }
 								onChange={ ( val ) => updateSetting( 'teams_event_new_application', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Bewerbungsstatus geandert', 'recruiting-playbook' ) }
+								label={ __( 'Application status changed', 'recruiting-playbook' ) }
 								checked={ settings.teams_event_status_changed }
 								onChange={ ( val ) => updateSetting( 'teams_event_status_changed', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Neue Stelle veroffentlicht', 'recruiting-playbook' ) }
+								label={ __( 'New job published', 'recruiting-playbook' ) }
 								checked={ settings.teams_event_job_published }
 								onChange={ ( val ) => updateSetting( 'teams_event_job_published', val ) }
 							/>
 							<CheckboxRow
-								label={ __( 'Bewerbungsfrist lauft ab (3 Tage vorher)', 'recruiting-playbook' ) }
+								label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
 								checked={ settings.teams_event_deadline_reminder }
 								onChange={ ( val ) => updateSetting( 'teams_event_deadline_reminder', val ) }
 							/>
@@ -429,8 +429,8 @@ export function IntegrationSettings() {
 								disabled={ ! settings.teams_webhook_url || testing === 'teams' }
 							>
 								{ testing === 'teams'
-									? __( 'Wird gesendet...', 'recruiting-playbook' )
-									: __( 'Test-Nachricht senden', 'recruiting-playbook' )
+									? __( 'Sending...', 'recruiting-playbook' )
+									: __( 'Send test message', 'recruiting-playbook' )
 								}
 							</Button>
 						</div>
@@ -440,7 +440,7 @@ export function IntegrationSettings() {
 					<CardContent>
 						<Alert>
 							<AlertDescription>
-								{ __( 'Teams-Benachrichtigungen sind ein Pro-Feature.', 'recruiting-playbook' ) }
+								{ __( 'Teams notifications are a Pro feature.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -457,7 +457,7 @@ export function IntegrationSettings() {
 								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
 							</CardTitle>
 							<CardDescription>
-								{ __( 'Conversion-Tracking direkt mit Google Ads – ohne Google Tag Manager.', 'recruiting-playbook' ) }
+								{ __( 'Conversion tracking directly with Google Ads – without Google Tag Manager.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Switch
@@ -472,7 +472,7 @@ export function IntegrationSettings() {
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
 							<div>
 								<Label style={ { marginBottom: '6px', display: 'block' } }>
-									{ __( 'Conversion-ID', 'recruiting-playbook' ) }
+									{ __( 'Conversion ID', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									placeholder="AW-XXXXXXXXX"
@@ -485,7 +485,7 @@ export function IntegrationSettings() {
 									{ __( 'Conversion Label', 'recruiting-playbook' ) }
 								</Label>
 								<Input
-									placeholder={ __( 'Aus Google Ads kopieren', 'recruiting-playbook' ) }
+									placeholder={ __( 'Copy from Google Ads', 'recruiting-playbook' ) }
 									value={ settings.google_ads_conversion_label }
 									onChange={ ( e ) => updateSetting( 'google_ads_conversion_label', e.target.value ) }
 								/>
@@ -508,7 +508,7 @@ export function IntegrationSettings() {
 
 						<Alert style={ { marginTop: '16px' } }>
 							<AlertDescription style={ { fontSize: '13px' } }>
-								{ __( 'Wird bei jeder erfolgreichen Bewerbung automatisch als Conversion an Google Ads gemeldet.', 'recruiting-playbook' ) }
+								{ __( 'Automatically reported to Google Ads as a conversion for every successful application.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -517,7 +517,7 @@ export function IntegrationSettings() {
 					<CardContent>
 						<Alert>
 							<AlertDescription>
-								{ __( 'Google Ads Conversion ist ein Pro-Feature.', 'recruiting-playbook' ) }
+								{ __( 'Google Ads Conversion is a Pro feature.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -528,8 +528,8 @@ export function IntegrationSettings() {
 			<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
 				<Button onClick={ handleSave } disabled={ saving }>
 					{ saving
-						? __( 'Wird gespeichert...', 'recruiting-playbook' )
-						: __( 'Speichern', 'recruiting-playbook' )
+						? __( 'Saving...', 'recruiting-playbook' )
+						: __( 'Save', 'recruiting-playbook' )
 					}
 				</Button>
 			</div>

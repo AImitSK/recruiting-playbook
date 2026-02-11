@@ -1,7 +1,7 @@
 /**
  * General Settings Component
  *
- * Allgemeine Einstellungen (Benachrichtigungen, Jobs, Schema)
+ * General settings (notifications, jobs, schema)
  *
  * @package RecruitingPlaybook
  */
@@ -55,19 +55,19 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 			) }
 
 			<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
-				{ /* Benachrichtigungen */ }
+				{ /* Notifications */ }
 				<Card>
 					<CardHeader>
-						<CardTitle>{ i18n.notifications || __( 'Benachrichtigungen', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ i18n.notifications || __( 'Notifications', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ i18n.notificationsDesc || __( 'E-Mail-Benachrichtigungen für neue Bewerbungen', 'recruiting-playbook' ) }
+							{ i18n.notificationsDesc || __( 'Email notifications for new applications', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 							<div>
 								<Label htmlFor="notification_email">
-									{ i18n.notificationEmail || __( 'Benachrichtigungs-E-Mail', 'recruiting-playbook' ) }
+									{ i18n.notificationEmail || __( 'Notification Email', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									id="notification_email"
@@ -77,13 +77,13 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 									placeholder="jobs@example.com"
 								/>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.notificationEmailDesc || __( 'E-Mail-Adresse für neue Bewerbungen.', 'recruiting-playbook' ) }
+									{ i18n.notificationEmailDesc || __( 'Email address for new applications.', 'recruiting-playbook' ) }
 								</p>
 							</div>
 
 							<div>
 								<Label htmlFor="privacy_page_id">
-									{ i18n.privacyPage || __( 'Datenschutz-Seite', 'recruiting-playbook' ) }
+									{ i18n.privacyPage || __( 'Privacy Page', 'recruiting-playbook' ) }
 								</Label>
 								<select
 									id="privacy_page_id"
@@ -101,7 +101,7 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 										borderRadius: '6px',
 									} }
 								>
-									<option value="">{ i18n.selectPage || __( '— Seite auswählen —', 'recruiting-playbook' ) }</option>
+									<option value="">{ i18n.selectPage || __( '— Select Page —', 'recruiting-playbook' ) }</option>
 									{ pages?.map( ( page ) => (
 										<option key={ page.id } value={ page.id }>
 											{ page.title }
@@ -109,19 +109,19 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 									) ) }
 								</select>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.privacyPageDesc || __( 'Seite mit Datenschutzerklärung für das Bewerbungsformular.', 'recruiting-playbook' ) }
+									{ i18n.privacyPageDesc || __( 'Page with privacy policy for the application form.', 'recruiting-playbook' ) }
 								</p>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				{ /* Stellenanzeigen */ }
+				{ /* Job Listings */ }
 				<Card>
 					<CardHeader>
-						<CardTitle>{ i18n.jobListings || __( 'Stellenanzeigen', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ i18n.jobListings || __( 'Job Listings', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ i18n.jobListingsDesc || __( 'Einstellungen für Stellenanzeigen und die Karriereseite', 'recruiting-playbook' ) }
+							{ i18n.jobListingsDesc || __( 'Settings for job listings and the careers page', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
@@ -129,7 +129,7 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 							<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 								<div>
 									<Label htmlFor="jobs_per_page">
-										{ i18n.jobsPerPage || __( 'Stellen pro Seite', 'recruiting-playbook' ) }
+										{ i18n.jobsPerPage || __( 'Jobs per Page', 'recruiting-playbook' ) }
 									</Label>
 									<Input
 										id="jobs_per_page"
@@ -144,7 +144,7 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 
 								<div>
 									<Label htmlFor="jobs_slug">
-										{ i18n.urlSlug || __( 'URL-Slug', 'recruiting-playbook' ) }
+										{ i18n.urlSlug || __( 'URL Slug', 'recruiting-playbook' ) }
 									</Label>
 									<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
 										<code style={ { fontSize: '0.75rem', color: '#6b7280' } }>{ homeUrl }/</code>
@@ -159,7 +159,7 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 										<code style={ { fontSize: '0.75rem', color: '#6b7280' } }>/</code>
 									</div>
 									<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-										{ i18n.urlSlugDesc || __( 'URL-Pfad für die Stellenübersicht.', 'recruiting-playbook' ) }
+										{ i18n.urlSlugDesc || __( 'URL path for the job listing overview.', 'recruiting-playbook' ) }
 									</p>
 								</div>
 							</div>
@@ -168,12 +168,12 @@ export function GeneralSettings( { settings, pages, saving, error, onUpdate, onS
 					</CardContent>
 				</Card>
 
-				{ /* Speichern Button */ }
+				{ /* Save Button */ }
 				<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
 					<Button type="submit" disabled={ saving }>
 						{ saving
-							? ( i18n.saving || __( 'Speichern...', 'recruiting-playbook' ) )
-							: ( i18n.saveSettings || __( 'Einstellungen speichern', 'recruiting-playbook' ) )
+							? ( i18n.saving || __( 'Saving...', 'recruiting-playbook' ) )
+							: ( i18n.saveSettings || __( 'Save Settings', 'recruiting-playbook' ) )
 						}
 					</Button>
 				</div>

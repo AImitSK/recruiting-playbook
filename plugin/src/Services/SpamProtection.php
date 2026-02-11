@@ -86,7 +86,7 @@ class SpamProtection {
 		if ( ! empty( $honeypot ) ) {
 			return new WP_Error(
 				'spam_detected',
-				__( 'Ihre Anfrage wurde als potentieller Spam erkannt.', 'recruiting-playbook' ),
+				__( 'Your request was detected as potential spam.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -117,7 +117,7 @@ class SpamProtection {
 		if ( $form_time < self::MIN_FORM_TIME ) {
 			return new WP_Error(
 				'submission_too_fast',
-				__( 'Bitte nehmen Sie sich etwas mehr Zeit zum Ausfüllen des Formulars.', 'recruiting-playbook' ),
+				__( 'Please take a bit more time to fill out the form.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -146,7 +146,7 @@ class SpamProtection {
 		if ( $attempts >= self::MAX_APPLICATIONS_PER_HOUR ) {
 			return new WP_Error(
 				'rate_limit_exceeded',
-				__( 'Sie haben die maximale Anzahl an Bewerbungen erreicht. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+				__( 'You have reached the maximum number of applications. Please try again later.', 'recruiting-playbook' ),
 				[ 'status' => 429 ]
 			);
 		}
@@ -224,7 +224,7 @@ class SpamProtection {
 				<label for="rp_hp_website">%s</label>
 				<input type="text" name="_hp_field" id="rp_hp_website" tabindex="-1" autocomplete="off" value="">
 			</div>',
-			esc_html__( 'Website (nicht ausfüllen)', 'recruiting-playbook' )
+			esc_html__( 'Website (do not fill out)', 'recruiting-playbook' )
 		);
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Settings Page Component
  *
- * Hauptseite für Plugin-Einstellungen mit Tabs
+ * Main page for plugin settings with tabs
  *
  * @package RecruitingPlaybook
  */
@@ -42,7 +42,7 @@ export function SettingsPage() {
 		updateSetting,
 	} = useSettings();
 
-	// Cleanup bei Unmount
+	// Cleanup on unmount
 	useEffect( () => {
 		return () => {
 			if ( notificationTimeoutRef.current ) {
@@ -52,7 +52,7 @@ export function SettingsPage() {
 	}, [] );
 
 	/**
-	 * Benachrichtigung anzeigen
+	 * Show notification
 	 */
 	const showNotification = useCallback( ( message, type = 'success' ) => {
 		if ( notificationTimeoutRef.current ) {
@@ -68,14 +68,14 @@ export function SettingsPage() {
 	}, [] );
 
 	/**
-	 * Settings speichern
+	 * Save settings
 	 */
 	const handleSave = useCallback( async ( data ) => {
 		setError( null );
 		const success = await saveSettings( data );
 
 		if ( success ) {
-			showNotification( i18n.settingsSaved || __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ) );
+			showNotification( i18n.settingsSaved || __( 'Settings have been saved.', 'recruiting-playbook' ) );
 		}
 	}, [ saveSettings, showNotification, setError, i18n.settingsSaved ] );
 
@@ -95,17 +95,17 @@ export function SettingsPage() {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: ( activeTab === 'design' || activeTab === 'api' || activeTab === 'ai' || activeTab === 'integrations' ) ? '1100px' : '900px' } }>
-				{ /* Header: Logo links, Titel rechts */ }
+				{ /* Header: Logo left, title right */ }
 				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
 					{ logoUrl && (
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ i18n.pageTitle || __( 'Einstellungen', 'recruiting-playbook' ) }
+						{ i18n.pageTitle || __( 'Settings', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
-				{ /* Erfolgs-Notification */ }
+				{ /* Success notification */ }
 				{ notification && (
 					<Alert
 						variant={ notification.type === 'error' ? 'destructive' : 'default' }
@@ -123,17 +123,17 @@ export function SettingsPage() {
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<TabsList>
 						<TabsTrigger value="general">
-							{ i18n.tabGeneral || __( 'Allgemein', 'recruiting-playbook' ) }
+							{ i18n.tabGeneral || __( 'General', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="company">
-							{ i18n.tabCompany || __( 'Firmendaten', 'recruiting-playbook' ) }
+							{ i18n.tabCompany || __( 'Company Information', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="export">
 							{ i18n.tabExport || __( 'Export', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ config.isPro && (
 							<TabsTrigger value="roles">
-								{ __( 'Benutzerrollen', 'recruiting-playbook' ) }
+								{ __( 'User Roles', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
 						{ config.isPro && (
@@ -142,7 +142,7 @@ export function SettingsPage() {
 							</TabsTrigger>
 						) }
 						<TabsTrigger value="integrations">
-							{ __( 'Integrationen', 'recruiting-playbook' ) }
+							{ __( 'Integrations', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ config.isPro && (
 							<TabsTrigger value="api">
@@ -151,7 +151,7 @@ export function SettingsPage() {
 						) }
 						{ config.hasAiAddon && (
 							<TabsTrigger value="ai">
-								{ __( 'KI-Analyse', 'recruiting-playbook' ) }
+								{ __( 'AI Analysis', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
 					</TabsList>

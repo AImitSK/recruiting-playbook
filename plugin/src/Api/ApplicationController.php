@@ -108,7 +108,7 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -128,23 +128,23 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id'              => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'status'          => [
-							'description' => __( 'Neuer Status', 'recruiting-playbook' ),
+							'description' => __( 'New status', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
 						],
 						'note'            => [
-							'description' => __( 'Notiz zur Statusänderung', 'recruiting-playbook' ),
+							'description' => __( 'Note for status change', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => false,
 						],
 						'kanban_position' => [
-							'description' => __( 'Position im Kanban-Board', 'recruiting-playbook' ),
+							'description' => __( 'Position on Kanban board', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => false,
 						],
@@ -164,12 +164,12 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id'          => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'hard_delete' => [
-							'description' => __( 'Endgültig löschen', 'recruiting-playbook' ),
+							'description' => __( 'Permanently delete', 'recruiting-playbook' ),
 							'type'        => 'boolean',
 							'default'     => false,
 						],
@@ -189,7 +189,7 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Dokument-ID', 'recruiting-playbook' ),
+							'description' => __( 'Document ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -209,7 +209,7 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -242,13 +242,13 @@ class ApplicationController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'status'    => [
-							'description' => __( 'Status/Spalte der zu sortierenden Bewerbungen', 'recruiting-playbook' ),
+							'description' => __( 'Status/column of applications to sort', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 							'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
 						],
 						'positions' => [
-							'description' => __( 'Array mit ID und neuer Position', 'recruiting-playbook' ),
+							'description' => __( 'Array with ID and new position', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'required'    => true,
 							'items'       => [
@@ -279,33 +279,33 @@ class ApplicationController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'job_id'           => [
-				'description'       => __( 'ID der Stelle', 'recruiting-playbook' ),
+				'description'       => __( 'Job ID', 'recruiting-playbook' ),
 				'type'              => 'integer',
 				'required'          => true,
 				'validate_callback' => [ $this, 'validate_job_id' ],
 			],
 			'salutation'       => [
-				'description' => __( 'Anrede', 'recruiting-playbook' ),
+				'description' => __( 'Salutation', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 				'enum'        => [ 'Herr', 'Frau', 'Divers', '' ],
 			],
 			'first_name'       => [
-				'description'       => __( 'Vorname', 'recruiting-playbook' ),
+				'description'       => __( 'First name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => [ $this, 'validate_name' ],
 			],
 			'last_name'        => [
-				'description'       => __( 'Nachname', 'recruiting-playbook' ),
+				'description'       => __( 'Last name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => [ $this, 'validate_name' ],
 			],
 			'email'            => [
-				'description'       => __( 'E-Mail-Adresse', 'recruiting-playbook' ),
+				'description'       => __( 'Email address', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'format'            => 'email',
 				'required'          => true,
@@ -313,25 +313,25 @@ class ApplicationController extends WP_REST_Controller {
 				'validate_callback' => [ $this, 'validate_email' ],
 			],
 			'phone'            => [
-				'description'       => __( 'Telefonnummer', 'recruiting-playbook' ),
+				'description'       => __( 'Phone number', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'cover_letter'     => [
-				'description'       => __( 'Anschreiben', 'recruiting-playbook' ),
+				'description'       => __( 'Cover letter', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'message'          => [
-				'description'       => __( 'Anschreiben (Alias)', 'recruiting-playbook' ),
+				'description'       => __( 'Cover letter (alias)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'privacy_consent'  => [
-				'description'       => __( 'Datenschutz-Einwilligung', 'recruiting-playbook' ),
+				'description'       => __( 'Privacy consent', 'recruiting-playbook' ),
 				'type'              => 'boolean',
 				'required'          => true,
 				'sanitize_callback' => 'rest_sanitize_boolean',
@@ -339,18 +339,18 @@ class ApplicationController extends WP_REST_Controller {
 			],
 			// Spam-Schutz Felder
 			'_hp_field'        => [
-				'description' => __( 'Honeypot-Feld', 'recruiting-playbook' ),
+				'description' => __( 'Honeypot field', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 			],
 			'_form_timestamp'  => [
-				'description' => __( 'Formular-Zeitstempel', 'recruiting-playbook' ),
+				'description' => __( 'Form timestamp', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'required'    => false,
 			],
 			// Custom Fields (Pro) - akzeptiert JSON-String oder Objekt
 			'custom_fields'    => [
-				'description'       => __( 'Custom Field Werte (Pro-Feature)', 'recruiting-playbook' ),
+				'description'       => __( 'Custom field values (Pro feature)', 'recruiting-playbook' ),
 				'required'          => false,
 				'default'           => [],
 				'sanitize_callback' => [ $this, 'sanitize_custom_fields' ],
@@ -432,7 +432,7 @@ class ApplicationController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'        => true,
-				'message'        => __( 'Ihre Bewerbung wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ),
+				'message'        => __( 'Your application has been submitted successfully. You will receive a confirmation email shortly.', 'recruiting-playbook' ),
 				'application_id' => $result,
 				'job_title'      => $job_title,
 			],
@@ -490,7 +490,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! $application ) {
 			return new WP_Error(
 				'rest_application_not_found',
-				__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Application not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -519,7 +519,7 @@ class ApplicationController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Status wurde aktualisiert.', 'recruiting-playbook' ),
+				'message' => __( 'Status has been updated.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -536,7 +536,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
 			return new WP_Error(
 				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -548,7 +548,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Bewerbungen anzuzeigen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to view applications.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -576,7 +576,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
 			return new WP_Error(
 				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -588,7 +588,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Bewerbungen zu bearbeiten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to edit applications.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -603,45 +603,45 @@ class ApplicationController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'job_id'   => [
-				'description' => __( 'Nach Stelle filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by job', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'status'   => [
-				'description' => __( 'Nach Status filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by status', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'new', 'screening', 'interview', 'offer', 'hired', 'rejected', 'withdrawn' ],
 			],
 			'search'   => [
-				'description' => __( 'Suche in Name, E-Mail', 'recruiting-playbook' ),
+				'description' => __( 'Search in name, email', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'per_page' => [
-				'description' => __( 'Ergebnisse pro Seite', 'recruiting-playbook' ),
+				'description' => __( 'Results per page', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 20,
 				'minimum'     => 1,
 				'maximum'     => 200,
 			],
 			'page'     => [
-				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
+				'description' => __( 'Page number', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 1,
 				'minimum'     => 1,
 			],
 			'orderby'  => [
-				'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
+				'description' => __( 'Sort field', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'date', 'name', 'status', 'kanban_position' ],
 				'default'     => 'date',
 			],
 			'order'    => [
-				'description' => __( 'Sortierrichtung', 'recruiting-playbook' ),
+				'description' => __( 'Sort direction', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'asc', 'desc' ],
 				'default'     => 'desc',
 			],
 			'context'  => [
-				'description' => __( 'Kontext für die Abfrage (kanban: mit Dokumentenanzahl)', 'recruiting-playbook' ),
+				'description' => __( 'Context for query (kanban: with document count)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'view', 'kanban' ],
 				'default'     => 'view',
@@ -676,7 +676,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! is_numeric( $value ) || (int) $value <= 0 ) {
 			return new WP_Error(
 				'invalid_job_id',
-				__( 'Ungültige Stellen-ID.', 'recruiting-playbook' )
+				__( 'Invalid job ID.', 'recruiting-playbook' )
 			);
 		}
 
@@ -684,7 +684,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! $post || 'job_listing' !== $post->post_type || 'publish' !== $post->post_status ) {
 			return new WP_Error(
 				'job_not_found',
-				__( 'Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' )
+				__( 'The specified job does not exist or is not available.', 'recruiting-playbook' )
 			);
 		}
 
@@ -701,14 +701,14 @@ class ApplicationController extends WP_REST_Controller {
 		if ( empty( trim( $value ) ) ) {
 			return new WP_Error(
 				'invalid_name',
-				__( 'Name darf nicht leer sein.', 'recruiting-playbook' )
+				__( 'Name must not be empty.', 'recruiting-playbook' )
 			);
 		}
 
 		if ( strlen( $value ) > 100 ) {
 			return new WP_Error(
 				'name_too_long',
-				__( 'Name ist zu lang (max. 100 Zeichen).', 'recruiting-playbook' )
+				__( 'Name is too long (max. 100 characters).', 'recruiting-playbook' )
 			);
 		}
 
@@ -725,7 +725,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! is_email( $value ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'Ungültige E-Mail-Adresse.', 'recruiting-playbook' )
+				__( 'Invalid email address.', 'recruiting-playbook' )
 			);
 		}
 
@@ -742,7 +742,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! $value ) {
 			return new WP_Error(
 				'privacy_consent_required',
-				__( 'Die Einwilligung zur Datenschutzerklärung ist erforderlich.', 'recruiting-playbook' )
+				__( 'Consent to the privacy policy is required.', 'recruiting-playbook' )
 			);
 		}
 
@@ -799,7 +799,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_delete_failed',
-				__( 'Bewerbung konnte nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'Application could not be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -808,8 +808,8 @@ class ApplicationController extends WP_REST_Controller {
 			[
 				'success' => true,
 				'message' => $hard_delete
-					? __( 'Bewerbung wurde endgültig gelöscht.', 'recruiting-playbook' )
-					: __( 'Bewerbung wurde gelöscht.', 'recruiting-playbook' ),
+					? __( 'Application has been permanently deleted.', 'recruiting-playbook' )
+					: __( 'Application has been deleted.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -826,7 +826,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
 			return new WP_Error(
 				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
+				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -838,7 +838,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! current_user_can( 'delete_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Bewerbungen zu löschen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to delete applications.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -880,7 +880,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( empty( $data ) ) {
 			return new WP_Error(
 				'rest_candidate_not_found',
-				__( 'Kandidat nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Candidate not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -928,7 +928,7 @@ class ApplicationController extends WP_REST_Controller {
 
 		foreach ( $top_jobs as &$job ) {
 			$post       = get_post( $job->job_id );
-			$job->title = $post ? $post->post_title : __( 'Gelöscht', 'recruiting-playbook' );
+			$job->title = $post ? $post->post_title : __( 'Deleted', 'recruiting-playbook' );
 		}
 
 		$total = 0;
@@ -959,7 +959,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new WP_Error(
 				'rest_cookie_invalid_nonce',
-				__( 'Ungültiges Sicherheitstoken. Bitte laden Sie die Seite neu.', 'recruiting-playbook' ),
+				__( 'Invalid security token. Please reload the page.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -970,7 +970,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( get_transient( $transient_key ) ) {
 			return new WP_Error(
 				'too_many_requests',
-				__( 'Zu viele Anfragen. Bitte warten Sie kurz.', 'recruiting-playbook' ),
+				__( 'Too many requests. Please wait a moment.', 'recruiting-playbook' ),
 				[ 'status' => 429 ]
 			);
 		}
@@ -982,7 +982,7 @@ class ApplicationController extends WP_REST_Controller {
 		if ( empty( $positions ) || ! is_array( $positions ) ) {
 			return new WP_Error(
 				'invalid_positions',
-				__( 'Ungültige Positionen.', 'recruiting-playbook' ),
+				__( 'Invalid positions.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -996,7 +996,7 @@ class ApplicationController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Positionen wurden aktualisiert.', 'recruiting-playbook' ),
+				'message' => __( 'Positions have been updated.', 'recruiting-playbook' ),
 				'updated' => $result,
 			],
 			200

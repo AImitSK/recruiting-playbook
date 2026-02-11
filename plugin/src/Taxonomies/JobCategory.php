@@ -1,6 +1,6 @@
 <?php
 /**
- * Taxonomy: Berufsfeld / Kategorie
+ * Taxonomy: Job Category
  *
  * @package RecruitingPlaybook
  */
@@ -15,28 +15,28 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\PostTypes\JobListing;
 
 /**
- * Taxonomy: Berufsfeld / Kategorie
+ * Taxonomy: Job Category
  */
 class JobCategory {
 
 	public const TAXONOMY = 'job_category';
 
 	/**
-	 * Taxonomie registrieren
+	 * Register taxonomy
 	 */
 	public function register(): void {
 		$labels = [
-			'name'              => __( 'Berufsfelder', 'recruiting-playbook' ),
-			'singular_name'     => __( 'Berufsfeld', 'recruiting-playbook' ),
-			'search_items'      => __( 'Berufsfelder durchsuchen', 'recruiting-playbook' ),
-			'all_items'         => __( 'Alle Berufsfelder', 'recruiting-playbook' ),
-			'parent_item'       => __( 'Übergeordnetes Berufsfeld', 'recruiting-playbook' ),
-			'parent_item_colon' => __( 'Übergeordnetes Berufsfeld:', 'recruiting-playbook' ),
-			'edit_item'         => __( 'Berufsfeld bearbeiten', 'recruiting-playbook' ),
-			'update_item'       => __( 'Berufsfeld aktualisieren', 'recruiting-playbook' ),
-			'add_new_item'      => __( 'Neues Berufsfeld', 'recruiting-playbook' ),
-			'new_item_name'     => __( 'Neuer Berufsfeld-Name', 'recruiting-playbook' ),
-			'menu_name'         => __( 'Berufsfelder', 'recruiting-playbook' ),
+			'name'              => __( 'Job Categories', 'recruiting-playbook' ),
+			'singular_name'     => __( 'Job Category', 'recruiting-playbook' ),
+			'search_items'      => __( 'Search Job Categories', 'recruiting-playbook' ),
+			'all_items'         => __( 'All Job Categories', 'recruiting-playbook' ),
+			'parent_item'       => __( 'Parent Job Category', 'recruiting-playbook' ),
+			'parent_item_colon' => __( 'Parent Job Category:', 'recruiting-playbook' ),
+			'edit_item'         => __( 'Edit Job Category', 'recruiting-playbook' ),
+			'update_item'       => __( 'Update Job Category', 'recruiting-playbook' ),
+			'add_new_item'      => __( 'New Job Category', 'recruiting-playbook' ),
+			'new_item_name'     => __( 'New Job Category Name', 'recruiting-playbook' ),
+			'menu_name'         => __( 'Job Categories', 'recruiting-playbook' ),
 		];
 
 		$args = [

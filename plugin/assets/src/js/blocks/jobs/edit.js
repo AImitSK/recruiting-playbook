@@ -46,16 +46,16 @@ export default function Edit( { attributes, setAttributes } ) {
 		const parts = [];
 		parts.push(
 			limit === 1
-				? __( '1 Stelle', 'recruiting-playbook' )
-				: `${ limit } ${ __( 'Stellen', 'recruiting-playbook' ) }`
+				? __( '1 job', 'recruiting-playbook' )
+				: `${ limit } ${ __( 'jobs', 'recruiting-playbook' ) }`
 		);
 		parts.push(
 			columns === 1
-				? __( '1 Spalte', 'recruiting-playbook' )
-				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+				? __( '1 column', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'columns', 'recruiting-playbook' ) }`
 		);
 		if ( featured ) {
-			parts.push( __( 'Nur Featured', 'recruiting-playbook' ) );
+			parts.push( __( 'Featured only', 'recruiting-playbook' ) );
 		}
 		return parts.join( ' · ' );
 	};
@@ -64,11 +64,11 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Anzeige', 'recruiting-playbook' ) }
+					title={ __( 'Display', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<RangeControl
-						label={ __( 'Anzahl Stellen', 'recruiting-playbook' ) }
+						label={ __( 'Number of Jobs', 'recruiting-playbook' ) }
 						value={ limit }
 						onChange={ ( value ) =>
 							setAttributes( { limit: value } )
@@ -76,7 +76,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						min={ 1 }
 						max={ 50 }
 						help={ __(
-							'Maximale Anzahl der angezeigten Stellen.',
+							'Maximum number of jobs to display.',
 							'recruiting-playbook'
 						) }
 					/>
@@ -117,7 +117,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<ToggleControl
 						label={ __(
-							'Nur Featured Jobs',
+							'Featured Jobs Only',
 							'recruiting-playbook'
 						) }
 						checked={ featured }
@@ -125,30 +125,30 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { featured: value } )
 						}
 						help={ __(
-							'Zeigt nur hervorgehobene Stellen an.',
+							'Display only featured jobs.',
 							'recruiting-playbook'
 						) }
 					/>
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Sortierung', 'recruiting-playbook' ) }
+					title={ __( 'Sorting', 'recruiting-playbook' ) }
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Sortieren nach', 'recruiting-playbook' ) }
+						label={ __( 'Sort By', 'recruiting-playbook' ) }
 						value={ orderby }
 						options={ [
 							{
-								label: __( 'Datum', 'recruiting-playbook' ),
+								label: __( 'Date', 'recruiting-playbook' ),
 								value: 'date',
 							},
 							{
-								label: __( 'Titel', 'recruiting-playbook' ),
+								label: __( 'Title', 'recruiting-playbook' ),
 								value: 'title',
 							},
 							{
-								label: __( 'Zufall', 'recruiting-playbook' ),
+								label: __( 'Random', 'recruiting-playbook' ),
 								value: 'rand',
 							},
 						] }
@@ -157,19 +157,19 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<SelectControl
-						label={ __( 'Reihenfolge', 'recruiting-playbook' ) }
+						label={ __( 'Order', 'recruiting-playbook' ) }
 						value={ order }
 						options={ [
 							{
 								label: __(
-									'Neueste zuerst',
+									'Newest first',
 									'recruiting-playbook'
 								),
 								value: 'DESC',
 							},
 							{
 								label: __(
-									'Älteste zuerst',
+									'Oldest first',
 									'recruiting-playbook'
 								),
 								value: 'ASC',
@@ -184,10 +184,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Stellenliste', 'recruiting-playbook' ) }
+					label={ __( 'Job List', 'recruiting-playbook' ) }
 					summary={ getSummary() }
 					helpText={ __(
-						'Konfiguriere die Anzeige in der Seitenleiste.',
+						'Configure the display in the sidebar.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_jobs]"

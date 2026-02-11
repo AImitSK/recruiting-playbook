@@ -188,12 +188,12 @@ class JobSearchShortcode {
 				<div class="rp-grid rp-gap-4 sm:rp-grid-cols-2 lg:rp-grid-cols-4">
 					<?php if ( $show_search ) : ?>
 						<div>
-							<label class="rp-label"><?php esc_html_e( 'Suche', 'recruiting-playbook' ); ?></label>
+							<label class="rp-label"><?php esc_html_e( 'Search', 'recruiting-playbook' ); ?></label>
 							<input
 								type="text"
 								name="rp_search"
 								value="<?php echo esc_attr( $search ); ?>"
-								placeholder="<?php esc_attr_e( 'Stichwort, Jobtitel...', 'recruiting-playbook' ); ?>"
+								placeholder="<?php esc_attr_e( 'Keyword, job title...', 'recruiting-playbook' ); ?>"
 								class="rp-input"
 							>
 						</div>
@@ -201,9 +201,9 @@ class JobSearchShortcode {
 
 					<?php if ( $show_category && ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
 						<div>
-							<label class="rp-label"><?php esc_html_e( 'Berufsfeld', 'recruiting-playbook' ); ?></label>
+							<label class="rp-label"><?php esc_html_e( 'Category', 'recruiting-playbook' ); ?></label>
 							<select name="rp_category" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Berufsfelder', 'recruiting-playbook' ); ?></option>
+								<option value=""><?php esc_html_e( 'All Categories', 'recruiting-playbook' ); ?></option>
 								<?php foreach ( $categories as $cat ) : ?>
 									<option value="<?php echo esc_attr( $cat->slug ); ?>" <?php selected( $category, $cat->slug ); ?>>
 										<?php echo esc_html( $cat->name ); ?>
@@ -215,9 +215,9 @@ class JobSearchShortcode {
 
 					<?php if ( $show_location && ! empty( $locations ) && ! is_wp_error( $locations ) ) : ?>
 						<div>
-							<label class="rp-label"><?php esc_html_e( 'Standort', 'recruiting-playbook' ); ?></label>
+							<label class="rp-label"><?php esc_html_e( 'Location', 'recruiting-playbook' ); ?></label>
 							<select name="rp_location" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Standorte', 'recruiting-playbook' ); ?></option>
+								<option value=""><?php esc_html_e( 'All Locations', 'recruiting-playbook' ); ?></option>
 								<?php foreach ( $locations as $loc ) : ?>
 									<option value="<?php echo esc_attr( $loc->slug ); ?>" <?php selected( $location, $loc->slug ); ?>>
 										<?php echo esc_html( $loc->name ); ?>
@@ -229,9 +229,9 @@ class JobSearchShortcode {
 
 					<?php if ( $show_type && ! empty( $types ) && ! is_wp_error( $types ) ) : ?>
 						<div>
-							<label class="rp-label"><?php esc_html_e( 'Beschäftigungsart', 'recruiting-playbook' ); ?></label>
+							<label class="rp-label"><?php esc_html_e( 'Employment Type', 'recruiting-playbook' ); ?></label>
 							<select name="rp_type" class="rp-input rp-select">
-								<option value=""><?php esc_html_e( 'Alle Arten', 'recruiting-playbook' ); ?></option>
+								<option value=""><?php esc_html_e( 'All Types', 'recruiting-playbook' ); ?></option>
 								<?php foreach ( $types as $t ) : ?>
 									<option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $type, $t->slug ); ?>>
 										<?php echo esc_html( $t->name ); ?>
@@ -244,11 +244,11 @@ class JobSearchShortcode {
 
 				<div class="rp-mt-4 rp-flex rp-gap-3 rp-flex-wrap">
 					<button type="submit" class="wp-element-button">
-						<?php esc_html_e( 'Suchen', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Search', 'recruiting-playbook' ); ?>
 					</button>
 					<?php if ( $search || $category || $location || $type ) : ?>
 						<a href="<?php echo esc_url( remove_query_arg( [ 'rp_search', 'rp_category', 'rp_location', 'rp_type', 'rp_page' ] ) ); ?>" class="wp-element-button is-style-outline">
-							<?php esc_html_e( 'Filter zurücksetzen', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Reset filters', 'recruiting-playbook' ); ?>
 						</a>
 					<?php endif; ?>
 				</div>
@@ -259,7 +259,7 @@ class JobSearchShortcode {
 				<?php
 				printf(
 					/* translators: %d: Number of jobs found */
-					esc_html( _n( '%d Stelle gefunden', '%d Stellen gefunden', $query->found_posts, 'recruiting-playbook' ) ),
+					esc_html( _n( '%d job found', '%d jobs found', $query->found_posts, 'recruiting-playbook' ) ),
 					$query->found_posts
 				);
 				?>
@@ -288,7 +288,7 @@ class JobSearchShortcode {
 					<nav class="rp-mt-8 rp-flex rp-justify-center rp-gap-2 rp-flex-wrap">
 						<?php if ( $paged > 1 ) : ?>
 							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged - 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								&laquo; <?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
+								&laquo; <?php esc_html_e( 'Previous', 'recruiting-playbook' ); ?>
 							</a>
 						<?php endif; ?>
 
@@ -304,7 +304,7 @@ class JobSearchShortcode {
 
 						<?php if ( $paged < $total_pages ) : ?>
 							<a href="<?php echo esc_url( add_query_arg( 'rp_page', $paged + 1, $current_url ) ); ?>" class="wp-element-button is-style-outline">
-								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?> &raquo;
+								<?php esc_html_e( 'Next', 'recruiting-playbook' ); ?> &raquo;
 							</a>
 						<?php endif; ?>
 					</nav>
@@ -315,7 +315,7 @@ class JobSearchShortcode {
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
 					</svg>
 					<p class="rp-mt-4 rp-text-gray-500">
-						<?php esc_html_e( 'Keine passenden Stellen gefunden. Bitte versuchen Sie andere Suchkriterien.', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'No matching jobs found. Please try different search criteria.', 'recruiting-playbook' ); ?>
 					</p>
 				</div>
 			<?php endif; ?>

@@ -8,8 +8,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Avada / Fusion Builder Integration
  *
- * Registriert alle Recruiting Playbook Elements für den Fusion Builder.
- * Dies ist ein Pro-Feature und erfordert eine aktive Pro-Lizenz.
+ * Registers all Recruiting Playbook elements for Fusion Builder.
+ * This is a Pro feature and requires an active Pro license.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 class AvadaIntegration {
 
 	/**
-	 * Integration initialisieren
+	 * Initialize integration
 	 *
 	 * @return void
 	 */
@@ -32,24 +32,24 @@ class AvadaIntegration {
 			return;
 		}
 
-		// Elements registrieren (in $all_fusion_builder_elements)
+		// Register elements (in $all_fusion_builder_elements)
 		add_action( 'fusion_builder_before_init', [ $this, 'registerElements' ], 11 );
 
-		// WICHTIG: Elements nach dem Filtern wieder hinzufügen
-		// Fusion Builder filtert basierend auf Benutzer-Einstellungen,
-		// aber wir wollen unsere Elements IMMER verfügbar machen.
+		// IMPORTANT: Re-add elements after filtering
+		// Fusion Builder filters based on user settings,
+		// but we want our elements to ALWAYS be available.
 		add_filter( 'fusion_builder_all_elements', [ $this, 'ensureElementsAvailable' ], 20 );
 
-		// Element-Kategorie hinzufügen
+		// Add element category
 		add_filter( 'fusion_builder_element_categories', [ $this, 'addCategory' ] );
 
-		// Editor-Assets laden (Backend + Live Builder).
+		// Load editor assets (Backend + Live Builder).
 		add_action( 'fusion_builder_admin_scripts_hook', [ $this, 'enqueueEditorAssets' ] );
 		add_action( 'fusion_builder_enqueue_live_scripts', [ $this, 'enqueueEditorAssets' ] );
 	}
 
 	/**
-	 * Elements registrieren
+	 * Register elements
 	 *
 	 * @return void
 	 */
@@ -59,18 +59,18 @@ class AvadaIntegration {
 	}
 
 	/**
-	 * Stellt sicher, dass RP-Elements nach dem Filtern verfügbar sind
+	 * Ensures RP elements are available after filtering
 	 *
-	 * Fusion Builder filtert Elements basierend auf Benutzer-Einstellungen.
-	 * Unsere Elements sollen aber immer verfügbar sein (solange Pro aktiv ist).
+	 * Fusion Builder filters elements based on user settings.
+	 * Our elements should always be available (as long as Pro is active).
 	 *
-	 * @param array $elements Gefilterte Elements.
-	 * @return array Elements mit RP-Elements.
+	 * @param array $elements Filtered elements.
+	 * @return array Elements with RP elements.
 	 */
 	public function ensureElementsAvailable( array $elements ): array {
 		global $all_fusion_builder_elements;
 
-		// RP-Elements aus der globalen Liste holen und hinzufügen.
+		// Get RP elements from the global list and add them.
 		if ( ! empty( $all_fusion_builder_elements ) ) {
 			foreach ( $all_fusion_builder_elements as $shortcode => $config ) {
 				if ( strpos( $shortcode, 'rp_' ) === 0 && ! isset( $elements[ $shortcode ] ) ) {
@@ -83,10 +83,10 @@ class AvadaIntegration {
 	}
 
 	/**
-	 * Kategorie für Element-Picker hinzufügen
+	 * Add category for element picker
 	 *
-	 * @param array $categories Bestehende Kategorien.
-	 * @return array Kategorien mit Recruiting Playbook.
+	 * @param array $categories Existing categories.
+	 * @return array Categories with Recruiting Playbook.
 	 */
 	public function addCategory( array $categories ): array {
 		$categories['recruiting_playbook'] = esc_attr__( 'Recruiting Playbook', 'recruiting-playbook' );
@@ -94,12 +94,12 @@ class AvadaIntegration {
 	}
 
 	/**
-	 * Editor-Assets laden
+	 * Load editor assets
 	 *
 	 * @return void
 	 */
 	public function enqueueEditorAssets(): void {
-		// Frontend-CSS wird in Plugin::enqueueFrontendAssets() über ?builder / ?fb-edit geladen.
+		// Frontend CSS is loaded in Plugin::enqueueFrontendAssets() via ?builder / ?fb-edit.
 		wp_enqueue_style(
 			'rp-avada-editor',
 			RP_PLUGIN_URL . 'assets/css/avada-editor.css',
@@ -107,16 +107,16 @@ class AvadaIntegration {
 			RP_VERSION
 		);
 
-		// Preview-Templates im Footer laden (Backend + Live Builder).
+		// Load preview templates in footer (Backend + Live Builder).
 		add_action( 'admin_footer', [ $this, 'outputPreviewTemplates' ], 99 );
 		add_action( 'wp_footer', [ $this, 'outputPreviewTemplates' ], 99 );
 	}
 
 	/**
-	 * Preview-Templates für den Fusion Builder ausgeben
+	 * Output preview templates for Fusion Builder
 	 *
-	 * Lädt alle Underscore.js Preview-Templates in den Footer,
-	 * damit der Backend- und Live-Builder sie für die Element-Vorschau nutzen kann.
+	 * Loads all Underscore.js preview templates into the footer,
+	 * so the backend and live builder can use them for element preview.
 	 *
 	 * @return void
 	 */

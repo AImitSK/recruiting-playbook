@@ -58,7 +58,7 @@ class TalentPoolService {
 		if ( $this->repository->exists( $candidate_id ) ) {
 			return new WP_Error(
 				'already_exists',
-				__( 'Kandidat ist bereits im Talent-Pool', 'recruiting-playbook' ),
+				__( 'Candidate is already in the talent pool', 'recruiting-playbook' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -78,7 +78,7 @@ class TalentPoolService {
 		if ( ! $candidate ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Kandidat nicht gefunden', 'recruiting-playbook' ),
+				__( 'Candidate not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -111,7 +111,7 @@ class TalentPoolService {
 		if ( ! $entry_id ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'Fehler beim Hinzufügen zum Talent-Pool', 'recruiting-playbook' ),
+				__( 'Error adding to talent pool', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -120,7 +120,7 @@ class TalentPoolService {
 		$this->logActivityForCandidate(
 			$candidate_id,
 			'talent_pool_added',
-			__( 'Zum Talent-Pool hinzugefügt', 'recruiting-playbook' ),
+			__( 'Added to talent pool', 'recruiting-playbook' ),
 			[
 				'reason' => $reason,
 				'tags'   => $normalized_tags,
@@ -142,7 +142,7 @@ class TalentPoolService {
 		if ( ! $entry ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Kandidat nicht im Talent-Pool', 'recruiting-playbook' ),
+				__( 'Candidate not in talent pool', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -153,7 +153,7 @@ class TalentPoolService {
 		$this->logActivityForCandidate(
 			$candidate_id,
 			'talent_pool_removed',
-			__( 'Aus Talent-Pool entfernt', 'recruiting-playbook' )
+			__( 'Removed from talent pool', 'recruiting-playbook' )
 		);
 
 		return true;
@@ -172,7 +172,7 @@ class TalentPoolService {
 		if ( ! $entry ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Kandidat nicht im Talent-Pool', 'recruiting-playbook' ),
+				__( 'Candidate not in talent pool', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -273,19 +273,19 @@ class TalentPoolService {
 
 			$candidate_name = trim( "{$entry['first_name']} {$entry['last_name']}" );
 			if ( empty( $candidate_name ) ) {
-				$candidate_name = __( 'Unbekannt', 'recruiting-playbook' );
+				$candidate_name = __( 'Unknown', 'recruiting-playbook' );
 			}
 
 			$subject = sprintf(
 				/* translators: %s: Candidate name */
-				__( '[Recruiting Playbook] Talent-Pool Eintrag läuft ab: %s', 'recruiting-playbook' ),
+				__( '[Recruiting Playbook] Talent pool entry expiring: %s', 'recruiting-playbook' ),
 				$candidate_name
 			);
 
 			$message = sprintf(
 				/* translators: 1: Candidate name, 2: Expiry date */
 				__(
-					"Der Talent-Pool Eintrag für %1\$s läuft am %2\$s ab.\n\nBitte prüfen Sie, ob Sie den Eintrag verlängern möchten.\n\nGrundinformationen:\n- E-Mail: %3\$s\n- Aufgenommen am: %4\$s",
+					"The talent pool entry for %1\$s expires on %2\$s.\n\nPlease review whether you would like to extend the entry.\n\nBasic information:\n- Email: %3\$s\n- Added on: %4\$s",
 					'recruiting-playbook'
 				),
 				$candidate_name,

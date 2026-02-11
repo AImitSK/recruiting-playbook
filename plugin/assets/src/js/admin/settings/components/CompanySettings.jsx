@@ -1,7 +1,7 @@
 /**
  * Company Settings Component
  *
- * Firmendaten und Standard-Absender
+ * Company data and default sender
  *
  * @package RecruitingPlaybook
  */
@@ -44,7 +44,7 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 			sender_email: settings?.sender_email,
 		};
 
-		// Pro-Einstellungen nur senden wenn Pro aktiv.
+		// Only send Pro settings if Pro is active.
 		if ( isPro ) {
 			data.hide_email_branding = settings?.hide_email_branding;
 		}
@@ -66,19 +66,19 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 			) }
 
 			<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
-				{ /* Firmendaten */ }
+				{ /* Company Data */ }
 				<Card>
 					<CardHeader>
-						<CardTitle>{ i18n.companyData || __( 'Firmendaten', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ i18n.companyData || __( 'Company Data', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ i18n.companyDataDesc || __( 'Diese Daten werden in E-Mail-Signaturen und im Google for Jobs Schema verwendet.', 'recruiting-playbook' ) }
+							{ i18n.companyDataDesc || __( 'This data is used in email signatures and the Google for Jobs schema.', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 							<div>
 								<Label htmlFor="company_name">
-									{ i18n.companyName || __( 'Firmenname', 'recruiting-playbook' ) }
+									{ i18n.companyName || __( 'Company Name', 'recruiting-playbook' ) }
 									<span style={ { color: '#ef4444' } }> *</span>
 								</Label>
 								<Input
@@ -89,13 +89,13 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 									required
 								/>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.companyNameDesc || __( 'Wird im Schema, E-Mails und auf der Karriereseite angezeigt.', 'recruiting-playbook' ) }
+									{ i18n.companyNameDesc || __( 'Displayed in schema, emails, and on the careers page.', 'recruiting-playbook' ) }
 								</p>
 							</div>
 
 							<div>
 								<Label htmlFor="company_street">
-									{ i18n.street || __( 'Straße & Hausnummer', 'recruiting-playbook' ) }
+									{ i18n.street || __( 'Street & Number', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									id="company_street"
@@ -108,7 +108,7 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 							<div style={ { display: 'grid', gridTemplateColumns: '100px 1fr', gap: '1rem' } }>
 								<div>
 									<Label htmlFor="company_zip">
-										{ i18n.zip || __( 'PLZ', 'recruiting-playbook' ) }
+										{ i18n.zip || __( 'Zip Code', 'recruiting-playbook' ) }
 									</Label>
 									<Input
 										id="company_zip"
@@ -119,7 +119,7 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 								</div>
 								<div>
 									<Label htmlFor="company_city">
-										{ i18n.city || __( 'Stadt', 'recruiting-playbook' ) }
+										{ i18n.city || __( 'City', 'recruiting-playbook' ) }
 									</Label>
 									<Input
 										id="company_city"
@@ -133,7 +133,7 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 							<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 								<div>
 									<Label htmlFor="company_phone">
-										{ i18n.phone || __( 'Telefon', 'recruiting-playbook' ) }
+										{ i18n.phone || __( 'Phone', 'recruiting-playbook' ) }
 									</Label>
 									<Input
 										id="company_phone"
@@ -159,7 +159,7 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 
 							<div>
 								<Label htmlFor="company_email">
-									{ i18n.contactEmail || __( 'Kontakt-E-Mail', 'recruiting-playbook' ) }
+									{ i18n.contactEmail || __( 'Contact Email', 'recruiting-playbook' ) }
 									<span style={ { color: '#ef4444' } }> *</span>
 								</Label>
 								<Input
@@ -170,41 +170,41 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 									required
 								/>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.contactEmailDesc || __( 'Allgemeine Kontakt-E-Mail der Firma (für E-Mail-Signaturen).', 'recruiting-playbook' ) }
+									{ i18n.contactEmailDesc || __( 'General contact email of the company (for email signatures).', 'recruiting-playbook' ) }
 								</p>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				{ /* Standard-Absender */ }
+				{ /* Default Sender */ }
 				<Card>
 					<CardHeader>
-						<CardTitle>{ i18n.defaultSender || __( 'Standard-Absender', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ i18n.defaultSender || __( 'Default Sender', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ i18n.defaultSenderDesc || __( 'Standard-Absenderdaten für automatische und manuelle E-Mails.', 'recruiting-playbook' ) }
+							{ i18n.defaultSenderDesc || __( 'Default sender data for automatic and manual emails.', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 							<div>
 								<Label htmlFor="sender_name">
-									{ i18n.senderName || __( 'Absender-Name', 'recruiting-playbook' ) }
+									{ i18n.senderName || __( 'Sender Name', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									id="sender_name"
 									type="text"
 									value={ settings.sender_name || '' }
 									onChange={ ( e ) => onUpdate( 'sender_name', e.target.value ) }
-									placeholder={ i18n.hrDepartment || __( 'Personalabteilung', 'recruiting-playbook' ) }
+									placeholder={ i18n.hrDepartment || __( 'HR Department', 'recruiting-playbook' ) }
 								/>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.senderNameDesc || __( 'Name, der als Absender in E-Mails angezeigt wird.', 'recruiting-playbook' ) }
+									{ i18n.senderNameDesc || __( 'Name displayed as sender in emails.', 'recruiting-playbook' ) }
 								</p>
 							</div>
 							<div>
 								<Label htmlFor="sender_email">
-									{ i18n.senderEmail || __( 'Absender-E-Mail', 'recruiting-playbook' ) }
+									{ i18n.senderEmail || __( 'Sender Email', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									id="sender_email"
@@ -214,30 +214,30 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 									placeholder="jobs@example.com"
 								/>
 								<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-									{ i18n.senderEmailDesc || __( 'E-Mail-Adresse, von der E-Mails gesendet werden.', 'recruiting-playbook' ) }
+									{ i18n.senderEmailDesc || __( 'Email address from which emails are sent.', 'recruiting-playbook' ) }
 								</p>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				{ /* Pro-Einstellungen (nur wenn Pro aktiv) */ }
+				{ /* Pro Settings (only if Pro is active) */ }
 				{ isPro && (
 					<Card>
 						<CardHeader>
-							<CardTitle>{ i18n.proSettings || __( 'Pro-Einstellungen', 'recruiting-playbook' ) }</CardTitle>
+							<CardTitle>{ i18n.proSettings || __( 'Pro Settings', 'recruiting-playbook' ) }</CardTitle>
 							<CardDescription>
-								{ i18n.proSettingsDesc || __( 'Erweiterte Einstellungen für Pro-Nutzer.', 'recruiting-playbook' ) }
+								{ i18n.proSettingsDesc || __( 'Advanced settings for Pro users.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 								<div>
 									<Label htmlFor="hide_email_branding" style={ { marginBottom: 0 } }>
-										{ i18n.whiteLabel || __( 'White-Label E-Mails', 'recruiting-playbook' ) }
+										{ i18n.whiteLabel || __( 'White-Label Emails', 'recruiting-playbook' ) }
 									</Label>
 									<p style={ { marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' } }>
-										{ i18n.whiteLabelDesc || __( '"Versand über Recruiting Playbook"-Hinweis in E-Mails ausblenden', 'recruiting-playbook' ) }
+										{ i18n.whiteLabelDesc || __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ) }
 									</p>
 								</div>
 								<Switch
@@ -250,12 +250,12 @@ export function CompanySettings( { settings, saving, error, onUpdate, onSave } )
 					</Card>
 				) }
 
-				{ /* Speichern Button */ }
+				{ /* Save Button */ }
 				<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
 					<Button type="submit" disabled={ saving }>
 						{ saving
-							? ( i18n.saving || __( 'Speichern...', 'recruiting-playbook' ) )
-							: ( i18n.saveSettings || __( 'Einstellungen speichern', 'recruiting-playbook' ) )
+							? ( i18n.saving || __( 'Saving...', 'recruiting-playbook' ) )
+							: ( i18n.saveSettings || __( 'Save Settings', 'recruiting-playbook' ) )
 						}
 					</Button>
 				</div>

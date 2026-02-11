@@ -99,7 +99,7 @@ export default function FieldEditor( {
 		try {
 			const success = await onUpdate( field.id, localField );
 			if ( ! success ) {
-				setError( i18n?.saveError || __( 'Fehler beim Speichern', 'recruiting-playbook' ) );
+				setError( i18n?.saveError || __( 'Error saving', 'recruiting-playbook' ) );
 			}
 		} catch ( err ) {
 			setError( err.message );
@@ -130,13 +130,13 @@ export default function FieldEditor( {
 			<CardHeader className="pb-3">
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 					<CardTitle style={ { fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-						{ i18n?.editField || __( 'Feld bearbeiten', 'recruiting-playbook' ) }
+						{ i18n?.editField || __( 'Edit field', 'recruiting-playbook' ) }
 						{ field.is_system && <Lock style={ { height: '1rem', width: '1rem', color: '#9ca3af' } } /> }
 					</CardTitle>
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						{ hasChanges && (
 							<span style={ { fontSize: '0.75rem', color: '#d97706' } }>
-								{ i18n?.unsavedChanges || __( 'Ungespeichert', 'recruiting-playbook' ) }
+								{ i18n?.unsavedChanges || __( 'Unsaved', 'recruiting-playbook' ) }
 							</span>
 						) }
 						{ isSaving && <Spinner size="small" /> }
@@ -158,11 +158,11 @@ export default function FieldEditor( {
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<TabsList style={ { marginBottom: '1rem', width: '100%', display: 'grid', gridTemplateColumns: hasValidation ? 'repeat(2, 1fr)' : '1fr' } }>
 						<TabsTrigger value="general">
-							{ i18n?.general || __( 'Allgemein', 'recruiting-playbook' ) }
+							{ i18n?.general || __( 'General', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ hasValidation && (
 							<TabsTrigger value="validation">
-								{ i18n?.validation || __( 'Validierung', 'recruiting-playbook' ) }
+								{ i18n?.validation || __( 'Validation', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -171,7 +171,7 @@ export default function FieldEditor( {
 						{ /* Field Key */ }
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="field_key">
-								{ i18n?.fieldKey || __( 'Feldschlüssel', 'recruiting-playbook' ) }
+								{ i18n?.fieldKey || __( 'Field key', 'recruiting-playbook' ) }
 							</Label>
 							<Input
 								id="field_key"
@@ -183,7 +183,7 @@ export default function FieldEditor( {
 								disabled={ field.is_system }
 							/>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-								{ i18n?.fieldKeyHelp || __( 'Eindeutiger Bezeichner (keine Sonderzeichen)', 'recruiting-playbook' ) }
+								{ i18n?.fieldKeyHelp || __( 'Unique identifier (no special characters)', 'recruiting-playbook' ) }
 							</p>
 						</div>
 
@@ -196,7 +196,7 @@ export default function FieldEditor( {
 								id="label"
 								value={ localField.label || '' }
 								onChange={ ( e ) => updateLocalField( { label: e.target.value } ) }
-								placeholder={ i18n?.labelPlaceholder || __( 'Feld-Bezeichnung', 'recruiting-playbook' ) }
+								placeholder={ i18n?.labelPlaceholder || __( 'Field label', 'recruiting-playbook' ) }
 							/>
 						</div>
 
@@ -204,13 +204,13 @@ export default function FieldEditor( {
 						{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( field.type ) && (
 							<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 								<Label htmlFor="placeholder">
-									{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
+									{ i18n?.fieldPlaceholder || __( 'Placeholder', 'recruiting-playbook' ) }
 								</Label>
 								<Input
 									id="placeholder"
 									value={ localField.placeholder || '' }
 									onChange={ ( e ) => updateLocalField( { placeholder: e.target.value } ) }
-									placeholder={ i18n?.placeholderHelp || __( 'Platzhaltertext...', 'recruiting-playbook' ) }
+									placeholder={ i18n?.placeholderHelp || __( 'Placeholder text...', 'recruiting-playbook' ) }
 								/>
 							</div>
 						) }
@@ -218,26 +218,26 @@ export default function FieldEditor( {
 						{ /* Description */ }
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="description">
-								{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
+								{ i18n?.fieldDescription || __( 'Description', 'recruiting-playbook' ) }
 							</Label>
 							<Textarea
 								id="description"
 								value={ localField.description || '' }
 								onChange={ ( e ) => updateLocalField( { description: e.target.value } ) }
-								placeholder={ i18n?.descriptionHelp || __( 'Hilfetext für das Feld', 'recruiting-playbook' ) }
+								placeholder={ i18n?.descriptionHelp || __( 'Help text for the field', 'recruiting-playbook' ) }
 								rows={ 2 }
 							/>
 						</div>
 
 						{ /* Width */ }
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-							<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
+							<Label>{ i18n?.fieldWidth || __( 'Width', 'recruiting-playbook' ) }</Label>
 							<Select
 								value={ localField.settings?.width || 'full' }
 								onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
 							>
-								<SelectOption value="full">{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }</SelectOption>
-								<SelectOption value="half">{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="full">{ i18n?.widthFull || __( 'Full width', 'recruiting-playbook' ) }</SelectOption>
+								<SelectOption value="half">{ i18n?.widthHalf || __( 'Half width', 'recruiting-playbook' ) }</SelectOption>
 							</Select>
 						</div>
 
@@ -260,7 +260,7 @@ export default function FieldEditor( {
 									onCheckedChange={ ( checked ) => updateLocalField( { is_required: checked } ) }
 								/>
 								<Label htmlFor="is_required" style={ { cursor: 'pointer' } }>
-									{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }
+									{ i18n?.fieldRequired || __( 'Required field', 'recruiting-playbook' ) }
 								</Label>
 							</div>
 
@@ -271,7 +271,7 @@ export default function FieldEditor( {
 									onCheckedChange={ ( checked ) => updateLocalField( { is_enabled: checked } ) }
 								/>
 								<Label htmlFor="is_enabled" style={ { cursor: 'pointer' } }>
-									{ i18n?.fieldEnabled || __( 'Aktiviert', 'recruiting-playbook' ) }
+									{ i18n?.fieldEnabled || __( 'Enabled', 'recruiting-playbook' ) }
 								</Label>
 							</div>
 						</div>
@@ -296,7 +296,7 @@ export default function FieldEditor( {
 							{ confirmDelete ? (
 								<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 									<span style={ { fontSize: '0.875rem', color: '#dc2626' } }>
-										{ i18n?.confirmDelete || __( 'Wirklich löschen?', 'recruiting-playbook' ) }
+										{ i18n?.confirmDelete || __( 'Really delete?', 'recruiting-playbook' ) }
 									</span>
 									<Button
 										variant="destructive"
@@ -304,14 +304,14 @@ export default function FieldEditor( {
 										onClick={ handleDelete }
 										disabled={ isSaving }
 									>
-										{ i18n?.yes || __( 'Ja', 'recruiting-playbook' ) }
+										{ i18n?.yes || __( 'Yes', 'recruiting-playbook' ) }
 									</Button>
 									<Button
 										variant="outline"
 										size="sm"
 										onClick={ () => setConfirmDelete( false ) }
 									>
-										{ i18n?.no || __( 'Nein', 'recruiting-playbook' ) }
+										{ i18n?.no || __( 'No', 'recruiting-playbook' ) }
 									</Button>
 								</div>
 							) : (
@@ -322,13 +322,13 @@ export default function FieldEditor( {
 									style={ { color: '#dc2626' } }
 								>
 									<Trash2 style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-									{ i18n?.delete || __( 'Löschen', 'recruiting-playbook' ) }
+									{ i18n?.delete || __( 'Delete', 'recruiting-playbook' ) }
 								</Button>
 							) }
 						</>
 					) : (
 						<span style={ { fontSize: '0.75rem', color: '#6b7280' } }>
-							{ i18n?.systemFieldWarning || __( 'System-Felder können nicht gelöscht werden', 'recruiting-playbook' ) }
+							{ i18n?.systemFieldWarning || __( 'System fields cannot be deleted', 'recruiting-playbook' ) }
 						</span>
 					) }
 
@@ -337,8 +337,8 @@ export default function FieldEditor( {
 						disabled={ ! hasChanges || isSaving }
 					>
 						{ isSaving
-							? ( i18n?.saving || __( 'Speichern...', 'recruiting-playbook' ) )
-							: ( i18n?.save || __( 'Speichern', 'recruiting-playbook' ) )
+							? ( i18n?.saving || __( 'Saving...', 'recruiting-playbook' ) )
+							: ( i18n?.save || __( 'Save', 'recruiting-playbook' ) )
 						}
 					</Button>
 				</div>

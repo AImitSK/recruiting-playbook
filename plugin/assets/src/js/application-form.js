@@ -135,17 +135,17 @@ document.addEventListener('alpine:init', () => {
             if (rules.required) {
                 if (typeof value === 'boolean') {
                     if (!value) {
-                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        this.errors[fieldKey] = this.i18n.required || 'This field is required';
                         return false;
                     }
                 } else if (typeof value === 'string') {
                     if (!value.trim()) {
-                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        this.errors[fieldKey] = this.i18n.required || 'This field is required';
                         return false;
                     }
                 } else if (Array.isArray(value)) {
                     if (value.length === 0) {
-                        this.errors[fieldKey] = this.i18n.required || 'Dieses Feld ist erforderlich';
+                        this.errors[fieldKey] = this.i18n.required || 'This field is required';
                         return false;
                     }
                 } else if (value === null || value === undefined) {
@@ -161,31 +161,31 @@ document.addEventListener('alpine:init', () => {
 
             // Email validation
             if (rules.email && !this.isValidEmail(value)) {
-                this.errors[fieldKey] = this.i18n.invalidEmail || 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                this.errors[fieldKey] = this.i18n.invalidEmail || 'Please enter a valid email address';
                 return false;
             }
 
             // Phone validation
             if (rules.phone && !this.isValidPhone(value)) {
-                this.errors[fieldKey] = this.i18n.invalidPhone || 'Bitte geben Sie eine gültige Telefonnummer ein';
+                this.errors[fieldKey] = this.i18n.invalidPhone || 'Please enter a valid phone number';
                 return false;
             }
 
             // URL validation
             if (rules.url && !this.isValidUrl(value)) {
-                this.errors[fieldKey] = this.i18n.invalidUrl || 'Bitte geben Sie eine gültige URL ein';
+                this.errors[fieldKey] = this.i18n.invalidUrl || 'Please enter a valid URL';
                 return false;
             }
 
             // Min length
             if (rules.minLength && typeof value === 'string' && value.length < rules.minLength) {
-                this.errors[fieldKey] = (this.i18n.minLength || 'Mindestens %d Zeichen erforderlich').replace('%d', rules.minLength);
+                this.errors[fieldKey] = (this.i18n.minLength || 'At least %d characters required').replace('%d', rules.minLength);
                 return false;
             }
 
             // Max length
             if (rules.maxLength && typeof value === 'string' && value.length > rules.maxLength) {
-                this.errors[fieldKey] = (this.i18n.maxLength || 'Maximal %d Zeichen erlaubt').replace('%d', rules.maxLength);
+                this.errors[fieldKey] = (this.i18n.maxLength || 'Maximum %d characters allowed').replace('%d', rules.maxLength);
                 return false;
             }
 
@@ -264,7 +264,7 @@ document.addEventListener('alpine:init', () => {
                 // Multiple documents
                 for (const file of fileList) {
                     if (this.files.documents.length >= this.maxFiles) {
-                        this.errors.documents = `Maximal ${this.maxFiles} Dateien erlaubt`;
+                        this.errors.documents = `Maximum ${this.maxFiles} files allowed`;
                         break;
                     }
 
@@ -315,14 +315,14 @@ document.addEventListener('alpine:init', () => {
             if (file.size > this.maxFileSize) {
                 return {
                     valid: false,
-                    message: this.getI18nString('fileTooLarge', 'Die Datei ist zu groß (max. 10 MB)')
+                    message: this.getI18nString('fileTooLarge', 'File is too large (max. 10 MB)')
                 };
             }
 
             if (!this.allowedTypes.includes(file.type)) {
                 return {
                     valid: false,
-                    message: this.getI18nString('invalidFileType', 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG')
+                    message: this.getI18nString('invalidFileType', 'File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG')
                 };
             }
 
@@ -409,7 +409,7 @@ document.addEventListener('alpine:init', () => {
             try {
                 const formData = new FormData();
 
-                // System-Felder, die direkt gesendet werden (nicht als custom_fields)
+                // System fields that are sent directly (not as custom_fields)
                 const systemFields = [
                     'job_id', 'salutation', 'first_name', 'last_name', 'email', 'phone',
                     'cover_letter', 'message', 'privacy_consent', 'resume',
@@ -470,9 +470,9 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 // Send request
-                // WICHTIG: Keine Nonce für öffentliche Bewerbungen senden!
-                // WordPress REST API gibt 403 zurück wenn Nonce ungültig ist (z.B. durch Caching).
-                // Spam-Schutz wird stattdessen durch Honeypot und Timestamp gewährleistet.
+                // IMPORTANT: Do not send nonce for public applications!
+                // WordPress REST API returns 403 if nonce is invalid (e.g., due to caching).
+                // Spam protection is ensured by honeypot and timestamp instead.
                 const response = await fetch(window.rpForm.apiUrl + 'applications', {
                     method: 'POST',
                     body: formData
@@ -485,12 +485,12 @@ document.addEventListener('alpine:init', () => {
                     if (data.data?.field_errors) {
                         this.errors = { ...this.errors, ...data.data.field_errors };
                     }
-                    throw new Error(data.message || data.error?.message || 'Ein Fehler ist aufgetreten');
+                    throw new Error(data.message || data.error?.message || 'An error occurred');
                 }
 
                 this.submitted = true;
 
-                // Conversion Tracking: Bewerbung erfolgreich abgeschickt
+                // Conversion Tracking: Application successfully submitted
                 if (typeof window.rpTrackApplicationSubmitted === 'function') {
                     window.rpTrackApplicationSubmitted({
                         job_id: this.formData.job_id,

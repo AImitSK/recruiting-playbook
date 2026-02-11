@@ -27,7 +27,7 @@ import { X, ListChecks } from 'lucide-react';
  */
 export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 	// Local state for form values
-	const [ label, setLabel ] = useState( settings.label || __( 'Zusammenfassung', 'recruiting-playbook' ) );
+	const [ label, setLabel ] = useState( settings.label || __( 'Summary', 'recruiting-playbook' ) );
 	const [ showHeader, setShowHeader ] = useState( settings.show_header !== false );
 	const [ showStepTitles, setShowStepTitles ] = useState( settings.show_step_titles !== false );
 	const [ showEditButtons, setShowEditButtons ] = useState( settings.show_edit_buttons !== false );
@@ -66,8 +66,8 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<ListChecks style={ { height: '1.25rem', width: '1.25rem', color: '#3b82f6' } } />
 						<div>
-							<CardTitle>{ __( 'Zusammenfassung Einstellungen', 'recruiting-playbook' ) }</CardTitle>
-							<CardDescription>{ __( 'Konfigurieren Sie die Anzeige der Zusammenfassung', 'recruiting-playbook' ) }</CardDescription>
+							<CardTitle>{ __( 'Summary Settings', 'recruiting-playbook' ) }</CardTitle>
+							<CardDescription>{ __( 'Configure how the summary is displayed', 'recruiting-playbook' ) }</CardDescription>
 						</div>
 					</div>
 					<Button variant="ghost" size="sm" onClick={ onClose }>
@@ -78,12 +78,12 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 				<CardContent style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 					{ /* Label */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="summary-label">{ __( 'Bezeichnung', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="summary-label">{ __( 'Label', 'recruiting-playbook' ) }</Label>
 						<Input
 							id="summary-label"
 							value={ label }
 							onChange={ ( e ) => setLabel( e.target.value ) }
-							placeholder={ __( 'Zusammenfassung', 'recruiting-playbook' ) }
+							placeholder={ __( 'Summary', 'recruiting-playbook' ) }
 						/>
 					</div>
 
@@ -91,10 +91,10 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem' } }>
 						<div>
 							<Label htmlFor="show-header" style={ { marginBottom: 0 } }>
-								{ __( 'Überschrift anzeigen', 'recruiting-playbook' ) }
+								{ __( 'Show header', 'recruiting-playbook' ) }
 							</Label>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0' } }>
-								{ __( 'Zeigt die Bezeichnung als Überschrift an', 'recruiting-playbook' ) }
+								{ __( 'Displays the label as a heading', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -108,10 +108,10 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem' } }>
 						<div>
 							<Label htmlFor="show-step-titles" style={ { marginBottom: 0 } }>
-								{ __( 'Schritt-Titel anzeigen', 'recruiting-playbook' ) }
+								{ __( 'Show step titles', 'recruiting-playbook' ) }
 							</Label>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0' } }>
-								{ __( 'Gruppiert die Felder nach Schritten', 'recruiting-playbook' ) }
+								{ __( 'Groups fields by step', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -125,10 +125,10 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem' } }>
 						<div>
 							<Label htmlFor="show-edit-buttons" style={ { marginBottom: 0 } }>
-								{ __( 'Bearbeiten-Buttons anzeigen', 'recruiting-playbook' ) }
+								{ __( 'Show edit buttons', 'recruiting-playbook' ) }
 							</Label>
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: '0.25rem 0 0' } }>
-								{ __( 'Ermöglicht das Bearbeiten einzelner Schritte', 'recruiting-playbook' ) }
+								{ __( 'Allows editing individual steps', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -140,12 +140,12 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 
 					{ /* Help Text */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="help-text">{ __( 'Hilfetext', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="help-text">{ __( 'Help text', 'recruiting-playbook' ) }</Label>
 						<Textarea
 							id="help-text"
 							value={ helpText }
 							onChange={ ( e ) => setHelpText( e.target.value ) }
-							placeholder={ __( 'z.B. "Bitte prüfen Sie Ihre Angaben vor dem Absenden."', 'recruiting-playbook' ) }
+							placeholder={ __( 'e.g. "Please review your information before submitting."', 'recruiting-playbook' ) }
 							rows={ 2 }
 						/>
 					</div>
@@ -153,10 +153,10 @@ export default function SummarySettings( { settings = {}, onSave, onClose } ) {
 					{ /* Action Buttons */ }
 					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
 						<Button variant="outline" onClick={ onClose }>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button onClick={ handleSave }>
-							{ __( 'Speichern', 'recruiting-playbook' ) }
+							{ __( 'Save', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardContent>

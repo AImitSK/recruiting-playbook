@@ -159,7 +159,7 @@ class Shortcodes {
 		$atts = shortcode_atts(
 			[
 				'job_id'         => 0,
-				'title'          => __( 'Jetzt bewerben', 'recruiting-playbook' ),
+				'title'          => __( 'Apply Now', 'recruiting-playbook' ),
 				'show_job_title' => 'true',
 				'show_progress'  => 'true',
 			],
@@ -178,7 +178,7 @@ class Shortcodes {
 		if ( ! $job_id ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Keine Stelle angegeben. Bitte job_id Attribut setzen.', 'recruiting-playbook' ) . '
+					' . esc_html__( 'Error: No job specified. Please set the job_id attribute.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
 		}
@@ -187,7 +187,7 @@ class Shortcodes {
 		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
-					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
+					' . esc_html__( 'Error: The specified job does not exist or is not available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
 		}
@@ -231,7 +231,7 @@ class Shortcodes {
 						<?php
 						printf(
 							/* translators: %s: Job title */
-							esc_html__( 'Bewerbung für: %s', 'recruiting-playbook' ),
+							esc_html__( 'Application for: %s', 'recruiting-playbook' ),
 							'<strong>' . esc_html( $job->post_title ) . '</strong>'
 						);
 						?>
@@ -273,7 +273,7 @@ class Shortcodes {
 						<?php
 						printf(
 							/* translators: %s: Job title */
-							esc_html__( 'Bewerbung für: %s', 'recruiting-playbook' ),
+							esc_html__( 'Application for: %s', 'recruiting-playbook' ),
 							'<strong>' . esc_html( $job->post_title ) . '</strong>'
 						);
 						?>
@@ -326,8 +326,8 @@ class Shortcodes {
 					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
-					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
-					<p class="rp-text-gray-600"><?php esc_html_e( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ); ?></p>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' ); ?></h3>
+					<p class="rp-text-gray-600"><?php esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' ); ?></p>
 				</div>
 			</template>
 
@@ -343,7 +343,7 @@ class Shortcodes {
 					<!-- Fortschrittsanzeige (Multi-Step) -->
 					<div x-show="totalSteps > 1" class="rp-mb-8">
 						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-							<span><?php esc_html_e( 'Schritt', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'von', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span><?php esc_html_e( 'Step', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'of', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
 							<span x-text="progress + '%'"></span>
 						</div>
 						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
@@ -369,7 +369,7 @@ class Shortcodes {
 								@click="prevStep"
 								class="wp-element-button is-style-outline"
 							>
-								<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
 							</button>
 							<div x-show="step === 1 || totalSteps === 1"></div>
 
@@ -379,7 +379,7 @@ class Shortcodes {
 								@click="nextStep"
 								class="wp-element-button"
 							>
-								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Next', 'recruiting-playbook' ); ?>
 							</button>
 
 							<button
@@ -388,8 +388,8 @@ class Shortcodes {
 								:disabled="loading"
 								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
 							>
-								<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
-								<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
+								<span x-show="!loading"><?php esc_html_e( 'Submit Application', 'recruiting-playbook' ); ?></span>
+								<span x-show="loading"><?php esc_html_e( 'Submitting...', 'recruiting-playbook' ); ?></span>
 							</button>
 						</div>
 					</form>
@@ -416,8 +416,8 @@ class Shortcodes {
 					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
-					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ); ?></h3>
-					<p class="rp-text-gray-600"><?php esc_html_e( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ); ?></p>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' ); ?></h3>
+					<p class="rp-text-gray-600"><?php esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' ); ?></p>
 				</div>
 			</template>
 
@@ -432,7 +432,7 @@ class Shortcodes {
 					<!-- Fortschrittsanzeige -->
 					<div class="rp-mb-8">
 						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-							<span><?php esc_html_e( 'Schritt', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'von', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span><?php esc_html_e( 'Step', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'of', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
 							<span x-text="progress + '%'"></span>
 						</div>
 						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
@@ -446,25 +446,25 @@ class Shortcodes {
 
 						<!-- Schritt 1: Persönliche Daten -->
 						<div x-show="step === 1" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Persönliche Daten', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Personal Information', 'recruiting-playbook' ); ?></h3>
 
 							<div class="rp-space-y-4">
 								<!-- Anrede, Vorname & Nachname -->
 								<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-5 rp-gap-4">
 									<!-- Anrede (1/5) -->
 									<div class="sm:rp-col-span-1">
-										<label class="rp-label"><?php esc_html_e( 'Anrede', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label"><?php esc_html_e( 'Title', 'recruiting-playbook' ); ?></label>
 										<select x-model="formData.salutation" class="rp-input rp-select">
-											<option value=""><?php esc_html_e( 'Bitte wählen', 'recruiting-playbook' ); ?></option>
-											<option value="Herr"><?php esc_html_e( 'Herr', 'recruiting-playbook' ); ?></option>
-											<option value="Frau"><?php esc_html_e( 'Frau', 'recruiting-playbook' ); ?></option>
-											<option value="Divers"><?php esc_html_e( 'Divers', 'recruiting-playbook' ); ?></option>
+											<option value=""><?php esc_html_e( 'Please select', 'recruiting-playbook' ); ?></option>
+											<option value="Herr"><?php esc_html_e( 'Mr.', 'recruiting-playbook' ); ?></option>
+											<option value="Frau"><?php esc_html_e( 'Ms.', 'recruiting-playbook' ); ?></option>
+											<option value="Divers"><?php esc_html_e( 'Mx.', 'recruiting-playbook' ); ?></option>
 										</select>
 									</div>
 									<!-- Vorname (2/5) -->
 									<div class="sm:rp-col-span-2">
 										<label class="rp-label">
-											<?php esc_html_e( 'Vorname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php esc_html_e( 'First Name', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="text" x-model="formData.first_name"
 											class="rp-input"
@@ -475,7 +475,7 @@ class Shortcodes {
 									<!-- Nachname (2/5) -->
 									<div class="sm:rp-col-span-2">
 										<label class="rp-label">
-											<?php esc_html_e( 'Nachname', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php esc_html_e( 'Last Name', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="text" x-model="formData.last_name"
 											class="rp-input"
@@ -490,7 +490,7 @@ class Shortcodes {
 									<!-- E-Mail -->
 									<div>
 										<label class="rp-label">
-											<?php esc_html_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php esc_html_e( 'Email Address', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="email" x-model="formData.email"
 											class="rp-input"
@@ -500,7 +500,7 @@ class Shortcodes {
 									</div>
 									<!-- Telefon -->
 									<div>
-										<label class="rp-label"><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label"><?php esc_html_e( 'Phone', 'recruiting-playbook' ); ?></label>
 										<input type="tel" x-model="formData.phone" class="rp-input">
 									</div>
 								</div>
@@ -509,11 +509,11 @@ class Shortcodes {
 
 						<!-- Schritt 2: Dokumente -->
 						<div x-show="step === 2" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Bewerbungsunterlagen', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Application Documents', 'recruiting-playbook' ); ?></h3>
 
 							<!-- Lebenslauf -->
 							<div class="rp-mb-6">
-								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Lebenslauf', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Resume', 'recruiting-playbook' ); ?></label>
 								<div
 									x-on:dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
 									x-on:dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
@@ -526,9 +526,9 @@ class Shortcodes {
 											<svg class="rp-w-10 rp-h-10 rp-text-gray-400 rp-mx-auto rp-mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
 											</svg>
-											<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?></p>
+											<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Drag file here or', 'recruiting-playbook' ); ?></p>
 											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-												<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
+												<?php esc_html_e( 'Select file', 'recruiting-playbook' ); ?>
 												<input type="file" x-on:change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
 											</label>
 											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' ); ?></p>
@@ -558,17 +558,17 @@ class Shortcodes {
 
 							<!-- Weitere Dokumente -->
 							<div class="rp-mb-6">
-								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Weitere Dokumente (Zeugnisse, Zertifikate)', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Additional Documents (References, Certificates)', 'recruiting-playbook' ); ?></label>
 								<div
 									x-on:dragover.prevent
 									x-on:drop.prevent="handleDrop($event, 'documents')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
 								>
 									<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-										<?php esc_html_e( 'Dateien auswählen', 'recruiting-playbook' ); ?>
+										<?php esc_html_e( 'Select files', 'recruiting-playbook' ); ?>
 										<input type="file" x-on:change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
 									</label>
-									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Mehrere Dateien möglich (max. 5 Dateien, je 10 MB)', 'recruiting-playbook' ); ?></p>
+									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Multiple files allowed (max. 5 files, 10 MB each)', 'recruiting-playbook' ); ?></p>
 								</div>
 
 								<!-- Hochgeladene Dateien -->
@@ -590,44 +590,44 @@ class Shortcodes {
 
 							<!-- Anschreiben -->
 							<div>
-								<label class="rp-label"><?php esc_html_e( 'Anschreiben / Nachricht', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label"><?php esc_html_e( 'Cover Letter / Message', 'recruiting-playbook' ); ?></label>
 								<textarea x-model="formData.cover_letter" rows="4"
 									class="rp-input rp-textarea"
-									placeholder="<?php esc_attr_e( 'Optional: Fügen Sie ein kurzes Anschreiben hinzu...', 'recruiting-playbook' ); ?>"></textarea>
+									placeholder="<?php esc_attr_e( 'Optional: Add a brief cover letter...', 'recruiting-playbook' ); ?>"></textarea>
 							</div>
 						</div>
 
 						<!-- Schritt 3: Datenschutz & Absenden -->
 						<div x-show="step === 3" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Datenschutz & Absenden', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Privacy & Submit', 'recruiting-playbook' ); ?></h3>
 
 							<!-- Zusammenfassung -->
 							<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-5 rp-mb-6">
-								<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Ihre Angaben', 'recruiting-playbook' ); ?></h4>
+								<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Your Information', 'recruiting-playbook' ); ?></h4>
 								<dl class="rp-text-sm rp-space-y-2">
 									<div class="rp-flex">
 										<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Name:', 'recruiting-playbook' ); ?></dt>
 										<dd class="rp-text-gray-900" x-text="formData.salutation + ' ' + formData.first_name + ' ' + formData.last_name"></dd>
 									</div>
 									<div class="rp-flex">
-										<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'E-Mail:', 'recruiting-playbook' ); ?></dt>
+										<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Email:', 'recruiting-playbook' ); ?></dt>
 										<dd class="rp-text-gray-900" x-text="formData.email"></dd>
 									</div>
 									<template x-if="formData.phone">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Telefon:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Phone:', 'recruiting-playbook' ); ?></dt>
 											<dd class="rp-text-gray-900" x-text="formData.phone"></dd>
 										</div>
 									</template>
 									<template x-if="files.resume">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Lebenslauf:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Resume:', 'recruiting-playbook' ); ?></dt>
 											<dd class="rp-text-gray-900" x-text="files.resume.name"></dd>
 										</div>
 									</template>
 									<template x-if="files.documents.length > 0">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Dokumente:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Documents:', 'recruiting-playbook' ); ?></dt>
 											<dd class="rp-text-gray-900" x-text="files.documents.length + ' Datei(en)'"></dd>
 										</div>
 									</template>
@@ -646,15 +646,15 @@ class Shortcodes {
 											$privacy_link = sprintf(
 												'<a href="%s" target="_blank" class="rp-underline">%s</a>',
 												esc_url( $privacy_url ),
-												esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' )
+												esc_html__( 'Privacy Policy', 'recruiting-playbook' )
 											);
 										} else {
-											$privacy_link = esc_html__( 'Datenschutzerklärung', 'recruiting-playbook' );
+											$privacy_link = esc_html__( 'Privacy Policy', 'recruiting-playbook' );
 										}
 										echo wp_kses(
 											sprintf(
 												/* translators: %s: privacy policy link */
-												__( 'Ich habe die %s gelesen und stimme der Verarbeitung meiner Daten zum Zweck der Bewerbung zu.', 'recruiting-playbook' ),
+												__( 'I have read the %s and agree to the processing of my data for the purpose of this application.', 'recruiting-playbook' ),
 												$privacy_link
 											),
 											[
@@ -680,7 +680,7 @@ class Shortcodes {
 								@click="prevStep"
 								class="wp-element-button is-style-outline"
 							>
-								<?php esc_html_e( 'Zurück', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
 							</button>
 							<div x-show="step === 1"></div>
 
@@ -690,7 +690,7 @@ class Shortcodes {
 								@click="nextStep"
 								class="wp-element-button"
 							>
-								<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Next', 'recruiting-playbook' ); ?>
 							</button>
 
 							<button
@@ -699,8 +699,8 @@ class Shortcodes {
 								:disabled="loading"
 								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
 							>
-								<span x-show="!loading"><?php esc_html_e( 'Bewerbung absenden', 'recruiting-playbook' ); ?></span>
-								<span x-show="loading"><?php esc_html_e( 'Wird gesendet...', 'recruiting-playbook' ); ?></span>
+								<span x-show="!loading"><?php esc_html_e( 'Submit Application', 'recruiting-playbook' ); ?></span>
+								<span x-show="loading"><?php esc_html_e( 'Submitting...', 'recruiting-playbook' ); ?></span>
 							</button>
 						</div>
 					</form>
@@ -730,7 +730,7 @@ class Shortcodes {
 		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
-				__( 'KI-Job-Match', 'recruiting-playbook' ),
+				__( 'AI Job Match', 'recruiting-playbook' ),
 				'KI'
 			);
 		}
@@ -738,7 +738,7 @@ class Shortcodes {
 		$atts = shortcode_atts(
 			[
 				'job_id'  => 0,
-				'title'   => __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
+				'title'   => __( 'Am I a good fit for this job?', 'recruiting-playbook' ),
 				'display' => 'button',
 				'style'   => '',        // primary (default), secondary, outline.
 				'size'    => '',        // small, large.
@@ -759,7 +759,7 @@ class Shortcodes {
 		if ( ! $job_id ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
-					' . esc_html__( 'Hinweis: Keine Stelle angegeben. Bitte job_id Attribut setzen oder auf einer Stellenseite verwenden.', 'recruiting-playbook' ) . '
+					' . esc_html__( 'Note: No job specified. Please set the job_id attribute or use on a job listing page.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
 		}
@@ -768,7 +768,7 @@ class Shortcodes {
 		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error rp-text-sm">
-					' . esc_html__( 'Fehler: Die angegebene Stelle existiert nicht oder ist nicht verfügbar.', 'recruiting-playbook' ) . '
+					' . esc_html__( 'Error: The specified job does not exist or is not available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
 		}
@@ -784,8 +784,8 @@ class Shortcodes {
 		$ai_button_style = $design_settings['ai_button_style'] ?? 'preset';
 
 		// Button-Text: Shortcode-Attribut hat Priorität, dann Design-Setting, dann Default.
-		$default_text = $design_settings['ai_match_button_text'] ?? __( 'Passe ich zu diesem Job?', 'recruiting-playbook' );
-		$button_text  = ( $atts['title'] !== __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ) )
+		$default_text = $design_settings['ai_match_button_text'] ?? __( 'Am I a good fit for this job?', 'recruiting-playbook' );
+		$button_text  = ( $atts['title'] !== __( 'Am I a good fit for this job?', 'recruiting-playbook' ) )
 			? esc_html( $atts['title'] )
 			: esc_html( $default_text );
 
@@ -900,15 +900,15 @@ class Shortcodes {
 		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
-				__( 'KI-Job-Finder', 'recruiting-playbook' ),
+				__( 'AI Job Finder', 'recruiting-playbook' ),
 				'KI'
 			);
 		}
 
 		$atts = shortcode_atts(
 			[
-				'title'    => __( 'Finde deinen Traumjob', 'recruiting-playbook' ),
-				'subtitle' => __( 'Lade deinen Lebenslauf hoch und entdecke passende Stellen.', 'recruiting-playbook' ),
+				'title'    => __( 'Find Your Dream Job', 'recruiting-playbook' ),
+				'subtitle' => __( 'Upload your resume and discover matching positions.', 'recruiting-playbook' ),
 				'limit'    => 5,
 				'class'    => '',
 			],
@@ -922,7 +922,7 @@ class Shortcodes {
 		if ( 0 === $job_count ) {
 			return '<div class="rp-plugin">
 				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
-					' . esc_html__( 'Aktuell sind keine offenen Stellen verfügbar.', 'recruiting-playbook' ) . '
+					' . esc_html__( 'Currently no open positions available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
 		}
@@ -987,23 +987,23 @@ class Shortcodes {
 					],
 					'nonce'     => wp_create_nonce( 'wp_rest' ),
 					'i18n'      => [
-						'uploading'       => __( 'Lebenslauf wird hochgeladen...', 'recruiting-playbook' ),
-						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
-						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
-						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
-						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
-						'noMatches'       => __( 'Leider wurden keine passenden Stellen gefunden.', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
-						'matchHigh'       => __( 'Sehr gut geeignet', 'recruiting-playbook' ),
-						'matchMedium'     => __( 'Gut geeignet', 'recruiting-playbook' ),
-						'matchLow'        => __( 'Bedingt geeignet', 'recruiting-playbook' ),
-						'viewJob'         => __( 'Stelle ansehen', 'recruiting-playbook' ),
-						'applyNow'        => __( 'Jetzt bewerben', 'recruiting-playbook' ),
-						'matchedSkills'   => __( 'Passende Skills', 'recruiting-playbook' ),
-						'missingSkills'   => __( 'Fehlende Skills', 'recruiting-playbook' ),
-						'tryAgain'        => __( 'Erneut versuchen', 'recruiting-playbook' ),
-						'newSearch'       => __( 'Neue Suche', 'recruiting-playbook' ),
+						'uploading'       => __( 'Uploading resume...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+						'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+						'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+						'noMatches'       => __( 'Unfortunately, no matching positions were found.', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
+						'matchHigh'       => __( 'Excellent fit', 'recruiting-playbook' ),
+						'matchMedium'     => __( 'Good fit', 'recruiting-playbook' ),
+						'matchLow'        => __( 'Conditional fit', 'recruiting-playbook' ),
+						'viewJob'         => __( 'View job', 'recruiting-playbook' ),
+						'applyNow'        => __( 'Apply now', 'recruiting-playbook' ),
+						'matchedSkills'   => __( 'Matched skills', 'recruiting-playbook' ),
+						'missingSkills'   => __( 'Missing skills', 'recruiting-playbook' ),
+						'tryAgain'        => __( 'Try again', 'recruiting-playbook' ),
+						'newSearch'       => __( 'New search', 'recruiting-playbook' ),
 					],
 				]
 			);
@@ -1055,16 +1055,16 @@ class Shortcodes {
 					],
 					'nonce'     => wp_create_nonce( 'wp_rest' ),
 					'i18n'      => [
-						'uploading'       => __( 'Dokument wird hochgeladen...', 'recruiting-playbook' ),
-						'processing'      => __( 'Analyse läuft...', 'recruiting-playbook' ),
-						'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
-						'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
-						'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
-						'resultHigh'      => __( 'Gute Übereinstimmung', 'recruiting-playbook' ),
-						'resultMedium'    => __( 'Teilweise passend', 'recruiting-playbook' ),
-						'resultLow'       => __( 'Eher nicht passend', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+						'uploading'       => __( 'Uploading document...', 'recruiting-playbook' ),
+						'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
+						'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+						'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+						'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+						'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
+						'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
+						'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
 					],
 				]
 			);
@@ -1132,7 +1132,7 @@ class Shortcodes {
 				<p class="rp-text-gray-600 rp-mb-4">' .
 				sprintf(
 					/* translators: %s: Required tier name */
-					esc_html__( 'Dieses Feature ist Teil von %s.', 'recruiting-playbook' ),
+					esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
 					'<strong>' . esc_html( $label ) . '</strong>'
 				) . '</p>
 				<a href="' . esc_url( admin_url( 'admin.php?page=recruiting-playbook-license' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
@@ -1213,26 +1213,26 @@ class Shortcodes {
 					'apiUrl' => rest_url( 'recruiting/v1/' ),
 					'nonce'  => wp_create_nonce( 'wp_rest' ),
 					'i18n'   => [
-						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-						'invalidUrl'      => __( 'Bitte geben Sie eine gültige URL ein', 'recruiting-playbook' ),
-						'invalidPhone'    => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
-						'invalidNumber'   => __( 'Bitte geben Sie eine gültige Zahl ein', 'recruiting-playbook' ),
-						'invalidDate'     => __( 'Bitte geben Sie ein gültiges Datum ein', 'recruiting-playbook' ),
-						'minLength'       => __( 'Mindestens {min} Zeichen erforderlich', 'recruiting-playbook' ),
-						'maxLength'       => __( 'Maximal {max} Zeichen erlaubt', 'recruiting-playbook' ),
-						'numberMin'       => __( 'Mindestwert: {min}', 'recruiting-playbook' ),
-						'numberMax'       => __( 'Maximalwert: {max}', 'recruiting-playbook' ),
-						'dateMin'         => __( 'Datum muss nach {date} liegen', 'recruiting-playbook' ),
-						'dateMax'         => __( 'Datum muss vor {date} liegen', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. {size} MB)', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Dateityp nicht erlaubt', 'recruiting-playbook' ),
-						'fileRequired'    => __( 'Bitte laden Sie eine Datei hoch', 'recruiting-playbook' ),
-						'maxFilesReached' => __( 'Maximal {max} Dateien erlaubt', 'recruiting-playbook' ),
-						'minSelections'   => __( 'Bitte wählen Sie mindestens {min} Optionen', 'recruiting-playbook' ),
-						'maxSelections'   => __( 'Bitte wählen Sie maximal {max} Optionen', 'recruiting-playbook' ),
-						'patternMismatch' => __( 'Das Format ist ungültig', 'recruiting-playbook' ),
-						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+						'required'        => __( 'This field is required', 'recruiting-playbook' ),
+						'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+						'invalidUrl'      => __( 'Please enter a valid URL', 'recruiting-playbook' ),
+						'invalidPhone'    => __( 'Please enter a valid phone number', 'recruiting-playbook' ),
+						'invalidNumber'   => __( 'Please enter a valid number', 'recruiting-playbook' ),
+						'invalidDate'     => __( 'Please enter a valid date', 'recruiting-playbook' ),
+						'minLength'       => __( 'At least {min} characters required', 'recruiting-playbook' ),
+						'maxLength'       => __( 'Maximum {max} characters allowed', 'recruiting-playbook' ),
+						'numberMin'       => __( 'Minimum value: {min}', 'recruiting-playbook' ),
+						'numberMax'       => __( 'Maximum value: {max}', 'recruiting-playbook' ),
+						'dateMin'         => __( 'Date must be after {date}', 'recruiting-playbook' ),
+						'dateMax'         => __( 'Date must be before {date}', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'The file is too large (max. {size} MB)', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'File type not allowed', 'recruiting-playbook' ),
+						'fileRequired'    => __( 'Please upload a file', 'recruiting-playbook' ),
+						'maxFilesReached' => __( 'Maximum {max} files allowed', 'recruiting-playbook' ),
+						'minSelections'   => __( 'Please select at least {min} options', 'recruiting-playbook' ),
+						'maxSelections'   => __( 'Please select at most {max} options', 'recruiting-playbook' ),
+						'patternMismatch' => __( 'The format is invalid', 'recruiting-playbook' ),
+						'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
 					],
 				]
 			);
@@ -1306,11 +1306,11 @@ class Shortcodes {
 					'apiUrl' => rest_url( 'recruiting/v1/' ),
 					'nonce'  => wp_create_nonce( 'wp_rest' ),
 					'i18n'   => [
-						'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-						'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'Die Datei ist zu groß (max. 10 MB)', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
-						'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+						'required'        => __( 'This field is required', 'recruiting-playbook' ),
+						'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+						'fileTooLarge'    => __( 'The file is too large (max. 10 MB)', 'recruiting-playbook' ),
+						'invalidFileType' => __( 'File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+						'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
 					],
 				]
 			);

@@ -1,7 +1,7 @@
 /**
  * CardsPanel Component
  *
- * Tab: Cards - Layout-Preset und Erscheinungsbild.
+ * Tab: Cards - Layout preset and appearance.
  *
  * @package RecruitingPlaybook
  */
@@ -25,12 +25,12 @@ import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 export function CardsPanel( { settings, onUpdate } ) {
 	return (
 		<div className="rp-space-y-4">
-			{ /* Card: Layout-Preset */ }
+			{ /* Card: Layout Preset */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Layout-Preset', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Layout Preset', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Vordefinierte Layouts für Job-Cards', 'recruiting-playbook' ) }
+						{ __( 'Predefined layouts for job cards', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -44,10 +44,10 @@ export function CardsPanel( { settings, onUpdate } ) {
 						<RadioGroupItem value="compact">
 							<div className="rp-text-center">
 								<div className="rp-text-sm rp-font-medium">
-									{ __( 'Kompakt', 'recruiting-playbook' ) }
+									{ __( 'Compact', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Wenig Padding, platzsparend', 'recruiting-playbook' ) }
+									{ __( 'Low padding, space-saving', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
@@ -57,17 +57,17 @@ export function CardsPanel( { settings, onUpdate } ) {
 									{ __( 'Standard', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Ausgewogenes Layout', 'recruiting-playbook' ) }
+									{ __( 'Balanced layout', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
 						<RadioGroupItem value="spacious">
 							<div className="rp-text-center">
 								<div className="rp-text-sm rp-font-medium">
-									{ __( 'Großzügig', 'recruiting-playbook' ) }
+									{ __( 'Spacious', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Viel Weißraum', 'recruiting-playbook' ) }
+									{ __( 'Plenty of whitespace', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
@@ -75,18 +75,18 @@ export function CardsPanel( { settings, onUpdate } ) {
 				</CardContent>
 			</Card>
 
-			{ /* Card: Erscheinungsbild */ }
+			{ /* Card: Appearance */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Erscheinungsbild', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Appearance', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Visuelle Eigenschaften der Job-Cards und Formularbox', 'recruiting-playbook' ) }
+						{ __( 'Visual properties of job cards and form box', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Eckenradius */ }
+					{ /* Border radius */ }
 					<Slider
-						label={ __( 'Eckenradius', 'recruiting-playbook' ) }
+						label={ __( 'Border Radius', 'recruiting-playbook' ) }
 						value={ settings.card_border_radius ?? 8 }
 						onChange={ ( value ) => onUpdate( 'card_border_radius', value ) }
 						min={ 0 }
@@ -95,10 +95,10 @@ export function CardsPanel( { settings, onUpdate } ) {
 						unit="px"
 					/>
 
-					{ /* Schatten */ }
+					{ /* Shadow */ }
 					<div>
 						<Label className="rp-mb-2 rp-block">
-							{ __( 'Schatten', 'recruiting-playbook' ) }
+							{ __( 'Shadow', 'recruiting-playbook' ) }
 						</Label>
 						<RadioGroup
 							value={ settings.card_shadow || 'light' }
@@ -106,24 +106,24 @@ export function CardsPanel( { settings, onUpdate } ) {
 							variant="buttons"
 						>
 							<RadioGroupItem value="none">
-								{ __( 'Keiner', 'recruiting-playbook' ) }
+								{ __( 'None', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="light">
-								{ __( 'Leicht', 'recruiting-playbook' ) }
+								{ __( 'Light', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="medium">
-								{ __( 'Mittel', 'recruiting-playbook' ) }
+								{ __( 'Medium', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="strong">
-								{ __( 'Stark', 'recruiting-playbook' ) }
+								{ __( 'Strong', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 						</RadioGroup>
 					</div>
 
-					{ /* Rahmen */ }
+					{ /* Border */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<Label htmlFor="card_border_show">
-							{ __( 'Rahmen anzeigen', 'recruiting-playbook' ) }
+							{ __( 'Show Border', 'recruiting-playbook' ) }
 						</Label>
 						<Switch
 							id="card_border_show"
@@ -132,11 +132,11 @@ export function CardsPanel( { settings, onUpdate } ) {
 						/>
 					</div>
 
-					{ /* Rahmenfarbe (nur wenn Rahmen aktiv) */ }
+					{ /* Border color (only when border active) */ }
 					{ settings.card_border_show && (
 						<div className="rp-flex rp-items-center rp-justify-between rp-pl-4">
 							<Label htmlFor="card_border_color">
-								{ __( 'Rahmenfarbe', 'recruiting-playbook' ) }
+								{ __( 'Border Color', 'recruiting-playbook' ) }
 							</Label>
 							<ColorPicker
 								id="card_border_color"
@@ -146,11 +146,11 @@ export function CardsPanel( { settings, onUpdate } ) {
 						</div>
 					) }
 
-					{ /* Rahmenstärke (nur wenn Rahmen aktiv) */ }
+					{ /* Border width (only when border active) */ }
 					{ settings.card_border_show && (
 						<div className="rp-pl-4">
 							<Slider
-								label={ __( 'Rahmenstärke', 'recruiting-playbook' ) }
+								label={ __( 'Border Width', 'recruiting-playbook' ) }
 								value={ settings.card_border_width ?? 1 }
 								onChange={ ( value ) => onUpdate( 'card_border_width', value ) }
 								min={ 1 }
@@ -161,10 +161,10 @@ export function CardsPanel( { settings, onUpdate } ) {
 						</div>
 					) }
 
-					{ /* Hintergrund */ }
+					{ /* Background */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<Label htmlFor="card_background">
-							{ __( 'Hintergrund', 'recruiting-playbook' ) }
+							{ __( 'Background', 'recruiting-playbook' ) }
 						</Label>
 						<ColorPicker
 							id="card_background"
@@ -173,10 +173,10 @@ export function CardsPanel( { settings, onUpdate } ) {
 						/>
 					</div>
 
-					{ /* Hover-Effekt */ }
+					{ /* Hover Effect */ }
 					<div>
 						<Label className="rp-mb-2 rp-block">
-							{ __( 'Hover-Effekt', 'recruiting-playbook' ) }
+							{ __( 'Hover Effect', 'recruiting-playbook' ) }
 						</Label>
 						<RadioGroup
 							value={ settings.card_hover_effect || 'lift' }
@@ -184,16 +184,16 @@ export function CardsPanel( { settings, onUpdate } ) {
 							variant="buttons"
 						>
 							<RadioGroupItem value="none">
-								{ __( 'Keiner', 'recruiting-playbook' ) }
+								{ __( 'None', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="lift">
-								{ __( 'Hochheben', 'recruiting-playbook' ) }
+								{ __( 'Lift', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="glow">
-								{ __( 'Leuchten', 'recruiting-playbook' ) }
+								{ __( 'Glow', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="border">
-								{ __( 'Rahmen', 'recruiting-playbook' ) }
+								{ __( 'Border', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 						</RadioGroup>
 					</div>

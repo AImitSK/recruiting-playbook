@@ -1,5 +1,5 @@
 /**
- * Custom Hook für Bewertungen
+ * Custom Hook for ratings
  *
  * @package RecruitingPlaybook
  */
@@ -8,10 +8,10 @@ import { useState, useCallback, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Hook zum Laden und Verwalten von Bewertungen
+ * Hook for loading and managing ratings
  *
- * @param {number} applicationId Bewerbungs-ID
- * @return {Object} Rating state und Funktionen
+ * @param {number} applicationId Application ID
+ * @return {Object} Rating state and functions
  */
 export function useRating( applicationId ) {
 	const [ summary, setSummary ] = useState( null );
@@ -21,7 +21,7 @@ export function useRating( applicationId ) {
 	const [ saving, setSaving ] = useState( false );
 
 	/**
-	 * Bewertungs-Zusammenfassung vom Server laden
+	 * Load rating summary from server
 	 */
 	const fetchSummary = useCallback( async () => {
 		if ( ! applicationId ) {
@@ -44,24 +44,24 @@ export function useRating( applicationId ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorLoadingRating ||
-				'Fehler beim Laden der Bewertung'
+				'Error loading rating'
 			);
 		} finally {
 			setLoading( false );
 		}
 	}, [ applicationId ] );
 
-	// Initial laden
+	// Initial load
 	useEffect( () => {
 		fetchSummary();
 	}, [ fetchSummary ] );
 
 	/**
-	 * Bewertung abgeben
+	 * Submit a rating
 	 *
-	 * @param {string} category Kategorie (overall, skills, culture_fit, experience)
-	 * @param {number} rating   Bewertung (1-5)
-	 * @return {boolean} Erfolg
+	 * @param {string} category Category (overall, skills, culture_fit, experience)
+	 * @param {number} rating   Rating (1-5)
+	 * @return {boolean} Success
 	 */
 	const rate = useCallback(
 		async ( category, rating ) => {
@@ -69,7 +69,7 @@ export function useRating( applicationId ) {
 				return false;
 			}
 
-			// Vorherige Werte für Rollback speichern
+			// Save previous values for rollback
 			const previousUserRatings = { ...userRatings };
 			const previousSummary = summary ? { ...summary } : null;
 
@@ -77,7 +77,7 @@ export function useRating( applicationId ) {
 				setSaving( true );
 				setError( null );
 
-				// Optimistic Update für User-Rating
+				// Optimistic Update for user rating
 				setUserRatings( ( prev ) => ( {
 					...prev,
 					[ category ]: rating,
@@ -99,7 +99,7 @@ export function useRating( applicationId ) {
 			} catch ( err ) {
 				console.error( 'Error rating:', err );
 
-				// Rollback bei Fehler
+				// Rollback on error
 				setUserRatings( previousUserRatings );
 				if ( previousSummary ) {
 					setSummary( previousSummary );
@@ -108,7 +108,7 @@ export function useRating( applicationId ) {
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorRating ||
-					'Fehler beim Bewerten'
+					'Error rating'
 				);
 				return false;
 			} finally {
@@ -119,10 +119,10 @@ export function useRating( applicationId ) {
 	);
 
 	/**
-	 * Bewertung löschen
+	 * Delete a rating
 	 *
-	 * @param {string} category Kategorie
-	 * @return {boolean} Erfolg
+	 * @param {string} category Category
+	 * @return {boolean} Success
 	 */
 	const deleteRating = useCallback(
 		async ( category ) => {
@@ -130,7 +130,7 @@ export function useRating( applicationId ) {
 				return false;
 			}
 
-			// Vorherige Werte für Rollback speichern
+			// Save previous values for rollback
 			const previousUserRatings = { ...userRatings };
 
 			try {
@@ -149,20 +149,20 @@ export function useRating( applicationId ) {
 					method: 'DELETE',
 				} );
 
-				// Zusammenfassung neu laden
+				// Reload summary
 				await fetchSummary();
 
 				return true;
 			} catch ( err ) {
 				console.error( 'Error deleting rating:', err );
 
-				// Rollback bei Fehler
+				// Rollback on error
 				setUserRatings( previousUserRatings );
 
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorDeletingRating ||
-					'Fehler beim Löschen der Bewertung'
+					'Error deleting rating'
 				);
 				return false;
 			} finally {

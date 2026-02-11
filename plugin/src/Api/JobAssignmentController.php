@@ -59,13 +59,13 @@ class JobAssignmentController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'user_id' => [
-							'description'       => __( 'Benutzer-ID', 'recruiting-playbook' ),
+							'description'       => __( 'User ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
 						],
 						'job_id'  => [
-							'description'       => __( 'Stellen-ID', 'recruiting-playbook' ),
+							'description'       => __( 'Job ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
@@ -86,13 +86,13 @@ class JobAssignmentController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'user_id' => [
-							'description'       => __( 'Benutzer-ID', 'recruiting-playbook' ),
+							'description'       => __( 'User ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
 						],
 						'job_id'  => [
-							'description'       => __( 'Stellen-ID', 'recruiting-playbook' ),
+							'description'       => __( 'Job ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
@@ -113,7 +113,7 @@ class JobAssignmentController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'user_id' => [
-							'description'       => __( 'Benutzer-ID', 'recruiting-playbook' ),
+							'description'       => __( 'User ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
@@ -134,7 +134,7 @@ class JobAssignmentController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'job_id' => [
-							'description'       => __( 'Stellen-ID', 'recruiting-playbook' ),
+							'description'       => __( 'Job ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
@@ -155,13 +155,13 @@ class JobAssignmentController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'user_id' => [
-							'description'       => __( 'Benutzer-ID', 'recruiting-playbook' ),
+							'description'       => __( 'User ID', 'recruiting-playbook' ),
 							'type'              => 'integer',
 							'required'          => true,
 							'sanitize_callback' => 'absint',
 						],
 						'job_ids' => [
-							'description' => __( 'Liste von Stellen-IDs', 'recruiting-playbook' ),
+							'description' => __( 'List of job IDs', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'required'    => true,
 							'items'       => [
@@ -189,7 +189,7 @@ class JobAssignmentController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_assign_jobs' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen-Zuweisungen einzusehen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to view job assignments.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -212,7 +212,7 @@ class JobAssignmentController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_assign_jobs' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Stellen-Zuweisungen zu verwalten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage job assignments.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -349,7 +349,7 @@ class JobAssignmentController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'user_roles' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

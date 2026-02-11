@@ -63,7 +63,7 @@ class MatchController extends WP_REST_Controller {
 						'required'          => true,
 						'type'              => 'integer',
 						'sanitize_callback' => 'absint',
-						'description'       => __( 'ID der Stelle', 'recruiting-playbook' ),
+						'description'       => __( 'Job listing ID', 'recruiting-playbook' ),
 					],
 				],
 			]
@@ -82,7 +82,7 @@ class MatchController extends WP_REST_Controller {
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
-						'description'       => __( 'Analyse-Job-ID', 'recruiting-playbook' ),
+						'description'       => __( 'Analysis job ID', 'recruiting-playbook' ),
 					],
 				],
 			]
@@ -104,7 +104,7 @@ class MatchController extends WP_REST_Controller {
 						'validate_callback' => function ( $value ) {
 							return $value >= 1 && $value <= 10;
 						},
-						'description'       => __( 'Anzahl der Top-Matches (1-10)', 'recruiting-playbook' ),
+						'description'       => __( 'Number of top matches (1-10)', 'recruiting-playbook' ),
 					],
 				],
 			]
@@ -122,7 +122,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'CV-Matching erfordert das AI-Addon.', 'recruiting-playbook' ),
+				__( 'CV matching requires the AI addon.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -132,7 +132,7 @@ class MatchController extends WP_REST_Controller {
 		if ( empty( $files['file'] ) ) {
 			return new WP_Error(
 				'missing_file',
-				__( 'Bitte laden Sie eine Datei hoch.', 'recruiting-playbook' ),
+				__( 'Please upload a file.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -143,7 +143,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! $job_id ) {
 			return new WP_Error(
 				'missing_job_id',
-				__( 'Job-ID erforderlich.', 'recruiting-playbook' ),
+				__( 'Job ID required.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -159,7 +159,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! $job || 'job_listing' !== $job->post_type ) {
 			return new WP_Error(
 				'invalid_job',
-				__( 'Stelle nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Job not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -194,7 +194,7 @@ class MatchController extends WP_REST_Controller {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'api_error',
-				__( 'Analyse-Service nicht erreichbar.', 'recruiting-playbook' ),
+				__( 'Analysis service not reachable.', 'recruiting-playbook' ),
 				[ 'status' => 503 ]
 			);
 		}
@@ -205,7 +205,7 @@ class MatchController extends WP_REST_Controller {
 		if ( $status_code >= 400 ) {
 			return new WP_Error(
 				$response_body['error'] ?? 'api_error',
-				$response_body['message'] ?? __( 'Analyse fehlgeschlagen.', 'recruiting-playbook' ),
+				$response_body['message'] ?? __( 'Analysis failed.', 'recruiting-playbook' ),
 				[ 'status' => $status_code ]
 			);
 		}
@@ -250,7 +250,7 @@ class MatchController extends WP_REST_Controller {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'api_error',
-				__( 'Service nicht erreichbar.', 'recruiting-playbook' ),
+				__( 'Service not reachable.', 'recruiting-playbook' ),
 				[ 'status' => 503 ]
 			);
 		}
@@ -279,7 +279,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'KI-Matching ist nicht verfügbar.', 'recruiting-playbook' ),
+				__( 'AI matching is not available.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -289,7 +289,7 @@ class MatchController extends WP_REST_Controller {
 		if ( empty( $files['file'] ) ) {
 			return new WP_Error(
 				'no_file',
-				__( 'Keine Datei hochgeladen.', 'recruiting-playbook' ),
+				__( 'No file uploaded.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -307,7 +307,7 @@ class MatchController extends WP_REST_Controller {
 		if ( empty( $jobs ) ) {
 			return new WP_Error(
 				'no_jobs',
-				__( 'Keine aktiven Stellen vorhanden.', 'recruiting-playbook' ),
+				__( 'No active jobs available.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -419,7 +419,7 @@ class MatchController extends WP_REST_Controller {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'api_error',
-				__( 'Analyse-Service nicht erreichbar.', 'recruiting-playbook' ),
+				__( 'Analysis service not reachable.', 'recruiting-playbook' ),
 				[ 'status' => 503 ]
 			);
 		}
@@ -430,7 +430,7 @@ class MatchController extends WP_REST_Controller {
 		if ( $status_code >= 400 ) {
 			return new WP_Error(
 				$response_body['code'] ?? 'api_error',
-				$response_body['message'] ?? __( 'API-Fehler', 'recruiting-playbook' ),
+				$response_body['message'] ?? __( 'API error', 'recruiting-playbook' ),
 				[ 'status' => $status_code ]
 			);
 		}
@@ -496,7 +496,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! in_array( $file['type'], $allowed_types, true ) ) {
 			return new WP_Error(
 				'invalid_file_type',
-				__( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
+				__( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -506,7 +506,7 @@ class MatchController extends WP_REST_Controller {
 		if ( $file['size'] > $max_size ) {
 			return new WP_Error(
 				'file_too_large',
-				__( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
+				__( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -515,7 +515,7 @@ class MatchController extends WP_REST_Controller {
 		if ( UPLOAD_ERR_OK !== $file['error'] ) {
 			return new WP_Error(
 				'upload_error',
-				__( 'Fehler beim Hochladen der Datei.', 'recruiting-playbook' ),
+				__( 'Error uploading file.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -539,7 +539,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! function_exists( 'rp_fs' ) ) {
 			return new WP_Error(
 				'freemius_not_available',
-				__( 'Freemius SDK nicht verfügbar.', 'recruiting-playbook' ),
+				__( 'Freemius SDK not available.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -552,7 +552,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! $site || empty( $site->id ) || empty( $site->secret_key ) ) {
 			return new WP_Error(
 				'no_freemius_install',
-				__( 'Keine gültige Freemius-Installation gefunden.', 'recruiting-playbook' ),
+				__( 'No valid Freemius installation found.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

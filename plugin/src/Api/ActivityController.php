@@ -58,25 +58,25 @@ class ActivityController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'get_timeline_permissions_check' ],
 				'args'                => [
 					'application_id' => [
-						'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+						'description' => __( 'Application ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'per_page'       => [
-						'description' => __( 'Einträge pro Seite', 'recruiting-playbook' ),
+						'description' => __( 'Entries per page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 50,
 						'minimum'     => 1,
 						'maximum'     => 100,
 					],
 					'page'           => [
-						'description' => __( 'Seite', 'recruiting-playbook' ),
+						'description' => __( 'Page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 1,
 						'minimum'     => 1,
 					],
 					'types'          => [
-						'description' => __( 'Activity-Typen filtern', 'recruiting-playbook' ),
+						'description' => __( 'Filter activity types', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'string',
@@ -97,25 +97,25 @@ class ActivityController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'get_timeline_permissions_check' ],
 				'args'                => [
 					'candidate_id' => [
-						'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+						'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'per_page'     => [
-						'description' => __( 'Einträge pro Seite', 'recruiting-playbook' ),
+						'description' => __( 'Entries per page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 50,
 						'minimum'     => 1,
 						'maximum'     => 100,
 					],
 					'page'         => [
-						'description' => __( 'Seite', 'recruiting-playbook' ),
+						'description' => __( 'Page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 1,
 						'minimum'     => 1,
 					],
 					'types'        => [
-						'description' => __( 'Activity-Typen filtern', 'recruiting-playbook' ),
+						'description' => __( 'Filter activity types', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [
 							'type' => 'string',
@@ -184,7 +184,7 @@ class ActivityController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -207,7 +207,7 @@ class ActivityController extends WP_REST_Controller {
 		if ( ! current_user_can( 'view_activity_log' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Anzeigen der Timeline.', 'recruiting-playbook' ),
+				__( 'No permission to view the timeline.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

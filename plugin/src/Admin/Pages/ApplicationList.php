@@ -30,8 +30,8 @@ class ApplicationList extends \WP_List_Table {
 	public function __construct() {
 		parent::__construct(
 			[
-				'singular' => __( 'Bewerbung', 'recruiting-playbook' ),
-				'plural'   => __( 'Bewerbungen', 'recruiting-playbook' ),
+				'singular' => __( 'Application', 'recruiting-playbook' ),
+				'plural'   => __( 'Applications', 'recruiting-playbook' ),
 				'ajax'     => false,
 			]
 		);
@@ -45,12 +45,12 @@ class ApplicationList extends \WP_List_Table {
 	public function get_columns(): array {
 		return [
 			'cb'         => '<input type="checkbox" />',
-			'applicant'  => __( 'Bewerber', 'recruiting-playbook' ),
-			'job'        => __( 'Stelle', 'recruiting-playbook' ),
+			'applicant'  => __( 'Applicant', 'recruiting-playbook' ),
+			'job'        => __( 'Job', 'recruiting-playbook' ),
 			'status'     => __( 'Status', 'recruiting-playbook' ),
-			'documents'  => __( 'Dokumente', 'recruiting-playbook' ),
-			'created_at' => __( 'Eingegangen', 'recruiting-playbook' ),
-			'actions'    => __( 'Aktionen', 'recruiting-playbook' ),
+			'documents'  => __( 'Documents', 'recruiting-playbook' ),
+			'created_at' => __( 'Received', 'recruiting-playbook' ),
+			'actions'    => __( 'Actions', 'recruiting-playbook' ),
 		];
 	}
 
@@ -75,14 +75,14 @@ class ApplicationList extends \WP_List_Table {
 	 */
 	public function get_bulk_actions(): array {
 		$actions = [
-			'bulk_screening' => __( 'Status: In Prüfung', 'recruiting-playbook' ),
-			'bulk_rejected'  => __( 'Status: Abgelehnt', 'recruiting-playbook' ),
-			'bulk_delete'    => __( 'Löschen', 'recruiting-playbook' ),
+			'bulk_screening' => __( 'Status: Screening', 'recruiting-playbook' ),
+			'bulk_rejected'  => __( 'Status: Rejected', 'recruiting-playbook' ),
+			'bulk_delete'    => __( 'Delete', 'recruiting-playbook' ),
 		];
 
 		// Pro-Feature: Bulk-E-Mail.
 		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
-			$actions['bulk_email'] = __( '✉️ E-Mail senden', 'recruiting-playbook' );
+			$actions['bulk_email'] = __( '✉️ Send Email', 'recruiting-playbook' );
 		}
 
 		return $actions;
@@ -306,7 +306,7 @@ class ApplicationList extends \WP_List_Table {
 	public function column_job( $item ): string {
 		$job = get_post( $item['job_id'] );
 		if ( ! $job ) {
-			return '<em>' . esc_html__( 'Gelöscht', 'recruiting-playbook' ) . '</em>';
+			return '<em>' . esc_html__( 'Deleted', 'recruiting-playbook' ) . '</em>';
 		}
 
 		return sprintf(
@@ -380,7 +380,7 @@ class ApplicationList extends \WP_List_Table {
 			'<span title="%s">%s</span>',
 			esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $date ) ),
 			/* translators: %s: Human time difference */
-			sprintf( esc_html__( 'vor %s', 'recruiting-playbook' ), $human_diff )
+			sprintf( esc_html__( '%s ago', 'recruiting-playbook' ), $human_diff )
 		);
 	}
 
@@ -402,7 +402,7 @@ class ApplicationList extends \WP_List_Table {
 		$actions[] = sprintf(
 			'<a href="%s" class="button button-small">%s</a>',
 			esc_url( $detail_url ),
-			esc_html__( 'Ansehen', 'recruiting-playbook' )
+			esc_html__( 'View', 'recruiting-playbook' )
 		);
 
 		if ( 'new' === $item['status'] ) {
@@ -419,7 +419,7 @@ class ApplicationList extends \WP_List_Table {
 			$actions[] = sprintf(
 				'<a href="%s" class="button button-small" style="background: #dba617; border-color: #dba617; color: white;">%s</a>',
 				esc_url( $screening_url ),
-				esc_html__( 'Prüfen', 'recruiting-playbook' )
+				esc_html__( 'Screen', 'recruiting-playbook' )
 			);
 		}
 
@@ -430,7 +430,7 @@ class ApplicationList extends \WP_List_Table {
 	 * Keine Items Meldung
 	 */
 	public function no_items(): void {
-		esc_html_e( 'Keine Bewerbungen gefunden.', 'recruiting-playbook' );
+		esc_html_e( 'No applications found.', 'recruiting-playbook' );
 	}
 
 	/**
@@ -448,7 +448,7 @@ class ApplicationList extends \WP_List_Table {
 		// Status-Filter.
 		$current_status = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
 		echo '<select name="status">';
-		echo '<option value="">' . esc_html__( 'Alle Status', 'recruiting-playbook' ) . '</option>';
+		echo '<option value="">' . esc_html__( 'All Statuses', 'recruiting-playbook' ) . '</option>';
 		foreach ( ApplicationStatus::getVisible() as $value => $label ) {
 			printf(
 				'<option value="%s" %s>%s</option>',
@@ -461,7 +461,7 @@ class ApplicationList extends \WP_List_Table {
 		printf(
 			'<option value="deleted" %s>%s</option>',
 			selected( $current_status, 'deleted', false ),
-			esc_html__( '🗑️ Gelöscht', 'recruiting-playbook' )
+			esc_html__( '🗑️ Deleted', 'recruiting-playbook' )
 		);
 		echo '</select>';
 
@@ -478,7 +478,7 @@ class ApplicationList extends \WP_List_Table {
 
 		$current_job = isset( $_GET['job_id'] ) ? absint( $_GET['job_id'] ) : 0;
 		echo '<select name="job_id">';
-		echo '<option value="">' . esc_html__( 'Alle Stellen', 'recruiting-playbook' ) . '</option>';
+		echo '<option value="">' . esc_html__( 'All Jobs', 'recruiting-playbook' ) . '</option>';
 		foreach ( $jobs as $job ) {
 			printf(
 				'<option value="%d" %s>%s</option>',
@@ -496,15 +496,15 @@ class ApplicationList extends \WP_List_Table {
 		printf(
 			'<input type="date" name="date_from" value="%s" placeholder="%s" />',
 			esc_attr( $date_from ),
-			esc_attr__( 'Von', 'recruiting-playbook' )
+			esc_attr__( 'From', 'recruiting-playbook' )
 		);
 		printf(
 			'<input type="date" name="date_to" value="%s" placeholder="%s" />',
 			esc_attr( $date_to ),
-			esc_attr__( 'Bis', 'recruiting-playbook' )
+			esc_attr__( 'To', 'recruiting-playbook' )
 		);
 
-		submit_button( __( 'Filtern', 'recruiting-playbook' ), '', 'filter_action', false );
+		submit_button( __( 'Filter', 'recruiting-playbook' ), '', 'filter_action', false );
 
 		echo '</div>';
 	}

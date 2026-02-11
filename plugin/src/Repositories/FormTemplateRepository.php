@@ -296,7 +296,7 @@ class FormTemplateRepository {
 		if ( empty( $new_name ) ) {
 			$new_name = sprintf(
 				/* translators: %s: Original template name */
-				__( '%s (Kopie)', 'recruiting-playbook' ),
+				__( '%s (Copy)', 'recruiting-playbook' ),
 				$original->getName()
 			);
 		}

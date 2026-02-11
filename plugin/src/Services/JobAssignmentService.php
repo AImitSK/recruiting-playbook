@@ -51,7 +51,7 @@ class JobAssignmentService {
 		if ( ! get_userdata( $user_id ) ) {
 			return new WP_Error(
 				'invalid_user',
-				__( 'Benutzer nicht gefunden.', 'recruiting-playbook' ),
+				__( 'User not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -60,7 +60,7 @@ class JobAssignmentService {
 		if ( 'job_listing' !== get_post_type( $job_id ) ) {
 			return new WP_Error(
 				'invalid_job',
-				__( 'Ungültige Stelle.', 'recruiting-playbook' ),
+				__( 'Invalid job.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -69,7 +69,7 @@ class JobAssignmentService {
 		if ( $this->repository->exists( $user_id, $job_id ) ) {
 			return new WP_Error(
 				'already_assigned',
-				__( 'Benutzer ist dieser Stelle bereits zugewiesen.', 'recruiting-playbook' ),
+				__( 'User is already assigned to this job.', 'recruiting-playbook' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -83,7 +83,7 @@ class JobAssignmentService {
 		if ( ! $id ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'Zuweisung konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Assignment could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -105,7 +105,7 @@ class JobAssignmentService {
 		if ( ! $this->repository->exists( $user_id, $job_id ) ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Zuweisung nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Assignment not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -279,9 +279,9 @@ class JobAssignmentService {
 				'message'     => sprintf(
 					/* translators: %s: user display name */
 					'job_assigned' === $action
-						? __( '%s der Stelle zugewiesen', 'recruiting-playbook' )
-						: __( '%s von der Stelle entfernt', 'recruiting-playbook' ),
-					$target ? $target->display_name : __( 'Unbekannt', 'recruiting-playbook' )
+						? __( '%s assigned to job', 'recruiting-playbook' )
+						: __( '%s removed from job', 'recruiting-playbook' ),
+					$target ? $target->display_name : __( 'Unknown', 'recruiting-playbook' )
 				),
 				'meta'        => wp_json_encode( [
 					'target_user_id' => $target_user,

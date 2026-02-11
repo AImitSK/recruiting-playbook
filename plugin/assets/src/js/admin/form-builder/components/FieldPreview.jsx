@@ -97,7 +97,7 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 					/>
 				) : (
 					<p style={ { fontSize: '0.875rem', color: '#9ca3af', fontStyle: 'italic', margin: 0 } }>
-						{ __( 'HTML-Inhalt wird hier angezeigt...', 'recruiting-playbook' ) }
+						{ __( 'HTML content will be displayed here...', 'recruiting-playbook' ) }
 					</p>
 				) }
 			</div>
@@ -165,7 +165,7 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 				return (
 					<Select disabled defaultValue="">
 						<SelectOption value="">
-							{ field.placeholder || __( 'Bitte wählen...', 'recruiting-playbook' ) }
+							{ field.placeholder || __( 'Please select...', 'recruiting-playbook' ) }
 						</SelectOption>
 						{ options.map( ( opt, idx ) => (
 							<SelectOption key={ idx } value={ opt.value || opt.label }>
@@ -224,16 +224,16 @@ export default function FieldPreview( { field, fieldType, viewMode = 'desktop' }
 					<div style={ { border: '2px dashed #d1d5db', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center', backgroundColor: '#f9fafb' } }>
 						<Upload style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#9ca3af' } } />
 						<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
-							{ __( 'Dateien hierher ziehen oder klicken zum Auswählen', 'recruiting-playbook' ) }
+							{ __( 'Drag files here or click to select', 'recruiting-playbook' ) }
 						</p>
 						{ field.validation?.allowed_types && (
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' } }>
-								{ __( 'Erlaubte Typen:', 'recruiting-playbook' ) } { field.validation.allowed_types }
+								{ __( 'Allowed types:', 'recruiting-playbook' ) } { field.validation.allowed_types }
 							</p>
 						) }
 						{ field.validation?.max_file_size && (
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-								{ __( 'Max. Größe:', 'recruiting-playbook' ) } { field.validation.max_file_size } MB
+								{ __( 'Max. size:', 'recruiting-playbook' ) } { field.validation.max_file_size } MB
 							</p>
 						) }
 					</div>

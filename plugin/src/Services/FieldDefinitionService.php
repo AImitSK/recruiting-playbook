@@ -237,7 +237,7 @@ class FieldDefinitionService {
 		if ( ! $this->isValidFieldKey( $data['field_key'] ) ) {
 			return new WP_Error(
 				'invalid_field_key',
-				__( 'Ungültiger Feld-Schlüssel. Erlaubt sind Kleinbuchstaben, Zahlen und Unterstriche.', 'recruiting-playbook' ),
+				__( 'Invalid field key. Only lowercase letters, numbers, and underscores are allowed.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -249,7 +249,7 @@ class FieldDefinitionService {
 		if ( $this->repository->fieldKeyExists( $data['field_key'], $template_id, $job_id ) ) {
 			return new WP_Error(
 				'duplicate_field_key',
-				__( 'Ein Feld mit diesem Schlüssel existiert bereits.', 'recruiting-playbook' ),
+				__( 'A field with this key already exists.', 'recruiting-playbook' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -265,7 +265,7 @@ class FieldDefinitionService {
 		if ( ! $field ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'Feld konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Field could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -286,7 +286,7 @@ class FieldDefinitionService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Feld nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Field not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -322,7 +322,7 @@ class FieldDefinitionService {
 			if ( ! $this->isValidFieldKey( $data['field_key'] ) ) {
 				return new WP_Error(
 					'invalid_field_key',
-					__( 'Ungültiger Feld-Schlüssel.', 'recruiting-playbook' ),
+					__( 'Invalid field key.', 'recruiting-playbook' ),
 					[ 'status' => 422 ]
 				);
 			}
@@ -336,7 +336,7 @@ class FieldDefinitionService {
 			) ) {
 				return new WP_Error(
 					'duplicate_field_key',
-					__( 'Ein Feld mit diesem Schlüssel existiert bereits.', 'recruiting-playbook' ),
+					__( 'A field with this key already exists.', 'recruiting-playbook' ),
 					[ 'status' => 409 ]
 				);
 			}
@@ -346,7 +346,7 @@ class FieldDefinitionService {
 		if ( isset( $data['field_type'] ) && ! $this->isValidFieldType( $data['field_type'] ) ) {
 			return new WP_Error(
 				'invalid_field_type',
-				__( 'Ungültiger Feldtyp.', 'recruiting-playbook' ),
+				__( 'Invalid field type.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -356,7 +356,7 @@ class FieldDefinitionService {
 		if ( ! $field ) {
 			return new WP_Error(
 				'update_failed',
-				__( 'Feld konnte nicht aktualisiert werden.', 'recruiting-playbook' ),
+				__( 'Field could not be updated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -376,7 +376,7 @@ class FieldDefinitionService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Feld nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Field not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -385,7 +385,7 @@ class FieldDefinitionService {
 		if ( $existing->isSystem() ) {
 			return new WP_Error(
 				'cannot_delete_system_field',
-				__( 'System-Felder können nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'System fields cannot be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -400,7 +400,7 @@ class FieldDefinitionService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'delete_failed',
-				__( 'Feld konnte nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'Field could not be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -479,7 +479,7 @@ class FieldDefinitionService {
 		if ( empty( $positions ) ) {
 			return new WP_Error(
 				'empty_positions',
-				__( 'Keine Positionen angegeben.', 'recruiting-playbook' ),
+				__( 'No positions specified.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -489,7 +489,7 @@ class FieldDefinitionService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'reorder_failed',
-				__( 'Reihenfolge konnte nicht geändert werden.', 'recruiting-playbook' ),
+				__( 'Order could not be changed.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -527,31 +527,31 @@ class FieldDefinitionService {
 		return [
 			[
 				'type'  => 'text',
-				'label' => __( 'Textfeld', 'recruiting-playbook' ),
+				'label' => __( 'Text field', 'recruiting-playbook' ),
 				'icon'  => 'type',
 				'group' => 'text',
 			],
 			[
 				'type'  => 'textarea',
-				'label' => __( 'Textbereich', 'recruiting-playbook' ),
+				'label' => __( 'Text area', 'recruiting-playbook' ),
 				'icon'  => 'align-left',
 				'group' => 'text',
 			],
 			[
 				'type'  => 'email',
-				'label' => __( 'E-Mail', 'recruiting-playbook' ),
+				'label' => __( 'Email', 'recruiting-playbook' ),
 				'icon'  => 'mail',
 				'group' => 'text',
 			],
 			[
 				'type'  => 'phone',
-				'label' => __( 'Telefon', 'recruiting-playbook' ),
+				'label' => __( 'Phone', 'recruiting-playbook' ),
 				'icon'  => 'phone',
 				'group' => 'text',
 			],
 			[
 				'type'  => 'number',
-				'label' => __( 'Zahl', 'recruiting-playbook' ),
+				'label' => __( 'Number', 'recruiting-playbook' ),
 				'icon'  => 'hash',
 				'group' => 'text',
 			],
@@ -569,7 +569,7 @@ class FieldDefinitionService {
 			],
 			[
 				'type'  => 'radio',
-				'label' => __( 'Radio-Buttons', 'recruiting-playbook' ),
+				'label' => __( 'Radio buttons', 'recruiting-playbook' ),
 				'icon'  => 'circle-dot',
 				'group' => 'choice',
 			],
@@ -581,19 +581,19 @@ class FieldDefinitionService {
 			],
 			[
 				'type'  => 'date',
-				'label' => __( 'Datum', 'recruiting-playbook' ),
+				'label' => __( 'Date', 'recruiting-playbook' ),
 				'icon'  => 'calendar',
 				'group' => 'special',
 			],
 			[
 				'type'  => 'file',
-				'label' => __( 'Datei-Upload', 'recruiting-playbook' ),
+				'label' => __( 'File upload', 'recruiting-playbook' ),
 				'icon'  => 'paperclip',
 				'group' => 'special',
 			],
 			[
 				'type'  => 'heading',
-				'label' => __( 'Überschrift', 'recruiting-playbook' ),
+				'label' => __( 'Heading', 'recruiting-playbook' ),
 				'icon'  => 'heading',
 				'group' => 'layout',
 			],
@@ -611,7 +611,7 @@ class FieldDefinitionService {
 		if ( empty( $data['field_key'] ) ) {
 			return new WP_Error(
 				'missing_field_key',
-				__( 'Feld-Schlüssel ist erforderlich.', 'recruiting-playbook' ),
+				__( 'Field key is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -619,7 +619,7 @@ class FieldDefinitionService {
 		if ( empty( $data['field_type'] ) ) {
 			return new WP_Error(
 				'missing_field_type',
-				__( 'Feldtyp ist erforderlich.', 'recruiting-playbook' ),
+				__( 'Field type is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -627,7 +627,7 @@ class FieldDefinitionService {
 		if ( empty( $data['label'] ) ) {
 			return new WP_Error(
 				'missing_label',
-				__( 'Label ist erforderlich.', 'recruiting-playbook' ),
+				__( 'Label is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -636,7 +636,7 @@ class FieldDefinitionService {
 		if ( ! $this->isValidFieldType( $data['field_type'] ) ) {
 			return new WP_Error(
 				'invalid_field_type',
-				__( 'Ungültiger Feldtyp.', 'recruiting-playbook' ),
+				__( 'Invalid field type.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}

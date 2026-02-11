@@ -130,7 +130,7 @@ abstract class AbstractFieldType implements FieldTypeInterface {
 				'required',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s ist ein Pflichtfeld.', 'recruiting-playbook' ),
+					__( '%s is a required field.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
@@ -153,7 +153,7 @@ abstract class AbstractFieldType implements FieldTypeInterface {
 				'min_length',
 				sprintf(
 					/* translators: 1: Field label, 2: Minimum length */
-					__( '%1$s muss mindestens %2$d Zeichen lang sein.', 'recruiting-playbook' ),
+					__( '%1$s must be at least %2$d characters long.', 'recruiting-playbook' ),
 					$label,
 					$min_length
 				)
@@ -177,7 +177,7 @@ abstract class AbstractFieldType implements FieldTypeInterface {
 				'max_length',
 				sprintf(
 					/* translators: 1: Field label, 2: Maximum length */
-					__( '%1$s darf maximal %2$d Zeichen lang sein.', 'recruiting-playbook' ),
+					__( '%1$s must not exceed %2$d characters.', 'recruiting-playbook' ),
 					$label,
 					$max_length
 				)
@@ -202,7 +202,7 @@ abstract class AbstractFieldType implements FieldTypeInterface {
 				? $pattern_message
 				: sprintf(
 					/* translators: %s: Field label */
-					__( '%s hat ein ungültiges Format.', 'recruiting-playbook' ),
+					__( '%s has an invalid format.', 'recruiting-playbook' ),
 					$label
 				);
 

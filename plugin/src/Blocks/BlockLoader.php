@@ -2,8 +2,8 @@
 /**
  * Gutenberg Block Loader
  *
- * Registriert alle Recruiting Playbook Blöcke für den Block-Editor.
- * Free-Feature: Verfügbar für alle Nutzer (Free & Pro).
+ * Registers all Recruiting Playbook blocks for the block editor.
+ * Free-Feature: Available for all users (Free & Pro).
  *
  * @package RecruitingPlaybook
  */
@@ -17,12 +17,12 @@ use RecruitingPlaybook\Blocks\Patterns\PatternLoader;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Block Loader Klasse
+ * Block Loader Class
  */
 class BlockLoader {
 
 	/**
-	 * Liste aller verfügbaren Blöcke
+	 * List of all available blocks
 	 *
 	 * @var array<string>
 	 */
@@ -37,7 +37,7 @@ class BlockLoader {
 	];
 
 	/**
-	 * AI-Addon Blöcke (nur mit AI-Addon verfügbar)
+	 * AI-Addon Blocks (only available with AI-Addon)
 	 *
 	 * @var array<string>
 	 */
@@ -47,14 +47,14 @@ class BlockLoader {
 	];
 
 	/**
-	 * Pattern Loader Instanz
+	 * Pattern Loader Instance
 	 *
 	 * @var PatternLoader
 	 */
 	private PatternLoader $pattern_loader;
 
 	/**
-	 * Initialisierung
+	 * Initialization
 	 */
 	public function register(): void {
 		// Pro-Feature Check.
@@ -66,33 +66,33 @@ class BlockLoader {
 		add_filter( 'block_categories_all', [ $this, 'registerCategory' ], 10, 2 );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueueEditorAssets' ] );
 
-		// Block-Patterns registrieren.
+		// Register block patterns.
 		$this->pattern_loader = new PatternLoader();
 		$this->pattern_loader->register();
 	}
 
 	/**
-	 * Prüfen ob Blöcke verwendet werden können
+	 * Check if blocks can be used
 	 *
-	 * Gutenberg Blocks sind ein Free-Feature und immer verfügbar.
-	 * Nur Page Builder (Avada, Elementor, etc.) sind Pro-Features.
+	 * Gutenberg Blocks are a Free-Feature and always available.
+	 * Only Page Builders (Avada, Elementor, etc.) are Pro-Features.
 	 *
-	 * @return bool Immer true - Blocks sind für alle verfügbar.
+	 * @return bool Always true - Blocks are available for all.
 	 */
 	private function canUseBlocks(): bool {
 		return true;
 	}
 
 	/**
-	 * Alle Blöcke registrieren
+	 * Register all blocks
 	 */
 	public function registerBlocks(): void {
-		// Standard-Blöcke registrieren.
+		// Register standard blocks.
 		foreach ( $this->blocks as $block ) {
 			$this->registerBlock( $block );
 		}
 
-		// AI-Blöcke nur wenn AI-Addon aktiv.
+		// AI blocks only if AI-Addon is active.
 		if ( $this->hasAiAddon() ) {
 			foreach ( $this->ai_blocks as $block ) {
 				$this->registerBlock( $block );
@@ -101,14 +101,14 @@ class BlockLoader {
 	}
 
 	/**
-	 * Einzelnen Block registrieren
+	 * Register a single block
 	 *
-	 * @param string $block Block-Name (ohne Prefix).
+	 * @param string $block Block name (without prefix).
 	 */
 	private function registerBlock( string $block ): void {
 		$block_dir = RP_PLUGIN_DIR . "src/Blocks/Blocks/{$block}";
 
-		// Block nur registrieren wenn block.json existiert.
+		// Only register block if block.json exists.
 		if ( ! file_exists( $block_dir . '/block.json' ) ) {
 			return;
 		}
@@ -117,20 +117,20 @@ class BlockLoader {
 	}
 
 	/**
-	 * Prüfen ob AI-Addon aktiv ist
+	 * Check if AI-Addon is active
 	 *
-	 * @return bool True wenn AI-Addon verfügbar.
+	 * @return bool True if AI-Addon is available.
 	 */
 	private function hasAiAddon(): bool {
 		return function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching();
 	}
 
 	/**
-	 * Block-Kategorie registrieren
+	 * Register block category
 	 *
-	 * @param array                   $categories Vorhandene Kategorien.
-	 * @param \WP_Block_Editor_Context $context    Block-Editor Kontext.
-	 * @return array Erweiterte Kategorien.
+	 * @param array                   $categories Existing categories.
+	 * @param \WP_Block_Editor_Context $context    Block editor context.
+	 * @return array Extended categories.
 	 */
 	public function registerCategory( array $categories, $context ): array {
 		return array_merge(
@@ -145,7 +145,7 @@ class BlockLoader {
 	}
 
 	/**
-	 * Editor-Assets laden
+	 * Load editor assets
 	 */
 	public function enqueueEditorAssets(): void {
 		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/blocks.asset.php';
@@ -156,7 +156,7 @@ class BlockLoader {
 
 		$asset = require $asset_file;
 
-		// Block-Editor JavaScript.
+		// Block editor JavaScript.
 		wp_enqueue_script(
 			'rp-blocks-editor',
 			RP_PLUGIN_URL . 'assets/dist/js/blocks.js',
@@ -165,14 +165,14 @@ class BlockLoader {
 			true
 		);
 
-		// Lokalisierung für Blöcke.
+		// Localization for blocks.
 		wp_set_script_translations(
 			'rp-blocks-editor',
 			'recruiting-playbook',
 			RP_PLUGIN_DIR . 'languages'
 		);
 
-		// Block-Konfiguration.
+		// Block configuration.
 		wp_localize_script(
 			'rp-blocks-editor',
 			'rpBlocksConfig',
@@ -185,7 +185,7 @@ class BlockLoader {
 			]
 		);
 
-		// Editor-Styles.
+		// Editor styles.
 		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/blocks-editor.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
@@ -196,14 +196,14 @@ class BlockLoader {
 			);
 		}
 
-		// Design & Branding CSS-Variablen auch im Editor laden.
+		// Load design & branding CSS variables in the editor as well.
 		$this->enqueueDesignVariables();
 	}
 
 	/**
-	 * Taxonomie-Daten für Blöcke vorbereiten
+	 * Prepare taxonomy data for blocks
 	 *
-	 * @return array Taxonomie-Daten.
+	 * @return array Taxonomy data.
 	 */
 	private function getTaxonomiesData(): array {
 		$taxonomies = [
@@ -238,10 +238,10 @@ class BlockLoader {
 	}
 
 	/**
-	 * Design-Variablen im Editor laden
+	 * Load design variables in the editor
 	 */
 	private function enqueueDesignVariables(): void {
-		// CssGeneratorService nutzen falls verfügbar.
+		// Use CssGeneratorService if available.
 		if ( class_exists( '\RecruitingPlaybook\Services\CssGeneratorService' ) ) {
 			$css_generator = new \RecruitingPlaybook\Services\CssGeneratorService();
 			$inline_css    = $css_generator->generate_css();

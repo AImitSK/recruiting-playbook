@@ -43,7 +43,7 @@ export function useTalentPool( candidateId, initialInPool = false ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorLoadingTalentPool ||
-				'Fehler beim Laden des Talent-Pool Status'
+				'Error loading talent pool status'
 			);
 		} finally {
 			setLoading( false );
@@ -108,7 +108,7 @@ export function useTalentPool( candidateId, initialInPool = false ) {
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorAddingToTalentPool ||
-					'Fehler beim Hinzufügen zum Talent-Pool'
+					'Error adding to talent pool'
 				);
 				return false;
 			} finally {
@@ -156,7 +156,7 @@ export function useTalentPool( candidateId, initialInPool = false ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorRemovingFromTalentPool ||
-				'Fehler beim Entfernen aus dem Talent-Pool'
+				'Error removing from talent pool'
 			);
 			return false;
 		} finally {
@@ -194,7 +194,7 @@ export function useTalentPool( candidateId, initialInPool = false ) {
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorUpdatingTalentPool ||
-					'Fehler beim Aktualisieren des Talent-Pool Eintrags'
+					'Error updating talent pool entry'
 				);
 				return false;
 			} finally {
@@ -269,7 +269,7 @@ export function useTalentPoolList( initialArgs = {} ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorLoadingTalentPoolList ||
-				'Fehler beim Laden der Talent-Pool Liste'
+				'Error loading talent pool list'
 			);
 		} finally {
 			setLoading( false );

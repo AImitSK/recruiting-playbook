@@ -67,7 +67,7 @@ export function KanbanPage() {
 						/>
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ __( 'Kanban-Board', 'recruiting-playbook' ) }
+						{ __( 'Kanban Board', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
@@ -89,7 +89,7 @@ export function KanbanPage() {
 									minWidth: '200px',
 								} }
 							>
-								<option value="">{ __( 'Alle Stellen', 'recruiting-playbook' ) }</option>
+								<option value="">{ __( 'All Jobs', 'recruiting-playbook' ) }</option>
 								{ jobs.map( ( job ) => (
 									<option key={ job.id } value={ job.id }>
 										{ job.title }
@@ -112,7 +112,7 @@ export function KanbanPage() {
 								/>
 								<input
 									type="search"
-									placeholder={ __( 'Bewerber suchen...', 'recruiting-playbook' ) }
+									placeholder={ __( 'Search applicants...', 'recruiting-playbook' ) }
 									onChange={ ( e ) => debouncedSetSearchTerm( e.target.value ) }
 									style={ {
 										paddingLeft: '2.5rem',
@@ -137,7 +137,7 @@ export function KanbanPage() {
 									variant="outline"
 									onClick={ handleRefresh }
 									disabled={ isRefreshing }
-									title={ __( 'Aktualisieren', 'recruiting-playbook' ) }
+									title={ __( 'Refresh', 'recruiting-playbook' ) }
 									style={ { padding: '0.5rem' } }
 								>
 									<RefreshCw
@@ -166,7 +166,7 @@ export function KanbanPage() {
 									} }
 								>
 									<List style={ { width: '1rem', height: '1rem' } } />
-									{ __( 'Listen-Ansicht', 'recruiting-playbook' ) }
+									{ __( 'List View', 'recruiting-playbook' ) }
 								</a>
 							</div>
 						</div>

@@ -1,8 +1,8 @@
 /**
  * ApiKeySettings Component
  *
- * API-Key-Verwaltung im Settings-Tab "API".
- * Eigenständige Komponente mit eigenem Hook.
+ * API key management in Settings tab "API".
+ * Standalone component with its own hook.
  *
  * @package RecruitingPlaybook
  */
@@ -57,7 +57,7 @@ export function ApiKeySettings() {
 		deleteKey,
 	} = useApiKeys();
 
-	// Dialog-State.
+	// Dialog state.
 	const [ showCreateDialog, setShowCreateDialog ] = useState( false );
 	const [ showKeyDialog, setShowKeyDialog ] = useState( false );
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
@@ -65,13 +65,13 @@ export function ApiKeySettings() {
 	const [ deleteTargetId, setDeleteTargetId ] = useState( null );
 	const [ copied, setCopied ] = useState( false );
 
-	// Formular-State für Erstellung.
+	// Form state for creation.
 	const [ newKeyName, setNewKeyName ] = useState( '' );
 	const [ newKeyPermissions, setNewKeyPermissions ] = useState( [] );
 	const [ newKeyRateLimit, setNewKeyRateLimit ] = useState( 1000 );
 
 	/**
-	 * Key erstellen
+	 * Create key
 	 */
 	const handleCreate = useCallback( async () => {
 		if ( ! newKeyName.trim() || newKeyPermissions.length === 0 ) {
@@ -88,7 +88,7 @@ export function ApiKeySettings() {
 			setCreatedPlainKey( result.plain_key );
 			setShowCreateDialog( false );
 			setShowKeyDialog( true );
-			// Formular zurücksetzen.
+			// Reset form.
 			setNewKeyName( '' );
 			setNewKeyPermissions( [] );
 			setNewKeyRateLimit( 1000 );
@@ -96,14 +96,14 @@ export function ApiKeySettings() {
 	}, [ newKeyName, newKeyPermissions, newKeyRateLimit, createKey ] );
 
 	/**
-	 * Key Active-Status toggeln
+	 * Toggle key active status
 	 */
 	const handleToggleActive = useCallback( async ( id, currentActive ) => {
 		await updateKey( id, { is_active: ! currentActive } );
 	}, [ updateKey ] );
 
 	/**
-	 * Key löschen
+	 * Delete key
 	 */
 	const handleDelete = useCallback( async () => {
 		if ( ! deleteTargetId ) {
@@ -115,7 +115,7 @@ export function ApiKeySettings() {
 	}, [ deleteTargetId, deleteKey ] );
 
 	/**
-	 * In Zwischenablage kopieren
+	 * Copy to clipboard
 	 */
 	const handleCopyKey = useCallback( () => {
 		navigator.clipboard.writeText( createdPlainKey ).then( () => {
@@ -125,7 +125,7 @@ export function ApiKeySettings() {
 	}, [ createdPlainKey ] );
 
 	/**
-	 * Permission-Checkbox toggeln
+	 * Toggle permission checkbox
 	 */
 	const togglePermission = useCallback( ( permKey ) => {
 		setNewKeyPermissions( ( prev ) =>
@@ -136,14 +136,14 @@ export function ApiKeySettings() {
 	}, [] );
 
 	/**
-	 * Datum formatieren
+	 * Format date
 	 */
 	const formatDate = ( dateString ) => {
 		if ( ! dateString ) {
 			return '-';
 		}
 		try {
-			return new Date( dateString ).toLocaleDateString( 'de-DE', {
+			return new Date( dateString ).toLocaleDateString( 'en-US', {
 				day: '2-digit',
 				month: '2-digit',
 				year: 'numeric',
@@ -177,9 +177,9 @@ export function ApiKeySettings() {
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 						<div>
-							<CardTitle>{ __( 'API-Keys', 'recruiting-playbook' ) }</CardTitle>
+							<CardTitle>{ __( 'API Keys', 'recruiting-playbook' ) }</CardTitle>
 							<CardDescription>
-								{ __( 'Erstellen und verwalten Sie API-Keys für den externen Zugriff auf die REST API.', 'recruiting-playbook' ) }
+								{ __( 'Create and manage API keys for external access to the REST API.', 'recruiting-playbook' ) }
 							</CardDescription>
 						</div>
 						<Button
@@ -188,7 +188,7 @@ export function ApiKeySettings() {
 								setShowCreateDialog( true );
 							} }
 						>
-							{ __( 'Neuen Key erstellen', 'recruiting-playbook' ) }
+							{ __( 'Create New Key', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardHeader>
@@ -199,9 +199,9 @@ export function ApiKeySettings() {
 							padding: '2rem',
 							color: '#6b7280',
 						} }>
-							<p>{ __( 'Keine API-Keys vorhanden.', 'recruiting-playbook' ) }</p>
+							<p>{ __( 'No API keys available.', 'recruiting-playbook' ) }</p>
 							<p style={ { fontSize: '0.875rem' } }>
-								{ __( 'Erstellen Sie einen Key, um die REST API nutzen zu können.', 'recruiting-playbook' ) }
+								{ __( 'Create a key to use the REST API.', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					) : (
@@ -210,10 +210,10 @@ export function ApiKeySettings() {
 								<TableRow>
 									<TableHead style={ { width: '15%' } }>{ __( 'Name', 'recruiting-playbook' ) }</TableHead>
 									<TableHead style={ { width: '15%' } }>{ __( 'Key', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '22%' } }>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '16%', textAlign: 'right' } }>{ __( 'Letzte Nutzung', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '22%' } }>{ __( 'Permissions', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '16%', textAlign: 'right' } }>{ __( 'Last Used', 'recruiting-playbook' ) }</TableHead>
 									<TableHead style={ { width: '10%', textAlign: 'right' } }>{ __( 'Requests', 'recruiting-playbook' ) }</TableHead>
-									<TableHead style={ { width: '8%', textAlign: 'center' } }>{ __( 'Aktiv', 'recruiting-playbook' ) }</TableHead>
+									<TableHead style={ { width: '8%', textAlign: 'center' } }>{ __( 'Active', 'recruiting-playbook' ) }</TableHead>
 									<TableHead style={ { width: '14%' } }></TableHead>
 								</TableRow>
 							</TableHeader>
@@ -251,7 +251,7 @@ export function ApiKeySettings() {
 											{ formatDate( key.last_used_at ) }
 										</TableCell>
 										<TableCell style={ { fontSize: '0.85rem', textAlign: 'right' } }>
-											{ key.request_count.toLocaleString( 'de-DE' ) }
+											{ key.request_count.toLocaleString( 'en-US' ) }
 										</TableCell>
 										<TableCell style={ { textAlign: 'center' } }>
 											<Switch
@@ -270,7 +270,7 @@ export function ApiKeySettings() {
 												} }
 												style={ { color: '#ef4444' } }
 											>
-												{ __( 'Löschen', 'recruiting-playbook' ) }
+												{ __( 'Delete', 'recruiting-playbook' ) }
 											</Button>
 										</TableCell>
 									</TableRow>
@@ -286,10 +286,10 @@ export function ApiKeySettings() {
 				<AlertDialogContent style={ { maxWidth: '560px' } }>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
-							{ __( 'Neuen API-Key erstellen', 'recruiting-playbook' ) }
+							{ __( 'Create New API Key', 'recruiting-playbook' ) }
 						</AlertDialogTitle>
 						<AlertDialogDescription>
-							{ __( 'Geben Sie einen Namen ein und wählen Sie die Berechtigungen.', 'recruiting-playbook' ) }
+							{ __( 'Enter a name and select permissions.', 'recruiting-playbook' ) }
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 
@@ -301,14 +301,14 @@ export function ApiKeySettings() {
 								id="key-name"
 								value={ newKeyName }
 								onChange={ ( e ) => setNewKeyName( e.target.value ) }
-								placeholder={ __( 'z.B. CRM Integration', 'recruiting-playbook' ) }
+								placeholder={ __( 'e.g. CRM Integration', 'recruiting-playbook' ) }
 								style={ { marginTop: '0.25rem' } }
 							/>
 						</div>
 
 						{ /* Rate Limit */ }
 						<div>
-							<Label htmlFor="key-rate-limit">{ __( 'Rate Limit (Anfragen/Stunde)', 'recruiting-playbook' ) }</Label>
+							<Label htmlFor="key-rate-limit">{ __( 'Rate Limit (requests/hour)', 'recruiting-playbook' ) }</Label>
 							<Input
 								id="key-rate-limit"
 								type="number"
@@ -322,7 +322,7 @@ export function ApiKeySettings() {
 
 						{ /* Permissions */ }
 						<div>
-							<Label>{ __( 'Berechtigungen', 'recruiting-playbook' ) }</Label>
+							<Label>{ __( 'Permissions', 'recruiting-playbook' ) }</Label>
 							<div style={ {
 								display: 'grid',
 								gridTemplateColumns: '1fr 1fr',
@@ -354,13 +354,13 @@ export function ApiKeySettings() {
 
 					<AlertDialogFooter>
 						<AlertDialogCancel>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={ handleCreate }
 							disabled={ saving || ! newKeyName.trim() || newKeyPermissions.length === 0 }
 						>
-							{ saving ? __( 'Erstellen...', 'recruiting-playbook' ) : __( 'Key erstellen', 'recruiting-playbook' ) }
+							{ saving ? __( 'Creating...', 'recruiting-playbook' ) : __( 'Create Key', 'recruiting-playbook' ) }
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -377,7 +377,7 @@ export function ApiKeySettings() {
 				<AlertDialogContent style={ { maxWidth: '520px' } }>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
-							{ __( 'API-Key erstellt', 'recruiting-playbook' ) }
+							{ __( 'API Key Created', 'recruiting-playbook' ) }
 						</AlertDialogTitle>
 						<AlertDialogDescription>
 							{ /* Intentionally empty - warning below provides the description. */ }
@@ -386,7 +386,7 @@ export function ApiKeySettings() {
 
 					<Alert variant="destructive" style={ { marginBottom: '1rem' } }>
 						<AlertDescription>
-							{ __( 'Kopieren Sie den Key jetzt! Er wird nur einmal angezeigt und kann nicht wiederhergestellt werden.', 'recruiting-playbook' ) }
+							{ __( 'Copy the key now! It will only be displayed once and cannot be recovered.', 'recruiting-playbook' ) }
 						</AlertDescription>
 					</Alert>
 
@@ -409,8 +409,8 @@ export function ApiKeySettings() {
 							style={ { whiteSpace: 'nowrap', flexShrink: 0 } }
 						>
 							{ copied
-								? __( 'Kopiert!', 'recruiting-playbook' )
-								: __( 'Kopieren', 'recruiting-playbook' )
+								? __( 'Copied!', 'recruiting-playbook' )
+								: __( 'Copy', 'recruiting-playbook' )
 							}
 						</Button>
 					</div>
@@ -421,7 +421,7 @@ export function ApiKeySettings() {
 							setCreatedPlainKey( '' );
 							setCopied( false );
 						} }>
-							{ __( 'Fertig', 'recruiting-playbook' ) }
+							{ __( 'Done', 'recruiting-playbook' ) }
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -432,15 +432,15 @@ export function ApiKeySettings() {
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
-							{ __( 'API-Key löschen?', 'recruiting-playbook' ) }
+							{ __( 'Delete API Key?', 'recruiting-playbook' ) }
 						</AlertDialogTitle>
 						<AlertDialogDescription>
-							{ __( 'Der Key wird unwiderruflich gelöscht. Alle Integrationen, die diesen Key nutzen, verlieren den Zugriff.', 'recruiting-playbook' ) }
+							{ __( 'The key will be permanently deleted. All integrations using this key will lose access.', 'recruiting-playbook' ) }
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={ handleDelete }
@@ -448,8 +448,8 @@ export function ApiKeySettings() {
 							style={ { backgroundColor: '#ef4444' } }
 						>
 							{ saving
-								? __( 'Löschen...', 'recruiting-playbook' )
-								: __( 'Endgültig löschen', 'recruiting-playbook' )
+								? __( 'Deleting...', 'recruiting-playbook' )
+								: __( 'Permanently Delete', 'recruiting-playbook' )
 							}
 						</AlertDialogAction>
 					</AlertDialogFooter>

@@ -338,8 +338,8 @@ class Migrator {
 							'field_key' => 'file_upload',
 							'type'      => 'file_upload',
 							'settings'  => [
-								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
-								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+								'label'         => __( 'Application Documents', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB per file', 'recruiting-playbook' ),
 								'allowed_types' => 'pdf,doc,docx',
 								'max_file_size' => 10,
 								'max_files'     => 5,
@@ -388,9 +388,9 @@ class Migrator {
 							'field_key' => 'summary',
 							'type'      => 'summary',
 							'settings'  => [
-								'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'title'            => __( 'Your Information at a Glance', 'recruiting-playbook' ),
 								'layout'           => 'two-column',
-								'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 								'show_only_filled' => false,
 							],
 						] );
@@ -412,8 +412,8 @@ class Migrator {
 							'type'         => 'privacy_consent',
 							'is_removable' => false,
 							'settings'     => [
-								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+								'checkbox_text' => __( 'I have read the {datenschutz_link} and consent to the processing of my data.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 							],
 						];
 						$migrated = true;
@@ -586,11 +586,11 @@ class Migrator {
 			$table,
 			[
 				'user_id'         => null,
-				'name'            => __( 'Firmen-Signatur', 'recruiting-playbook' ),
-				'greeting'        => __( 'Mit freundlichen Grüßen', 'recruiting-playbook' ),
+				'name'            => __( 'Company Signature', 'recruiting-playbook' ),
+				'greeting'        => __( 'Best regards', 'recruiting-playbook' ),
 				'content'         => sprintf(
 					"%s\n%s",
-					__( 'Ihr HR Team', 'recruiting-playbook' ),
+					__( 'Your HR Team', 'recruiting-playbook' ),
 					$company_name
 				),
 				'is_default'      => 1,
@@ -620,8 +620,8 @@ class Migrator {
 			[
 				'field_key'   => 'first_name',
 				'field_type'  => 'text',
-				'label'       => __( 'Vorname', 'recruiting-playbook' ),
-				'placeholder' => __( 'Max', 'recruiting-playbook' ),
+				'label'       => __( 'First Name', 'recruiting-playbook' ),
+				'placeholder' => __( 'John', 'recruiting-playbook' ),
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 1,
@@ -631,8 +631,8 @@ class Migrator {
 			[
 				'field_key'   => 'last_name',
 				'field_type'  => 'text',
-				'label'       => __( 'Nachname', 'recruiting-playbook' ),
-				'placeholder' => __( 'Mustermann', 'recruiting-playbook' ),
+				'label'       => __( 'Last Name', 'recruiting-playbook' ),
+				'placeholder' => __( 'Doe', 'recruiting-playbook' ),
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 2,
@@ -642,8 +642,8 @@ class Migrator {
 			[
 				'field_key'   => 'email',
 				'field_type'  => 'email',
-				'label'       => __( 'E-Mail', 'recruiting-playbook' ),
-				'placeholder' => __( 'max.mustermann@beispiel.de', 'recruiting-playbook' ),
+				'label'       => __( 'Email', 'recruiting-playbook' ),
+				'placeholder' => __( 'john.doe@example.com', 'recruiting-playbook' ),
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 3,
@@ -652,8 +652,8 @@ class Migrator {
 			[
 				'field_key'   => 'phone',
 				'field_type'  => 'phone',
-				'label'       => __( 'Telefon', 'recruiting-playbook' ),
-				'placeholder' => __( '+49 123 456789', 'recruiting-playbook' ),
+				'label'       => __( 'Phone', 'recruiting-playbook' ),
+				'placeholder' => __( '+1 234 567890', 'recruiting-playbook' ),
 				'is_required' => 0,
 				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 4,
@@ -662,9 +662,9 @@ class Migrator {
 			[
 				'field_key'   => 'message',
 				'field_type'  => 'textarea',
-				'label'       => __( 'Anschreiben', 'recruiting-playbook' ),
-				'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
-				'description' => __( 'Optional: Schreiben Sie uns, warum Sie sich für diese Stelle interessieren.', 'recruiting-playbook' ),
+				'label'       => __( 'Cover Letter', 'recruiting-playbook' ),
+				'placeholder' => __( 'Why do you want to work with us?', 'recruiting-playbook' ),
+				'description' => __( 'Optional: Tell us why you are interested in this position.', 'recruiting-playbook' ),
 				'is_required' => 0,
 				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 5,
@@ -748,7 +748,7 @@ class Migrator {
 			'steps'    => [
 				[
 					'id'        => 'step_personal',
-					'title'     => __( 'Persönliche Daten', 'recruiting-playbook' ),
+					'title'     => __( 'Personal Information', 'recruiting-playbook' ),
 					'position'  => 1,
 					'deletable' => false,
 					'fields'    => [
@@ -780,7 +780,7 @@ class Migrator {
 				],
 				[
 					'id'        => 'step_documents',
-					'title'     => __( 'Dokumente', 'recruiting-playbook' ),
+					'title'     => __( 'Documents', 'recruiting-playbook' ),
 					'position'  => 2,
 					'deletable' => false,
 					'fields'    => [
@@ -795,8 +795,8 @@ class Migrator {
 							'field_key' => 'file_upload',
 							'type'      => 'file_upload',
 							'settings'  => [
-								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
-								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+								'label'         => __( 'Application Documents', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB per file', 'recruiting-playbook' ),
 								'allowed_types' => 'pdf,doc,docx',
 								'max_file_size' => 10,
 								'max_files'     => 5,
@@ -807,7 +807,7 @@ class Migrator {
 				],
 				[
 					'id'            => 'step_finale',
-					'title'         => __( 'Abschluss', 'recruiting-playbook' ),
+					'title'         => __( 'Summary', 'recruiting-playbook' ),
 					'position'      => 999,
 					'deletable'     => false,
 					'is_finale'     => true,
@@ -817,9 +817,9 @@ class Migrator {
 							'field_key' => 'summary',
 							'type'      => 'summary',
 							'settings'  => [
-								'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'title'            => __( 'Your Information at a Glance', 'recruiting-playbook' ),
 								'layout'           => 'two-column',
-								'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 								'show_only_filled' => false,
 							],
 						],
@@ -828,8 +828,8 @@ class Migrator {
 							'type'         => 'privacy_consent',
 							'is_removable' => false,
 							'settings'     => [
-								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+								'checkbox_text' => __( 'I have read the {datenschutz_link} and consent to the processing of my data.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 							],
 						],
 					],
@@ -887,32 +887,32 @@ class Migrator {
 			// === AUTOMATISIERBARE TEMPLATES (nur echte Platzhalter) ===
 			[
 				'slug'      => 'application-confirmation',
-				'name'      => __( 'Eingangsbestätigung', 'recruiting-playbook' ),
-				'subject'   => __( 'Ihre Bewerbung bei {firma}: {stelle}', 'recruiting-playbook' ),
+				'name'      => __( 'Application Confirmation', 'recruiting-playbook' ),
+				'subject'   => __( 'Your application at {firma}: {stelle}', 'recruiting-playbook' ),
 				'category'  => 'application',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma', 'bewerbung_datum', 'bewerbung_id' ],
 				'body_html' => $this->getConfirmationTemplateHtml(),
 			],
 			[
 				'slug'      => 'rejection-standard',
-				'name'      => __( 'Absage', 'recruiting-playbook' ),
-				'subject'   => __( 'Ihre Bewerbung als {stelle}', 'recruiting-playbook' ),
+				'name'      => __( 'Rejection', 'recruiting-playbook' ),
+				'subject'   => __( 'Your application for {stelle}', 'recruiting-playbook' ),
 				'category'  => 'rejection',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getRejectionTemplateHtml(),
 			],
 			[
 				'slug'      => 'application-withdrawn',
-				'name'      => __( 'Bewerbung zurückgezogen', 'recruiting-playbook' ),
-				'subject'   => __( 'Bestätigung: Bewerbung zurückgezogen', 'recruiting-playbook' ),
+				'name'      => __( 'Application Withdrawn', 'recruiting-playbook' ),
+				'subject'   => __( 'Confirmation: Application withdrawn', 'recruiting-playbook' ),
 				'category'  => 'application',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getWithdrawnTemplateHtml(),
 			],
 			[
 				'slug'      => 'talent-pool-added',
-				'name'      => __( 'Aufnahme in Talent-Pool', 'recruiting-playbook' ),
-				'subject'   => __( 'Willkommen im Talent-Pool von {firma}', 'recruiting-playbook' ),
+				'name'      => __( 'Added to Talent Pool', 'recruiting-playbook' ),
+				'subject'   => __( 'Welcome to the Talent Pool of {firma}', 'recruiting-playbook' ),
 				'category'  => 'application',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'firma' ],
 				'body_html' => $this->getTalentPoolAddedTemplateHtml(),
@@ -921,40 +921,40 @@ class Migrator {
 			// === MANUELLE TEMPLATES (mit ___ Lücken für Eingaben) ===
 			[
 				'slug'      => 'interview-invitation',
-				'name'      => __( 'Interview-Einladung', 'recruiting-playbook' ),
-				'subject'   => __( 'Einladung zum Vorstellungsgespräch: {stelle}', 'recruiting-playbook' ),
+				'name'      => __( 'Interview Invitation', 'recruiting-playbook' ),
+				'subject'   => __( 'Invitation to interview: {stelle}', 'recruiting-playbook' ),
 				'category'  => 'interview',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getInterviewTemplateHtml(),
 			],
 			[
 				'slug'      => 'interview-reminder',
-				'name'      => __( 'Interview-Erinnerung', 'recruiting-playbook' ),
-				'subject'   => __( 'Erinnerung: Ihr Vorstellungsgespräch am ___', 'recruiting-playbook' ),
+				'name'      => __( 'Interview Reminder', 'recruiting-playbook' ),
+				'subject'   => __( 'Reminder: Your interview on ___', 'recruiting-playbook' ),
 				'category'  => 'interview',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getInterviewReminderTemplateHtml(),
 			],
 			[
 				'slug'      => 'offer-letter',
-				'name'      => __( 'Stellenangebot', 'recruiting-playbook' ),
-				'subject'   => __( 'Stellenangebot: {stelle} bei {firma}', 'recruiting-playbook' ),
+				'name'      => __( 'Job Offer', 'recruiting-playbook' ),
+				'subject'   => __( 'Job offer: {stelle} at {firma}', 'recruiting-playbook' ),
 				'category'  => 'offer',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getOfferTemplateHtml(),
 			],
 			[
 				'slug'      => 'contract-sent',
-				'name'      => __( 'Vertragsunterlagen', 'recruiting-playbook' ),
-				'subject'   => __( 'Ihre Vertragsunterlagen für {stelle}', 'recruiting-playbook' ),
+				'name'      => __( 'Contract Documents', 'recruiting-playbook' ),
+				'subject'   => __( 'Your contract documents for {stelle}', 'recruiting-playbook' ),
 				'category'  => 'offer',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'firma' ],
 				'body_html' => $this->getContractSentTemplateHtml(),
 			],
 			[
 				'slug'      => 'talent-pool-matching-job',
-				'name'      => __( 'Passende Stelle gefunden', 'recruiting-playbook' ),
-				'subject'   => __( 'Neue Stelle bei {firma}: {stelle}', 'recruiting-playbook' ),
+				'name'      => __( 'Matching Job Found', 'recruiting-playbook' ),
+				'subject'   => __( 'New job at {firma}: {stelle}', 'recruiting-playbook' ),
 				'category'  => 'application',
 				'variables' => [ 'anrede_formal', 'vorname', 'nachname', 'stelle', 'stelle_ort', 'stelle_url', 'firma' ],
 				'body_html' => $this->getTalentPoolMatchingJobTemplateHtml(),

@@ -32,7 +32,7 @@ class TextField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Textfeld', 'recruiting-playbook' );
+		return __( 'Text Field', 'recruiting-playbook' );
 	}
 
 	/**
@@ -65,29 +65,29 @@ class TextField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min_length',
-				'label'       => __( 'Minimale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Minimum Length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0,
 				'placeholder' => '0',
 			],
 			[
 				'key'         => 'max_length',
-				'label'       => __( 'Maximale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Maximum Length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'placeholder' => '255',
 			],
 			[
 				'key'         => 'pattern',
-				'label'       => __( 'Regex-Pattern', 'recruiting-playbook' ),
+				'label'       => __( 'Regex Pattern', 'recruiting-playbook' ),
 				'type'        => 'text',
 				'placeholder' => '^[A-Za-z]+$',
 			],
 			[
 				'key'         => 'pattern_message',
-				'label'       => __( 'Pattern-Fehlermeldung', 'recruiting-playbook' ),
+				'label'       => __( 'Pattern Error Message', 'recruiting-playbook' ),
 				'type'        => 'text',
-				'placeholder' => __( 'Ungültiges Format', 'recruiting-playbook' ),
+				'placeholder' => __( 'Invalid format', 'recruiting-playbook' ),
 			],
 		];
 	}

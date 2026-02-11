@@ -6,10 +6,10 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Stellenliste Element für Fusion Builder
+ * RP: Job List Element for Fusion Builder
  *
- * Zeigt eine Liste von Stellenanzeigen in einem Grid-Layout.
- * Wrapper für den [rp_jobs] Shortcode.
+ * Displays a list of job listings in a grid layout.
+ * Wrapper for the [rp_jobs] shortcode.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -17,13 +17,13 @@ defined( 'ABSPATH' ) || exit;
 class JobGrid extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
 	protected function getConfig(): array {
 		return [
-			'name'            => esc_attr__( 'RP: Stellenliste', 'recruiting-playbook' ),
+			'name'            => esc_attr__( 'RP: Job List', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_jobs',
 			'icon'            => 'fusiona-sorting-boxes',
 			'help_url'        => $this->getHelpUrl( 'rp_jobs' ),
@@ -39,7 +39,7 @@ class JobGrid extends AbstractElement {
 	}
 
 	/**
-	 * Allgemeine Parameter
+	 * General parameters
 	 *
 	 * @return array<array<string, mixed>>
 	 */
@@ -47,8 +47,8 @@ class JobGrid extends AbstractElement {
 		return [
 			[
 				'type'        => 'range',
-				'heading'     => esc_attr__( 'Anzahl Stellen', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Wie viele Stellen sollen angezeigt werden?', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Number of Jobs', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'How many jobs should be displayed?', 'recruiting-playbook' ),
 				'param_name'  => 'limit',
 				'value'       => '10',
 				'min'         => '1',
@@ -57,8 +57,8 @@ class JobGrid extends AbstractElement {
 				],
 			[
 				'type'        => 'radio_button_set',
-				'heading'     => esc_attr__( 'Spalten', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Anzahl der Spalten im Grid.', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'Number of columns in the grid.', 'recruiting-playbook' ),
 				'param_name'  => 'columns',
 				'default'     => '2',
 				'value'       => [
@@ -72,7 +72,7 @@ class JobGrid extends AbstractElement {
 	}
 
 	/**
-	 * Filter-Parameter
+	 * Filter parameters
 	 *
 	 * @return array<array<string, mixed>>
 	 */
@@ -80,44 +80,44 @@ class JobGrid extends AbstractElement {
 		return [
 			[
 				'type'        => 'select',
-				'heading'     => esc_attr__( 'Kategorie', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Nach Kategorie filtern.', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Category', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'Filter by category.', 'recruiting-playbook' ),
 				'param_name'  => 'category',
 				'value'       => $this->getTaxonomyOptions( 'job_category' ),
 				'default'     => '',
 			],
 			[
 				'type'        => 'select',
-				'heading'     => esc_attr__( 'Standort', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Nach Standort filtern.', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Location', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'Filter by location.', 'recruiting-playbook' ),
 				'param_name'  => 'location',
 				'value'       => $this->getTaxonomyOptions( 'job_location' ),
 				'default'     => '',
 			],
 			[
 				'type'        => 'select',
-				'heading'     => esc_attr__( 'Beschäftigungsart', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Nach Beschäftigungsart filtern.', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Employment Type', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'Filter by employment type.', 'recruiting-playbook' ),
 				'param_name'  => 'type',
 				'value'       => $this->getTaxonomyOptions( 'employment_type' ),
 				'default'     => '',
 			],
 			[
 				'type'        => 'radio_button_set',
-				'heading'     => esc_attr__( 'Nur Featured', 'recruiting-playbook' ),
-				'description' => esc_attr__( 'Nur hervorgehobene Stellen anzeigen.', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Featured Only', 'recruiting-playbook' ),
+				'description' => esc_attr__( 'Show only featured jobs.', 'recruiting-playbook' ),
 				'param_name'  => 'featured',
 				'default'     => 'false',
 				'value'       => [
-					'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-					'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+					'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+					'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 				],
 			],
 		];
 	}
 
 	/**
-	 * Sortierungs-Parameter
+	 * Sorting parameters
 	 *
 	 * @return array<array<string, mixed>>
 	 */
@@ -125,23 +125,23 @@ class JobGrid extends AbstractElement {
 		return [
 			[
 				'type'        => 'select',
-				'heading'     => esc_attr__( 'Sortieren nach', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Sort By', 'recruiting-playbook' ),
 				'param_name'  => 'orderby',
 				'default'     => 'date',
 				'value'       => [
-					'date'  => esc_attr__( 'Datum', 'recruiting-playbook' ),
-					'title' => esc_attr__( 'Titel', 'recruiting-playbook' ),
-					'rand'  => esc_attr__( 'Zufällig', 'recruiting-playbook' ),
+					'date'  => esc_attr__( 'Date', 'recruiting-playbook' ),
+					'title' => esc_attr__( 'Title', 'recruiting-playbook' ),
+					'rand'  => esc_attr__( 'Random', 'recruiting-playbook' ),
 				],
 			],
 			[
 				'type'        => 'radio_button_set',
-				'heading'     => esc_attr__( 'Reihenfolge', 'recruiting-playbook' ),
+				'heading'     => esc_attr__( 'Order', 'recruiting-playbook' ),
 				'param_name'  => 'order',
 				'default'     => 'DESC',
 				'value'       => [
-					'DESC' => esc_attr__( 'Absteigend', 'recruiting-playbook' ),
-					'ASC'  => esc_attr__( 'Aufsteigend', 'recruiting-playbook' ),
+					'DESC' => esc_attr__( 'Descending', 'recruiting-playbook' ),
+					'ASC'  => esc_attr__( 'Ascending', 'recruiting-playbook' ),
 				],
 			],
 		];

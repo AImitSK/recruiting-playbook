@@ -134,7 +134,7 @@ class IntegrationController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'No permission.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -246,7 +246,7 @@ class IntegrationController extends WP_REST_Controller {
 		if ( empty( $url ) ) {
 			return new WP_Error(
 				'no_webhook_url',
-				__( 'Keine Slack Webhook-URL konfiguriert.', 'recruiting-playbook' ),
+				__( 'No Slack webhook URL configured.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -257,7 +257,7 @@ class IntegrationController extends WP_REST_Controller {
 					'type' => 'section',
 					'text' => [
 						'type' => 'mrkdwn',
-						'text' => "*Recruiting Playbook – Test*\n" . __( 'Die Slack-Integration funktioniert!', 'recruiting-playbook' ),
+						'text' => "*Recruiting Playbook – Test*\n" . __( 'Slack integration is working!', 'recruiting-playbook' ),
 					],
 				],
 			],
@@ -286,7 +286,7 @@ class IntegrationController extends WP_REST_Controller {
 				'slack_error',
 				sprintf(
 					/* translators: %d: HTTP status code */
-					__( 'Slack hat mit Status %d geantwortet.', 'recruiting-playbook' ),
+					__( 'Slack responded with status %d.', 'recruiting-playbook' ),
 					$code
 				),
 				[ 'status' => 502 ]
@@ -294,7 +294,7 @@ class IntegrationController extends WP_REST_Controller {
 		}
 
 		return new WP_REST_Response(
-			[ 'message' => __( 'Test-Nachricht erfolgreich gesendet!', 'recruiting-playbook' ) ],
+			[ 'message' => __( 'Test message sent successfully!', 'recruiting-playbook' ) ],
 			200
 		);
 	}
@@ -311,7 +311,7 @@ class IntegrationController extends WP_REST_Controller {
 		if ( empty( $url ) ) {
 			return new WP_Error(
 				'no_webhook_url',
-				__( 'Keine Teams Workflow-URL konfiguriert.', 'recruiting-playbook' ),
+				__( 'No Teams workflow URL configured.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -333,7 +333,7 @@ class IntegrationController extends WP_REST_Controller {
 							],
 							[
 								'type' => 'TextBlock',
-								'text' => __( 'Die Teams-Integration funktioniert!', 'recruiting-playbook' ),
+								'text' => __( 'Teams integration is working!', 'recruiting-playbook' ),
 							],
 						],
 					],
@@ -364,7 +364,7 @@ class IntegrationController extends WP_REST_Controller {
 				'teams_error',
 				sprintf(
 					/* translators: %d: HTTP status code */
-					__( 'Teams hat mit Status %d geantwortet.', 'recruiting-playbook' ),
+					__( 'Teams responded with status %d.', 'recruiting-playbook' ),
 					$code
 				),
 				[ 'status' => 502 ]
@@ -372,7 +372,7 @@ class IntegrationController extends WP_REST_Controller {
 		}
 
 		return new WP_REST_Response(
-			[ 'message' => __( 'Test-Nachricht erfolgreich gesendet!', 'recruiting-playbook' ) ],
+			[ 'message' => __( 'Test message sent successfully!', 'recruiting-playbook' ) ],
 			200
 		);
 	}

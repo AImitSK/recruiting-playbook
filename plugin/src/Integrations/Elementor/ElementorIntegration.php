@@ -8,8 +8,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Elementor Integration
  *
- * Registriert alle Recruiting Playbook Widgets für Elementor.
- * Dies ist ein Pro-Feature und erfordert eine aktive Pro-Lizenz.
+ * Registers all Recruiting Playbook Widgets for Elementor.
+ * This is a Pro feature and requires an active Pro license.
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -17,36 +17,36 @@ defined( 'ABSPATH' ) || exit;
 class ElementorIntegration {
 
 	/**
-	 * Integration initialisieren
+	 * Initialize integration
 	 */
 	public function register(): void {
-		// Pro-Feature Check.
+		// Pro feature check.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'elementor_integration' ) ) {
 			return;
 		}
 
-		// Elementor Check.
+		// Elementor check.
 		if ( ! did_action( 'elementor/loaded' ) ) {
 			return;
 		}
 
-		// Minimum-Version Check.
+		// Minimum version check.
 		if ( ! defined( 'ELEMENTOR_VERSION' ) || ! version_compare( ELEMENTOR_VERSION, '3.0.0', '>=' ) ) {
 			return;
 		}
 
-		// Widget-Kategorie registrieren.
+		// Register widget category.
 		add_action( 'elementor/elements/categories_registered', [ $this, 'registerCategory' ] );
 
-		// Widgets registrieren.
+		// Register widgets.
 		add_action( 'elementor/widgets/register', [ $this, 'registerWidgets' ] );
 
-		// Editor-Assets laden.
+		// Load editor assets.
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueueEditorAssets' ] );
 	}
 
 	/**
-	 * Widget-Kategorie registrieren
+	 * Register widget category
 	 *
 	 * @param \Elementor\Elements_Manager $elements_manager Elementor Elements Manager.
 	 */
@@ -61,7 +61,7 @@ class ElementorIntegration {
 	}
 
 	/**
-	 * Widgets registrieren
+	 * Register widgets
 	 *
 	 * @param \Elementor\Widgets_Manager $widgets_manager Elementor Widgets Manager.
 	 */
@@ -71,7 +71,7 @@ class ElementorIntegration {
 	}
 
 	/**
-	 * Editor-Assets laden
+	 * Load editor assets
 	 */
 	public function enqueueEditorAssets(): void {
 		wp_enqueue_style(

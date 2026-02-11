@@ -53,10 +53,10 @@ const fieldTypeIcons = {
  * Category labels for grouping in dropdown
  */
 const CATEGORIES = {
-	basic: { label: 'Basis-Felder', order: 1 },
-	choice: { label: 'Auswahl-Felder', order: 2 },
-	advanced: { label: 'Erweiterte Felder', order: 3 },
-	layout: { label: 'Layout-Elemente', order: 4 },
+	basic: { label: 'Basic Fields', order: 1 },
+	choice: { label: 'Choice Fields', order: 2 },
+	advanced: { label: 'Advanced Fields', order: 3 },
+	layout: { label: 'Layout Elements', order: 4 },
 };
 
 /**
@@ -159,7 +159,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 			setFieldSettings( ( prev ) => ( {
 				...prev,
 				label: newType === 'html'
-					? ( prev.label || __( 'Hinweistext', 'recruiting-playbook' ) )
+					? ( prev.label || __( 'Notice Text', 'recruiting-playbook' ) )
 					: ( prev.label || fieldTypes[ newType ].label || '' ),
 				options: [ 'select', 'radio', 'checkbox' ].includes( newType ) ? prev.options : [],
 				content: newType === 'html' ? ( prev.content || '' ) : '',
@@ -247,7 +247,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 					} }
 				>
 					<h2 style={ { margin: 0, fontSize: '1.125rem', fontWeight: 600 } }>
-						{ i18n?.createField || __( 'Neues Feld erstellen', 'recruiting-playbook' ) }
+						{ i18n?.createField || __( 'Create New Field', 'recruiting-playbook' ) }
 					</h2>
 					<Button variant="ghost" size="sm" onClick={ onClose }>
 						<X style={ { height: '1.25rem', width: '1.25rem' } } />
@@ -268,7 +268,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 					{ /* Field Type Dropdown */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="field_type">
-							{ i18n?.fieldType || __( 'Feldtyp', 'recruiting-playbook' ) }
+							{ i18n?.fieldType || __( 'Field Type', 'recruiting-playbook' ) }
 							<span style={ { color: '#ef4444' } }> *</span>
 						</Label>
 						<div style={ { position: 'relative' } }>
@@ -292,7 +292,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 							>
 								{ selectedType && fieldTypes[ selectedType ]
 									? fieldTypes[ selectedType ].label
-									: ( i18n?.selectFieldType || __( 'Feldtyp wählen...', 'recruiting-playbook' ) )
+									: ( i18n?.selectFieldType || __( 'Select field type...', 'recruiting-playbook' ) )
 								}
 							</button>
 
@@ -400,24 +400,24 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 							<div style={ { borderTop: '1px solid #e5e7eb', margin: '0.25rem 0' } } />
 
 							<h3 style={ { fontSize: '0.875rem', fontWeight: 600, color: '#374151', margin: 0 } }>
-								{ i18n?.fieldSettings || __( 'Einstellungen', 'recruiting-playbook' ) }
+								{ i18n?.fieldSettings || __( 'Settings', 'recruiting-playbook' ) }
 							</h3>
 
 							{ /* HTML Content Editor - only for HTML fields */ }
 							{ isHtmlField ? (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 									<Label>
-										{ __( 'Inhalt', 'recruiting-playbook' ) }
+										{ __( 'Content', 'recruiting-playbook' ) }
 										<span style={ { color: '#ef4444' } }> *</span>
 									</Label>
 									<RichTextEditor
 										value={ fieldSettings.content }
 										onChange={ ( content ) => updateSettings( 'content', content ) }
-										placeholder={ __( 'HTML-Inhalt eingeben...', 'recruiting-playbook' ) }
+										placeholder={ __( 'Enter HTML content...', 'recruiting-playbook' ) }
 										minHeight="150px"
 									/>
 									<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-										{ __( 'Formatierter Text wird im Formular angezeigt (z.B. Hinweise, Erklärungen).', 'recruiting-playbook' ) }
+										{ __( 'Formatted text will be displayed in the form (e.g. notices, explanations).', 'recruiting-playbook' ) }
 									</p>
 								</div>
 							) : (
@@ -425,14 +425,14 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									{ /* Label */ }
 									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 										<Label htmlFor="field_label">
-											{ i18n?.fieldLabel || __( 'Bezeichnung', 'recruiting-playbook' ) }
+											{ i18n?.fieldLabel || __( 'Label', 'recruiting-playbook' ) }
 											<span style={ { color: '#ef4444' } }> *</span>
 										</Label>
 										<Input
 											id="field_label"
 											value={ fieldSettings.label }
 											onChange={ ( e ) => updateSettings( 'label', e.target.value ) }
-											placeholder={ i18n?.labelPlaceholder || __( 'z.B. Anrede', 'recruiting-playbook' ) }
+											placeholder={ i18n?.labelPlaceholder || __( 'e.g. Salutation', 'recruiting-playbook' ) }
 										/>
 									</div>
 
@@ -440,13 +440,13 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									{ hasPlaceholder && (
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 											<Label htmlFor="field_placeholder">
-												{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
+												{ i18n?.fieldPlaceholder || __( 'Placeholder', 'recruiting-playbook' ) }
 											</Label>
 											<Input
 												id="field_placeholder"
 												value={ fieldSettings.placeholder }
 												onChange={ ( e ) => updateSettings( 'placeholder', e.target.value ) }
-												placeholder={ i18n?.placeholderHelp || __( 'Platzhaltertext...', 'recruiting-playbook' ) }
+												placeholder={ i18n?.placeholderHelp || __( 'Placeholder text...', 'recruiting-playbook' ) }
 											/>
 										</div>
 									) }
@@ -454,13 +454,13 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									{ /* Description */ }
 									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 										<Label htmlFor="field_description">
-											{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
+											{ i18n?.fieldDescription || __( 'Description', 'recruiting-playbook' ) }
 										</Label>
 										<Textarea
 											id="field_description"
 											value={ fieldSettings.description }
 											onChange={ ( e ) => updateSettings( 'description', e.target.value ) }
-											placeholder={ i18n?.descriptionHelp || __( 'Hilfetext für das Feld (optional)', 'recruiting-playbook' ) }
+											placeholder={ i18n?.descriptionHelp || __( 'Help text for the field (optional)', 'recruiting-playbook' ) }
 											rows={ 2 }
 										/>
 									</div>
@@ -469,23 +469,23 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 										{ /* Width */ }
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-											<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
+											<Label>{ i18n?.fieldWidth || __( 'Width', 'recruiting-playbook' ) }</Label>
 											<Select
 												value={ fieldSettings.width }
 												onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
 											>
 												<SelectOption value="full">
-													{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }
+													{ i18n?.widthFull || __( 'Full Width', 'recruiting-playbook' ) }
 												</SelectOption>
 												<SelectOption value="half">
-													{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }
+													{ i18n?.widthHalf || __( 'Half Width', 'recruiting-playbook' ) }
 												</SelectOption>
 											</Select>
 										</div>
 
 										{ /* Required */ }
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-											<Label>{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }</Label>
+											<Label>{ i18n?.fieldRequired || __( 'Required Field', 'recruiting-playbook' ) }</Label>
 											<div
 												style={ {
 													display: 'flex',
@@ -501,8 +501,8 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 												/>
 												<Label htmlFor="is_required" style={ { cursor: 'pointer', fontWeight: 400 } }>
 													{ fieldSettings.is_required
-														? ( i18n?.yes || __( 'Ja', 'recruiting-playbook' ) )
-														: ( i18n?.no || __( 'Nein', 'recruiting-playbook' ) )
+														? ( i18n?.yes || __( 'Yes', 'recruiting-playbook' ) )
+														: ( i18n?.no || __( 'No', 'recruiting-playbook' ) )
 													}
 												</Label>
 											</div>
@@ -512,7 +512,7 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 									{ /* Options for select/radio/checkbox */ }
 									{ hasOptions && (
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-											<Label>{ i18n?.fieldOptions || __( 'Optionen', 'recruiting-playbook' ) }</Label>
+											<Label>{ i18n?.fieldOptions || __( 'Options', 'recruiting-playbook' ) }</Label>
 											<OptionsEditor
 												options={ fieldSettings.options }
 												onChange={ ( options ) => updateSettings( 'options', options ) }
@@ -540,13 +540,13 @@ export default function FieldTypeSelector( { fieldTypes, onSelect, onClose, isPr
 					} }
 				>
 					<Button variant="outline" onClick={ onClose }>
-						{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+						{ i18n?.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 					</Button>
 					<Button
 						onClick={ handleSubmit }
 						disabled={ ! isValid }
 					>
-						{ i18n?.createField || __( 'Feld erstellen', 'recruiting-playbook' ) }
+						{ i18n?.createField || __( 'Create Field', 'recruiting-playbook' ) }
 					</Button>
 				</div>
 			</div>

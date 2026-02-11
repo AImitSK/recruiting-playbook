@@ -312,7 +312,7 @@ class EmailTemplateRepository {
 
 		// Neuen Namen generieren.
 		if ( empty( $new_name ) ) {
-			$new_name = $template['name'] . ' ' . __( '(Kopie)', 'recruiting-playbook' );
+			$new_name = $template['name'] . ' ' . __( '(Copy)', 'recruiting-playbook' );
 		}
 
 		return $this->create( [

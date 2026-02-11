@@ -130,15 +130,15 @@ class DashboardWidget {
 		<div class="rp-dw-stats">
 			<div class="rp-dw-stat">
 				<span class="rp-dw-stat-number"><?php echo esc_html( (string) $stats['active_jobs'] ); ?></span>
-				<span class="rp-dw-stat-label"><?php esc_html_e( 'Aktive Stellen', 'recruiting-playbook' ); ?></span>
+				<span class="rp-dw-stat-label"><?php esc_html_e( 'Active Jobs', 'recruiting-playbook' ); ?></span>
 			</div>
 			<div class="rp-dw-stat">
 				<span class="rp-dw-stat-number"><?php echo esc_html( (string) $stats['new_applications'] ); ?></span>
-				<span class="rp-dw-stat-label"><?php esc_html_e( 'Neue Bewerbungen', 'recruiting-playbook' ); ?></span>
+				<span class="rp-dw-stat-label"><?php esc_html_e( 'New Applications', 'recruiting-playbook' ); ?></span>
 			</div>
 			<div class="rp-dw-stat">
 				<span class="rp-dw-stat-number"><?php echo esc_html( (string) $stats['this_week'] ); ?></span>
-				<span class="rp-dw-stat-label"><?php esc_html_e( 'Diese Woche', 'recruiting-playbook' ); ?></span>
+				<span class="rp-dw-stat-label"><?php esc_html_e( 'This Week', 'recruiting-playbook' ); ?></span>
 			</div>
 		</div>
 
@@ -146,10 +146,10 @@ class DashboardWidget {
 			<table class="rp-dw-table">
 				<thead>
 					<tr>
-						<th><?php esc_html_e( 'Bewerber', 'recruiting-playbook' ); ?></th>
-						<th><?php esc_html_e( 'Stelle', 'recruiting-playbook' ); ?></th>
+						<th><?php esc_html_e( 'Applicant', 'recruiting-playbook' ); ?></th>
+						<th><?php esc_html_e( 'Job', 'recruiting-playbook' ); ?></th>
 						<th><?php esc_html_e( 'Status', 'recruiting-playbook' ); ?></th>
-						<th><?php esc_html_e( 'Datum', 'recruiting-playbook' ); ?></th>
+						<th><?php esc_html_e( 'Date', 'recruiting-playbook' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -179,15 +179,15 @@ class DashboardWidget {
 				</tbody>
 			</table>
 		<?php else : ?>
-			<p class="rp-dw-empty"><?php esc_html_e( 'Noch keine Bewerbungen vorhanden.', 'recruiting-playbook' ); ?></p>
+			<p class="rp-dw-empty"><?php esc_html_e( 'No applications yet.', 'recruiting-playbook' ); ?></p>
 		<?php endif; ?>
 
 		<div class="rp-dw-links">
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>">
-				<?php esc_html_e( 'Alle Bewerbungen', 'recruiting-playbook' ); ?> &rarr;
+				<?php esc_html_e( 'All Applications', 'recruiting-playbook' ); ?> &rarr;
 			</a>
 			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=job_listing' ) ); ?>">
-				<?php esc_html_e( 'Neue Stelle erstellen', 'recruiting-playbook' ); ?> &rarr;
+				<?php esc_html_e( 'Create New Job', 'recruiting-playbook' ); ?> &rarr;
 			</a>
 		</div>
 		<?php

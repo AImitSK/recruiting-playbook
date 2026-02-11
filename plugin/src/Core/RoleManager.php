@@ -283,63 +283,63 @@ class RoleManager {
 	public static function getCapabilityGroups(): array {
 		return [
 			'applications' => [
-				'label'        => __( 'Bewerbungen', 'recruiting-playbook' ),
+				'label'        => __( 'Applications', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_view_applications'   => __( 'Bewerbungen anzeigen', 'recruiting-playbook' ),
-					'rp_edit_applications'   => __( 'Bewerbungen bearbeiten', 'recruiting-playbook' ),
-					'rp_delete_applications' => __( 'Bewerbungen löschen', 'recruiting-playbook' ),
+					'rp_view_applications'   => __( 'View applications', 'recruiting-playbook' ),
+					'rp_edit_applications'   => __( 'Edit applications', 'recruiting-playbook' ),
+					'rp_delete_applications' => __( 'Delete applications', 'recruiting-playbook' ),
 				],
 			],
 			'notes'        => [
-				'label'        => __( 'Notizen', 'recruiting-playbook' ),
+				'label'        => __( 'Notes', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_view_notes'         => __( 'Notizen anzeigen', 'recruiting-playbook' ),
-					'rp_create_notes'       => __( 'Notizen erstellen', 'recruiting-playbook' ),
-					'rp_edit_own_notes'     => __( 'Eigene Notizen bearbeiten', 'recruiting-playbook' ),
-					'rp_edit_others_notes'  => __( 'Fremde Notizen bearbeiten', 'recruiting-playbook' ),
-					'rp_delete_notes'       => __( 'Notizen löschen', 'recruiting-playbook' ),
+					'rp_view_notes'         => __( 'View notes', 'recruiting-playbook' ),
+					'rp_create_notes'       => __( 'Create notes', 'recruiting-playbook' ),
+					'rp_edit_own_notes'     => __( 'Edit own notes', 'recruiting-playbook' ),
+					'rp_edit_others_notes'  => __( 'Edit others notes', 'recruiting-playbook' ),
+					'rp_delete_notes'       => __( 'Delete notes', 'recruiting-playbook' ),
 				],
 			],
 			'evaluation'   => [
-				'label'        => __( 'Bewertungen & Talent-Pool', 'recruiting-playbook' ),
+				'label'        => __( 'Ratings & Talent Pool', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_rate_applications'  => __( 'Bewerbungen bewerten', 'recruiting-playbook' ),
-					'rp_manage_talent_pool' => __( 'Talent-Pool verwalten', 'recruiting-playbook' ),
-					'rp_view_activity_log'  => __( 'Aktivitätslog einsehen', 'recruiting-playbook' ),
+					'rp_rate_applications'  => __( 'Rate applications', 'recruiting-playbook' ),
+					'rp_manage_talent_pool' => __( 'Manage talent pool', 'recruiting-playbook' ),
+					'rp_view_activity_log'  => __( 'View activity log', 'recruiting-playbook' ),
 				],
 			],
 			'email'        => [
-				'label'        => __( 'E-Mail-System', 'recruiting-playbook' ),
+				'label'        => __( 'Email System', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_read_email_templates'   => __( 'Templates anzeigen', 'recruiting-playbook' ),
-					'rp_create_email_templates' => __( 'Templates erstellen', 'recruiting-playbook' ),
-					'rp_edit_email_templates'   => __( 'Templates bearbeiten', 'recruiting-playbook' ),
-					'rp_delete_email_templates' => __( 'Templates löschen', 'recruiting-playbook' ),
-					'rp_send_emails'            => __( 'E-Mails senden', 'recruiting-playbook' ),
-					'rp_view_email_log'         => __( 'E-Mail-Historie einsehen', 'recruiting-playbook' ),
+					'rp_read_email_templates'   => __( 'View templates', 'recruiting-playbook' ),
+					'rp_create_email_templates' => __( 'Create templates', 'recruiting-playbook' ),
+					'rp_edit_email_templates'   => __( 'Edit templates', 'recruiting-playbook' ),
+					'rp_delete_email_templates' => __( 'Delete templates', 'recruiting-playbook' ),
+					'rp_send_emails'            => __( 'Send emails', 'recruiting-playbook' ),
+					'rp_view_email_log'         => __( 'View email history', 'recruiting-playbook' ),
 				],
 			],
 			'admin'        => [
 				'label'        => __( 'Administration', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_manage_roles' => __( 'Rollen verwalten', 'recruiting-playbook' ),
-					'rp_assign_jobs'  => __( 'Stellen zuweisen', 'recruiting-playbook' ),
+					'rp_manage_roles' => __( 'Manage roles', 'recruiting-playbook' ),
+					'rp_assign_jobs'  => __( 'Assign jobs', 'recruiting-playbook' ),
 				],
 			],
 			'reporting'    => [
 				'label'        => __( 'Reporting & Dashboard', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_view_stats'          => __( 'Statistiken anzeigen', 'recruiting-playbook' ),
-					'rp_view_advanced_stats' => __( 'Erweiterte Statistiken anzeigen', 'recruiting-playbook' ),
-					'rp_export_data'         => __( 'Daten exportieren', 'recruiting-playbook' ),
-					'rp_view_system_status'  => __( 'Systemstatus anzeigen', 'recruiting-playbook' ),
-					'rp_run_cleanup'         => __( 'Bereinigung ausführen', 'recruiting-playbook' ),
+					'rp_view_stats'          => __( 'View statistics', 'recruiting-playbook' ),
+					'rp_view_advanced_stats' => __( 'View advanced statistics', 'recruiting-playbook' ),
+					'rp_export_data'         => __( 'Export data', 'recruiting-playbook' ),
+					'rp_view_system_status'  => __( 'View system status', 'recruiting-playbook' ),
+					'rp_run_cleanup'         => __( 'Run cleanup', 'recruiting-playbook' ),
 				],
 			],
 			'forms'        => [
-				'label'        => __( 'Formular-Builder', 'recruiting-playbook' ),
+				'label'        => __( 'Form Builder', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_manage_forms' => __( 'Formular-Felder & Vorlagen verwalten', 'recruiting-playbook' ),
+					'rp_manage_forms' => __( 'Manage form fields & templates', 'recruiting-playbook' ),
 				],
 			],
 		];

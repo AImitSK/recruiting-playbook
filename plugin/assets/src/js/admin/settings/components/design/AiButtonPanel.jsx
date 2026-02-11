@@ -1,7 +1,7 @@
 /**
  * AiButtonPanel Component
  *
- * Tab: KI-Button - Stil, Preset und Texte.
+ * Tab: AI Button - Style, Preset and Texts.
  *
  * @package RecruitingPlaybook
  */
@@ -34,8 +34,8 @@ const iconOptions = [
  */
 const presetStyles = {
 	gradient: {
-		label: __( 'Farbverlauf', 'recruiting-playbook' ),
-		description: __( 'Lila-Pink Verlauf', 'recruiting-playbook' ),
+		label: __( 'Gradient', 'recruiting-playbook' ),
+		description: __( 'Purple-Pink Gradient', 'recruiting-playbook' ),
 		style: {
 			background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
 			color: '#ffffff',
@@ -43,7 +43,7 @@ const presetStyles = {
 	},
 	outline: {
 		label: __( 'Outline', 'recruiting-playbook' ),
-		description: __( 'Transparenter Hintergrund', 'recruiting-playbook' ),
+		description: __( 'Transparent Background', 'recruiting-playbook' ),
 		style: {
 			background: 'transparent',
 			border: '2px solid #8b5cf6',
@@ -52,7 +52,7 @@ const presetStyles = {
 	},
 	minimal: {
 		label: __( 'Minimal', 'recruiting-playbook' ),
-		description: __( 'Dezent und schlicht', 'recruiting-playbook' ),
+		description: __( 'Subtle and Simple', 'recruiting-playbook' ),
 		style: {
 			background: '#f3f4f6',
 			color: '#374151',
@@ -60,7 +60,7 @@ const presetStyles = {
 	},
 	glow: {
 		label: __( 'Glow', 'recruiting-playbook' ),
-		description: __( 'Mit Leuchteffekt', 'recruiting-playbook' ),
+		description: __( 'With Glow Effect', 'recruiting-playbook' ),
 		style: {
 			background: '#8b5cf6',
 			color: '#ffffff',
@@ -69,7 +69,7 @@ const presetStyles = {
 	},
 	soft: {
 		label: __( 'Soft', 'recruiting-playbook' ),
-		description: __( 'Heller Hintergrund', 'recruiting-playbook' ),
+		description: __( 'Light Background', 'recruiting-playbook' ),
 		style: {
 			background: 'rgba(139, 92, 246, 0.1)',
 			color: '#8b5cf6',
@@ -118,16 +118,16 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 
 	return (
 		<div className="rp-space-y-4">
-			{ /* Card: Stil-Modus */ }
+			{ /* Card: Style Mode */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'KI-Button Stil', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'AI Button Style', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Globaler Stil für alle KI-Buttons im Plugin', 'recruiting-playbook' ) }
+						{ __( 'Global style for all AI buttons in the plugin', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Stil-Modus */ }
+					{ /* Style Mode */ }
 					<RadioGroup
 						value={ styleMode }
 						onValueChange={ ( value ) => onUpdate( 'ai_button_style', value ) }
@@ -141,7 +141,7 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 									{ __( 'Theme', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Primärfarbe', 'recruiting-playbook' ) }
+									{ __( 'Primary Color', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
@@ -151,23 +151,23 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 									{ __( 'Preset', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Vordefiniert', 'recruiting-playbook' ) }
+									{ __( 'Predefined', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
 						<RadioGroupItem value="manual">
 							<div className="rp-text-center">
 								<div className="rp-text-sm rp-font-medium">
-									{ __( 'Manuell', 'recruiting-playbook' ) }
+									{ __( 'Manual', 'recruiting-playbook' ) }
 								</div>
 								<div className="rp-text-xs rp-text-gray-500 rp-mt-1">
-									{ __( 'Eigene Farben', 'recruiting-playbook' ) }
+									{ __( 'Custom Colors', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</RadioGroupItem>
 					</RadioGroup>
 
-					{ /* Vorschau */ }
+					{ /* Preview */ }
 					<div className="rp-p-4 rp-bg-gray-50 rp-rounded-lg rp-flex rp-items-center rp-justify-center">
 						<button
 							type="button"
@@ -178,19 +178,19 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							} }
 						>
 							<IconComponent className="rp-w-4 rp-h-4" />
-							{ settings.ai_match_button_text || __( 'KI-Matching starten', 'recruiting-playbook' ) }
+							{ settings.ai_match_button_text || __( 'Start AI Matching', 'recruiting-playbook' ) }
 						</button>
 					</div>
 				</CardContent>
 			</Card>
 
-			{ /* Card: Preset-Auswahl (nur bei preset) */ }
+			{ /* Card: Preset Selection (only for preset) */ }
 			{ styleMode === 'preset' && (
 				<Card>
 					<CardHeader>
-						<CardTitle>{ __( 'Preset-Auswahl', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ __( 'Preset Selection', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ __( 'Vordefinierte KI-Button Designs', 'recruiting-playbook' ) }
+							{ __( 'Predefined AI Button Designs', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
@@ -211,7 +211,7 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 										style={ presetData.style }
 									>
 										<Sparkles className="rp-w-3 rp-h-3" />
-										KI
+										AI
 									</div>
 									<div className="rp-text-sm rp-font-medium">{ presetData.label }</div>
 									<div className="rp-text-xs rp-text-gray-500">{ presetData.description }</div>
@@ -222,24 +222,24 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 				</Card>
 			) }
 
-			{ /* Card: Manuelle Farben (nur bei manual) */ }
+			{ /* Card: Manual Colors (only for manual) */ }
 			{ styleMode === 'manual' && (
 				<Card>
 					<CardHeader>
-						<CardTitle>{ __( 'Manuelle Farben', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ __( 'Manual Colors', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							{ __( 'Individuelle Farbeinstellungen', 'recruiting-playbook' ) }
+							{ __( 'Individual Color Settings', 'recruiting-playbook' ) }
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="rp-space-y-4">
-						{ /* Farbverlauf */ }
+						{ /* Gradient */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
 							<div>
 								<Label htmlFor="ai_button_use_gradient">
-									{ __( 'Farbverlauf', 'recruiting-playbook' ) }
+									{ __( 'Gradient', 'recruiting-playbook' ) }
 								</Label>
 								<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-									{ __( 'Zwei Farben als Verlauf mischen', 'recruiting-playbook' ) }
+									{ __( 'Mix two colors as gradient', 'recruiting-playbook' ) }
 								</p>
 							</div>
 							<Switch
@@ -249,12 +249,12 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							/>
 						</div>
 
-						{ /* Farbe 1 */ }
+						{ /* Color 1 */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
 							<Label>
 								{ settings.ai_button_use_gradient
-									? __( 'Farbe 1 (Start)', 'recruiting-playbook' )
-									: __( 'Hintergrund', 'recruiting-playbook' )
+									? __( 'Color 1 (Start)', 'recruiting-playbook' )
+									: __( 'Background', 'recruiting-playbook' )
 								}
 							</Label>
 							<ColorPicker
@@ -263,10 +263,10 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							/>
 						</div>
 
-						{ /* Farbe 2 (nur bei Gradient) */ }
+						{ /* Color 2 (only for Gradient) */ }
 						{ settings.ai_button_use_gradient && (
 							<div className="rp-flex rp-items-center rp-justify-between">
-								<Label>{ __( 'Farbe 2 (Ende)', 'recruiting-playbook' ) }</Label>
+								<Label>{ __( 'Color 2 (End)', 'recruiting-playbook' ) }</Label>
 								<ColorPicker
 									value={ settings.ai_button_color_2 || '#ec4899' }
 									onChange={ ( color ) => onUpdate( 'ai_button_color_2', color ) }
@@ -274,9 +274,9 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 							</div>
 						) }
 
-						{ /* Textfarbe */ }
+						{ /* Text Color */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
-							<Label>{ __( 'Textfarbe', 'recruiting-playbook' ) }</Label>
+							<Label>{ __( 'Text Color', 'recruiting-playbook' ) }</Label>
 							<ColorPicker
 								value={ settings.ai_button_text_color || '#ffffff' }
 								onChange={ ( color ) => onUpdate( 'ai_button_text_color', color ) }
@@ -285,7 +285,7 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 
 						{ /* Radius */ }
 						<Slider
-							label={ __( 'Eckenradius', 'recruiting-playbook' ) }
+							label={ __( 'Border Radius', 'recruiting-playbook' ) }
 							value={ settings.ai_button_radius ?? 8 }
 							onChange={ ( value ) => onUpdate( 'ai_button_radius', value ) }
 							min={ 0 }
@@ -297,25 +297,25 @@ export function AiButtonPanel( { settings, onUpdate, computedPrimaryColor } ) {
 				</Card>
 			) }
 
-			{ /* Card: Button-Texte */ }
+			{ /* Card: Button Texts */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'KI-Matching Button', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'AI Matching Button', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Text und Icon für den KI-Matching Button', 'recruiting-playbook' ) }
+						{ __( 'Text and icon for the AI Matching button', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
 					{ /* Text */ }
 					<div>
 						<Label htmlFor="ai_match_button_text" className="rp-mb-1.5 rp-block">
-							{ __( 'Button-Text', 'recruiting-playbook' ) }
+							{ __( 'Button Text', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="ai_match_button_text"
 							value={ settings.ai_match_button_text || '' }
 							onChange={ ( e ) => onUpdate( 'ai_match_button_text', e.target.value ) }
-							placeholder={ __( 'KI-Matching starten', 'recruiting-playbook' ) }
+							placeholder={ __( 'Start AI Matching', 'recruiting-playbook' ) }
 						/>
 					</div>
 

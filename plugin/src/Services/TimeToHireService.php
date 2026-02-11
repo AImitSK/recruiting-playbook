@@ -241,7 +241,7 @@ class TimeToHireService {
 			$job = get_post( $job_id );
 			$result[] = [
 				'job_id'       => $job_id,
-				'job_title'    => $job ? $job->post_title : __( 'Unbekannt', 'recruiting-playbook' ),
+				'job_title'    => $job ? $job->post_title : __( 'Unknown', 'recruiting-playbook' ),
 				'average_days' => (int) round( array_sum( $data['days'] ) / count( $data['days'] ) ),
 				'hires'        => $data['hires'],
 			];

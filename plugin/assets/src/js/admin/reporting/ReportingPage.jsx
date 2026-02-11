@@ -1,7 +1,7 @@
 /**
  * Reporting Page Component
  *
- * Hauptseite für Berichte und Statistiken
+ * Main page for reports and statistics
  *
  * @package RecruitingPlaybook
  */
@@ -41,18 +41,18 @@ export function ReportingPage() {
 	const [ period, setPeriod ] = useState( '30days' );
 	const [ activeTab, setActiveTab ] = useState( 'overview' );
 
-	// Daten aus window laden
+	// Load data from window
 	const data = window.rpReportingData || {};
 	const { isPro, canViewStats, canViewAdvanced, canExport, upgradeUrl, logoUrl, i18n } = data;
 
-	// Hooks für Statistiken
+	// Hooks for statistics
 	const { overview, loading: overviewLoading, error: overviewError } = useStats( period );
 	const { trends, loading: trendsLoading } = useTrends( period );
 	const { data: timeToHireData, loading: tthLoading } = useTimeToHire( period );
 	const { data: conversionData, loading: conversionLoading } = useConversion( period );
 	const { exportApplications, exportStats, loading: exportLoading } = useExport();
 
-	// Berechtigungsprüfung
+	// Permission check
 	if ( ! canViewStats ) {
 		return (
 			<div className="rp-admin" style={ { padding: '20px 0', maxWidth: '1200px' } }>
@@ -64,14 +64,14 @@ export function ReportingPage() {
 				>
 					<Lock style={ { width: '1rem', height: '1rem', color: '#ef4444' } } />
 					<AlertDescription style={ { color: '#991b1b' } }>
-						{ __( 'Sie haben keine Berechtigung, diese Seite anzuzeigen.', 'recruiting-playbook' ) }
+						{ __( 'You do not have permission to view this page.', 'recruiting-playbook' ) }
 					</AlertDescription>
 				</Alert>
 			</div>
 		);
 	}
 
-	// Pro-Feature Upgrade Banner
+	// Pro feature upgrade banner
 	const ProUpgradeBanner = ( { feature } ) => (
 		<div
 			style={ {
@@ -84,10 +84,10 @@ export function ReportingPage() {
 		>
 			<Lock style={ { width: '2rem', height: '2rem', color: '#ca8a04', marginBottom: '0.5rem' } } />
 			<h3 style={ { marginBottom: '0.5rem', color: '#854d0e' } }>
-				{ i18n.proFeature || 'Pro-Feature' }
+				{ i18n.proFeature || 'Pro Feature' }
 			</h3>
 			<p style={ { color: '#a16207', marginBottom: '1rem' } }>
-				{ feature } { i18n.proRequired || 'erfordert die Pro-Version.' }
+				{ feature } { i18n.proRequired || 'requires the Pro version.' }
 			</p>
 			<a
 				href={ upgradeUrl }
@@ -101,7 +101,7 @@ export function ReportingPage() {
 					fontWeight: 500,
 				} }
 			>
-				{ i18n.upgradeToPro || 'Auf Pro upgraden' }
+				{ i18n.upgradeToPro || 'Upgrade to Pro' }
 			</a>
 		</div>
 	);
@@ -126,7 +126,7 @@ export function ReportingPage() {
 						/>
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ i18n.pageTitle || 'Berichte & Statistiken' }
+						{ i18n.pageTitle || 'Reports & Statistics' }
 					</h1>
 				</div>
 
@@ -140,7 +140,7 @@ export function ReportingPage() {
 						} }
 					>
 						<AlertDescription style={ { color: '#991b1b' } }>
-							{ i18n.error || 'Fehler beim Laden der Daten' }: { overviewError }
+							{ i18n.error || 'Error loading data' }: { overviewError }
 						</AlertDescription>
 					</Alert>
 				) }
@@ -155,45 +155,45 @@ export function ReportingPage() {
 					} }
 				>
 					<StatsCard
-						title="Bewerbungen"
+						title="Applications"
 						value={ `${ overview?.applications?.total || 0 } / ${ overview?.applications?.new || 0 }` }
-						tooltip="Gesamt / Neue Bewerbungen im gewählten Zeitraum"
+						tooltip="Total / New applications in selected period"
 						loading={ overviewLoading }
 						icon={ <Users style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title="Aktive Stellen"
+						title="Active Jobs"
 						value={ overview?.jobs?.active || 0 }
-						tooltip="Anzahl der veröffentlichten Stellenanzeigen"
+						tooltip="Number of published job listings"
 						loading={ overviewLoading }
 						icon={ <Briefcase style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title="Eingestellt"
+						title="Hired"
 						value={ overview?.applications?.hired || 0 }
-						tooltip="Erfolgreich eingestellte Bewerber im Zeitraum"
+						tooltip="Successfully hired candidates in period"
 						loading={ overviewLoading }
 						icon={ <TrendingUp style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title="Ø Time-to-Hire"
+						title="Avg Time-to-Hire"
 						value={ overview?.time_to_hire?.average_days || '-' }
-						suffix="Tage"
-						tooltip="Durchschnittliche Tage von Bewerbung bis Einstellung"
+						suffix="days"
+						tooltip="Average days from application to hire"
 						loading={ overviewLoading }
 						icon={ <Clock style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 					<StatsCard
-						title="Conversion-Rate"
+						title="Conversion Rate"
 						value={ overview?.conversion_rate?.rate?.toFixed( 1 ) || '-' }
 						suffix="%"
-						tooltip="Verhältnis von Stellenaufrufen zu Bewerbungen"
+						tooltip="Ratio of job views to applications"
 						loading={ overviewLoading }
 						icon={ <BarChart3 style={ { width: '1.25rem', height: '1.25rem' } } /> }
 					/>
 				</div>
 
-				{ /* Tabs für Detailansichten */ }
+				{ /* Tabs for detail views */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<div
 						style={ {
@@ -204,13 +204,13 @@ export function ReportingPage() {
 					>
 						<TabsList>
 							<TabsTrigger value="overview">
-								{ i18n.tabOverview || 'Übersicht' }
+								{ i18n.tabOverview || 'Overview' }
 							</TabsTrigger>
 							<TabsTrigger value="trends">
 								{ i18n.tabTrends || 'Trends' }
 							</TabsTrigger>
 							<TabsTrigger value="jobs">
-								{ i18n.tabJobs || 'Stellen' }
+								{ i18n.tabJobs || 'Jobs' }
 							</TabsTrigger>
 							<TabsTrigger value="conversion">
 								{ i18n.conversionFunnel || 'Conversion' }
@@ -234,7 +234,7 @@ export function ReportingPage() {
 						</div>
 					</div>
 
-					{ /* Übersicht Tab */ }
+					{ /* Overview Tab */ }
 					<TabsContent value="overview" style={ { marginTop: '1rem' } }>
 						<div
 							style={ {
@@ -243,20 +243,20 @@ export function ReportingPage() {
 								gap: '1.5rem',
 							} }
 						>
-							{ /* Bewerbungen im Zeitverlauf */ }
+							{ /* Applications over time */ }
 							<TrendChart
-								title={ i18n.applicationsOverTime || 'Bewerbungen im Zeitverlauf' }
+								title={ i18n.applicationsOverTime || 'Applications Over Time' }
 								data={ trends?.data || [] }
 								series={ [
-									{ key: 'total', name: 'Bewerbungen', color: '#1d71b8' },
+									{ key: 'total', name: 'Applications', color: '#1d71b8' },
 								] }
 								loading={ trendsLoading }
 							/>
 
-							{ /* Top-Stellen */ }
+							{ /* Top Jobs */ }
 							<JobStatsTable
-								title={ i18n.topJobs || 'Top-Stellen' }
-								description="Stellen nach Bewerbungsanzahl"
+								title={ i18n.topJobs || 'Top Jobs' }
+								description="Jobs by application count"
 								jobs={ overview?.top_jobs || [] }
 								loading={ overviewLoading }
 								limit={ 5 }
@@ -274,11 +274,11 @@ export function ReportingPage() {
 							} }
 						>
 							<TrendChart
-								title={ i18n.applicationsOverTime || 'Bewerbungen im Zeitverlauf' }
+								title={ i18n.applicationsOverTime || 'Applications Over Time' }
 								data={ trends?.data || [] }
 								series={ [
-									{ key: 'total', name: 'Gesamt', color: '#1d71b8' },
-									{ key: 'new', name: 'Neu', color: '#2fac66' },
+									{ key: 'total', name: 'Total', color: '#1d71b8' },
+									{ key: 'new', name: 'New', color: '#2fac66' },
 								] }
 								loading={ trendsLoading }
 								height={ 350 }
@@ -289,14 +289,14 @@ export function ReportingPage() {
 									title={ i18n.timeToHireTrend || 'Time-to-Hire Trend' }
 									data={ timeToHireData?.trend || [] }
 									series={ [
-										{ key: 'average_days', name: 'Ø Tage', color: '#f59e0b' },
+										{ key: 'average_days', name: 'Avg Days', color: '#f59e0b' },
 									] }
 									type="line"
 									loading={ tthLoading }
 									height={ 350 }
 								/>
 							) : (
-								<ProUpgradeBanner feature={ i18n.advancedReporting || 'Erweiterte Berichte' } />
+								<ProUpgradeBanner feature={ i18n.advancedReporting || 'Advanced Reports' } />
 							) }
 						</div>
 					</TabsContent>
@@ -304,8 +304,8 @@ export function ReportingPage() {
 					{ /* Jobs Tab */ }
 					<TabsContent value="jobs" style={ { marginTop: '1rem' } }>
 						<JobStatsTable
-							title={ i18n.topJobs || 'Stellen-Übersicht' }
-							description="Alle aktiven Stellen mit Bewerbungs-Statistiken"
+							title={ i18n.topJobs || 'Job Overview' }
+							description="All active jobs with application statistics"
 							jobs={ overview?.job_stats || overview?.top_jobs || [] }
 							loading={ overviewLoading }
 							limit={ 20 }
@@ -323,22 +323,22 @@ export function ReportingPage() {
 								} }
 							>
 								<ConversionFunnel
-									title={ i18n.conversionFunnel || 'Conversion-Funnel' }
-									description="Vom Stellenaufruf zur Bewerbung"
+									title={ i18n.conversionFunnel || 'Conversion Funnel' }
+									description="From job view to application"
 									data={ conversionData?.funnel || {} }
 									loading={ conversionLoading }
 								/>
 
 								<JobStatsTable
-									title="Top-konvertierende Stellen"
-									description="Stellen mit höchster Conversion-Rate"
+									title="Top Converting Jobs"
+									description="Jobs with highest conversion rate"
 									jobs={ conversionData?.top_converting_jobs || [] }
 									loading={ conversionLoading }
 									limit={ 5 }
 								/>
 							</div>
 						) : (
-							<ProUpgradeBanner feature={ i18n.conversionFunnel || 'Conversion-Analyse' } />
+							<ProUpgradeBanner feature={ i18n.conversionFunnel || 'Conversion Analysis' } />
 						) }
 					</TabsContent>
 				</Tabs>

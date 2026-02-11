@@ -1,5 +1,5 @@
 /**
- * Kanban-Karte (Bewerber)
+ * Kanban Card (Applicant)
  *
  * @package RecruitingPlaybook
  */
@@ -39,41 +39,41 @@ export function KanbanCard( {
 		opacity: isDragging ? 0.5 : 1,
 	};
 
-	const fullName = `${ application.first_name || '' } ${ application.last_name || '' }`.trim() || __( 'Unbekannt', 'recruiting-playbook' );
+	const fullName = `${ application.first_name || '' } ${ application.last_name || '' }`.trim() || __( 'Unknown', 'recruiting-playbook' );
 	const initials = getInitials( application.first_name, application.last_name );
 	const daysAgo = getDaysAgo( application.created_at );
 	const i18n = window.rpKanban?.i18n || {};
 	const detailUrl = window.rpKanban?.detailUrl || '';
 
-	// Aria-Label für die Karte
-	const jobTitle = application.job_title || __( 'Keine Stelle', 'recruiting-playbook' );
+	// Aria label for the card
+	const jobTitle = application.job_title || __( 'No job', 'recruiting-playbook' );
 	const dateText = formatDaysAgo( daysAgo, i18n );
-	const positionText = `${ index + 1 } von ${ totalInColumn }`;
+	const positionText = `${ index + 1 } of ${ totalInColumn }`;
 	const documentsText = application.documents_count > 0
-		? `, ${ application.documents_count } ${ application.documents_count === 1 ? 'Dokument' : 'Dokumente' }`
+		? `, ${ application.documents_count } ${ application.documents_count === 1 ? 'document' : 'documents' }`
 		: '';
 
-	const cardAriaLabel = `${ fullName }, ${ jobTitle }, ${ dateText }${ documentsText }. Position ${ positionText } in ${ columnLabel }. Drücke Leertaste zum Ziehen.`;
+	const cardAriaLabel = `${ fullName }, ${ jobTitle }, ${ dateText }${ documentsText }. Position ${ positionText } in ${ columnLabel }. Press space to drag.`;
 
 	const handleClick = ( e ) => {
-		// Nicht navigieren wenn wir draggen
+		// Don't navigate while dragging
 		if ( isDragging || isDraggingOverlay ) {
 			return;
 		}
 
-		// Prüfen ob es ein Drag-Event war
+		// Check if it was a drag event
 		if ( e.defaultPrevented ) {
 			return;
 		}
 
-		// Detail-Seite öffnen
+		// Open detail page
 		if ( detailUrl ) {
 			window.location.href = `${ detailUrl }${ application.id }`;
 		}
 	};
 
 	const handleKeyDown = ( e ) => {
-		// Enter öffnet Details (nur wenn nicht am Draggen)
+		// Enter opens details (only when not dragging)
 		if ( e.key === 'Enter' && ! isDragging && ! e.defaultPrevented ) {
 			handleClick( e );
 		}
@@ -121,19 +121,19 @@ export function KanbanCard( {
 				</span>
 			</div>
 
-			{ /* Footer mit Badges */ }
+			{ /* Footer with badges */ }
 			<div className="rp-kanban-card-footer">
-				{ /* Dokumente */ }
+				{ /* Documents */ }
 				{ application.documents_count > 0 && (
-					<span className="rp-kanban-card-badge" title={ `${ application.documents_count } Dokumente` }>
+					<span className="rp-kanban-card-badge" title={ `${ application.documents_count } documents` }>
 						<span className="dashicons dashicons-media-document" aria-hidden="true" />
 						{ application.documents_count }
 					</span>
 				) }
 
-				{ /* Notizen */ }
+				{ /* Notes */ }
 				{ application.notes_count > 0 && (
-					<span className="rp-kanban-card-badge" title={ `${ application.notes_count } Notizen` }>
+					<span className="rp-kanban-card-badge" title={ `${ application.notes_count } notes` }>
 						<span className="dashicons dashicons-edit" aria-hidden="true" />
 						{ application.notes_count }
 					</span>
@@ -156,11 +156,11 @@ export function KanbanCard( {
 }
 
 /**
- * Initialen aus Vor- und Nachname generieren
+ * Generate initials from first and last name
  *
- * @param {string} firstName Vorname
- * @param {string} lastName  Nachname
- * @return {string} Initialen
+ * @param {string} firstName First name
+ * @param {string} lastName  Last name
+ * @return {string} Initials
  */
 function getInitials( firstName, lastName ) {
 	const first = ( firstName || '' ).charAt( 0 ).toUpperCase();
@@ -169,10 +169,10 @@ function getInitials( firstName, lastName ) {
 }
 
 /**
- * Tage seit Erstellung berechnen
+ * Calculate days since creation
  *
- * @param {string} dateString Datum als String
- * @return {number} Anzahl Tage
+ * @param {string} dateString Date as string
+ * @return {number} Number of days
  */
 function getDaysAgo( dateString ) {
 	if ( ! dateString ) {
@@ -186,28 +186,28 @@ function getDaysAgo( dateString ) {
 }
 
 /**
- * Tage formatieren
+ * Format days
  *
- * @param {number} days Anzahl Tage
- * @param {Object} i18n Übersetzungen
- * @return {string} Formatierter String
+ * @param {number} days Number of days
+ * @param {Object} i18n Translations
+ * @return {string} Formatted string
  */
 function formatDaysAgo( days, i18n ) {
 	if ( days === 0 ) {
-		return i18n.today || __( 'Heute', 'recruiting-playbook' );
+		return i18n.today || __( 'Today', 'recruiting-playbook' );
 	}
 	if ( days === 1 ) {
-		return i18n.yesterday || __( 'Gestern', 'recruiting-playbook' );
+		return i18n.yesterday || __( 'Yesterday', 'recruiting-playbook' );
 	}
-	const template = i18n.daysAgo || __( 'vor %d Tagen', 'recruiting-playbook' );
+	const template = i18n.daysAgo || __( '%d days ago', 'recruiting-playbook' );
 	return template.replace( '%d', days );
 }
 
 /**
- * Avatar-Farbe basierend auf ID generieren
+ * Generate avatar color based on ID
  *
- * @param {number} id Bewerbungs-ID
- * @return {string} Hex-Farbe
+ * @param {number} id Application ID
+ * @return {string} Hex color
  */
 function getAvatarColor( id ) {
 	const colors = [

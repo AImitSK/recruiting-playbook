@@ -33,7 +33,7 @@ class HtmlField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'HTML / Textblock', 'recruiting-playbook' );
+		return __( 'HTML / Text Block', 'recruiting-playbook' );
 	}
 
 	/**

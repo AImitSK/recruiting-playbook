@@ -130,8 +130,8 @@ class FormRenderService {
 				<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 				</svg>
-				<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2">' . esc_html__( 'Bewerbung erfolgreich gesendet!', 'recruiting-playbook' ) . '</h3>
-				<p class="rp-text-gray-600">' . esc_html__( 'Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigung per E-Mail.', 'recruiting-playbook' ) . '</p>
+				<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2">' . esc_html__( 'Application successfully submitted!', 'recruiting-playbook' ) . '</h3>
+				<p class="rp-text-gray-600">' . esc_html__( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' ) . '</p>
 			</div>
 		</template>';
 	}
@@ -156,7 +156,7 @@ class FormRenderService {
 	private function renderProgressBar( int $total_steps ): string {
 		return '<div class="rp-mb-8">
 			<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-				<span>' . esc_html__( 'Schritt', 'recruiting-playbook' ) . ' <span x-text="step"></span> ' . esc_html__( 'von', 'recruiting-playbook' ) . ' <span x-text="totalSteps"></span></span>
+				<span>' . esc_html__( 'Step', 'recruiting-playbook' ) . ' <span x-text="step"></span> ' . esc_html__( 'of', 'recruiting-playbook' ) . ' <span x-text="totalSteps"></span></span>
 				<span x-text="progress + \'%\'"></span>
 			</div>
 			<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
@@ -260,7 +260,7 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderFileUploadSystemField( array $settings ): string {
-		$label         = $settings['label'] ?? __( 'Bewerbungsunterlagen', 'recruiting-playbook' );
+		$label         = $settings['label'] ?? __( 'Application Documents', 'recruiting-playbook' );
 		$help_text     = $settings['help_text'] ?? '';
 		$allowed_types = $settings['allowed_types'] ?? [ 'pdf', 'doc', 'docx' ];
 		$max_file_size = $settings['max_file_size'] ?? 10;
@@ -279,9 +279,9 @@ class FormRenderService {
 			'maxFiles'         => $max_files,
 			'maxSize'          => $max_file_size,
 			'allowedTypes'     => $allowed_types,
-			'errorMaxFiles'    => sprintf( __( 'Maximal %d Dateien erlaubt', 'recruiting-playbook' ), $max_files ),
-			'errorInvalidType' => sprintf( __( 'Ungültiger Dateityp. Erlaubt: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ),
-			'errorTooLarge'    => sprintf( __( 'Datei zu groß (max. %d MB)', 'recruiting-playbook' ), $max_file_size ),
+			'errorMaxFiles'    => sprintf( __( 'Maximum %d files allowed', 'recruiting-playbook' ), $max_files ),
+			'errorInvalidType' => sprintf( __( 'Invalid file type. Allowed: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ),
+			'errorTooLarge'    => sprintf( __( 'File too large (max. %d MB)', 'recruiting-playbook' ), $max_file_size ),
 		];
 
 		ob_start();
@@ -316,10 +316,10 @@ class FormRenderService {
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
 							</svg>
 							<p class="rp-text-gray-600 rp-mb-2">
-								<?php esc_html_e( 'Datei hierher ziehen oder', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Drag file here or', 'recruiting-playbook' ); ?>
 							</p>
 							<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-								<?php esc_html_e( 'Datei auswählen', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Select file', 'recruiting-playbook' ); ?>
 								<input
 									type="file"
 									@change="handleSelect($event)"
@@ -332,7 +332,7 @@ class FormRenderService {
 								<?php
 								printf(
 									/* translators: 1: allowed types, 2: max file size */
-									esc_html__( '%1$s (max. %2$d MB pro Datei)', 'recruiting-playbook' ),
+									esc_html__( '%1$s (max. %2$d MB per file)', 'recruiting-playbook' ),
 									esc_html( strtoupper( implode( ', ', $allowed_types ) ) ),
 									esc_html( $max_file_size )
 								);
@@ -341,7 +341,7 @@ class FormRenderService {
 								<?php
 								printf(
 									/* translators: %d: max number of files */
-									esc_html__( 'Maximal %d Dateien', 'recruiting-playbook' ),
+									esc_html__( 'Maximum %d files', 'recruiting-playbook' ),
 									esc_html( $max_files )
 								);
 								?>
@@ -367,7 +367,7 @@ class FormRenderService {
 										type="button"
 										@click="removeFile(index)"
 										class="rp-p-1 rp-text-error hover:rp-bg-error-light rp-rounded"
-										title="<?php esc_attr_e( 'Datei entfernen', 'recruiting-playbook' ); ?>"
+										title="<?php esc_attr_e( 'Remove file', 'recruiting-playbook' ); ?>"
 									>
 										<svg class="rp-w-4 rp-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -377,7 +377,7 @@ class FormRenderService {
 							</template>
 
 							<label class="rp-inline-block rp-text-sm rp-text-primary hover:rp-text-primary-hover rp-cursor-pointer rp-mt-2">
-								+ <?php esc_html_e( 'Weitere Datei hinzufügen', 'recruiting-playbook' ); ?>
+								+ <?php esc_html_e( 'Add another file', 'recruiting-playbook' ); ?>
 								<input
 									type="file"
 									@change="handleSelect($event)"
@@ -407,7 +407,7 @@ class FormRenderService {
 	 */
 	private function renderSummarySystemField( array $settings, array $config, array $field_definitions ): string {
 		// Unterstütze beide Key-Varianten für Abwärtskompatibilität.
-		$label             = $settings['title'] ?? $settings['label'] ?? __( 'Ihre Angaben im Überblick', 'recruiting-playbook' );
+		$label             = $settings['title'] ?? $settings['label'] ?? __( 'Your Information at a Glance', 'recruiting-playbook' );
 		$show_header       = $settings['show_header'] ?? true;
 		$show_step_titles  = $settings['show_step_titles'] ?? true;
 		$show_edit_buttons = $settings['show_edit_buttons'] ?? true;
@@ -424,10 +424,10 @@ class FormRenderService {
 	 */
 	private function renderPrivacyConsentSystemField( array $settings ): string {
 		// Unterstütze beide Key-Varianten für Abwärtskompatibilität.
-		$consent_text      = $settings['checkbox_text'] ?? $settings['consent_text'] ?? __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' );
-		$privacy_link_text = $settings['link_text'] ?? $settings['privacy_link_text'] ?? __( 'Datenschutzerklärung', 'recruiting-playbook' );
+		$consent_text      = $settings['checkbox_text'] ?? $settings['consent_text'] ?? __( 'I have read the {datenschutz_link} and agree to the processing of my data.', 'recruiting-playbook' );
+		$privacy_link_text = $settings['link_text'] ?? $settings['privacy_link_text'] ?? __( 'Privacy Policy', 'recruiting-playbook' );
 		$privacy_url       = $settings['privacy_url'] ?? get_privacy_policy_url();
-		$error_message     = $settings['error_message'] ?? __( 'Sie müssen der Datenschutzerklärung zustimmen.', 'recruiting-playbook' );
+		$error_message     = $settings['error_message'] ?? __( 'You must agree to the Privacy Policy.', 'recruiting-playbook' );
 		$help_text         = $settings['help_text'] ?? '';
 
 		// SECURITY FIX: Text vor und nach dem Platzhalter separat escapen.
@@ -558,7 +558,7 @@ class FormRenderService {
 		bool $show_edit_buttons = true,
 		string $help_text = ''
 	): string {
-		$label = $label ?: __( 'Ihre Angaben', 'recruiting-playbook' );
+		$label = $label ?: __( 'Your Information', 'recruiting-playbook' );
 
 		$output = '<div class="rp-summary rp-bg-gray-50 rp-rounded-lg rp-p-4 rp-mb-6">';
 
@@ -643,7 +643,7 @@ class FormRenderService {
 	private function renderUploadedFilesSummary( array $config ): string {
 		// Prüfen ob file_upload System-Feld in irgendeinem Step vorhanden ist.
 		$has_file_upload   = false;
-		$file_upload_label = __( 'Bewerbungsunterlagen', 'recruiting-playbook' );
+		$file_upload_label = __( 'Application Documents', 'recruiting-playbook' );
 
 		foreach ( $config['steps'] as $step ) {
 			if ( empty( $step['system_fields'] ) ) {
@@ -754,7 +754,7 @@ class FormRenderService {
 		// Zurück-Button (nicht auf Step 1).
 		$output .= sprintf(
 			'<button type="button" x-show="step > 1" x-on:click="prevStep" class="wp-element-button is-style-outline">%s</button>',
-			esc_html__( 'Zurück', 'recruiting-playbook' )
+			esc_html__( 'Back', 'recruiting-playbook' )
 		);
 
 		// Spacer für Step 1.
@@ -763,7 +763,7 @@ class FormRenderService {
 		// Weiter-Button (nicht auf letztem Step).
 		$output .= sprintf(
 			'<button type="button" x-show="step < totalSteps" x-on:click="nextStep" class="wp-element-button">%s</button>',
-			esc_html__( 'Weiter', 'recruiting-playbook' )
+			esc_html__( 'Next', 'recruiting-playbook' )
 		);
 
 		// Absenden-Button (nur auf letztem Step).
@@ -772,8 +772,8 @@ class FormRenderService {
 				<span x-show="!loading">%s</span>
 				<span x-show="loading">%s</span>
 			</button>',
-			esc_html__( 'Bewerbung absenden', 'recruiting-playbook' ),
-			esc_html__( 'Wird gesendet...', 'recruiting-playbook' )
+			esc_html__( 'Submit application', 'recruiting-playbook' ),
+			esc_html__( 'Submitting...', 'recruiting-playbook' )
 		);
 
 		$output .= '</div>';
@@ -970,13 +970,13 @@ class FormRenderService {
 	 */
 	private function getI18nStrings(): array {
 		return [
-			'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-			'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-			'invalidPhone'    => __( 'Bitte geben Sie eine gültige Telefonnummer ein', 'recruiting-playbook' ),
-			'minLength'       => __( 'Mindestens %d Zeichen erforderlich', 'recruiting-playbook' ),
-			'maxLength'       => __( 'Maximal %d Zeichen erlaubt', 'recruiting-playbook' ),
-			'fileTooLarge'    => __( 'Die Datei ist zu groß (max. %d MB)', 'recruiting-playbook' ),
-			'invalidFileType' => __( 'Dieser Dateityp ist nicht erlaubt', 'recruiting-playbook' ),
+			'required'        => __( 'This field is required', 'recruiting-playbook' ),
+			'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+			'invalidPhone'    => __( 'Please enter a valid phone number', 'recruiting-playbook' ),
+			'minLength'       => __( 'At least %d characters required', 'recruiting-playbook' ),
+			'maxLength'       => __( 'Maximum %d characters allowed', 'recruiting-playbook' ),
+			'fileTooLarge'    => __( 'File is too large (max. %d MB)', 'recruiting-playbook' ),
+			'invalidFileType' => __( 'This file type is not allowed', 'recruiting-playbook' ),
 		];
 	}
 
@@ -989,7 +989,7 @@ class FormRenderService {
 	private function renderFallbackForm( int $job_id ): string {
 		return sprintf(
 			'<div class="rp-form-error">%s</div>',
-			esc_html__( 'Formular konnte nicht geladen werden. Bitte kontaktieren Sie den Administrator.', 'recruiting-playbook' )
+			esc_html__( 'Form could not be loaded. Please contact the administrator.', 'recruiting-playbook' )
 		);
 	}
 

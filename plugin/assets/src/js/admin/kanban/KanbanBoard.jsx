@@ -1,5 +1,5 @@
 /**
- * Kanban-Board Hauptkomponente
+ * Kanban Board Main Component
  *
  * @package RecruitingPlaybook
  */
@@ -23,17 +23,17 @@ import { KanbanCard } from './KanbanCard';
 import { useApplications } from './hooks/useApplications';
 
 /**
- * Benutzerdefinierte Kollisionserkennung
- * Prüft zuerst Pointer-Position, dann Rechteck-Überschneidung
+ * Custom collision detection
+ * Checks pointer position first, then rectangle intersection
  */
 function customCollisionDetection( args ) {
-	// Erst prüfen ob Pointer innerhalb eines Elements ist
+	// First check if pointer is within an element
 	const pointerCollisions = pointerWithin( args );
 	if ( pointerCollisions.length > 0 ) {
 		return pointerCollisions;
 	}
 
-	// Fallback auf Rechteck-Überschneidung
+	// Fallback to rectangle intersection
 	return rectIntersection( args );
 }
 
@@ -50,10 +50,10 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 
 	const [ activeId, setActiveId ] = useState( null );
 
-	// Ref für Live-Region (Screen Reader Ankündigungen)
+	// Ref for live region (screen reader announcements)
 	const liveRegionRef = useRef( null );
 
-	// Sensoren für Drag-and-Drop mit Keyboard-Support
+	// Sensors for drag-and-drop with keyboard support
 	const sensors = useSensors(
 		useSensor( PointerSensor, {
 			activationConstraint: {
@@ -66,14 +66,14 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 	);
 
 	/**
-	 * Screen Reader Ankündigung
+	 * Screen reader announcement
 	 *
-	 * @param {string} message Nachricht für Screen Reader
+	 * @param {string} message Message for screen reader
 	 */
 	const announce = useCallback( ( message ) => {
 		if ( liveRegionRef.current ) {
 			liveRegionRef.current.textContent = message;
-			// Nach kurzer Zeit leeren für nächste Ankündigung
+			// Clear after short time for next announcement
 			setTimeout( () => {
 				if ( liveRegionRef.current ) {
 					liveRegionRef.current.textContent = '';
@@ -89,7 +89,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 		}
 	}, [ refreshTrigger, refetch ] );
 
-	// Gefilterte Bewerbungen
+	// Filtered applications
 	const filteredApplications = applications.filter( ( app ) => {
 		if ( jobFilter && app.job_id !== parseInt( jobFilter, 10 ) ) {
 			return false;
@@ -105,7 +105,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 		return true;
 	} );
 
-	// Nach Status gruppieren
+	// Group by status
 	const statuses = window.rpKanban?.statuses || [];
 	const columns = useMemo( () =>
 		statuses.map( ( status ) => ( {
@@ -117,7 +117,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 		[ statuses, filteredApplications ]
 	);
 
-	// Helper: Finde Spalte für eine Karten-ID
+	// Helper: Find column for a card ID
 	const findColumnByCardId = useCallback(
 		( cardId ) => {
 			for ( const column of columns ) {
@@ -130,12 +130,12 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 		[ columns ]
 	);
 
-	// Aktive Karte für DragOverlay
+	// Active card for DragOverlay
 	const activeApplication = activeId
 		? applications.find( ( app ) => app.id === activeId )
 		: null;
 
-	// Ankündigung nach erfolgreichem Drop
+	// Announcement after successful drop
 	const announceDropResult = useCallback(
 		( app, targetColumn, isSameColumn ) => {
 			const name = `${ app.first_name } ${ app.last_name }`.trim();
@@ -143,11 +143,11 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 
 			if ( isSameColumn ) {
 				announce(
-					__( `${ name } neu sortiert in ${ columnLabel }.`, 'recruiting-playbook' )
+					__( `${ name } reordered in ${ columnLabel }.`, 'recruiting-playbook' )
 				);
 			} else {
 				announce(
-					__( `${ name } verschoben nach ${ columnLabel }.`, 'recruiting-playbook' )
+					__( `${ name } moved to ${ columnLabel }.`, 'recruiting-playbook' )
 				);
 			}
 		},
@@ -159,14 +159,14 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 		const { active } = event;
 		setActiveId( active.id );
 
-		// Screen Reader Ankündigung
+		// Screen reader announcement
 		const app = applications.find( ( a ) => a.id === active.id );
 		if ( app ) {
 			const name = `${ app.first_name } ${ app.last_name }`.trim();
 			const column = columns.find( ( c ) => c.id === app.status );
 			const columnLabel = column?.label || app.status;
 			announce(
-				__( `${ name } aufgenommen aus ${ columnLabel }. Nutze Pfeiltasten zum Verschieben.`, 'recruiting-playbook' )
+				__( `${ name } picked up from ${ columnLabel }. Use arrow keys to move.`, 'recruiting-playbook' )
 			);
 		}
 	}, [ applications, columns, announce ] );
@@ -184,7 +184,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 			const activeId = active.id;
 			const overId = over.id;
 
-			// Aktive Karte und deren Spalte finden
+			// Find active card and its column
 			const activeApp = applications.find( ( a ) => a.id === activeId );
 			if ( ! activeApp ) {
 				return;
@@ -195,22 +195,22 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 				return;
 			}
 
-			// Ziel-Status ermitteln
+			// Determine target status
 			let targetStatus = null;
 			let targetColumn = null;
 			let isOverCard = false;
 
 			if ( over.data?.current?.type === 'column' ) {
-				// Über einer Spalte
+				// Over a column
 				targetStatus = over.data.current.status;
 				targetColumn = columns.find( ( c ) => c.id === targetStatus );
 			} else if ( over.data?.current?.type === 'card' ) {
-				// Über einer Karte
+				// Over a card
 				targetStatus = over.data.current.status;
 				targetColumn = columns.find( ( c ) => c.id === targetStatus );
 				isOverCard = true;
 			} else {
-				// Fallback: overId könnte der Status sein
+				// Fallback: overId might be the status
 				const statusIds = statuses.map( ( s ) => s.id );
 				if ( statusIds.includes( overId ) ) {
 					targetStatus = overId;
@@ -224,7 +224,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 
 			const sourceStatus = activeApp.status;
 
-			// Fall 1: Gleiche Spalte - Sortierung ändern
+			// Case 1: Same column - change sorting
 			if ( sourceStatus === targetStatus && isOverCard && activeId !== overId ) {
 				await reorderInColumn(
 					sourceStatus,
@@ -236,19 +236,19 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 				return;
 			}
 
-			// Fall 2: Andere Spalte - Karte verschieben
+			// Case 2: Different column - move card
 			if ( sourceStatus !== targetStatus ) {
-				// Position in Zielspalte berechnen
+				// Calculate position in target column
 				let targetPosition = 0;
 
 				if ( isOverCard ) {
-					// Position der Zielkarte finden
+					// Find position of target card
 					const overIndex = targetColumn.applications.findIndex(
 						( app ) => app.id === overId
 					);
 					targetPosition = overIndex >= 0 ? overIndex : targetColumn.applications.length;
 				} else {
-					// Am Ende der Spalte einfügen
+					// Insert at end of column
 					targetPosition = targetColumn.applications.length;
 				}
 
@@ -267,7 +267,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 	// Drag-Cancel Handler
 	const handleDragCancel = useCallback( () => {
 		setActiveId( null );
-		announce( __( 'Verschieben abgebrochen.', 'recruiting-playbook' ) );
+		announce( __( 'Move cancelled.', 'recruiting-playbook' ) );
 	}, [ announce ] );
 
 	if ( loading ) {
@@ -279,7 +279,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 				aria-busy="true"
 			>
 				<span className="spinner is-active" aria-hidden="true"></span>
-				{ window.rpKanban?.i18n?.loading || __( 'Lade Bewerbungen...', 'recruiting-playbook' ) }
+				{ window.rpKanban?.i18n?.loading || __( 'Loading applications...', 'recruiting-playbook' ) }
 			</div>
 		);
 	}
@@ -293,7 +293,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 			>
 				<p>{ error }</p>
 				<button onClick={ refetch } className="button">
-					{ window.rpKanban?.i18n?.retry || __( 'Erneut versuchen', 'recruiting-playbook' ) }
+					{ window.rpKanban?.i18n?.retry || __( 'Try again', 'recruiting-playbook' ) }
 				</button>
 			</div>
 		);
@@ -320,7 +320,7 @@ export function KanbanBoard( { jobFilter = '', searchTerm = '', refreshTrigger =
 				<div
 					className="rp-kanban-board"
 					role="region"
-					aria-label={ __( 'Kanban-Board für Bewerbungen', 'recruiting-playbook' ) }
+					aria-label={ __( 'Kanban board for applications', 'recruiting-playbook' ) }
 				>
 					{ columns.map( ( column, index ) => (
 						<KanbanColumn

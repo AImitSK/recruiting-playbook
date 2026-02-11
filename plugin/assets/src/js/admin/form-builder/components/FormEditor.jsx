@@ -85,13 +85,13 @@ const fieldTypeIcons = {
  */
 const fieldTypeLabels = {
 	text: __( 'Text', 'recruiting-playbook' ),
-	textarea: __( 'Textbereich', 'recruiting-playbook' ),
-	email: __( 'E-Mail', 'recruiting-playbook' ),
-	phone: __( 'Telefon', 'recruiting-playbook' ),
-	select: __( 'Auswahl', 'recruiting-playbook' ),
+	textarea: __( 'Text Area', 'recruiting-playbook' ),
+	email: __( 'Email', 'recruiting-playbook' ),
+	phone: __( 'Phone', 'recruiting-playbook' ),
+	select: __( 'Select', 'recruiting-playbook' ),
 	radio: __( 'Radio', 'recruiting-playbook' ),
 	checkbox: __( 'Checkbox', 'recruiting-playbook' ),
-	date: __( 'Datum', 'recruiting-playbook' ),
+	date: __( 'Date', 'recruiting-playbook' ),
 	url: __( 'URL', 'recruiting-playbook' ),
 	html: __( 'HTML', 'recruiting-playbook' ),
 };
@@ -162,7 +162,7 @@ function SortableFieldItem( {
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 				<button
 					type="button"
-					aria-label={ __( 'Feld per Drag & Drop verschieben', 'recruiting-playbook' ) }
+					aria-label={ __( 'Drag and drop to reorder field', 'recruiting-playbook' ) }
 					style={ {
 						cursor: 'grab',
 						color: '#9ca3af',
@@ -183,7 +183,7 @@ function SortableFieldItem( {
 				{ /* Required/Optional badge */ }
 				{ fieldConfig.is_required ? (
 					<Badge style={ { backgroundColor: '#ef4444', color: 'white', fontSize: '0.625rem', padding: '0.125rem 0.375rem', lineHeight: 1 } }>
-						{ __( 'Pflicht', 'recruiting-playbook' ) }
+						{ __( 'Required', 'recruiting-playbook' ) }
 					</Badge>
 				) : (
 					<Badge variant="outline" style={ { backgroundColor: '#f3f4f6', color: '#6b7280', fontSize: '0.625rem', padding: '0.125rem 0.375rem', lineHeight: 1, borderColor: '#e5e7eb' } }>
@@ -243,12 +243,12 @@ function SortableFieldItem( {
 						{ fieldConfig.width === 'half' ? (
 							<>
 								<Columns2 style={ { height: '0.75rem', width: '0.75rem' } } />
-								{ __( 'Halbe Spalte', 'recruiting-playbook' ) }
+								{ __( 'Half Column', 'recruiting-playbook' ) }
 							</>
 						) : (
 							<>
 								<Square style={ { height: '0.75rem', width: '0.75rem' } } />
-								{ __( 'Volle Spalte', 'recruiting-playbook' ) }
+								{ __( 'Full Column', 'recruiting-playbook' ) }
 							</>
 						) }
 					</span>
@@ -270,7 +270,7 @@ function SortableFieldItem( {
 						<button
 							type="button"
 							onClick={ () => onEditField( fieldConfig.field_key ) }
-							title={ __( 'Feld bearbeiten', 'recruiting-playbook' ) }
+							title={ __( 'Edit field', 'recruiting-playbook' ) }
 							style={ {
 								background: 'none',
 								border: 'none',
@@ -303,7 +303,7 @@ function SortableFieldItem( {
 								borderRadius: '0.25rem',
 							} }
 							className="hover:bg-gray-100"
-							title={ __( 'Feld entfernen', 'recruiting-playbook' ) }
+							title={ __( 'Remove field', 'recruiting-playbook' ) }
 						>
 							<X style={ { height: '1rem', width: '1rem' } } />
 						</button>
@@ -315,7 +315,7 @@ function SortableFieldItem( {
 								display: 'flex',
 								alignItems: 'center',
 							} }
-							title={ __( 'Pflichtfeld - kann nicht entfernt werden', 'recruiting-playbook' ) }
+							title={ __( 'Required field - cannot be removed', 'recruiting-playbook' ) }
 						>
 							<Lock style={ { height: '1rem', width: '1rem' } } />
 						</div>
@@ -339,9 +339,9 @@ const systemFieldIcons = {
  * Label mapping for system field types
  */
 const systemFieldLabels = {
-	file_upload: __( 'Datei-Upload', 'recruiting-playbook' ),
-	summary: __( 'Zusammenfassung', 'recruiting-playbook' ),
-	privacy_consent: __( 'Datenschutz-Zustimmung', 'recruiting-playbook' ),
+	file_upload: __( 'File Upload', 'recruiting-playbook' ),
+	summary: __( 'Summary', 'recruiting-playbook' ),
+	privacy_consent: __( 'Privacy Consent', 'recruiting-playbook' ),
 };
 
 /**
@@ -399,7 +399,7 @@ function SystemFieldCard( {
 				<button
 					type="button"
 					onClick={ () => onOpenSettings && onOpenSettings( stepId, systemField ) }
-					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					title={ __( 'Settings', 'recruiting-playbook' ) }
 					style={ {
 						background: 'none',
 						border: 'none',
@@ -486,7 +486,7 @@ function SortableStep( {
 						{ ! isFinale && (
 							<button
 								type="button"
-								aria-label={ __( 'Schritt per Drag & Drop verschieben', 'recruiting-playbook' ) }
+								aria-label={ __( 'Drag and drop to reorder step', 'recruiting-playbook' ) }
 								style={ {
 									cursor: 'grab',
 									color: '#9ca3af',
@@ -511,7 +511,7 @@ function SortableStep( {
 							{ isFinale ? (
 								<>
 									<Flag style={ { height: '0.75rem', width: '0.75rem', marginRight: '0.25rem' } } />
-									{ __( 'Finale', 'recruiting-playbook' ) }
+									{ __( 'Final', 'recruiting-playbook' ) }
 								</>
 							) : (
 								<>{ index + 1 }</>
@@ -569,7 +569,7 @@ function SortableStep( {
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
 						{ /* Field count (including system fields) */ }
 						<Badge variant="secondary" style={ { marginRight: '0.5rem' } }>
-							{ totalFieldCount } { __( 'Felder', 'recruiting-playbook' ) }
+							{ totalFieldCount } { __( 'Fields', 'recruiting-playbook' ) }
 						</Badge>
 
 						{ /* Delete button (only for deletable steps) */ }
@@ -578,7 +578,7 @@ function SortableStep( {
 								variant="ghost"
 								size="sm"
 								onClick={ () => {
-									if ( window.confirm( __( 'Schritt löschen?', 'recruiting-playbook' ) ) ) {
+									if ( window.confirm( __( 'Delete step?', 'recruiting-playbook' ) ) ) {
 										onRemove( step.id );
 									}
 								} }
@@ -621,7 +621,7 @@ function SortableStep( {
 								{ visibleFields.length === 0 ? (
 									<div style={ { textAlign: 'center', padding: '1rem', color: '#9ca3af', backgroundColor: '#f9fafb', borderRadius: '0.5rem', border: '2px dashed #e5e7eb' } }>
 										<p style={ { margin: 0, fontSize: '0.875rem' } }>
-											{ __( 'Keine Felder in diesem Schritt', 'recruiting-playbook' ) }
+											{ __( 'No fields in this step', 'recruiting-playbook' ) }
 										</p>
 									</div>
 								) : (
@@ -644,7 +644,7 @@ function SortableStep( {
 					{ systemFields.length > 0 && (
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' } }>
 							<div style={ { fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.25rem' } }>
-								{ __( 'System-Felder', 'recruiting-playbook' ) }
+								{ __( 'System Fields', 'recruiting-playbook' ) }
 							</div>
 							{ systemFields.map( ( systemField ) => (
 								<SystemFieldCard
@@ -667,7 +667,7 @@ function SortableStep( {
 								style={ { width: '100%' } }
 							>
 								<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.5rem' } } />
-								{ __( 'Neues Feld erstellen', 'recruiting-playbook' ) }
+								{ __( 'Create new field', 'recruiting-playbook' ) }
 							</Button>
 						</div>
 					) }
@@ -774,7 +774,7 @@ export default function FormEditor( {
 			return;
 		}
 		const newStepId = addStep( {
-			title: __( 'Neuer Schritt', 'recruiting-playbook' ),
+			title: __( 'New Step', 'recruiting-playbook' ),
 		} );
 		if ( newStepId ) {
 			setExpandedSteps( ( prev ) => ( { ...prev, [ newStepId ]: true } ) );
@@ -939,7 +939,7 @@ export default function FormEditor( {
 					style={ { width: '100%', borderStyle: 'dashed' } }
 				>
 					<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.5rem' } } />
-					{ __( 'Schritt hinzufügen', 'recruiting-playbook' ) }
+					{ __( 'Add step', 'recruiting-playbook' ) }
 				</Button>
 			</div>
 
@@ -979,7 +979,7 @@ export default function FormEditor( {
 						style={ { color: '#6b7280' } }
 					>
 						<RotateCcw style={ { height: '1rem', width: '1rem', marginRight: '0.5rem' } } />
-						{ __( 'Formular zurücksetzen', 'recruiting-playbook' ) }
+						{ __( 'Reset form to default', 'recruiting-playbook' ) }
 					</Button>
 				</div>
 			) }

@@ -1,16 +1,16 @@
 /**
  * API Error Handler Utility
  *
- * Zentrales Error-Handling für API-Calls
+ * Central error handling for API calls
  *
  * @package RecruitingPlaybook
  */
 
 /**
- * Prüft ob ein Fehler ein Authentifizierungsfehler ist
+ * Checks if an error is an authentication error
  *
- * @param {Error} error Fehler-Objekt
- * @return {boolean} True wenn Auth-Fehler
+ * @param {Error} error Error object
+ * @return {boolean} True if auth error
  */
 export function isAuthError( error ) {
 	return error?.code === 'rest_cookie_invalid_nonce' ||
@@ -20,30 +20,30 @@ export function isAuthError( error ) {
 }
 
 /**
- * Behandelt API-Fehler zentral
+ * Handles API errors centrally
  *
- * Bei Authentifizierungsfehlern wird die Seite neu geladen,
- * um eine neue Nonce zu erhalten.
+ * For authentication errors, the page is reloaded
+ * to obtain a new nonce.
  *
- * @param {Error}    error       Fehler-Objekt
- * @param {Function} setError    State-Setter für Fehlermeldung
- * @param {string}   defaultMsg  Standard-Fehlermeldung
- * @return {boolean} True wenn der Fehler behandelt wurde (Auth-Reload)
+ * @param {Error}    error       Error object
+ * @param {Function} setError    State setter for error message
+ * @param {string}   defaultMsg  Default error message
+ * @return {boolean} True if the error was handled (Auth reload)
  */
-export function handleApiError( error, setError, defaultMsg = 'Ein Fehler ist aufgetreten' ) {
-	// Aborted requests ignorieren
+export function handleApiError( error, setError, defaultMsg = 'An error occurred' ) {
+	// Ignore aborted requests
 	if ( error?.name === 'AbortError' ) {
 		return true;
 	}
 
-	// Auth-Fehler: Seite neu laden
+	// Auth error: reload page
 	if ( isAuthError( error ) ) {
 		console.warn( 'Authentication error, reloading page...' );
 		window.location.reload();
 		return true;
 	}
 
-	// Andere Fehler: Fehlermeldung setzen
+	// Other errors: set error message
 	if ( setError ) {
 		setError( error?.message || defaultMsg );
 	}
@@ -52,9 +52,9 @@ export function handleApiError( error, setError, defaultMsg = 'Ein Fehler ist au
 }
 
 /**
- * Erstellt einen AbortController für API-Requests
+ * Creates an AbortController for API requests
  *
- * @return {AbortController} Neuer AbortController
+ * @return {AbortController} New AbortController
  */
 export function createAbortController() {
 	return new AbortController();

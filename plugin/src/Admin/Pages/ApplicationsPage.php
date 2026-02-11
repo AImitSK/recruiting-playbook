@@ -237,7 +237,7 @@ class ApplicationsPage {
 			} else {
 				$row['first_name'] = '';
 				$row['last_name']  = '';
-				$row['email']      = __( 'Unbekannt', 'recruiting-playbook' );
+				$row['email']      = __( 'Unknown', 'recruiting-playbook' );
 				$row['phone']      = '';
 			}
 

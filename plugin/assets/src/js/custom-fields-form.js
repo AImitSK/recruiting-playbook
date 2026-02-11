@@ -317,7 +317,7 @@ document.addEventListener('alpine:init', () => {
             // Required check
             if (field.is_required) {
                 if (!this.hasValue(value, field.type)) {
-                    this.errors[key] = validation.custom_error || i18n.required || 'Dieses Feld ist erforderlich';
+                    this.errors[key] = validation.custom_error || i18n.required || 'This field is required';
                     return false;
                 }
             }
@@ -331,21 +331,21 @@ document.addEventListener('alpine:init', () => {
             switch (field.type) {
                 case 'email':
                     if (!this.isValidEmail(value)) {
-                        this.errors[key] = i18n.invalidEmail || 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+                        this.errors[key] = i18n.invalidEmail || 'Please enter a valid email address';
                         return false;
                     }
                     break;
 
                 case 'url':
                     if (!this.isValidUrl(value)) {
-                        this.errors[key] = i18n.invalidUrl || 'Bitte geben Sie eine gültige URL ein';
+                        this.errors[key] = i18n.invalidUrl || 'Please enter a valid URL';
                         return false;
                     }
                     break;
 
                 case 'phone':
                     if (!this.isValidPhone(value)) {
-                        this.errors[key] = i18n.invalidPhone || 'Bitte geben Sie eine gültige Telefonnummer ein';
+                        this.errors[key] = i18n.invalidPhone || 'Please enter a valid phone number';
                         return false;
                     }
                     break;
@@ -353,17 +353,17 @@ document.addEventListener('alpine:init', () => {
                 case 'number':
                     const num = parseFloat(value);
                     if (isNaN(num)) {
-                        this.errors[key] = i18n.invalidNumber || 'Bitte geben Sie eine gültige Zahl ein';
+                        this.errors[key] = i18n.invalidNumber || 'Please enter a valid number';
                         return false;
                     }
                     if (validation.min !== undefined && num < validation.min) {
                         this.errors[key] = i18n.numberMin?.replace('{min}', validation.min) ||
-                            `Mindestwert: ${validation.min}`;
+                            `Minimum value: ${validation.min}`;
                         return false;
                     }
                     if (validation.max !== undefined && num > validation.max) {
                         this.errors[key] = i18n.numberMax?.replace('{max}', validation.max) ||
-                            `Maximalwert: ${validation.max}`;
+                            `Maximum value: ${validation.max}`;
                         return false;
                     }
                     break;
@@ -372,19 +372,19 @@ document.addEventListener('alpine:init', () => {
                 case 'textarea':
                     if (validation.min_length && value.length < validation.min_length) {
                         this.errors[key] = i18n.minLength?.replace('{min}', validation.min_length) ||
-                            `Mindestens ${validation.min_length} Zeichen erforderlich`;
+                            `At least ${validation.min_length} characters required`;
                         return false;
                     }
                     if (validation.max_length && value.length > validation.max_length) {
                         this.errors[key] = i18n.maxLength?.replace('{max}', validation.max_length) ||
-                            `Maximal ${validation.max_length} Zeichen erlaubt`;
+                            `Maximum ${validation.max_length} characters allowed`;
                         return false;
                     }
                     if (validation.pattern) {
                         const regex = new RegExp(validation.pattern);
                         if (!regex.test(value)) {
                             this.errors[key] = validation.custom_error || i18n.patternMismatch ||
-                                'Das Format ist ungültig';
+                                'The format is invalid';
                             return false;
                         }
                     }
@@ -392,17 +392,17 @@ document.addEventListener('alpine:init', () => {
 
                 case 'date':
                     if (!this.isValidDate(value)) {
-                        this.errors[key] = i18n.invalidDate || 'Bitte geben Sie ein gültiges Datum ein';
+                        this.errors[key] = i18n.invalidDate || 'Please enter a valid date';
                         return false;
                     }
                     if (validation.min_date && value < validation.min_date) {
                         this.errors[key] = i18n.dateMin?.replace('{date}', validation.min_date) ||
-                            `Datum muss nach ${validation.min_date} liegen`;
+                            `Date must be after ${validation.min_date}`;
                         return false;
                     }
                     if (validation.max_date && value > validation.max_date) {
                         this.errors[key] = i18n.dateMax?.replace('{date}', validation.max_date) ||
-                            `Datum muss vor ${validation.max_date} liegen`;
+                            `Date must be before ${validation.max_date}`;
                         return false;
                     }
                     break;
@@ -410,7 +410,7 @@ document.addEventListener('alpine:init', () => {
                 case 'file':
                     const files = this.files[key] || [];
                     if (field.is_required && files.length === 0) {
-                        this.errors[key] = i18n.fileRequired || 'Bitte laden Sie eine Datei hoch';
+                        this.errors[key] = i18n.fileRequired || 'Please upload a file';
                         return false;
                     }
                     break;
@@ -419,14 +419,14 @@ document.addEventListener('alpine:init', () => {
                     if (field.settings?.mode === 'multi' && validation.min_selections) {
                         if (value.length < validation.min_selections) {
                             this.errors[key] = i18n.minSelections?.replace('{min}', validation.min_selections) ||
-                                `Bitte wählen Sie mindestens ${validation.min_selections} Optionen`;
+                                `Please select at least ${validation.min_selections} options`;
                             return false;
                         }
                     }
                     if (field.settings?.mode === 'multi' && validation.max_selections) {
                         if (value.length > validation.max_selections) {
                             this.errors[key] = i18n.maxSelections?.replace('{max}', validation.max_selections) ||
-                                `Bitte wählen Sie maximal ${validation.max_selections} Optionen`;
+                                `Please select maximum ${validation.max_selections} options`;
                             return false;
                         }
                     }
@@ -611,7 +611,7 @@ document.addEventListener('alpine:init', () => {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || data.error?.message || 'Ein Fehler ist aufgetreten');
+                    throw new Error(data.message || data.error?.message || 'An error occurred');
                 }
 
                 this.submitted = true;
@@ -748,7 +748,7 @@ document.addEventListener('alpine:init', () => {
             for (const file of fileList) {
                 // Check max files
                 if (this.uploadedFiles.length >= this.maxFiles) {
-                    this.error = `Maximal ${this.maxFiles} Dateien erlaubt`;
+                    this.error = `Maximum ${this.maxFiles} files allowed`;
                     break;
                 }
 
@@ -782,7 +782,7 @@ document.addEventListener('alpine:init', () => {
                 return {
                     valid: false,
                     message: i18n.fileTooLarge ||
-                        `Die Datei ist zu groß (max. ${this.maxSize / 1024 / 1024} MB)`
+                        `File is too large (max. ${this.maxSize / 1024 / 1024} MB)`
                 };
             }
 
@@ -802,7 +802,7 @@ document.addEventListener('alpine:init', () => {
                     return {
                         valid: false,
                         message: i18n.invalidFileType ||
-                            `Dateityp nicht erlaubt. Erlaubt: ${this.allowedTypes}`
+                            `File type not allowed. Allowed: ${this.allowedTypes}`
                     };
                 }
             }

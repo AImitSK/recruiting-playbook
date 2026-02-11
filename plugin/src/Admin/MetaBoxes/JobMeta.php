@@ -99,7 +99,7 @@ class JobMeta {
 	public function register(): void {
 		add_meta_box(
 			'rp_job_details',
-			__( 'Stellen-Details', 'recruiting-playbook' ),
+			__( 'Job Details', 'recruiting-playbook' ),
 			[ $this, 'render' ],
 			JobListing::POST_TYPE,
 			'normal',
@@ -132,7 +132,7 @@ class JobMeta {
 
 		// Gehalt.
 		echo '<fieldset class="rp-fieldset">';
-		echo '<legend>' . esc_html__( 'Gehalt', 'recruiting-playbook' ) . '</legend>';
+		echo '<legend>' . esc_html__( 'Salary', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
 		$this->renderField( '_rp_salary_min', $post );
 		$this->renderField( '_rp_salary_max', $post );
@@ -144,7 +144,7 @@ class JobMeta {
 
 		// Kontakt.
 		echo '<fieldset class="rp-fieldset">';
-		echo '<legend>' . esc_html__( 'Ansprechpartner', 'recruiting-playbook' ) . '</legend>';
+		echo '<legend>' . esc_html__( 'Contact Person', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
 		$this->renderField( '_rp_contact_person', $post );
 		$this->renderField( '_rp_contact_email', $post );
@@ -154,7 +154,7 @@ class JobMeta {
 
 		// Details.
 		echo '<fieldset class="rp-fieldset">';
-		echo '<legend>' . esc_html__( 'Weitere Details', 'recruiting-playbook' ) . '</legend>';
+		echo '<legend>' . esc_html__( 'Additional Details', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
 		$this->renderField( '_rp_application_deadline', $post );
 		$this->renderField( '_rp_start_date', $post );

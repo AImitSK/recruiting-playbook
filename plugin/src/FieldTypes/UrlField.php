@@ -2,7 +2,7 @@
 /**
  * URL Field Type
  *
- * URL/Link-Eingabefeld mit Validierung.
+ * URL/link input field with validation.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * URL Feldtyp
+ * URL field type
  */
 class UrlField extends AbstractFieldType {
 
@@ -62,7 +62,7 @@ class UrlField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getAvailableValidationRules(): array {
-		return []; // URL-Validierung ist immer aktiv.
+		return []; // URL validation is always active.
 	}
 
 	/**
@@ -80,13 +80,13 @@ class UrlField extends AbstractFieldType {
 
 		$value = (string) $value;
 
-		// URL-Format prüfen.
+		// Validate URL format.
 		if ( ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
 			return new WP_Error(
 				'invalid_url',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s muss eine gültige URL sein.', 'recruiting-playbook' ),
+					__( '%s must be a valid URL.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
@@ -119,7 +119,7 @@ class UrlField extends AbstractFieldType {
 			return '—';
 		}
 
-		// Gekürzte Anzeige.
+		// Shortened display.
 		$display = preg_replace( '#^https?://#', '', $url );
 		$display = rtrim( $display, '/' );
 		if ( strlen( $display ) > 50 ) {

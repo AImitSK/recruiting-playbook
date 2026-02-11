@@ -111,7 +111,7 @@ class FormTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -129,7 +129,7 @@ class FormTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -150,12 +150,12 @@ class FormTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'id'   => [
-							'description' => __( 'Template-ID zum Duplizieren', 'recruiting-playbook' ),
+							'description' => __( 'Template ID to duplicate', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'name' => [
-							'description' => __( 'Name für das neue Template', 'recruiting-playbook' ),
+							'description' => __( 'Name for the new template', 'recruiting-playbook' ),
 							'type'        => 'string',
 						],
 					],
@@ -174,7 +174,7 @@ class FormTemplateController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -199,7 +199,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Formular-Vorlagen zu verwalten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage form templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -232,7 +232,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Formular-Vorlagen zu erstellen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to create form templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -290,7 +290,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( ! $template ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Kein Standard-Template definiert.', 'recruiting-playbook' ),
+				__( 'No default template defined.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -311,7 +311,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( ! $template ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -402,7 +402,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'update_failed',
-				__( 'Template konnte nicht als Standard gesetzt werden.', 'recruiting-playbook' ),
+				__( 'Template could not be set as default.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -465,7 +465,7 @@ class FormTemplateController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'include_fields' => [
-				'description' => __( 'Felder in Response inkludieren', 'recruiting-playbook' ),
+				'description' => __( 'Include fields in response', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => false,
 			],
@@ -484,26 +484,26 @@ class FormTemplateController extends WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'id'          => [
-					'description' => __( 'Template-ID', 'recruiting-playbook' ),
+					'description' => __( 'Template ID', 'recruiting-playbook' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
 				'name'        => [
-					'description' => __( 'Template-Name', 'recruiting-playbook' ),
+					'description' => __( 'Template name', 'recruiting-playbook' ),
 					'type'        => 'string',
 					'required'    => true,
 				],
 				'description' => [
-					'description' => __( 'Beschreibung', 'recruiting-playbook' ),
+					'description' => __( 'Description', 'recruiting-playbook' ),
 					'type'        => 'string',
 				],
 				'is_default'  => [
-					'description' => __( 'Standard-Template', 'recruiting-playbook' ),
+					'description' => __( 'Default template', 'recruiting-playbook' ),
 					'type'        => 'boolean',
 					'default'     => false,
 				],
 				'field_ids'   => [
-					'description' => __( 'IDs der Felder in diesem Template', 'recruiting-playbook' ),
+					'description' => __( 'IDs of fields in this template', 'recruiting-playbook' ),
 					'type'        => 'array',
 					'items'       => [ 'type' => 'integer' ],
 				],
@@ -520,7 +520,7 @@ class FormTemplateController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Custom Fields erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'Custom Fields requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

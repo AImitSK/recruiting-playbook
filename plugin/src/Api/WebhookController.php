@@ -100,7 +100,7 @@ class WebhookController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'admin_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Webhook-ID', 'recruiting-playbook' ),
+							'description' => __( 'Webhook ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -120,19 +120,19 @@ class WebhookController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'admin_permissions_check' ],
 					'args'                => [
 						'id'       => [
-							'description' => __( 'Webhook-ID', 'recruiting-playbook' ),
+							'description' => __( 'Webhook ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'per_page' => [
-							'description' => __( 'Ergebnisse pro Seite', 'recruiting-playbook' ),
+							'description' => __( 'Results per page', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'default'     => 20,
 							'minimum'     => 1,
 							'maximum'     => 100,
 						],
 						'page'     => [
-							'description' => __( 'Seitennummer', 'recruiting-playbook' ),
+							'description' => __( 'Page number', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'default'     => 1,
 							'minimum'     => 1,
@@ -153,7 +153,7 @@ class WebhookController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'admin_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Webhook-ID', 'recruiting-playbook' ),
+							'description' => __( 'Webhook ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -174,7 +174,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'webhooks' ) ) {
 			return new WP_Error(
 				'rest_webhooks_pro_required',
-				__( 'Webhooks erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Webhooks require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -185,7 +185,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung für Webhook-Verwaltung.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage webhooks.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -273,7 +273,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $webhook_id ) {
 			return new WP_Error(
 				'rest_webhook_create_failed',
-				__( 'Webhook konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Webhook could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -317,7 +317,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $webhook ) {
 			return new WP_Error(
 				'rest_webhook_not_found',
-				__( 'Webhook nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Webhook not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -372,7 +372,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( empty( $update_data ) ) {
 			return new WP_Error(
 				'rest_webhook_no_changes',
-				__( 'Keine Änderungen übergeben.', 'recruiting-playbook' ),
+				__( 'No changes provided.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -428,7 +428,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $webhook ) {
 			return new WP_Error(
 				'rest_webhook_not_found',
-				__( 'Webhook nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Webhook not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -451,7 +451,7 @@ class WebhookController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Webhook wurde gelöscht.', 'recruiting-playbook' ),
+				'message' => __( 'Webhook was deleted.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -486,7 +486,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $webhook ) {
 			return new WP_Error(
 				'rest_webhook_not_found',
-				__( 'Webhook nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Webhook not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -566,7 +566,7 @@ class WebhookController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success'          => false,
-					'message'          => __( 'Test-Ping fehlgeschlagen.', 'recruiting-playbook' ),
+					'message'          => __( 'Test ping failed.', 'recruiting-playbook' ),
 					'response_code'    => $result['response_code'],
 					'response_time_ms' => $result['response_time_ms'],
 					'error'            => $result['error'],
@@ -578,7 +578,7 @@ class WebhookController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'          => true,
-				'message'          => __( 'Test-Ping erfolgreich.', 'recruiting-playbook' ),
+				'message'          => __( 'Test ping successful.', 'recruiting-playbook' ),
 				'response_code'    => $result['response_code'],
 				'response_time_ms' => $result['response_time_ms'],
 			],
@@ -621,7 +621,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( empty( $url ) ) {
 			return new WP_Error(
 				'rest_webhook_invalid_url',
-				__( 'URL ist ein Pflichtfeld.', 'recruiting-playbook' ),
+				__( 'URL is a required field.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -631,7 +631,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $parsed || empty( $parsed['host'] ) ) {
 			return new WP_Error(
 				'rest_webhook_invalid_url',
-				__( 'Ungültige URL.', 'recruiting-playbook' ),
+				__( 'Invalid URL.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -643,7 +643,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! $is_https && ! $is_localhost ) {
 			return new WP_Error(
 				'rest_webhook_https_required',
-				__( 'Webhook-URLs müssen HTTPS verwenden.', 'recruiting-playbook' ),
+				__( 'Webhook URLs must use HTTPS.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -661,7 +661,7 @@ class WebhookController extends WP_REST_Controller {
 		if ( ! is_array( $events ) || empty( $events ) ) {
 			return new WP_Error(
 				'rest_webhook_invalid_events',
-				__( 'Mindestens ein Event muss ausgewählt werden.', 'recruiting-playbook' ),
+				__( 'At least one event must be selected.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -672,7 +672,7 @@ class WebhookController extends WP_REST_Controller {
 				'rest_webhook_invalid_events',
 				sprintf(
 					/* translators: %s: comma-separated list of invalid event names */
-					__( 'Ungültige Events: %s', 'recruiting-playbook' ),
+					__( 'Invalid events: %s', 'recruiting-playbook' ),
 					implode( ', ', $invalid )
 				),
 				[ 'status' => 400 ]
@@ -690,19 +690,19 @@ class WebhookController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'name'   => [
-				'description'       => __( 'Webhook-Name', 'recruiting-playbook' ),
+				'description'       => __( 'Webhook name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'url'    => [
-				'description' => __( 'Webhook-URL (HTTPS)', 'recruiting-playbook' ),
+				'description' => __( 'Webhook URL (HTTPS)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => true,
 				'format'      => 'uri',
 			],
 			'events' => [
-				'description' => __( 'Events die den Webhook auslösen', 'recruiting-playbook' ),
+				'description' => __( 'Events that trigger the webhook', 'recruiting-playbook' ),
 				'type'        => 'array',
 				'required'    => true,
 				'items'       => [
@@ -711,12 +711,12 @@ class WebhookController extends WP_REST_Controller {
 				],
 			],
 			'secret' => [
-				'description' => __( 'HMAC-Secret (wird auto-generiert wenn leer)', 'recruiting-playbook' ),
+				'description' => __( 'HMAC secret (auto-generated if empty)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 			],
 			'active' => [
-				'description' => __( 'Webhook aktiv', 'recruiting-playbook' ),
+				'description' => __( 'Webhook active', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => true,
 			],
@@ -732,7 +732,7 @@ class WebhookController extends WP_REST_Controller {
 		$args = $this->get_create_item_args();
 
 		$args['id'] = [
-			'description' => __( 'Webhook-ID', 'recruiting-playbook' ),
+			'description' => __( 'Webhook ID', 'recruiting-playbook' ),
 			'type'        => 'integer',
 			'required'    => true,
 		];

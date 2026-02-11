@@ -59,36 +59,36 @@ class TalentPoolController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'search'   => [
-							'description' => __( 'Suchbegriff', 'recruiting-playbook' ),
+							'description' => __( 'Search term', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'default'     => '',
 						],
 						'tags'     => [
-							'description' => __( 'Tags filtern', 'recruiting-playbook' ),
+							'description' => __( 'Filter tags', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'default'     => '',
 						],
 						'per_page' => [
-							'description' => __( 'Einträge pro Seite', 'recruiting-playbook' ),
+							'description' => __( 'Items per page', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'default'     => 20,
 							'minimum'     => 1,
 							'maximum'     => 100,
 						],
 						'page'     => [
-							'description' => __( 'Seite', 'recruiting-playbook' ),
+							'description' => __( 'Page', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'default'     => 1,
 							'minimum'     => 1,
 						],
 						'orderby'  => [
-							'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
+							'description' => __( 'Sort field', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'default'     => 'created_at',
 							'enum'        => [ 'created_at', 'expires_at', 'last_name' ],
 						],
 						'order'    => [
-							'description' => __( 'Sortierrichtung', 'recruiting-playbook' ),
+							'description' => __( 'Sort order', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'default'     => 'DESC',
 							'enum'        => [ 'ASC', 'DESC' ],
@@ -102,24 +102,24 @@ class TalentPoolController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'candidate_id' => [
-							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'reason'       => [
-							'description'       => __( 'Grund für Aufnahme', 'recruiting-playbook' ),
+							'description'       => __( 'Reason for inclusion', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'default'           => '',
 							'sanitize_callback' => 'sanitize_textarea_field',
 						],
 						'tags'         => [
-							'description'       => __( 'Tags (komma-separiert)', 'recruiting-playbook' ),
+							'description'       => __( 'Tags (comma-separated)', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'default'           => '',
 							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'expires_at'   => [
-							'description' => __( 'Ablaufdatum (YYYY-MM-DD)', 'recruiting-playbook' ),
+							'description' => __( 'Expiration date (YYYY-MM-DD)', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'format'      => 'date',
 							'default'     => null,
@@ -152,7 +152,7 @@ class TalentPoolController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'candidate_id' => [
-							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -165,22 +165,22 @@ class TalentPoolController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'candidate_id' => [
-							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'reason'       => [
-							'description'       => __( 'Grund für Aufnahme', 'recruiting-playbook' ),
+							'description'       => __( 'Reason for inclusion', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_textarea_field',
 						],
 						'tags'         => [
-							'description'       => __( 'Tags (komma-separiert)', 'recruiting-playbook' ),
+							'description'       => __( 'Tags (comma-separated)', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'sanitize_callback' => 'sanitize_text_field',
 						],
 						'expires_at'   => [
-							'description' => __( 'Ablaufdatum (YYYY-MM-DD)', 'recruiting-playbook' ),
+							'description' => __( 'Expiration date (YYYY-MM-DD)', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'format'      => 'date',
 						],
@@ -193,7 +193,7 @@ class TalentPoolController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'candidate_id' => [
-							'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -212,7 +212,7 @@ class TalentPoolController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'get_items_permissions_check' ],
 				'args'                => [
 					'candidate_id' => [
-						'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+						'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
@@ -260,7 +260,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( ! $entry ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Kandidat nicht im Talent-Pool', 'recruiting-playbook' ),
+				__( 'Candidate not in talent pool', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -378,7 +378,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -401,7 +401,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Anzeigen des Talent-Pools.', 'recruiting-playbook' ),
+				__( 'No permission to view the talent pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -424,7 +424,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Hinzufügen von Kandidaten zum Talent-Pool.', 'recruiting-playbook' ),
+				__( 'No permission to add candidates to the talent pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -447,7 +447,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Bearbeiten des Talent-Pools.', 'recruiting-playbook' ),
+				__( 'No permission to edit the talent pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -470,7 +470,7 @@ class TalentPoolController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_talent_pool' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Entfernen aus dem Talent-Pool.', 'recruiting-playbook' ),
+				__( 'No permission to remove from the talent pool.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

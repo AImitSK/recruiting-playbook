@@ -6,13 +6,13 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: KI-Job-Match Element für Fusion Builder
+ * RP: AI Job Match Element for Fusion Builder
  *
- * "Passe ich zu diesem Job?" Button mit KI-Analyse.
- * Besucher können prüfen, ob ihr Profil zur Stelle passt.
- * Wrapper für den [rp_ai_job_match] Shortcode.
+ * "Do I match this job?" button with AI analysis.
+ * Visitors can check if their profile matches the job.
+ * Wrapper for the [rp_ai_job_match] shortcode.
  *
- * Erfordert das AI-Addon.
+ * Requires the AI addon.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -20,13 +20,13 @@ defined( 'ABSPATH' ) || exit;
 class AiJobMatch extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
 	protected function getConfig(): array {
 		return [
-			'name'            => esc_attr__( 'RP: KI-Job-Match', 'recruiting-playbook' ),
+			'name'            => esc_attr__( 'RP: AI Job Match', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_ai_job_match',
 			'icon'            => 'fusiona-check_circle_outline',
 			'component'       => true,
@@ -37,34 +37,34 @@ class AiJobMatch extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'select',
-					'heading'     => esc_attr__( 'Stelle', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Leer = automatisch erkennen (auf Stellenseiten).', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Job', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Empty = auto-detect (on job pages).', 'recruiting-playbook' ),
 					'param_name'  => 'job_id',
 					'value'       => $this->getJobOptions(),
 					'default'     => '',
 				],
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'Button-Text', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Text auf dem Button.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Button Text', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Text displayed on the button.', 'recruiting-playbook' ),
 					'param_name'  => 'title',
-					'value'       => 'Passe ich zu diesem Job?',
+					'value'       => 'Do I match this job?',
 				],
 				[
 					'type'        => 'select',
-					'heading'     => esc_attr__( 'Button-Stil', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Visueller Stil des Buttons.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Button Style', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Visual style of the button.', 'recruiting-playbook' ),
 					'param_name'  => 'style',
 					'default'     => '',
 					'value'       => [
-						''        => esc_attr__( 'Standard (gefüllt)', 'recruiting-playbook' ),
-						'outline' => esc_attr__( 'Outline (nur Rahmen)', 'recruiting-playbook' ),
+						''        => esc_attr__( 'Default (filled)', 'recruiting-playbook' ),
+						'outline' => esc_attr__( 'Outline (border only)', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'CSS-Klassen', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Zusätzliche CSS-Klassen für individuelle Gestaltung.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'CSS Classes', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Additional CSS classes for custom styling.', 'recruiting-playbook' ),
 					'param_name'  => 'class',
 					'value'       => '',
 				],

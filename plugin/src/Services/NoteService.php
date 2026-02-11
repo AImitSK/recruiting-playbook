@@ -54,7 +54,7 @@ class NoteService {
 		if ( ! $application ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Bewerbung nicht gefunden', 'recruiting-playbook' ),
+				__( 'Application not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -70,7 +70,7 @@ class NoteService {
 		if ( ! $note_id ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'Notiz konnte nicht erstellt werden', 'recruiting-playbook' ),
+				__( 'Note could not be created', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -79,7 +79,7 @@ class NoteService {
 		$this->logActivity(
 			$application_id,
 			'note_added',
-			__( 'Notiz hinzugefügt', 'recruiting-playbook' ),
+			__( 'Note added', 'recruiting-playbook' ),
 			[
 				'note_id' => $note_id,
 				'preview' => wp_trim_words( wp_strip_all_tags( $content ), 20 ),
@@ -141,7 +141,7 @@ class NoteService {
 		if ( ! $note ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Notiz nicht gefunden', 'recruiting-playbook' ),
+				__( 'Note not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -150,7 +150,7 @@ class NoteService {
 		if ( $note['is_private'] && $note['user_id'] !== get_current_user_id() ) {
 			return new WP_Error(
 				'forbidden',
-				__( 'Keine Berechtigung', 'recruiting-playbook' ),
+				__( 'No permission', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -171,7 +171,7 @@ class NoteService {
 		if ( ! $note ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Notiz nicht gefunden', 'recruiting-playbook' ),
+				__( 'Note not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -180,7 +180,7 @@ class NoteService {
 		if ( $note['user_id'] !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'forbidden',
-				__( 'Keine Berechtigung', 'recruiting-playbook' ),
+				__( 'No permission', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -194,7 +194,7 @@ class NoteService {
 			$this->logActivity(
 				(int) $note['application_id'],
 				'note_updated',
-				__( 'Notiz bearbeitet', 'recruiting-playbook' ),
+				__( 'Note edited', 'recruiting-playbook' ),
 				[ 'note_id' => $note_id ]
 			);
 		}
@@ -214,7 +214,7 @@ class NoteService {
 		if ( ! $note ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Notiz nicht gefunden', 'recruiting-playbook' ),
+				__( 'Note not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -223,7 +223,7 @@ class NoteService {
 		if ( $note['user_id'] !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'forbidden',
-				__( 'Keine Berechtigung', 'recruiting-playbook' ),
+				__( 'No permission', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -235,7 +235,7 @@ class NoteService {
 			$this->logActivity(
 				(int) $note['application_id'],
 				'note_deleted',
-				__( 'Notiz gelöscht', 'recruiting-playbook' ),
+				__( 'Note deleted', 'recruiting-playbook' ),
 				[ 'note_id' => $note_id ]
 			);
 		}

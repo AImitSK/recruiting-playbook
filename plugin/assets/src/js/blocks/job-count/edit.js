@@ -57,39 +57,39 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Textformat', 'recruiting-playbook' ) }
+					title={ __( 'Text Format', 'recruiting-playbook' ) }
 					initialOpen={ false }
 				>
 					<TextControl
-						label={ __( 'Mehrere Stellen', 'recruiting-playbook' ) }
+						label={ __( 'Multiple Jobs', 'recruiting-playbook' ) }
 						value={ format }
 						onChange={ ( value ) =>
 							setAttributes( { format: value } )
 						}
 						help={ __(
-							'Verwenden Sie {count} als Platzhalter für die Anzahl.',
+							'Use {count} as a placeholder for the number.',
 							'recruiting-playbook'
 						) }
 					/>
 					<TextControl
-						label={ __( 'Eine Stelle', 'recruiting-playbook' ) }
+						label={ __( 'One Job', 'recruiting-playbook' ) }
 						value={ singular }
 						onChange={ ( value ) =>
 							setAttributes( { singular: value } )
 						}
 						help={ __(
-							'Text wenn genau 1 Stelle vorhanden ist.',
+							'Text when exactly 1 job exists.',
 							'recruiting-playbook'
 						) }
 					/>
 					<TextControl
-						label={ __( 'Keine Stellen', 'recruiting-playbook' ) }
+						label={ __( 'No Jobs', 'recruiting-playbook' ) }
 						value={ zero }
 						onChange={ ( value ) =>
 							setAttributes( { zero: value } )
 						}
 						help={ __(
-							'Text wenn keine Stellen vorhanden sind.',
+							'Text when no jobs are available.',
 							'recruiting-playbook'
 						) }
 					/>
@@ -98,10 +98,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Stellen-Zähler', 'recruiting-playbook' ) }
+					label={ __( 'Job Counter', 'recruiting-playbook' ) }
 					summary={ format }
 					helpText={ __(
-						'Zeigt die Anzahl offener Stellen an.',
+						'Displays the number of open jobs.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_job_count]"

@@ -2,7 +2,7 @@
 /**
  * Heading Field Type
  *
- * Überschrift/Zwischentitel (nur Anzeige, kein Eingabefeld).
+ * Heading/Section Title (display only, no input field).
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * Heading Feldtyp (Display-Only)
+ * Heading Field Type (Display-Only)
  */
 class HeadingField extends AbstractFieldType {
 
@@ -32,7 +32,7 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Überschrift', 'recruiting-playbook' );
+		return __( 'Heading', 'recruiting-playbook' );
 	}
 
 	/**
@@ -63,14 +63,14 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getAvailableValidationRules(): array {
-		return []; // Keine Validierung für Anzeige-Elemente.
+		return []; // No validation for display elements.
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function validate( $value, FieldDefinition $field, array $form_data = [] ): bool|WP_Error {
-		// Überschriften haben keine Eingabewerte.
+		// Headings have no input values.
 		return true;
 	}
 
@@ -78,7 +78,7 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function sanitize( $value, FieldDefinition $field ): mixed {
-		// Überschriften haben keine Werte.
+		// Headings have no values.
 		return null;
 	}
 
@@ -86,7 +86,7 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function formatDisplayValue( $value, FieldDefinition $field ): string {
-		// Überschriften werden nicht in der Datenansicht angezeigt.
+		// Headings are not shown in data views.
 		return '';
 	}
 
@@ -94,7 +94,7 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function formatExportValue( $value, FieldDefinition $field ): string {
-		// Überschriften werden nicht exportiert.
+		// Headings are not exported.
 		return '';
 	}
 
@@ -109,7 +109,7 @@ class HeadingField extends AbstractFieldType {
 		$description  = $field->getDescription();
 		$conditional  = $field->getConditional();
 
-		// Erlaubte Heading-Levels.
+		// Allowed heading levels.
 		$allowed_levels = [ 'h2', 'h3', 'h4', 'h5', 'h6' ];
 		if ( ! in_array( $level, $allowed_levels, true ) ) {
 			$level = 'h3';
@@ -144,9 +144,9 @@ class HeadingField extends AbstractFieldType {
 	}
 
 	/**
-	 * Conditional Expression für Alpine.js erstellen
+	 * Build conditional expression for Alpine.js
 	 *
-	 * @param array $conditional Conditional-Konfiguration.
+	 * @param array $conditional Conditional configuration.
 	 * @return string Alpine.js Expression.
 	 */
 	private function buildConditionalExpression( array $conditional ): string {

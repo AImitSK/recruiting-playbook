@@ -1,7 +1,7 @@
 /**
  * TypographyPanel Component
  *
- * Tab: Typografie - Schriftgrößen, Zeilenabstände, Links.
+ * Tab: Typography - Font sizes, line heights, links.
  *
  * @package RecruitingPlaybook
  */
@@ -26,12 +26,12 @@ import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) {
 	return (
 		<div className="rp-space-y-4">
-			{ /* Card: Schriftgrößen */ }
+			{ /* Card: Font Sizes */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Schriftgrößen', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Font Sizes', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Größen für Überschriften und Fließtext in rem', 'recruiting-playbook' ) }
+						{ __( 'Sizes for headings and body text in rem', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
@@ -72,7 +72,7 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						unit="rem"
 					/>
 					<Slider
-						label={ __( 'Klein', 'recruiting-playbook' ) }
+						label={ __( 'Small', 'recruiting-playbook' ) }
 						value={ settings.font_size_small || 0.875 }
 						onChange={ ( value ) => onUpdate( 'font_size_small', value ) }
 						min={ 0.625 }
@@ -83,17 +83,17 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 				</CardContent>
 			</Card>
 
-			{ /* Card: Zeilenabstand */ }
+			{ /* Card: Line Height */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Zeilenabstand', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Line Height', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Vertikaler Abstand zwischen Textzeilen', 'recruiting-playbook' ) }
+						{ __( 'Vertical spacing between lines of text', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
 					<Slider
-						label={ __( 'Überschriften', 'recruiting-playbook' ) }
+						label={ __( 'Headings', 'recruiting-playbook' ) }
 						value={ settings.line_height_heading || 1.2 }
 						onChange={ ( value ) => onUpdate( 'line_height_heading', value ) }
 						min={ 1.0 }
@@ -101,7 +101,7 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						step={ 0.05 }
 					/>
 					<Slider
-						label={ __( 'Fließtext', 'recruiting-playbook' ) }
+						label={ __( 'Body Text', 'recruiting-playbook' ) }
 						value={ settings.line_height_body || 1.6 }
 						onChange={ ( value ) => onUpdate( 'line_height_body', value ) }
 						min={ 1.3 }
@@ -111,17 +111,17 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 				</CardContent>
 			</Card>
 
-			{ /* Card: Abstände (Stellenausschreibung) */ }
+			{ /* Card: Spacing (Job Listing) */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Abstände', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Spacing', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Abstände in der Stellenausschreibung (em)', 'recruiting-playbook' ) }
+						{ __( 'Spacing in the job listing (em)', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
 					<Slider
-						label={ __( 'Abstand über Überschriften', 'recruiting-playbook' ) }
+						label={ __( 'Spacing Above Headings', 'recruiting-playbook' ) }
 						value={ settings.heading_margin_top || 1.5 }
 						onChange={ ( value ) => onUpdate( 'heading_margin_top', value ) }
 						min={ 0.5 }
@@ -130,7 +130,7 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						unit="em"
 					/>
 					<Slider
-						label={ __( 'Abstand unter Überschriften', 'recruiting-playbook' ) }
+						label={ __( 'Spacing Below Headings', 'recruiting-playbook' ) }
 						value={ settings.heading_margin_bottom || 0.5 }
 						onChange={ ( value ) => onUpdate( 'heading_margin_bottom', value ) }
 						min={ 0.25 }
@@ -139,7 +139,7 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						unit="em"
 					/>
 					<Slider
-						label={ __( 'Absatz-Abstand', 'recruiting-playbook' ) }
+						label={ __( 'Paragraph Spacing', 'recruiting-playbook' ) }
 						value={ settings.paragraph_spacing || 1 }
 						onChange={ ( value ) => onUpdate( 'paragraph_spacing', value ) }
 						min={ 0.5 }
@@ -155,18 +155,18 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 				<CardHeader>
 					<CardTitle>{ __( 'Links', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Farbe und Stil von Verlinkungen', 'recruiting-playbook' ) }
+						{ __( 'Color and style of links', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Primärfarbe verwenden */ }
+					{ /* Use Primary Color */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="link_use_primary">
-								{ __( 'Primärfarbe verwenden', 'recruiting-playbook' ) }
+								{ __( 'Use Primary Color', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Links übernehmen die Primärfarbe', 'recruiting-playbook' ) }
+								{ __( 'Links inherit the primary color', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -176,10 +176,10 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						/>
 					</div>
 
-					{ /* Link-Farbe */ }
+					{ /* Link Color */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<Label htmlFor="link_color">
-							{ __( 'Link-Farbe', 'recruiting-playbook' ) }
+							{ __( 'Link Color', 'recruiting-playbook' ) }
 						</Label>
 						<ColorPicker
 							id="link_color"
@@ -189,10 +189,10 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 						/>
 					</div>
 
-					{ /* Unterstreichung */ }
+					{ /* Underline */ }
 					<div>
 						<Label className="rp-mb-2 rp-block">
-							{ __( 'Unterstreichung', 'recruiting-playbook' ) }
+							{ __( 'Underline', 'recruiting-playbook' ) }
 						</Label>
 						<RadioGroup
 							value={ settings.link_decoration || 'underline' }
@@ -200,13 +200,13 @@ export function TypographyPanel( { settings, onUpdate, computedPrimaryColor } ) 
 							variant="buttons"
 						>
 							<RadioGroupItem value="none">
-								{ __( 'Keine', 'recruiting-playbook' ) }
+								{ __( 'None', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="underline">
-								{ __( 'Immer', 'recruiting-playbook' ) }
+								{ __( 'Always', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="hover">
-								{ __( 'Bei Hover', 'recruiting-playbook' ) }
+								{ __( 'On Hover', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 						</RadioGroup>
 					</div>

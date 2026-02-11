@@ -38,7 +38,7 @@ export function PreviewWrapper( {
 			>
 				<Spinner />
 				<span className="rp-block-preview__loading-text">
-					{ __( 'Lade Vorschau…', 'recruiting-playbook' ) }
+					{ __( 'Loading preview…', 'recruiting-playbook' ) }
 				</span>
 			</div>
 		);
@@ -50,13 +50,13 @@ export function PreviewWrapper( {
 			<Placeholder
 				icon={ icon }
 				label={
-					emptyLabel || __( 'Keine Inhalte', 'recruiting-playbook' )
+					emptyLabel || __( 'No content', 'recruiting-playbook' )
 				}
 				className={ `rp-block-preview rp-block-preview--empty ${ className }` }
 			>
 				<p>
 					{ __(
-						'Konfigurieren Sie die Einstellungen in der Seitenleiste.',
+						'Configure the settings in the sidebar.',
 						'recruiting-playbook'
 					) }
 				</p>
@@ -97,7 +97,7 @@ export function ServerSidePreview( {
 			<PreviewWrapper
 				isEmpty={ true }
 				emptyLabel={ __(
-					'Keine Vorschau verfügbar',
+					'No preview available',
 					'recruiting-playbook'
 				) }
 				className={ className }
@@ -113,7 +113,7 @@ export function ServerSidePreview( {
 				<div className="rp-block-preview__overlay">
 					<span>
 						{ __(
-							'Klicken zum Bearbeiten',
+							'Click to edit',
 							'recruiting-playbook'
 						) }
 					</span>

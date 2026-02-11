@@ -108,7 +108,7 @@ abstract class AbstractWidget extends Widget_Base {
 	 */
 	protected function getTaxonomyOptions( string $taxonomy ): array {
 		$terms   = get_terms( [ 'taxonomy' => $taxonomy, 'hide_empty' => false ] );
-		$options = [ '' => esc_html__( '— Alle —', 'recruiting-playbook' ) ];
+		$options = [ '' => esc_html__( '— All —', 'recruiting-playbook' ) ];
 
 		if ( ! is_wp_error( $terms ) && is_array( $terms ) ) {
 			foreach ( $terms as $term ) {
@@ -133,7 +133,7 @@ abstract class AbstractWidget extends Widget_Base {
 			'order'          => 'ASC',
 		] );
 
-		$options = [ '' => esc_html__( '— Automatisch —', 'recruiting-playbook' ) ];
+		$options = [ '' => esc_html__( '— Automatic —', 'recruiting-playbook' ) ];
 
 		foreach ( $jobs as $job ) {
 			$options[ (string) $job->ID ] = $job->post_title;

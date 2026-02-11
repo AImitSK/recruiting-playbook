@@ -71,7 +71,7 @@ const rpJobFinderComponent = (options = {}) => ({
 
         if (!allowedTypes.includes(file.type)) {
             this.error = this.config.i18n?.invalidFileType ||
-                'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.';
+                'Please upload a PDF, JPG, PNG or DOCX file.';
             this.status = 'error';
             return;
         }
@@ -79,7 +79,7 @@ const rpJobFinderComponent = (options = {}) => ({
         // Max 10 MB
         if (file.size > 10 * 1024 * 1024) {
             this.error = this.config.i18n?.fileTooLarge ||
-                'Die Datei ist zu groß. Maximum: 10 MB.';
+                'The file is too large. Maximum: 10 MB.';
             this.status = 'error';
             return;
         }
@@ -127,7 +127,7 @@ const rpJobFinderComponent = (options = {}) => ({
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Analyse fehlgeschlagen');
+                throw new Error(data.message || 'Analysis failed');
             }
 
             this.jobRequestId = data.job_id;
@@ -192,7 +192,7 @@ const rpJobFinderComponent = (options = {}) => ({
             } else if (data.status === 'failed') {
                 this.stopPolling();
                 this.status = 'error';
-                this.error = data.error_message || data.error || 'Analyse fehlgeschlagen';
+                this.error = data.error_message || data.error || 'Analysis failed';
             }
 
         } catch (e) {
@@ -226,9 +226,9 @@ const rpJobFinderComponent = (options = {}) => ({
 
     getCategoryLabel(category) {
         const labels = {
-            high: this.config.i18n?.resultHigh || 'Gute Übereinstimmung',
-            medium: this.config.i18n?.resultMedium || 'Teilweise passend',
-            low: this.config.i18n?.resultLow || 'Weniger passend'
+            high: this.config.i18n?.resultHigh || 'Good match',
+            medium: this.config.i18n?.resultMedium || 'Partial match',
+            low: this.config.i18n?.resultLow || 'Low match'
         };
         return labels[category] || '';
     },
@@ -255,8 +255,8 @@ const rpJobFinderComponent = (options = {}) => ({
 
     get statusMessage() {
         const messages = {
-            uploading: this.config.i18n?.uploading || 'Dokument wird hochgeladen...',
-            processing: this.config.i18n?.analyzing || 'Analysiere Lebenslauf gegen alle Stellen...'
+            uploading: this.config.i18n?.uploading || 'Uploading document...',
+            processing: this.config.i18n?.analyzing || 'Analyzing resume against all jobs...'
         };
         return messages[this.status] || '';
     },

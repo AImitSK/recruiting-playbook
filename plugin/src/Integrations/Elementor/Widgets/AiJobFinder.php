@@ -8,9 +8,9 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: KI-Job-Finder — Elementor Widget
+ * RP: AI Job Finder — Elementor Widget
  *
- * Benötigt das AI-Addon (wird vom WidgetLoader geprüft).
+ * Requires the AI Addon (checked by WidgetLoader).
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -22,7 +22,7 @@ class AiJobFinder extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: KI-Job-Finder', 'recruiting-playbook' );
+		return esc_html__( 'RP: AI Job Finder', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -30,7 +30,7 @@ class AiJobFinder extends AbstractWidget {
 	}
 
 	public function get_keywords(): array {
-		return [ 'ki', 'ai', 'job', 'finder', 'lebenslauf', 'cv', 'matching' ];
+		return [ 'ai', 'job', 'finder', 'resume', 'cv', 'matching' ];
 	}
 
 	protected function get_shortcode_name(): string {
@@ -50,7 +50,7 @@ class AiJobFinder extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -58,16 +58,16 @@ class AiJobFinder extends AbstractWidget {
 		$this->add_control(
 			'title',
 			[
-				'label'   => esc_html__( 'Überschrift', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Title', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
-				'default' => 'Finde deinen Traumjob',
+				'default' => 'Find your dream job',
 			]
 		);
 
 		$this->add_control(
 			'subtitle',
 			[
-				'label'   => esc_html__( 'Untertitel', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Subtitle', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
 				'default' => '',
 			]
@@ -76,8 +76,8 @@ class AiJobFinder extends AbstractWidget {
 		$this->add_control(
 			'limit',
 			[
-				'label'       => esc_html__( 'Max. Vorschläge', 'recruiting-playbook' ),
-				'description' => esc_html__( 'Maximale Anzahl der KI-Vorschläge.', 'recruiting-playbook' ),
+				'label'       => esc_html__( 'Max. suggestions', 'recruiting-playbook' ),
+				'description' => esc_html__( 'Maximum number of AI suggestions.', 'recruiting-playbook' ),
 				'type'        => Controls_Manager::NUMBER,
 				'default'     => 5,
 				'min'         => 1,

@@ -25,10 +25,10 @@ class PlaceholderService {
 	 * @see docs/technical/email-signature-specification.md
 	 */
 	private const GROUPS = [
-		'candidate'   => 'Kandidat',
-		'application' => 'Bewerbung',
-		'job'         => 'Stelle',
-		'company'     => 'Firma',
+		'candidate'   => 'Candidate',
+		'application' => 'Application',
+		'job'         => 'Job',
+		'company'     => 'Company',
 	];
 
 	/**
@@ -175,7 +175,7 @@ class PlaceholderService {
 			// Bewerbung.
 			'bewerbung_id'     => '#2025-0042',
 			'bewerbung_datum'  => date_i18n( get_option( 'date_format' ) ),
-			'bewerbung_status' => __( 'In Prüfung', 'recruiting-playbook' ),
+			'bewerbung_status' => __( 'Under Review', 'recruiting-playbook' ),
 
 			// Stelle.
 			'stelle'           => 'Senior PHP Developer',
@@ -263,13 +263,13 @@ class PlaceholderService {
 			case 'herr':
 			case 'mr':
 			case 'mr.':
-				return __( 'Herr', 'recruiting-playbook' );
+				return __( 'Mr.', 'recruiting-playbook' );
 			case 'frau':
 			case 'mrs':
 			case 'mrs.':
 			case 'ms':
 			case 'ms.':
-				return __( 'Frau', 'recruiting-playbook' );
+				return __( 'Ms.', 'recruiting-playbook' );
 			default:
 				return '';
 		}
@@ -286,22 +286,22 @@ class PlaceholderService {
 		$last_name  = $candidate['last_name'] ?? '';
 
 		if ( empty( $last_name ) ) {
-			return __( 'Guten Tag', 'recruiting-playbook' );
+			return __( 'Hello', 'recruiting-playbook' );
 		}
 
 		switch ( strtolower( $salutation ) ) {
 			case 'herr':
 			case 'mr':
 			case 'mr.':
-				return sprintf( __( 'Sehr geehrter Herr %s', 'recruiting-playbook' ), $last_name );
+				return sprintf( __( 'Dear Mr. %s', 'recruiting-playbook' ), $last_name );
 			case 'frau':
 			case 'mrs':
 			case 'mrs.':
 			case 'ms':
 			case 'ms.':
-				return sprintf( __( 'Sehr geehrte Frau %s', 'recruiting-playbook' ), $last_name );
+				return sprintf( __( 'Dear Ms. %s', 'recruiting-playbook' ), $last_name );
 			default:
-				return sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $last_name );
+				return sprintf( __( 'Hello %s', 'recruiting-playbook' ), $last_name );
 		}
 	}
 
@@ -339,13 +339,13 @@ class PlaceholderService {
 	 */
 	private function translateStatus( string $status ): string {
 		$statuses = [
-			'new'       => __( 'Neu', 'recruiting-playbook' ),
-			'screening' => __( 'In Prüfung', 'recruiting-playbook' ),
+			'new'       => __( 'New', 'recruiting-playbook' ),
+			'screening' => __( 'Under Review', 'recruiting-playbook' ),
 			'interview' => __( 'Interview', 'recruiting-playbook' ),
-			'offer'     => __( 'Angebot', 'recruiting-playbook' ),
-			'hired'     => __( 'Eingestellt', 'recruiting-playbook' ),
-			'rejected'  => __( 'Abgesagt', 'recruiting-playbook' ),
-			'withdrawn' => __( 'Zurückgezogen', 'recruiting-playbook' ),
+			'offer'     => __( 'Offer', 'recruiting-playbook' ),
+			'hired'     => __( 'Hired', 'recruiting-playbook' ),
+			'rejected'  => __( 'Rejected', 'recruiting-playbook' ),
+			'withdrawn' => __( 'Withdrawn', 'recruiting-playbook' ),
 		];
 
 		return $statuses[ $status ] ?? $status;
@@ -368,95 +368,95 @@ class PlaceholderService {
 		return [
 			// Kandidat (7 Platzhalter).
 			'anrede'           => [
-				'label'       => __( 'Anrede', 'recruiting-playbook' ),
+				'label'       => __( 'Salutation', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Herr / Frau', 'recruiting-playbook' ),
+				'description' => __( 'Mr. / Ms.', 'recruiting-playbook' ),
 			],
 			'anrede_formal'    => [
-				'label'       => __( 'Formelle Anrede', 'recruiting-playbook' ),
+				'label'       => __( 'Formal Salutation', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Sehr geehrter Herr Mustermann', 'recruiting-playbook' ),
+				'description' => __( 'Dear Mr. Doe', 'recruiting-playbook' ),
 			],
 			'vorname'          => [
-				'label'       => __( 'Vorname', 'recruiting-playbook' ),
+				'label'       => __( 'First Name', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Vorname des Kandidaten', 'recruiting-playbook' ),
+				'description' => __( 'Candidate\'s first name', 'recruiting-playbook' ),
 			],
 			'nachname'         => [
-				'label'       => __( 'Nachname', 'recruiting-playbook' ),
+				'label'       => __( 'Last Name', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Nachname des Kandidaten', 'recruiting-playbook' ),
+				'description' => __( 'Candidate\'s last name', 'recruiting-playbook' ),
 			],
 			'name'             => [
-				'label'       => __( 'Vollständiger Name', 'recruiting-playbook' ),
+				'label'       => __( 'Full Name', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Vor- und Nachname', 'recruiting-playbook' ),
+				'description' => __( 'First and last name', 'recruiting-playbook' ),
 			],
 			'email'            => [
-				'label'       => __( 'E-Mail', 'recruiting-playbook' ),
+				'label'       => __( 'Email', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'E-Mail-Adresse des Kandidaten', 'recruiting-playbook' ),
+				'description' => __( 'Candidate\'s email address', 'recruiting-playbook' ),
 			],
 			'telefon'          => [
-				'label'       => __( 'Telefon', 'recruiting-playbook' ),
+				'label'       => __( 'Phone', 'recruiting-playbook' ),
 				'group'       => 'candidate',
-				'description' => __( 'Telefonnummer des Kandidaten', 'recruiting-playbook' ),
+				'description' => __( 'Candidate\'s phone number', 'recruiting-playbook' ),
 			],
 
 			// Bewerbung (3 Platzhalter).
 			'bewerbung_id'     => [
-				'label'       => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+				'label'       => __( 'Application ID', 'recruiting-playbook' ),
 				'group'       => 'application',
-				'description' => __( 'Referenznummer der Bewerbung', 'recruiting-playbook' ),
+				'description' => __( 'Application reference number', 'recruiting-playbook' ),
 			],
 			'bewerbung_datum'  => [
-				'label'       => __( 'Bewerbungsdatum', 'recruiting-playbook' ),
+				'label'       => __( 'Application Date', 'recruiting-playbook' ),
 				'group'       => 'application',
-				'description' => __( 'Eingangsdatum der Bewerbung', 'recruiting-playbook' ),
+				'description' => __( 'Application submission date', 'recruiting-playbook' ),
 			],
 			'bewerbung_status' => [
-				'label'       => __( 'Bewerbungsstatus', 'recruiting-playbook' ),
+				'label'       => __( 'Application Status', 'recruiting-playbook' ),
 				'group'       => 'application',
-				'description' => __( 'Aktueller Status der Bewerbung', 'recruiting-playbook' ),
+				'description' => __( 'Current application status', 'recruiting-playbook' ),
 			],
 
 			// Stelle (4 Platzhalter).
 			'stelle'           => [
-				'label'       => __( 'Stellentitel', 'recruiting-playbook' ),
+				'label'       => __( 'Job Title', 'recruiting-playbook' ),
 				'group'       => 'job',
-				'description' => __( 'Titel der Stelle', 'recruiting-playbook' ),
+				'description' => __( 'Title of the job', 'recruiting-playbook' ),
 			],
 			'stelle_ort'       => [
-				'label'       => __( 'Arbeitsort', 'recruiting-playbook' ),
+				'label'       => __( 'Job Location', 'recruiting-playbook' ),
 				'group'       => 'job',
-				'description' => __( 'Standort der Stelle', 'recruiting-playbook' ),
+				'description' => __( 'Location of the job', 'recruiting-playbook' ),
 			],
 			'stelle_typ'       => [
-				'label'       => __( 'Beschäftigungsart', 'recruiting-playbook' ),
+				'label'       => __( 'Employment Type', 'recruiting-playbook' ),
 				'group'       => 'job',
-				'description' => __( 'Vollzeit, Teilzeit, etc.', 'recruiting-playbook' ),
+				'description' => __( 'Full-time, part-time, etc.', 'recruiting-playbook' ),
 			],
 			'stelle_url'       => [
-				'label'       => __( 'Stellen-URL', 'recruiting-playbook' ),
+				'label'       => __( 'Job URL', 'recruiting-playbook' ),
 				'group'       => 'job',
-				'description' => __( 'Link zur Stellenanzeige', 'recruiting-playbook' ),
+				'description' => __( 'Link to job listing', 'recruiting-playbook' ),
 			],
 
 			// Firma (3 Platzhalter).
 			'firma'            => [
-				'label'       => __( 'Firmenname', 'recruiting-playbook' ),
+				'label'       => __( 'Company Name', 'recruiting-playbook' ),
 				'group'       => 'company',
-				'description' => __( 'Name des Unternehmens', 'recruiting-playbook' ),
+				'description' => __( 'Name of the company', 'recruiting-playbook' ),
 			],
 			'firma_adresse'    => [
-				'label'       => __( 'Firmenadresse', 'recruiting-playbook' ),
+				'label'       => __( 'Company Address', 'recruiting-playbook' ),
 				'group'       => 'company',
-				'description' => __( 'Adresse des Unternehmens', 'recruiting-playbook' ),
+				'description' => __( 'Address of the company', 'recruiting-playbook' ),
 			],
 			'firma_website'    => [
-				'label'       => __( 'Firmenwebsite', 'recruiting-playbook' ),
+				'label'       => __( 'Company Website', 'recruiting-playbook' ),
 				'group'       => 'company',
-				'description' => __( 'Website des Unternehmens', 'recruiting-playbook' ),
+				'description' => __( 'Website of the company', 'recruiting-playbook' ),
 			],
 		];
 	}

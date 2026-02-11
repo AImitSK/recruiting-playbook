@@ -1,7 +1,7 @@
 /**
  * Custom Fields Panel Component
  *
- * Zeigt Custom Fields einer Bewerbung in der Admin-Detailansicht an.
+ * Displays custom fields of an application in the admin detail view.
  *
  * @package RecruitingPlaybook
  */
@@ -22,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 
 /**
- * Icon-Mapping für Feldtypen
+ * Icon mapping for field types
  */
 const FIELD_TYPE_ICONS = {
 	text: null,
@@ -40,7 +40,7 @@ const FIELD_TYPE_ICONS = {
 };
 
 /**
- * Einzelnes Feld rendern
+ * Render individual field
  */
 function FieldValue( { field } ) {
 	const { type, label, value, display_value } = field;
@@ -51,7 +51,7 @@ function FieldValue( { field } ) {
 		return null;
 	}
 
-	// Heading wird als Überschrift gerendert
+	// Heading is rendered as section header
 	if ( type === 'heading' ) {
 		return (
 			<div style={ { gridColumn: '1 / -1', marginTop: '0.5rem' } }>
@@ -69,10 +69,10 @@ function FieldValue( { field } ) {
 		);
 	}
 
-	// Leere Werte anzeigen
+	// Display empty values
 	const isEmpty = value === null || value === '' || ( Array.isArray( value ) && value.length === 0 );
 
-	// File-Typ hat spezielle Darstellung
+	// File type has special display
 	if ( type === 'file' ) {
 		return (
 			<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
@@ -99,7 +99,7 @@ function FieldValue( { field } ) {
 		);
 	}
 
-	// Standard-Darstellung
+	// Standard display
 	return (
 		<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
 			<span style={ {
@@ -122,7 +122,7 @@ function FieldValue( { field } ) {
 }
 
 /**
- * Dateiliste rendern
+ * Render file list
  */
 function FileList( { files } ) {
 	if ( ! Array.isArray( files ) || files.length === 0 ) {
@@ -142,17 +142,17 @@ function FileList( { files } ) {
 					} }
 				>
 					<FileText style={ { width: '0.875rem', height: '0.875rem', color: '#6b7280' } } />
-					<span>{ file.filename || file.name || `Datei ${ index + 1 }` }</span>
+					<span>{ file.filename || file.name || `File ${ index + 1 }` }</span>
 					{ file.view_url && (
 						<Button variant="ghost" size="sm" asChild style={ { padding: '0.25rem' } }>
-							<a href={ file.view_url } target="_blank" rel="noopener noreferrer" title={ __( 'Ansehen', 'recruiting-playbook' ) }>
+							<a href={ file.view_url } target="_blank" rel="noopener noreferrer" title={ __( 'View', 'recruiting-playbook' ) }>
 								<Eye style={ { width: '0.75rem', height: '0.75rem' } } />
 							</a>
 						</Button>
 					) }
 					{ file.download_url && (
 						<Button variant="ghost" size="sm" asChild style={ { padding: '0.25rem' } }>
-							<a href={ file.download_url } download title={ __( 'Herunterladen', 'recruiting-playbook' ) }>
+							<a href={ file.download_url } download title={ __( 'Download', 'recruiting-playbook' ) }>
 								<Download style={ { width: '0.75rem', height: '0.75rem' } } />
 							</a>
 						</Button>
@@ -164,10 +164,10 @@ function FileList( { files } ) {
 }
 
 /**
- * Wert formatieren basierend auf Feldtyp
+ * Format value based on field type
  */
 function formatValue( type, value, displayValue ) {
-	// Display-Value hat Priorität wenn vorhanden
+	// Display value has priority if present
 	if ( displayValue !== undefined && displayValue !== null && displayValue !== value ) {
 		return displayValue;
 	}
@@ -207,7 +207,7 @@ function formatValue( type, value, displayValue ) {
 
 		case 'checkbox':
 			if ( typeof value === 'boolean' ) {
-				return value ? __( 'Ja', 'recruiting-playbook' ) : __( 'Nein', 'recruiting-playbook' );
+				return value ? __( 'Yes', 'recruiting-playbook' ) : __( 'No', 'recruiting-playbook' );
 			}
 			if ( Array.isArray( value ) ) {
 				return value.join( ', ' ) || '-';
@@ -228,10 +228,10 @@ function formatValue( type, value, displayValue ) {
 }
 
 /**
- * CustomFieldsPanel Hauptkomponente
+ * CustomFieldsPanel main component
  */
 export function CustomFieldsPanel( { customFields, showHeader = true } ) {
-	// Keine Custom Fields vorhanden
+	// No custom fields present
 	if ( ! customFields || ! Array.isArray( customFields ) || customFields.length === 0 ) {
 		return null;
 	}
@@ -251,7 +251,7 @@ export function CustomFieldsPanel( { customFields, showHeader = true } ) {
 	return (
 		<Card>
 			<CardHeader style={ { paddingBottom: 0 } }>
-				<CardTitle>{ __( 'Zusätzliche Angaben', 'recruiting-playbook' ) }</CardTitle>
+				<CardTitle>{ __( 'Additional Information', 'recruiting-playbook' ) }</CardTitle>
 			</CardHeader>
 			<CardContent style={ { padding: '1rem 1.5rem' } }>
 				{ content }

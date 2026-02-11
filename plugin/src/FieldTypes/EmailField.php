@@ -2,7 +2,7 @@
 /**
  * Email Field Type
  *
- * E-Mail-Eingabefeld mit Validierung.
+ * Email input field with validation.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * E-Mail Feldtyp
+ * Email Field Type
  */
 class EmailField extends AbstractFieldType {
 
@@ -32,7 +32,7 @@ class EmailField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'E-Mail', 'recruiting-playbook' );
+		return __( 'Email', 'recruiting-playbook' );
 	}
 
 	/**
@@ -62,7 +62,7 @@ class EmailField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getAvailableValidationRules(): array {
-		return []; // E-Mail-Validierung ist immer aktiv.
+		return []; // Email validation is always active.
 	}
 
 	/**
@@ -85,7 +85,7 @@ class EmailField extends AbstractFieldType {
 				'invalid_email',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s muss eine gültige E-Mail-Adresse sein.', 'recruiting-playbook' ),
+					__( '%s must be a valid email address.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
