@@ -2,7 +2,7 @@
 /**
  * Textarea Field Type
  *
- * Mehrzeiliges Textfeld.
+ * Multi-line text field.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * Textarea Feldtyp
+ * Textarea field type
  */
 class TextareaField extends AbstractFieldType {
 
@@ -32,7 +32,7 @@ class TextareaField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Textbereich', 'recruiting-playbook' );
+		return __( 'Textarea', 'recruiting-playbook' );
 	}
 
 	/**
@@ -65,14 +65,14 @@ class TextareaField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min_length',
-				'label'       => __( 'Minimale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Minimum length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0,
 				'placeholder' => '0',
 			],
 			[
 				'key'         => 'max_length',
-				'label'       => __( 'Maximale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Maximum length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'placeholder' => '5000',

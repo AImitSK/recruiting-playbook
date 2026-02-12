@@ -136,7 +136,7 @@ function JobCardPreview( { settings, computedPrimaryColor } ) {
 						className="rp-px-1.5 rp-py-0.5 rp-text-[10px] rp-font-medium rp-rounded"
 						style={ badgeStyle( settings.badge_color_new || '#22c55e' ) }
 					>
-						{ __( 'Neu', 'recruiting-playbook' ) }
+						{ __( 'New', 'recruiting-playbook' ) }
 					</span>
 					<span
 						className="rp-px-1.5 rp-py-0.5 rp-text-[10px] rp-font-medium rp-rounded"
@@ -166,7 +166,7 @@ function JobCardPreview( { settings, computedPrimaryColor } ) {
 				{ settings.show_employment_type !== false && (
 					<span className="rp-flex rp-items-center rp-gap-0.5">
 						<Clock className="rp-w-2.5 rp-h-2.5" />
-						{ __( 'Vollzeit', 'recruiting-playbook' ) }
+						{ __( 'Full-time', 'recruiting-playbook' ) }
 					</span>
 				) }
 			</div>
@@ -238,7 +238,7 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
 				className="rp-font-semibold rp-text-gray-900 rp-mb-2"
 				style={ { fontSize: '0.75rem' } }
 			>
-				{ __( 'Jetzt bewerben', 'recruiting-playbook' ) }
+				{ __( 'Apply now', 'recruiting-playbook' ) }
 			</h5>
 
 			{ /* Placeholder inputs */ }
@@ -247,7 +247,7 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
 					{ __( 'Name', 'recruiting-playbook' ) }
 				</div>
 				<div className="rp-h-5 rp-bg-gray-100 rp-rounded rp-text-[9px] rp-text-gray-400 rp-flex rp-items-center rp-px-2">
-					{ __( 'E-Mail', 'recruiting-playbook' ) }
+					{ __( 'Email', 'recruiting-playbook' ) }
 				</div>
 			</div>
 
@@ -256,7 +256,7 @@ function FormBoxPreview( { settings, computedPrimaryColor } ) {
 				className="rp-w-full rp-py-1 rp-text-[10px] rp-font-medium"
 				style={ buttonStyle }
 			>
-				{ __( 'Absenden', 'recruiting-playbook' ) }
+				{ __( 'Submit', 'recruiting-playbook' ) }
 			</button>
 		</div>
 	);
@@ -327,7 +327,7 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 					padding: '0.375rem 0.75rem', // Fixed size
 				} }
 			>
-				{ __( 'Jetzt bewerben', 'recruiting-playbook' ) }
+				{ __( 'Apply now', 'recruiting-playbook' ) }
 			</button>
 
 			<div className="rp-flex rp-gap-2">
@@ -337,7 +337,7 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 					className="rp-text-[10px] rp-font-medium rp-flex-1"
 					style={ primaryStyle }
 				>
-					{ __( 'Bewerben', 'recruiting-playbook' ) }
+					{ __( 'Apply', 'recruiting-playbook' ) }
 				</button>
 
 				{ /* Outline Button */ }
@@ -346,7 +346,7 @@ function ButtonsPreview( { settings, computedPrimaryColor } ) {
 					className="rp-text-[10px] rp-font-medium rp-flex-1"
 					style={ outlineStyle }
 				>
-					{ __( 'Merken', 'recruiting-playbook' ) }
+					{ __( 'Save', 'recruiting-playbook' ) }
 				</button>
 			</div>
 		</div>
@@ -423,7 +423,7 @@ function AiButtonPreview( { settings, computedPrimaryColor } ) {
 			style={ buttonStyle }
 		>
 			<Sparkles className="rp-w-3 rp-h-3" />
-			{ settings.ai_match_button_text || __( 'KI-Matching starten', 'recruiting-playbook' ) }
+			{ settings.ai_match_button_text || __( 'Start AI matching', 'recruiting-playbook' ) }
 		</button>
 	);
 }
@@ -449,7 +449,7 @@ function TypographyPreview( { settings, computedPrimaryColor } ) {
 					color: '#111827',
 				} }
 			>
-				{ __( 'Ihre Aufgaben', 'recruiting-playbook' ) }
+				{ __( 'Your Responsibilities', 'recruiting-playbook' ) }
 			</h2>
 			<p
 				style={ {
@@ -471,7 +471,7 @@ function TypographyPreview( { settings, computedPrimaryColor } ) {
 				} }
 				className={ linkDecoration === 'hover' ? 'hover:rp-underline' : '' }
 			>
-				{ __( 'Mehr erfahren', 'recruiting-playbook' ) }
+				{ __( 'Learn more', 'recruiting-playbook' ) }
 			</a>
 		</div>
 	);
@@ -510,21 +510,21 @@ export function LivePreview( { settings, computedPrimaryColor } ) {
 			<Card>
 				<CardHeader className="rp-pb-2">
 					<CardTitle className="rp-text-sm">
-						{ __( 'Live-Vorschau', 'recruiting-playbook' ) }
+						{ __( 'Live Preview', 'recruiting-playbook' ) }
 					</CardTitle>
 					<CardDescription className="rp-text-xs">
-						{ __( 'Änderungen werden sofort angezeigt', 'recruiting-playbook' ) }
+						{ __( 'Changes are displayed immediately', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					<PreviewSection title={ __( 'JOB-CARD', 'recruiting-playbook' ) }>
+					<PreviewSection title={ __( 'JOB CARD', 'recruiting-playbook' ) }>
 						<JobCardPreview
 							settings={ settings }
 							computedPrimaryColor={ computedPrimaryColor }
 						/>
 					</PreviewSection>
 
-					<PreviewSection title={ __( 'FORMULARBOX', 'recruiting-playbook' ) }>
+					<PreviewSection title={ __( 'FORM BOX', 'recruiting-playbook' ) }>
 						<FormBoxPreview
 							settings={ settings }
 							computedPrimaryColor={ computedPrimaryColor }
@@ -538,21 +538,21 @@ export function LivePreview( { settings, computedPrimaryColor } ) {
 						/>
 					</PreviewSection>
 
-					<PreviewSection title={ __( 'KI-BUTTON', 'recruiting-playbook' ) }>
+					<PreviewSection title={ __( 'AI BUTTON', 'recruiting-playbook' ) }>
 						<AiButtonPreview
 							settings={ settings }
 							computedPrimaryColor={ computedPrimaryColor }
 						/>
 					</PreviewSection>
 
-					<PreviewSection title={ __( 'TYPOGRAFIE', 'recruiting-playbook' ) }>
+					<PreviewSection title={ __( 'TYPOGRAPHY', 'recruiting-playbook' ) }>
 						<TypographyPreview
 							settings={ settings }
 							computedPrimaryColor={ computedPrimaryColor }
 						/>
 					</PreviewSection>
 
-					<PreviewSection title={ __( 'PRIMÄRFARBE', 'recruiting-playbook' ) }>
+					<PreviewSection title={ __( 'PRIMARY COLOR', 'recruiting-playbook' ) }>
 						<ColorSwatchPreview color={ computedPrimaryColor } />
 					</PreviewSection>
 				</CardContent>

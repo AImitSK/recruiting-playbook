@@ -153,7 +153,7 @@ class SignatureController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Signatur-ID', 'recruiting-playbook' ),
+							'description' => __( 'Signature ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -171,7 +171,7 @@ class SignatureController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Signatur-ID', 'recruiting-playbook' ),
+							'description' => __( 'Signature ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -191,7 +191,7 @@ class SignatureController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Signatur-ID', 'recruiting-playbook' ),
+							'description' => __( 'Signature ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -235,7 +235,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! $signature ) {
 			return new WP_Error(
 				'rest_signature_not_found',
-				__( 'Signatur nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Signature not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -264,7 +264,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( false === $id ) {
 			return new WP_Error(
 				'rest_signature_create_failed',
-				__( 'Signatur konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Signature could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -274,7 +274,7 @@ class SignatureController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'   => true,
-				'message'   => __( 'Signatur wurde erstellt.', 'recruiting-playbook' ),
+				'message'   => __( 'Signature created.', 'recruiting-playbook' ),
 				'signature' => $signature,
 			],
 			201
@@ -304,7 +304,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( empty( $data ) ) {
 			return new WP_Error(
 				'rest_signature_no_data',
-				__( 'Keine Daten zum Aktualisieren.', 'recruiting-playbook' ),
+				__( 'No data to update.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -314,7 +314,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_signature_update_failed',
-				__( 'Signatur konnte nicht aktualisiert werden.', 'recruiting-playbook' ),
+				__( 'Signature could not be updated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -324,7 +324,7 @@ class SignatureController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'   => true,
-				'message'   => __( 'Signatur wurde aktualisiert.', 'recruiting-playbook' ),
+				'message'   => __( 'Signature updated.', 'recruiting-playbook' ),
 				'signature' => $signature,
 			],
 			200
@@ -345,7 +345,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_signature_delete_failed',
-				__( 'Signatur konnte nicht gelöscht werden. Die Standard-Firmen-Signatur kann nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'Signature could not be deleted. The default company signature cannot be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -353,7 +353,7 @@ class SignatureController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Signatur wurde gelöscht.', 'recruiting-playbook' ),
+				'message' => __( 'Signature deleted.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -372,7 +372,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! $signature ) {
 			return new WP_Error(
 				'rest_signature_not_found',
-				__( 'Signatur nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Signature not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -382,7 +382,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_signature_set_default_failed',
-				__( 'Signatur konnte nicht als Standard gesetzt werden.', 'recruiting-playbook' ),
+				__( 'Signature could not be set as default.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -390,7 +390,7 @@ class SignatureController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Signatur wurde als Standard gesetzt.', 'recruiting-playbook' ),
+				'message' => __( 'Signature set as default.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -423,7 +423,7 @@ class SignatureController extends WP_REST_Controller {
 	public function create_company_signature( $request ) {
 		$data = [
 			'user_id'         => null, // Firmen-Signatur hat keine User-ID.
-			'name'            => $request->get_param( 'name' ) ?: __( 'Firmen-Signatur', 'recruiting-playbook' ),
+			'name'            => $request->get_param( 'name' ) ?: __( 'Company Signature', 'recruiting-playbook' ),
 			'greeting'        => $request->get_param( 'greeting' ),
 			'content'         => $request->get_param( 'content' ),
 			'is_default'      => $request->get_param( 'is_default' ) ?? false,
@@ -435,7 +435,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( false === $id ) {
 			return new WP_Error(
 				'rest_signature_create_failed',
-				__( 'Firmen-Signatur konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Company signature could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -445,7 +445,7 @@ class SignatureController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'   => true,
-				'message'   => __( 'Firmen-Signatur wurde erstellt.', 'recruiting-playbook' ),
+				'message'   => __( 'Company signature created.', 'recruiting-playbook' ),
 				'signature' => $signature,
 			],
 			201
@@ -507,7 +507,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie müssen angemeldet sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -527,7 +527,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie müssen angemeldet sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -556,7 +556,7 @@ class SignatureController extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_forbidden',
-			__( 'Sie haben keine Berechtigung, diese Signatur anzuzeigen.', 'recruiting-playbook' ),
+			__( 'You do not have permission to view this signature.', 'recruiting-playbook' ),
 			[ 'status' => 403 ]
 		);
 	}
@@ -573,7 +573,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie müssen angemeldet sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -594,7 +594,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie müssen angemeldet sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -611,7 +611,7 @@ class SignatureController extends WP_REST_Controller {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return new WP_Error(
 					'rest_forbidden',
-					__( 'Nur Administratoren können Firmen-Signaturen bearbeiten.', 'recruiting-playbook' ),
+					__( 'Only administrators can edit company signatures.', 'recruiting-playbook' ),
 					[ 'status' => 403 ]
 				);
 			}
@@ -630,7 +630,7 @@ class SignatureController extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_forbidden',
-			__( 'Sie haben keine Berechtigung, diese Signatur zu bearbeiten.', 'recruiting-playbook' ),
+			__( 'You do not have permission to edit this signature.', 'recruiting-playbook' ),
 			[ 'status' => 403 ]
 		);
 	}
@@ -648,7 +648,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie müssen angemeldet sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -665,7 +665,7 @@ class SignatureController extends WP_REST_Controller {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return new WP_Error(
 					'rest_forbidden',
-					__( 'Nur Administratoren können Firmen-Signaturen löschen.', 'recruiting-playbook' ),
+					__( 'Only administrators can delete company signatures.', 'recruiting-playbook' ),
 					[ 'status' => 403 ]
 				);
 			}
@@ -684,7 +684,7 @@ class SignatureController extends WP_REST_Controller {
 
 		return new WP_Error(
 			'rest_forbidden',
-			__( 'Sie haben keine Berechtigung, diese Signatur zu löschen.', 'recruiting-playbook' ),
+			__( 'You do not have permission to delete this signature.', 'recruiting-playbook' ),
 			[ 'status' => 403 ]
 		);
 	}
@@ -699,7 +699,7 @@ class SignatureController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Nur Administratoren haben Zugriff auf diese Funktion.', 'recruiting-playbook' ),
+				__( 'Only administrators have access to this function.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -715,29 +715,29 @@ class SignatureController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'name'            => [
-				'description'       => __( 'Signatur-Name', 'recruiting-playbook' ),
+				'description'       => __( 'Signature name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'greeting'        => [
-				'description'       => __( 'Grußformel', 'recruiting-playbook' ),
+				'description'       => __( 'Greeting', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'content'         => [
-				'description'       => __( 'Signatur-Inhalt', 'recruiting-playbook' ),
+				'description'       => __( 'Signature content', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'is_default'      => [
-				'description' => __( 'Als Standard setzen', 'recruiting-playbook' ),
+				'description' => __( 'Set as default', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => false,
 			],
 			'include_company' => [
-				'description' => __( 'Firmendaten anhängen', 'recruiting-playbook' ),
+				'description' => __( 'Include company data', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => true,
 			],
@@ -752,30 +752,30 @@ class SignatureController extends WP_REST_Controller {
 	private function get_company_signature_args(): array {
 		return [
 			'name'            => [
-				'description'       => __( 'Signatur-Name', 'recruiting-playbook' ),
+				'description'       => __( 'Signature name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
-				'default'           => __( 'Firmen-Signatur', 'recruiting-playbook' ),
+				'default'           => __( 'Company Signature', 'recruiting-playbook' ),
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'greeting'        => [
-				'description'       => __( 'Grußformel', 'recruiting-playbook' ),
+				'description'       => __( 'Greeting', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'content'         => [
-				'description'       => __( 'Signatur-Inhalt', 'recruiting-playbook' ),
+				'description'       => __( 'Signature content', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'is_default'      => [
-				'description' => __( 'Als Standard setzen', 'recruiting-playbook' ),
+				'description' => __( 'Set as default', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => false,
 			],
 			'include_company' => [
-				'description' => __( 'Firmendaten anhängen', 'recruiting-playbook' ),
+				'description' => __( 'Include company data', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => true,
 			],

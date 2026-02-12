@@ -51,7 +51,7 @@ class Settings {
 		// Sektion: Allgemein.
 		add_settings_section(
 			'rp_general_section',
-			__( 'Allgemeine Einstellungen', 'recruiting-playbook' ),
+			__( 'General Settings', 'recruiting-playbook' ),
 			[ $this, 'renderGeneralSection' ],
 			'rp-settings'
 		);
@@ -59,33 +59,33 @@ class Settings {
 		// Feld: Benachrichtigungs-E-Mail.
 		add_settings_field(
 			'notification_email',
-			__( 'Benachrichtigungs-E-Mail', 'recruiting-playbook' ),
+			__( 'Notification Email', 'recruiting-playbook' ),
 			[ $this, 'renderEmailField' ],
 			'rp-settings',
 			'rp_general_section',
 			[
 				'label_for'   => 'notification_email',
-				'description' => __( 'E-Mail-Adresse für neue Bewerbungen.', 'recruiting-playbook' ),
+				'description' => __( 'Email address for new applications.', 'recruiting-playbook' ),
 			]
 		);
 
 		// Feld: Datenschutz-URL.
 		add_settings_field(
 			'privacy_url',
-			__( 'Datenschutz-Seite', 'recruiting-playbook' ),
+			__( 'Privacy Page', 'recruiting-playbook' ),
 			[ $this, 'renderPageSelectField' ],
 			'rp-settings',
 			'rp_general_section',
 			[
 				'label_for'   => 'privacy_url',
-				'description' => __( 'Seite mit Datenschutzerklärung für das Bewerbungsformular.', 'recruiting-playbook' ),
+				'description' => __( 'Page with privacy policy for the application form.', 'recruiting-playbook' ),
 			]
 		);
 
 		// Sektion: Firmendaten.
 		add_settings_section(
 			'rp_company_section',
-			__( 'Firmendaten', 'recruiting-playbook' ),
+			__( 'Company Data', 'recruiting-playbook' ),
 			[ $this, 'renderCompanySection' ],
 			'rp-settings'
 		);
@@ -93,13 +93,13 @@ class Settings {
 		// Feld: Firmenname.
 		add_settings_field(
 			'company_name',
-			__( 'Firmenname', 'recruiting-playbook' ) . ' *',
+			__( 'Company Name', 'recruiting-playbook' ) . ' *',
 			[ $this, 'renderTextField' ],
 			'rp-settings',
 			'rp_company_section',
 			[
 				'label_for'   => 'company_name',
-				'description' => __( 'Wird im Schema, E-Mails und auf der Karriereseite angezeigt.', 'recruiting-playbook' ),
+				'description' => __( 'Displayed in schema, emails, and on the careers page.', 'recruiting-playbook' ),
 				'required'    => true,
 			]
 		);
@@ -107,7 +107,7 @@ class Settings {
 		// Feld: Straße.
 		add_settings_field(
 			'company_street',
-			__( 'Straße & Hausnummer', 'recruiting-playbook' ),
+			__( 'Street & Number', 'recruiting-playbook' ),
 			[ $this, 'renderTextField' ],
 			'rp-settings',
 			'rp_company_section',
@@ -119,7 +119,7 @@ class Settings {
 		// Feld: PLZ & Stadt.
 		add_settings_field(
 			'company_city',
-			__( 'PLZ & Stadt', 'recruiting-playbook' ),
+			__( 'Postal Code & City', 'recruiting-playbook' ),
 			[ $this, 'renderZipCityField' ],
 			'rp-settings',
 			'rp_company_section',
@@ -131,7 +131,7 @@ class Settings {
 		// Feld: Telefon.
 		add_settings_field(
 			'company_phone',
-			__( 'Telefon', 'recruiting-playbook' ),
+			__( 'Phone', 'recruiting-playbook' ),
 			[ $this, 'renderTextField' ],
 			'rp-settings',
 			'rp_company_section',
@@ -157,13 +157,13 @@ class Settings {
 		// Feld: Kontakt-E-Mail.
 		add_settings_field(
 			'company_email',
-			__( 'Kontakt-E-Mail', 'recruiting-playbook' ) . ' *',
+			__( 'Contact Email', 'recruiting-playbook' ) . ' *',
 			[ $this, 'renderEmailField' ],
 			'rp-settings',
 			'rp_company_section',
 			[
 				'label_for'   => 'company_email',
-				'description' => __( 'Allgemeine Kontakt-E-Mail der Firma (für E-Mail-Signaturen).', 'recruiting-playbook' ),
+				'description' => __( 'General contact email of the company (for email signatures).', 'recruiting-playbook' ),
 				'required'    => true,
 			]
 		);
@@ -171,7 +171,7 @@ class Settings {
 		// Sektion: E-Mail-Absender.
 		add_settings_section(
 			'rp_sender_section',
-			__( 'Standard-Absender', 'recruiting-playbook' ),
+			__( 'Default Sender', 'recruiting-playbook' ),
 			[ $this, 'renderSenderSection' ],
 			'rp-settings'
 		);
@@ -179,27 +179,27 @@ class Settings {
 		// Feld: Absender-Name.
 		add_settings_field(
 			'sender_name',
-			__( 'Absender-Name', 'recruiting-playbook' ),
+			__( 'Sender Name', 'recruiting-playbook' ),
 			[ $this, 'renderTextField' ],
 			'rp-settings',
 			'rp_sender_section',
 			[
 				'label_for'   => 'sender_name',
-				'description' => __( 'Name, der als Absender in E-Mails angezeigt wird.', 'recruiting-playbook' ),
-				'placeholder' => __( 'Personalabteilung', 'recruiting-playbook' ),
+				'description' => __( 'Name displayed as sender in emails.', 'recruiting-playbook' ),
+				'placeholder' => __( 'HR Department', 'recruiting-playbook' ),
 			]
 		);
 
 		// Feld: Absender-E-Mail.
 		add_settings_field(
 			'sender_email',
-			__( 'Absender-E-Mail', 'recruiting-playbook' ),
+			__( 'Sender Email', 'recruiting-playbook' ),
 			[ $this, 'renderEmailField' ],
 			'rp-settings',
 			'rp_sender_section',
 			[
 				'label_for'   => 'sender_email',
-				'description' => __( 'E-Mail-Adresse, von der E-Mails gesendet werden.', 'recruiting-playbook' ),
+				'description' => __( 'Email address from which emails are sent.', 'recruiting-playbook' ),
 				'placeholder' => 'jobs@example.com',
 			]
 		);
@@ -207,7 +207,7 @@ class Settings {
 		// Sektion: Stellenanzeigen.
 		add_settings_section(
 			'rp_jobs_section',
-			__( 'Stellenanzeigen', 'recruiting-playbook' ),
+			__( 'Job Listings', 'recruiting-playbook' ),
 			[ $this, 'renderJobsSection' ],
 			'rp-settings'
 		);
@@ -215,7 +215,7 @@ class Settings {
 		// Feld: Stellen pro Seite.
 		add_settings_field(
 			'jobs_per_page',
-			__( 'Stellen pro Seite', 'recruiting-playbook' ),
+			__( 'Jobs Per Page', 'recruiting-playbook' ),
 			[ $this, 'renderNumberField' ],
 			'rp-settings',
 			'rp_jobs_section',
@@ -229,13 +229,13 @@ class Settings {
 		// Feld: URL-Slug.
 		add_settings_field(
 			'jobs_slug',
-			__( 'URL-Slug', 'recruiting-playbook' ),
+			__( 'URL Slug', 'recruiting-playbook' ),
 			[ $this, 'renderSlugField' ],
 			'rp-settings',
 			'rp_jobs_section',
 			[
 				'label_for'   => 'jobs_slug',
-				'description' => __( 'URL-Pfad für die Stellenübersicht (z.B. "jobs" für /jobs/).', 'recruiting-playbook' ),
+				'description' => __( 'URL path for the jobs overview (e.g., "jobs" for /jobs/).', 'recruiting-playbook' ),
 			]
 		);
 
@@ -248,8 +248,8 @@ class Settings {
 			'rp_jobs_section',
 			[
 				'label_for'   => 'enable_schema',
-				'label'       => __( 'JSON-LD Schema für Google for Jobs aktivieren', 'recruiting-playbook' ),
-				'description' => __( 'Strukturierte Daten für bessere Sichtbarkeit in Google.', 'recruiting-playbook' ),
+				'label'       => __( 'Enable JSON-LD schema for Google for Jobs', 'recruiting-playbook' ),
+				'description' => __( 'Structured data for better visibility in Google.', 'recruiting-playbook' ),
 			]
 		);
 
@@ -257,7 +257,7 @@ class Settings {
 		if ( function_exists( 'rp_can' ) && rp_can( 'custom_branding' ) ) {
 			add_settings_section(
 				'rp_pro_section',
-				__( 'Pro-Einstellungen', 'recruiting-playbook' ),
+				__( 'Pro Settings', 'recruiting-playbook' ),
 				[ $this, 'renderProSection' ],
 				'rp-settings'
 			);
@@ -265,14 +265,14 @@ class Settings {
 			// Feld: E-Mail-Branding ausblenden.
 			add_settings_field(
 				'hide_email_branding',
-				__( 'White-Label E-Mails', 'recruiting-playbook' ),
+				__( 'White-Label Emails', 'recruiting-playbook' ),
 				[ $this, 'renderCheckboxField' ],
 				'rp-settings',
 				'rp_pro_section',
 				[
 					'label_for'   => 'hide_email_branding',
-					'label'       => __( '"Versand über Recruiting Playbook"-Hinweis in E-Mails ausblenden', 'recruiting-playbook' ),
-					'description' => __( 'Entfernt den Branding-Hinweis aus dem Footer aller E-Mails.', 'recruiting-playbook' ),
+					'label'       => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
+					'description' => __( 'Removes the branding notice from the footer of all emails.', 'recruiting-playbook' ),
 				]
 			);
 		}
@@ -300,7 +300,7 @@ class Settings {
 			'company_email'        => get_option( 'admin_email' ),
 
 			// Standard-Absender.
-			'sender_name'          => __( 'Personalabteilung', 'recruiting-playbook' ),
+			'sender_name'          => __( 'HR Department', 'recruiting-playbook' ),
 			'sender_email'         => get_option( 'admin_email' ),
 
 			// Stellenanzeigen.
@@ -377,7 +377,7 @@ class Settings {
 		<div id="rp-settings-root">
 			<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
 				<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
-				<?php esc_html_e( 'Lade Einstellungen...', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Loading settings...', 'recruiting-playbook' ); ?>
 			</div>
 		</div>
 		<?php
@@ -445,76 +445,76 @@ class Settings {
 	 */
 	private function getI18nStrings(): array {
 		return [
-			'pageTitle'             => __( 'Einstellungen', 'recruiting-playbook' ),
-			'tabGeneral'            => __( 'Allgemein', 'recruiting-playbook' ),
-			'tabCompany'            => __( 'Firmendaten', 'recruiting-playbook' ),
+			'pageTitle'             => __( 'Settings', 'recruiting-playbook' ),
+			'tabGeneral'            => __( 'General', 'recruiting-playbook' ),
+			'tabCompany'            => __( 'Company Data', 'recruiting-playbook' ),
 			'tabExport'             => __( 'Export', 'recruiting-playbook' ),
 
 			// General Settings.
-			'notifications'         => __( 'Benachrichtigungen', 'recruiting-playbook' ),
-			'notificationsDesc'     => __( 'E-Mail-Benachrichtigungen für neue Bewerbungen', 'recruiting-playbook' ),
-			'notificationEmail'     => __( 'Benachrichtigungs-E-Mail', 'recruiting-playbook' ),
-			'notificationEmailDesc' => __( 'E-Mail-Adresse für neue Bewerbungen.', 'recruiting-playbook' ),
-			'privacyPage'           => __( 'Datenschutz-Seite', 'recruiting-playbook' ),
-			'privacyPageDesc'       => __( 'Seite mit Datenschutzerklärung für das Bewerbungsformular.', 'recruiting-playbook' ),
-			'selectPage'            => __( '— Seite auswählen —', 'recruiting-playbook' ),
-			'jobListings'           => __( 'Stellenanzeigen', 'recruiting-playbook' ),
-			'jobListingsDesc'       => __( 'Einstellungen für Stellenanzeigen und die Karriereseite', 'recruiting-playbook' ),
-			'jobsPerPage'           => __( 'Stellen pro Seite', 'recruiting-playbook' ),
-			'urlSlug'               => __( 'URL-Slug', 'recruiting-playbook' ),
-			'urlSlugDesc'           => __( 'URL-Pfad für die Stellenübersicht.', 'recruiting-playbook' ),
+			'notifications'         => __( 'Notifications', 'recruiting-playbook' ),
+			'notificationsDesc'     => __( 'Email notifications for new applications', 'recruiting-playbook' ),
+			'notificationEmail'     => __( 'Notification Email', 'recruiting-playbook' ),
+			'notificationEmailDesc' => __( 'Email address for new applications.', 'recruiting-playbook' ),
+			'privacyPage'           => __( 'Privacy Page', 'recruiting-playbook' ),
+			'privacyPageDesc'       => __( 'Page with privacy policy for the application form.', 'recruiting-playbook' ),
+			'selectPage'            => __( '— Select Page —', 'recruiting-playbook' ),
+			'jobListings'           => __( 'Job Listings', 'recruiting-playbook' ),
+			'jobListingsDesc'       => __( 'Settings for job listings and careers page', 'recruiting-playbook' ),
+			'jobsPerPage'           => __( 'Jobs Per Page', 'recruiting-playbook' ),
+			'urlSlug'               => __( 'URL Slug', 'recruiting-playbook' ),
+			'urlSlugDesc'           => __( 'URL path for the jobs overview.', 'recruiting-playbook' ),
 			'googleForJobs'         => __( 'Google for Jobs Schema', 'recruiting-playbook' ),
-			'googleForJobsDesc'     => __( 'JSON-LD Schema für bessere Sichtbarkeit in Google', 'recruiting-playbook' ),
+			'googleForJobsDesc'     => __( 'JSON-LD schema for better visibility in Google', 'recruiting-playbook' ),
 
 			// Company Settings.
-			'companyData'           => __( 'Firmendaten', 'recruiting-playbook' ),
-			'companyDataDesc'       => __( 'Diese Daten werden in E-Mail-Signaturen und im Google for Jobs Schema verwendet.', 'recruiting-playbook' ),
-			'companyName'           => __( 'Firmenname', 'recruiting-playbook' ),
-			'companyNameDesc'       => __( 'Wird im Schema, E-Mails und auf der Karriereseite angezeigt.', 'recruiting-playbook' ),
-			'street'                => __( 'Straße & Hausnummer', 'recruiting-playbook' ),
-			'zip'                   => __( 'PLZ', 'recruiting-playbook' ),
-			'city'                  => __( 'Stadt', 'recruiting-playbook' ),
-			'phone'                 => __( 'Telefon', 'recruiting-playbook' ),
+			'companyData'           => __( 'Company Data', 'recruiting-playbook' ),
+			'companyDataDesc'       => __( 'This data is used in email signatures and the Google for Jobs schema.', 'recruiting-playbook' ),
+			'companyName'           => __( 'Company Name', 'recruiting-playbook' ),
+			'companyNameDesc'       => __( 'Displayed in schema, emails, and on the careers page.', 'recruiting-playbook' ),
+			'street'                => __( 'Street & Number', 'recruiting-playbook' ),
+			'zip'                   => __( 'Postal Code', 'recruiting-playbook' ),
+			'city'                  => __( 'City', 'recruiting-playbook' ),
+			'phone'                 => __( 'Phone', 'recruiting-playbook' ),
 			'website'               => __( 'Website', 'recruiting-playbook' ),
-			'contactEmail'          => __( 'Kontakt-E-Mail', 'recruiting-playbook' ),
-			'contactEmailDesc'      => __( 'Allgemeine Kontakt-E-Mail der Firma (für E-Mail-Signaturen).', 'recruiting-playbook' ),
-			'defaultSender'         => __( 'Standard-Absender', 'recruiting-playbook' ),
-			'defaultSenderDesc'     => __( 'Standard-Absenderdaten für automatische und manuelle E-Mails.', 'recruiting-playbook' ),
-			'senderName'            => __( 'Absender-Name', 'recruiting-playbook' ),
-			'senderNameDesc'        => __( 'Name, der als Absender in E-Mails angezeigt wird.', 'recruiting-playbook' ),
-			'senderEmail'           => __( 'Absender-E-Mail', 'recruiting-playbook' ),
-			'senderEmailDesc'       => __( 'E-Mail-Adresse, von der E-Mails gesendet werden.', 'recruiting-playbook' ),
-			'hrDepartment'          => __( 'Personalabteilung', 'recruiting-playbook' ),
+			'contactEmail'          => __( 'Contact Email', 'recruiting-playbook' ),
+			'contactEmailDesc'      => __( 'General contact email of the company (for email signatures).', 'recruiting-playbook' ),
+			'defaultSender'         => __( 'Default Sender', 'recruiting-playbook' ),
+			'defaultSenderDesc'     => __( 'Default sender data for automatic and manual emails.', 'recruiting-playbook' ),
+			'senderName'            => __( 'Sender Name', 'recruiting-playbook' ),
+			'senderNameDesc'        => __( 'Name displayed as sender in emails.', 'recruiting-playbook' ),
+			'senderEmail'           => __( 'Sender Email', 'recruiting-playbook' ),
+			'senderEmailDesc'       => __( 'Email address from which emails are sent.', 'recruiting-playbook' ),
+			'hrDepartment'          => __( 'HR Department', 'recruiting-playbook' ),
 
 			// Export Settings.
-			'fullBackup'            => __( 'Vollständiger Backup', 'recruiting-playbook' ),
-			'fullBackupDesc'        => __( 'Exportiert alle Plugin-Daten als JSON-Datei', 'recruiting-playbook' ),
-			'exportIncludes'        => __( 'Der Export enthält:', 'recruiting-playbook' ),
-			'settingsExport'        => __( 'Einstellungen', 'recruiting-playbook' ),
-			'jobsExport'            => __( 'Stellen (inkl. Meta-Daten)', 'recruiting-playbook' ),
-			'taxonomiesExport'      => __( 'Taxonomien (Kategorien, Standorte, etc.)', 'recruiting-playbook' ),
-			'candidatesExport'      => __( 'Kandidaten', 'recruiting-playbook' ),
-			'applicationsExport'    => __( 'Bewerbungen', 'recruiting-playbook' ),
-			'documentsExport'       => __( 'Dokument-Metadaten', 'recruiting-playbook' ),
-			'activityLogExport'     => __( 'Aktivitäts-Log (letzte 1000 Einträge)', 'recruiting-playbook' ),
-			'note'                  => __( 'Hinweis:', 'recruiting-playbook' ),
-			'documentsNotIncluded'  => __( 'Hochgeladene Dokumente (PDFs etc.) werden aus Datenschutzgründen nicht exportiert.', 'recruiting-playbook' ),
-			'downloadBackup'        => __( 'Backup herunterladen', 'recruiting-playbook' ),
-			'downloadStarted'       => __( 'Download wurde gestartet.', 'recruiting-playbook' ),
-			'preparing'             => __( 'Wird vorbereitet...', 'recruiting-playbook' ),
+			'fullBackup'            => __( 'Full Backup', 'recruiting-playbook' ),
+			'fullBackupDesc'        => __( 'Exports all plugin data as JSON file', 'recruiting-playbook' ),
+			'exportIncludes'        => __( 'The export includes:', 'recruiting-playbook' ),
+			'settingsExport'        => __( 'Settings', 'recruiting-playbook' ),
+			'jobsExport'            => __( 'Jobs (incl. metadata)', 'recruiting-playbook' ),
+			'taxonomiesExport'      => __( 'Taxonomies (categories, locations, etc.)', 'recruiting-playbook' ),
+			'candidatesExport'      => __( 'Candidates', 'recruiting-playbook' ),
+			'applicationsExport'    => __( 'Applications', 'recruiting-playbook' ),
+			'documentsExport'       => __( 'Document metadata', 'recruiting-playbook' ),
+			'activityLogExport'     => __( 'Activity log (last 1000 entries)', 'recruiting-playbook' ),
+			'note'                  => __( 'Note:', 'recruiting-playbook' ),
+			'documentsNotIncluded'  => __( 'Uploaded documents (PDFs etc.) are not exported for privacy reasons.', 'recruiting-playbook' ),
+			'downloadBackup'        => __( 'Download Backup', 'recruiting-playbook' ),
+			'downloadStarted'       => __( 'Download has been started.', 'recruiting-playbook' ),
+			'preparing'             => __( 'Preparing...', 'recruiting-playbook' ),
 
 			// Pro Settings.
-			'proSettings'           => __( 'Pro-Einstellungen', 'recruiting-playbook' ),
-			'proSettingsDesc'       => __( 'Erweiterte Einstellungen für Pro-Nutzer.', 'recruiting-playbook' ),
-			'whiteLabel'            => __( 'White-Label E-Mails', 'recruiting-playbook' ),
-			'whiteLabelDesc'        => __( '"Versand über Recruiting Playbook"-Hinweis in E-Mails ausblenden', 'recruiting-playbook' ),
+			'proSettings'           => __( 'Pro Settings', 'recruiting-playbook' ),
+			'proSettingsDesc'       => __( 'Advanced settings for Pro users.', 'recruiting-playbook' ),
+			'whiteLabel'            => __( 'White-Label Emails', 'recruiting-playbook' ),
+			'whiteLabelDesc'        => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
 
 			// Common.
-			'saveSettings'          => __( 'Einstellungen speichern', 'recruiting-playbook' ),
-			'saving'                => __( 'Speichern...', 'recruiting-playbook' ),
-			'settingsSaved'         => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
-			'errorLoading'          => __( 'Fehler beim Laden der Einstellungen', 'recruiting-playbook' ),
-			'errorSaving'           => __( 'Fehler beim Speichern', 'recruiting-playbook' ),
+			'saveSettings'          => __( 'Save Settings', 'recruiting-playbook' ),
+			'saving'                => __( 'Saving...', 'recruiting-playbook' ),
+			'settingsSaved'         => __( 'Settings have been saved.', 'recruiting-playbook' ),
+			'errorLoading'          => __( 'Error loading settings', 'recruiting-playbook' ),
+			'errorSaving'           => __( 'Error saving', 'recruiting-playbook' ),
 		];
 	}
 
@@ -528,7 +528,7 @@ class Settings {
 		?>
 		<div class="notice <?php echo esc_attr( $class ); ?>" style="padding: 12px;">
 			<p>
-				<strong><?php esc_html_e( 'E-Mail-Konfiguration:', 'recruiting-playbook' ); ?></strong>
+				<strong><?php esc_html_e( 'Email Configuration:', 'recruiting-playbook' ); ?></strong>
 				<?php echo esc_html( $smtp_status['message'] ); ?>
 			</p>
 			<?php if ( ! $smtp_status['configured'] ) : ?>
@@ -536,7 +536,7 @@ class Settings {
 					<?php
 					printf(
 						/* translators: %s: link to WordPress.org plugins */
-						esc_html__( 'Empfohlene SMTP-Plugins: %s', 'recruiting-playbook' ),
+						esc_html__( 'Recommended SMTP plugins: %s', 'recruiting-playbook' ),
 						'<a href="https://wordpress.org/plugins/wp-mail-smtp/" target="_blank">WP Mail SMTP</a>, <a href="https://wordpress.org/plugins/post-smtp/" target="_blank">Post SMTP</a>'
 					);
 					?>
@@ -550,35 +550,35 @@ class Settings {
 	 * Allgemeine Sektion
 	 */
 	public function renderGeneralSection(): void {
-		echo '<p>' . esc_html__( 'Grundlegende Einstellungen für das Recruiting Playbook Plugin.', 'recruiting-playbook' ) . '</p>';
+		echo '<p>' . esc_html__( 'Basic settings for the Recruiting Playbook plugin.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**
 	 * Jobs Sektion
 	 */
 	public function renderJobsSection(): void {
-		echo '<p>' . esc_html__( 'Einstellungen für Stellenanzeigen und die Karriereseite.', 'recruiting-playbook' ) . '</p>';
+		echo '<p>' . esc_html__( 'Settings for job listings and careers page.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**
 	 * Firmendaten Sektion
 	 */
 	public function renderCompanySection(): void {
-		echo '<p>' . esc_html__( 'Diese Daten werden in E-Mail-Signaturen und im Google for Jobs Schema verwendet.', 'recruiting-playbook' ) . '</p>';
+		echo '<p>' . esc_html__( 'This data is used in email signatures and the Google for Jobs schema.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**
 	 * Absender Sektion
 	 */
 	public function renderSenderSection(): void {
-		echo '<p>' . esc_html__( 'Standard-Absenderdaten für automatische und manuelle E-Mails.', 'recruiting-playbook' ) . '</p>';
+		echo '<p>' . esc_html__( 'Default sender data for automatic and manual emails.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**
 	 * Pro-Features Sektion
 	 */
 	public function renderProSection(): void {
-		echo '<p>' . esc_html__( 'Erweiterte Einstellungen für Pro-Nutzer.', 'recruiting-playbook' ) . '</p>';
+		echo '<p>' . esc_html__( 'Advanced settings for Pro users.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**
@@ -686,7 +686,7 @@ class Settings {
 			name="<?php echo esc_attr( self::OPTION_NAME . '[company_zip]' ); ?>"
 			value="<?php echo esc_attr( $zip ); ?>"
 			class="small-text"
-			placeholder="<?php esc_attr_e( 'PLZ', 'recruiting-playbook' ); ?>"
+			placeholder="<?php esc_attr_e( 'Postal Code', 'recruiting-playbook' ); ?>"
 			style="width: 80px; margin-right: 8px;"
 		>
 		<input
@@ -695,7 +695,7 @@ class Settings {
 			name="<?php echo esc_attr( self::OPTION_NAME . '[company_city]' ); ?>"
 			value="<?php echo esc_attr( $city ); ?>"
 			class="regular-text"
-			placeholder="<?php esc_attr_e( 'Stadt', 'recruiting-playbook' ); ?>"
+			placeholder="<?php esc_attr_e( 'City', 'recruiting-playbook' ); ?>"
 			style="width: 200px;"
 		>
 		<?php
@@ -789,7 +789,7 @@ class Settings {
 			'name'             => esc_attr( self::OPTION_NAME . '[' . $id . ']' ),
 			'id'               => esc_attr( $id ),
 			'selected'         => absint( url_to_postid( $value ) ),
-			'show_option_none' => esc_html__( '— Seite auswählen —', 'recruiting-playbook' ),
+			'show_option_none' => esc_html__( '— Select Page —', 'recruiting-playbook' ),
 		] );
 
 		if ( ! empty( $args['description'] ) ) :

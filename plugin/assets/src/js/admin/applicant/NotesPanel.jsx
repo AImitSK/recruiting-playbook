@@ -41,10 +41,10 @@ function formatRelativeTime( dateString ) {
 	const hours = Math.floor( diff / 3600000 );
 	const days = Math.floor( diff / 86400000 );
 
-	if ( minutes < 1 ) return __( 'Gerade eben', 'recruiting-playbook' );
-	if ( minutes < 60 ) return `vor ${ minutes } ${ minutes === 1 ? 'Minute' : 'Minuten' }`;
-	if ( hours < 24 ) return `vor ${ hours } ${ hours === 1 ? 'Stunde' : 'Stunden' }`;
-	if ( days < 7 ) return `vor ${ days } ${ days === 1 ? 'Tag' : 'Tagen' }`;
+	if ( minutes < 1 ) return __( 'Just now', 'recruiting-playbook' );
+	if ( minutes < 60 ) return `${ minutes } ${ minutes === 1 ? 'minute' : 'minutes' } ago`;
+	if ( hours < 24 ) return `${ hours } ${ hours === 1 ? 'hour' : 'hours' } ago`;
+	if ( days < 7 ) return `${ days } ${ days === 1 ? 'day' : 'days' } ago`;
 
 	return date.toLocaleDateString( 'de-DE', {
 		day: '2-digit',
@@ -90,7 +90,7 @@ function NoteEditor( { initialContent = '', onSave, onCancel, saving, saveLabel,
 				value={ content }
 				onChange={ ( e ) => setContent( e.target.value ) }
 				onKeyDown={ handleKeyDown }
-				placeholder={ __( 'Notiz eingeben...', 'recruiting-playbook' ) }
+				placeholder={ __( 'Enter note...', 'recruiting-playbook' ) }
 				rows={ 4 }
 				disabled={ saving }
 				style={ {
@@ -114,24 +114,24 @@ function NoteEditor( { initialContent = '', onSave, onCancel, saving, saveLabel,
 							disabled={ saving }
 						/>
 						<Lock style={ { width: '0.875rem', height: '0.875rem' } } />
-						{ __( 'Nur für mich sichtbar', 'recruiting-playbook' ) }
+						{ __( 'Visible only to me', 'recruiting-playbook' ) }
 					</label>
 				) }
 
 				<div style={ { display: 'flex', gap: '0.5rem', marginLeft: 'auto' } }>
 					{ onCancel && (
 						<Button variant="outline" onClick={ onCancel } disabled={ saving }>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 					) }
 					<Button onClick={ handleSave } disabled={ ! content.trim() || saving }>
 						{ saving ? (
 							<>
 								<Spinner size="0.875rem" />
-								{ __( 'Speichern...', 'recruiting-playbook' ) }
+								{ __( 'Saving...', 'recruiting-playbook' ) }
 							</>
 						) : (
-							saveLabel || __( 'Speichern', 'recruiting-playbook' )
+							saveLabel || __( 'Save', 'recruiting-playbook' )
 						) }
 					</Button>
 				</div>
@@ -141,7 +141,7 @@ function NoteEditor( { initialContent = '', onSave, onCancel, saving, saveLabel,
 				<kbd style={ { padding: '0.125rem 0.375rem', backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '0.25rem', fontSize: '0.6875rem' } }>Ctrl</kbd>
 				{ ' + ' }
 				<kbd style={ { padding: '0.125rem 0.375rem', backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '0.25rem', fontSize: '0.6875rem' } }>Enter</kbd>
-				{ ' ' }{ __( 'zum Speichern', 'recruiting-playbook' ) }
+				{ ' ' }{ __( 'to save', 'recruiting-playbook' ) }
 			</div>
 		</div>
 	);
@@ -180,7 +180,7 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 					onCancel={ () => setIsEditing( false ) }
 					saving={ saving }
 					showPrivate={ false }
-					saveLabel={ __( 'Änderungen speichern', 'recruiting-playbook' ) }
+					saveLabel={ __( 'Save changes', 'recruiting-playbook' ) }
 				/>
 			</div>
 		);
@@ -205,7 +205,7 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 					/>
 				) }
 				<span style={ { fontWeight: 600, fontSize: '0.875rem', color: '#1f2937' } }>
-					{ note.author?.name || __( 'Unbekannt', 'recruiting-playbook' ) }
+					{ note.author?.name || __( 'Unknown', 'recruiting-playbook' ) }
 				</span>
 				{ note.is_private && (
 					<span
@@ -222,13 +222,13 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 						} }
 					>
 						<Lock style={ { width: '0.625rem', height: '0.625rem' } } />
-						{ __( 'Privat', 'recruiting-playbook' ) }
+						{ __( 'Private', 'recruiting-playbook' ) }
 					</span>
 				) }
 				<span style={ { marginLeft: 'auto', fontSize: '0.75rem', color: '#6b7280' } }>
 					{ formatRelativeTime( note.created_at ) }
 					{ note.updated_at !== note.created_at && (
-						<span style={ { marginLeft: '0.25rem' } }>({ __( 'bearbeitet', 'recruiting-playbook' ) })</span>
+						<span style={ { marginLeft: '0.25rem' } }>({ __( 'edited', 'recruiting-playbook' ) })</span>
 					) }
 				</span>
 			</div>
@@ -260,21 +260,21 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 							} }
 						>
 							<Edit2 style={ { width: '0.75rem', height: '0.75rem' } } />
-							{ __( 'Bearbeiten', 'recruiting-playbook' ) }
+							{ __( 'Edit', 'recruiting-playbook' ) }
 						</button>
 					) }
 					{ note.can_delete && (
 						<>
 							{ showDeleteConfirm ? (
 								<span style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem' } }>
-									<span>{ __( 'Wirklich löschen?', 'recruiting-playbook' ) }</span>
+									<span>{ __( 'Really delete?', 'recruiting-playbook' ) }</span>
 									<button
 										type="button"
 										onClick={ handleDelete }
 										disabled={ saving }
 										style={ { background: 'none', border: 'none', padding: 0, color: '#d63638', cursor: 'pointer', fontWeight: 600 } }
 									>
-										{ __( 'Ja', 'recruiting-playbook' ) }
+										{ __( 'Yes', 'recruiting-playbook' ) }
 									</button>
 									<button
 										type="button"
@@ -282,7 +282,7 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 										disabled={ saving }
 										style={ { background: 'none', border: 'none', padding: 0, color: '#6b7280', cursor: 'pointer' } }
 									>
-										{ __( 'Nein', 'recruiting-playbook' ) }
+										{ __( 'No', 'recruiting-playbook' ) }
 									</button>
 								</span>
 							) : (
@@ -303,7 +303,7 @@ function NoteItem( { note, onUpdate, onDelete, saving } ) {
 									} }
 								>
 									<Trash2 style={ { width: '0.75rem', height: '0.75rem' } } />
-									{ __( 'Löschen', 'recruiting-playbook' ) }
+									{ __( 'Delete', 'recruiting-playbook' ) }
 								</button>
 							) }
 						</>
@@ -343,7 +343,7 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 		return (
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', gap: '0.5rem', color: '#6b7280' } }>
 				<Spinner />
-				{ __( 'Laden...', 'recruiting-playbook' ) }
+				{ __( 'Loading...', 'recruiting-playbook' ) }
 			</div>
 		);
 	}
@@ -354,7 +354,7 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 			{ showHeader ? (
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
 					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937', display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
-						{ __( 'Notizen', 'recruiting-playbook' ) }
+						{ __( 'Notes', 'recruiting-playbook' ) }
 						{ notes.length > 0 && (
 							<span
 								style={ {
@@ -373,7 +373,7 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 					{ ! showNewNote && (
 						<Button size="sm" onClick={ () => setShowNewNote( true ) }>
 							<Plus style={ { width: '1rem', height: '1rem' } } />
-							{ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
+							{ __( 'Add note', 'recruiting-playbook' ) }
 						</Button>
 					) }
 				</div>
@@ -382,7 +382,7 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 					<div style={ { display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' } }>
 						<Button size="sm" onClick={ () => setShowNewNote( true ) }>
 							<Plus style={ { width: '1rem', height: '1rem' } } />
-							{ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
+							{ __( 'Add note', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				)
@@ -412,10 +412,10 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 				{ notes.length === 0 ? (
 					<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
 						<Edit2 style={ { width: '2.5rem', height: '2.5rem', marginBottom: '0.75rem', opacity: 0.3 } } />
-						<p style={ { margin: '0 0 1rem 0' } }>{ __( 'Noch keine Notizen vorhanden.', 'recruiting-playbook' ) }</p>
+						<p style={ { margin: '0 0 1rem 0' } }>{ __( 'No notes available yet.', 'recruiting-playbook' ) }</p>
 						{ ! showNewNote && (
 							<Button variant="outline" onClick={ () => setShowNewNote( true ) }>
-								{ __( 'Erste Notiz hinzufügen', 'recruiting-playbook' ) }
+								{ __( 'Add first note', 'recruiting-playbook' ) }
 							</Button>
 						) }
 					</div>

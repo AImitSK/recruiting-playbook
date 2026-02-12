@@ -286,8 +286,8 @@ class FieldValue {
 		// Single checkbox.
 		if ( is_bool( $parsed ) ) {
 			return $parsed
-				? __( 'Ja', 'recruiting-playbook' )
-				: __( 'Nein', 'recruiting-playbook' );
+				? __( 'Yes', 'recruiting-playbook' )
+				: __( 'No', 'recruiting-playbook' );
 		}
 
 		// Multi-checkbox.

@@ -206,7 +206,7 @@ class CustomFieldFileService {
 				'too_many_files',
 				sprintf(
 					/* translators: %s: Field label */
-					__( 'Für %s ist nur eine Datei erlaubt.', 'recruiting-playbook' ),
+					__( 'Only one file is allowed for %s.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
@@ -217,7 +217,7 @@ class CustomFieldFileService {
 				'max_files_exceeded',
 				sprintf(
 					/* translators: 1: Field label, 2: Max count */
-					__( 'Für %1$s sind maximal %2$d Dateien erlaubt.', 'recruiting-playbook' ),
+					__( 'A maximum of %2$d files are allowed for %1$s.', 'recruiting-playbook' ),
 					$field->getLabel(),
 					$max_files
 				)
@@ -229,7 +229,7 @@ class CustomFieldFileService {
 				'min_files_required',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s ist ein Pflichtfeld.', 'recruiting-playbook' ),
+					__( '%s is a required field.', 'recruiting-playbook' ),
 					$field->getLabel()
 				)
 			);
@@ -243,7 +243,7 @@ class CustomFieldFileService {
 					'upload_error',
 					sprintf(
 						/* translators: %s: File name */
-						__( 'Fehler beim Upload von %s.', 'recruiting-playbook' ),
+						__( 'Error uploading %s.', 'recruiting-playbook' ),
 						$file['name']
 					)
 				);
@@ -255,7 +255,7 @@ class CustomFieldFileService {
 					'file_too_large',
 					sprintf(
 						/* translators: 1: File name, 2: Max size */
-						__( 'Die Datei %1$s ist zu groß. Maximum: %2$d MB.', 'recruiting-playbook' ),
+						__( 'The file %1$s is too large. Maximum: %2$d MB.', 'recruiting-playbook' ),
 						$file['name'],
 						$max_size_mb
 					)
@@ -268,7 +268,7 @@ class CustomFieldFileService {
 					'invalid_file_type',
 					sprintf(
 						/* translators: 1: File name, 2: Allowed types */
-						__( 'Der Dateityp von %1$s ist nicht erlaubt. Erlaubt: %2$s.', 'recruiting-playbook' ),
+						__( 'The file type of %1$s is not allowed. Allowed: %2$s.', 'recruiting-playbook' ),
 						$file['name'],
 						implode( ', ', array_keys( $allowed_types ) )
 					)
@@ -395,7 +395,7 @@ class CustomFieldFileService {
 				'move_failed',
 				sprintf(
 					/* translators: %s: File name */
-					__( 'Die Datei %s konnte nicht gespeichert werden.', 'recruiting-playbook' ),
+					__( 'The file %s could not be saved.', 'recruiting-playbook' ),
 					$file['name']
 				)
 			);
@@ -454,7 +454,7 @@ class CustomFieldFileService {
 			wp_delete_file( $destination );
 			return new WP_Error(
 				'db_error',
-				__( 'Dokument konnte nicht in der Datenbank gespeichert werden.', 'recruiting-playbook' )
+				__( 'Document could not be saved in the database.', 'recruiting-playbook' )
 			);
 		}
 

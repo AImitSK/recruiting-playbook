@@ -63,7 +63,7 @@ abstract class AbstractElement {
 				'hide_empty' => false,
 			]
 		);
-		$options = [ '' => esc_attr__( '— Alle —', 'recruiting-playbook' ) ];
+		$options = [ '' => esc_attr__( '— All —', 'recruiting-playbook' ) ];
 
 		if ( ! is_wp_error( $terms ) && is_array( $terms ) ) {
 			foreach ( $terms as $term ) {
@@ -90,7 +90,7 @@ abstract class AbstractElement {
 			]
 		);
 
-		$options = [ '' => esc_attr__( '— Automatisch —', 'recruiting-playbook' ) ];
+		$options = [ '' => esc_attr__( '— Automatic —', 'recruiting-playbook' ) ];
 
 		foreach ( $jobs as $job ) {
 			$options[ (string) $job->ID ] = $job->post_title;

@@ -57,6 +57,7 @@ use RecruitingPlaybook\Services\CssGeneratorService;
 use RecruitingPlaybook\Blocks\BlockLoader;
 use RecruitingPlaybook\Integrations\Avada\AvadaIntegration;
 use RecruitingPlaybook\Integrations\Elementor\ElementorIntegration;
+use RecruitingPlaybook\Integration\PolylangIntegration;
 use RecruitingPlaybook\Database\Migrator;
 use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
@@ -125,6 +126,9 @@ final class Plugin {
 
 		// Elementor Integration (Pro-Feature).
 		$this->initElementorIntegration();
+
+		// Polylang Integration (Free-Feature).
+		$this->initPolylangIntegration();
 
 		// XML Job Feed (Free-Feature).
 		$this->initXmlJobFeed();
@@ -245,7 +249,7 @@ final class Plugin {
 				<?php
 				printf(
 					/* translators: %s: composer install command */
-					esc_html__( 'Action Scheduler Bibliothek fehlt. Bitte führen Sie %s im Plugin-Verzeichnis aus.', 'recruiting-playbook' ),
+					esc_html__( 'Action Scheduler library is missing. Please run %s in the plugin directory.', 'recruiting-playbook' ),
 					'<code>composer install</code>'
 				);
 				?>
@@ -265,7 +269,7 @@ final class Plugin {
 		<div class="notice notice-warning">
 			<p>
 				<strong><?php esc_html_e( 'Recruiting Playbook:', 'recruiting-playbook' ); ?></strong>
-				<?php esc_html_e( 'Action Scheduler wurde geladen, aber die Funktionen sind nicht verfügbar. E-Mail-Queue möglicherweise nicht funktional.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Action Scheduler was loaded, but its functions are not available. Email queue may not be functional.', 'recruiting-playbook' ); ?>
 			</p>
 		</div>
 		<?php
@@ -293,13 +297,15 @@ final class Plugin {
 	/**
 	 * Übersetzungen laden
 	 *
-	 * Hinweis: Bei WordPress.org gehosteten Plugins werden Übersetzungen
-	 * seit WP 4.6 automatisch geladen. Diese Methode ist ein Platzhalter
-	 * für zukünftige Erweiterungen.
+	 * Lädt Übersetzungsdateien aus dem languages/ Verzeichnis.
+	 * Unterstützt .mo-Dateien (PHP) und .json-Dateien (JavaScript).
 	 */
 	private function loadI18n(): void {
-		// WordPress.org lädt Übersetzungen automatisch für gehostete Plugins.
-		// Keine manuelle Initialisierung erforderlich.
+		load_plugin_textdomain(
+			'recruiting-playbook',
+			false,
+			dirname( plugin_basename( RP_PLUGIN_FILE ) ) . '/languages'
+		);
 	}
 
 	/**
@@ -450,7 +456,7 @@ final class Plugin {
 		if ( ! $rate_check['allowed'] ) {
 			return new \WP_Error(
 				'rate_limit_exceeded',
-				__( 'Rate Limit überschritten. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
+				__( 'Rate limit exceeded. Please try again later.', 'recruiting-playbook' ),
 				[
 					'status' => 429,
 					'retry_after' => $rate_check['reset'] - time(),
@@ -538,6 +544,22 @@ final class Plugin {
 
 		$xml_feed = new XmlJobFeed();
 		$xml_feed->register();
+	}
+
+	/**
+	 * Polylang Integration initialisieren
+	 *
+	 * Free-Feature: Registriert Custom Post Types und Taxonomies für Polylang.
+	 * Integration wird nur geladen wenn Polylang verfügbar ist.
+	 */
+	private function initPolylangIntegration(): void {
+		// Nur laden wenn Polylang verfügbar ist.
+		if ( ! function_exists( 'pll_register_string' ) ) {
+			return;
+		}
+
+		$polylang_integration = new PolylangIntegration();
+		$polylang_integration->register();
 	}
 
 	/**
@@ -903,11 +925,11 @@ final class Plugin {
 						'apiUrl' => rest_url( 'recruiting/v1/' ),
 						'nonce'  => wp_create_nonce( 'wp_rest' ),
 						'i18n'   => [
-							'required'        => __( 'Dieses Feld ist erforderlich', 'recruiting-playbook' ),
-							'invalidEmail'    => __( 'Bitte geben Sie eine gültige E-Mail-Adresse ein', 'recruiting-playbook' ),
-							'fileTooLarge'    => __( 'Die Datei ist zu groß (max. 10 MB)', 'recruiting-playbook' ),
-							'invalidFileType' => __( 'Dateityp nicht erlaubt. Erlaubt: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
-							'privacyRequired' => __( 'Bitte stimmen Sie der Datenschutzerklärung zu', 'recruiting-playbook' ),
+							'required'        => __( 'This field is required', 'recruiting-playbook' ),
+							'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+							'fileTooLarge'    => __( 'File is too large (max. 10 MB)', 'recruiting-playbook' ),
+							'invalidFileType' => __( 'File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+							'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
 						],
 					]
 				);
@@ -951,14 +973,14 @@ final class Plugin {
 						],
 						'nonce'     => wp_create_nonce( 'wp_rest' ),
 						'i18n'      => [
-							'error'           => __( 'Ein Fehler ist aufgetreten', 'recruiting-playbook' ),
-							'analysisFailed'  => __( 'Analyse fehlgeschlagen', 'recruiting-playbook' ),
-							'timeout'         => __( 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.', 'recruiting-playbook' ),
-							'invalidFileType' => __( 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.', 'recruiting-playbook' ),
-							'fileTooLarge'    => __( 'Die Datei ist zu groß. Maximum: 10 MB.', 'recruiting-playbook' ),
-							'resultLow'       => __( 'Eher nicht passend', 'recruiting-playbook' ),
-							'resultMedium'    => __( 'Teilweise passend', 'recruiting-playbook' ),
-							'resultHigh'      => __( 'Gute Übereinstimmung', 'recruiting-playbook' ),
+							'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+							'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+							'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+							'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+							'fileTooLarge'    => __( 'File is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
+							'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
+							'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
+							'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
 						],
 					]
 				);
@@ -1117,73 +1139,73 @@ final class Plugin {
 					'userId'  => get_current_user_id(),
 					'logoUrl' => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 					'i18n'    => [
-						// Allgemein.
-						'loading'        => __( 'Laden...', 'recruiting-playbook' ),
-						'save'           => __( 'Speichern', 'recruiting-playbook' ),
-						'saving'         => __( 'Speichern...', 'recruiting-playbook' ),
-						'cancel'         => __( 'Abbrechen', 'recruiting-playbook' ),
-						'delete'         => __( 'Löschen', 'recruiting-playbook' ),
-						'edit'           => __( 'Bearbeiten', 'recruiting-playbook' ),
-						'preview'        => __( 'Vorschau', 'recruiting-playbook' ),
+						// General.
+						'loading'        => __( 'Loading...', 'recruiting-playbook' ),
+						'save'           => __( 'Save', 'recruiting-playbook' ),
+						'saving'         => __( 'Saving...', 'recruiting-playbook' ),
+						'cancel'         => __( 'Cancel', 'recruiting-playbook' ),
+						'delete'         => __( 'Delete', 'recruiting-playbook' ),
+						'edit'           => __( 'Edit', 'recruiting-playbook' ),
+						'preview'        => __( 'Preview', 'recruiting-playbook' ),
 						'name'           => __( 'Name', 'recruiting-playbook' ),
 						'status'         => __( 'Status', 'recruiting-playbook' ),
-						'actions'        => __( 'Aktionen', 'recruiting-playbook' ),
-						'default'        => __( 'Standard', 'recruiting-playbook' ),
-						'errorLoading'   => __( 'Fehler beim Laden', 'recruiting-playbook' ),
-						'errorSaving'    => __( 'Fehler beim Speichern', 'recruiting-playbook' ),
-						'errorDeleting'  => __( 'Fehler beim Löschen', 'recruiting-playbook' ),
+						'actions'        => __( 'Actions', 'recruiting-playbook' ),
+						'default'        => __( 'Default', 'recruiting-playbook' ),
+						'errorLoading'   => __( 'Error loading', 'recruiting-playbook' ),
+						'errorSaving'    => __( 'Error saving', 'recruiting-playbook' ),
+						'errorDeleting'  => __( 'Error deleting', 'recruiting-playbook' ),
 
 						// Page.
-						'pageTitle'  => __( 'E-Mail-Vorlagen & Signaturen', 'recruiting-playbook' ),
+						'pageTitle'  => __( 'Email Templates & Signatures', 'recruiting-playbook' ),
 
 						// Tabs.
 						'templates'  => __( 'Templates', 'recruiting-playbook' ),
-						'signatures' => __( 'Signaturen', 'recruiting-playbook' ),
+						'signatures' => __( 'Signatures', 'recruiting-playbook' ),
 
 						// Templates.
-						'newTemplate'       => __( 'Neues Template', 'recruiting-playbook' ),
-						'editTemplate'      => __( 'Template bearbeiten', 'recruiting-playbook' ),
-						'templateSaved'     => __( 'Template wurde gespeichert.', 'recruiting-playbook' ),
-						'templateDeleted'   => __( 'Template wurde gelöscht.', 'recruiting-playbook' ),
-						'templateDuplicated' => __( 'Template wurde dupliziert.', 'recruiting-playbook' ),
-						'templateReset'     => __( 'Template wurde zurückgesetzt.', 'recruiting-playbook' ),
-						'confirmDelete'     => __( 'Möchten Sie dieses Template wirklich löschen?', 'recruiting-playbook' ),
-						'noTemplates'       => __( 'Keine Templates gefunden.', 'recruiting-playbook' ),
-						'subject'           => __( 'Betreff', 'recruiting-playbook' ),
-						'category'          => __( 'Kategorie', 'recruiting-playbook' ),
-						'body'              => __( 'Inhalt', 'recruiting-playbook' ),
-						'active'            => __( 'Aktiv', 'recruiting-playbook' ),
+						'newTemplate'       => __( 'New Template', 'recruiting-playbook' ),
+						'editTemplate'      => __( 'Edit Template', 'recruiting-playbook' ),
+						'templateSaved'     => __( 'Template saved.', 'recruiting-playbook' ),
+						'templateDeleted'   => __( 'Template deleted.', 'recruiting-playbook' ),
+						'templateDuplicated' => __( 'Template duplicated.', 'recruiting-playbook' ),
+						'templateReset'     => __( 'Template reset.', 'recruiting-playbook' ),
+						'confirmDelete'     => __( 'Do you really want to delete this template?', 'recruiting-playbook' ),
+						'noTemplates'       => __( 'No templates found.', 'recruiting-playbook' ),
+						'subject'           => __( 'Subject', 'recruiting-playbook' ),
+						'category'          => __( 'Category', 'recruiting-playbook' ),
+						'body'              => __( 'Body', 'recruiting-playbook' ),
+						'active'            => __( 'Active', 'recruiting-playbook' ),
 						'system'            => __( 'System', 'recruiting-playbook' ),
-						'inactive'          => __( 'Inaktiv', 'recruiting-playbook' ),
-						'allCategories'     => __( 'Alle Kategorien', 'recruiting-playbook' ),
+						'inactive'          => __( 'Inactive', 'recruiting-playbook' ),
+						'allCategories'     => __( 'All Categories', 'recruiting-playbook' ),
 
-						// Signaturen.
-						'newSignature'            => __( 'Neue Signatur', 'recruiting-playbook' ),
-						'editSignature'           => __( 'Signatur bearbeiten', 'recruiting-playbook' ),
-						'mySignatures'            => __( 'Meine Signaturen', 'recruiting-playbook' ),
-						'companySignature'        => __( 'Firmen-Signatur', 'recruiting-playbook' ),
-						'editCompanySignature'    => __( 'Firmen-Signatur bearbeiten', 'recruiting-playbook' ),
-						'signatureSaved'          => __( 'Signatur wurde gespeichert.', 'recruiting-playbook' ),
-						'signatureDeleted'        => __( 'Signatur wurde gelöscht.', 'recruiting-playbook' ),
-						'signatureSetDefault'     => __( 'Standard-Signatur wurde gesetzt.', 'recruiting-playbook' ),
-						'setAsDefault'            => __( 'Als Standard setzen', 'recruiting-playbook' ),
-						'noSignatures'            => __( 'Keine Signaturen vorhanden.', 'recruiting-playbook' ),
-						'noCompanySignature'      => __( 'Keine Firmen-Signatur vorhanden.', 'recruiting-playbook' ),
-						'confirmDeleteSignature'  => __( 'Möchten Sie diese Signatur wirklich löschen?', 'recruiting-playbook' ),
-						'signatureContent'        => __( 'Signatur-Inhalt', 'recruiting-playbook' ),
-						'signatureHint'           => __( 'Gestalten Sie Ihre E-Mail-Signatur mit Ihren Kontaktdaten.', 'recruiting-playbook' ),
-						'companySignatureHint'    => __( 'Die Firmen-Signatur wird verwendet, wenn ein Benutzer keine eigene Signatur hat.', 'recruiting-playbook' ),
-						'createSignatureHint'     => __( 'Erstellen Sie Ihre erste Signatur, um E-Mails zu personalisieren.', 'recruiting-playbook' ),
-						'signaturePreviewHint'    => __( 'So wird Ihre Signatur in E-Mails aussehen:', 'recruiting-playbook' ),
+						// Signatures.
+						'newSignature'            => __( 'New Signature', 'recruiting-playbook' ),
+						'editSignature'           => __( 'Edit Signature', 'recruiting-playbook' ),
+						'mySignatures'            => __( 'My Signatures', 'recruiting-playbook' ),
+						'companySignature'        => __( 'Company Signature', 'recruiting-playbook' ),
+						'editCompanySignature'    => __( 'Edit Company Signature', 'recruiting-playbook' ),
+						'signatureSaved'          => __( 'Signature saved.', 'recruiting-playbook' ),
+						'signatureDeleted'        => __( 'Signature deleted.', 'recruiting-playbook' ),
+						'signatureSetDefault'     => __( 'Default signature set.', 'recruiting-playbook' ),
+						'setAsDefault'            => __( 'Set as Default', 'recruiting-playbook' ),
+						'noSignatures'            => __( 'No signatures available.', 'recruiting-playbook' ),
+						'noCompanySignature'      => __( 'No company signature available.', 'recruiting-playbook' ),
+						'confirmDeleteSignature'  => __( 'Do you really want to delete this signature?', 'recruiting-playbook' ),
+						'signatureContent'        => __( 'Signature Content', 'recruiting-playbook' ),
+						'signatureHint'           => __( 'Design your email signature with your contact details.', 'recruiting-playbook' ),
+						'companySignatureHint'    => __( 'The company signature is used when a user does not have their own signature.', 'recruiting-playbook' ),
+						'createSignatureHint'     => __( 'Create your first signature to personalize emails.', 'recruiting-playbook' ),
+						'signaturePreviewHint'    => __( 'This is how your signature will appear in emails:', 'recruiting-playbook' ),
 
-						// Kategorien.
+						// Categories.
 						'categories' => [
-							'application'   => __( 'Bewerbung', 'recruiting-playbook' ),
-							'status_change' => __( 'Statusänderung', 'recruiting-playbook' ),
+							'application'   => __( 'Application', 'recruiting-playbook' ),
+							'status_change' => __( 'Status Change', 'recruiting-playbook' ),
 							'interview'     => __( 'Interview', 'recruiting-playbook' ),
-							'offer'         => __( 'Angebot', 'recruiting-playbook' ),
-							'rejection'     => __( 'Absage', 'recruiting-playbook' ),
-							'custom'        => __( 'Benutzerdefiniert', 'recruiting-playbook' ),
+							'offer'         => __( 'Offer', 'recruiting-playbook' ),
+							'rejection'     => __( 'Rejection', 'recruiting-playbook' ),
+							'custom'        => __( 'Custom', 'recruiting-playbook' ),
 							'system'        => __( 'System', 'recruiting-playbook' ),
 						],
 					],

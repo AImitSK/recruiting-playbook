@@ -37,6 +37,13 @@ class JobSchema {
 			return;
 		}
 
+		$post = get_post();
+
+		// Kein Schema für Entwürfe/Previews - nur veröffentlichte Posts.
+		if ( ! $post || 'publish' !== $post->post_status ) {
+			return;
+		}
+
 		// Prüfen ob Schema aktiviert ist (Integrations-Settings > Legacy-Fallback).
 		$integrations = get_option( 'rp_integrations', [] );
 		if ( isset( $integrations['google_jobs_enabled'] ) ) {
@@ -51,7 +58,6 @@ class JobSchema {
 			}
 		}
 
-		$post   = get_post();
 		$schema = $this->buildSchema( $post );
 
 		if ( empty( $schema ) ) {
@@ -74,13 +80,17 @@ class JobSchema {
 		$settings     = get_option( 'rp_settings', [] );
 		$integrations = get_option( 'rp_integrations', [] );
 
+		// Veröffentlichungsdatum ermitteln (Fallback auf aktuelles Datum für Entwürfe).
+		$post_time = get_post_time( 'U', true, $post );
+		$date_posted = $post_time ? gmdate( 'c', $post_time ) : gmdate( 'c' );
+
 		// Pflichtfelder.
 		$schema = [
 			'@context'      => 'https://schema.org/',
 			'@type'         => 'JobPosting',
 			'title'         => get_the_title( $post ),
 			'description'   => $this->getDescription( $post ),
-			'datePosted'    => gmdate( 'c', get_post_time( 'U', true, $post ) ),
+			'datePosted'    => $date_posted,
 			'identifier'    => [
 				'@type' => 'PropertyValue',
 				'name'  => $settings['company_name'] ?? get_bloginfo( 'name' ),
@@ -94,7 +104,10 @@ class JobSchema {
 		if ( $show_deadline ) {
 			$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
 			if ( $deadline ) {
-				$schema['validThrough'] = gmdate( 'c', strtotime( $deadline . ' 23:59:59' ) );
+				$deadline_timestamp = strtotime( $deadline . ' 23:59:59' );
+				if ( $deadline_timestamp ) {
+					$schema['validThrough'] = gmdate( 'c', $deadline_timestamp );
+				}
 			}
 		}
 
@@ -264,7 +277,7 @@ class JobSchema {
 		if ( ! $post instanceof \WP_Post ) {
 			return [
 				'valid'    => false,
-				'errors'   => [ __( 'Ungültiger Post', 'recruiting-playbook' ) ],
+				'errors'   => [ __( 'Invalid post', 'recruiting-playbook' ) ],
 				'warnings' => [],
 			];
 		}
@@ -276,21 +289,21 @@ class JobSchema {
 		// Pflichtfelder prüfen.
 		// 1. Titel.
 		if ( empty( $post->post_title ) ) {
-			$errors[] = __( 'Stellentitel fehlt', 'recruiting-playbook' );
+			$errors[] = __( 'Job title is missing', 'recruiting-playbook' );
 		}
 
 		// 2. Beschreibung.
 		if ( empty( $post->post_content ) ) {
-			$errors[] = __( 'Stellenbeschreibung fehlt', 'recruiting-playbook' );
+			$errors[] = __( 'Job description is missing', 'recruiting-playbook' );
 		} elseif ( strlen( wp_strip_all_tags( $post->post_content ) ) < 100 ) {
-			$warnings[] = __( 'Stellenbeschreibung ist sehr kurz (min. 100 Zeichen empfohlen)', 'recruiting-playbook' );
+			$warnings[] = __( 'Job description is very short (minimum 100 characters recommended)', 'recruiting-playbook' );
 		}
 
 		// 3. Veröffentlichungsdatum (automatisch durch WordPress).
 
 		// 4. Unternehmen.
 		if ( empty( $settings['company_name'] ) && empty( get_bloginfo( 'name' ) ) ) {
-			$errors[] = __( 'Unternehmensname fehlt (in Plugin-Einstellungen oder WordPress-Einstellungen)', 'recruiting-playbook' );
+			$errors[] = __( 'Company name is missing (in plugin settings or WordPress settings)', 'recruiting-playbook' );
 		}
 
 		// Empfohlene Felder prüfen.
@@ -299,13 +312,13 @@ class JobSchema {
 		$remote    = get_post_meta( $post->ID, '_rp_remote_option', true );
 
 		if ( ( ! $locations || is_wp_error( $locations ) ) && 'full' !== $remote ) {
-			$warnings[] = __( 'Standort fehlt (empfohlen für besseres Ranking)', 'recruiting-playbook' );
+			$warnings[] = __( 'Location is missing (recommended for better ranking)', 'recruiting-playbook' );
 		}
 
 		// 6. Beschäftigungsart.
 		$employment_types = get_the_terms( $post->ID, 'employment_type' );
 		if ( ! $employment_types || is_wp_error( $employment_types ) ) {
-			$warnings[] = __( 'Beschäftigungsart fehlt (Vollzeit, Teilzeit, etc.)', 'recruiting-playbook' );
+			$warnings[] = __( 'Employment type is missing (full-time, part-time, etc.)', 'recruiting-playbook' );
 		}
 
 		// 7. Gehalt.
@@ -314,15 +327,18 @@ class JobSchema {
 		$salary_max  = get_post_meta( $post->ID, '_rp_salary_max', true );
 
 		if ( ! $hide_salary && ! $salary_min && ! $salary_max ) {
-			$warnings[] = __( 'Gehalt fehlt (wichtig für Google for Jobs Ranking)', 'recruiting-playbook' );
+			$warnings[] = __( 'Salary is missing (important for Google for Jobs ranking)', 'recruiting-playbook' );
 		}
 
 		// 8. Bewerbungsfrist.
 		$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
 		if ( ! $deadline ) {
-			$warnings[] = __( 'Bewerbungsfrist fehlt', 'recruiting-playbook' );
-		} elseif ( strtotime( $deadline ) < time() ) {
-			$errors[] = __( 'Bewerbungsfrist ist abgelaufen', 'recruiting-playbook' );
+			$warnings[] = __( 'Application deadline is missing', 'recruiting-playbook' );
+		} else {
+			$deadline_timestamp = strtotime( $deadline );
+			if ( $deadline_timestamp && $deadline_timestamp < time() ) {
+				$errors[] = __( 'Application deadline has expired', 'recruiting-playbook' );
+			}
 		}
 
 		// Ergebnis.

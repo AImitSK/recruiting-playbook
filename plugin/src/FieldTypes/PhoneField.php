@@ -32,7 +32,7 @@ class PhoneField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getLabel(): string {
-		return __( 'Telefon', 'recruiting-playbook' );
+		return __( 'Phone', 'recruiting-playbook' );
 	}
 
 	/**
@@ -65,14 +65,14 @@ class PhoneField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min_length',
-				'label'       => __( 'Minimale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Minimum length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0,
 				'placeholder' => '6',
 			],
 			[
 				'key'         => 'max_length',
-				'label'       => __( 'Maximale Länge', 'recruiting-playbook' ),
+				'label'       => __( 'Maximum length', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'placeholder' => '20',
@@ -97,14 +97,14 @@ class PhoneField extends AbstractFieldType {
 		$validation = $field->getValidation() ?? [];
 		$label      = $field->getLabel();
 
-		// Prüfen auf gültiges Telefonnummer-Format (erlaubt: +, -, Zahlen, Leerzeichen, Klammern).
+		// Check for valid phone number format (allowed: +, -, numbers, spaces, parentheses).
 		$cleaned = preg_replace( '/[^0-9+]/', '', $value );
 		if ( strlen( $cleaned ) < 6 ) {
 			return new WP_Error(
 				'invalid_phone',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s muss eine gültige Telefonnummer sein.', 'recruiting-playbook' ),
+					__( '%s must be a valid phone number.', 'recruiting-playbook' ),
 					$label
 				)
 			);
@@ -135,7 +135,7 @@ class PhoneField extends AbstractFieldType {
 			return '';
 		}
 
-		// Nur erlaubte Zeichen behalten: Zahlen, +, -, Leerzeichen, Klammern.
+		// Keep only allowed characters: numbers, +, -, spaces, parentheses.
 		$value = preg_replace( '/[^0-9+\-\s()\/]/', '', (string) $value );
 
 		return trim( $value );

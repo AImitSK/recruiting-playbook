@@ -265,7 +265,7 @@ function rp_license_status(): array {
 			'has_ai'      => rp_has_ai(),
 			'is_active'   => false,
 			'is_valid'    => true,
-			'message'     => __( 'Kostenlose Version', 'recruiting-playbook' ),
+			'message'     => __( 'Free version', 'recruiting-playbook' ),
 			'upgrade_url' => rp_upgrade_url(),
 		];
 	}
@@ -280,10 +280,10 @@ function rp_license_status(): array {
 		'message'     => $is_paying
 			? sprintf(
 				/* translators: %s: tier name */
-				__( '%s Lizenz aktiv', 'recruiting-playbook' ),
+				__( '%s license active', 'recruiting-playbook' ),
 				$tier_labels[ $tier ] ?? $tier
 			)
-			: __( 'Lizenz ungültig oder abgelaufen.', 'recruiting-playbook' ),
+			: __( 'License invalid or expired.', 'recruiting-playbook' ),
 		'upgrade_url' => rp_upgrade_url(),
 	];
 }
@@ -358,8 +358,8 @@ function rp_check_feature_permission( string $feature, string $capability, strin
 		return new \WP_Error(
 			$error_code,
 			$is_addon_feature
-				? __( 'Diese Funktion erfordert das KI-Addon.', 'recruiting-playbook' )
-				: __( 'Diese Funktion erfordert Pro.', 'recruiting-playbook' ),
+				? __( 'This feature requires the AI Addon.', 'recruiting-playbook' )
+				: __( 'This feature requires Pro.', 'recruiting-playbook' ),
 			[
 				'status'      => 403,
 				'upgrade_url' => rp_upgrade_url( $is_addon_feature ? 'KI' : 'PRO' ),
@@ -428,14 +428,14 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 		esc_html(
 			sprintf(
 				/* translators: 1: feature name, 2: tier name */
-				__( '%1$s erfordert %2$s', 'recruiting-playbook' ),
+				__( '%1$s requires %2$s', 'recruiting-playbook' ),
 				$feature_name,
 				$tier_labels[ $required_tier ] ?? $required_tier
 			)
 		),
-		esc_html__( 'Upgraden Sie, um diese Funktion freizuschalten.', 'recruiting-playbook' ),
+		esc_html__( 'Upgrade to unlock this feature.', 'recruiting-playbook' ),
 		esc_url( rp_upgrade_url( $required_tier ) ),
-		esc_html__( 'Mehr erfahren', 'recruiting-playbook' )
+		esc_html__( 'Learn more', 'recruiting-playbook' )
 	);
 
 	return false;

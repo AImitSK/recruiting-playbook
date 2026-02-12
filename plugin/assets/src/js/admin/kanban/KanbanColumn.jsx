@@ -1,5 +1,5 @@
 /**
- * Kanban-Spalte
+ * Kanban Column
  *
  * @package RecruitingPlaybook
  */
@@ -35,11 +35,11 @@ export function KanbanColumn( {
 	const count = applications.length;
 	const i18n = window.rpKanban?.i18n || {};
 
-	// Aria-Label für die Spalte
+	// Aria-label for the column
 	const columnAriaLabel = `${ label }, ${ count } ${ count === 1
-		? __( 'Bewerbung', 'recruiting-playbook' )
-		: __( 'Bewerbungen', 'recruiting-playbook' )
-	}, Spalte ${ columnIndex + 1 } von ${ totalColumns }`;
+		? __( 'application', 'recruiting-playbook' )
+		: __( 'applications', 'recruiting-playbook' )
+	}, column ${ columnIndex + 1 } of ${ totalColumns }`;
 
 	return (
 		<section
@@ -69,7 +69,7 @@ export function KanbanColumn( {
 				<h3 className="rp-kanban-column-title" id={ `rp-kanban-column-title-${ status }` }>
 					{ label }
 				</h3>
-				<span className="rp-kanban-column-count" aria-label={ `${ count } Bewerbungen` }>
+				<span className="rp-kanban-column-count" aria-label={ `${ count } applications` }>
 					{ count }
 				</span>
 				<button
@@ -77,8 +77,8 @@ export function KanbanColumn( {
 					className="rp-kanban-collapse-btn"
 					aria-label={
 						isCollapsed
-							? i18n.expand || __( 'Aufklappen', 'recruiting-playbook' )
-							: i18n.collapse || __( 'Zuklappen', 'recruiting-playbook' )
+							? i18n.expand || __( 'Expand', 'recruiting-playbook' )
+							: i18n.collapse || __( 'Collapse', 'recruiting-playbook' )
 					}
 					onClick={ ( e ) => {
 						e.stopPropagation();
@@ -106,7 +106,7 @@ export function KanbanColumn( {
 					>
 						{ applications.length === 0 ? (
 							<div className="rp-kanban-empty" role="listitem">
-								{ i18n.noApplications || __( 'Keine Bewerbungen', 'recruiting-playbook' ) }
+								{ i18n.noApplications || __( 'No applications', 'recruiting-playbook' ) }
 							</div>
 						) : (
 							applications.map( ( app, index ) => (

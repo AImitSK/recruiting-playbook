@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Stellensuche — Elementor Widget
+ * RP: Job Search — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class JobSearch extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Stellensuche', 'recruiting-playbook' );
+		return esc_html__( 'RP: Job Search', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -51,7 +51,7 @@ class JobSearch extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -59,10 +59,10 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'show_search',
 			[
-				'label'        => esc_html__( 'Suchfeld anzeigen', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Show search field', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -71,10 +71,10 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'show_category',
 			[
-				'label'        => esc_html__( 'Kategorie-Filter', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Category filter', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -83,10 +83,10 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'show_location',
 			[
-				'label'        => esc_html__( 'Standort-Filter', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Location filter', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -95,10 +95,10 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'show_type',
 			[
-				'label'        => esc_html__( 'Beschäftigungsart-Filter', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Employment type filter', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -107,7 +107,7 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'limit',
 			[
-				'label'     => esc_html__( 'Stellen pro Seite', 'recruiting-playbook' ),
+				'label'     => esc_html__( 'Jobs per page', 'recruiting-playbook' ),
 				'type'      => Controls_Manager::NUMBER,
 				'default'   => 10,
 				'min'       => 1,
@@ -119,7 +119,7 @@ class JobSearch extends AbstractWidget {
 		$this->add_control(
 			'columns',
 			[
-				'label'   => esc_html__( 'Spalten', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Columns', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '1',
 				'options' => [

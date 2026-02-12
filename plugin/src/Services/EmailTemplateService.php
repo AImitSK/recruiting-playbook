@@ -344,20 +344,20 @@ class EmailTemplateService {
 	public function getCategories(): array {
 		return [
 			'application' => [
-				'label'       => __( 'Bewerbung', 'recruiting-playbook' ),
-				'description' => __( 'Templates für Bewerbungsprozess', 'recruiting-playbook' ),
+				'label'       => __( 'Application', 'recruiting-playbook' ),
+				'description' => __( 'Templates for application process', 'recruiting-playbook' ),
 			],
 			'interview'   => [
 				'label'       => __( 'Interview', 'recruiting-playbook' ),
-				'description' => __( 'Templates für Intervieweinladungen', 'recruiting-playbook' ),
+				'description' => __( 'Templates for interview invitations', 'recruiting-playbook' ),
 			],
 			'offer'       => [
-				'label'       => __( 'Angebot', 'recruiting-playbook' ),
-				'description' => __( 'Templates für Stellenangebote', 'recruiting-playbook' ),
+				'label'       => __( 'Offer', 'recruiting-playbook' ),
+				'description' => __( 'Templates for job offers', 'recruiting-playbook' ),
 			],
 			'custom'      => [
-				'label'       => __( 'Benutzerdefiniert', 'recruiting-playbook' ),
-				'description' => __( 'Eigene Templates', 'recruiting-playbook' ),
+				'label'       => __( 'Custom', 'recruiting-playbook' ),
+				'description' => __( 'Custom templates', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -443,7 +443,7 @@ class EmailTemplateService {
 				'<p style="margin: 0; color: #adb5bd; font-size: 11px;">%s</p>',
 				sprintf(
 					/* translators: %s: Link to Recruiting Playbook website */
-					esc_html__( 'Versand über %s', 'recruiting-playbook' ),
+					esc_html__( 'Sent via %s', 'recruiting-playbook' ),
 					'<a href="' . esc_url( $recruiting_url ) . '" style="color: #adb5bd; text-decoration: underline;">Recruiting Playbook</a>'
 				)
 			);
@@ -490,30 +490,30 @@ class EmailTemplateService {
 
 		// Name erforderlich.
 		if ( empty( $data['name'] ) ) {
-			$errors->add( 'name_required', __( 'Name ist erforderlich.', 'recruiting-playbook' ) );
+			$errors->add( 'name_required', __( 'Name is required.', 'recruiting-playbook' ) );
 		}
 
 		// Subject erforderlich.
 		if ( empty( $data['subject'] ) ) {
-			$errors->add( 'subject_required', __( 'Betreff ist erforderlich.', 'recruiting-playbook' ) );
+			$errors->add( 'subject_required', __( 'Subject is required.', 'recruiting-playbook' ) );
 		}
 
 		// Body erforderlich.
 		if ( empty( $data['body_html'] ) ) {
-			$errors->add( 'body_required', __( 'Inhalt ist erforderlich.', 'recruiting-playbook' ) );
+			$errors->add( 'body_required', __( 'Content is required.', 'recruiting-playbook' ) );
 		}
 
 		// Slug-Eindeutigkeit prüfen.
 		if ( ! empty( $data['slug'] ) ) {
 			if ( $this->repository->slugExists( $data['slug'], $exclude_id ) ) {
-				$errors->add( 'slug_exists', __( 'Dieser Slug existiert bereits.', 'recruiting-playbook' ) );
+				$errors->add( 'slug_exists', __( 'This slug already exists.', 'recruiting-playbook' ) );
 			}
 		}
 
 		// Kategorie validieren.
 		$valid_categories = array_keys( $this->getCategories() );
 		if ( ! empty( $data['category'] ) && ! in_array( $data['category'], $valid_categories, true ) ) {
-			$errors->add( 'invalid_category', __( 'Ungültige Kategorie.', 'recruiting-playbook' ) );
+			$errors->add( 'invalid_category', __( 'Invalid category.', 'recruiting-playbook' ) );
 		}
 
 		if ( $errors->has_errors() ) {
@@ -536,199 +536,199 @@ class EmailTemplateService {
 		$defaults = [
 			// === AUTOMATISIERBARE TEMPLATES ===
 			'application-confirmation' => [
-				'subject'   => __( 'Ihre Bewerbung bei {firma}: {stelle}', 'recruiting-playbook' ),
+				'subject'   => __( 'Your application at {firma}: {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>vielen Dank für Ihre Bewerbung als <strong>{stelle}</strong> bei {firma}!</p>
+<p>thank you for your application as <strong>{stelle}</strong> at {firma}!</p>
 
-<p>Wir haben Ihre Unterlagen erhalten und werden diese sorgfältig prüfen. Sie erhalten von uns Rückmeldung, sobald wir Ihre Bewerbung geprüft haben.</p>
+<p>We have received your documents and will review them carefully. You will receive feedback from us as soon as we have reviewed your application.</p>
 
-<p><strong>Ihre Bewerbung im Überblick:</strong></p>
+<p><strong>Your application overview:</strong></p>
 <ul>
 <li>Position: {stelle}</li>
-<li>Eingegangen am: {bewerbung_datum}</li>
-<li>Referenznummer: {bewerbung_id}</li>
+<li>Received on: {bewerbung_datum}</li>
+<li>Reference number: {bewerbung_id}</li>
 </ul>
 
-<p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>',
+<p>If you have any questions, please do not hesitate to contact us.</p>',
 			],
 			'rejection-standard'       => [
-				'subject'   => __( 'Ihre Bewerbung als {stelle}', 'recruiting-playbook' ),
+				'subject'   => __( 'Your application as {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>vielen Dank für Ihr Interesse an der Position <strong>{stelle}</strong> und die Zeit, die Sie in Ihre Bewerbung investiert haben.</p>
+<p>thank you for your interest in the position <strong>{stelle}</strong> and the time you invested in your application.</p>
 
-<p>Nach sorgfältiger Prüfung müssen wir Ihnen leider mitteilen, dass wir uns für andere Kandidaten entschieden haben, deren Profil besser zu unseren aktuellen Anforderungen passt.</p>
+<p>After careful consideration, we regret to inform you that we have decided to proceed with other candidates whose profile better matches our current requirements.</p>
 
-<p>Diese Entscheidung ist keine Bewertung Ihrer Qualifikation. Wir ermutigen Sie, sich bei passenden zukünftigen Stellenangeboten erneut zu bewerben.</p>
+<p>This decision is not an evaluation of your qualifications. We encourage you to apply again for suitable future job openings.</p>
 
-<p>Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.</p>',
+<p>We wish you all the best and much success for your future career.</p>',
 			],
 			'application-withdrawn'    => [
-				'subject'   => __( 'Bestätigung: Bewerbung zurückgezogen', 'recruiting-playbook' ),
+				'subject'   => __( 'Confirmation: Application withdrawn', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>hiermit bestätigen wir den Eingang Ihrer Mitteilung, dass Sie Ihre Bewerbung als <strong>{stelle}</strong> zurückziehen möchten.</p>
+<p>we confirm receipt of your message that you would like to withdraw your application as <strong>{stelle}</strong>.</p>
 
-<p>Wir haben Ihre Bewerbung entsprechend aus unserem System entfernt und werden Ihre Unterlagen gemäß den geltenden Datenschutzbestimmungen löschen.</p>
+<p>We have removed your application from our system accordingly and will delete your documents in accordance with the applicable data protection regulations.</p>
 
-<p>Wir bedauern Ihre Entscheidung, respektieren sie aber selbstverständlich. Sollten Sie in Zukunft Interesse an einer Zusammenarbeit mit {firma} haben, freuen wir uns über eine erneute Bewerbung.</p>
+<p>We regret your decision, but of course we respect it. Should you be interested in working with {firma} in the future, we would be happy to receive a new application.</p>
 
-<p>Wir wünschen Ihnen für Ihren weiteren beruflichen Weg alles Gute!</p>',
+<p>We wish you all the best for your further career path!</p>',
 			],
 			'talent-pool-added'        => [
-				'subject'   => __( 'Willkommen im Talent-Pool von {firma}', 'recruiting-playbook' ),
+				'subject'   => __( 'Welcome to the talent pool of {firma}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>vielen Dank für Ihr Interesse an {firma}!</p>
+<p>thank you for your interest in {firma}!</p>
 
-<p>Obwohl wir aktuell keine passende Position für Sie haben, waren wir von Ihrem Profil überzeugt. Mit Ihrer Zustimmung haben wir Sie daher in unseren Talent-Pool aufgenommen.</p>
+<p>Although we currently do not have a suitable position for you, we were impressed by your profile. With your consent, we have therefore added you to our talent pool.</p>
 
-<p><strong>Was bedeutet das für Sie?</strong></p>
+<p><strong>What does this mean for you?</strong></p>
 <ul>
-<li>Wir werden Sie kontaktieren, sobald eine zu Ihrem Profil passende Stelle frei wird</li>
-<li>Sie erhalten exklusive Informationen über neue Karrieremöglichkeiten</li>
-<li>Ihre Daten werden gemäß unseren Datenschutzrichtlinien vertraulich behandelt</li>
+<li>We will contact you as soon as a position matching your profile becomes available</li>
+<li>You will receive exclusive information about new career opportunities</li>
+<li>Your data will be treated confidentially in accordance with our privacy policy</li>
 </ul>
 
-<p>Sie können Ihr Profil jederzeit aktualisieren oder die Aufnahme im Talent-Pool widerrufen.</p>
+<p>You can update your profile at any time or revoke your inclusion in the talent pool.</p>
 
-<p>Wir freuen uns auf eine mögliche zukünftige Zusammenarbeit!</p>',
+<p>We look forward to a possible future collaboration!</p>',
 			],
 
 			// === MANUELLE TEMPLATES (mit ____ Lücken) ===
 			'interview-invitation'     => [
-				'subject'   => __( 'Einladung zum Vorstellungsgespräch: {stelle}', 'recruiting-playbook' ),
+				'subject'   => __( 'Interview invitation: {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>wir freuen uns, Ihnen mitteilen zu können, dass uns Ihre Bewerbung als <strong>{stelle}</strong> überzeugt hat. Gerne möchten wir Sie persönlich kennenlernen.</p>
+<p>we are pleased to inform you that we were impressed by your application as <strong>{stelle}</strong>. We would like to meet you in person.</p>
 
-<p><strong>Terminvorschlag:</strong></p>
+<p><strong>Proposed date:</strong></p>
 <table style="border-collapse: collapse; margin: 16px 0;">
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Datum:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Date:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Uhrzeit:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Time:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Ort:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Location:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Gesprächspartner:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Interviewer:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 </table>
 
-<p>Bitte bestätigen Sie uns den Termin oder teilen Sie uns mit, falls Sie einen alternativen Termin benötigen.</p>
+<p>Please confirm the appointment or let us know if you need an alternative date.</p>
 
-<p><strong>Bitte bringen Sie mit:</strong></p>
+<p><strong>Please bring:</strong></p>
 <ul>
-<li>Gültigen Personalausweis</li>
-<li>Aktuelle Zeugnisse (falls noch nicht eingereicht)</li>
+<li>Valid ID card</li>
+<li>Current certificates (if not already submitted)</li>
 </ul>
 
-<p>Wir freuen uns auf das Gespräch mit Ihnen!</p>',
+<p>We look forward to talking to you!</p>',
 			],
 			'interview-reminder'       => [
-				'subject'   => __( 'Erinnerung: Ihr Vorstellungsgespräch am ____', 'recruiting-playbook' ),
+				'subject'   => __( 'Reminder: Your interview on ____', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>wir möchten Sie an Ihr bevorstehendes Vorstellungsgespräch für die Position <strong>{stelle}</strong> erinnern.</p>
+<p>we would like to remind you of your upcoming interview for the position <strong>{stelle}</strong>.</p>
 
-<p><strong>Termin:</strong></p>
+<p><strong>Appointment:</strong></p>
 <table style="border-collapse: collapse; margin: 16px 0;">
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Datum:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Date:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Uhrzeit:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Time:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 <tr>
-<td style="padding: 8px 16px 8px 0;"><strong>Ort:</strong></td>
+<td style="padding: 8px 16px 8px 0;"><strong>Location:</strong></td>
 <td style="padding: 8px 0;">____</td>
 </tr>
 </table>
 
-<p><strong>Bitte denken Sie daran:</strong></p>
+<p><strong>Please remember:</strong></p>
 <ul>
-<li>Gültigen Personalausweis mitbringen</li>
-<li>Pünktlich erscheinen</li>
+<li>Bring a valid ID card</li>
+<li>Arrive on time</li>
 </ul>
 
-<p>Falls Sie den Termin nicht wahrnehmen können, bitten wir um rechtzeitige Absage.</p>
+<p>If you cannot attend the appointment, please cancel in time.</p>
 
-<p>Wir freuen uns auf das Gespräch mit Ihnen!</p>',
+<p>We look forward to talking to you!</p>',
 			],
 			'offer-letter'             => [
-				'subject'   => __( 'Stellenangebot: {stelle} bei {firma}', 'recruiting-playbook' ),
+				'subject'   => __( 'Job offer: {stelle} at {firma}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>wir freuen uns sehr, Ihnen nach den positiven Gesprächen ein Angebot für die Position <strong>{stelle}</strong> unterbreiten zu können!</p>
+<p>we are very pleased to be able to offer you the position <strong>{stelle}</strong> following our positive discussions!</p>
 
-<p><strong>Eckdaten des Angebots:</strong></p>
+<p><strong>Key details of the offer:</strong></p>
 <ul>
 <li>Position: {stelle}</li>
-<li>Startdatum: ____</li>
-<li>Vertragsart: ____</li>
-<li>Arbeitszeit: ____</li>
+<li>Start date: ____</li>
+<li>Contract type: ____</li>
+<li>Working hours: ____</li>
 </ul>
 
-<p>Die detaillierten Vertragsunterlagen erhalten Sie in Kürze per Post oder als separaten Anhang.</p>
+<p>You will receive the detailed contract documents shortly by mail or as a separate attachment.</p>
 
-<p>Bitte teilen Sie uns Ihre Entscheidung bis zum <strong>____</strong> mit.</p>
+<p>Please let us know your decision by <strong>____</strong>.</p>
 
-<p>Für Rückfragen stehen wir Ihnen selbstverständlich gerne zur Verfügung.</p>',
+<p>If you have any questions, please do not hesitate to contact us.</p>',
 			],
 			'contract-sent'            => [
-				'subject'   => __( 'Ihre Vertragsunterlagen für {stelle}', 'recruiting-playbook' ),
+				'subject'   => __( 'Your contract documents for {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>wie besprochen, übersenden wir Ihnen anbei die Vertragsunterlagen für Ihre Anstellung als <strong>{stelle}</strong> bei {firma}.</p>
+<p>as discussed, we are sending you the contract documents for your employment as <strong>{stelle}</strong> at {firma}.</p>
 
-<p><strong>Die Unterlagen umfassen:</strong></p>
+<p><strong>The documents include:</strong></p>
 <ul>
-<li>Arbeitsvertrag (2 Exemplare)</li>
+<li>Employment contract (2 copies)</li>
 <li>____</li>
 </ul>
 
-<p><strong>Nächste Schritte:</strong></p>
+<p><strong>Next steps:</strong></p>
 <ol>
-<li>Bitte prüfen Sie die Unterlagen sorgfältig</li>
-<li>Unterschreiben Sie beide Vertragsexemplare</li>
-<li>Senden Sie ein unterschriebenes Exemplar bis zum <strong>____</strong> an uns zurück</li>
+<li>Please review the documents carefully</li>
+<li>Sign both copies of the contract</li>
+<li>Return one signed copy to us by <strong>____</strong></li>
 </ol>
 
-<p>Sollten Sie Fragen zu den Unterlagen haben, stehen wir Ihnen gerne zur Verfügung.</p>
+<p>If you have any questions about the documents, please do not hesitate to contact us.</p>
 
-<p>Wir freuen uns auf die Zusammenarbeit!</p>',
+<p>We look forward to working together!</p>',
 			],
 			'talent-pool-matching-job' => [
-				'subject'   => __( 'Neue Stelle bei {firma}: {stelle}', 'recruiting-playbook' ),
+				'subject'   => __( 'New position at {firma}: {stelle}', 'recruiting-playbook' ),
 				'body_html' => '<p>{anrede_formal},</p>
 
-<p>Sie befinden sich in unserem Talent-Pool, und wir haben eine Stelle gefunden, die zu Ihrem Profil passen könnte!</p>
+<p>you are in our talent pool, and we have found a position that might match your profile!</p>
 
-<p><strong>Die Position:</strong></p>
+<p><strong>The position:</strong></p>
 <ul>
 <li><strong>{stelle}</strong></li>
-<li>Standort: {stelle_ort}</li>
+<li>Location: {stelle_ort}</li>
 </ul>
 
-<p>Wir denken, dass diese Stelle aufgrund Ihrer Qualifikationen und Erfahrungen interessant für Sie sein könnte.</p>
+<p>We think this position could be interesting for you based on your qualifications and experience.</p>
 
-<p><strong>Interesse?</strong></p>
-<p>Wenn Sie an dieser Position interessiert sind, antworten Sie einfach auf diese E-Mail oder bewerben Sie sich direkt über unsere Karriereseite:</p>
+<p><strong>Interested?</strong></p>
+<p>If you are interested in this position, simply reply to this email or apply directly via our career page:</p>
 <p><a href="{stelle_url}">{stelle_url}</a></p>
 
-<p>Falls die Stelle nicht das Richtige für Sie ist, bleiben Sie weiterhin in unserem Talent-Pool und wir informieren Sie über zukünftige Möglichkeiten.</p>
+<p>If this position is not right for you, you will remain in our talent pool and we will inform you about future opportunities.</p>
 
-<p>Wir würden uns freuen, von Ihnen zu hören!</p>',
+<p>We would be happy to hear from you!</p>',
 			],
 		];
 

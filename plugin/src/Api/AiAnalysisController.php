@@ -144,7 +144,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'No permission.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -152,7 +152,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'ai_cv_matching' ) ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'KI-Addon nicht aktiv.', 'recruiting-playbook' ),
+				__( 'AI addon not active.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -383,7 +383,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		if ( ! function_exists( 'rp_fs' ) ) {
 			return new WP_Error(
 				'freemius_not_available',
-				__( 'Freemius SDK nicht verfügbar.', 'recruiting-playbook' ),
+				__( 'Freemius SDK not available.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -394,7 +394,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		if ( ! $site || empty( $site->id ) || empty( $site->secret_key ) ) {
 			return new WP_Error(
 				'no_freemius_install',
-				__( 'Keine gültige Freemius-Installation gefunden.', 'recruiting-playbook' ),
+				__( 'No valid Freemius installation found.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

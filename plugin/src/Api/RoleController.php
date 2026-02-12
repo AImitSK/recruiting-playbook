@@ -71,12 +71,12 @@ class RoleController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'slug'         => [
-							'description' => __( 'Rollen-Slug', 'recruiting-playbook' ),
+							'description' => __( 'Role slug', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'required'    => true,
 						],
 						'capabilities' => [
-							'description' => __( 'Capability-Konfiguration', 'recruiting-playbook' ),
+							'description' => __( 'Capability configuration', 'recruiting-playbook' ),
 							'type'        => 'object',
 							'required'    => true,
 						],
@@ -101,7 +101,7 @@ class RoleController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_roles' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Rollen zu verwalten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage roles.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -124,7 +124,7 @@ class RoleController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Nur Administratoren können Rollen-Berechtigungen ändern.', 'recruiting-playbook' ),
+				__( 'Only administrators can change role permissions.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -218,7 +218,7 @@ class RoleController extends WP_REST_Controller {
 		if ( ! in_array( $slug, $allowed_roles, true ) ) {
 			return new WP_Error(
 				'invalid_role',
-				__( 'Nur Custom Recruiting-Rollen können bearbeitet werden.', 'recruiting-playbook' ),
+				__( 'Only custom recruiting roles can be edited.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -228,7 +228,7 @@ class RoleController extends WP_REST_Controller {
 		if ( ! $wp_role ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Rolle nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Role not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -275,7 +275,7 @@ class RoleController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'user_roles' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

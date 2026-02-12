@@ -1,7 +1,7 @@
 /**
  * JobAssignments Component
  *
- * Stellen-Zuweisung für Recruiting-User
+ * Job assignment for recruiting users
  *
  * @package RecruitingPlaybook
  */
@@ -36,7 +36,7 @@ export function JobAssignments() {
 	} = useJobAssignments();
 
 	/**
-	 * User-Dropdown Handler
+	 * User dropdown handler
 	 */
 	const handleUserChange = useCallback( ( e ) => {
 		const userId = parseInt( e.target.value, 10 );
@@ -63,12 +63,12 @@ export function JobAssignments() {
 				</Alert>
 			) }
 
-			{ /* User-Auswahl */ }
+			{ /* User selection */ }
 			<Card>
 				<CardHeader>
 					<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<Users style={ { width: '1.25rem', height: '1.25rem', color: '#1d71b8' } } />
-						{ __( 'Benutzer auswählen', 'recruiting-playbook' ) }
+						{ __( 'Select User', 'recruiting-playbook' ) }
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
@@ -85,7 +85,7 @@ export function JobAssignments() {
 						} }
 					>
 						<option value="">
-							{ __( '— Benutzer wählen —', 'recruiting-playbook' ) }
+							{ __( '— Select User —', 'recruiting-playbook' ) }
 						</option>
 						{ users.map( ( user ) => (
 							<option key={ user.id } value={ user.id }>
@@ -96,15 +96,15 @@ export function JobAssignments() {
 				</CardContent>
 			</Card>
 
-			{ /* Zuweisungen nur anzeigen wenn User ausgewählt */ }
+			{ /* Show assignments only if user is selected */ }
 			{ selectedUser && (
 				<>
-					{ /* Zugewiesene Stellen */ }
+					{ /* Assigned jobs */ }
 					<Card>
 						<CardHeader>
 							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 								<Briefcase style={ { width: '1.25rem', height: '1.25rem', color: '#2fac66' } } />
-								{ __( 'Zugewiesene Stellen', 'recruiting-playbook' ) }
+								{ __( 'Assigned Jobs', 'recruiting-playbook' ) }
 								<span style={ {
 									backgroundColor: '#e6f5ec',
 									color: '#2fac66',
@@ -120,7 +120,7 @@ export function JobAssignments() {
 						<CardContent>
 							{ assignedJobs.length === 0 ? (
 								<p style={ { color: '#9ca3af', fontStyle: 'italic' } }>
-									{ __( 'Keine Stellen zugewiesen.', 'recruiting-playbook' ) }
+									{ __( 'No jobs assigned.', 'recruiting-playbook' ) }
 								</p>
 							) : (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
@@ -143,12 +143,12 @@ export function JobAssignments() {
 												</div>
 												<div style={ { fontSize: '0.75rem', color: '#6b7280' } }>
 													{ job.status === 'publish'
-														? __( 'Aktiv', 'recruiting-playbook' )
+														? __( 'Active', 'recruiting-playbook' )
 														: job.status === 'draft'
-															? __( 'Entwurf', 'recruiting-playbook' )
+															? __( 'Draft', 'recruiting-playbook' )
 															: job.status
 													}
-													{ job.assigned_at && ` · ${ __( 'Zugewiesen am', 'recruiting-playbook' ) } ${ new Date( job.assigned_at ).toLocaleDateString( 'de-DE' ) }` }
+													{ job.assigned_at && ` · ${ __( 'Assigned on', 'recruiting-playbook' ) } ${ new Date( job.assigned_at ).toLocaleDateString( 'de-DE' ) }` }
 												</div>
 											</div>
 											<Button
@@ -159,7 +159,7 @@ export function JobAssignments() {
 												style={ { color: '#ef4444' } }
 											>
 												<X style={ { width: '1rem', height: '1rem' } } />
-												{ __( 'Entfernen', 'recruiting-playbook' ) }
+												{ __( 'Remove', 'recruiting-playbook' ) }
 											</Button>
 										</div>
 									) ) }
@@ -168,13 +168,13 @@ export function JobAssignments() {
 						</CardContent>
 					</Card>
 
-					{ /* Verfügbare Stellen */ }
+					{ /* Available jobs */ }
 					<Card>
 						<CardHeader>
 							<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 									<Briefcase style={ { width: '1.25rem', height: '1.25rem', color: '#6b7280' } } />
-									{ __( 'Verfügbare Stellen', 'recruiting-playbook' ) }
+									{ __( 'Available Jobs', 'recruiting-playbook' ) }
 									<span style={ {
 										backgroundColor: '#f3f4f6',
 										color: '#6b7280',
@@ -194,7 +194,7 @@ export function JobAssignments() {
 										disabled={ assigning }
 									>
 										<UserPlus style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
-										{ __( 'Alle zuweisen', 'recruiting-playbook' ) }
+										{ __( 'Assign All', 'recruiting-playbook' ) }
 									</Button>
 								) }
 							</div>
@@ -202,7 +202,7 @@ export function JobAssignments() {
 						<CardContent>
 							{ unassignedJobs.length === 0 ? (
 								<p style={ { color: '#9ca3af', fontStyle: 'italic' } }>
-									{ __( 'Alle Stellen sind bereits zugewiesen.', 'recruiting-playbook' ) }
+									{ __( 'All jobs are already assigned.', 'recruiting-playbook' ) }
 								</p>
 							) : (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
@@ -225,9 +225,9 @@ export function JobAssignments() {
 												</div>
 												<div style={ { fontSize: '0.75rem', color: '#6b7280' } }>
 													{ job.status === 'publish'
-														? __( 'Aktiv', 'recruiting-playbook' )
+														? __( 'Active', 'recruiting-playbook' )
 														: job.status === 'draft'
-															? __( 'Entwurf', 'recruiting-playbook' )
+															? __( 'Draft', 'recruiting-playbook' )
 															: job.status
 													}
 												</div>
@@ -239,7 +239,7 @@ export function JobAssignments() {
 												disabled={ assigning }
 											>
 												<UserPlus style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
-												{ __( 'Zuweisen', 'recruiting-playbook' ) }
+												{ __( 'Assign', 'recruiting-playbook' ) }
 											</Button>
 										</div>
 									) ) }

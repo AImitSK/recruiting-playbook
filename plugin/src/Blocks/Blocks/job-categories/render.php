@@ -1,17 +1,17 @@
 <?php
 /**
- * Server-Side Render für rp/job-categories Block
+ * Server-Side Render for rp/job-categories Block
  *
- * @var array    $attributes Block-Attribute.
- * @var string   $content    Inner Blocks (leer bei diesem Block).
- * @var WP_Block $block      Block-Instanz.
+ * @var array    $attributes Block attributes.
+ * @var string   $content    Inner Blocks (empty for this block).
+ * @var WP_Block $block      Block instance.
  *
  * @package RecruitingPlaybook
  */
 
 defined( 'ABSPATH' ) || exit;
 
-// Attribute zu Shortcode-Attributen konvertieren.
+// Convert attributes to shortcode attributes.
 $shortcode_atts = [
 	'columns'    => $attributes['columns'] ?? 4,
 	'show_count' => ! empty( $attributes['showCount'] ) ? 'true' : 'false',
@@ -19,16 +19,16 @@ $shortcode_atts = [
 	'orderby'    => $attributes['orderby'] ?? 'name',
 ];
 
-// Shortcode-Klasse nutzen.
+// Use shortcode class.
 $shortcode = new \RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode();
 $output    = $shortcode->render( $shortcode_atts );
 
-// Falls keine Kategorien vorhanden sind.
+// If no categories are available.
 if ( empty( trim( $output ) ) ) {
-	$output = '<p class="rp-block-empty">' . esc_html__( 'Keine Kategorien vorhanden.', 'recruiting-playbook' ) . '</p>';
+	$output = '<p class="rp-block-empty">' . esc_html__( 'No categories available.', 'recruiting-playbook' ) . '</p>';
 }
 
-// Block-Wrapper mit Gutenberg-Klassen.
+// Block wrapper with Gutenberg classes.
 $wrapper_attributes = get_block_wrapper_attributes( [
 	'class' => 'rp-block-job-categories',
 ] );

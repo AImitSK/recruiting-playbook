@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Stellenliste — Elementor Widget
+ * RP: Job Listing — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class JobGrid extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Stellenliste', 'recruiting-playbook' );
+		return esc_html__( 'RP: Job Listing', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -28,7 +28,7 @@ class JobGrid extends AbstractWidget {
 	}
 
 	public function get_keywords(): array {
-		return [ 'jobs', 'stellen', 'grid', 'liste', 'recruiting' ];
+		return [ 'jobs', 'positions', 'grid', 'list', 'recruiting' ];
 	}
 
 	protected function get_shortcode_name(): string {
@@ -50,11 +50,11 @@ class JobGrid extends AbstractWidget {
 
 	protected function register_controls(): void {
 
-		// --- Tab: Allgemein ---
+		// --- Tab: General ---
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -62,7 +62,7 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'limit',
 			[
-				'label'   => esc_html__( 'Anzahl Stellen', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Number of Jobs', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::NUMBER,
 				'default' => 10,
 				'min'     => 1,
@@ -74,7 +74,7 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'columns',
 			[
-				'label'   => esc_html__( 'Spalten', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Columns', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '2',
 				'options' => [
@@ -100,7 +100,7 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'category',
 			[
-				'label'   => esc_html__( 'Kategorie', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Category', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'job_category' ),
@@ -110,7 +110,7 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'location',
 			[
-				'label'   => esc_html__( 'Standort', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Location', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'job_location' ),
@@ -120,7 +120,7 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'type',
 			[
-				'label'   => esc_html__( 'Beschäftigungsart', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Employment Type', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'employment_type' ),
@@ -130,10 +130,10 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'featured',
 			[
-				'label'        => esc_html__( 'Nur Featured', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Featured Only', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => '',
 			]
@@ -141,11 +141,11 @@ class JobGrid extends AbstractWidget {
 
 		$this->end_controls_section();
 
-		// --- Tab: Sortierung ---
+		// --- Tab: Sorting ---
 		$this->start_controls_section(
 			'section_sorting',
 			[
-				'label' => esc_html__( 'Sortierung', 'recruiting-playbook' ),
+				'label' => esc_html__( 'Sorting', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -153,13 +153,13 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'orderby',
 			[
-				'label'   => esc_html__( 'Sortieren nach', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Sort By', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'date',
 				'options' => [
-					'date'  => esc_html__( 'Datum', 'recruiting-playbook' ),
-					'title' => esc_html__( 'Titel', 'recruiting-playbook' ),
-					'rand'  => esc_html__( 'Zufällig', 'recruiting-playbook' ),
+					'date'  => esc_html__( 'Date', 'recruiting-playbook' ),
+					'title' => esc_html__( 'Title', 'recruiting-playbook' ),
+					'rand'  => esc_html__( 'Random', 'recruiting-playbook' ),
 				],
 			]
 		);
@@ -167,12 +167,12 @@ class JobGrid extends AbstractWidget {
 		$this->add_control(
 			'order',
 			[
-				'label'   => esc_html__( 'Reihenfolge', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Order', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'DESC',
 				'options' => [
-					'DESC' => esc_html__( 'Absteigend', 'recruiting-playbook' ),
-					'ASC'  => esc_html__( 'Aufsteigend', 'recruiting-playbook' ),
+					'DESC' => esc_html__( 'Descending', 'recruiting-playbook' ),
+					'ASC'  => esc_html__( 'Ascending', 'recruiting-playbook' ),
 				],
 			]
 		);

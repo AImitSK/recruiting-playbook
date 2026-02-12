@@ -1,8 +1,8 @@
 /**
  * DesignTab Component
  *
- * Haupt-Container für Design & Branding Einstellungen.
- * Enthält Sub-Tabs für verschiedene Design-Bereiche.
+ * Main container for Design & Branding settings.
+ * Contains sub-tabs for different design areas.
  *
  * @package RecruitingPlaybook
  */
@@ -52,7 +52,7 @@ export function DesignTab() {
 		discardChanges,
 	} = useDesignSettings();
 
-	// Cleanup bei Unmount
+	// Cleanup on unmount
 	useEffect( () => {
 		return () => {
 			if ( notificationTimeoutRef.current ) {
@@ -62,7 +62,7 @@ export function DesignTab() {
 	}, [] );
 
 	/**
-	 * Benachrichtigung anzeigen
+	 * Show notification
 	 */
 	const showNotification = useCallback( ( message, type = 'success' ) => {
 		if ( notificationTimeoutRef.current ) {
@@ -78,22 +78,22 @@ export function DesignTab() {
 	}, [] );
 
 	/**
-	 * Settings speichern
+	 * Save settings
 	 */
 	const handleSave = useCallback( async () => {
 		setError( null );
 		const success = await saveSettings();
 
 		if ( success ) {
-			showNotification( __( 'Design-Einstellungen wurden gespeichert.', 'recruiting-playbook' ) );
+			showNotification( __( 'Design settings have been saved.', 'recruiting-playbook' ) );
 		}
 	}, [ saveSettings, showNotification, setError ] );
 
 	/**
-	 * Settings zurücksetzen
+	 * Reset settings
 	 */
 	const handleReset = useCallback( async () => {
-		if ( ! window.confirm( __( 'Alle Design-Einstellungen auf Standardwerte zurücksetzen?', 'recruiting-playbook' ) ) ) {
+		if ( ! window.confirm( __( 'Reset all design settings to default values?', 'recruiting-playbook' ) ) ) {
 			return;
 		}
 
@@ -101,15 +101,15 @@ export function DesignTab() {
 		const success = await resetSettings();
 
 		if ( success ) {
-			showNotification( __( 'Design-Einstellungen wurden zurückgesetzt.', 'recruiting-playbook' ) );
+			showNotification( __( 'Design settings have been reset.', 'recruiting-playbook' ) );
 		}
 	}, [ resetSettings, showNotification, setError ] );
 
 	/**
-	 * Änderungen verwerfen
+	 * Discard changes
 	 */
 	const handleDiscard = useCallback( () => {
-		if ( isDirty && window.confirm( __( 'Ungespeicherte Änderungen verwerfen?', 'recruiting-playbook' ) ) ) {
+		if ( isDirty && window.confirm( __( 'Discard unsaved changes?', 'recruiting-playbook' ) ) ) {
 			discardChanges();
 		}
 	}, [ isDirty, discardChanges ] );
@@ -129,7 +129,7 @@ export function DesignTab() {
 			<Alert variant="destructive">
 				<AlertCircle className="rp-h-4 rp-w-4" />
 				<AlertDescription>
-					{ __( 'Design-Einstellungen konnten nicht geladen werden.', 'recruiting-playbook' ) }
+					{ __( 'Design settings could not be loaded.', 'recruiting-playbook' ) }
 				</AlertDescription>
 			</Alert>
 		);
@@ -137,7 +137,7 @@ export function DesignTab() {
 
 	return (
 		<div className="rp-flex rp-gap-6">
-			{ /* Settings-Panel (links) */ }
+			{ /* Settings Panel (left) */ }
 			<div className="rp-flex-1 rp-min-w-0">
 				{ /* Error Alert */ }
 				{ error && (
@@ -168,7 +168,7 @@ export function DesignTab() {
 							{ __( 'Branding', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="typography">
-							{ __( 'Typografie', 'recruiting-playbook' ) }
+							{ __( 'Typography', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="cards">
 							{ __( 'Cards', 'recruiting-playbook' ) }
@@ -177,10 +177,10 @@ export function DesignTab() {
 							{ __( 'Buttons', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="joblist">
-							{ __( 'Job-Liste', 'recruiting-playbook' ) }
+							{ __( 'Job List', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="aibutton">
-							{ __( 'KI-Button', 'recruiting-playbook' ) }
+							{ __( 'AI Button', 'recruiting-playbook' ) }
 						</TabsTrigger>
 					</TabsList>
 
@@ -240,7 +240,7 @@ export function DesignTab() {
 							onClick={ handleReset }
 							disabled={ saving }
 						>
-							{ __( 'Zurücksetzen', 'recruiting-playbook' ) }
+							{ __( 'Reset', 'recruiting-playbook' ) }
 						</Button>
 						{ isDirty && (
 							<Button
@@ -248,7 +248,7 @@ export function DesignTab() {
 								onClick={ handleDiscard }
 								disabled={ saving }
 							>
-								{ __( 'Verwerfen', 'recruiting-playbook' ) }
+								{ __( 'Discard', 'recruiting-playbook' ) }
 							</Button>
 						) }
 					</div>
@@ -257,14 +257,14 @@ export function DesignTab() {
 						disabled={ saving || ! isDirty }
 					>
 						{ saving
-							? __( 'Speichern...', 'recruiting-playbook' )
-							: __( 'Einstellungen speichern', 'recruiting-playbook' )
+							? __( 'Saving...', 'recruiting-playbook' )
+							: __( 'Save Settings', 'recruiting-playbook' )
 						}
 					</Button>
 				</div>
 			</div>
 
-			{ /* Live-Vorschau (rechts) */ }
+			{ /* Live Preview (right) */ }
 			<div className="rp-w-80 rp-flex-shrink-0">
 				<LivePreview
 					settings={ settings }

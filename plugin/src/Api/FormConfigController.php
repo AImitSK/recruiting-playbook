@@ -72,12 +72,12 @@ class FormConfigController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'edit_config_permissions_check' ],
 					'args'                => [
 						'steps' => [
-							'description' => __( 'Step-Konfiguration', 'recruiting-playbook' ),
+							'description' => __( 'Step configuration', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'required'    => true,
 						],
 						'settings' => [
-							'description' => __( 'Formular-Einstellungen', 'recruiting-playbook' ),
+							'description' => __( 'Form settings', 'recruiting-playbook' ),
 							'type'        => 'object',
 						],
 					],
@@ -167,7 +167,7 @@ class FormConfigController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, den Formular-Builder zu nutzen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to use the form builder.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -191,7 +191,7 @@ class FormConfigController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, die Formular-Konfiguration zu bearbeiten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to edit the form configuration.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -244,7 +244,7 @@ class FormConfigController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success'     => true,
-					'message'     => __( 'Entwurf gespeichert.', 'recruiting-playbook' ),
+					'message'     => __( 'Draft saved.', 'recruiting-playbook' ),
 					'has_changes' => $this->service->hasUnpublishedChanges(),
 				],
 				200
@@ -275,7 +275,7 @@ class FormConfigController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success'           => true,
-					'message'           => __( 'Formular veröffentlicht.', 'recruiting-playbook' ),
+					'message'           => __( 'Form published.', 'recruiting-playbook' ),
 					'published_version' => $this->service->getPublishedVersion(),
 					'has_changes'       => false,
 				],
@@ -307,7 +307,7 @@ class FormConfigController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success'     => true,
-					'message'     => __( 'Änderungen verworfen.', 'recruiting-playbook' ),
+					'message'     => __( 'Changes discarded.', 'recruiting-playbook' ),
 					'draft'       => $this->service->getDraft(),
 					'has_changes' => false,
 				],
@@ -365,7 +365,7 @@ class FormConfigController extends WP_REST_Controller {
 			if ( ! is_array( $data ) || ! isset( $data['fields'], $data['system_fields'] ) ) {
 				return new WP_Error(
 					'invalid_data',
-					__( 'Fehler beim Laden der aktiven Felder', 'recruiting-playbook' ),
+					__( 'Error loading active fields', 'recruiting-playbook' ),
 					[ 'status' => 500 ]
 				);
 			}
@@ -400,7 +400,7 @@ class FormConfigController extends WP_REST_Controller {
 			return new WP_REST_Response(
 				[
 					'success'     => true,
-					'message'     => __( 'Formular auf Standard zurückgesetzt.', 'recruiting-playbook' ),
+					'message'     => __( 'Form reset to default.', 'recruiting-playbook' ),
 					'draft'       => $data['draft'],
 					'has_changes' => false,
 				],
@@ -424,7 +424,7 @@ class FormConfigController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Der Formular-Builder erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'The form builder requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

@@ -33,10 +33,10 @@ export function useEmailHistory( options = {} ) {
 	const candidateId = options?.candidateId;
 	const perPage = pagination.perPage;
 	const i18n = window.rpEmailData?.i18n || window.rpApplicant?.i18n || {};
-	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der E-Mails';
-	const errorSendingMsg = i18n.errorSending || 'Fehler beim Senden';
-	const errorCancellingMsg = i18n.errorCancelling || 'Fehler beim Stornieren';
-	const errorPreviewMsg = i18n.errorPreview || 'Fehler bei der Vorschau';
+	const errorLoadingMsg = i18n.errorLoading || 'Error loading emails';
+	const errorSendingMsg = i18n.errorSending || 'Error sending';
+	const errorCancellingMsg = i18n.errorCancelling || 'Error cancelling';
+	const errorPreviewMsg = i18n.errorPreview || 'Error generating preview';
 
 	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );

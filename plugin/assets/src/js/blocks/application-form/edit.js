@@ -31,20 +31,20 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const getDescription = () => {
 		if ( jobId > 0 ) {
-			return `Job-ID: ${ jobId }`;
+			return `Job ID: ${ jobId }`;
 		}
-		return __( 'Automatische Erkennung', 'recruiting-playbook' );
+		return __( 'Automatic detection', 'recruiting-playbook' );
 	};
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					title={ __( 'Settings', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Job-ID', 'recruiting-playbook' ) }
+						label={ __( 'Job ID', 'recruiting-playbook' ) }
 						value={ jobId || '' }
 						onChange={ ( value ) =>
 							setAttributes( {
@@ -53,12 +53,12 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						type="number"
 						help={ __(
-							'Leer lassen für automatische Erkennung auf Stellenseiten.',
+							'Leave empty for automatic detection on job pages.',
 							'recruiting-playbook'
 						) }
 					/>
 					<TextControl
-						label={ __( 'Überschrift', 'recruiting-playbook' ) }
+						label={ __( 'Heading', 'recruiting-playbook' ) }
 						value={ title }
 						onChange={ ( value ) =>
 							setAttributes( { title: value } )
@@ -66,7 +66,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<ToggleControl
 						label={ __(
-							'Stellentitel anzeigen',
+							'Show job title',
 							'recruiting-playbook'
 						) }
 						checked={ showJobTitle }
@@ -74,13 +74,13 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { showJobTitle: value } )
 						}
 						help={ __(
-							'Zeigt "Bewerbung für: [Stellentitel]" an.',
+							'Shows "Application for: [Job Title]".',
 							'recruiting-playbook'
 						) }
 					/>
 					<ToggleControl
 						label={ __(
-							'Fortschrittsanzeige',
+							'Progress indicator',
 							'recruiting-playbook'
 						) }
 						checked={ showProgress }
@@ -88,7 +88,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { showProgress: value } )
 						}
 						help={ __(
-							'Zeigt den Fortschritt bei Multi-Step-Formularen.',
+							'Shows progress for multi-step forms.',
 							'recruiting-playbook'
 						) }
 					/>
@@ -97,10 +97,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Bewerbungsformular', 'recruiting-playbook' ) }
+					label={ __( 'Application Form', 'recruiting-playbook' ) }
 					summary={ getDescription() }
 					helpText={ __(
-						'Das Formular wird im Frontend angezeigt.',
+						'The form will be displayed on the frontend.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_application_form]"

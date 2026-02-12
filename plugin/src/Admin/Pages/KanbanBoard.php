@@ -26,8 +26,8 @@ class KanbanBoard {
 		// Prüfe rp_view_applications ODER manage_options (Admin-Fallback).
 		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_die(
-				esc_html__( 'Sie haben keine Berechtigung, diese Seite anzuzeigen.', 'recruiting-playbook' ),
-				esc_html__( 'Zugriff verweigert', 'recruiting-playbook' ),
+				esc_html__( 'You do not have permission to view this page.', 'recruiting-playbook' ),
+				esc_html__( 'Access denied', 'recruiting-playbook' ),
 				[ 'response' => 403 ]
 			);
 		}
@@ -45,7 +45,7 @@ class KanbanBoard {
 		echo '<div id="rp-kanban-root">';
 		echo '<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">';
 		echo '<span class="spinner is-active" style="float: none; margin-right: 10px;"></span> ';
-		echo esc_html__( 'Lade Kanban-Board...', 'recruiting-playbook' );
+		echo esc_html__( 'Loading Kanban board...', 'recruiting-playbook' );
 		echo '</div>';
 		echo '</div>';
 	}
@@ -55,14 +55,14 @@ class KanbanBoard {
 	 */
 	private function render_upgrade_notice(): void {
 		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Kanban-Board', 'recruiting-playbook' ) . '</h1>';
+		echo '<h1>' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
 
 		if ( function_exists( 'rp_require_feature' ) ) {
 			rp_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' );
 		} else {
 			// Fallback wenn Helper nicht geladen.
 			echo '<div class="notice notice-warning">';
-			echo '<p>' . esc_html__( 'Das Kanban-Board ist ein Pro-Feature.', 'recruiting-playbook' ) . '</p>';
+			echo '<p>' . esc_html__( 'The Kanban board is a Pro feature.', 'recruiting-playbook' ) . '</p>';
 			echo '</div>';
 		}
 
@@ -143,12 +143,12 @@ class KanbanBoard {
 		return [
 			[
 				'id'    => 'new',
-				'label' => __( 'Neu', 'recruiting-playbook' ),
+				'label' => __( 'New', 'recruiting-playbook' ),
 				'color' => $colors['new'] ?? '#2271b1',
 			],
 			[
 				'id'    => 'screening',
-				'label' => __( 'In Prüfung', 'recruiting-playbook' ),
+				'label' => __( 'Screening', 'recruiting-playbook' ),
 				'color' => $colors['screening'] ?? '#dba617',
 			],
 			[
@@ -158,23 +158,23 @@ class KanbanBoard {
 			],
 			[
 				'id'    => 'offer',
-				'label' => __( 'Angebot', 'recruiting-playbook' ),
+				'label' => __( 'Offer', 'recruiting-playbook' ),
 				'color' => $colors['offer'] ?? '#1e8cbe',
 			],
 			[
 				'id'    => 'hired',
-				'label' => __( 'Eingestellt', 'recruiting-playbook' ),
+				'label' => __( 'Hired', 'recruiting-playbook' ),
 				'color' => $colors['hired'] ?? '#00a32a',
 			],
 			[
 				'id'        => 'rejected',
-				'label'     => __( 'Abgelehnt', 'recruiting-playbook' ),
+				'label'     => __( 'Rejected', 'recruiting-playbook' ),
 				'color'     => $colors['rejected'] ?? '#d63638',
 				'collapsed' => true,
 			],
 			[
 				'id'        => 'withdrawn',
-				'label'     => __( 'Zurückgezogen', 'recruiting-playbook' ),
+				'label'     => __( 'Withdrawn', 'recruiting-playbook' ),
 				'color'     => $colors['withdrawn'] ?? '#787c82',
 				'collapsed' => true,
 			],
@@ -188,18 +188,18 @@ class KanbanBoard {
 	 */
 	private function get_i18n_strings(): array {
 		return [
-			'loading'        => __( 'Lade Bewerbungen...', 'recruiting-playbook' ),
-			'error'          => __( 'Fehler beim Laden', 'recruiting-playbook' ),
-			'retry'          => __( 'Erneut versuchen', 'recruiting-playbook' ),
-			'noApplications' => __( 'Keine Bewerbungen', 'recruiting-playbook' ),
-			'today'          => __( 'Heute', 'recruiting-playbook' ),
-			'yesterday'      => __( 'Gestern', 'recruiting-playbook' ),
-			'daysAgo'        => __( 'vor %d Tagen', 'recruiting-playbook' ),
-			'expand'         => __( 'Aufklappen', 'recruiting-playbook' ),
-			'collapse'       => __( 'Zuklappen', 'recruiting-playbook' ),
-			'dragHint'       => __( 'Ziehen um Status zu ändern', 'recruiting-playbook' ),
-			'statusChanged'  => __( 'Status geändert', 'recruiting-playbook' ),
-			'updateFailed'   => __( 'Aktualisierung fehlgeschlagen', 'recruiting-playbook' ),
+			'loading'        => __( 'Loading applications...', 'recruiting-playbook' ),
+			'error'          => __( 'Error loading', 'recruiting-playbook' ),
+			'retry'          => __( 'Try again', 'recruiting-playbook' ),
+			'noApplications' => __( 'No applications', 'recruiting-playbook' ),
+			'today'          => __( 'Today', 'recruiting-playbook' ),
+			'yesterday'      => __( 'Yesterday', 'recruiting-playbook' ),
+			'daysAgo'        => __( '%d days ago', 'recruiting-playbook' ),
+			'expand'         => __( 'Expand', 'recruiting-playbook' ),
+			'collapse'       => __( 'Collapse', 'recruiting-playbook' ),
+			'dragHint'       => __( 'Drag to change status', 'recruiting-playbook' ),
+			'statusChanged'  => __( 'Status changed', 'recruiting-playbook' ),
+			'updateFailed'   => __( 'Update failed', 'recruiting-playbook' ),
 		];
 	}
 

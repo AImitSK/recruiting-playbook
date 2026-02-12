@@ -1,7 +1,7 @@
 /**
  * RolesList Component
  *
- * Capability-Matrix für Rollen-Verwaltung
+ * Capability matrix for role management
  *
  * @package RecruitingPlaybook
  */
@@ -49,7 +49,7 @@ export function RolesList() {
 	}, [] );
 
 	/**
-	 * Änderungen speichern
+	 * Save changes
 	 */
 	const handleSave = useCallback( async ( roleSlug ) => {
 		const role = roles.find( ( r ) => r.slug === roleSlug );
@@ -70,13 +70,13 @@ export function RolesList() {
 				delete next[ roleSlug ];
 				return next;
 			} );
-			setNotification( __( 'Berechtigungen gespeichert.', 'recruiting-playbook' ) );
+			setNotification( __( 'Permissions saved.', 'recruiting-playbook' ) );
 			setTimeout( () => setNotification( null ), 3000 );
 		}
 	}, [ roles, editedCaps, saveRoleCapabilities ] );
 
 	/**
-	 * Aktuellen Wert einer Capability ermitteln
+	 * Get current capability value
 	 */
 	const getCapValue = useCallback( ( role, cap ) => {
 		if ( editedCaps[ role.slug ]?.hasOwnProperty( cap ) ) {
@@ -86,7 +86,7 @@ export function RolesList() {
 	}, [ editedCaps ] );
 
 	/**
-	 * Prüfen ob Rolle ungespeicherte Änderungen hat
+	 * Check if role has unsaved changes
 	 */
 	const hasChanges = useCallback( ( roleSlug ) => {
 		return Object.keys( editedCaps[ roleSlug ] || {} ).length > 0;
@@ -100,10 +100,10 @@ export function RolesList() {
 		);
 	}
 
-	// Admin-only Caps die nicht bearbeitet werden können.
+	// Admin-only capabilities that cannot be edited.
 	const adminOnlyCaps = [ 'rp_manage_roles', 'rp_assign_jobs' ];
 
-	// Editierbare Rollen (keine Standard-WP-Rollen).
+	// Editable roles (no default WP roles).
 	const editableRoles = roles.filter( ( r ) =>
 		[ 'rp_recruiter', 'rp_hiring_manager' ].includes( r.slug )
 	);
@@ -138,7 +138,7 @@ export function RolesList() {
 							<thead>
 								<tr style={ { borderBottom: '2px solid #e5e7eb' } }>
 									<th style={ { textAlign: 'left', padding: '0.75rem 1rem', fontWeight: 600, color: '#374151' } }>
-										{ __( 'Berechtigung', 'recruiting-playbook' ) }
+										{ __( 'Permission', 'recruiting-playbook' ) }
 									</th>
 									<th style={ { textAlign: 'center', padding: '0.75rem 1rem', fontWeight: 600, color: '#374151', width: '100px' } }>
 										{ __( 'Admin', 'recruiting-playbook' ) }
@@ -165,11 +165,11 @@ export function RolesList() {
 										<td style={ { padding: '0.75rem 1rem', color: '#4b5563' } }>
 											{ cap.label || cap.key }
 										</td>
-										{ /* Admin: Immer aktiv */ }
+										{ /* Admin: Always active */ }
 										<td style={ { textAlign: 'center', padding: '0.75rem 1rem' } }>
 											<Check style={ { width: '1.25rem', height: '1.25rem', color: '#2fac66', margin: '0 auto' } } />
 										</td>
-										{ /* Editierbare Rollen */ }
+										{ /* Editable roles */ }
 										{ editableRoles.map( ( role ) => (
 											<td key={ role.slug } style={ { textAlign: 'center', padding: '0.75rem 1rem' } }>
 												{ adminOnlyCaps.includes( cap.key ) ? (
@@ -193,7 +193,7 @@ export function RolesList() {
 				</Card>
 			) ) }
 
-			{ /* Speichern-Buttons pro Rolle */ }
+			{ /* Save buttons per role */ }
 			{ editableRoles.length > 0 && (
 				<div style={ { display: 'flex', gap: '1rem', justifyContent: 'flex-end' } }>
 					{ editableRoles.map( ( role ) => (
@@ -203,8 +203,8 @@ export function RolesList() {
 							disabled={ saving || ! hasChanges( role.slug ) }
 						>
 							{ saving
-								? __( 'Speichern…', 'recruiting-playbook' )
-								: `${ role.name } ${ __( 'speichern', 'recruiting-playbook' ) }`
+								? __( 'Saving…', 'recruiting-playbook' )
+								: `${ __( 'Save', 'recruiting-playbook' ) } ${ role.name }`
 							}
 						</Button>
 					) ) }

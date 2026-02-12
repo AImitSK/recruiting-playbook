@@ -47,7 +47,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_length">
-							{ i18n?.minLength || __( 'Minimale Länge', 'recruiting-playbook' ) }
+							{ i18n?.minLength || __( 'Minimum Length', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="min_length"
@@ -61,7 +61,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_length">
-							{ i18n?.maxLength || __( 'Maximale Länge', 'recruiting-playbook' ) }
+							{ i18n?.maxLength || __( 'Maximum Length', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="max_length"
@@ -69,7 +69,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 							min="0"
 							value={ validation.max_length || '' }
 							onChange={ ( e ) => updateRule( 'max_length', e.target.value ? parseInt( e.target.value, 10 ) : '' ) }
-							placeholder={ i18n?.unlimited || __( 'Unbegrenzt', 'recruiting-playbook' ) }
+							placeholder={ i18n?.unlimited || __( 'Unlimited', 'recruiting-playbook' ) }
 						/>
 					</div>
 				</div>
@@ -80,27 +80,27 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_value">
-							{ i18n?.minValue || __( 'Minimalwert', 'recruiting-playbook' ) }
+							{ i18n?.minValue || __( 'Minimum Value', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="min_value"
 							type="number"
 							value={ validation.min_value ?? '' }
 							onChange={ ( e ) => updateRule( 'min_value', e.target.value ? parseFloat( e.target.value ) : '' ) }
-							placeholder={ i18n?.noLimit || __( 'Kein Limit', 'recruiting-playbook' ) }
+							placeholder={ i18n?.noLimit || __( 'No Limit', 'recruiting-playbook' ) }
 						/>
 					</div>
 
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_value">
-							{ i18n?.maxValue || __( 'Maximalwert', 'recruiting-playbook' ) }
+							{ i18n?.maxValue || __( 'Maximum Value', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="max_value"
 							type="number"
 							value={ validation.max_value ?? '' }
 							onChange={ ( e ) => updateRule( 'max_value', e.target.value ? parseFloat( e.target.value ) : '' ) }
-							placeholder={ i18n?.noLimit || __( 'Kein Limit', 'recruiting-playbook' ) }
+							placeholder={ i18n?.noLimit || __( 'No Limit', 'recruiting-playbook' ) }
 						/>
 					</div>
 				</div>
@@ -110,7 +110,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 			{ showPattern && (
 				<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 					<Label htmlFor="pattern">
-						{ i18n?.pattern || __( 'Regex-Pattern', 'recruiting-playbook' ) }
+						{ i18n?.pattern || __( 'Regex Pattern', 'recruiting-playbook' ) }
 					</Label>
 					<Input
 						id="pattern"
@@ -119,7 +119,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 						placeholder="^[A-Z][a-z]+$"
 					/>
 					<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-						{ i18n?.patternHelp || __( 'Regulärer Ausdruck für die Validierung (z.B. ^[0-9]+$ für nur Zahlen)', 'recruiting-playbook' ) }
+						{ i18n?.patternHelp || __( 'Regular expression for validation (e.g., ^[0-9]+$ for numbers only)', 'recruiting-playbook' ) }
 					</p>
 				</div>
 			) }
@@ -129,7 +129,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 				<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="min_date">
-							{ i18n?.minDate || __( 'Frühestes Datum', 'recruiting-playbook' ) }
+							{ i18n?.minDate || __( 'Earliest Date', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="min_date"
@@ -141,7 +141,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="max_date">
-							{ i18n?.maxDate || __( 'Spätestes Datum', 'recruiting-playbook' ) }
+							{ i18n?.maxDate || __( 'Latest Date', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="max_date"
@@ -158,7 +158,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 				<>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 						<Label htmlFor="allowed_types">
-							{ i18n?.allowedTypes || __( 'Erlaubte Dateitypen', 'recruiting-playbook' ) }
+							{ i18n?.allowedTypes || __( 'Allowed File Types', 'recruiting-playbook' ) }
 						</Label>
 						<Input
 							id="allowed_types"
@@ -167,14 +167,14 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 							placeholder=".pdf,.doc,.docx"
 						/>
 						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-							{ i18n?.allowedTypesHelp || __( 'Kommagetrennte Liste von Dateiendungen', 'recruiting-playbook' ) }
+							{ i18n?.allowedTypesHelp || __( 'Comma-separated list of file extensions', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' } }>
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="max_file_size">
-								{ i18n?.maxFileSize || __( 'Max. Dateigröße (MB)', 'recruiting-playbook' ) }
+								{ i18n?.maxFileSize || __( 'Max. File Size (MB)', 'recruiting-playbook' ) }
 							</Label>
 							<Input
 								id="max_file_size"
@@ -188,7 +188,7 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="max_files">
-								{ i18n?.maxFiles || __( 'Max. Anzahl Dateien', 'recruiting-playbook' ) }
+								{ i18n?.maxFiles || __( 'Max. Number of Files', 'recruiting-playbook' ) }
 							</Label>
 							<Input
 								id="max_files"
@@ -206,20 +206,20 @@ export default function ValidationEditor( { validation = {}, onChange, fieldType
 			{ /* Custom error message */ }
 			<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 				<Label htmlFor="custom_error">
-					{ i18n?.customError || __( 'Eigene Fehlermeldung', 'recruiting-playbook' ) }
+					{ i18n?.customError || __( 'Custom Error Message', 'recruiting-playbook' ) }
 				</Label>
 				<Textarea
 					id="custom_error"
 					value={ validation.custom_error || '' }
 					onChange={ ( e ) => updateRule( 'custom_error', e.target.value ) }
-					placeholder={ i18n?.customErrorPlaceholder || __( 'Wird bei Validierungsfehlern angezeigt', 'recruiting-playbook' ) }
+					placeholder={ i18n?.customErrorPlaceholder || __( 'Displayed when validation fails', 'recruiting-playbook' ) }
 					rows={ 2 }
 				/>
 			</div>
 
 			{ /* Help text */ }
 			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0, paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
-				{ i18n?.validationHelp || __( 'Validierungsregeln werden beim Absenden des Formulars geprüft. Leer lassen für keine Einschränkung.', 'recruiting-playbook' ) }
+				{ i18n?.validationHelp || __( 'Validation rules are checked when the form is submitted. Leave empty for no restrictions.', 'recruiting-playbook' ) }
 			</p>
 		</div>
 	);

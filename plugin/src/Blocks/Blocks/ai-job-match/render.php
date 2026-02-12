@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 // Attribute zu Shortcode-Attributen konvertieren.
 $shortcode_atts = [
 	'job_id' => $attributes['jobId'] ?? 0,
-	'title'  => $attributes['title'] ?? __( 'Passe ich zu diesem Job?', 'recruiting-playbook' ),
+	'title'  => $attributes['title'] ?? __( 'Am I a good fit for this job?', 'recruiting-playbook' ),
 	'style'  => $attributes['style'] ?? '',
 ];
 

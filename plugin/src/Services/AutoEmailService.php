@@ -264,10 +264,10 @@ class AutoEmailService {
 	 */
 	public static function getAvailableStatuses(): array {
 		return [
-			'rejected'  => __( 'Abgelehnt', 'recruiting-playbook' ),
+			'rejected'  => __( 'Rejected', 'recruiting-playbook' ),
 			'interview' => __( 'Interview', 'recruiting-playbook' ),
-			'offer'     => __( 'Angebot', 'recruiting-playbook' ),
-			'hired'     => __( 'Eingestellt', 'recruiting-playbook' ),
+			'offer'     => __( 'Offer', 'recruiting-playbook' ),
+			'hired'     => __( 'Hired', 'recruiting-playbook' ),
 		];
 	}
 }

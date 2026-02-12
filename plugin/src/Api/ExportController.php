@@ -58,26 +58,26 @@ class ExportController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'export_permissions_check' ],
 				'args'                => [
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'status' => [
-						'description' => __( 'Status-Filter', 'recruiting-playbook' ),
+						'description' => __( 'Status filter', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
 					],
 					'job_id' => [
-						'description' => __( 'Filter nach Stelle', 'recruiting-playbook' ),
+						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
 					'columns' => [
-						'description' => __( 'Export-Spalten', 'recruiting-playbook' ),
+						'description' => __( 'Export columns', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
 					],
@@ -95,7 +95,7 @@ class ExportController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'export_permissions_check' ],
 				'args'                => [
 					'period' => [
-						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'description' => __( 'Time period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
@@ -186,7 +186,7 @@ class ExportController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_not_logged_in',
-				__( 'Sie müssen eingeloggt sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -200,7 +200,7 @@ class ExportController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_export_data' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung für Export.', 'recruiting-playbook' ),
+				__( 'No permission for export.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -209,7 +209,7 @@ class ExportController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'pro_feature_required',
-				__( 'CSV-Export erfordert die Pro-Version.', 'recruiting-playbook' ),
+				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'feature'     => 'csv_export',

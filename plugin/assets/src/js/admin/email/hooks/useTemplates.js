@@ -24,9 +24,9 @@ export function useTemplates( options = {} ) {
 	// Stabile Referenzen für Dependencies
 	const category = options?.category;
 	const i18n = window.rpEmailData?.i18n || {};
-	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der Templates';
-	const errorSavingMsg = i18n.errorSaving || 'Fehler beim Speichern';
-	const errorDeletingMsg = i18n.errorDeleting || 'Fehler beim Löschen';
+	const errorLoadingMsg = i18n.errorLoading || 'Error loading templates';
+	const errorSavingMsg = i18n.errorSaving || 'Error saving';
+	const errorDeletingMsg = i18n.errorDeleting || 'Error deleting';
 
 	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );

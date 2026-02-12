@@ -55,13 +55,13 @@ class JobCountShortcode {
 
 		// Defaults anwenden wenn leer (Fusion Builder sendet leere Strings für ungesetzte Werte).
 		if ( '' === $atts['format'] ) {
-			$atts['format'] = __( '{count} offene Stellen', 'recruiting-playbook' );
+			$atts['format'] = __( '{count} open positions', 'recruiting-playbook' );
 		}
 		if ( '' === $atts['singular'] ) {
-			$atts['singular'] = __( '{count} offene Stelle', 'recruiting-playbook' );
+			$atts['singular'] = __( '{count} open position', 'recruiting-playbook' );
 		}
 		if ( '' === $atts['zero'] ) {
-			$atts['zero'] = __( 'Keine offenen Stellen', 'recruiting-playbook' );
+			$atts['zero'] = __( 'No open positions', 'recruiting-playbook' );
 		}
 
 		// Query-Args aufbauen.

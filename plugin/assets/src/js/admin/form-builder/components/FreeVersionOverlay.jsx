@@ -20,11 +20,11 @@ import { Lock, Sparkles, Check } from 'lucide-react';
  */
 export default function FreeVersionOverlay( { upgradeUrl, i18n = {} } ) {
 	const features = [
-		__( 'Formular-Schritte anpassen', 'recruiting-playbook' ),
-		__( 'Felder hinzufügen und entfernen', 'recruiting-playbook' ),
-		__( 'Eigene Felder erstellen', 'recruiting-playbook' ),
-		__( 'Drag & Drop Sortierung', 'recruiting-playbook' ),
-		__( 'System-Feld Einstellungen', 'recruiting-playbook' ),
+		__( 'Customize form steps', 'recruiting-playbook' ),
+		__( 'Add and remove fields', 'recruiting-playbook' ),
+		__( 'Create custom fields', 'recruiting-playbook' ),
+		__( 'Drag & Drop sorting', 'recruiting-playbook' ),
+		__( 'System field settings', 'recruiting-playbook' ),
 	];
 
 	return (
@@ -71,12 +71,12 @@ export default function FreeVersionOverlay( { upgradeUrl, i18n = {} } ) {
 
 				{ /* Title */ }
 				<h3 style={ { fontSize: '1.25rem', fontWeight: 700, color: '#1f2937', margin: '0 0 0.5rem' } }>
-					{ i18n?.proFeatureTitle || __( 'Pro-Feature', 'recruiting-playbook' ) }
+					{ i18n?.proFeatureTitle || __( 'Pro Feature', 'recruiting-playbook' ) }
 				</h3>
 
 				{ /* Description */ }
 				<p style={ { fontSize: '0.875rem', color: '#6b7280', margin: '0 0 1.25rem', lineHeight: 1.5 } }>
-					{ i18n?.proFeatureDescription || __( 'Der Formular-Builder ist ein Pro-Feature. Upgraden Sie, um Ihr Bewerbungsformular vollständig anzupassen.', 'recruiting-playbook' ) }
+					{ i18n?.proFeatureDescription || __( 'The Form Builder is a Pro feature. Upgrade to fully customize your application form.', 'recruiting-playbook' ) }
 				</p>
 
 				{ /* Feature List */ }
@@ -113,12 +113,12 @@ export default function FreeVersionOverlay( { upgradeUrl, i18n = {} } ) {
 					} }
 				>
 					<Sparkles style={ { height: '1rem', width: '1rem' } } />
-					{ i18n?.upgradeToPro || __( 'Auf Pro upgraden', 'recruiting-playbook' ) }
+					{ i18n?.upgradeToPro || __( 'Upgrade to Pro', 'recruiting-playbook' ) }
 				</Button>
 
 				{ /* Subtext */ }
 				<p style={ { fontSize: '0.75rem', color: '#9ca3af', margin: '0.75rem 0 0' } }>
-					{ i18n?.standardFormInfo || __( 'In der Free Version wird ein Standard-Formular verwendet.', 'recruiting-playbook' ) }
+					{ i18n?.standardFormInfo || __( 'The Free version uses a standard form.', 'recruiting-playbook' ) }
 				</p>
 			</div>
 		</div>

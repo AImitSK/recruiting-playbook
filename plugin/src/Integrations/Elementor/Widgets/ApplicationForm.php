@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Bewerbungsformular — Elementor Widget
+ * RP: Application Form — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class ApplicationForm extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Bewerbungsformular', 'recruiting-playbook' );
+		return esc_html__( 'RP: Application Form', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -28,7 +28,7 @@ class ApplicationForm extends AbstractWidget {
 	}
 
 	public function get_keywords(): array {
-		return [ 'bewerbung', 'formular', 'application', 'form', 'bewerben' ];
+		return [ 'application', 'form', 'apply', 'job application' ];
 	}
 
 	protected function get_shortcode_name(): string {
@@ -49,7 +49,7 @@ class ApplicationForm extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -57,8 +57,8 @@ class ApplicationForm extends AbstractWidget {
 		$this->add_control(
 			'job_id',
 			[
-				'label'       => esc_html__( 'Stelle', 'recruiting-playbook' ),
-				'description' => esc_html__( 'Leer = automatisch erkennen (auf Stellenseiten).', 'recruiting-playbook' ),
+				'label'       => esc_html__( 'Job', 'recruiting-playbook' ),
+				'description' => esc_html__( 'Empty = auto-detect (on job listing pages).', 'recruiting-playbook' ),
 				'type'        => Controls_Manager::SELECT,
 				'default'     => '',
 				'options'     => $this->getJobOptions(),
@@ -68,19 +68,19 @@ class ApplicationForm extends AbstractWidget {
 		$this->add_control(
 			'title',
 			[
-				'label'   => esc_html__( 'Überschrift', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Heading', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
-				'default' => 'Jetzt bewerben',
+				'default' => 'Apply Now',
 			]
 		);
 
 		$this->add_control(
 			'show_job_title',
 			[
-				'label'        => esc_html__( 'Stellentitel anzeigen', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Show Job Title', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]
@@ -89,10 +89,10 @@ class ApplicationForm extends AbstractWidget {
 		$this->add_control(
 			'show_progress',
 			[
-				'label'        => esc_html__( 'Fortschrittsanzeige', 'recruiting-playbook' ),
+				'label'        => esc_html__( 'Show Progress Indicator', 'recruiting-playbook' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Ja', 'recruiting-playbook' ),
-				'label_off'    => esc_html__( 'Nein', 'recruiting-playbook' ),
+				'label_on'     => esc_html__( 'Yes', 'recruiting-playbook' ),
+				'label_off'    => esc_html__( 'No', 'recruiting-playbook' ),
 				'return_value' => 'true',
 				'default'      => 'true',
 			]

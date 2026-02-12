@@ -81,7 +81,7 @@ class EmailLogController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Log-ID', 'recruiting-playbook' ),
+							'description' => __( 'Log ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -101,7 +101,7 @@ class EmailLogController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'resend_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Log-ID', 'recruiting-playbook' ),
+							'description' => __( 'Log ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -122,7 +122,7 @@ class EmailLogController extends WP_REST_Controller {
 					'args'                => array_merge(
 						[
 							'id' => [
-								'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+								'description' => __( 'Application ID', 'recruiting-playbook' ),
 								'type'        => 'integer',
 								'required'    => true,
 							],
@@ -145,7 +145,7 @@ class EmailLogController extends WP_REST_Controller {
 					'args'                => array_merge(
 						[
 							'id' => [
-								'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+								'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 								'type'        => 'integer',
 								'required'    => true,
 							],
@@ -202,7 +202,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( ! $log ) {
 			return new WP_Error(
 				'rest_log_not_found',
-				__( 'E-Mail-Log nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Email log not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -225,7 +225,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( false === $new_log_id ) {
 			return new WP_Error(
 				'rest_resend_failed',
-				__( 'E-Mail konnte nicht erneut gesendet werden.', 'recruiting-playbook' ),
+				__( 'Email could not be resent.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -233,7 +233,7 @@ class EmailLogController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success'      => true,
-				'message'      => __( 'E-Mail wurde erneut in die Warteschlange eingereiht.', 'recruiting-playbook' ),
+				'message'      => __( 'Email has been queued for sending again.', 'recruiting-playbook' ),
 				'email_log_id' => $new_log_id,
 			],
 			200
@@ -312,7 +312,7 @@ class EmailLogController extends WP_REST_Controller {
 				'email_templates',
 				'rp_view_email_log',
 				'rest_email_log_required',
-				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' )
+				__( 'You do not have permission to view the email history.', 'recruiting-playbook' )
 			);
 		}
 
@@ -321,7 +321,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_view_email_log' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, die E-Mail-Historie anzuzeigen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to view the email history.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -330,7 +330,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_log_required',
-				__( 'E-Mail-Historie erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email history requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -356,7 +356,7 @@ class EmailLogController extends WP_REST_Controller {
 				'email_templates',
 				'rp_send_emails',
 				'rest_email_resend_required',
-				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' )
+				__( 'You do not have permission to resend emails.', 'recruiting-playbook' )
 			);
 		}
 
@@ -365,7 +365,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_send_emails' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mails erneut zu senden.', 'recruiting-playbook' ),
+				__( 'You do not have permission to resend emails.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -374,7 +374,7 @@ class EmailLogController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_resend_required',
-				__( 'E-Mail erneut senden erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Resending emails requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -393,58 +393,58 @@ class EmailLogController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'per_page'       => [
-				'description' => __( 'Ergebnisse pro Seite', 'recruiting-playbook' ),
+				'description' => __( 'Results per page', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 20,
 				'minimum'     => 1,
 				'maximum'     => 100,
 			],
 			'page'           => [
-				'description' => __( 'Seitennummer', 'recruiting-playbook' ),
+				'description' => __( 'Page number', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 1,
 				'minimum'     => 1,
 			],
 			'status'         => [
-				'description' => __( 'Nach Status filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by status', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'pending', 'queued', 'sent', 'failed', 'cancelled' ],
 			],
 			'application_id' => [
-				'description' => __( 'Nach Bewerbung filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by application', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'candidate_id'   => [
-				'description' => __( 'Nach Kandidat filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by candidate', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'template_id'    => [
-				'description' => __( 'Nach Template filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by template', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'date_from'      => [
-				'description' => __( 'Datum von (Y-m-d)', 'recruiting-playbook' ),
+				'description' => __( 'Date from (Y-m-d)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'format'      => 'date',
 			],
 			'date_to'        => [
-				'description' => __( 'Datum bis (Y-m-d)', 'recruiting-playbook' ),
+				'description' => __( 'Date to (Y-m-d)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'format'      => 'date',
 			],
 			'search'         => [
-				'description'       => __( 'Suche in Betreff, Empfänger', 'recruiting-playbook' ),
+				'description'       => __( 'Search in subject, recipient', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'orderby'        => [
-				'description' => __( 'Sortierfeld', 'recruiting-playbook' ),
+				'description' => __( 'Sort field', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'created_at', 'sent_at', 'status' ],
 				'default'     => 'created_at',
 			],
 			'order'          => [
-				'description' => __( 'Sortierrichtung', 'recruiting-playbook' ),
+				'description' => __( 'Sort direction', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'enum'        => [ 'asc', 'desc' ],
 				'default'     => 'desc',

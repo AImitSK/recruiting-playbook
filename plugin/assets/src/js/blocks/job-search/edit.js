@@ -33,27 +33,27 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const getFilterSummary = () => {
 		const filters = [];
-		if ( showSearch ) filters.push( __( 'Suche', 'recruiting-playbook' ) );
+		if ( showSearch ) filters.push( __( 'Search', 'recruiting-playbook' ) );
 		if ( showCategory )
-			filters.push( __( 'Kategorie', 'recruiting-playbook' ) );
+			filters.push( __( 'Category', 'recruiting-playbook' ) );
 		if ( showLocation )
-			filters.push( __( 'Standort', 'recruiting-playbook' ) );
-		if ( showType ) filters.push( __( 'Art', 'recruiting-playbook' ) );
+			filters.push( __( 'Location', 'recruiting-playbook' ) );
+		if ( showType ) filters.push( __( 'Type', 'recruiting-playbook' ) );
 		return filters.length > 0
 			? filters.join( ', ' )
-			: __( 'Keine Filter', 'recruiting-playbook' );
+			: __( 'No filters', 'recruiting-playbook' );
 	};
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Suchformular', 'recruiting-playbook' ) }
+					title={ __( 'Search Form', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<ToggleControl
 						label={ __(
-							'Suchfeld anzeigen',
+							'Show search field',
 							'recruiting-playbook'
 						) }
 						checked={ showSearch }
@@ -63,7 +63,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<ToggleControl
 						label={ __(
-							'Kategorie-Filter anzeigen',
+							'Show category filter',
 							'recruiting-playbook'
 						) }
 						checked={ showCategory }
@@ -73,7 +73,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<ToggleControl
 						label={ __(
-							'Standort-Filter anzeigen',
+							'Show location filter',
 							'recruiting-playbook'
 						) }
 						checked={ showLocation }
@@ -83,7 +83,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<ToggleControl
 						label={ __(
-							'Beschäftigungsart-Filter anzeigen',
+							'Show employment type filter',
 							'recruiting-playbook'
 						) }
 						checked={ showType }
@@ -94,12 +94,12 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Ergebnisse', 'recruiting-playbook' ) }
+					title={ __( 'Results', 'recruiting-playbook' ) }
 					initialOpen={ false }
 				>
 					<RangeControl
 						label={ __(
-							'Stellen pro Seite',
+							'Jobs per page',
 							'recruiting-playbook'
 						) }
 						value={ limit }
@@ -109,7 +109,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						min={ 1 }
 						max={ 50 }
 						help={ __(
-							'Anzahl der Stellen pro Seite.',
+							'Number of jobs per page.',
 							'recruiting-playbook'
 						) }
 					/>
@@ -126,10 +126,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Stellensuche', 'recruiting-playbook' ) }
-					summary={ `${ __( 'Filter:', 'recruiting-playbook' ) } ${ getFilterSummary() }` }
+					label={ __( 'Job Search', 'recruiting-playbook' ) }
+					summary={ `${ __( 'Filters:', 'recruiting-playbook' ) } ${ getFilterSummary() }` }
 					helpText={ __(
-						'Suchformular mit Filtern und Ergebnisliste.',
+						'Search form with filters and results list.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_job_search]"

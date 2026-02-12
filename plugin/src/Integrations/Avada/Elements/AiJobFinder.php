@@ -6,13 +6,13 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: KI-Job-Finder Element für Fusion Builder
+ * RP: AI Job Finder Element for Fusion Builder
  *
- * KI-gestützter Job-Finder: Besucher laden ihren Lebenslauf hoch
- * und erhalten passende Stellenvorschläge.
- * Wrapper für den [rp_ai_job_finder] Shortcode.
+ * AI-powered job finder: Visitors upload their resume
+ * and receive matching job suggestions.
+ * Wrapper for the [rp_ai_job_finder] shortcode.
  *
- * Erfordert das AI-Addon.
+ * Requires the AI addon.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -20,13 +20,13 @@ defined( 'ABSPATH' ) || exit;
 class AiJobFinder extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
 	protected function getConfig(): array {
 		return [
-			'name'            => esc_attr__( 'RP: KI-Job-Finder', 'recruiting-playbook' ),
+			'name'            => esc_attr__( 'RP: AI Job Finder', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_ai_job_finder',
 			'icon'            => 'fusiona-avada-ai',
 			'help_url'        => $this->getHelpUrl( 'rp_ai_job_finder' ),
@@ -36,22 +36,22 @@ class AiJobFinder extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'Überschrift', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Überschrift des Job-Finders.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Heading', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Heading of the job finder.', 'recruiting-playbook' ),
 					'param_name'  => 'title',
-					'value'       => 'Finde deinen Traumjob',
+					'value'       => 'Find Your Dream Job',
 				],
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'Untertitel', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Erklärungstext unter der Überschrift.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Subtitle', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Explanatory text below the heading.', 'recruiting-playbook' ),
 					'param_name'  => 'subtitle',
-					'value'       => 'Lade deinen Lebenslauf hoch und entdecke passende Stellen.',
+					'value'       => 'Upload your resume and discover matching jobs.',
 				],
 				[
 					'type'        => 'range',
-					'heading'     => esc_attr__( 'Max. Vorschläge', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Maximale Anzahl der KI-Vorschläge.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Max. Suggestions', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Maximum number of AI suggestions.', 'recruiting-playbook' ),
 					'param_name'  => 'limit',
 					'value'       => '5',
 					'min'         => '1',
@@ -60,8 +60,8 @@ class AiJobFinder extends AbstractElement {
 				],
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'CSS-Klassen', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Zusätzliche CSS-Klassen für individuelle Gestaltung.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'CSS Classes', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Additional CSS classes for custom styling.', 'recruiting-playbook' ),
 					'param_name'  => 'class',
 					'value'       => '',
 				],

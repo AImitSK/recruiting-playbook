@@ -212,7 +212,7 @@ class CustomFieldsService {
 				if ( $field->isRequired() && $this->isEmpty( $value ) ) {
 					$errors[ $field_key ] = sprintf(
 						/* translators: %s: Field label */
-						__( '%s ist ein Pflichtfeld.', 'recruiting-playbook' ),
+						__( '%s is a required field.', 'recruiting-playbook' ),
 						$field->getLabel()
 					);
 				}
@@ -222,7 +222,7 @@ class CustomFieldsService {
 		if ( ! empty( $errors ) ) {
 			return new WP_Error(
 				'validation_failed',
-				__( 'Bitte korrigieren Sie die Fehler im Formular.', 'recruiting-playbook' ),
+				__( 'Please correct the errors in the form.', 'recruiting-playbook' ),
 				[ 'field_errors' => $errors ]
 			);
 		}

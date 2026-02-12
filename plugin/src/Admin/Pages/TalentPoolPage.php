@@ -51,44 +51,44 @@ class TalentPoolPage {
 					'applicationsUrl'   => admin_url( 'admin.php?page=recruiting-playbook' ),
 					'applicationUrl'    => admin_url( 'admin.php?page=rp-application-detail&id=' ),
 					'i18n'              => [
-						'title'                => __( 'Talent-Pool', 'recruiting-playbook' ),
-						'subtitle'             => __( 'Vielversprechende Kandidaten für zukünftige Stellen', 'recruiting-playbook' ),
-						'loading'              => __( 'Lade Talent-Pool...', 'recruiting-playbook' ),
-						'emptyPool'            => __( 'Der Talent-Pool ist noch leer.', 'recruiting-playbook' ),
-						'emptyPoolHint'        => __( 'Fügen Sie vielversprechende Kandidaten aus der Bewerbungsdetailseite zum Talent-Pool hinzu.', 'recruiting-playbook' ),
-						'goToApplications'     => __( 'Zu den Bewerbungen', 'recruiting-playbook' ),
-						'search'               => __( 'Kandidaten suchen...', 'recruiting-playbook' ),
-						'filterByTags'         => __( 'Nach Tags filtern', 'recruiting-playbook' ),
-						'allTags'              => __( 'Alle Tags', 'recruiting-playbook' ),
-						'candidate'            => __( 'Kandidat', 'recruiting-playbook' ),
-						'candidates'           => __( 'Kandidaten', 'recruiting-playbook' ),
-						'addedOn'              => __( 'Hinzugefügt am', 'recruiting-playbook' ),
-						'expiresOn'            => __( 'Läuft ab am', 'recruiting-playbook' ),
-						'reason'               => __( 'Begründung', 'recruiting-playbook' ),
+						'title'                => __( 'Talent Pool', 'recruiting-playbook' ),
+						'subtitle'             => __( 'Promising candidates for future positions', 'recruiting-playbook' ),
+						'loading'              => __( 'Loading talent pool...', 'recruiting-playbook' ),
+						'emptyPool'            => __( 'The talent pool is still empty.', 'recruiting-playbook' ),
+						'emptyPoolHint'        => __( 'Add promising candidates from the application detail page to the talent pool.', 'recruiting-playbook' ),
+						'goToApplications'     => __( 'Go to Applications', 'recruiting-playbook' ),
+						'search'               => __( 'Search candidates...', 'recruiting-playbook' ),
+						'filterByTags'         => __( 'Filter by tags', 'recruiting-playbook' ),
+						'allTags'              => __( 'All tags', 'recruiting-playbook' ),
+						'candidate'            => __( 'Candidate', 'recruiting-playbook' ),
+						'candidates'           => __( 'Candidates', 'recruiting-playbook' ),
+						'addedOn'              => __( 'Added on', 'recruiting-playbook' ),
+						'expiresOn'            => __( 'Expires on', 'recruiting-playbook' ),
+						'reason'               => __( 'Reason', 'recruiting-playbook' ),
 						'tags'                 => __( 'Tags', 'recruiting-playbook' ),
-						'noTags'               => __( 'Keine Tags', 'recruiting-playbook' ),
-						'viewApplication'      => __( 'Bewerbung anzeigen', 'recruiting-playbook' ),
-						'removeFromPool'       => __( 'Aus Pool entfernen', 'recruiting-playbook' ),
-						'confirmRemove'        => __( 'Kandidat wirklich aus dem Talent-Pool entfernen?', 'recruiting-playbook' ),
-						'removed'              => __( 'Kandidat wurde aus dem Talent-Pool entfernt.', 'recruiting-playbook' ),
-						'errorRemoving'        => __( 'Fehler beim Entfernen aus dem Talent-Pool.', 'recruiting-playbook' ),
-						'errorLoading'         => __( 'Fehler beim Laden des Talent-Pools.', 'recruiting-playbook' ),
-						'retry'                => __( 'Erneut versuchen', 'recruiting-playbook' ),
-						'expiresSoon'          => __( 'Läuft bald ab', 'recruiting-playbook' ),
-						'expired'              => __( 'Abgelaufen', 'recruiting-playbook' ),
-						'expiresInDays'        => __( 'Läuft ab in %d Tagen', 'recruiting-playbook' ),
-						'total'                => __( 'Gesamt', 'recruiting-playbook' ),
-						'perPage'              => __( 'pro Seite', 'recruiting-playbook' ),
-						'page'                 => __( 'Seite', 'recruiting-playbook' ),
-						'of'                   => __( 'von', 'recruiting-playbook' ),
-						'previous'             => __( 'Vorherige', 'recruiting-playbook' ),
-						'next'                 => __( 'Nächste', 'recruiting-playbook' ),
-						'edit'                 => __( 'Bearbeiten', 'recruiting-playbook' ),
-						'save'                 => __( 'Speichern', 'recruiting-playbook' ),
-						'cancel'               => __( 'Abbrechen', 'recruiting-playbook' ),
-						'saved'                => __( 'Änderungen gespeichert.', 'recruiting-playbook' ),
-						'errorSaving'          => __( 'Fehler beim Speichern.', 'recruiting-playbook' ),
-						'gdprNotice'           => __( 'DSGVO-Hinweis: Kandidaten werden nach Ablauf automatisch aus dem Pool entfernt.', 'recruiting-playbook' ),
+						'noTags'               => __( 'No tags', 'recruiting-playbook' ),
+						'viewApplication'      => __( 'View application', 'recruiting-playbook' ),
+						'removeFromPool'       => __( 'Remove from pool', 'recruiting-playbook' ),
+						'confirmRemove'        => __( 'Really remove candidate from talent pool?', 'recruiting-playbook' ),
+						'removed'              => __( 'Candidate has been removed from talent pool.', 'recruiting-playbook' ),
+						'errorRemoving'        => __( 'Error removing from talent pool.', 'recruiting-playbook' ),
+						'errorLoading'         => __( 'Error loading talent pool.', 'recruiting-playbook' ),
+						'retry'                => __( 'Retry', 'recruiting-playbook' ),
+						'expiresSoon'          => __( 'Expires soon', 'recruiting-playbook' ),
+						'expired'              => __( 'Expired', 'recruiting-playbook' ),
+						'expiresInDays'        => __( 'Expires in %d days', 'recruiting-playbook' ),
+						'total'                => __( 'Total', 'recruiting-playbook' ),
+						'perPage'              => __( 'per page', 'recruiting-playbook' ),
+						'page'                 => __( 'Page', 'recruiting-playbook' ),
+						'of'                   => __( 'of', 'recruiting-playbook' ),
+						'previous'             => __( 'Previous', 'recruiting-playbook' ),
+						'next'                 => __( 'Next', 'recruiting-playbook' ),
+						'edit'                 => __( 'Edit', 'recruiting-playbook' ),
+						'save'                 => __( 'Save', 'recruiting-playbook' ),
+						'cancel'               => __( 'Cancel', 'recruiting-playbook' ),
+						'saved'                => __( 'Changes saved.', 'recruiting-playbook' ),
+						'errorSaving'          => __( 'Error saving.', 'recruiting-playbook' ),
+						'gdprNotice'           => __( 'GDPR notice: Candidates are automatically removed from the pool after expiration.', 'recruiting-playbook' ),
 					],
 				]
 			);
@@ -111,7 +111,7 @@ class TalentPoolPage {
 		<div id="rp-talent-pool-root">
 			<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
 				<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
-				<?php esc_html_e( 'Lade Talent-Pool...', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Loading talent pool...', 'recruiting-playbook' ); ?>
 			</div>
 		</div>
 		<?php
@@ -123,18 +123,18 @@ class TalentPoolPage {
 	private function renderUpgradeNotice(): void {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Talent-Pool', 'recruiting-playbook' ); ?></h1>
+			<h1><?php esc_html_e( 'Talent Pool', 'recruiting-playbook' ); ?></h1>
 
 			<div class="rp-pro-feature-notice">
 				<div class="rp-pro-feature-notice__icon">
 					<span class="dashicons dashicons-groups"></span>
 				</div>
 				<div class="rp-pro-feature-notice__content">
-					<h2><?php esc_html_e( 'Talent-Pool ist ein Pro-Feature', 'recruiting-playbook' ); ?></h2>
+					<h2><?php esc_html_e( 'Talent Pool is a Pro feature', 'recruiting-playbook' ); ?></h2>
 					<p>
 						<?php
 						esc_html_e(
-							'Mit dem Talent-Pool können Sie vielversprechende Kandidaten für zukünftige Stellen vormerken. So haben Sie immer Zugriff auf qualifizierte Talente, wenn eine neue Position zu besetzen ist.',
+							'With the Talent Pool you can save promising candidates for future positions. This way you always have access to qualified talent when a new position needs to be filled.',
 							'recruiting-playbook'
 						);
 						?>
@@ -142,24 +142,24 @@ class TalentPoolPage {
 					<ul class="rp-pro-feature-notice__features">
 						<li>
 							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Kandidaten mit Tags organisieren', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Organize candidates with tags', 'recruiting-playbook' ); ?>
 						</li>
 						<li>
 							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'DSGVO-konforme Aufbewahrung mit automatischem Ablauf', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'GDPR-compliant storage with automatic expiration', 'recruiting-playbook' ); ?>
 						</li>
 						<li>
 							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Schnelle Suche und Filterung', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Fast search and filtering', 'recruiting-playbook' ); ?>
 						</li>
 						<li>
 							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Notizen und Begründungen hinterlegen', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Add notes and reasons', 'recruiting-playbook' ); ?>
 						</li>
 					</ul>
 					<p>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-license' ) ); ?>" class="button button-primary button-hero">
-							<?php esc_html_e( 'Jetzt auf Pro upgraden', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Upgrade to Pro now', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
 				</div>

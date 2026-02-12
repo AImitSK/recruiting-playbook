@@ -42,7 +42,7 @@ export function TaxonomySelect( {
 	// Add empty option if allowed.
 	if ( allowEmpty ) {
 		options.unshift( {
-			label: __( 'Alle', 'recruiting-playbook' ),
+			label: __( 'All', 'recruiting-playbook' ),
 			value: '',
 		} );
 	}
@@ -51,13 +51,13 @@ export function TaxonomySelect( {
 	const getDefaultLabel = () => {
 		switch ( taxonomy ) {
 			case 'job_category':
-				return __( 'Kategorie', 'recruiting-playbook' );
+				return __( 'Category', 'recruiting-playbook' );
 			case 'job_location':
-				return __( 'Standort', 'recruiting-playbook' );
+				return __( 'Location', 'recruiting-playbook' );
 			case 'employment_type':
-				return __( 'Beschäftigungsart', 'recruiting-playbook' );
+				return __( 'Employment Type', 'recruiting-playbook' );
 			default:
-				return __( 'Auswahl', 'recruiting-playbook' );
+				return __( 'Selection', 'recruiting-playbook' );
 		}
 	};
 
@@ -113,13 +113,13 @@ export function TaxonomyMultiSelect( {
 	const getDefaultLabel = () => {
 		switch ( taxonomy ) {
 			case 'job_category':
-				return __( 'Kategorien', 'recruiting-playbook' );
+				return __( 'Categories', 'recruiting-playbook' );
 			case 'job_location':
-				return __( 'Standorte', 'recruiting-playbook' );
+				return __( 'Locations', 'recruiting-playbook' );
 			case 'employment_type':
-				return __( 'Beschäftigungsarten', 'recruiting-playbook' );
+				return __( 'Employment Types', 'recruiting-playbook' );
 			default:
-				return __( 'Auswahl', 'recruiting-playbook' );
+				return __( 'Selection', 'recruiting-playbook' );
 		}
 	};
 

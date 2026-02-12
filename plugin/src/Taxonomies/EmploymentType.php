@@ -26,15 +26,15 @@ class EmploymentType {
 	 */
 	public function register(): void {
 		$labels = [
-			'name'              => __( 'Beschäftigungsarten', 'recruiting-playbook' ),
-			'singular_name'     => __( 'Beschäftigungsart', 'recruiting-playbook' ),
-			'search_items'      => __( 'Beschäftigungsarten durchsuchen', 'recruiting-playbook' ),
-			'all_items'         => __( 'Alle Beschäftigungsarten', 'recruiting-playbook' ),
-			'edit_item'         => __( 'Beschäftigungsart bearbeiten', 'recruiting-playbook' ),
-			'update_item'       => __( 'Beschäftigungsart aktualisieren', 'recruiting-playbook' ),
-			'add_new_item'      => __( 'Neue Beschäftigungsart', 'recruiting-playbook' ),
-			'new_item_name'     => __( 'Neuer Name', 'recruiting-playbook' ),
-			'menu_name'         => __( 'Beschäftigungsarten', 'recruiting-playbook' ),
+			'name'              => __( 'Employment Types', 'recruiting-playbook' ),
+			'singular_name'     => __( 'Employment Type', 'recruiting-playbook' ),
+			'search_items'      => __( 'Search Employment Types', 'recruiting-playbook' ),
+			'all_items'         => __( 'All Employment Types', 'recruiting-playbook' ),
+			'edit_item'         => __( 'Edit Employment Type', 'recruiting-playbook' ),
+			'update_item'       => __( 'Update Employment Type', 'recruiting-playbook' ),
+			'add_new_item'      => __( 'New Employment Type', 'recruiting-playbook' ),
+			'new_item_name'     => __( 'New Name', 'recruiting-playbook' ),
+			'menu_name'         => __( 'Employment Types', 'recruiting-playbook' ),
 		];
 
 		$args = [
@@ -63,13 +63,13 @@ class EmploymentType {
 		}
 
 		$defaults = [
-			'vollzeit'      => __( 'Vollzeit', 'recruiting-playbook' ),
-			'teilzeit'      => __( 'Teilzeit', 'recruiting-playbook' ),
+			'vollzeit'      => __( 'Full-time', 'recruiting-playbook' ),
+			'teilzeit'      => __( 'Part-time', 'recruiting-playbook' ),
 			'minijob'       => __( 'Minijob', 'recruiting-playbook' ),
-			'ausbildung'    => __( 'Ausbildung', 'recruiting-playbook' ),
-			'praktikum'     => __( 'Praktikum', 'recruiting-playbook' ),
-			'werkstudent'   => __( 'Werkstudent', 'recruiting-playbook' ),
-			'freiberuflich' => __( 'Freiberuflich', 'recruiting-playbook' ),
+			'ausbildung'    => __( 'Apprenticeship', 'recruiting-playbook' ),
+			'praktikum'     => __( 'Internship', 'recruiting-playbook' ),
+			'werkstudent'   => __( 'Working Student', 'recruiting-playbook' ),
+			'freiberuflich' => __( 'Freelance', 'recruiting-playbook' ),
 		];
 
 		foreach ( $defaults as $slug => $name ) {

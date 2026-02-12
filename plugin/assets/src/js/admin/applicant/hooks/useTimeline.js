@@ -1,5 +1,5 @@
 /**
- * Custom Hook für Timeline/Activity Log
+ * Custom Hook for Timeline/Activity Log
  *
  * @package RecruitingPlaybook
  */
@@ -8,11 +8,11 @@ import { useState, useCallback, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Hook zum Laden und Verwalten der Timeline
+ * Hook for loading and managing the timeline
  *
- * @param {number} applicationId Bewerbungs-ID
- * @param {string} filter        Kategorie-Filter ('all' oder spezifische Kategorie)
- * @return {Object} Timeline state und Funktionen
+ * @param {number} applicationId Application ID
+ * @param {string} filter        Category filter ('all' or specific category)
+ * @return {Object} Timeline state and functions
  */
 export function useTimeline( applicationId, filter = 'all' ) {
 	const [ items, setItems ] = useState( [] );
@@ -23,10 +23,10 @@ export function useTimeline( applicationId, filter = 'all' ) {
 	const [ total, setTotal ] = useState( 0 );
 
 	/**
-	 * Kategorie-Filter in API-Types umwandeln
+	 * Convert category filter to API types
 	 *
-	 * @param {string} categoryFilter Kategorie-Filter
-	 * @return {Array} API-Type-Array
+	 * @param {string} categoryFilter Category filter
+	 * @return {Array} API type array
 	 */
 	const getTypesFromFilter = ( categoryFilter ) => {
 		const typeMap = {
@@ -46,10 +46,10 @@ export function useTimeline( applicationId, filter = 'all' ) {
 	};
 
 	/**
-	 * Timeline vom Server laden
+	 * Load timeline from server
 	 *
-	 * @param {number}  pageNum      Seite
-	 * @param {boolean} append       An existierende Items anhängen?
+	 * @param {number}  pageNum      Page number
+	 * @param {boolean} append       Append to existing items?
 	 */
 	const fetchTimeline = useCallback(
 		async ( pageNum = 1, append = false ) => {
@@ -65,7 +65,7 @@ export function useTimeline( applicationId, filter = 'all' ) {
 				const types = getTypesFromFilter( filter );
 				let path = `/recruiting/v1/applications/${ applicationId }/timeline?page=${ pageNum }&per_page=20`;
 
-				// WordPress REST API erwartet Array-Syntax: types[]=value1&types[]=value2
+				// WordPress REST API expects array syntax: types[]=value1&types[]=value2
 				if ( types.length > 0 ) {
 					const typesParam = types.map( ( t ) => `types[]=${ encodeURIComponent( t ) }` ).join( '&' );
 					path += `&${ typesParam }`;
@@ -73,12 +73,12 @@ export function useTimeline( applicationId, filter = 'all' ) {
 
 				const response = await apiFetch( {
 					path,
-					parse: false, // Um Headers zu erhalten
+					parse: false, // To get headers
 				} );
 
 				const data = await response.json();
 
-				// Pagination aus Headers lesen
+				// Read pagination from headers
 				const totalFromHeader = parseInt(
 					response.headers.get( 'X-WP-Total' ) || '0',
 					10
@@ -102,7 +102,7 @@ export function useTimeline( applicationId, filter = 'all' ) {
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorLoadingTimeline ||
-					'Fehler beim Laden der Timeline'
+					'Error loading timeline'
 				);
 			} finally {
 				setLoading( false );
@@ -111,7 +111,7 @@ export function useTimeline( applicationId, filter = 'all' ) {
 		[ applicationId, filter ]
 	);
 
-	// Initial laden und bei Filter-Änderung neu laden
+	// Load initially and reload on filter change
 	useEffect( () => {
 		setItems( [] );
 		setPage( 1 );
@@ -119,7 +119,7 @@ export function useTimeline( applicationId, filter = 'all' ) {
 	}, [ fetchTimeline ] );
 
 	/**
-	 * Mehr Einträge laden
+	 * Load more entries
 	 */
 	const loadMore = useCallback( async () => {
 		if ( page < totalPages && ! loading ) {
@@ -128,7 +128,7 @@ export function useTimeline( applicationId, filter = 'all' ) {
 	}, [ page, totalPages, loading, fetchTimeline ] );
 
 	/**
-	 * Timeline aktualisieren
+	 * Refresh timeline
 	 */
 	const refresh = useCallback( async () => {
 		setItems( [] );

@@ -1,7 +1,7 @@
 /**
  * RolesSettings Component
  *
- * Benutzerrollen-Tab mit Sub-Navigation (Rollen / Stellen-Zuweisung)
+ * User roles tab with sub-navigation (Roles / Job Assignment)
  *
  * @package RecruitingPlaybook
  */
@@ -20,13 +20,13 @@ export function RolesSettings() {
 	const [ activeSection, setActiveSection ] = useState( 'roles' );
 
 	const sections = [
-		{ id: 'roles', label: __( 'Rollen & Berechtigungen', 'recruiting-playbook' ) },
-		{ id: 'assignments', label: __( 'Stellen-Zuweisung', 'recruiting-playbook' ) },
+		{ id: 'roles', label: __( 'Roles & Permissions', 'recruiting-playbook' ) },
+		{ id: 'assignments', label: __( 'Job Assignment', 'recruiting-playbook' ) },
 	];
 
 	return (
 		<div>
-			{ /* Sub-Navigation */ }
+			{ /* Sub-navigation */ }
 			<div style={ {
 				display: 'flex',
 				gap: '0.25rem',
@@ -58,7 +58,7 @@ export function RolesSettings() {
 				) ) }
 			</div>
 
-			{ /* Inhalt */ }
+			{ /* Content */ }
 			{ activeSection === 'roles' && <RolesList /> }
 			{ activeSection === 'assignments' && <JobAssignments /> }
 		</div>

@@ -67,7 +67,7 @@ class ApplicationDetail {
 					true
 				);
 
-				wp_set_script_translations( 'rp-applicant', 'recruiting-playbook' );
+				wp_set_script_translations( 'rp-applicant', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
 
 				// Konfiguration für React.
 				wp_localize_script(
@@ -81,19 +81,19 @@ class ApplicationDetail {
 						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 						'canSendEmails' => function_exists( 'rp_can' ) && rp_can( 'email_templates' ),
 						'i18n'          => [
-							'loadingApplication'      => __( 'Lade Bewerbung...', 'recruiting-playbook' ),
-							'errorLoadingApplication' => __( 'Fehler beim Laden der Bewerbung', 'recruiting-playbook' ),
-							'applicationNotFound'     => __( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ),
-							'errorChangingStatus'     => __( 'Fehler beim Ändern des Status', 'recruiting-playbook' ),
-							'backToList'              => __( 'Zurück zur Liste', 'recruiting-playbook' ),
-							'application'             => __( 'Bewerbung', 'recruiting-playbook' ),
+							'loadingApplication'      => __( 'Loading application...', 'recruiting-playbook' ),
+							'errorLoadingApplication' => __( 'Error loading application', 'recruiting-playbook' ),
+							'applicationNotFound'     => __( 'Application not found.', 'recruiting-playbook' ),
+							'errorChangingStatus'     => __( 'Error changing status', 'recruiting-playbook' ),
+							'backToList'              => __( 'Back to list', 'recruiting-playbook' ),
+							'application'             => __( 'Application', 'recruiting-playbook' ),
 							'status'                  => __( 'Status', 'recruiting-playbook' ),
-							'rating'                  => __( 'Bewertung', 'recruiting-playbook' ),
-							'documents'               => __( 'Dokumente', 'recruiting-playbook' ),
-							'view'                    => __( 'Ansehen', 'recruiting-playbook' ),
-							'download'                => __( 'Herunterladen', 'recruiting-playbook' ),
-							'appliedOn'               => __( 'Beworben am', 'recruiting-playbook' ),
-							'retry'                   => __( 'Erneut versuchen', 'recruiting-playbook' ),
+							'rating'                  => __( 'Rating', 'recruiting-playbook' ),
+							'documents'               => __( 'Documents', 'recruiting-playbook' ),
+							'view'                    => __( 'View', 'recruiting-playbook' ),
+							'download'                => __( 'Download', 'recruiting-playbook' ),
+							'appliedOn'               => __( 'Applied on', 'recruiting-playbook' ),
+							'retry'                   => __( 'Retry', 'recruiting-playbook' ),
 						],
 					]
 				);
@@ -108,7 +108,7 @@ class ApplicationDetail {
 		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 
 		if ( ! $id ) {
-			wp_die( esc_html__( 'Keine Bewerbung angegeben.', 'recruiting-playbook' ) );
+			wp_die( esc_html__( 'No application specified.', 'recruiting-playbook' ) );
 		}
 
 		// Assets laden.
@@ -128,7 +128,7 @@ class ApplicationDetail {
 		$application = $this->getApplication( $id );
 
 		if ( ! $application ) {
-			wp_die( esc_html__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ) );
+			wp_die( esc_html__( 'Application not found.', 'recruiting-playbook' ) );
 		}
 
 		$candidate    = $this->getCandidate( (int) $application['candidate_id'] );
@@ -144,12 +144,12 @@ class ApplicationDetail {
 				<?php
 				printf(
 					/* translators: %s: Applicant name */
-					esc_html__( 'Bewerbung von %s', 'recruiting-playbook' ),
+					esc_html__( 'Application from %s', 'recruiting-playbook' ),
 					esc_html( $candidate['first_name'] . ' ' . $candidate['last_name'] )
 				);
 				?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="page-title-action">
-					<?php esc_html_e( 'Zurück zur Liste', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Back to list', 'recruiting-playbook' ); ?>
 				</a>
 			</h1>
 
@@ -158,7 +158,7 @@ class ApplicationDetail {
 				<div class="rp-detail-main">
 					<!-- Kontaktdaten -->
 					<div class="postbox">
-						<h2 class="hndle"><?php esc_html_e( 'Kontaktdaten', 'recruiting-playbook' ); ?></h2>
+						<h2 class="hndle"><?php esc_html_e( 'Contact information', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<table class="form-table">
 								<tr>
@@ -166,7 +166,7 @@ class ApplicationDetail {
 									<td><?php echo esc_html( $candidate['first_name'] . ' ' . $candidate['last_name'] ); ?></td>
 								</tr>
 								<tr>
-									<th><?php esc_html_e( 'E-Mail', 'recruiting-playbook' ); ?></th>
+									<th><?php esc_html_e( 'Email', 'recruiting-playbook' ); ?></th>
 									<td>
 										<a href="mailto:<?php echo esc_attr( $candidate['email'] ); ?>">
 											<?php echo esc_html( $candidate['email'] ); ?>
@@ -175,7 +175,7 @@ class ApplicationDetail {
 								</tr>
 								<?php if ( ! empty( $candidate['phone'] ) ) : ?>
 								<tr>
-									<th><?php esc_html_e( 'Telefon', 'recruiting-playbook' ); ?></th>
+									<th><?php esc_html_e( 'Phone', 'recruiting-playbook' ); ?></th>
 									<td>
 										<a href="tel:<?php echo esc_attr( $candidate['phone'] ); ?>">
 											<?php echo esc_html( $candidate['phone'] ); ?>
@@ -190,7 +190,7 @@ class ApplicationDetail {
 					<!-- Anschreiben -->
 					<?php if ( ! empty( $application['cover_letter'] ) ) : ?>
 					<div class="postbox">
-						<h2 class="hndle"><?php esc_html_e( 'Anschreiben', 'recruiting-playbook' ); ?></h2>
+						<h2 class="hndle"><?php esc_html_e( 'Cover letter', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<div class="rp-cover-letter">
 								<?php echo wp_kses_post( nl2br( $application['cover_letter'] ) ); ?>
@@ -202,22 +202,22 @@ class ApplicationDetail {
 					<!-- Dokumente -->
 					<div class="postbox">
 						<h2 class="hndle">
-							<?php esc_html_e( 'Dokumente', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Documents', 'recruiting-playbook' ); ?>
 							<span class="count">(<?php echo count( $documents ); ?>)</span>
 						</h2>
 						<div class="inside">
 							<?php if ( empty( $documents ) ) : ?>
 								<p class="description">
-									<?php esc_html_e( 'Keine Dokumente hochgeladen.', 'recruiting-playbook' ); ?>
+									<?php esc_html_e( 'No documents uploaded.', 'recruiting-playbook' ); ?>
 								</p>
 							<?php else : ?>
 								<table class="widefat striped">
 									<thead>
 										<tr>
-											<th><?php esc_html_e( 'Dokument', 'recruiting-playbook' ); ?></th>
-											<th><?php esc_html_e( 'Typ', 'recruiting-playbook' ); ?></th>
-											<th><?php esc_html_e( 'Größe', 'recruiting-playbook' ); ?></th>
-											<th><?php esc_html_e( 'Aktion', 'recruiting-playbook' ); ?></th>
+											<th><?php esc_html_e( 'Document', 'recruiting-playbook' ); ?></th>
+											<th><?php esc_html_e( 'Type', 'recruiting-playbook' ); ?></th>
+											<th><?php esc_html_e( 'Size', 'recruiting-playbook' ); ?></th>
+											<th><?php esc_html_e( 'Action', 'recruiting-playbook' ); ?></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -248,11 +248,11 @@ class ApplicationDetail {
 
 					<!-- Aktivitäts-Log -->
 					<div class="postbox">
-						<h2 class="hndle"><?php esc_html_e( 'Verlauf', 'recruiting-playbook' ); ?></h2>
+						<h2 class="hndle"><?php esc_html_e( 'Activity log', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<?php if ( empty( $activity_log ) ) : ?>
 								<p class="description">
-									<?php esc_html_e( 'Keine Aktivitäten aufgezeichnet.', 'recruiting-playbook' ); ?>
+									<?php esc_html_e( 'No activities recorded.', 'recruiting-playbook' ); ?>
 								</p>
 							<?php else : ?>
 								<ul class="rp-activity-log">
@@ -299,7 +299,7 @@ class ApplicationDetail {
 
 								<p>
 									<button type="submit" name="update_status" class="button button-primary" style="width: 100%;">
-										<?php esc_html_e( 'Status aktualisieren', 'recruiting-playbook' ); ?>
+										<?php esc_html_e( 'Update status', 'recruiting-playbook' ); ?>
 									</button>
 								</p>
 							</form>
@@ -310,7 +310,7 @@ class ApplicationDetail {
 
 					<!-- Stelle -->
 					<div class="postbox">
-						<h2 class="hndle"><?php esc_html_e( 'Stelle', 'recruiting-playbook' ); ?></h2>
+						<h2 class="hndle"><?php esc_html_e( 'Job', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<?php if ( $job ) : ?>
 								<p>
@@ -318,15 +318,15 @@ class ApplicationDetail {
 								</p>
 								<p>
 									<a href="<?php echo esc_url( get_edit_post_link( $job->ID ) ); ?>" class="button button-small">
-										<?php esc_html_e( 'Bearbeiten', 'recruiting-playbook' ); ?>
+										<?php esc_html_e( 'Edit', 'recruiting-playbook' ); ?>
 									</a>
 									<a href="<?php echo esc_url( get_permalink( $job->ID ) ); ?>" class="button button-small" target="_blank">
-										<?php esc_html_e( 'Ansehen', 'recruiting-playbook' ); ?>
+										<?php esc_html_e( 'View', 'recruiting-playbook' ); ?>
 									</a>
 								</p>
 							<?php else : ?>
 								<p class="description">
-									<?php esc_html_e( 'Stelle wurde gelöscht.', 'recruiting-playbook' ); ?>
+									<?php esc_html_e( 'Job was deleted.', 'recruiting-playbook' ); ?>
 								</p>
 							<?php endif; ?>
 						</div>
@@ -337,16 +337,16 @@ class ApplicationDetail {
 						<h2 class="hndle"><?php esc_html_e( 'Details', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<p>
-								<strong><?php esc_html_e( 'Eingegangen:', 'recruiting-playbook' ); ?></strong><br>
+								<strong><?php esc_html_e( 'Received:', 'recruiting-playbook' ); ?></strong><br>
 								<?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $application['created_at'] ) ) ); ?>
 							</p>
 							<p>
-								<strong><?php esc_html_e( 'Letzte Änderung:', 'recruiting-playbook' ); ?></strong><br>
+								<strong><?php esc_html_e( 'Last updated:', 'recruiting-playbook' ); ?></strong><br>
 								<?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $application['updated_at'] ) ) ); ?>
 							</p>
 							<?php if ( ! empty( $application['source_url'] ) ) : ?>
 							<p>
-								<strong><?php esc_html_e( 'Quelle:', 'recruiting-playbook' ); ?></strong><br>
+								<strong><?php esc_html_e( 'Source:', 'recruiting-playbook' ); ?></strong><br>
 								<small><?php echo esc_url( $application['source_url'] ); ?></small>
 							</p>
 							<?php endif; ?>
@@ -355,16 +355,16 @@ class ApplicationDetail {
 
 					<!-- DSGVO-Aktionen -->
 					<div class="postbox">
-						<h2 class="hndle"><?php esc_html_e( 'DSGVO', 'recruiting-playbook' ); ?></h2>
+						<h2 class="hndle"><?php esc_html_e( 'GDPR', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<p>
 								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=recruiting-playbook&action=export_data&id=' . $id ), 'rp_export_data_' . $id ) ); ?>" class="button button-small" style="width: 100%; text-align: center;">
-									<?php esc_html_e( 'Daten exportieren', 'recruiting-playbook' ); ?>
+									<?php esc_html_e( 'Export data', 'recruiting-playbook' ); ?>
 								</a>
 							</p>
 							<p>
-								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=recruiting-playbook&action=delete&id=' . $id ), 'rp_delete_' . $id ) ); ?>" class="button button-small button-link-delete" style="width: 100%; text-align: center;" onclick="return confirm('<?php esc_attr_e( 'Diese Bewerbung wirklich löschen?', 'recruiting-playbook' ); ?>');">
-									<?php esc_html_e( 'Bewerbung löschen', 'recruiting-playbook' ); ?>
+								<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=recruiting-playbook&action=delete&id=' . $id ), 'rp_delete_' . $id ) ); ?>" class="button button-small button-link-delete" style="width: 100%; text-align: center;" onclick="return confirm('<?php esc_attr_e( 'Really delete this application?', 'recruiting-playbook' ); ?>');">
+									<?php esc_html_e( 'Delete application', 'recruiting-playbook' ); ?>
 								</a>
 							</p>
 						</div>
@@ -514,7 +514,7 @@ class ApplicationDetail {
 			'admin_notices',
 			function () {
 				echo '<div class="notice notice-success is-dismissible"><p>';
-				esc_html_e( 'Status wurde aktualisiert.', 'recruiting-playbook' );
+				esc_html_e( 'Status was updated.', 'recruiting-playbook' );
 				echo '</p></div>';
 			}
 		);
@@ -536,22 +536,22 @@ class ApplicationDetail {
 				$new_label = $statuses[ $entry['new_value'] ] ?? $entry['new_value'];
 				return sprintf(
 					/* translators: 1: Old status, 2: New status */
-					__( 'Status geändert: %1$s → %2$s', 'recruiting-playbook' ),
+					__( 'Status changed: %1$s → %2$s', 'recruiting-playbook' ),
 					$old_label,
 					$new_label
 				);
 
 			case 'created':
-				return __( 'Bewerbung eingegangen', 'recruiting-playbook' );
+				return __( 'Application received', 'recruiting-playbook' );
 
 			case 'document_downloaded':
-				return __( 'Dokument heruntergeladen', 'recruiting-playbook' );
+				return __( 'Document downloaded', 'recruiting-playbook' );
 
 			case 'email_sent':
-				return __( 'E-Mail gesendet', 'recruiting-playbook' );
+				return __( 'Email sent', 'recruiting-playbook' );
 
 			case 'soft_deleted':
-				return __( 'Bewerbung gelöscht', 'recruiting-playbook' );
+				return __( 'Application deleted', 'recruiting-playbook' );
 
 			default:
 				return $action;
@@ -655,15 +655,15 @@ class ApplicationDetail {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			?>
 			<div class="postbox">
-				<h2 class="hndle"><?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?></h2>
+				<h2 class="hndle"><?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?></h2>
 				<div class="inside">
 					<p class="description">
-						<?php esc_html_e( 'E-Mail-Versand ist ein Pro-Feature.', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Email sending is a Pro feature.', 'recruiting-playbook' ); ?>
 					</p>
 					<?php if ( function_exists( 'rp_upgrade_url' ) ) : ?>
 						<p>
 							<a href="<?php echo esc_url( rp_upgrade_url( 'PRO' ) ); ?>" class="button" target="_blank">
-								<?php esc_html_e( 'Auf Pro upgraden', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Upgrade to Pro', 'recruiting-playbook' ); ?>
 							</a>
 						</p>
 					<?php endif; ?>
@@ -676,14 +676,14 @@ class ApplicationDetail {
 		if ( empty( $templates ) ) {
 			?>
 			<div class="postbox">
-				<h2 class="hndle"><?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?></h2>
+				<h2 class="hndle"><?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?></h2>
 				<div class="inside">
 					<p class="description">
-						<?php esc_html_e( 'Keine E-Mail-Templates vorhanden.', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'No email templates available.', 'recruiting-playbook' ); ?>
 					</p>
 					<p>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>" class="button">
-							<?php esc_html_e( 'Templates erstellen', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Create templates', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
 				</div>
@@ -696,7 +696,7 @@ class ApplicationDetail {
 		<div class="postbox">
 			<h2 class="hndle">
 				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
-				<?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?>
 			</h2>
 			<div class="inside">
 				<form method="post" id="rp-email-composer-form">
@@ -704,14 +704,14 @@ class ApplicationDetail {
 					<input type="hidden" name="application_id" value="<?php echo esc_attr( $application_id ); ?>" />
 
 					<p>
-						<strong><?php esc_html_e( 'An:', 'recruiting-playbook' ); ?></strong><br>
+						<strong><?php esc_html_e( 'To:', 'recruiting-playbook' ); ?></strong><br>
 						<?php echo esc_html( $candidate['email'] ); ?>
 					</p>
 
 					<p>
 						<label for="rp-email-template"><strong><?php esc_html_e( 'Template:', 'recruiting-playbook' ); ?></strong></label>
 						<select name="template_id" id="rp-email-template" style="width: 100%;" required>
-							<option value=""><?php esc_html_e( '— Template wählen —', 'recruiting-playbook' ); ?></option>
+							<option value=""><?php esc_html_e( '— Select template —', 'recruiting-playbook' ); ?></option>
 							<?php foreach ( $templates as $template ) : ?>
 								<option value="<?php echo esc_attr( $template['id'] ); ?>">
 									<?php echo esc_html( $template['name'] ); ?>
@@ -727,19 +727,19 @@ class ApplicationDetail {
 					$company_sig    = $signature_repo->getCompanyDefault();
 					?>
 					<p>
-						<label for="rp-email-signature"><strong><?php esc_html_e( 'Signatur:', 'recruiting-playbook' ); ?></strong></label>
+						<label for="rp-email-signature"><strong><?php esc_html_e( 'Signature:', 'recruiting-playbook' ); ?></strong></label>
 						<select name="signature_id" id="rp-email-signature" style="width: 100%;">
-							<option value=""><?php esc_html_e( '— Keine Signatur —', 'recruiting-playbook' ); ?></option>
+							<option value=""><?php esc_html_e( '— No signature —', 'recruiting-playbook' ); ?></option>
 							<?php if ( $company_sig ) : ?>
 								<option value="<?php echo esc_attr( $company_sig['id'] ); ?>">
-									<?php esc_html_e( 'Firmen-Signatur', 'recruiting-playbook' ); ?>
+									<?php esc_html_e( 'Company signature', 'recruiting-playbook' ); ?>
 								</option>
 							<?php endif; ?>
 							<?php foreach ( $signatures as $signature ) : ?>
 								<option value="<?php echo esc_attr( $signature['id'] ); ?>" <?php selected( ! empty( $signature['is_default'] ) ); ?>>
 									<?php echo esc_html( $signature['name'] ); ?>
 									<?php if ( ! empty( $signature['is_default'] ) ) : ?>
-										(<?php esc_html_e( 'Standard', 'recruiting-playbook' ); ?>)
+										(<?php esc_html_e( 'Default', 'recruiting-playbook' ); ?>)
 									<?php endif; ?>
 								</option>
 							<?php endforeach; ?>
@@ -747,20 +747,20 @@ class ApplicationDetail {
 					</p>
 
 					<p id="rp-email-preview-info" style="display: none;">
-						<strong><?php esc_html_e( 'Betreff:', 'recruiting-playbook' ); ?></strong>
+						<strong><?php esc_html_e( 'Subject:', 'recruiting-playbook' ); ?></strong>
 						<span id="rp-email-preview-subject" style="font-style: italic;"></span>
 					</p>
 
 					<p>
 						<button type="submit" name="send_email" class="button button-primary" style="width: 100%;">
 							<span class="dashicons dashicons-email-alt" style="margin-top: 3px;"></span>
-							<?php esc_html_e( 'E-Mail senden', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?>
 						</button>
 					</p>
 
 					<p class="description" style="margin-top: 10px;">
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-email-templates' ) ); ?>">
-							<?php esc_html_e( 'Templates verwalten', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Manage templates', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
 				</form>
@@ -799,20 +799,20 @@ class ApplicationDetail {
 		<div class="postbox">
 			<h2 class="hndle">
 				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
-				<?php esc_html_e( 'E-Mail-Verlauf', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Email history', 'recruiting-playbook' ); ?>
 				<span class="count">(<?php echo count( $emails ); ?>)</span>
 			</h2>
 			<div class="inside">
 				<?php if ( empty( $emails ) ) : ?>
 					<p class="description">
-						<?php esc_html_e( 'Noch keine E-Mails an diesen Bewerber gesendet.', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'No emails sent to this applicant yet.', 'recruiting-playbook' ); ?>
 					</p>
 				<?php else : ?>
 					<table class="widefat striped">
 						<thead>
 							<tr>
-								<th><?php esc_html_e( 'Datum', 'recruiting-playbook' ); ?></th>
-								<th><?php esc_html_e( 'Betreff', 'recruiting-playbook' ); ?></th>
+								<th><?php esc_html_e( 'Date', 'recruiting-playbook' ); ?></th>
+								<th><?php esc_html_e( 'Subject', 'recruiting-playbook' ); ?></th>
 								<th><?php esc_html_e( 'Status', 'recruiting-playbook' ); ?></th>
 							</tr>
 						</thead>
@@ -846,11 +846,11 @@ class ApplicationDetail {
 	 */
 	private function renderEmailStatus( string $status, string $error_message = '' ): void {
 		$labels = [
-			'pending'   => __( 'Ausstehend', 'recruiting-playbook' ),
-			'queued'    => __( 'In Warteschlange', 'recruiting-playbook' ),
-			'sent'      => __( 'Gesendet', 'recruiting-playbook' ),
-			'failed'    => __( 'Fehlgeschlagen', 'recruiting-playbook' ),
-			'cancelled' => __( 'Abgebrochen', 'recruiting-playbook' ),
+			'pending'   => __( 'Pending', 'recruiting-playbook' ),
+			'queued'    => __( 'Queued', 'recruiting-playbook' ),
+			'sent'      => __( 'Sent', 'recruiting-playbook' ),
+			'failed'    => __( 'Failed', 'recruiting-playbook' ),
+			'cancelled' => __( 'Cancelled', 'recruiting-playbook' ),
 		];
 
 		$colors = [
@@ -890,7 +890,7 @@ class ApplicationDetail {
 				'admin_notices',
 				function () {
 					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'E-Mail-Versand erfordert Pro.', 'recruiting-playbook' );
+					esc_html_e( 'Email sending requires Pro.', 'recruiting-playbook' );
 					echo '</p></div>';
 				}
 			);
@@ -905,7 +905,7 @@ class ApplicationDetail {
 				'admin_notices',
 				function () {
 					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'Bitte wählen Sie ein Template aus.', 'recruiting-playbook' );
+					esc_html_e( 'Please select a template.', 'recruiting-playbook' );
 					echo '</p></div>';
 				}
 			);
@@ -921,7 +921,7 @@ class ApplicationDetail {
 				'admin_notices',
 				function () {
 					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'E-Mail konnte nicht gesendet werden.', 'recruiting-playbook' );
+					esc_html_e( 'Email could not be sent.', 'recruiting-playbook' );
 					echo '</p></div>';
 				}
 			);
@@ -951,7 +951,7 @@ class ApplicationDetail {
 			'admin_notices',
 			function () {
 				echo '<div class="notice notice-success is-dismissible"><p>';
-				esc_html_e( 'E-Mail wurde gesendet.', 'recruiting-playbook' );
+				esc_html_e( 'Email was sent.', 'recruiting-playbook' );
 				echo '</p></div>';
 			}
 		);

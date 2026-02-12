@@ -1,7 +1,7 @@
 /**
  * Rating Stars Component
  *
- * Sterne-Bewertung mit Kategorien - shadcn/ui Style
+ * Star rating with categories - shadcn/ui Style
  *
  * @package RecruitingPlaybook
  */
@@ -12,23 +12,23 @@ import { Star, Briefcase, Users, TrendingUp } from 'lucide-react';
 import { useRating } from './hooks/useRating';
 
 /**
- * Bewertungs-Kategorien
+ * Rating Categories
  */
 const CATEGORIES = {
 	overall: {
-		label: __( 'Gesamteindruck', 'recruiting-playbook' ),
+		label: __( 'Overall Impression', 'recruiting-playbook' ),
 		Icon: Star,
 	},
 	skills: {
-		label: __( 'Fachkompetenz', 'recruiting-playbook' ),
+		label: __( 'Professional Competence', 'recruiting-playbook' ),
 		Icon: Briefcase,
 	},
 	culture_fit: {
-		label: __( 'Kulturelle Passung', 'recruiting-playbook' ),
+		label: __( 'Cultural Fit', 'recruiting-playbook' ),
 		Icon: Users,
 	},
 	experience: {
-		label: __( 'Erfahrung', 'recruiting-playbook' ),
+		label: __( 'Experience', 'recruiting-playbook' ),
 		Icon: TrendingUp,
 	},
 };
@@ -49,7 +49,7 @@ function Spinner( { size = '1rem' } ) {
 }
 
 /**
- * Sterne-Anzeige Komponente (wiederverwendbar)
+ * Star Display Component (reusable)
  */
 function Stars( { rating = 0, average = 0, count = 0, readonly = false, onRate, saving = false } ) {
 	const [ hoverRating, setHoverRating ] = useState( null );
@@ -92,7 +92,7 @@ function Stars( { rating = 0, average = 0, count = 0, readonly = false, onRate, 
 							color: isFilled ? '#f59e0b' : isHover ? '#fbbf24' : '#d1d5db',
 							transition: 'color 0.15s ease',
 						} }
-						aria-label={ `${ star } ${ __( 'von 5 Sternen', 'recruiting-playbook' ) }` }
+						aria-label={ `${ star } ${ __( 'out of 5 stars', 'recruiting-playbook' ) }` }
 					>
 						<Star
 							style={ {
@@ -120,7 +120,7 @@ function Stars( { rating = 0, average = 0, count = 0, readonly = false, onRate, 
 }
 
 /**
- * Einfache Rating-Ansicht (nur Gesamt-Sterne)
+ * Simple Rating View (overall stars only)
  */
 export function RatingSimple( { applicationId, readonly = false } ) {
 	const { summary, userRatings, loading, saving, rate } = useRating( applicationId );
@@ -146,7 +146,7 @@ export function RatingSimple( { applicationId, readonly = false } ) {
 }
 
 /**
- * Detaillierte Rating-Ansicht mit Kategorien
+ * Detailed Rating View with Categories
  */
 export function RatingDetailed( { applicationId, readonly = false, showDistribution = true } ) {
 	const { summary, userRatings, loading, error, saving, rate } = useRating( applicationId );
@@ -156,7 +156,7 @@ export function RatingDetailed( { applicationId, readonly = false, showDistribut
 		return (
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', gap: '0.5rem', color: '#6b7280' } }>
 				<Spinner />
-				{ __( 'Laden...', 'recruiting-playbook' ) }
+				{ __( 'Loading...', 'recruiting-playbook' ) }
 			</div>
 		);
 	}
@@ -169,7 +169,7 @@ export function RatingDetailed( { applicationId, readonly = false, showDistribut
 				</div>
 			) }
 
-			{ /* Kategorie-Tabs */ }
+			{ /* Category Tabs */ }
 			<div style={ { display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginBottom: '1rem' } }>
 				{ Object.entries( CATEGORIES ).map( ( [ key, config ] ) => {
 					const isActive = activeCategory === key;
@@ -216,7 +216,7 @@ export function RatingDetailed( { applicationId, readonly = false, showDistribut
 				} ) }
 			</div>
 
-			{ /* Aktive Kategorie */ }
+			{ /* Active Category */ }
 			<div style={ { marginBottom: '1.5rem' } }>
 				{ Object.entries( CATEGORIES ).map( ( [ key, config ] ) => {
 					if ( activeCategory !== key ) return null;
@@ -264,11 +264,11 @@ export function RatingDetailed( { applicationId, readonly = false, showDistribut
 				} ) }
 			</div>
 
-			{ /* Verteilung */ }
+			{ /* Distribution */ }
 			{ showDistribution && summary?.distribution && summary.count > 0 && (
 				<div>
 					<h4 style={ { margin: '0 0 0.75rem 0', fontSize: '0.875rem', fontWeight: 600, color: '#374151' } }>
-						{ __( 'Verteilung', 'recruiting-playbook' ) }
+						{ __( 'Distribution', 'recruiting-playbook' ) }
 					</h4>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.375rem' } }>
 						{ [ 5, 4, 3, 2, 1 ].map( ( star ) => {
@@ -316,7 +316,7 @@ export function RatingDetailed( { applicationId, readonly = false, showDistribut
 }
 
 /**
- * Kompakte Rating-Anzeige für Kanban-Karten
+ * Compact Rating Badge for Kanban Cards
  */
 export function RatingBadge( { average, count = 0 } ) {
 	if ( ! average || average <= 0 ) {
@@ -336,7 +336,7 @@ export function RatingBadge( { average, count = 0 } ) {
 				fontSize: '0.75rem',
 				fontWeight: 500,
 			} }
-			title={ `${ count } ${ count === 1 ? __( 'Bewertung', 'recruiting-playbook' ) : __( 'Bewertungen', 'recruiting-playbook' ) }` }
+			title={ `${ count } ${ count === 1 ? __( 'rating', 'recruiting-playbook' ) : __( 'ratings', 'recruiting-playbook' ) }` }
 		>
 			<Star style={ { width: '0.75rem', height: '0.75rem', fill: '#f59e0b', color: '#f59e0b' } } />
 			<span>{ average.toFixed( 1 ) }</span>

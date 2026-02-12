@@ -144,15 +144,15 @@ export default function TemplateManager( {
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 				<div>
 					<h2 style={ { fontSize: '1.125rem', fontWeight: 600, margin: '0 0 0.25rem 0' } }>
-						{ i18n?.templates || __( 'Formular-Templates', 'recruiting-playbook' ) }
+						{ i18n?.templates || __( 'Form Templates', 'recruiting-playbook' ) }
 					</h2>
 					<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
-						{ i18n?.templatesDescription || __( 'Erstellen Sie verschiedene Formular-Konfigurationen für unterschiedliche Stellen', 'recruiting-playbook' ) }
+						{ i18n?.templatesDescription || __( 'Create different form configurations for different jobs', 'recruiting-playbook' ) }
 					</p>
 				</div>
 				<Button onClick={ () => setShowCreateForm( true ) } disabled={ showCreateForm }>
 					<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-					{ i18n?.createTemplate || __( 'Template erstellen', 'recruiting-playbook' ) }
+					{ i18n?.createTemplate || __( 'Create Template', 'recruiting-playbook' ) }
 				</Button>
 			</div>
 
@@ -161,7 +161,7 @@ export default function TemplateManager( {
 				<Card className="border-blue-200 bg-blue-50">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-base">
-							{ i18n?.newTemplate || __( 'Neues Template', 'recruiting-playbook' ) }
+							{ i18n?.newTemplate || __( 'New Template', 'recruiting-playbook' ) }
 						</CardTitle>
 					</CardHeader>
 					<CardContent style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
@@ -173,25 +173,25 @@ export default function TemplateManager( {
 								id="new_name"
 								value={ newTemplate.name }
 								onChange={ ( e ) => setNewTemplate( { ...newTemplate, name: e.target.value } ) }
-								placeholder={ i18n?.templateNamePlaceholder || __( 'z.B. Entwickler-Bewerbung', 'recruiting-playbook' ) }
+								placeholder={ i18n?.templateNamePlaceholder || __( 'e.g. Developer Application', 'recruiting-playbook' ) }
 							/>
 						</div>
 
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 							<Label htmlFor="new_description">
-								{ i18n?.templateDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
+								{ i18n?.templateDescription || __( 'Description', 'recruiting-playbook' ) }
 							</Label>
 							<Textarea
 								id="new_description"
 								value={ newTemplate.description }
 								onChange={ ( e ) => setNewTemplate( { ...newTemplate, description: e.target.value } ) }
-								placeholder={ i18n?.templateDescriptionPlaceholder || __( 'Optionale Beschreibung...', 'recruiting-playbook' ) }
+								placeholder={ i18n?.templateDescriptionPlaceholder || __( 'Optional description...', 'recruiting-playbook' ) }
 								rows={ 2 }
 							/>
 						</div>
 
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-							<Label>{ i18n?.selectFields || __( 'Felder auswählen', 'recruiting-playbook' ) }</Label>
+							<Label>{ i18n?.selectFields || __( 'Select Fields', 'recruiting-playbook' ) }</Label>
 							<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', maxHeight: '10rem', overflowY: 'auto', padding: '0.5rem', backgroundColor: '#fff', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
 								{ fields.map( ( field ) => (
 									<label
@@ -218,11 +218,11 @@ export default function TemplateManager( {
 									setNewTemplate( { name: '', description: '', field_ids: [] } );
 								} }
 							>
-								{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+								{ i18n?.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button onClick={ handleCreate } disabled={ ! newTemplate.name || isSaving }>
 								{ isSaving ? <Spinner size="small" /> : <Check style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } /> }
-								{ i18n?.create || __( 'Erstellen', 'recruiting-playbook' ) }
+								{ i18n?.create || __( 'Create', 'recruiting-playbook' ) }
 							</Button>
 						</div>
 					</CardContent>
@@ -235,14 +235,14 @@ export default function TemplateManager( {
 					<CardContent style={ { padding: '3rem 0', textAlign: 'center' } }>
 						<FileText style={ { height: '3rem', width: '3rem', margin: '0 auto 1rem', color: '#9ca3af' } } />
 						<h3 style={ { fontSize: '1.125rem', fontWeight: 500, marginBottom: '0.5rem' } }>
-							{ i18n?.noTemplates || __( 'Keine Templates vorhanden', 'recruiting-playbook' ) }
+							{ i18n?.noTemplates || __( 'No Templates Available', 'recruiting-playbook' ) }
 						</h3>
 						<p style={ { color: '#4b5563', marginBottom: '1rem' } }>
-							{ i18n?.noTemplatesDescription || __( 'Erstellen Sie Ihr erstes Template, um verschiedene Formular-Konfigurationen zu speichern.', 'recruiting-playbook' ) }
+							{ i18n?.noTemplatesDescription || __( 'Create your first template to save different form configurations.', 'recruiting-playbook' ) }
 						</p>
 						<Button onClick={ () => setShowCreateForm( true ) }>
 							<Plus style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-							{ i18n?.createFirstTemplate || __( 'Erstes Template erstellen', 'recruiting-playbook' ) }
+							{ i18n?.createFirstTemplate || __( 'Create First Template', 'recruiting-playbook' ) }
 						</Button>
 					</CardContent>
 				</Card>
@@ -270,7 +270,7 @@ export default function TemplateManager( {
 											</div>
 
 											<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-												<Label>{ i18n?.templateDescription || __( 'Beschreibung', 'recruiting-playbook' ) }</Label>
+												<Label>{ i18n?.templateDescription || __( 'Description', 'recruiting-playbook' ) }</Label>
 												<Textarea
 													value={ editingTemplate.description || '' }
 													onChange={ ( e ) =>
@@ -281,7 +281,7 @@ export default function TemplateManager( {
 											</div>
 
 											<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-												<Label>{ i18n?.selectFields || __( 'Felder', 'recruiting-playbook' ) }</Label>
+												<Label>{ i18n?.selectFields || __( 'Fields', 'recruiting-playbook' ) }</Label>
 												<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', maxHeight: '10rem', overflowY: 'auto', padding: '0.5rem', backgroundColor: '#f9fafb', borderRadius: '0.25rem', border: '1px solid #e5e7eb' } }>
 													{ fields.map( ( field ) => (
 														<label
@@ -304,11 +304,11 @@ export default function TemplateManager( {
 
 											<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' } }>
 												<Button variant="outline" onClick={ () => setEditingTemplate( null ) }>
-													{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+													{ i18n?.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 												</Button>
 												<Button onClick={ handleUpdate } disabled={ isSaving }>
 													{ isSaving ? <Spinner size="small" /> : <Check style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } /> }
-													{ i18n?.save || __( 'Speichern', 'recruiting-playbook' ) }
+													{ i18n?.save || __( 'Save', 'recruiting-playbook' ) }
 												</Button>
 											</div>
 										</div>
@@ -321,7 +321,7 @@ export default function TemplateManager( {
 													{ isDefault && (
 														<Badge style={ { backgroundColor: '#dbeafe', color: '#1d4ed8' } }>
 															<Star style={ { height: '0.75rem', width: '0.75rem', marginRight: '0.25rem' } } />
-															{ i18n?.default || __( 'Standard', 'recruiting-playbook' ) }
+															{ i18n?.default || __( 'Default', 'recruiting-playbook' ) }
 														</Badge>
 													) }
 												</div>
@@ -329,7 +329,7 @@ export default function TemplateManager( {
 													<p style={ { fontSize: '0.875rem', color: '#4b5563', marginTop: '0.25rem' } }>{ template.description }</p>
 												) }
 												<p style={ { fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' } }>
-													{ ( template.field_ids || [] ).length } { i18n?.fields || __( 'Felder', 'recruiting-playbook' ) }
+													{ ( template.field_ids || [] ).length } { i18n?.fields || __( 'Fields', 'recruiting-playbook' ) }
 												</p>
 											</div>
 
@@ -337,7 +337,7 @@ export default function TemplateManager( {
 												{ isDeleting ? (
 													<>
 														<span style={ { fontSize: '0.875rem', color: '#dc2626', marginRight: '0.5rem' } }>
-															{ i18n?.confirmDelete || __( 'Wirklich löschen?', 'recruiting-playbook' ) }
+															{ i18n?.confirmDelete || __( 'Really delete?', 'recruiting-playbook' ) }
 														</span>
 														<Button
 															variant="destructive"
@@ -345,14 +345,14 @@ export default function TemplateManager( {
 															onClick={ () => handleDelete( template.id ) }
 															disabled={ isSaving }
 														>
-															{ i18n?.yes || __( 'Ja', 'recruiting-playbook' ) }
+															{ i18n?.yes || __( 'Yes', 'recruiting-playbook' ) }
 														</Button>
 														<Button
 															variant="outline"
 															size="sm"
 															onClick={ () => setConfirmDelete( null ) }
 														>
-															{ i18n?.no || __( 'Nein', 'recruiting-playbook' ) }
+															{ i18n?.no || __( 'No', 'recruiting-playbook' ) }
 														</Button>
 													</>
 												) : (
@@ -363,7 +363,7 @@ export default function TemplateManager( {
 																size="sm"
 																onClick={ () => handleSetDefault( template.id ) }
 																disabled={ isSaving }
-																title={ i18n?.setAsDefault || __( 'Als Standard setzen', 'recruiting-playbook' ) }
+																title={ i18n?.setAsDefault || __( 'Set as Default', 'recruiting-playbook' ) }
 															>
 																<Star style={ { height: '1rem', width: '1rem' } } />
 															</Button>
@@ -373,7 +373,7 @@ export default function TemplateManager( {
 															size="sm"
 															onClick={ () => handleDuplicate( template.id ) }
 															disabled={ isSaving }
-															title={ i18n?.duplicate || __( 'Duplizieren', 'recruiting-playbook' ) }
+															title={ i18n?.duplicate || __( 'Duplicate', 'recruiting-playbook' ) }
 														>
 															<Copy style={ { height: '1rem', width: '1rem' } } />
 														</Button>
@@ -381,7 +381,7 @@ export default function TemplateManager( {
 															variant="outline"
 															size="sm"
 															onClick={ () => setEditingTemplate( template ) }
-															title={ i18n?.edit || __( 'Bearbeiten', 'recruiting-playbook' ) }
+															title={ i18n?.edit || __( 'Edit', 'recruiting-playbook' ) }
 														>
 															<Edit2 style={ { height: '1rem', width: '1rem' } } />
 														</Button>
@@ -391,7 +391,7 @@ export default function TemplateManager( {
 																size="sm"
 																onClick={ () => setConfirmDelete( template.id ) }
 																style={ { color: '#ef4444' } }
-																title={ i18n?.delete || __( 'Löschen', 'recruiting-playbook' ) }
+																title={ i18n?.delete || __( 'Delete', 'recruiting-playbook' ) }
 															>
 																<Trash2 style={ { height: '1rem', width: '1rem' } } />
 															</Button>
@@ -410,7 +410,7 @@ export default function TemplateManager( {
 
 			{ /* Help text */ }
 			<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-				{ i18n?.templateTip || __( 'Templates ermöglichen verschiedene Formular-Konfigurationen für unterschiedliche Stellen. Das Standard-Template wird für neue Stellen verwendet.', 'recruiting-playbook' ) }
+				{ i18n?.templateTip || __( 'Templates allow different form configurations for different jobs. The default template is used for new jobs.', 'recruiting-playbook' ) }
 			</p>
 		</div>
 	);

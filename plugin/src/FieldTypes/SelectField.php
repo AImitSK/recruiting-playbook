@@ -2,7 +2,7 @@
 /**
  * Select Field Type
  *
- * Dropdown-Auswahlfeld mit optionaler Freitext-Option.
+ * Dropdown selection field with optional free text option.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -17,7 +17,7 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
 /**
- * Select/Dropdown Feldtyp
+ * Select/Dropdown field type
  */
 class SelectField extends AbstractFieldType {
 
@@ -69,7 +69,7 @@ class SelectField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getAvailableValidationRules(): array {
-		return []; // Select hat keine zusätzlichen Validierungsregeln.
+		return []; // Select has no additional validation rules.
 	}
 
 	/**
@@ -90,19 +90,19 @@ class SelectField extends AbstractFieldType {
 		$settings = $field->getSettings() ?? [];
 		$label    = $field->getLabel();
 
-		// Wenn "Sonstiges" erlaubt ist, akzeptieren wir jeden Wert.
+		// If "Other" is allowed, we accept any value.
 		if ( ! empty( $settings['allow_other'] ) ) {
 			return true;
 		}
 
-		// Prüfen ob der Wert in den Optionen enthalten ist.
+		// Check if the value is in the options.
 		$valid_values = array_column( $options, 'value' );
 		if ( ! in_array( $value, $valid_values, true ) ) {
 			return new WP_Error(
 				'invalid_option',
 				sprintf(
 					/* translators: %s: Field label */
-					__( '%s enthält einen ungültigen Wert.', 'recruiting-playbook' ),
+					__( '%s contains an invalid value.', 'recruiting-playbook' ),
 					$label
 				)
 			);
@@ -132,14 +132,14 @@ class SelectField extends AbstractFieldType {
 
 		$options = $field->getOptions() ?? [];
 
-		// Label für den Wert finden.
+		// Find label for the value.
 		foreach ( $options as $option ) {
 			if ( isset( $option['value'] ) && $option['value'] === $value ) {
 				return esc_html( $option['label'] ?? $value );
 			}
 		}
 
-		// Wenn nicht gefunden (z.B. "Sonstiges"), den Wert direkt anzeigen.
+		// If not found (e.g. "Other"), display the value directly.
 		return esc_html( $value );
 	}
 
@@ -169,7 +169,7 @@ class SelectField extends AbstractFieldType {
 		$html .= $this->renderLabel( $field );
 
 		if ( $allow_other ) {
-			// Mit "Sonstiges" Option: Zeige Textfeld wenn "other" gewählt.
+			// With "Other" option: Show text field when "other" is selected.
 			$html .= '<div x-data="{ showOther: false }">';
 			$html .= sprintf(
 				'<select %s class="rp-form__select" x-on:change="showOther = $event.target.value === \'__other__\'">',
@@ -179,7 +179,7 @@ class SelectField extends AbstractFieldType {
 			$html .= sprintf( '<select %s class="rp-form__select">', $select_attrs );
 		}
 
-		// Placeholder Option.
+		// Placeholder option.
 		$placeholder = $field->getPlaceholder();
 		if ( $placeholder ) {
 			$html .= sprintf(
@@ -189,11 +189,11 @@ class SelectField extends AbstractFieldType {
 		} else {
 			$html .= sprintf(
 				'<option value="" disabled selected>%s</option>',
-				esc_html__( 'Bitte wählen...', 'recruiting-playbook' )
+				esc_html__( 'Please select...', 'recruiting-playbook' )
 			);
 		}
 
-		// Optionen.
+		// Options.
 		foreach ( $options as $option ) {
 			$option_value = $option['value'] ?? '';
 			$option_label = $option['label'] ?? $option_value;
@@ -207,22 +207,22 @@ class SelectField extends AbstractFieldType {
 			);
 		}
 
-		// "Sonstiges" Option.
+		// "Other" option.
 		if ( $allow_other ) {
 			$html .= sprintf(
 				'<option value="__other__">%s</option>',
-				esc_html__( 'Sonstiges...', 'recruiting-playbook' )
+				esc_html__( 'Other...', 'recruiting-playbook' )
 			);
 		}
 
 		$html .= '</select>';
 
-		// Textfeld für "Sonstiges".
+		// Text field for "Other".
 		if ( $allow_other ) {
 			$html .= sprintf(
 				'<input type="text" x-show="showOther" x-cloak x-model="formData.%s_other" class="rp-form__input rp-form__input--other" placeholder="%s" />',
 				esc_attr( $field_key ),
-				esc_attr__( 'Bitte angeben...', 'recruiting-playbook' )
+				esc_attr__( 'Please specify...', 'recruiting-playbook' )
 			);
 			$html .= '</div>';
 		}

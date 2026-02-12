@@ -1,7 +1,7 @@
 /**
  * JobListPanel Component
  *
- * Tab: Job-Liste - Layout, Anzeige und Badge-Farben.
+ * Tab: Job List - Layout, Display and Badge Colors.
  *
  * @package RecruitingPlaybook
  */
@@ -24,19 +24,19 @@ import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 export function JobListPanel( { settings, onUpdate } ) {
 	return (
 		<div className="rp-space-y-4">
-			{ /* Card: Layout & Anzeige */ }
+			{ /* Card: Layout & Display */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Layout & Anzeige', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Layout & Display', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Darstellung der Job-Übersicht', 'recruiting-playbook' ) }
+						{ __( 'Display of job listing overview', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Darstellung */ }
+					{ /* Display */ }
 					<div>
 						<Label className="rp-mb-2 rp-block">
-							{ __( 'Darstellung', 'recruiting-playbook' ) }
+							{ __( 'Display', 'recruiting-playbook' ) }
 						</Label>
 						<RadioGroup
 							value={ settings.job_list_layout || 'grid' }
@@ -47,16 +47,16 @@ export function JobListPanel( { settings, onUpdate } ) {
 								{ __( 'Grid', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="list">
-								{ __( 'Liste', 'recruiting-playbook' ) }
+								{ __( 'List', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 						</RadioGroup>
 					</div>
 
-					{ /* Spaltenanzahl (nur bei Grid) */ }
+					{ /* Column count (only for Grid) */ }
 					{ settings.job_list_layout === 'grid' && (
 						<div>
 							<Label className="rp-mb-2 rp-block">
-								{ __( 'Spaltenanzahl', 'recruiting-playbook' ) }
+								{ __( 'Column Count', 'recruiting-playbook' ) }
 							</Label>
 							<RadioGroup
 								value={ String( settings.job_list_columns || 3 ) }
@@ -73,11 +73,11 @@ export function JobListPanel( { settings, onUpdate } ) {
 					{ /* Divider */ }
 					<div className="rp-border-t rp-border-gray-200 rp-pt-4">
 						<Label className="rp-mb-3 rp-block rp-text-sm rp-font-medium">
-							{ __( 'Angezeigte Informationen', 'recruiting-playbook' ) }
+							{ __( 'Displayed Information', 'recruiting-playbook' ) }
 						</Label>
 
 						<div className="rp-space-y-2">
-							{ /* Badges anzeigen */ }
+							{ /* Show badges */ }
 							<div className="rp-flex rp-items-center rp-justify-between rp-py-1">
 								<Label htmlFor="show_badges" className="rp-font-normal">
 									{ __( 'Badges', 'recruiting-playbook' ) }
@@ -89,10 +89,10 @@ export function JobListPanel( { settings, onUpdate } ) {
 								/>
 							</div>
 
-							{ /* Gehalt anzeigen */ }
+							{ /* Show salary */ }
 							<div className="rp-flex rp-items-center rp-justify-between rp-py-1">
 								<Label htmlFor="show_salary" className="rp-font-normal">
-									{ __( 'Gehalt', 'recruiting-playbook' ) }
+									{ __( 'Salary', 'recruiting-playbook' ) }
 								</Label>
 								<Switch
 									id="show_salary"
@@ -101,10 +101,10 @@ export function JobListPanel( { settings, onUpdate } ) {
 								/>
 							</div>
 
-							{ /* Standort anzeigen */ }
+							{ /* Show location */ }
 							<div className="rp-flex rp-items-center rp-justify-between rp-py-1">
 								<Label htmlFor="show_location" className="rp-font-normal">
-									{ __( 'Standort', 'recruiting-playbook' ) }
+									{ __( 'Location', 'recruiting-playbook' ) }
 								</Label>
 								<Switch
 									id="show_location"
@@ -113,10 +113,10 @@ export function JobListPanel( { settings, onUpdate } ) {
 								/>
 							</div>
 
-							{ /* Beschäftigungsart */ }
+							{ /* Employment type */ }
 							<div className="rp-flex rp-items-center rp-justify-between rp-py-1">
 								<Label htmlFor="show_employment_type" className="rp-font-normal">
-									{ __( 'Beschäftigungsart', 'recruiting-playbook' ) }
+									{ __( 'Employment Type', 'recruiting-playbook' ) }
 								</Label>
 								<Switch
 									id="show_employment_type"
@@ -125,10 +125,10 @@ export function JobListPanel( { settings, onUpdate } ) {
 								/>
 							</div>
 
-							{ /* Bewerbungsfrist */ }
+							{ /* Application deadline */ }
 							<div className="rp-flex rp-items-center rp-justify-between rp-py-1">
 								<Label htmlFor="show_deadline" className="rp-font-normal">
-									{ __( 'Bewerbungsfrist', 'recruiting-playbook' ) }
+									{ __( 'Application Deadline', 'recruiting-playbook' ) }
 								</Label>
 								<Switch
 									id="show_deadline"
@@ -141,19 +141,19 @@ export function JobListPanel( { settings, onUpdate } ) {
 				</CardContent>
 			</Card>
 
-			{ /* Card: Badge-Farben */ }
+			{ /* Card: Badge Colors */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Badge-Farben', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Badge Colors', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Farben für verschiedene Badge-Typen', 'recruiting-playbook' ) }
+						{ __( 'Colors for different badge types', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Badge-Stil */ }
+					{ /* Badge style */ }
 					<div>
 						<Label className="rp-mb-2 rp-block">
-							{ __( 'Badge-Stil', 'recruiting-playbook' ) }
+							{ __( 'Badge Style', 'recruiting-playbook' ) }
 						</Label>
 						<RadioGroup
 							value={ settings.badge_style || 'light' }
@@ -161,23 +161,23 @@ export function JobListPanel( { settings, onUpdate } ) {
 							variant="buttons"
 						>
 							<RadioGroupItem value="light">
-								{ __( 'Hell', 'recruiting-playbook' ) }
+								{ __( 'Light', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 							<RadioGroupItem value="solid">
-								{ __( 'Ausgefüllt', 'recruiting-playbook' ) }
+								{ __( 'Solid', 'recruiting-playbook' ) }
 							</RadioGroupItem>
 						</RadioGroup>
 						<p className="rp-text-xs rp-text-gray-500 rp-mt-1">
 							{ settings.badge_style === 'light'
-								? __( 'Transparenter Hintergrund, farbiger Text', 'recruiting-playbook' )
-								: __( 'Farbiger Hintergrund, weißer Text', 'recruiting-playbook' )
+								? __( 'Transparent background, colored text', 'recruiting-playbook' )
+								: __( 'Colored background, white text', 'recruiting-playbook' )
 							}
 						</p>
 					</div>
 
 					{ /* Divider */ }
 					<div className="rp-border-t rp-border-gray-200 rp-pt-4 rp-space-y-3">
-						{ /* Neu */ }
+						{ /* New */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
 							<div className="rp-flex rp-items-center rp-gap-2">
 								<span
@@ -191,7 +191,7 @@ export function JobListPanel( { settings, onUpdate } ) {
 											: ( settings.badge_color_new || '#22c55e' ),
 									} }
 								>
-									{ __( 'Neu', 'recruiting-playbook' ) }
+									{ __( 'New', 'recruiting-playbook' ) }
 								</span>
 							</div>
 							<ColorPicker
@@ -223,7 +223,7 @@ export function JobListPanel( { settings, onUpdate } ) {
 							/>
 						</div>
 
-						{ /* Kategorie */ }
+						{ /* Category */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
 							<div className="rp-flex rp-items-center rp-gap-2">
 								<span
@@ -246,7 +246,7 @@ export function JobListPanel( { settings, onUpdate } ) {
 							/>
 						</div>
 
-						{ /* Gehalt */ }
+						{ /* Salary */ }
 						<div className="rp-flex rp-items-center rp-justify-between">
 							<div className="rp-flex rp-items-center rp-gap-2">
 								<span

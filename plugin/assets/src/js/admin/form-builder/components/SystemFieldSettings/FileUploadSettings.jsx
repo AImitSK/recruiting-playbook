@@ -39,7 +39,7 @@ const FILE_TYPE_OPTIONS = [
  */
 export default function FileUploadSettings( { settings = {}, onSave, onClose } ) {
 	// Local state for form values
-	const [ label, setLabel ] = useState( settings.label || __( 'Dokumente hochladen', 'recruiting-playbook' ) );
+	const [ label, setLabel ] = useState( settings.label || __( 'Upload Documents', 'recruiting-playbook' ) );
 	const [ helpText, setHelpText ] = useState( settings.help_text || '' );
 	const [ allowedTypes, setAllowedTypes ] = useState( settings.allowed_types || [ 'pdf', 'doc', 'docx' ] );
 	const [ maxFileSize, setMaxFileSize ] = useState( settings.max_file_size || 10 );
@@ -92,8 +92,8 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<Upload style={ { height: '1.25rem', width: '1.25rem', color: '#22c55e' } } />
 						<div>
-							<CardTitle>{ __( 'Datei-Upload Einstellungen', 'recruiting-playbook' ) }</CardTitle>
-							<CardDescription>{ __( 'Konfigurieren Sie den Datei-Upload für Bewerbungen', 'recruiting-playbook' ) }</CardDescription>
+							<CardTitle>{ __( 'File Upload Settings', 'recruiting-playbook' ) }</CardTitle>
+							<CardDescription>{ __( 'Configure file upload for applications', 'recruiting-playbook' ) }</CardDescription>
 						</div>
 					</div>
 					<Button variant="ghost" size="sm" onClick={ onClose }>
@@ -104,18 +104,18 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 				<CardContent style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 					{ /* Label */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="upload-label">{ __( 'Bezeichnung', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="upload-label">{ __( 'Label', 'recruiting-playbook' ) }</Label>
 						<Input
 							id="upload-label"
 							value={ label }
 							onChange={ ( e ) => setLabel( e.target.value ) }
-							placeholder={ __( 'Dokumente hochladen', 'recruiting-playbook' ) }
+							placeholder={ __( 'Upload Documents', 'recruiting-playbook' ) }
 						/>
 					</div>
 
 					{ /* Allowed File Types */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.75rem' } }>
-						<Label>{ __( 'Erlaubte Dateitypen', 'recruiting-playbook' ) }</Label>
+						<Label>{ __( 'Allowed File Types', 'recruiting-playbook' ) }</Label>
 						<div style={ { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' } }>
 							{ FILE_TYPE_OPTIONS.map( ( option ) => (
 								<label
@@ -142,13 +142,13 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 							) ) }
 						</div>
 						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-							{ __( 'Mindestens ein Dateityp muss ausgewählt sein.', 'recruiting-playbook' ) }
+							{ __( 'At least one file type must be selected.', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					{ /* Max File Size */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="max-file-size">{ __( 'Maximale Dateigröße (MB)', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="max-file-size">{ __( 'Maximum File Size (MB)', 'recruiting-playbook' ) }</Label>
 						<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 							<Input
 								id="max-file-size"
@@ -162,13 +162,13 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>MB</span>
 						</div>
 						<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-							{ __( 'Erlaubt: 1-100 MB. Server-Limit kann niedriger sein.', 'recruiting-playbook' ) }
+							{ __( 'Allowed: 1-100 MB. Server limit may be lower.', 'recruiting-playbook' ) }
 						</p>
 					</div>
 
 					{ /* Max Files */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="max-files">{ __( 'Maximale Anzahl Dateien', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="max-files">{ __( 'Maximum Number of Files', 'recruiting-playbook' ) }</Label>
 						<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 							<Input
 								id="max-files"
@@ -179,18 +179,18 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 								onChange={ ( e ) => setMaxFiles( parseInt( e.target.value, 10 ) || 1 ) }
 								style={ { width: '100px' } }
 							/>
-							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>{ __( 'Dateien', 'recruiting-playbook' ) }</span>
+							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>{ __( 'files', 'recruiting-playbook' ) }</span>
 						</div>
 					</div>
 
 					{ /* Help Text */ }
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-						<Label htmlFor="help-text">{ __( 'Hilfetext', 'recruiting-playbook' ) }</Label>
+						<Label htmlFor="help-text">{ __( 'Help Text', 'recruiting-playbook' ) }</Label>
 						<Textarea
 							id="help-text"
 							value={ helpText }
 							onChange={ ( e ) => setHelpText( e.target.value ) }
-							placeholder={ __( 'z.B. "PDF, Word - max. 10 MB pro Datei"', 'recruiting-playbook' ) }
+							placeholder={ __( 'e.g. "PDF, Word - max. 10 MB per file"', 'recruiting-playbook' ) }
 							rows={ 2 }
 						/>
 					</div>
@@ -198,10 +198,10 @@ export default function FileUploadSettings( { settings = {}, onSave, onClose } )
 					{ /* Action Buttons */ }
 					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #e5e7eb' } }>
 						<Button variant="outline" onClick={ onClose }>
-							{ __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button onClick={ handleSave }>
-							{ __( 'Speichern', 'recruiting-playbook' ) }
+							{ __( 'Save', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardContent>

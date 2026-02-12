@@ -207,7 +207,7 @@ class EmailQueueService {
 				$this->logRepository->updateStatus(
 					$log_id,
 					'failed',
-					__( 'Maximale Versuche erreicht', 'recruiting-playbook' )
+					__( 'Maximum retries reached', 'recruiting-playbook' )
 				);
 			}
 		}
@@ -360,7 +360,7 @@ class EmailQueueService {
 			'action'      => 'email_sent',
 			'message'     => sprintf(
 				/* translators: %s: Email subject */
-				__( 'E-Mail gesendet: %s', 'recruiting-playbook' ),
+				__( 'Email sent: %s', 'recruiting-playbook' ),
 				$log['subject']
 			),
 			'meta'        => [

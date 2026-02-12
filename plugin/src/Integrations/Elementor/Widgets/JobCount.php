@@ -8,7 +8,7 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Stellen-Zähler — Elementor Widget
+ * RP: Job Counter — Elementor Widget
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -20,7 +20,7 @@ class JobCount extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: Stellen-Zähler', 'recruiting-playbook' );
+		return esc_html__( 'RP: Job Counter', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -50,7 +50,7 @@ class JobCount extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -58,7 +58,7 @@ class JobCount extends AbstractWidget {
 		$this->add_control(
 			'category',
 			[
-				'label'   => esc_html__( 'Kategorie', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Category', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'job_category' ),
@@ -68,7 +68,7 @@ class JobCount extends AbstractWidget {
 		$this->add_control(
 			'location',
 			[
-				'label'   => esc_html__( 'Standort', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Location', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => $this->getTaxonomyOptions( 'job_location' ),
@@ -78,10 +78,10 @@ class JobCount extends AbstractWidget {
 		$this->add_control(
 			'format',
 			[
-				'label'       => esc_html__( 'Format (Mehrzahl)', 'recruiting-playbook' ),
-				'description' => esc_html__( 'Verwende {count} als Platzhalter.', 'recruiting-playbook' ),
+				'label'       => esc_html__( 'Format (Plural)', 'recruiting-playbook' ),
+				'description' => esc_html__( 'Use {count} as placeholder.', 'recruiting-playbook' ),
 				'type'        => Controls_Manager::TEXT,
-				'default'     => '{count} offene Stellen',
+				'default'     => '{count} open jobs',
 				'separator'   => 'before',
 			]
 		);
@@ -89,18 +89,18 @@ class JobCount extends AbstractWidget {
 		$this->add_control(
 			'singular',
 			[
-				'label'   => esc_html__( 'Format (Einzahl)', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Format (Singular)', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
-				'default' => '{count} offene Stelle',
+				'default' => '{count} open job',
 			]
 		);
 
 		$this->add_control(
 			'zero',
 			[
-				'label'   => esc_html__( 'Format (Null)', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Format (Zero)', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
-				'default' => 'Keine offenen Stellen',
+				'default' => 'No open jobs',
 			]
 		);
 

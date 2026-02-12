@@ -133,7 +133,7 @@ class GdprService {
 			$table,
 			[
 				'email'          => 'anonymized-' . $candidate_id . '@deleted.local',
-				'first_name'     => 'Anonymisiert',
+				'first_name'     => 'Anonymized',
 				'last_name'      => '',
 				'phone'          => '',
 				'address_street' => '',
@@ -290,7 +290,7 @@ class GdprService {
 		$data = $this->exportCandidateData( $candidate_id );
 
 		if ( empty( $data ) ) {
-			wp_die( esc_html__( 'Kandidat nicht gefunden.', 'recruiting-playbook' ) );
+			wp_die( esc_html__( 'Candidate not found.', 'recruiting-playbook' ) );
 		}
 
 		$filename = sprintf(
@@ -322,7 +322,7 @@ class GdprService {
 		);
 
 		if ( ! $application ) {
-			wp_die( esc_html__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ) );
+			wp_die( esc_html__( 'Application not found.', 'recruiting-playbook' ) );
 		}
 
 		$data = $this->exportCandidateData( (int) $application['candidate_id'] );

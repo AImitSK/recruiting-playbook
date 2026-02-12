@@ -124,7 +124,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Feld-ID', 'recruiting-playbook' ),
+							'description' => __( 'Field ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -142,7 +142,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Feld-ID', 'recruiting-playbook' ),
+							'description' => __( 'Field ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -163,7 +163,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'field_ids' => [
-							'description' => __( 'Geordnete Liste der Feld-IDs', 'recruiting-playbook' ),
+							'description' => __( 'Ordered list of field IDs', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'items'       => [ 'type' => 'integer' ],
 							'required'    => true,
@@ -184,7 +184,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'job_id' => [
-							'description' => __( 'Job-ID', 'recruiting-playbook' ),
+							'description' => __( 'Job ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -204,12 +204,12 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'job_id'   => [
-							'description' => __( 'Job-ID', 'recruiting-playbook' ),
+							'description' => __( 'Job ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'field_ids' => [
-							'description' => __( 'Liste der Feld-IDs für diesen Job', 'recruiting-playbook' ),
+							'description' => __( 'List of field IDs for this job', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'items'       => [ 'type' => 'integer' ],
 							'required'    => true,
@@ -235,7 +235,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Formularfelder zu verwalten.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage form fields.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -268,7 +268,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_manage_forms' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, Formularfelder zu erstellen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to create form fields.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -393,7 +393,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( ! $field ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Feld nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Field not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -463,7 +463,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( empty( $field_ids ) || ! is_array( $field_ids ) ) {
 			return new WP_Error(
 				'invalid_params',
-				__( 'Ungültige Feld-IDs.', 'recruiting-playbook' ),
+				__( 'Invalid field IDs.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -486,7 +486,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( get_post_type( $job_id ) !== 'job_listing' ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Job nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Job not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -511,7 +511,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( get_post_type( $job_id ) !== 'job_listing' ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Job nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Job not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -561,15 +561,15 @@ class FieldDefinitionController extends WP_REST_Controller {
 	public function get_collection_params(): array {
 		return [
 			'template_id' => [
-				'description' => __( 'Nach Template-ID filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by template ID', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'type'        => [
-				'description' => __( 'Nach Feldtyp filtern', 'recruiting-playbook' ),
+				'description' => __( 'Filter by field type', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'is_system'   => [
-				'description' => __( 'Nur System-Felder anzeigen', 'recruiting-playbook' ),
+				'description' => __( 'Show only system fields', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 			],
 		];
@@ -587,51 +587,51 @@ class FieldDefinitionController extends WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'id'          => [
-					'description' => __( 'Feld-ID', 'recruiting-playbook' ),
+					'description' => __( 'Field ID', 'recruiting-playbook' ),
 					'type'        => 'integer',
 					'readonly'    => true,
 				],
 				'field_key'   => [
-					'description' => __( 'Eindeutiger Feldschlüssel', 'recruiting-playbook' ),
+					'description' => __( 'Unique field key', 'recruiting-playbook' ),
 					'type'        => 'string',
 					'required'    => true,
 					'pattern'     => '^[a-z][a-z0-9_]*$',
 				],
 				'type'        => [
-					'description' => __( 'Feldtyp', 'recruiting-playbook' ),
+					'description' => __( 'Field type', 'recruiting-playbook' ),
 					'type'        => 'string',
 					'required'    => true,
 					'enum'        => FieldTypeRegistry::getInstance()->getTypeKeys(),
 				],
 				'label'       => [
-					'description' => __( 'Feld-Label', 'recruiting-playbook' ),
+					'description' => __( 'Field label', 'recruiting-playbook' ),
 					'type'        => 'string',
 					'required'    => true,
 				],
 				'placeholder' => [
-					'description' => __( 'Placeholder-Text', 'recruiting-playbook' ),
+					'description' => __( 'Placeholder text', 'recruiting-playbook' ),
 					'type'        => 'string',
 				],
 				'description' => [
-					'description' => __( 'Hilfetext', 'recruiting-playbook' ),
+					'description' => __( 'Help text', 'recruiting-playbook' ),
 					'type'        => 'string',
 				],
 				'is_required' => [
-					'description' => __( 'Pflichtfeld', 'recruiting-playbook' ),
+					'description' => __( 'Required field', 'recruiting-playbook' ),
 					'type'        => 'boolean',
 					'default'     => false,
 				],
 				'is_system'   => [
-					'description' => __( 'System-Feld (nicht löschbar)', 'recruiting-playbook' ),
+					'description' => __( 'System field (not deletable)', 'recruiting-playbook' ),
 					'type'        => 'boolean',
 					'readonly'    => true,
 				],
 				'position'    => [
-					'description' => __( 'Sortierposition', 'recruiting-playbook' ),
+					'description' => __( 'Sort position', 'recruiting-playbook' ),
 					'type'        => 'integer',
 				],
 				'options'     => [
-					'description' => __( 'Auswahloptionen (für Select/Radio/Checkbox)', 'recruiting-playbook' ),
+					'description' => __( 'Selection options (for Select/Radio/Checkbox)', 'recruiting-playbook' ),
 					'type'        => 'array',
 					'items'       => [
 						'type'       => 'object',
@@ -642,7 +642,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					],
 				],
 				'validation'  => [
-					'description' => __( 'Validierungsregeln', 'recruiting-playbook' ),
+					'description' => __( 'Validation rules', 'recruiting-playbook' ),
 					'type'        => 'object',
 				],
 				'conditional' => [
@@ -650,15 +650,15 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'type'        => 'object',
 				],
 				'settings'    => [
-					'description' => __( 'Feldspezifische Einstellungen', 'recruiting-playbook' ),
+					'description' => __( 'Field-specific settings', 'recruiting-playbook' ),
 					'type'        => 'object',
 				],
 				'template_id' => [
-					'description' => __( 'Zugehörige Template-ID', 'recruiting-playbook' ),
+					'description' => __( 'Associated template ID', 'recruiting-playbook' ),
 					'type'        => 'integer',
 				],
 				'job_id'      => [
-					'description' => __( 'Job-spezifisches Feld für diese Job-ID', 'recruiting-playbook' ),
+					'description' => __( 'Job-specific field for this job ID', 'recruiting-playbook' ),
 					'type'        => 'integer',
 				],
 			],
@@ -674,7 +674,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Custom Fields erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'Custom Fields requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

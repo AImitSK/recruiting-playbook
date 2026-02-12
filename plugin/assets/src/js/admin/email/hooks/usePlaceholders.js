@@ -21,7 +21,7 @@ export function usePlaceholders() {
 
 	// Stabile Referenzen
 	const i18n = window.rpEmailData?.i18n || {};
-	const errorLoadingMsg = i18n.errorLoading || 'Fehler beim Laden der Platzhalter';
+	const errorLoadingMsg = i18n.errorLoading || 'Error loading placeholders';
 
 	// Refs für Cleanup und Mount-Status
 	const abortControllerRef = useRef( null );

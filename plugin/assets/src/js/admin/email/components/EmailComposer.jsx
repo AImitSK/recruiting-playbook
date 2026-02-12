@@ -1,5 +1,5 @@
 /**
- * EmailComposer - Komponente zum Verfassen von E-Mails
+ * EmailComposer - Component for composing emails
  *
  * @package RecruitingPlaybook
  */
@@ -23,20 +23,20 @@ import { EmailPreview } from './EmailPreview';
 import { replacePlaceholders } from '../utils';
 
 /**
- * EmailComposer Komponente
+ * EmailComposer Component
  *
  * @param {Object}   props               Props
- * @param {Array}    props.templates     Verfügbare Templates
- * @param {Array}    props.signatures    Verfügbare Signaturen
- * @param {Object}   props.placeholders  Verfügbare Platzhalter
- * @param {Object}   props.previewValues Preview-Werte für Platzhalter
- * @param {Object}   props.recipient     Empfänger-Daten
- * @param {number}   props.applicationId Bewerbungs-ID
- * @param {boolean}  props.sending       Sende-Status
- * @param {string}   props.error         Fehlermeldung
- * @param {Function} props.onSend        Callback beim Senden
- * @param {Function} props.onCancel      Callback beim Abbrechen
- * @return {JSX.Element} Komponente
+ * @param {Array}    props.templates     Available templates
+ * @param {Array}    props.signatures    Available signatures
+ * @param {Object}   props.placeholders  Available placeholders
+ * @param {Object}   props.previewValues Preview values for placeholders
+ * @param {Object}   props.recipient     Recipient data
+ * @param {number}   props.applicationId Application ID
+ * @param {boolean}  props.sending       Sending status
+ * @param {string}   props.error         Error message
+ * @param {Function} props.onSend        Callback when sending
+ * @param {Function} props.onCancel      Callback when canceling
+ * @return {JSX.Element} Component
  */
 export function EmailComposer( {
 	templates = [],
@@ -62,7 +62,7 @@ export function EmailComposer( {
 
 	const i18n = window.rpEmailData?.i18n || {};
 
-	// Standard-Signatur vorauswählen
+	// Preselect default signature
 	useEffect( () => {
 		if ( signatures.length > 0 && ! selectedSignature ) {
 			const defaultSig = signatures.find( ( s ) => s.is_default );
@@ -74,7 +74,7 @@ export function EmailComposer( {
 		}
 	}, [ signatures, selectedSignature ] );
 
-	// Empfänger-E-Mail aktualisieren wenn sich recipient ändert
+	// Update recipient email when recipient changes
 	useEffect( () => {
 		if ( recipient.email ) {
 			setFormData( ( prev ) => ( { ...prev, to: recipient.email } ) );
@@ -82,9 +82,9 @@ export function EmailComposer( {
 	}, [ recipient.email ] );
 
 	/**
-	 * Template auswählen und Felder füllen
+	 * Select template and fill fields
 	 *
-	 * @param {string} templateId Template-ID
+	 * @param {string} templateId Template ID
 	 */
 	const handleTemplateSelect = useCallback( ( templateId ) => {
 		setSelectedTemplate( templateId );
@@ -104,10 +104,10 @@ export function EmailComposer( {
 	}, [ templates ] );
 
 	/**
-	 * Feld aktualisieren
+	 * Update field
 	 *
-	 * @param {string} field Feldname
-	 * @param {*}      value Wert
+	 * @param {string} field Field name
+	 * @param {*}      value Value
 	 */
 	const updateField = useCallback( ( field, value ) => {
 		setFormData( ( prev ) => ( { ...prev, [ field ]: value } ) );
@@ -123,19 +123,19 @@ export function EmailComposer( {
 	}, [] );
 
 	/**
-	 * Platzhalter ersetzen (für Vorschau)
+	 * Replace placeholders (for preview)
 	 *
 	 * @param {string} text Text
-	 * @return {string} Text mit ersetzten Platzhaltern
+	 * @return {string} Text with replaced placeholders
 	 */
 	const getPreviewText = useCallback( ( text ) => {
 		return replacePlaceholders( text, previewValues );
 	}, [ previewValues ] );
 
 	/**
-	 * Formular validieren
+	 * Validate form
 	 *
-	 * @return {boolean} Gültig
+	 * @return {boolean} Valid
 	 */
 	const validate = useCallback( () => {
 		const errors = {};
@@ -146,21 +146,21 @@ export function EmailComposer( {
 		const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
 
 		if ( ! formData.to.trim() ) {
-			errors.to = i18n.recipientRequired || __( 'Empfänger ist erforderlich', 'recruiting-playbook' );
+			errors.to = i18n.recipientRequired || __( 'Recipient is required', 'recruiting-playbook' );
 		} else if ( ! emailRegex.test( formData.to.trim() ) ) {
-			errors.to = i18n.invalidEmail || __( 'Ungültige E-Mail-Adresse', 'recruiting-playbook' );
+			errors.to = i18n.invalidEmail || __( 'Invalid email address', 'recruiting-playbook' );
 		}
 
 		if ( ! formData.subject.trim() ) {
-			errors.subject = i18n.subjectRequired || __( 'Betreff ist erforderlich', 'recruiting-playbook' );
+			errors.subject = i18n.subjectRequired || __( 'Subject is required', 'recruiting-playbook' );
 		} else if ( formData.subject.length > MAX_SUBJECT_LENGTH ) {
-			errors.subject = `${ i18n.subjectTooLong || __( 'Betreff zu lang', 'recruiting-playbook' ) } (max. ${ MAX_SUBJECT_LENGTH })`;
+			errors.subject = `${ i18n.subjectTooLong || __( 'Subject too long', 'recruiting-playbook' ) } (max. ${ MAX_SUBJECT_LENGTH })`;
 		}
 
 		if ( ! formData.body.trim() ) {
-			errors.body = i18n.bodyRequired || __( 'Inhalt ist erforderlich', 'recruiting-playbook' );
+			errors.body = i18n.bodyRequired || __( 'Content is required', 'recruiting-playbook' );
 		} else if ( formData.body.length > MAX_BODY_LENGTH ) {
-			errors.body = `${ i18n.bodyTooLong || __( 'Inhalt zu lang', 'recruiting-playbook' ) } (max. ${ MAX_BODY_LENGTH })`;
+			errors.body = `${ i18n.bodyTooLong || __( 'Content too long', 'recruiting-playbook' ) } (max. ${ MAX_BODY_LENGTH })`;
 		}
 
 		setValidationErrors( errors );
@@ -168,7 +168,7 @@ export function EmailComposer( {
 	}, [ formData, i18n ] );
 
 	/**
-	 * E-Mail senden
+	 * Send email
 	 */
 	const handleSend = useCallback( () => {
 		if ( ! validate() ) {
@@ -184,7 +184,7 @@ export function EmailComposer( {
 			send_immediately: true,
 		};
 
-		// Nur signature_id senden wenn explizit gewählt (sonst nutzt Backend Firmen-Signatur)
+		// Only send signature_id if explicitly chosen (otherwise backend uses company signature)
 		if ( selectedSignature ) {
 			emailData.signature_id = parseInt( selectedSignature, 10 );
 		}
@@ -205,21 +205,21 @@ export function EmailComposer( {
 			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-						<CardTitle>{ i18n.composeEmail || __( 'E-Mail verfassen', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ i18n.composeEmail || __( 'Compose Email', 'recruiting-playbook' ) }</CardTitle>
 						<div style={ { display: 'flex', gap: '0.5rem' } }>
 							<Button
 								variant={ activeTab === 'compose' ? 'default' : 'outline' }
 								size="sm"
 								onClick={ () => setActiveTab( 'compose' ) }
 							>
-								{ i18n.compose || __( 'Verfassen', 'recruiting-playbook' ) }
+								{ i18n.compose || __( 'Compose', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								variant={ activeTab === 'preview' ? 'default' : 'outline' }
 								size="sm"
 								onClick={ () => setActiveTab( 'preview' ) }
 							>
-								{ i18n.preview || __( 'Vorschau', 'recruiting-playbook' ) }
+								{ i18n.preview || __( 'Preview', 'recruiting-playbook' ) }
 							</Button>
 						</div>
 					</div>
@@ -229,7 +229,7 @@ export function EmailComposer( {
 					{ activeTab === 'compose' ? (
 						<div style={ { display: 'grid', gridTemplateColumns: '1fr 280px', gap: '1.5rem' } }>
 							<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
-								{ /* Template und Signatur in einer Zeile */ }
+								{ /* Template and signature in one row */ }
 								<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 									{ /* Template */ }
 									<div>
@@ -239,36 +239,36 @@ export function EmailComposer( {
 											value={ selectedTemplate }
 											onChange={ ( e ) => handleTemplateSelect( e.target.value ) }
 										>
-											<option value="">{ i18n.selectTemplate || __( '-- Template auswählen --', 'recruiting-playbook' ) }</option>
+											<option value="">{ i18n.selectTemplate || __( '-- Select template --', 'recruiting-playbook' ) }</option>
 											{ templates.map( ( t ) => (
 												<option key={ t.id } value={ String( t.id ) }>{ t.name }</option>
 											) ) }
 										</Select>
 									</div>
 
-									{ /* Signatur */ }
+									{ /* Signature */ }
 									<div>
 										<Label htmlFor="signature">
-											{ i18n.signature || __( 'Signatur', 'recruiting-playbook' ) }
+											{ i18n.signature || __( 'Signature', 'recruiting-playbook' ) }
 										</Label>
 										<Select
 											id="signature"
 											value={ selectedSignature }
 											onChange={ ( e ) => setSelectedSignature( e.target.value ) }
 										>
-											<option value="">{ i18n.companySignature || __( 'Firmen-Signatur (Standard)', 'recruiting-playbook' ) }</option>
+											<option value="">{ i18n.companySignature || __( 'Company Signature (Default)', 'recruiting-playbook' ) }</option>
 											{ signatures.map( ( s ) => (
 												<option key={ s.id } value={ String( s.id ) }>
-													{ s.name }{ s.is_default ? ` (${ i18n.default || 'Standard' })` : '' }
+													{ s.name }{ s.is_default ? ` (${ i18n.default || 'Default' })` : '' }
 												</option>
 											) ) }
 										</Select>
 									</div>
 								</div>
 
-								{ /* Empfänger */ }
+								{ /* Recipient */ }
 								<div>
-									<Label htmlFor="recipient">{ i18n.recipient || __( 'Empfänger', 'recruiting-playbook' ) }</Label>
+									<Label htmlFor="recipient">{ i18n.recipient || __( 'Recipient', 'recruiting-playbook' ) }</Label>
 									<Input
 										id="recipient"
 										type="email"
@@ -283,9 +283,9 @@ export function EmailComposer( {
 									) }
 								</div>
 
-								{ /* Betreff */ }
+								{ /* Subject */ }
 								<div>
-									<Label htmlFor="subject">{ i18n.subject || __( 'Betreff', 'recruiting-playbook' ) }</Label>
+									<Label htmlFor="subject">{ i18n.subject || __( 'Subject', 'recruiting-playbook' ) }</Label>
 									<Input
 										id="subject"
 										type="text"
@@ -300,13 +300,13 @@ export function EmailComposer( {
 									) }
 								</div>
 
-								{ /* Nachricht - WYSIWYG Editor */ }
+								{ /* Message - WYSIWYG Editor */ }
 								<div>
-									<Label htmlFor="body">{ i18n.message || __( 'Nachricht', 'recruiting-playbook' ) }</Label>
+									<Label htmlFor="body">{ i18n.message || __( 'Message', 'recruiting-playbook' ) }</Label>
 									<RichTextEditor
 										value={ formData.body }
 										onChange={ ( value ) => updateField( 'body', value ) }
-										placeholder={ i18n.messagePlaceholder || __( 'Nachricht eingeben...', 'recruiting-playbook' ) }
+										placeholder={ i18n.messagePlaceholder || __( 'Enter message...', 'recruiting-playbook' ) }
 										style={ validationErrors.body ? { borderColor: '#d63638' } : {} }
 									/>
 									{ validationErrors.body && (
@@ -317,7 +317,7 @@ export function EmailComposer( {
 								</div>
 							</div>
 
-							{ /* Sidebar mit Platzhaltern */ }
+							{ /* Sidebar with placeholders */ }
 							<PlaceholderPicker placeholders={ placeholders } />
 						</div>
 					) : (
@@ -328,19 +328,19 @@ export function EmailComposer( {
 						/>
 					) }
 
-					{ /* Aktionen */ }
+					{ /* Actions */ }
 					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' } }>
 						<Button variant="outline" onClick={ onCancel } disabled={ sending }>
-							{ i18n.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ i18n.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button onClick={ handleSend } disabled={ sending }>
 							{ sending ? (
 								<>
 									<Spinner size="sm" style={ { marginRight: '0.5rem' } } />
-									{ i18n.sending || __( 'Senden...', 'recruiting-playbook' ) }
+									{ i18n.sending || __( 'Sending...', 'recruiting-playbook' ) }
 								</>
 							) : (
-								i18n.send || __( 'Senden', 'recruiting-playbook' )
+								i18n.send || __( 'Send', 'recruiting-playbook' )
 							) }
 						</Button>
 					</div>

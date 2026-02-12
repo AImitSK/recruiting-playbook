@@ -97,7 +97,7 @@ export default function FieldEditorModal( {
 			if ( success ) {
 				onClose();
 			} else {
-				setError( i18n?.saveError || __( 'Fehler beim Speichern', 'recruiting-playbook' ) );
+				setError( i18n?.saveError || __( 'Error saving', 'recruiting-playbook' ) );
 			}
 		} catch ( err ) {
 			setError( err.message );
@@ -184,7 +184,7 @@ export default function FieldEditorModal( {
 					} }
 				>
 					<h2 style={ { margin: 0, fontSize: '1.125rem', fontWeight: 600 } }>
-						{ i18n?.editField || __( 'Feld bearbeiten', 'recruiting-playbook' ) }
+						{ i18n?.editField || __( 'Edit Field', 'recruiting-playbook' ) }
 						{ field.label && (
 							<span style={ { fontWeight: 400, color: '#6b7280' } }>
 								: { field.label }
@@ -194,7 +194,7 @@ export default function FieldEditorModal( {
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						{ hasChanges && (
 							<span style={ { fontSize: '0.75rem', color: '#d97706' } }>
-								{ i18n?.unsavedChanges || __( 'Ungespeichert', 'recruiting-playbook' ) }
+								{ i18n?.unsavedChanges || __( 'Unsaved', 'recruiting-playbook' ) }
 							</span>
 						) }
 						{ isSaving && <Spinner size="small" /> }
@@ -229,11 +229,11 @@ export default function FieldEditorModal( {
 							} }
 						>
 							<TabsTrigger value="general">
-								{ i18n?.general || __( 'Allgemein', 'recruiting-playbook' ) }
+								{ i18n?.general || __( 'General', 'recruiting-playbook' ) }
 							</TabsTrigger>
 							{ hasValidation && (
 								<TabsTrigger value="validation">
-									{ i18n?.validation || __( 'Validierung', 'recruiting-playbook' ) }
+									{ i18n?.validation || __( 'Validation', 'recruiting-playbook' ) }
 								</TabsTrigger>
 							) }
 						</TabsList>
@@ -243,16 +243,16 @@ export default function FieldEditorModal( {
 							{ isHtmlField ? (
 								<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 									<Label>
-										{ __( 'Inhalt', 'recruiting-playbook' ) }
+										{ __( 'Content', 'recruiting-playbook' ) }
 									</Label>
 									<RichTextEditor
 										value={ localField.settings?.content || '' }
 										onChange={ ( content ) => updateSettings( 'content', content ) }
-										placeholder={ __( 'HTML-Inhalt eingeben...', 'recruiting-playbook' ) }
+										placeholder={ __( 'Enter HTML content...', 'recruiting-playbook' ) }
 										minHeight="150px"
 									/>
 									<p style={ { fontSize: '0.75rem', color: '#6b7280', margin: 0 } }>
-										{ __( 'Formatierter Text wird im Formular angezeigt (z.B. Hinweise, Erklärungen).', 'recruiting-playbook' ) }
+										{ __( 'Formatted text will be displayed in the form (e.g. notes, explanations).', 'recruiting-playbook' ) }
 									</p>
 								</div>
 							) : (
@@ -260,13 +260,13 @@ export default function FieldEditorModal( {
 									{ /* Label */ }
 									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 										<Label htmlFor="label">
-											{ i18n?.fieldLabel || __( 'Bezeichnung', 'recruiting-playbook' ) }
+											{ i18n?.fieldLabel || __( 'Label', 'recruiting-playbook' ) }
 										</Label>
 										<Input
 											id="label"
 											value={ localField.label || '' }
 											onChange={ ( e ) => updateLocalField( { label: e.target.value } ) }
-											placeholder={ i18n?.labelPlaceholder || __( 'Feld-Bezeichnung', 'recruiting-playbook' ) }
+											placeholder={ i18n?.labelPlaceholder || __( 'Field label', 'recruiting-playbook' ) }
 										/>
 									</div>
 
@@ -274,13 +274,13 @@ export default function FieldEditorModal( {
 									{ [ 'text', 'textarea', 'email', 'phone', 'number', 'url' ].includes( fieldType ) && (
 										<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 											<Label htmlFor="placeholder">
-												{ i18n?.fieldPlaceholder || __( 'Platzhalter', 'recruiting-playbook' ) }
+												{ i18n?.fieldPlaceholder || __( 'Placeholder', 'recruiting-playbook' ) }
 											</Label>
 											<Input
 												id="placeholder"
 												value={ localField.placeholder || '' }
 												onChange={ ( e ) => updateLocalField( { placeholder: e.target.value } ) }
-												placeholder={ i18n?.placeholderHelp || __( 'Platzhaltertext...', 'recruiting-playbook' ) }
+												placeholder={ i18n?.placeholderHelp || __( 'Placeholder text...', 'recruiting-playbook' ) }
 											/>
 										</div>
 									) }
@@ -288,29 +288,29 @@ export default function FieldEditorModal( {
 									{ /* Description */ }
 									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
 										<Label htmlFor="description">
-											{ i18n?.fieldDescription || __( 'Beschreibung', 'recruiting-playbook' ) }
+											{ i18n?.fieldDescription || __( 'Description', 'recruiting-playbook' ) }
 										</Label>
 										<Textarea
 											id="description"
 											value={ localField.description || '' }
 											onChange={ ( e ) => updateLocalField( { description: e.target.value } ) }
-											placeholder={ i18n?.descriptionHelp || __( 'Hilfetext für das Feld', 'recruiting-playbook' ) }
+											placeholder={ i18n?.descriptionHelp || __( 'Help text for the field', 'recruiting-playbook' ) }
 											rows={ 2 }
 										/>
 									</div>
 
 									{ /* Width */ }
 									<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem' } }>
-										<Label>{ i18n?.fieldWidth || __( 'Breite', 'recruiting-playbook' ) }</Label>
+										<Label>{ i18n?.fieldWidth || __( 'Width', 'recruiting-playbook' ) }</Label>
 										<Select
 											value={ localField.settings?.width || 'full' }
 											onChange={ ( e ) => updateSettings( 'width', e.target.value ) }
 										>
 											<SelectOption value="full">
-												{ i18n?.widthFull || __( 'Volle Breite', 'recruiting-playbook' ) }
+												{ i18n?.widthFull || __( 'Full width', 'recruiting-playbook' ) }
 											</SelectOption>
 											<SelectOption value="half">
-												{ i18n?.widthHalf || __( 'Halbe Breite', 'recruiting-playbook' ) }
+												{ i18n?.widthHalf || __( 'Half width', 'recruiting-playbook' ) }
 											</SelectOption>
 										</Select>
 									</div>
@@ -341,7 +341,7 @@ export default function FieldEditorModal( {
 											onCheckedChange={ ( checked ) => updateLocalField( { is_required: checked } ) }
 										/>
 										<Label htmlFor="is_required" style={ { cursor: 'pointer' } }>
-											{ i18n?.fieldRequired || __( 'Pflichtfeld', 'recruiting-playbook' ) }
+											{ i18n?.fieldRequired || __( 'Required field', 'recruiting-playbook' ) }
 										</Label>
 									</div>
 								</>
@@ -377,7 +377,7 @@ export default function FieldEditorModal( {
 							{ confirmDelete ? (
 								<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 									<span style={ { fontSize: '0.875rem', color: '#dc2626' } }>
-										{ i18n?.confirmDelete || __( 'Wirklich löschen?', 'recruiting-playbook' ) }
+										{ i18n?.confirmDelete || __( 'Really delete?', 'recruiting-playbook' ) }
 									</span>
 									<Button
 										variant="destructive"
@@ -385,14 +385,14 @@ export default function FieldEditorModal( {
 										onClick={ handleDelete }
 										disabled={ isSaving }
 									>
-										{ i18n?.yes || __( 'Ja', 'recruiting-playbook' ) }
+										{ i18n?.yes || __( 'Yes', 'recruiting-playbook' ) }
 									</Button>
 									<Button
 										variant="outline"
 										size="sm"
 										onClick={ () => setConfirmDelete( false ) }
 									>
-										{ i18n?.no || __( 'Nein', 'recruiting-playbook' ) }
+										{ i18n?.no || __( 'No', 'recruiting-playbook' ) }
 									</Button>
 								</div>
 							) : (
@@ -403,7 +403,7 @@ export default function FieldEditorModal( {
 									style={ { color: '#dc2626' } }
 								>
 									<Trash2 style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-									{ i18n?.delete || __( 'Löschen', 'recruiting-playbook' ) }
+									{ i18n?.delete || __( 'Delete', 'recruiting-playbook' ) }
 								</Button>
 							) }
 						</>
@@ -413,15 +413,15 @@ export default function FieldEditorModal( {
 
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<Button variant="outline" onClick={ onClose }>
-							{ i18n?.cancel || __( 'Abbrechen', 'recruiting-playbook' ) }
+							{ i18n?.cancel || __( 'Cancel', 'recruiting-playbook' ) }
 						</Button>
 						<Button
 							onClick={ handleSave }
 							disabled={ ! hasChanges || isSaving }
 						>
 							{ isSaving
-								? ( i18n?.saving || __( 'Speichern...', 'recruiting-playbook' ) )
-								: ( i18n?.save || __( 'Speichern', 'recruiting-playbook' ) )
+								? ( i18n?.saving || __( 'Saving...', 'recruiting-playbook' ) )
+								: ( i18n?.save || __( 'Save', 'recruiting-playbook' ) )
 							}
 						</Button>
 					</div>

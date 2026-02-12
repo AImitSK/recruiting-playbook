@@ -39,27 +39,27 @@ class SetupWizard {
 	public function __construct() {
 		$this->steps = [
 			'welcome' => [
-				'name'    => __( 'Willkommen', 'recruiting-playbook' ),
+				'name'    => __( 'Welcome', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderWelcome' ],
 				'save'    => null,
 			],
 			'company' => [
-				'name'    => __( 'Firmendaten', 'recruiting-playbook' ),
+				'name'    => __( 'Company Details', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderCompany' ],
 				'save'    => [ $this, 'saveCompany' ],
 			],
 			'email' => [
-				'name'    => __( 'E-Mail', 'recruiting-playbook' ),
+				'name'    => __( 'Email', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderEmail' ],
 				'save'    => [ $this, 'saveEmail' ],
 			],
 			'first_job' => [
-				'name'    => __( 'Erste Stelle', 'recruiting-playbook' ),
+				'name'    => __( 'First Job', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderFirstJob' ],
 				'save'    => [ $this, 'saveFirstJob' ],
 			],
 			'complete' => [
-				'name'    => __( 'Fertig', 'recruiting-playbook' ),
+				'name'    => __( 'Complete', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderComplete' ],
 				'save'    => null,
 			],
@@ -134,8 +134,8 @@ class SetupWizard {
 	public function registerPage(): void {
 		add_submenu_page(
 			'', // Versteckt (leerer String für PHP 8.1+ Kompatibilität).
-			__( 'Setup-Wizard', 'recruiting-playbook' ),
-			__( 'Setup-Wizard', 'recruiting-playbook' ),
+			__( 'Setup Wizard', 'recruiting-playbook' ),
+			__( 'Setup Wizard', 'recruiting-playbook' ),
 			'manage_options',
 			'rp-setup-wizard',
 			[ $this, 'render' ]
@@ -188,12 +188,12 @@ class SetupWizard {
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( 'rp_wizard_nonce' ),
 				'i18n'    => [
-					'saving'       => __( 'Speichern...', 'recruiting-playbook' ),
-					'saved'        => __( 'Gespeichert!', 'recruiting-playbook' ),
-					'error'        => __( 'Ein Fehler ist aufgetreten.', 'recruiting-playbook' ),
-					'sendingEmail' => __( 'E-Mail wird gesendet...', 'recruiting-playbook' ),
-					'emailSent'    => __( 'Test-E-Mail wurde gesendet!', 'recruiting-playbook' ),
-					'emailFailed'  => __( 'E-Mail konnte nicht gesendet werden.', 'recruiting-playbook' ),
+					'saving'       => __( 'Saving...', 'recruiting-playbook' ),
+					'saved'        => __( 'Saved!', 'recruiting-playbook' ),
+					'error'        => __( 'An error occurred.', 'recruiting-playbook' ),
+					'sendingEmail' => __( 'Sending email...', 'recruiting-playbook' ),
+					'emailSent'    => __( 'Test email sent!', 'recruiting-playbook' ),
+					'emailFailed'  => __( 'Email could not be sent.', 'recruiting-playbook' ),
 				],
 			]
 		);
@@ -232,35 +232,35 @@ class SetupWizard {
 	public function renderWelcome(): void {
 		?>
 		<div class="rp-wizard-step">
-			<h2><?php esc_html_e( 'Willkommen bei Recruiting Playbook!', 'recruiting-playbook' ); ?></h2>
+			<h2><?php esc_html_e( 'Welcome to Recruiting Playbook!', 'recruiting-playbook' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Dieser Assistent hilft Ihnen, das Plugin in wenigen Minuten einzurichten.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'This wizard will help you set up the plugin in just a few minutes.', 'recruiting-playbook' ); ?>
 			</p>
 
 			<div class="rp-wizard-features">
 				<div class="feature">
 					<span class="dashicons dashicons-businessman"></span>
-					<h4><?php esc_html_e( 'Stellenanzeigen verwalten', 'recruiting-playbook' ); ?></h4>
-					<p><?php esc_html_e( 'Erstellen und verwalten Sie Ihre Stellenanzeigen direkt in WordPress.', 'recruiting-playbook' ); ?></p>
+					<h4><?php esc_html_e( 'Manage job listings', 'recruiting-playbook' ); ?></h4>
+					<p><?php esc_html_e( 'Create and manage your job listings directly in WordPress.', 'recruiting-playbook' ); ?></p>
 				</div>
 				<div class="feature">
 					<span class="dashicons dashicons-email-alt"></span>
-					<h4><?php esc_html_e( 'Bewerbungen empfangen', 'recruiting-playbook' ); ?></h4>
-					<p><?php esc_html_e( 'Bewerber können sich direkt auf Ihrer Website bewerben.', 'recruiting-playbook' ); ?></p>
+					<h4><?php esc_html_e( 'Receive applications', 'recruiting-playbook' ); ?></h4>
+					<p><?php esc_html_e( 'Candidates can apply directly on your website.', 'recruiting-playbook' ); ?></p>
 				</div>
 				<div class="feature">
 					<span class="dashicons dashicons-chart-bar"></span>
-					<h4><?php esc_html_e( 'Bewerbungen verwalten', 'recruiting-playbook' ); ?></h4>
-					<p><?php esc_html_e( 'Behalten Sie den Überblick über alle Bewerbungen.', 'recruiting-playbook' ); ?></p>
+					<h4><?php esc_html_e( 'Manage applications', 'recruiting-playbook' ); ?></h4>
+					<p><?php esc_html_e( 'Keep track of all applications.', 'recruiting-playbook' ); ?></p>
 				</div>
 			</div>
 
 			<p class="rp-wizard-actions">
 				<a href="<?php echo esc_url( $this->getStepUrl( 'company' ) ); ?>" class="button button-primary button-hero">
-					<?php esc_html_e( 'Los geht\'s!', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Let\'s go!', 'recruiting-playbook' ); ?>
 				</a>
 				<button type="button" class="button button-link rp-skip-wizard">
-					<?php esc_html_e( 'Später einrichten', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Set up later', 'recruiting-playbook' ); ?>
 				</button>
 			</p>
 		</div>
@@ -274,16 +274,16 @@ class SetupWizard {
 		$settings = get_option( 'rp_settings', [] );
 		?>
 		<div class="rp-wizard-step">
-			<h2><?php esc_html_e( 'Firmendaten', 'recruiting-playbook' ); ?></h2>
+			<h2><?php esc_html_e( 'Company Details', 'recruiting-playbook' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Diese Informationen werden in E-Mails und im Google for Jobs Schema verwendet.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'This information will be used in emails and in the Google for Jobs schema.', 'recruiting-playbook' ); ?>
 			</p>
 
 			<form id="rp-wizard-company-form" class="rp-wizard-form">
 				<table class="form-table">
 					<tr>
 						<th scope="row">
-							<label for="company_name"><?php esc_html_e( 'Firmenname', 'recruiting-playbook' ); ?> *</label>
+							<label for="company_name"><?php esc_html_e( 'Company Name', 'recruiting-playbook' ); ?> *</label>
 						</th>
 						<td>
 							<input type="text"
@@ -296,7 +296,7 @@ class SetupWizard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="company_logo"><?php esc_html_e( 'Firmenlogo URL', 'recruiting-playbook' ); ?></label>
+							<label for="company_logo"><?php esc_html_e( 'Company Logo URL', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="url"
@@ -305,13 +305,13 @@ class SetupWizard {
 								   value="<?php echo esc_url( $settings['company_logo'] ?? '' ); ?>"
 								   class="regular-text">
 							<p class="description">
-								<?php esc_html_e( 'URL zu Ihrem Firmenlogo (empfohlen fuer Google for Jobs).', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'URL to your company logo (recommended for Google for Jobs).', 'recruiting-playbook' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="company_street"><?php esc_html_e( 'Strasse', 'recruiting-playbook' ); ?></label>
+							<label for="company_street"><?php esc_html_e( 'Street', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
@@ -323,7 +323,7 @@ class SetupWizard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="company_zip"><?php esc_html_e( 'PLZ', 'recruiting-playbook' ); ?></label>
+							<label for="company_zip"><?php esc_html_e( 'Postal Code', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
@@ -335,7 +335,7 @@ class SetupWizard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="company_city"><?php esc_html_e( 'Stadt', 'recruiting-playbook' ); ?></label>
+							<label for="company_city"><?php esc_html_e( 'City', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
@@ -347,7 +347,7 @@ class SetupWizard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="company_country"><?php esc_html_e( 'Land', 'recruiting-playbook' ); ?></label>
+							<label for="company_country"><?php esc_html_e( 'Country', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<select id="company_country" name="company_country">
@@ -359,7 +359,7 @@ class SetupWizard {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="privacy_policy_url"><?php esc_html_e( 'Datenschutz-URL', 'recruiting-playbook' ); ?> *</label>
+							<label for="privacy_policy_url"><?php esc_html_e( 'Privacy Policy URL', 'recruiting-playbook' ); ?> *</label>
 						</th>
 						<td>
 							<input type="url"
@@ -369,7 +369,7 @@ class SetupWizard {
 								   class="regular-text"
 								   required>
 							<p class="description">
-								<?php esc_html_e( 'Link zur Datenschutzerklaerung fuer das Bewerbungsformular.', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Link to the privacy policy for the application form.', 'recruiting-playbook' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -380,10 +380,10 @@ class SetupWizard {
 
 				<p class="rp-wizard-actions">
 					<a href="<?php echo esc_url( $this->getStepUrl( 'welcome' ) ); ?>" class="button">
-						<?php esc_html_e( 'Zurueck', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
 					</a>
 					<button type="submit" class="button button-primary">
-						<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Continue', 'recruiting-playbook' ); ?>
 					</button>
 				</p>
 			</form>
@@ -421,26 +421,26 @@ class SetupWizard {
 		$smtp_status = EmailService::checkSmtpConfig();
 		?>
 		<div class="rp-wizard-step">
-			<h2><?php esc_html_e( 'E-Mail-Einstellungen', 'recruiting-playbook' ); ?></h2>
+			<h2><?php esc_html_e( 'Email Settings', 'recruiting-playbook' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Konfigurieren Sie, wie E-Mail-Benachrichtigungen versendet werden.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Configure how email notifications will be sent.', 'recruiting-playbook' ); ?>
 			</p>
 
 			<!-- SMTP-Status -->
 			<div class="rp-smtp-status <?php echo $smtp_status['configured'] ? 'configured' : 'not-configured'; ?>">
 				<?php if ( $smtp_status['configured'] ) : ?>
 					<span class="dashicons dashicons-yes-alt"></span>
-					<strong><?php esc_html_e( 'SMTP konfiguriert', 'recruiting-playbook' ); ?></strong>
+					<strong><?php esc_html_e( 'SMTP configured', 'recruiting-playbook' ); ?></strong>
 					<p><?php echo esc_html( $smtp_status['message'] ); ?></p>
 				<?php else : ?>
 					<span class="dashicons dashicons-warning"></span>
-					<strong><?php esc_html_e( 'Kein SMTP konfiguriert', 'recruiting-playbook' ); ?></strong>
+					<strong><?php esc_html_e( 'No SMTP configured', 'recruiting-playbook' ); ?></strong>
 					<p><?php echo esc_html( $smtp_status['message'] ); ?></p>
 					<p>
 						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=smtp&tab=search&type=term' ) ); ?>"
 						   target="_blank"
 						   class="button button-secondary">
-							<?php esc_html_e( 'SMTP-Plugin installieren', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Install SMTP plugin', 'recruiting-playbook' ); ?>
 						</a>
 					</p>
 				<?php endif; ?>
@@ -450,7 +450,7 @@ class SetupWizard {
 				<table class="form-table">
 					<tr>
 						<th scope="row">
-							<label for="notification_email"><?php esc_html_e( 'Benachrichtigungs-E-Mail', 'recruiting-playbook' ); ?> *</label>
+							<label for="notification_email"><?php esc_html_e( 'Notification Email', 'recruiting-playbook' ); ?> *</label>
 						</th>
 						<td>
 							<input type="email"
@@ -460,13 +460,13 @@ class SetupWizard {
 								   class="regular-text"
 								   required>
 							<p class="description">
-								<?php esc_html_e( 'An diese Adresse werden Benachrichtigungen ueber neue Bewerbungen gesendet.', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Notifications about new applications will be sent to this address.', 'recruiting-playbook' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="sender_name"><?php esc_html_e( 'Absendername', 'recruiting-playbook' ); ?></label>
+							<label for="sender_name"><?php esc_html_e( 'Sender Name', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
@@ -480,15 +480,15 @@ class SetupWizard {
 
 				<!-- Test-E-Mail -->
 				<div class="rp-test-email-section">
-					<h3><?php esc_html_e( 'Test-E-Mail senden', 'recruiting-playbook' ); ?></h3>
+					<h3><?php esc_html_e( 'Send test email', 'recruiting-playbook' ); ?></h3>
 					<p>
 						<input type="email"
 							   id="test_email_address"
-							   placeholder="<?php esc_attr_e( 'E-Mail-Adresse', 'recruiting-playbook' ); ?>"
+							   placeholder="<?php esc_attr_e( 'Email address', 'recruiting-playbook' ); ?>"
 							   value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"
 							   class="regular-text">
 						<button type="button" id="rp-send-test-email" class="button">
-							<?php esc_html_e( 'Test senden', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Send test', 'recruiting-playbook' ); ?>
 						</button>
 					</p>
 					<div id="rp-test-email-result"></div>
@@ -499,10 +499,10 @@ class SetupWizard {
 
 				<p class="rp-wizard-actions">
 					<a href="<?php echo esc_url( $this->getStepUrl( 'company' ) ); ?>" class="button">
-						<?php esc_html_e( 'Zurueck', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
 					</a>
 					<button type="submit" class="button button-primary">
-						<?php esc_html_e( 'Weiter', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Continue', 'recruiting-playbook' ); ?>
 					</button>
 				</p>
 			</form>
@@ -533,47 +533,47 @@ class SetupWizard {
 	public function renderFirstJob(): void {
 		?>
 		<div class="rp-wizard-step">
-			<h2><?php esc_html_e( 'Erste Stelle erstellen', 'recruiting-playbook' ); ?></h2>
+			<h2><?php esc_html_e( 'Create first job', 'recruiting-playbook' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Erstellen Sie jetzt Ihre erste Stellenanzeige oder ueberspringen Sie diesen Schritt.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Create your first job listing now or skip this step.', 'recruiting-playbook' ); ?>
 			</p>
 
 			<form id="rp-wizard-job-form" class="rp-wizard-form">
 				<table class="form-table">
 					<tr>
 						<th scope="row">
-							<label for="job_title"><?php esc_html_e( 'Stellentitel', 'recruiting-playbook' ); ?></label>
+							<label for="job_title"><?php esc_html_e( 'Job Title', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
 								   id="job_title"
 								   name="job_title"
-								   placeholder="<?php esc_attr_e( 'z.B. Pflegefachkraft (m/w/d)', 'recruiting-playbook' ); ?>"
+								   placeholder="<?php esc_attr_e( 'e.g. Senior Developer (m/f/d)', 'recruiting-playbook' ); ?>"
 								   class="regular-text">
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="job_location"><?php esc_html_e( 'Standort', 'recruiting-playbook' ); ?></label>
+							<label for="job_location"><?php esc_html_e( 'Location', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<input type="text"
 								   id="job_location"
 								   name="job_location"
-								   placeholder="<?php esc_attr_e( 'z.B. Berlin', 'recruiting-playbook' ); ?>"
+								   placeholder="<?php esc_attr_e( 'e.g. Berlin', 'recruiting-playbook' ); ?>"
 								   class="regular-text">
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="job_type"><?php esc_html_e( 'Beschaeftigungsart', 'recruiting-playbook' ); ?></label>
+							<label for="job_type"><?php esc_html_e( 'Employment Type', 'recruiting-playbook' ); ?></label>
 						</th>
 						<td>
 							<select id="job_type" name="job_type">
-								<option value="FULL_TIME"><?php esc_html_e( 'Vollzeit', 'recruiting-playbook' ); ?></option>
-								<option value="PART_TIME"><?php esc_html_e( 'Teilzeit', 'recruiting-playbook' ); ?></option>
-								<option value="TEMPORARY"><?php esc_html_e( 'Befristet', 'recruiting-playbook' ); ?></option>
-								<option value="INTERN"><?php esc_html_e( 'Praktikum', 'recruiting-playbook' ); ?></option>
+								<option value="FULL_TIME"><?php esc_html_e( 'Full-time', 'recruiting-playbook' ); ?></option>
+								<option value="PART_TIME"><?php esc_html_e( 'Part-time', 'recruiting-playbook' ); ?></option>
+								<option value="TEMPORARY"><?php esc_html_e( 'Temporary', 'recruiting-playbook' ); ?></option>
+								<option value="INTERN"><?php esc_html_e( 'Internship', 'recruiting-playbook' ); ?></option>
 							</select>
 						</td>
 					</tr>
@@ -585,13 +585,13 @@ class SetupWizard {
 
 				<p class="rp-wizard-actions">
 					<a href="<?php echo esc_url( $this->getStepUrl( 'email' ) ); ?>" class="button">
-						<?php esc_html_e( 'Zurueck', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
 					</a>
 					<button type="button" class="button" id="rp-skip-job">
-						<?php esc_html_e( 'Ueberspringen', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Skip', 'recruiting-playbook' ); ?>
 					</button>
 					<button type="submit" class="button button-primary">
-						<?php esc_html_e( 'Stelle erstellen & Weiter', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Create job & Continue', 'recruiting-playbook' ); ?>
 					</button>
 				</p>
 			</form>
@@ -663,61 +663,61 @@ class SetupWizard {
 		?>
 		<div class="rp-wizard-step rp-wizard-complete">
 			<span class="dashicons dashicons-yes-alt"></span>
-			<h2><?php esc_html_e( 'Einrichtung abgeschlossen!', 'recruiting-playbook' ); ?></h2>
+			<h2><?php esc_html_e( 'Setup complete!', 'recruiting-playbook' ); ?></h2>
 			<p class="description">
-				<?php esc_html_e( 'Recruiting Playbook ist jetzt einsatzbereit.', 'recruiting-playbook' ); ?>
+				<?php esc_html_e( 'Recruiting Playbook is now ready to use.', 'recruiting-playbook' ); ?>
 			</p>
 
 			<div class="rp-wizard-next-steps">
-				<h3><?php esc_html_e( 'Naechste Schritte:', 'recruiting-playbook' ); ?></h3>
+				<h3><?php esc_html_e( 'Next steps:', 'recruiting-playbook' ); ?></h3>
 				<ul>
 					<?php if ( $created_job_id ) : ?>
 						<li>
 							<a href="<?php echo esc_url( get_edit_post_link( $created_job_id ) ); ?>">
-								<?php esc_html_e( 'Ihre erste Stelle vervollstaendigen', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Complete your first job', 'recruiting-playbook' ); ?>
 							</a>
 						</li>
 					<?php else : ?>
 						<li>
 							<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=job_listing' ) ); ?>">
-								<?php esc_html_e( 'Erste Stelle erstellen', 'recruiting-playbook' ); ?>
+								<?php esc_html_e( 'Create first job', 'recruiting-playbook' ); ?>
 							</a>
 						</li>
 					<?php endif; ?>
 					<li>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-settings' ) ); ?>">
-							<?php esc_html_e( 'Weitere Einstellungen konfigurieren', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Configure additional settings', 'recruiting-playbook' ); ?>
 						</a>
 					</li>
 					<li>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>">
-							<?php esc_html_e( 'Zum Dashboard', 'recruiting-playbook' ); ?>
+							<?php esc_html_e( 'Go to Dashboard', 'recruiting-playbook' ); ?>
 						</a>
 					</li>
 				</ul>
 			</div>
 
 			<div class="rp-wizard-shortcodes">
-				<h3><?php esc_html_e( 'Shortcodes fuer Ihre Seiten:', 'recruiting-playbook' ); ?></h3>
+				<h3><?php esc_html_e( 'Shortcodes for your pages:', 'recruiting-playbook' ); ?></h3>
 				<table class="widefat striped">
 					<tr>
 						<td><code>[rp_jobs]</code></td>
-						<td><?php esc_html_e( 'Zeigt alle Stellenanzeigen an', 'recruiting-playbook' ); ?></td>
+						<td><?php esc_html_e( 'Displays all job listings', 'recruiting-playbook' ); ?></td>
 					</tr>
 					<tr>
 						<td><code>[rp_job_search]</code></td>
-						<td><?php esc_html_e( 'Suchformular fuer Stellen', 'recruiting-playbook' ); ?></td>
+						<td><?php esc_html_e( 'Search form for jobs', 'recruiting-playbook' ); ?></td>
 					</tr>
 					<tr>
 						<td><code>[rp_application_form]</code></td>
-						<td><?php esc_html_e( 'Bewerbungsformular (auf Stellenseite)', 'recruiting-playbook' ); ?></td>
+						<td><?php esc_html_e( 'Application form (on job page)', 'recruiting-playbook' ); ?></td>
 					</tr>
 				</table>
 			</div>
 
 			<p class="rp-wizard-actions">
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=recruiting-playbook' ) ); ?>" class="button button-primary button-hero">
-					<?php esc_html_e( 'Zum Dashboard', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Go to Dashboard', 'recruiting-playbook' ); ?>
 				</a>
 			</p>
 		</div>
@@ -747,14 +747,14 @@ class SetupWizard {
 		check_ajax_referer( 'rp_wizard_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Keine Berechtigung.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No permission.', 'recruiting-playbook' ) ] );
 		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$step = isset( $_POST['step'] ) ? sanitize_key( wp_unslash( $_POST['step'] ) ) : '';
 
 		if ( ! isset( $this->steps[ $step ] ) || ! is_callable( $this->steps[ $step ]['save'] ) ) {
-			wp_send_json_error( [ 'message' => __( 'Ungueltiger Schritt.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Invalid step.', 'recruiting-playbook' ) ] );
 		}
 
 		// Sanitize POST data before passing to callback.
@@ -783,7 +783,7 @@ class SetupWizard {
 		check_ajax_referer( 'rp_wizard_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Keine Berechtigung.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No permission.', 'recruiting-playbook' ) ] );
 		}
 
 		update_option( 'rp_wizard_completed', true );
@@ -800,28 +800,28 @@ class SetupWizard {
 		check_ajax_referer( 'rp_wizard_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Keine Berechtigung.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No permission.', 'recruiting-playbook' ) ] );
 		}
 
 		$email = sanitize_email( $_POST['email'] ?? '' );
 
 		if ( ! is_email( $email ) ) {
-			wp_send_json_error( [ 'message' => __( 'Ungueltige E-Mail-Adresse.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Invalid email address.', 'recruiting-playbook' ) ] );
 		}
 
-		$subject = __( 'Recruiting Playbook - Test-E-Mail', 'recruiting-playbook' );
+		$subject = __( 'Recruiting Playbook - Test Email', 'recruiting-playbook' );
 		$message = sprintf(
 			/* translators: %s: current date/time */
-			__( "Dies ist eine Test-E-Mail von Recruiting Playbook.\n\nWenn Sie diese E-Mail erhalten, funktioniert der E-Mail-Versand korrekt.\n\nGesendet am: %s", 'recruiting-playbook' ),
+			__( "This is a test email from Recruiting Playbook.\n\nIf you receive this email, email delivery is working correctly.\n\nSent at: %s", 'recruiting-playbook' ),
 			current_time( 'mysql' )
 		);
 
 		$sent = wp_mail( $email, $subject, $message );
 
 		if ( $sent ) {
-			wp_send_json_success( [ 'message' => __( 'Test-E-Mail wurde gesendet!', 'recruiting-playbook' ) ] );
+			wp_send_json_success( [ 'message' => __( 'Test email sent!', 'recruiting-playbook' ) ] );
 		} else {
-			wp_send_json_error( [ 'message' => __( 'E-Mail konnte nicht gesendet werden. Bitte pruefen Sie Ihre SMTP-Konfiguration.', 'recruiting-playbook' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Email could not be sent. Please check your SMTP configuration.', 'recruiting-playbook' ) ] );
 		}
 	}
 }

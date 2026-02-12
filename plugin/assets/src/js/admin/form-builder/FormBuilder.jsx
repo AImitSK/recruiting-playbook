@@ -93,10 +93,10 @@ export default function FormBuilder() {
 						<div style={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem 0', textAlign: 'center' } }>
 							<Lock style={ { height: '3rem', width: '3rem', color: '#9ca3af' } } />
 							<h2 style={ { fontSize: '1.25rem', fontWeight: 600, margin: 0 } }>
-								{ i18n?.noPermission || __( 'Keine Berechtigung', 'recruiting-playbook' ) }
+								{ i18n?.noPermission || __( 'No Permission', 'recruiting-playbook' ) }
 							</h2>
 							<p style={ { color: '#4b5563', margin: 0 } }>
-								{ i18n?.noPermissionText || __( 'Sie haben keine Berechtigung, den Formular-Builder zu verwenden.', 'recruiting-playbook' ) }
+								{ i18n?.noPermissionText || __( 'You do not have permission to use the Form Builder.', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					</CardContent>
@@ -228,7 +228,7 @@ export default function FormBuilder() {
 
 	// Discard handler
 	const handleDiscard = async () => {
-		if ( window.confirm( __( 'Möchten Sie alle Änderungen verwerfen?', 'recruiting-playbook' ) ) ) {
+		if ( window.confirm( __( 'Do you want to discard all changes?', 'recruiting-playbook' ) ) ) {
 			await discardDraft();
 		}
 	};
@@ -253,7 +253,7 @@ export default function FormBuilder() {
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ i18n?.pageTitle || __( 'Formular-Builder', 'recruiting-playbook' ) }
+						{ i18n?.pageTitle || __( 'Form Builder', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
@@ -263,7 +263,7 @@ export default function FormBuilder() {
 						<AlertCircle className="h-4 w-4 text-amber-600" />
 						<AlertDescription className="flex items-center justify-between">
 							<span>
-								{ i18n?.proRequired || __( 'Custom Fields sind ein Pro-Feature. System-Felder können bearbeitet werden.', 'recruiting-playbook' ) }
+								{ i18n?.proRequired || __( 'Custom Fields are a Pro feature. System fields can be edited.', 'recruiting-playbook' ) }
 							</span>
 							<Button
 								variant="outline"
@@ -271,7 +271,7 @@ export default function FormBuilder() {
 								onClick={ () => window.location.href = upgradeUrl }
 								className="ml-4"
 							>
-								{ i18n?.upgradeToPro || __( 'Auf Pro upgraden', 'recruiting-playbook' ) }
+								{ i18n?.upgradeToPro || __( 'Upgrade to Pro', 'recruiting-playbook' ) }
 							</Button>
 						</AlertDescription>
 					</Alert>
@@ -292,10 +292,10 @@ export default function FormBuilder() {
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' } }>
 						<TabsList>
 							<TabsTrigger value="form">
-								{ i18n?.tabForm || __( 'Formular', 'recruiting-playbook' ) }
+								{ i18n?.tabForm || __( 'Form', 'recruiting-playbook' ) }
 							</TabsTrigger>
 							<TabsTrigger value="preview">
-								{ i18n?.tabPreview || __( 'Vorschau', 'recruiting-playbook' ) }
+								{ i18n?.tabPreview || __( 'Preview', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						</TabsList>
 
@@ -303,7 +303,7 @@ export default function FormBuilder() {
 						<div style={ { display: 'flex', gap: '0.5rem', alignItems: 'center' } }>
 							{ isSaving && (
 								<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
-									{ __( 'Speichern...', 'recruiting-playbook' ) }
+									{ __( 'Saving...', 'recruiting-playbook' ) }
 								</span>
 							) }
 
@@ -321,7 +321,7 @@ export default function FormBuilder() {
 									onClick={ handleDiscard }
 									disabled={ isPublishing }
 								>
-									{ __( 'Verwerfen', 'recruiting-playbook' ) }
+									{ __( 'Discard', 'recruiting-playbook' ) }
 								</Button>
 							) }
 
@@ -331,8 +331,8 @@ export default function FormBuilder() {
 								size="sm"
 							>
 								{ isPublishing
-									? __( 'Veröffentlichen...', 'recruiting-playbook' )
-									: __( 'Veröffentlichen', 'recruiting-playbook' )
+									? __( 'Publishing...', 'recruiting-playbook' )
+									: __( 'Publish', 'recruiting-playbook' )
 								}
 							</Button>
 						</div>

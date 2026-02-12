@@ -54,7 +54,7 @@ class RatingService {
 		if ( ! $application ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Bewerbung nicht gefunden', 'recruiting-playbook' ),
+				__( 'Application not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -77,7 +77,7 @@ class RatingService {
 		if ( ! $rating_id ) {
 			return new WP_Error(
 				'rating_failed',
-				__( 'Bewertung konnte nicht gespeichert werden', 'recruiting-playbook' ),
+				__( 'Rating could not be saved', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -87,7 +87,7 @@ class RatingService {
 			$this->logActivity(
 				$application_id,
 				'rating_updated',
-				__( 'Bewertung geändert', 'recruiting-playbook' ),
+				__( 'Rating changed', 'recruiting-playbook' ),
 				[
 					'from'     => (int) $existing['rating'],
 					'to'       => $rating,
@@ -98,7 +98,7 @@ class RatingService {
 			$this->logActivity(
 				$application_id,
 				'rating_added',
-				__( 'Bewertung abgegeben', 'recruiting-playbook' ),
+				__( 'Rating submitted', 'recruiting-playbook' ),
 				[
 					'rating'   => $rating,
 					'category' => $category,
@@ -172,7 +172,7 @@ class RatingService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Bewertung nicht gefunden', 'recruiting-playbook' ),
+				__( 'Rating not found', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}

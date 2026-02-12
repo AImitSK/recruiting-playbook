@@ -8,9 +8,9 @@ use Elementor\Controls_Manager;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: KI-Job-Match — Elementor Widget
+ * RP: AI Job Match — Elementor Widget
  *
- * Benötigt das AI-Addon (wird vom WidgetLoader geprüft).
+ * Requires the AI addon (checked by WidgetLoader).
  *
  * @package RecruitingPlaybook
  * @since 1.3.0
@@ -22,7 +22,7 @@ class AiJobMatch extends AbstractWidget {
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'RP: KI-Job-Match', 'recruiting-playbook' );
+		return esc_html__( 'RP: AI Job Match', 'recruiting-playbook' );
 	}
 
 	public function get_icon(): string {
@@ -30,7 +30,7 @@ class AiJobMatch extends AbstractWidget {
 	}
 
 	public function get_keywords(): array {
-		return [ 'ki', 'ai', 'match', 'passe ich', 'kompatibilität' ];
+		return [ 'ai', 'match', 'job match', 'compatibility', 'fit' ];
 	}
 
 	protected function get_shortcode_name(): string {
@@ -50,7 +50,7 @@ class AiJobMatch extends AbstractWidget {
 		$this->start_controls_section(
 			'section_general',
 			[
-				'label' => esc_html__( 'Allgemein', 'recruiting-playbook' ),
+				'label' => esc_html__( 'General', 'recruiting-playbook' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -58,8 +58,8 @@ class AiJobMatch extends AbstractWidget {
 		$this->add_control(
 			'job_id',
 			[
-				'label'       => esc_html__( 'Stelle', 'recruiting-playbook' ),
-				'description' => esc_html__( 'Leer = automatisch erkennen.', 'recruiting-playbook' ),
+				'label'       => esc_html__( 'Job', 'recruiting-playbook' ),
+				'description' => esc_html__( 'Empty = auto-detect.', 'recruiting-playbook' ),
 				'type'        => Controls_Manager::SELECT,
 				'default'     => '',
 				'options'     => $this->getJobOptions(),
@@ -69,20 +69,20 @@ class AiJobMatch extends AbstractWidget {
 		$this->add_control(
 			'title',
 			[
-				'label'   => esc_html__( 'Button-Text', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Button Text', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::TEXT,
-				'default' => 'Passe ich zu diesem Job?',
+				'default' => 'Am I a fit for this job?',
 			]
 		);
 
 		$this->add_control(
 			'style',
 			[
-				'label'   => esc_html__( 'Button-Stil', 'recruiting-playbook' ),
+				'label'   => esc_html__( 'Button Style', 'recruiting-playbook' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					''        => esc_html__( 'Standard', 'recruiting-playbook' ),
+					''        => esc_html__( 'Default', 'recruiting-playbook' ),
 					'outline' => esc_html__( 'Outline', 'recruiting-playbook' ),
 				],
 			]

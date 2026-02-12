@@ -185,7 +185,7 @@ class SettingsController extends WP_REST_Controller {
 			if ( ! empty( $email ) && ! is_email( $email ) ) {
 				return new WP_Error(
 					'invalid_notification_email',
-					__( 'Ungültige Benachrichtigungs-E-Mail-Adresse.', 'recruiting-playbook' ),
+					__( 'Invalid notification email address.', 'recruiting-playbook' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -239,7 +239,7 @@ class SettingsController extends WP_REST_Controller {
 			if ( ! empty( $email ) && ! is_email( $email ) ) {
 				return new WP_Error(
 					'invalid_company_email',
-					__( 'Ungültige Kontakt-E-Mail-Adresse.', 'recruiting-playbook' ),
+					__( 'Invalid contact email address.', 'recruiting-playbook' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -256,7 +256,7 @@ class SettingsController extends WP_REST_Controller {
 			if ( ! empty( $email ) && ! is_email( $email ) ) {
 				return new WP_Error(
 					'invalid_sender_email',
-					__( 'Ungültige Absender-E-Mail-Adresse.', 'recruiting-playbook' ),
+					__( 'Invalid sender email address.', 'recruiting-playbook' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -277,7 +277,7 @@ class SettingsController extends WP_REST_Controller {
 
 		return rest_ensure_response( [
 			'success' => true,
-			'message' => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+			'message' => __( 'Settings saved.', 'recruiting-playbook' ),
 		] );
 	}
 
@@ -297,7 +297,7 @@ class SettingsController extends WP_REST_Controller {
 			'company_phone'        => '',
 			'company_website'      => home_url(),
 			'company_email'        => get_option( 'admin_email' ),
-			'sender_name'          => __( 'Personalabteilung', 'recruiting-playbook' ),
+			'sender_name'          => __( 'HR Department', 'recruiting-playbook' ),
 			'sender_email'         => get_option( 'admin_email' ),
 			'jobs_per_page'        => 10,
 			'jobs_slug'            => 'jobs',
@@ -346,7 +346,7 @@ class SettingsController extends WP_REST_Controller {
 		if ( empty( $name ) ) {
 			return new WP_Error(
 				'missing_name',
-				__( 'Firmenname ist erforderlich.', 'recruiting-playbook' ),
+				__( 'Company name is required.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -354,7 +354,7 @@ class SettingsController extends WP_REST_Controller {
 		if ( empty( $email ) || ! is_email( $email ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'Eine gültige Kontakt-E-Mail ist erforderlich.', 'recruiting-playbook' ),
+				__( 'A valid contact email is required.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -379,7 +379,7 @@ class SettingsController extends WP_REST_Controller {
 			if ( ! empty( $sender_email ) && ! is_email( $sender_email ) ) {
 				return new WP_Error(
 					'invalid_sender_email',
-					__( 'Ungültige Absender-E-Mail-Adresse.', 'recruiting-playbook' ),
+					__( 'Invalid sender email address.', 'recruiting-playbook' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -403,7 +403,7 @@ class SettingsController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, die Firmendaten zu lesen.', 'recruiting-playbook' ),
+				__( 'You do not have permission to read company data.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -422,7 +422,7 @@ class SettingsController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, die Firmendaten zu ändern.', 'recruiting-playbook' ),
+				__( 'You do not have permission to update company data.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -472,7 +472,7 @@ class SettingsController extends WP_REST_Controller {
 
 		return rest_ensure_response( [
 			'settings' => $sanitized,
-			'message'  => __( 'Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+			'message'  => __( 'Settings saved.', 'recruiting-playbook' ),
 		] );
 	}
 
@@ -487,27 +487,27 @@ class SettingsController extends WP_REST_Controller {
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Firmenname', 'recruiting-playbook' ),
+				'description'       => __( 'Company name', 'recruiting-playbook' ),
 			],
 			'street'       => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Straße und Hausnummer', 'recruiting-playbook' ),
+				'description'       => __( 'Street and number', 'recruiting-playbook' ),
 			],
 			'zip'          => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Postleitzahl', 'recruiting-playbook' ),
+				'description'       => __( 'Postal code', 'recruiting-playbook' ),
 			],
 			'city'         => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Stadt', 'recruiting-playbook' ),
+				'description'       => __( 'City', 'recruiting-playbook' ),
 			],
 			'phone'        => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Telefonnummer', 'recruiting-playbook' ),
+				'description'       => __( 'Phone number', 'recruiting-playbook' ),
 			],
 			'website'      => [
 				'type'              => 'string',
@@ -520,18 +520,18 @@ class SettingsController extends WP_REST_Controller {
 				'format'            => 'email',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_email',
-				'description'       => __( 'Kontakt-E-Mail', 'recruiting-playbook' ),
+				'description'       => __( 'Contact email', 'recruiting-playbook' ),
 			],
 			'sender_name'  => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'description'       => __( 'Standard-Absender Name', 'recruiting-playbook' ),
+				'description'       => __( 'Default sender name', 'recruiting-playbook' ),
 			],
 			'sender_email' => [
 				'type'              => 'string',
 				'format'            => 'email',
 				'sanitize_callback' => 'sanitize_email',
-				'description'       => __( 'Standard-Absender E-Mail', 'recruiting-playbook' ),
+				'description'       => __( 'Default sender email', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -640,7 +640,7 @@ class SettingsController extends WP_REST_Controller {
 		if ( empty( $new_settings ) || ! is_array( $new_settings ) ) {
 			return new WP_Error(
 				'invalid_settings',
-				__( 'Ungültige Einstellungen.', 'recruiting-playbook' ),
+				__( 'Invalid settings.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -650,14 +650,14 @@ class SettingsController extends WP_REST_Controller {
 		if ( ! $success ) {
 			return new WP_Error(
 				'save_failed',
-				__( 'Einstellungen konnten nicht gespeichert werden.', 'recruiting-playbook' ),
+				__( 'Settings could not be saved.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
 
 		return rest_ensure_response( [
 			'success'  => true,
-			'message'  => __( 'Design-Einstellungen wurden gespeichert.', 'recruiting-playbook' ),
+			'message'  => __( 'Design settings saved.', 'recruiting-playbook' ),
 			'settings' => $design_service->get_design_settings(),
 		] );
 	}
@@ -674,7 +674,7 @@ class SettingsController extends WP_REST_Controller {
 
 		return rest_ensure_response( [
 			'success'  => true,
-			'message'  => __( 'Design-Einstellungen wurden zurückgesetzt.', 'recruiting-playbook' ),
+			'message'  => __( 'Design settings reset.', 'recruiting-playbook' ),
 			'settings' => $design_service->get_design_settings(),
 		] );
 	}

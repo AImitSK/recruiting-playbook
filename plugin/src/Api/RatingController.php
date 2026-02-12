@@ -59,19 +59,19 @@ class RatingController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_rating_permissions_check' ],
 					'args'                => [
 						'application_id' => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'rating'         => [
-							'description' => __( 'Bewertung (1-5)', 'recruiting-playbook' ),
+							'description' => __( 'Rating (1-5)', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 							'minimum'     => 1,
 							'maximum'     => 5,
 						],
 						'category'       => [
-							'description' => __( 'Bewertungskategorie', 'recruiting-playbook' ),
+							'description' => __( 'Rating category', 'recruiting-playbook' ),
 							'type'        => 'string',
 							'default'     => 'overall',
 							'enum'        => [ 'overall', 'skills', 'culture_fit', 'experience' ],
@@ -85,7 +85,7 @@ class RatingController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_ratings_permissions_check' ],
 					'args'                => [
 						'application_id' => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -104,7 +104,7 @@ class RatingController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'get_ratings_permissions_check' ],
 				'args'                => [
 					'application_id' => [
-						'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+						'description' => __( 'Application ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
@@ -122,12 +122,12 @@ class RatingController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'delete_rating_permissions_check' ],
 				'args'                => [
 					'application_id' => [
-						'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+						'description' => __( 'Application ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
 					'category'       => [
-						'description' => __( 'Bewertungskategorie', 'recruiting-playbook' ),
+						'description' => __( 'Rating category', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'required'    => true,
 						'enum'        => [ 'overall', 'skills', 'culture_fit', 'experience' ],
@@ -213,7 +213,7 @@ class RatingController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -236,7 +236,7 @@ class RatingController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Anzeigen von Bewertungen.', 'recruiting-playbook' ),
+				__( 'No permission to view ratings.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -259,7 +259,7 @@ class RatingController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Bewerten von Bewerbungen.', 'recruiting-playbook' ),
+				__( 'No permission to rate applications.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -282,7 +282,7 @@ class RatingController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'No permission.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -291,7 +291,7 @@ class RatingController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rate_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Löschen von Bewertungen.', 'recruiting-playbook' ),
+				__( 'No permission to delete ratings.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

@@ -51,7 +51,7 @@ class JobCustomFieldsMeta {
 
 		add_meta_box(
 			'rp_job_custom_fields',
-			__( 'Bewerbungsformular', 'recruiting-playbook' ),
+			__( 'Application Form', 'recruiting-playbook' ),
 			[ $this, 'render' ],
 			JobListing::POST_TYPE,
 			'side',
@@ -114,9 +114,9 @@ class JobCustomFieldsMeta {
 
 		if ( empty( $custom_fields ) ) {
 			echo '<p class="description">';
-			echo esc_html__( 'Keine Custom Fields konfiguriert.', 'recruiting-playbook' );
+			echo esc_html__( 'No custom fields configured.', 'recruiting-playbook' );
 			echo ' <a href="' . esc_url( admin_url( 'admin.php?page=rp-form-builder' ) ) . '">';
-			echo esc_html__( 'Zum Form Builder', 'recruiting-playbook' );
+			echo esc_html__( 'Go to Form Builder', 'recruiting-playbook' );
 			echo '</a></p>';
 			return;
 		}
@@ -131,13 +131,13 @@ class JobCustomFieldsMeta {
 						<?php checked( $override, '1' ); ?>
 						class="rp-override-toggle"
 					>
-					<?php esc_html_e( 'Felder für diese Stelle anpassen', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Customize fields for this job', 'recruiting-playbook' ); ?>
 				</label>
 			</p>
 
 			<div class="rp-fields-config" style="<?php echo $override ? '' : 'display:none;'; ?>">
 				<p class="description" style="margin-bottom: 10px;">
-					<?php esc_html_e( 'Aktivierte Felder werden im Bewerbungsformular dieser Stelle angezeigt.', 'recruiting-playbook' ); ?>
+					<?php esc_html_e( 'Enabled fields will be displayed in the application form for this job.', 'recruiting-playbook' ); ?>
 				</p>
 
 				<?php foreach ( $custom_fields as $field ) : ?>
@@ -162,7 +162,7 @@ class JobCustomFieldsMeta {
 
 				<p style="margin-top: 15px;">
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-form-builder' ) ); ?>" class="button button-small">
-						<?php esc_html_e( 'Felder bearbeiten', 'recruiting-playbook' ); ?>
+						<?php esc_html_e( 'Edit Fields', 'recruiting-playbook' ); ?>
 					</a>
 				</p>
 			</div>
@@ -175,7 +175,7 @@ class JobCustomFieldsMeta {
 					);
 					printf(
 						/* translators: %d: number of enabled fields */
-						esc_html__( 'Standard-Konfiguration: %d Felder aktiv', 'recruiting-playbook' ),
+						esc_html__( 'Default configuration: %d fields active', 'recruiting-playbook' ),
 						$enabled_count
 					);
 					?>

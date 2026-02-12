@@ -58,7 +58,7 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'stats_permissions_check' ],
 				'args'                => [
 					'period' => [
-						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
@@ -77,23 +77,23 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'stats_permissions_check' ],
 				'args'                => [
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'group_by' => [
-						'description' => __( 'Gruppierung', 'recruiting-playbook' ),
+						'description' => __( 'Grouping', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'day',
 						'enum'        => [ 'day', 'week', 'month' ],
 					],
 					'job_id' => [
-						'description' => __( 'Filter nach Stelle', 'recruiting-playbook' ),
+						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
 				],
@@ -110,35 +110,35 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'sort_by' => [
-						'description' => __( 'Sortierung', 'recruiting-playbook' ),
+						'description' => __( 'Sort by', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'applications',
 						'enum'        => [ 'applications', 'title', 'created', 'hired', 'avg_rating' ],
 					],
 					'sort_order' => [
-						'description' => __( 'Reihenfolge', 'recruiting-playbook' ),
+						'description' => __( 'Sort order', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'desc',
 						'enum'        => [ 'asc', 'desc' ],
 					],
 					'per_page' => [
-						'description' => __( 'Einträge pro Seite', 'recruiting-playbook' ),
+						'description' => __( 'Entries per page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 20,
 						'maximum'     => 100,
 					],
 					'page' => [
-						'description' => __( 'Seite', 'recruiting-playbook' ),
+						'description' => __( 'Page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 1,
 					],
@@ -156,29 +156,29 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
 					'period' => [
-						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
 					],
 					'metrics' => [
-						'description' => __( 'Metriken für Trend', 'recruiting-playbook' ),
+						'description' => __( 'Metrics for trend', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
 						'default'     => [ 'applications', 'hires' ],
 					],
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'granularity' => [
-						'description' => __( 'Granularität', 'recruiting-playbook' ),
+						'description' => __( 'Granularity', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'day',
 						'enum'        => [ 'day', 'week', 'month' ],
@@ -197,23 +197,23 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
 					'period' => [
-						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '90days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
 					],
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'job_id' => [
-						'description' => __( 'Filter nach Stelle', 'recruiting-playbook' ),
+						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
 				],
@@ -230,23 +230,23 @@ class StatsController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
 					'period' => [
-						'description' => __( 'Zeitraum', 'recruiting-playbook' ),
+						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
 					],
 					'date_from' => [
-						'description' => __( 'Startdatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'date_to' => [
-						'description' => __( 'Enddatum (Y-m-d)', 'recruiting-playbook' ),
+						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
 					'job_id' => [
-						'description' => __( 'Filter nach Stelle', 'recruiting-playbook' ),
+						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
 				],
@@ -339,7 +339,7 @@ class StatsController extends WP_REST_Controller {
 	public function get_time_to_hire( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		// Feature-Check.
 		if ( ! $this->canAccessAdvancedStats() ) {
-			return $this->requireProFeature( 'time_to_hire', __( 'Time-to-Hire Statistiken', 'recruiting-playbook' ) );
+			return $this->requireProFeature( 'time_to_hire', __( 'Time-to-Hire Statistics', 'recruiting-playbook' ) );
 		}
 
 		$period = $request->get_param( 'period' ) ?? '90days';
@@ -373,7 +373,7 @@ class StatsController extends WP_REST_Controller {
 	public function get_conversion( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		// Feature-Check.
 		if ( ! $this->canAccessAdvancedStats() ) {
-			return $this->requireProFeature( 'conversion_stats', __( 'Conversion-Statistiken', 'recruiting-playbook' ) );
+			return $this->requireProFeature( 'conversion_stats', __( 'Conversion Statistics', 'recruiting-playbook' ) );
 		}
 
 		$period = $request->get_param( 'period' ) ?? '30days';
@@ -452,7 +452,7 @@ class StatsController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_not_logged_in',
-				__( 'Sie müssen eingeloggt sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -460,7 +460,7 @@ class StatsController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_view_stats' ) && ! current_user_can( 'rp_view_applications' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung für Statistiken.', 'recruiting-playbook' ),
+				__( 'No permission to view statistics.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -484,7 +484,7 @@ class StatsController extends WP_REST_Controller {
 		if ( ! $this->canAccessAdvancedStats() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Erweiterte Statistiken erfordern die Pro-Version.', 'recruiting-playbook' ),
+				__( 'Advanced statistics require the Pro version.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -520,7 +520,7 @@ class StatsController extends WP_REST_Controller {
 	 * Pro-Feature Required Error
 	 *
 	 * @param string $feature Feature-Slug.
-	 * @param string $feature_name Feature-Name (deutsch).
+	 * @param string $feature_name Feature name.
 	 * @return WP_Error
 	 */
 	private function requireProFeature( string $feature, string $feature_name ): WP_Error {
@@ -528,7 +528,7 @@ class StatsController extends WP_REST_Controller {
 			'pro_feature_required',
 			sprintf(
 				/* translators: %s: Feature name */
-				__( '%s ist ein Pro-Feature. Bitte upgraden Sie auf die Pro-Version.', 'recruiting-playbook' ),
+				__( '%s is a Pro feature. Please upgrade to the Pro version.', 'recruiting-playbook' ),
 				$feature_name
 			),
 			[

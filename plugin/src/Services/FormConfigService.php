@@ -127,7 +127,7 @@ class FormConfigService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'save_failed',
-				__( 'Konfiguration konnte nicht gespeichert werden.', 'recruiting-playbook' ),
+				__( 'Configuration could not be saved.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -154,7 +154,7 @@ class FormConfigService {
 		if ( ! $this->hasUnpublishedChanges() ) {
 			return new WP_Error(
 				'no_changes',
-				__( 'Keine Änderungen zum Veröffentlichen vorhanden.', 'recruiting-playbook' ),
+				__( 'No changes to publish.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -167,7 +167,7 @@ class FormConfigService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'publish_failed',
-				__( 'Konfiguration konnte nicht veröffentlicht werden.', 'recruiting-playbook' ),
+				__( 'Configuration could not be published.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -186,7 +186,7 @@ class FormConfigService {
 		if ( ! $this->hasUnpublishedChanges() ) {
 			return new WP_Error(
 				'no_changes',
-				__( 'Keine Änderungen zum Verwerfen vorhanden.', 'recruiting-playbook' ),
+				__( 'No changes to discard.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -196,7 +196,7 @@ class FormConfigService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'discard_failed',
-				__( 'Änderungen konnten nicht verworfen werden.', 'recruiting-playbook' ),
+				__( 'Changes could not be discarded.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -218,7 +218,7 @@ class FormConfigService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'reset_failed',
-				__( 'Konfiguration konnte nicht zurückgesetzt werden.', 'recruiting-playbook' ),
+				__( 'Configuration could not be reset.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -239,7 +239,7 @@ class FormConfigService {
 		if ( ! $publish_result ) {
 			return new WP_Error(
 				'publish_failed',
-				__( 'Default-Konfiguration konnte nicht veröffentlicht werden.', 'recruiting-playbook' ),
+				__( 'Default configuration could not be published.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -276,7 +276,7 @@ class FormConfigService {
 		if ( ! isset( $config['steps'] ) || ! is_array( $config['steps'] ) ) {
 			return new WP_Error(
 				'missing_steps',
-				__( 'Formular-Konfiguration muss Steps enthalten.', 'recruiting-playbook' ),
+				__( 'Form configuration must contain steps.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -285,7 +285,7 @@ class FormConfigService {
 		if ( empty( $config['steps'] ) ) {
 			return new WP_Error(
 				'empty_steps',
-				__( 'Mindestens ein Step ist erforderlich.', 'recruiting-playbook' ),
+				__( 'At least one step is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -302,7 +302,7 @@ class FormConfigService {
 		if ( ! $has_finale ) {
 			return new WP_Error(
 				'missing_finale',
-				__( 'Ein Finale-Step ist erforderlich.', 'recruiting-playbook' ),
+				__( 'A finale step is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -325,7 +325,7 @@ class FormConfigService {
 				if ( ! $this->hasPrivacyConsentSystemField( $config ) ) {
 					return new WP_Error(
 						'missing_privacy_consent',
-						__( 'Das Datenschutz-Feld ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
+						__( 'The privacy consent field is required and must be visible.', 'recruiting-playbook' ),
 						[ 'status' => 422 ]
 					);
 				}
@@ -337,7 +337,7 @@ class FormConfigService {
 					'missing_required_field',
 					sprintf(
 						/* translators: %s: Field name */
-						__( 'Das Feld "%s" ist erforderlich und muss sichtbar sein.', 'recruiting-playbook' ),
+						__( 'The field "%s" is required and must be visible.', 'recruiting-playbook' ),
 						$required_field
 					),
 					[ 'status' => 422 ]
@@ -362,7 +362,7 @@ class FormConfigService {
 				'missing_step_id',
 				sprintf(
 					/* translators: %d: Step number */
-					__( 'Step %d: ID ist erforderlich.', 'recruiting-playbook' ),
+					__( 'Step %d: ID is required.', 'recruiting-playbook' ),
 					$index + 1
 				),
 				[ 'status' => 422 ]
@@ -375,7 +375,7 @@ class FormConfigService {
 				'missing_step_title',
 				sprintf(
 					/* translators: %d: Step number */
-					__( 'Step %d: Titel ist erforderlich.', 'recruiting-playbook' ),
+					__( 'Step %d: Title is required.', 'recruiting-playbook' ),
 					$index + 1
 				),
 				[ 'status' => 422 ]
@@ -388,7 +388,7 @@ class FormConfigService {
 				'invalid_step_fields',
 				sprintf(
 					/* translators: %d: Step number */
-					__( 'Step %d: Felder müssen ein Array sein.', 'recruiting-playbook' ),
+					__( 'Step %d: Fields must be an array.', 'recruiting-playbook' ),
 					$index + 1
 				),
 				[ 'status' => 422 ]
@@ -481,7 +481,7 @@ class FormConfigService {
 			'steps'    => [
 				[
 					'id'        => 'step_personal',
-					'title'     => __( 'Persönliche Daten', 'recruiting-playbook' ),
+					'title'     => __( 'Personal Information', 'recruiting-playbook' ),
 					'position'  => 1,
 					'deletable' => false,
 					'fields'    => [
@@ -492,7 +492,7 @@ class FormConfigService {
 							'is_removable' => false,
 							'width'        => 'half',
 							'settings'     => [
-								'label'       => __( 'Vorname', 'recruiting-playbook' ),
+								'label'       => __( 'First Name', 'recruiting-playbook' ),
 								'placeholder' => 'Max',
 							],
 						],
@@ -503,7 +503,7 @@ class FormConfigService {
 							'is_removable' => false,
 							'width'        => 'half',
 							'settings'     => [
-								'label'       => __( 'Nachname', 'recruiting-playbook' ),
+								'label'       => __( 'Last Name', 'recruiting-playbook' ),
 								'placeholder' => 'Mustermann',
 							],
 						],
@@ -514,7 +514,7 @@ class FormConfigService {
 							'is_removable' => false,
 							'width'        => 'full',
 							'settings'     => [
-								'label'       => __( 'E-Mail-Adresse', 'recruiting-playbook' ),
+								'label'       => __( 'Email Address', 'recruiting-playbook' ),
 								'placeholder' => 'max@beispiel.de',
 							],
 						],
@@ -525,7 +525,7 @@ class FormConfigService {
 							'is_removable' => true,
 							'width'        => 'full',
 							'settings'     => [
-								'label'       => __( 'Telefon', 'recruiting-playbook' ),
+								'label'       => __( 'Phone', 'recruiting-playbook' ),
 								'placeholder' => '+49...',
 							],
 						],
@@ -533,7 +533,7 @@ class FormConfigService {
 				],
 				[
 					'id'            => 'step_documents',
-					'title'         => __( 'Dokumente', 'recruiting-playbook' ),
+					'title'         => __( 'Documents', 'recruiting-playbook' ),
 					'position'      => 2,
 					'deletable'     => false,
 					'fields'        => [
@@ -544,8 +544,8 @@ class FormConfigService {
 							'is_removable' => true,
 							'width'        => 'full',
 							'settings'     => [
-								'label'       => __( 'Anschreiben / Nachricht', 'recruiting-playbook' ),
-								'placeholder' => __( 'Warum möchten Sie bei uns arbeiten?', 'recruiting-playbook' ),
+								'label'       => __( 'Cover Letter / Message', 'recruiting-playbook' ),
+								'placeholder' => __( 'Why do you want to work with us?', 'recruiting-playbook' ),
 							],
 						],
 					],
@@ -554,8 +554,8 @@ class FormConfigService {
 							'field_key' => 'file_upload',
 							'type'      => 'file_upload',
 							'settings'  => [
-								'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
-								'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+								'label'         => __( 'Application Documents', 'recruiting-playbook' ),
+								'help_text'     => __( 'PDF, Word - max. 10 MB per file', 'recruiting-playbook' ),
 								'allowed_types' => [ 'pdf', 'doc', 'docx' ],
 								'max_file_size' => 10,
 								'max_files'     => 5,
@@ -565,7 +565,7 @@ class FormConfigService {
 				],
 				[
 					'id'            => 'step_finale',
-					'title'         => __( 'Abschluss', 'recruiting-playbook' ),
+					'title'         => __( 'Summary', 'recruiting-playbook' ),
 					'position'      => 999,
 					'deletable'     => false,
 					'is_finale'     => true,
@@ -575,9 +575,9 @@ class FormConfigService {
 							'field_key' => 'summary',
 							'type'      => 'summary',
 							'settings'  => [
-								'title'           => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+								'title'           => __( 'Your Information Overview', 'recruiting-playbook' ),
 								'layout'          => 'two-column',
-								'additional_text' => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+								'additional_text' => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 								'show_only_filled' => false,
 							],
 						],
@@ -586,8 +586,8 @@ class FormConfigService {
 							'type'         => 'privacy_consent',
 							'is_removable' => false,
 							'settings'     => [
-								'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-								'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+								'checkbox_text' => __( 'I have read the {datenschutz_link} and agree to the processing of my data.', 'recruiting-playbook' ),
+								'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 								'privacy_url'   => get_privacy_policy_url() ?: '/datenschutz',
 							],
 						],
@@ -620,8 +620,8 @@ class FormConfigService {
 						'field_key' => 'file_upload',
 						'type'      => 'file_upload',
 						'settings'  => [
-							'label'         => __( 'Bewerbungsunterlagen', 'recruiting-playbook' ),
-							'help_text'     => __( 'PDF, Word - max. 10 MB pro Datei', 'recruiting-playbook' ),
+							'label'         => __( 'Application Documents', 'recruiting-playbook' ),
+							'help_text'     => __( 'PDF, Word - max. 10 MB per file', 'recruiting-playbook' ),
 							'allowed_types' => [ 'pdf', 'doc', 'docx' ],
 							'max_file_size' => 10,
 							'max_files'     => 5,
@@ -647,9 +647,9 @@ class FormConfigService {
 						'field_key' => 'summary',
 						'type'      => 'summary',
 						'settings'  => [
-							'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+							'title'            => __( 'Your Information Overview', 'recruiting-playbook' ),
 							'layout'           => 'two-column',
-							'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+							'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 							'show_only_filled' => false,
 						],
 					],
@@ -658,8 +658,8 @@ class FormConfigService {
 						'type'         => 'privacy_consent',
 						'is_removable' => false,
 						'settings'     => [
-							'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-							'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+							'checkbox_text' => __( 'I have read the {datenschutz_link} and agree to the processing of my data.', 'recruiting-playbook' ),
+							'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 							'privacy_url'   => get_privacy_policy_url() ?: '/datenschutz',
 						],
 					],
@@ -743,9 +743,9 @@ class FormConfigService {
 						'field_key' => 'summary',
 						'type'      => 'summary',
 						'settings'  => [
-							'title'            => __( 'Ihre Angaben im Überblick', 'recruiting-playbook' ),
+							'title'            => __( 'Your Information Overview', 'recruiting-playbook' ),
 							'layout'           => 'two-column',
-							'additional_text'  => __( 'Bitte prüfen Sie Ihre Angaben vor dem Absenden.', 'recruiting-playbook' ),
+							'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 							'show_only_filled' => false,
 						],
 					]
@@ -768,8 +768,8 @@ class FormConfigService {
 					'type'         => 'privacy_consent',
 					'is_removable' => false,
 					'settings'     => [
-						'checkbox_text' => __( 'Ich habe die {datenschutz_link} gelesen und stimme der Verarbeitung meiner Daten zu.', 'recruiting-playbook' ),
-						'link_text'     => __( 'Datenschutzerklärung', 'recruiting-playbook' ),
+						'checkbox_text' => __( 'I have read the {datenschutz_link} and agree to the processing of my data.', 'recruiting-playbook' ),
+						'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 						'privacy_url'   => function_exists( 'get_privacy_policy_url' ) ? ( get_privacy_policy_url() ?: '/datenschutz' ) : '/datenschutz',
 					],
 				];

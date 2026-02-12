@@ -154,7 +154,7 @@ class EmailService {
 
 		$subject = sprintf(
 			/* translators: 1: Applicant name, 2: Job title */
-			__( '[Neue Bewerbung] %1$s für %2$s', 'recruiting-playbook' ),
+			__( '[New Application] %1$s for %2$s', 'recruiting-playbook' ),
 			$application['candidate_name'],
 			$application['job_title']
 		);
@@ -184,7 +184,7 @@ class EmailService {
 
 		$subject = sprintf(
 			/* translators: %s: Job title */
-			__( 'Bewerbungseingang bestätigt: %s', 'recruiting-playbook' ),
+			__( 'Application received: %s', 'recruiting-playbook' ),
 			$application['job_title']
 		);
 
@@ -220,7 +220,7 @@ class EmailService {
 
 		$subject = sprintf(
 			/* translators: %s: Job title */
-			__( 'Ihre Bewerbung: %s', 'recruiting-playbook' ),
+			__( 'Your Application: %s', 'recruiting-playbook' ),
 			$application['job_title']
 		);
 
@@ -616,34 +616,34 @@ class EmailService {
 						<tr><td style="padding:8px 0;"><strong>%s:</strong></td><td>%s</td></tr>
 					</table>
 					<p><a href="%s" class="btn">%s</a></p>',
-					__( 'Neue Bewerbung eingegangen', 'recruiting-playbook' ),
+					__( 'New application received', 'recruiting-playbook' ),
 					sprintf(
 						/* translators: %s: Job title */
-						__( 'Eine neue Bewerbung für die Stelle "%s" ist eingegangen.', 'recruiting-playbook' ),
+						__( 'A new application for the position "%s" has been received.', 'recruiting-playbook' ),
 						esc_html( $app['job_title'] ?? '' )
 					),
 					__( 'Name', 'recruiting-playbook' ),
 					esc_html( $app['candidate_name'] ?? '' ),
-					__( 'Stelle', 'recruiting-playbook' ),
+					__( 'Job', 'recruiting-playbook' ),
 					esc_html( $app['job_title'] ?? '' ),
-					__( 'E-Mail', 'recruiting-playbook' ),
+					__( 'Email', 'recruiting-playbook' ),
 					esc_attr( $app['email'] ?? '' ),
 					esc_html( $app['email'] ?? '' ),
-					__( 'Eingegangen am', 'recruiting-playbook' ),
+					__( 'Received on', 'recruiting-playbook' ),
 					esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $app['created_at'] ?? '' ) ) ),
 					esc_url( $data['admin_url'] ?? '' ),
-					__( 'Bewerbung ansehen', 'recruiting-playbook' )
+					__( 'View application', 'recruiting-playbook' )
 				);
 				break;
 
 			case 'email-applicant-confirmation':
 				$greeting = ! empty( $app['salutation'] )
-					/* translators: 1: Salutation (e.g. Herr/Frau), 2: Last name */
-					? sprintf( __( 'Guten Tag %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: 1: Salutation (e.g. Mr./Ms.), 2: Last name */
+					? sprintf( __( 'Dear %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
 					/* translators: %s: First name */
-					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
+					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['first_name'] );
 
-				// Signatur wird via appendSignature() in sendApplicantConfirmation() hinzugefügt.
+				// Signature will be appended via appendSignature() in sendApplicantConfirmation().
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
@@ -651,39 +651,39 @@ class EmailService {
 					<p><strong>%s:</strong> %s</p>
 					<p>%s</p>
 					<p>%s</p>',
-					__( 'Bewerbungseingang bestätigt', 'recruiting-playbook' ),
+					__( 'Application received', 'recruiting-playbook' ),
 					$greeting,
-					__( 'vielen Dank für Ihre Bewerbung! Wir haben Ihre Unterlagen erhalten und werden diese sorgfältig prüfen.', 'recruiting-playbook' ),
-					__( 'Stelle', 'recruiting-playbook' ),
+					__( 'Thank you for your application! We have received your documents and will carefully review them.', 'recruiting-playbook' ),
+					__( 'Job', 'recruiting-playbook' ),
 					esc_html( $app['job_title'] ?? '' ),
-					__( 'Sie erhalten von uns Rückmeldung, sobald wir Ihre Bewerbung geprüft haben.', 'recruiting-playbook' ),
-					__( 'Bei Fragen stehen wir Ihnen gerne zur Verfügung.', 'recruiting-playbook' )
+					__( 'We will get back to you as soon as we have reviewed your application.', 'recruiting-playbook' ),
+					__( 'If you have any questions, please feel free to contact us.', 'recruiting-playbook' )
 				);
 				break;
 
 			case 'email-rejection':
 				$greeting = ! empty( $app['salutation'] )
-					/* translators: 1: Salutation (e.g. Herr/Frau), 2: Last name */
-					? sprintf( __( 'Guten Tag %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
+					/* translators: 1: Salutation (e.g. Mr./Ms.), 2: Last name */
+					? sprintf( __( 'Dear %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
 					/* translators: %s: First name */
-					: sprintf( __( 'Guten Tag %s', 'recruiting-playbook' ), $app['first_name'] );
+					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['first_name'] );
 
-				// Signatur wird via appendSignature() in sendRejectionEmail() hinzugefügt.
+				// Signature will be appended via appendSignature() in sendRejectionEmail().
 				$content = sprintf(
 					'<h2>%s</h2>
 					<p>%s,</p>
 					<p>%s</p>
 					<p>%s</p>
 					<p>%s</p>',
-					__( 'Ihre Bewerbung', 'recruiting-playbook' ),
+					__( 'Your Application', 'recruiting-playbook' ),
 					$greeting,
 					sprintf(
 						/* translators: %s: Job title */
-						__( 'vielen Dank für Ihr Interesse an der Position "%s" und die Zeit, die Sie in Ihre Bewerbung investiert haben.', 'recruiting-playbook' ),
+						__( 'Thank you for your interest in the position "%s" and the time you invested in your application.', 'recruiting-playbook' ),
 						esc_html( $app['job_title'] ?? '' )
 					),
-					__( 'Nach sorgfältiger Prüfung müssen wir Ihnen leider mitteilen, dass wir uns für andere Kandidaten entschieden haben, deren Profil besser zu unseren aktuellen Anforderungen passt.', 'recruiting-playbook' ),
-					__( 'Wir wünschen Ihnen für Ihre weitere berufliche Zukunft alles Gute und viel Erfolg.', 'recruiting-playbook' )
+					__( 'After careful consideration, we regret to inform you that we have decided to move forward with other candidates whose profile better matches our current requirements.', 'recruiting-playbook' ),
+					__( 'We wish you all the best and much success in your future career.', 'recruiting-playbook' )
 				);
 				break;
 
@@ -701,7 +701,7 @@ class EmailService {
 				'<p>%s</p>',
 				sprintf(
 					/* translators: %s: Link to Recruiting Playbook website */
-					__( 'Versand über %s', 'recruiting-playbook' ),
+					__( 'Sent via %s', 'recruiting-playbook' ),
 					'<a href="https://recruiting-playbook.de" style="color: #6b7280; text-decoration: underline;">Recruiting Playbook</a>'
 				)
 			);
@@ -883,20 +883,20 @@ class EmailService {
 		foreach ( $smtp_plugins as $plugin ) {
 			if ( is_plugin_active( $plugin ) ) {
 				$result['configured'] = true;
-				$result['message'] = __( 'SMTP-Plugin erkannt. E-Mails sollten zuverlässig zugestellt werden.', 'recruiting-playbook' );
+				$result['message'] = __( 'SMTP plugin detected. Emails should be delivered reliably.', 'recruiting-playbook' );
 				return $result;
 			}
 		}
 
-		// Prüfen ob wp_mail überschrieben wurde
+		// Check if wp_mail was overridden
 		if ( has_filter( 'wp_mail' ) || has_filter( 'phpmailer_init' ) ) {
 			$result['configured'] = true;
-			$result['message'] = __( 'E-Mail-Konfiguration erkannt.', 'recruiting-playbook' );
+			$result['message'] = __( 'Email configuration detected.', 'recruiting-playbook' );
 			return $result;
 		}
 
-		// Keine SMTP-Konfiguration gefunden
-		$result['message'] = __( 'Keine SMTP-Konfiguration erkannt. Wir empfehlen die Installation eines SMTP-Plugins für zuverlässigen E-Mail-Versand.', 'recruiting-playbook' );
+		// No SMTP configuration found
+		$result['message'] = __( 'No SMTP configuration detected. We recommend installing an SMTP plugin for reliable email delivery.', 'recruiting-playbook' );
 
 		return $result;
 	}

@@ -36,13 +36,13 @@ export default function Edit( { attributes, setAttributes } ) {
 		const parts = [];
 		parts.push(
 			limit === 1
-				? __( '1 Stelle', 'recruiting-playbook' )
-				: `${ limit } ${ __( 'Stellen', 'recruiting-playbook' ) }`
+				? __( '1 job', 'recruiting-playbook' )
+				: `${ limit } ${ __( 'jobs', 'recruiting-playbook' ) }`
 		);
 		parts.push(
 			columns === 1
-				? __( '1 Spalte', 'recruiting-playbook' )
-				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+				? __( '1 column', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'columns', 'recruiting-playbook' ) }`
 		);
 		return parts.join( ' · ' );
 	};
@@ -51,22 +51,22 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					title={ __( 'Settings', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Überschrift', 'recruiting-playbook' ) }
+						label={ __( 'Heading', 'recruiting-playbook' ) }
 						value={ title }
 						onChange={ ( value ) =>
 							setAttributes( { title: value } )
 						}
 						help={ __(
-							'Optionale Überschrift über den neuesten Stellen.',
+							'Optional heading above the latest jobs.',
 							'recruiting-playbook'
 						) }
 					/>
 					<RangeControl
-						label={ __( 'Anzahl Stellen', 'recruiting-playbook' ) }
+						label={ __( 'Number of jobs', 'recruiting-playbook' ) }
 						value={ limit }
 						onChange={ ( value ) =>
 							setAttributes( { limit: value } )
@@ -83,7 +83,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						max={ 4 }
 					/>
 					<ToggleControl
-						label={ __( 'Auszug anzeigen', 'recruiting-playbook' ) }
+						label={ __( 'Show excerpt', 'recruiting-playbook' ) }
 						checked={ showExcerpt }
 						onChange={ ( value ) =>
 							setAttributes( { showExcerpt: value } )
@@ -102,7 +102,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { category: value } )
 						}
 						label={ __(
-							'Nur aus Kategorie',
+							'From category only',
 							'recruiting-playbook'
 						) }
 					/>
@@ -111,10 +111,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Neueste Stellen', 'recruiting-playbook' ) }
+					label={ __( 'Latest Jobs', 'recruiting-playbook' ) }
 					summary={ getSummary() }
 					helpText={ __(
-						'Zeigt die neuesten Stellenanzeigen an.',
+						'Displays the latest job listings.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_latest_jobs]"

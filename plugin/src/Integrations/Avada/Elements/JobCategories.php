@@ -6,10 +6,10 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Job-Kategorien Element für Fusion Builder
+ * RP: Job Categories Element for Fusion Builder
  *
- * Zeigt alle Job-Kategorien als klickbare Karten an.
- * Wrapper für den [rp_job_categories] Shortcode.
+ * Displays all job categories as clickable cards.
+ * Wrapper for the [rp_job_categories] shortcode.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -17,13 +17,13 @@ defined( 'ABSPATH' ) || exit;
 class JobCategories extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
 	protected function getConfig(): array {
 		return [
-			'name'            => esc_attr__( 'RP: Job-Kategorien', 'recruiting-playbook' ),
+			'name'            => esc_attr__( 'RP: Job Categories', 'recruiting-playbook' ),
 			'shortcode'       => 'rp_job_categories',
 			'icon'            => 'fusiona-folder',
 			'help_url'        => $this->getHelpUrl( 'rp_job_categories' ),
@@ -33,8 +33,8 @@ class JobCategories extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Spalten', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Anzahl der Spalten im Grid.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Number of columns in the grid.', 'recruiting-playbook' ),
 					'param_name'  => 'columns',
 					'default'     => '4',
 					'value'       => [
@@ -47,35 +47,35 @@ class JobCategories extends AbstractElement {
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Anzahl anzeigen', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Zeigt die Anzahl der Jobs pro Kategorie.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Show Count', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Display the number of jobs per category.', 'recruiting-playbook' ),
 					'param_name'  => 'show_count',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Leere verstecken', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Kategorien ohne Jobs ausblenden.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Hide Empty', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Hide categories without jobs.', 'recruiting-playbook' ),
 					'param_name'  => 'hide_empty',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 				[
 					'type'        => 'select',
-					'heading'     => esc_attr__( 'Sortierung', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Sortierung der Kategorien.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Order By', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Sort order for categories.', 'recruiting-playbook' ),
 					'param_name'  => 'orderby',
 					'default'     => 'name',
 					'value'       => [
 						'name'  => esc_attr__( 'Name', 'recruiting-playbook' ),
-						'count' => esc_attr__( 'Anzahl', 'recruiting-playbook' ),
+						'count' => esc_attr__( 'Count', 'recruiting-playbook' ),
 					],
 				],
 			],

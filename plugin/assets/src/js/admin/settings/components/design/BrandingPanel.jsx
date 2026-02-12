@@ -1,7 +1,7 @@
 /**
  * BrandingPanel Component
  *
- * Tab: Branding - Farben, Logo, White-Label Einstellungen.
+ * Tab: Branding - Colors, Logo, White-Label Settings.
  *
  * @package RecruitingPlaybook
  */
@@ -27,23 +27,23 @@ import { Select, SelectOption } from '../../../components/ui/select';
 export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor } ) {
 	return (
 		<div className="rp-space-y-4">
-			{ /* Card: Farben */ }
+			{ /* Card: Colors */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Farben', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ __( 'Colors', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Primärfarbe für Buttons, Links und Akzente', 'recruiting-playbook' ) }
+						{ __( 'Primary color for buttons, links and accents', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Theme-Farben verwenden */ }
+					{ /* Use theme colors */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="use_theme_colors">
-								{ __( 'Theme-Farben verwenden', 'recruiting-playbook' ) }
+								{ __( 'Use theme colors', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Primärfarbe aus dem aktiven WordPress-Theme übernehmen', 'recruiting-playbook' ) }
+								{ __( 'Inherit primary color from the active WordPress theme', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -53,15 +53,15 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 						/>
 					</div>
 
-					{ /* Primärfarbe */ }
+					{ /* Primary color */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="primary_color">
-								{ __( 'Primärfarbe', 'recruiting-playbook' ) }
+								{ __( 'Primary color', 'recruiting-playbook' ) }
 							</Label>
 							{ settings.use_theme_colors && meta?.primary_color_computed && (
 								<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-									{ __( 'Vom Theme:', 'recruiting-playbook' ) } { meta.primary_color_computed }
+									{ __( 'From theme:', 'recruiting-playbook' ) } { meta.primary_color_computed }
 								</p>
 							) }
 						</div>
@@ -73,14 +73,14 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 						/>
 					</div>
 
-					{ /* Aktuelle Primärfarbe Anzeige */ }
+					{ /* Current primary color display */ }
 					<div className="rp-flex rp-items-center rp-gap-2 rp-p-3 rp-bg-gray-50 rp-rounded-md">
 						<div
 							className="rp-w-6 rp-h-6 rp-rounded rp-border rp-border-gray-300"
 							style={ { backgroundColor: computedPrimaryColor } }
 						/>
 						<span className="rp-text-sm rp-text-gray-600">
-							{ __( 'Aktive Primärfarbe:', 'recruiting-playbook' ) }
+							{ __( 'Active primary color:', 'recruiting-playbook' ) }
 							<code className="rp-ml-1 rp-font-mono rp-text-xs">{ computedPrimaryColor }</code>
 						</span>
 					</div>
@@ -92,18 +92,18 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 				<CardHeader>
 					<CardTitle>{ __( 'Logo', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Logo für E-Mail-Signaturen und Dokumenten-Header', 'recruiting-playbook' ) }
+						{ __( 'Logo for email signatures and document headers', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Theme-Logo verwenden */ }
+					{ /* Use theme logo */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="use_theme_logo">
-								{ __( 'Theme-Logo verwenden', 'recruiting-playbook' ) }
+								{ __( 'Use theme logo', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Custom Logo aus dem WordPress-Theme übernehmen', 'recruiting-playbook' ) }
+								{ __( 'Inherit custom logo from WordPress theme', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -113,14 +113,14 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 						/>
 					</div>
 
-					{ /* Logo in Signatur anzeigen */ }
+					{ /* Show logo in signature */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="logo_in_signature">
-								{ __( 'Logo in E-Mail-Signatur', 'recruiting-playbook' ) }
+								{ __( 'Logo in email signature', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Logo automatisch in E-Mail-Signaturen einfügen', 'recruiting-playbook' ) }
+								{ __( 'Automatically insert logo in email signatures', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -130,7 +130,7 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 						/>
 					</div>
 
-					{ /* Signatur-Logo Optionen (nur wenn aktiv) */ }
+					{ /* Signature logo options (only when active) */ }
 					{ settings.logo_in_signature && (
 						<div className="rp-pl-4 rp-border-l-2 rp-border-gray-200 rp-space-y-3">
 							{ /* Position */ }
@@ -142,15 +142,15 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 									value={ settings.signature_logo_position || 'top' }
 									onChange={ ( e ) => onUpdate( 'signature_logo_position', e.target.value ) }
 								>
-									<SelectOption value="top">{ __( 'Oben', 'recruiting-playbook' ) }</SelectOption>
-									<SelectOption value="bottom">{ __( 'Unten', 'recruiting-playbook' ) }</SelectOption>
-									<SelectOption value="left">{ __( 'Links', 'recruiting-playbook' ) }</SelectOption>
+									<SelectOption value="top">{ __( 'Top', 'recruiting-playbook' ) }</SelectOption>
+									<SelectOption value="bottom">{ __( 'Bottom', 'recruiting-playbook' ) }</SelectOption>
+									<SelectOption value="left">{ __( 'Left', 'recruiting-playbook' ) }</SelectOption>
 								</Select>
 							</div>
 
-							{ /* Max. Höhe */ }
+							{ /* Max. height */ }
 							<Slider
-								label={ __( 'Max. Höhe', 'recruiting-playbook' ) }
+								label={ __( 'Max. height', 'recruiting-playbook' ) }
 								value={ settings.signature_logo_max_height || 60 }
 								onChange={ ( value ) => onUpdate( 'signature_logo_max_height', value ) }
 								min={ 30 }
@@ -168,18 +168,18 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 				<CardHeader>
 					<CardTitle>{ __( 'White-Label', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ __( 'Plugin-Branding entfernen', 'recruiting-playbook' ) }
+						{ __( 'Remove plugin branding', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="rp-space-y-4">
-					{ /* Branding ausblenden */ }
+					{ /* Hide branding */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="hide_branding">
-								{ __( '"Powered by" ausblenden', 'recruiting-playbook' ) }
+								{ __( 'Hide "Powered by"', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Entfernt "Powered by Recruiting Playbook" im Frontend', 'recruiting-playbook' ) }
+								{ __( 'Removes "Powered by Recruiting Playbook" from frontend', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch
@@ -189,14 +189,14 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 						/>
 					</div>
 
-					{ /* White-Label E-Mails */ }
+					{ /* White-Label emails */ }
 					<div className="rp-flex rp-items-center rp-justify-between">
 						<div>
 							<Label htmlFor="hide_email_branding">
-								{ __( 'White-Label E-Mails', 'recruiting-playbook' ) }
+								{ __( 'White-label emails', 'recruiting-playbook' ) }
 							</Label>
 							<p className="rp-text-xs rp-text-gray-500 rp-mt-0.5">
-								{ __( 'Entfernt Plugin-Branding aus E-Mail-Footern', 'recruiting-playbook' ) }
+								{ __( 'Removes plugin branding from email footers', 'recruiting-playbook' ) }
 							</p>
 						</div>
 						<Switch

@@ -40,7 +40,7 @@ export function useApplications() {
 			setError(
 				err.message ||
 				window.rpKanban?.i18n?.error ||
-				'Fehler beim Laden'
+				'Error loading'
 			);
 		} finally {
 			setLoading( false );
@@ -96,14 +96,14 @@ export function useApplications() {
 					data: {
 						status: newStatus,
 						kanban_position: newPosition,
-						note: `Status via Kanban-Board geändert`,
+						note: `Status changed via Kanban board`,
 					},
 				} );
 
 				// Erfolgsmeldung anzeigen
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
-					i18n.statusChanged || 'Status geändert',
+					i18n.statusChanged || 'Status changed',
 					'success'
 				);
 
@@ -121,7 +121,7 @@ export function useApplications() {
 				// Fehlermeldung anzeigen
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
-					i18n.updateFailed || 'Aktualisierung fehlgeschlagen',
+					i18n.updateFailed || 'Update failed',
 					'error'
 				);
 			}
@@ -196,7 +196,7 @@ export function useApplications() {
 
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
-					i18n.reorderFailed || 'Sortierung fehlgeschlagen',
+					i18n.reorderFailed || 'Reordering failed',
 					'error'
 				);
 			}
@@ -262,7 +262,7 @@ export function useApplications() {
 					data: {
 						status: newStatus,
 						kanban_position: movedItemPosition,
-						note: `Status via Kanban-Board geändert`,
+						note: `Status changed via Kanban board`,
 					},
 				} );
 
@@ -280,7 +280,7 @@ export function useApplications() {
 
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
-					i18n.statusChanged || 'Status geändert',
+					i18n.statusChanged || 'Status changed',
 					'success'
 				);
 
@@ -297,7 +297,7 @@ export function useApplications() {
 
 				const i18n = window.rpKanban?.i18n || {};
 				showNotice(
-					i18n.updateFailed || 'Verschieben fehlgeschlagen',
+					i18n.updateFailed || 'Move failed',
 					'error'
 				);
 			}

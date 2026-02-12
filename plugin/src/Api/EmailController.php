@@ -122,7 +122,7 @@ class EmailController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'send_email_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'E-Mail-Log-ID', 'recruiting-playbook' ),
+							'description' => __( 'Email log ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -155,22 +155,22 @@ class EmailController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'send_email_permissions_check' ],
 					'args'                => [
 						'application_ids'  => [
-							'description' => __( 'Array von Bewerbungs-IDs', 'recruiting-playbook' ),
+							'description' => __( 'Array of application IDs', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'items'       => [ 'type' => 'integer' ],
 							'required'    => true,
 						],
 						'template_id'      => [
-							'description' => __( 'Template-ID', 'recruiting-playbook' ),
+							'description' => __( 'Template ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'custom_variables' => [
-							'description' => __( 'Globale Platzhalter-Werte für alle E-Mails', 'recruiting-playbook' ),
+							'description' => __( 'Global placeholder values for all emails', 'recruiting-playbook' ),
 							'type'        => 'object',
 						],
 						'send_immediately' => [
-							'description' => __( 'Sofort senden (nicht in Queue)', 'recruiting-playbook' ),
+							'description' => __( 'Send immediately (not queued)', 'recruiting-playbook' ),
 							'type'        => 'boolean',
 							'default'     => false,
 						],
@@ -201,7 +201,7 @@ class EmailController extends WP_REST_Controller {
 		if ( ! $application ) {
 			return new WP_Error(
 				'rest_application_not_found',
-				__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Application not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -210,7 +210,7 @@ class EmailController extends WP_REST_Controller {
 		if ( empty( $template_id ) && ( empty( $subject ) || empty( $body ) ) ) {
 			return new WP_Error(
 				'rest_email_invalid_params',
-				__( 'Entweder Template-ID oder Betreff und Inhalt erforderlich.', 'recruiting-playbook' ),
+				__( 'Either template ID or subject and body required.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -255,16 +255,16 @@ class EmailController extends WP_REST_Controller {
 		if ( false === $result ) {
 			return new WP_Error(
 				'rest_email_send_failed',
-				__( 'E-Mail konnte nicht gesendet werden.', 'recruiting-playbook' ),
+				__( 'Email could not be sent.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
 
 		$status  = $scheduled_at ? 'scheduled' : ( $use_queue ? 'queued' : 'sent' );
 		$message = match ( $status ) {
-			'scheduled' => __( 'E-Mail wurde für den Versand geplant.', 'recruiting-playbook' ),
-			'queued'    => __( 'E-Mail wurde in die Warteschlange eingereiht.', 'recruiting-playbook' ),
-			'sent'      => __( 'E-Mail wurde gesendet.', 'recruiting-playbook' ),
+			'scheduled' => __( 'Email has been scheduled for delivery.', 'recruiting-playbook' ),
+			'queued'    => __( 'Email has been queued.', 'recruiting-playbook' ),
+			'sent'      => __( 'Email has been sent.', 'recruiting-playbook' ),
 		};
 
 		return new WP_REST_Response(
@@ -301,7 +301,7 @@ class EmailController extends WP_REST_Controller {
 				if ( ! $template ) {
 					return new WP_Error(
 						'rest_template_not_found',
-						__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+						__( 'Template not found.', 'recruiting-playbook' ),
 						[ 'status' => 404 ]
 					);
 				}
@@ -332,7 +332,7 @@ class EmailController extends WP_REST_Controller {
 		if ( ! $application ) {
 			return new WP_Error(
 				'rest_application_not_found',
-				__( 'Bewerbung nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Application not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -343,7 +343,7 @@ class EmailController extends WP_REST_Controller {
 			if ( ! $preview ) {
 				return new WP_Error(
 					'rest_template_not_found',
-					__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+					__( 'Template not found.', 'recruiting-playbook' ),
 					[ 'status' => 404 ]
 				);
 			}
@@ -357,7 +357,7 @@ class EmailController extends WP_REST_Controller {
 			if ( ! $rendered ) {
 				return new WP_Error(
 					'rest_template_render_failed',
-					__( 'Template konnte nicht gerendert werden.', 'recruiting-playbook' ),
+					__( 'Template could not be rendered.', 'recruiting-playbook' ),
 					[ 'status' => 500 ]
 				);
 			}
@@ -408,7 +408,7 @@ class EmailController extends WP_REST_Controller {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_email_cancel_failed',
-				__( 'E-Mail konnte nicht storniert werden. Möglicherweise wurde sie bereits versendet.', 'recruiting-playbook' ),
+				__( 'Email could not be cancelled. It may have already been sent.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -416,7 +416,7 @@ class EmailController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Geplante E-Mail wurde storniert.', 'recruiting-playbook' ),
+				'message' => __( 'Scheduled email has been cancelled.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -450,7 +450,7 @@ class EmailController extends WP_REST_Controller {
 		if ( empty( $application_ids ) || ! is_array( $application_ids ) ) {
 			return new WP_Error(
 				'rest_invalid_application_ids',
-				__( 'Bewerbungs-IDs müssen als Array übergeben werden.', 'recruiting-playbook' ),
+				__( 'Application IDs must be provided as an array.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -460,7 +460,7 @@ class EmailController extends WP_REST_Controller {
 		if ( ! $template ) {
 			return new WP_Error(
 				'rest_template_not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -485,7 +485,7 @@ class EmailController extends WP_REST_Controller {
 				$results['failed']++;
 				$results['errors'][] = [
 					'application_id' => $application_id,
-					'error'          => __( 'Bewerbung nicht gefunden', 'recruiting-playbook' ),
+					'error'          => __( 'Application not found', 'recruiting-playbook' ),
 				];
 				continue;
 			}
@@ -502,7 +502,7 @@ class EmailController extends WP_REST_Controller {
 				$results['failed']++;
 				$results['errors'][] = [
 					'application_id' => $application_id,
-					'error'          => __( 'E-Mail konnte nicht gesendet werden', 'recruiting-playbook' ),
+					'error'          => __( 'Email could not be sent', 'recruiting-playbook' ),
 				];
 			} else {
 				$results['queued']++;
@@ -520,7 +520,7 @@ class EmailController extends WP_REST_Controller {
 				'status'  => $status,
 				'message' => sprintf(
 					/* translators: 1: number of queued emails, 2: number of failed emails */
-					__( '%1$d E-Mails in Warteschlange, %2$d fehlgeschlagen.', 'recruiting-playbook' ),
+					__( '%1$d emails queued, %2$d failed.', 'recruiting-playbook' ),
 					$results['queued'],
 					$results['failed']
 				),
@@ -546,7 +546,7 @@ class EmailController extends WP_REST_Controller {
 				'email_templates',
 				'rp_send_emails',
 				'rest_email_send_required',
-				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' )
+				__( 'You do not have permission to send emails.', 'recruiting-playbook' )
 			);
 		}
 
@@ -555,7 +555,7 @@ class EmailController extends WP_REST_Controller {
 		if ( ! current_user_can( 'rp_send_emails' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung, E-Mails zu senden.', 'recruiting-playbook' ),
+				__( 'You do not have permission to send emails.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -564,7 +564,7 @@ class EmailController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_send_required',
-				__( 'E-Mail-Versand erfordert Pro.', 'recruiting-playbook' ),
+				__( 'Email sending requires Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -583,40 +583,40 @@ class EmailController extends WP_REST_Controller {
 	private function get_send_args(): array {
 		return [
 			'application_id'   => [
-				'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+				'description' => __( 'Application ID', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'required'    => true,
 			],
 			'template_id'      => [
-				'description' => __( 'Template-ID (optional bei custom)', 'recruiting-playbook' ),
+				'description' => __( 'Template ID (optional for custom)', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'subject'          => [
-				'description'       => __( 'Betreff (überschreibt Template)', 'recruiting-playbook' ),
+				'description'       => __( 'Subject (overrides template)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'body'             => [
-				'description'       => __( 'Inhalt (überschreibt Template)', 'recruiting-playbook' ),
+				'description'       => __( 'Body (overrides template)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'sanitize_callback' => 'wp_kses_post',
 			],
 			'custom_variables' => [
-				'description' => __( 'Zusätzliche Platzhalter-Werte', 'recruiting-playbook' ),
+				'description' => __( 'Additional placeholder values', 'recruiting-playbook' ),
 				'type'        => 'object',
 			],
 			'send_immediately' => [
-				'description' => __( 'Sofort senden (nicht in Queue)', 'recruiting-playbook' ),
+				'description' => __( 'Send immediately (not queued)', 'recruiting-playbook' ),
 				'type'        => 'boolean',
 				'default'     => false,
 			],
 			'scheduled_at'     => [
-				'description' => __( 'Geplanter Versandzeitpunkt (ISO 8601)', 'recruiting-playbook' ),
+				'description' => __( 'Scheduled send time (ISO 8601)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'format'      => 'date-time',
 			],
 			'signature_id'     => [
-				'description' => __( 'Signatur-ID (null = automatisch, 0 = keine)', 'recruiting-playbook' ),
+				'description' => __( 'Signature ID (null = automatic, 0 = none)', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 		];
@@ -630,27 +630,27 @@ class EmailController extends WP_REST_Controller {
 	private function get_preview_args(): array {
 		return [
 			'application_id'   => [
-				'description' => __( 'Bewerbungs-ID (optional für Preview-Daten)', 'recruiting-playbook' ),
+				'description' => __( 'Application ID (optional for preview data)', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'template_id'      => [
-				'description' => __( 'Template-ID', 'recruiting-playbook' ),
+				'description' => __( 'Template ID', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 			'subject'          => [
-				'description' => __( 'Betreff', 'recruiting-playbook' ),
+				'description' => __( 'Subject', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'body'             => [
-				'description' => __( 'Inhalt', 'recruiting-playbook' ),
+				'description' => __( 'Body', 'recruiting-playbook' ),
 				'type'        => 'string',
 			],
 			'custom_variables' => [
-				'description' => __( 'Zusätzliche Platzhalter-Werte', 'recruiting-playbook' ),
+				'description' => __( 'Additional placeholder values', 'recruiting-playbook' ),
 				'type'        => 'object',
 			],
 			'signature_id'     => [
-				'description' => __( 'Signatur-ID für Vorschau', 'recruiting-playbook' ),
+				'description' => __( 'Signature ID for preview', 'recruiting-playbook' ),
 				'type'        => 'integer',
 			],
 		];

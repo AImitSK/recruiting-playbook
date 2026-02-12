@@ -116,7 +116,7 @@ class FormTemplateService {
 		if ( $this->repository->nameExists( $data['name'] ) ) {
 			return new WP_Error(
 				'duplicate_name',
-				__( 'Ein Template mit diesem Namen existiert bereits.', 'recruiting-playbook' ),
+				__( 'A template with this name already exists.', 'recruiting-playbook' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -127,7 +127,7 @@ class FormTemplateService {
 		if ( ! $template ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'Template konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'Template could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -156,7 +156,7 @@ class FormTemplateService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -177,7 +177,7 @@ class FormTemplateService {
 		if ( ! $template ) {
 			return new WP_Error(
 				'update_failed',
-				__( 'Template konnte nicht aktualisiert werden.', 'recruiting-playbook' ),
+				__( 'Template could not be updated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -202,7 +202,7 @@ class FormTemplateService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -214,7 +214,7 @@ class FormTemplateService {
 				'template_in_use',
 				sprintf(
 					/* translators: %d: Number of jobs using the template */
-					__( 'Template kann nicht gelöscht werden. Es wird von %d Stelle(n) verwendet.', 'recruiting-playbook' ),
+					__( 'Template cannot be deleted. It is used by %d job(s).', 'recruiting-playbook' ),
 					$usage_count
 				),
 				[ 'status' => 409, 'usage_count' => $usage_count ]
@@ -227,7 +227,7 @@ class FormTemplateService {
 			if ( count( $all_templates ) > 1 ) {
 				return new WP_Error(
 					'cannot_delete_default',
-					__( 'Das Standard-Template kann nicht gelöscht werden. Setzen Sie zuerst ein anderes Template als Standard.', 'recruiting-playbook' ),
+					__( 'The default template cannot be deleted. Set another template as default first.', 'recruiting-playbook' ),
 					[ 'status' => 409 ]
 				);
 			}
@@ -238,7 +238,7 @@ class FormTemplateService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'delete_failed',
-				__( 'Template konnte nicht gelöscht werden.', 'recruiting-playbook' ),
+				__( 'Template could not be deleted.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -259,7 +259,7 @@ class FormTemplateService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -283,7 +283,7 @@ class FormTemplateService {
 		if ( ! $template ) {
 			return new WP_Error(
 				'duplicate_failed',
-				__( 'Template konnte nicht dupliziert werden.', 'recruiting-playbook' ),
+				__( 'Template could not be duplicated.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -303,7 +303,7 @@ class FormTemplateService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Template nicht gefunden.', 'recruiting-playbook' ),
+				__( 'Template not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -318,7 +318,7 @@ class FormTemplateService {
 		if ( ! $result ) {
 			return new WP_Error(
 				'set_default_failed',
-				__( 'Template konnte nicht als Standard gesetzt werden.', 'recruiting-playbook' ),
+				__( 'Template could not be set as default.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -346,7 +346,7 @@ class FormTemplateService {
 		if ( empty( $data['name'] ) ) {
 			return new WP_Error(
 				'missing_name',
-				__( 'Template-Name ist erforderlich.', 'recruiting-playbook' ),
+				__( 'Template name is required.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -354,7 +354,7 @@ class FormTemplateService {
 		if ( strlen( $data['name'] ) > 255 ) {
 			return new WP_Error(
 				'name_too_long',
-				__( 'Template-Name darf maximal 255 Zeichen lang sein.', 'recruiting-playbook' ),
+				__( 'Template name may not exceed 255 characters.', 'recruiting-playbook' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -371,7 +371,7 @@ class FormTemplateService {
 	private function generateUniqueName( string $base_name ): string {
 		$new_name = sprintf(
 			/* translators: %s: Original template name */
-			__( '%s (Kopie)', 'recruiting-playbook' ),
+			__( '%s (Copy)', 'recruiting-playbook' ),
 			$base_name
 		);
 
@@ -380,7 +380,7 @@ class FormTemplateService {
 			++$counter;
 			$new_name = sprintf(
 				/* translators: 1: Original template name, 2: Copy number */
-				__( '%1$s (Kopie %2$d)', 'recruiting-playbook' ),
+				__( '%1$s (Copy %2$d)', 'recruiting-playbook' ),
 				$base_name,
 				$counter
 			);

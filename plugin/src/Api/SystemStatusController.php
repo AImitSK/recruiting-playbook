@@ -108,7 +108,7 @@ class SystemStatusController extends WP_REST_Controller {
 			'deleted' => $deleted,
 			'message' => sprintf(
 				/* translators: %d: Number of deleted documents */
-				__( '%d verwaiste Dokumente gelöscht', 'recruiting-playbook' ),
+				__( '%d orphaned documents deleted', 'recruiting-playbook' ),
 				$deleted
 			),
 		], 200 );
@@ -128,7 +128,7 @@ class SystemStatusController extends WP_REST_Controller {
 			'deleted' => $deleted,
 			'message' => sprintf(
 				/* translators: %d: Number of deleted applications */
-				__( '%d verwaiste Bewerbungen gelöscht', 'recruiting-playbook' ),
+				__( '%d orphaned applications deleted', 'recruiting-playbook' ),
 				$deleted
 			),
 		], 200 );
@@ -144,7 +144,7 @@ class SystemStatusController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_not_logged_in',
-				__( 'Sie müssen eingeloggt sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -153,7 +153,7 @@ class SystemStatusController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'rp_view_system_status' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung für Systemstatus.', 'recruiting-playbook' ),
+				__( 'No permission to view system status.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -171,7 +171,7 @@ class SystemStatusController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_not_logged_in',
-				__( 'Sie müssen eingeloggt sein.', 'recruiting-playbook' ),
+				__( 'You must be logged in.', 'recruiting-playbook' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -180,7 +180,7 @@ class SystemStatusController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'rp_run_cleanup' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung für Bereinigung.', 'recruiting-playbook' ),
+				__( 'No permission to run cleanup.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

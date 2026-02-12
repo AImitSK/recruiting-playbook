@@ -68,7 +68,7 @@ export function BlockPlaceholder( {
 			) }
 			<p className="rp-block-placeholder__link">
 				<a href={ docUrl } target="_blank" rel="noopener noreferrer">
-					{ __( 'Mehr erfahren', 'recruiting-playbook' ) }
+					{ __( 'Learn more', 'recruiting-playbook' ) }
 					<svg
 						width="14"
 						height="14"

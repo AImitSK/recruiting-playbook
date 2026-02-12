@@ -34,11 +34,11 @@ export default function Edit( { attributes, setAttributes } ) {
 		const parts = [];
 		parts.push(
 			columns === 1
-				? __( '1 Spalte', 'recruiting-playbook' )
-				: `${ columns } ${ __( 'Spalten', 'recruiting-playbook' ) }`
+				? __( '1 column', 'recruiting-playbook' )
+				: `${ columns } ${ __( 'columns', 'recruiting-playbook' ) }`
 		);
 		if ( showCount ) {
-			parts.push( __( 'mit Zähler', 'recruiting-playbook' ) );
+			parts.push( __( 'with counter', 'recruiting-playbook' ) );
 		}
 		return parts.join( ' · ' );
 	};
@@ -47,11 +47,11 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Anzeige', 'recruiting-playbook' ) }
+					title={ __( 'Display', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<RangeControl
-						label={ __( 'Spalten', 'recruiting-playbook' ) }
+						label={ __( 'Columns', 'recruiting-playbook' ) }
 						value={ columns }
 						onChange={ ( value ) =>
 							setAttributes( { columns: value } )
@@ -59,13 +59,13 @@ export default function Edit( { attributes, setAttributes } ) {
 						min={ 1 }
 						max={ 6 }
 						help={ __(
-							'Anzahl der Spalten im Grid-Layout.',
+							'Number of columns in the grid layout.',
 							'recruiting-playbook'
 						) }
 					/>
 					<ToggleControl
 						label={ __(
-							'Anzahl Stellen anzeigen',
+							'Show job count',
 							'recruiting-playbook'
 						) }
 						checked={ showCount }
@@ -73,13 +73,13 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { showCount: value } )
 						}
 						help={ __(
-							'Zeigt die Anzahl der Stellen pro Kategorie an.',
+							'Displays the number of jobs per category.',
 							'recruiting-playbook'
 						) }
 					/>
 					<ToggleControl
 						label={ __(
-							'Leere Kategorien ausblenden',
+							'Hide empty categories',
 							'recruiting-playbook'
 						) }
 						checked={ hideEmpty }
@@ -87,18 +87,18 @@ export default function Edit( { attributes, setAttributes } ) {
 							setAttributes( { hideEmpty: value } )
 						}
 						help={ __(
-							'Versteckt Kategorien ohne Stellenanzeigen.',
+							'Hides categories without job listings.',
 							'recruiting-playbook'
 						) }
 					/>
 				</PanelBody>
 
 				<PanelBody
-					title={ __( 'Sortierung', 'recruiting-playbook' ) }
+					title={ __( 'Sorting', 'recruiting-playbook' ) }
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Sortieren nach', 'recruiting-playbook' ) }
+						label={ __( 'Sort by', 'recruiting-playbook' ) }
 						value={ orderby }
 						options={ [
 							{
@@ -110,7 +110,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							},
 							{
 								label: __(
-									'Anzahl Stellen',
+									'Job count',
 									'recruiting-playbook'
 								),
 								value: 'count',
@@ -125,10 +125,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<BlockPlaceholder
-					label={ __( 'Job-Kategorien', 'recruiting-playbook' ) }
+					label={ __( 'Job Categories', 'recruiting-playbook' ) }
 					summary={ getSummary() }
 					helpText={ __(
-						'Zeigt alle Job-Kategorien als Karten an.',
+						'Displays all job categories as cards.',
 						'recruiting-playbook'
 					) }
 					shortcode="[rp_job_categories]"

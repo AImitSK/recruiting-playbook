@@ -1,9 +1,9 @@
 /**
  * CV Matching Modal Component
  *
- * Alpine.js Komponente für das KI-Matching Feature.
- * Ermöglicht Bewerbern, ihren Lebenslauf hochzuladen und
- * eine KI-basierte Einschätzung der Passgenauigkeit zu erhalten.
+ * Alpine.js component for the AI matching feature.
+ * Allows applicants to upload their resume and
+ * receive an AI-based assessment of their fit.
  */
 
 // Komponenten-Definition
@@ -30,7 +30,7 @@ const matchModalComponent = () => ({
         // Init
         init() {
             console.log('[RP] matchModal component initialized');
-            // ESC zum Schließen
+            // ESC to close
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.isOpen) {
                     this.close();
@@ -38,7 +38,7 @@ const matchModalComponent = () => ({
             });
         },
 
-        // Modal öffnen
+        // Open modal
         open(jobId, jobTitle) {
             console.log('[RP] matchModal.open called', { jobId, jobTitle });
             this.reset();
@@ -63,7 +63,7 @@ const matchModalComponent = () => ({
             }
         },
 
-        // Modal schließen
+        // Close modal
         close() {
             console.log('[RP] matchModal.close() called, isOpen was:', this.isOpen);
             this.isOpen = false;
@@ -71,7 +71,7 @@ const matchModalComponent = () => ({
             this.stopPolling();
         },
 
-        // State zurücksetzen
+        // Reset state
         reset() {
             this.file = null;
             this.status = 'idle';
@@ -110,9 +110,9 @@ const matchModalComponent = () => ({
             }
         },
 
-        // File validieren
+        // Validate file
         handleFile(file) {
-            // Erlaubte Typen
+            // Allowed types
             const allowedTypes = [
                 'application/pdf',
                 'image/jpeg',
@@ -121,13 +121,13 @@ const matchModalComponent = () => ({
             ];
 
             if (!allowedTypes.includes(file.type)) {
-                this.error = rpMatchConfig.i18n.invalidFileType || 'Bitte laden Sie eine PDF, JPG, PNG oder DOCX Datei hoch.';
+                this.error = rpMatchConfig.i18n.invalidFileType || 'Please upload a PDF, JPG, PNG or DOCX file.';
                 return;
             }
 
             // Max 10MB
             if (file.size > 10 * 1024 * 1024) {
-                this.error = rpMatchConfig.i18n.fileTooLarge || 'Die Datei ist zu groß. Maximum: 10 MB.';
+                this.error = rpMatchConfig.i18n.fileTooLarge || 'File is too large. Maximum: 10 MB.';
                 return;
             }
 
@@ -135,12 +135,12 @@ const matchModalComponent = () => ({
             this.error = null;
         },
 
-        // Datei entfernen
+        // Remove file
         removeFile() {
             this.file = null;
         },
 
-        // Analyse starten
+        // Start analysis
         async startAnalysis() {
             if (!this.file || !this.jobId) return;
 
@@ -164,23 +164,23 @@ const matchModalComponent = () => ({
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.message || rpMatchConfig.i18n.analysisFailed || 'Analyse fehlgeschlagen');
+                    throw new Error(data.message || rpMatchConfig.i18n.analysisFailed || 'Analysis failed');
                 }
 
                 this.jobRequestId = data.job_id;
                 this.status = 'processing';
                 this.progress = 30;
 
-                // Polling starten
+                // Start polling
                 this.startPolling();
 
             } catch (e) {
                 this.status = 'error';
-                this.error = e.message || rpMatchConfig.i18n.error || 'Ein Fehler ist aufgetreten';
+                this.error = e.message || rpMatchConfig.i18n.error || 'An error occurred';
             }
         },
 
-        // Polling für Ergebnis
+        // Poll for result
         startPolling() {
             this.pollInterval = setInterval(async () => {
                 try {
@@ -195,7 +195,7 @@ const matchModalComponent = () => ({
 
                     const data = await response.json();
 
-                    // Progress simulieren
+                    // Simulate progress
                     if (this.progress < 90) {
                         this.progress += 10;
                     }
@@ -206,21 +206,21 @@ const matchModalComponent = () => ({
                         this.progress = 100;
                         this.stopPolling();
                     } else if (data.status === 'failed') {
-                        this.error = data.error || rpMatchConfig.i18n.analysisFailed || 'Analyse fehlgeschlagen';
+                        this.error = data.error || rpMatchConfig.i18n.analysisFailed || 'Analysis failed';
                         this.status = 'error';
                         this.stopPolling();
                     }
 
                 } catch (e) {
-                    // Bei Netzwerkfehler weiter versuchen
+                    // Continue trying on network error
                     console.error('Polling error:', e);
                 }
-            }, 2000); // Alle 2 Sekunden
+            }, 2000); // Every 2 seconds
 
             // Timeout nach 4 Minuten (Cold Start von Cloud Run kann 30-60s dauern)
             setTimeout(() => {
                 if (this.status === 'processing') {
-                    this.error = rpMatchConfig.i18n.timeout || 'Die Analyse dauert zu lange. Bitte versuchen Sie es später erneut.';
+                    this.error = rpMatchConfig.i18n.timeout || 'Analysis is taking too long. Please try again later.';
                     this.status = 'error';
                     this.stopPolling();
                 }
@@ -234,7 +234,7 @@ const matchModalComponent = () => ({
             }
         },
 
-        // Ergebnis-Farbe
+        // Result color
         get resultColor() {
             if (!this.result) return '';
             const colors = {
@@ -245,18 +245,18 @@ const matchModalComponent = () => ({
             return colors[this.result.category] || '';
         },
 
-        // Ergebnis-Label
+        // Result label
         get resultLabel() {
             if (!this.result) return '';
             const labels = {
-                low: rpMatchConfig.i18n.resultLow || 'Eher nicht passend',
-                medium: rpMatchConfig.i18n.resultMedium || 'Teilweise passend',
-                high: rpMatchConfig.i18n.resultHigh || 'Gute Übereinstimmung',
+                low: rpMatchConfig.i18n.resultLow || 'Not a good fit',
+                medium: rpMatchConfig.i18n.resultMedium || 'Partial match',
+                high: rpMatchConfig.i18n.resultHigh || 'Good match',
             };
             return labels[this.result.category] || '';
         },
 
-        // Formatierter Dateiname
+        // Formatted file name
         get fileName() {
             if (!this.file) return '';
             const name = this.file.name;
@@ -266,7 +266,7 @@ const matchModalComponent = () => ({
             return name;
         },
 
-    // Formatierte Dateigröße
+    // Formatted file size
     get fileSize() {
         if (!this.file) return '';
         const kb = this.file.size / 1024;
@@ -277,7 +277,7 @@ const matchModalComponent = () => ({
     },
 });
 
-// Komponente registrieren - mit Fallback für verschiedene Ladereihenfolgen
+// Register component - with fallback for different loading orders
 function registerMatchModalComponent() {
     if (typeof Alpine !== 'undefined' && Alpine.data) {
         console.log('[RP] Registering matchModal component');
@@ -287,10 +287,10 @@ function registerMatchModalComponent() {
     }
 }
 
-// Versuche sofortige Registrierung (falls Alpine schon geladen)
+// Try immediate registration (if Alpine already loaded)
 if (typeof Alpine !== 'undefined') {
     registerMatchModalComponent();
 } else {
-    // Warte auf Alpine via alpine:init Event
+    // Wait for Alpine via alpine:init event
     document.addEventListener('alpine:init', registerMatchModalComponent);
 }

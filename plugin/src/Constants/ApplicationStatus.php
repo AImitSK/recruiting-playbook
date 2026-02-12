@@ -33,14 +33,14 @@ class ApplicationStatus {
 	 */
 	public static function getAll(): array {
 		return [
-			self::NEW       => __( 'Neu', 'recruiting-playbook' ),
-			self::SCREENING => __( 'In Prüfung', 'recruiting-playbook' ),
+			self::NEW       => __( 'New', 'recruiting-playbook' ),
+			self::SCREENING => __( 'Screening', 'recruiting-playbook' ),
 			self::INTERVIEW => __( 'Interview', 'recruiting-playbook' ),
-			self::OFFER     => __( 'Angebot', 'recruiting-playbook' ),
-			self::HIRED     => __( 'Eingestellt', 'recruiting-playbook' ),
-			self::REJECTED  => __( 'Abgelehnt', 'recruiting-playbook' ),
-			self::WITHDRAWN => __( 'Zurückgezogen', 'recruiting-playbook' ),
-			self::DELETED   => __( 'Gelöscht', 'recruiting-playbook' ),
+			self::OFFER     => __( 'Offer', 'recruiting-playbook' ),
+			self::HIRED     => __( 'Hired', 'recruiting-playbook' ),
+			self::REJECTED  => __( 'Rejected', 'recruiting-playbook' ),
+			self::WITHDRAWN => __( 'Withdrawn', 'recruiting-playbook' ),
+			self::DELETED   => __( 'Deleted', 'recruiting-playbook' ),
 		];
 	}
 

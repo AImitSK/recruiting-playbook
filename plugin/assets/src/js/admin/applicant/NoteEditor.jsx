@@ -81,7 +81,7 @@ export function NoteEditor( {
 				value={ content }
 				onChange={ ( e ) => setContent( e.target.value ) }
 				onKeyDown={ handleKeyDown }
-				placeholder={ i18n.notePlaceholder || 'Notiz eingeben...' }
+				placeholder={ i18n.notePlaceholder || 'Enter note...' }
 				rows={ 4 }
 				disabled={ saving }
 			/>
@@ -97,7 +97,7 @@ export function NoteEditor( {
 								disabled={ saving }
 							/>
 							<span className="dashicons dashicons-lock"></span>
-							{ i18n.privateNote || 'Nur für mich sichtbar' }
+							{ i18n.privateNote || 'Visible only to me' }
 						</label>
 					) }
 				</div>
@@ -110,7 +110,7 @@ export function NoteEditor( {
 							onClick={ onCancel }
 							disabled={ saving }
 						>
-							{ i18n.cancel || 'Abbrechen' }
+							{ i18n.cancel || 'Cancel' }
 						</button>
 					) }
 					<button
@@ -122,17 +122,17 @@ export function NoteEditor( {
 						{ saving ? (
 							<>
 								<span className="spinner is-active"></span>
-								{ i18n.saving || 'Speichern...' }
+								{ i18n.saving || 'Saving...' }
 							</>
 						) : (
-							saveLabel || i18n.save || 'Speichern'
+							saveLabel || i18n.save || 'Save'
 						) }
 					</button>
 				</div>
 			</div>
 
 			<div className="rp-note-editor__hint">
-				<kbd>Ctrl</kbd> + <kbd>Enter</kbd> { i18n.toSave || 'zum Speichern' }
+				<kbd>Ctrl</kbd> + <kbd>Enter</kbd> { i18n.toSave || 'to save' }
 			</div>
 		</div>
 	);

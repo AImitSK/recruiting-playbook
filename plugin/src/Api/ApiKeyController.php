@@ -80,7 +80,7 @@ class ApiKeyController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'admin_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'API-Key-ID', 'recruiting-playbook' ),
+							'description' => __( 'API Key ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -114,7 +114,7 @@ class ApiKeyController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
 			return new WP_Error(
 				'rest_api_keys_pro_required',
-				__( 'API-Keys erfordert Pro.', 'recruiting-playbook' ),
+				__( 'API Keys require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
@@ -125,7 +125,7 @@ class ApiKeyController extends WP_REST_Controller {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Sie haben keine Berechtigung für API-Key-Verwaltung.', 'recruiting-playbook' ),
+				__( 'You do not have permission to manage API Keys.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -227,7 +227,7 @@ class ApiKeyController extends WP_REST_Controller {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'API-Key wurde gelöscht.', 'recruiting-playbook' ),
+				'message' => __( 'API Key has been deleted.', 'recruiting-playbook' ),
 			],
 			200
 		);
@@ -243,52 +243,52 @@ class ApiKeyController extends WP_REST_Controller {
 		$permissions = [
 			[
 				'key'   => 'jobs_read',
-				'label' => __( 'Stellen lesen', 'recruiting-playbook' ),
-				'group' => __( 'Stellen', 'recruiting-playbook' ),
+				'label' => __( 'Read jobs', 'recruiting-playbook' ),
+				'group' => __( 'Jobs', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'jobs_write',
-				'label' => __( 'Stellen erstellen/bearbeiten', 'recruiting-playbook' ),
-				'group' => __( 'Stellen', 'recruiting-playbook' ),
+				'label' => __( 'Create/edit jobs', 'recruiting-playbook' ),
+				'group' => __( 'Jobs', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'applications_read',
-				'label' => __( 'Bewerbungen lesen', 'recruiting-playbook' ),
-				'group' => __( 'Bewerbungen', 'recruiting-playbook' ),
+				'label' => __( 'Read applications', 'recruiting-playbook' ),
+				'group' => __( 'Applications', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'applications_write',
-				'label' => __( 'Bewerbungen bearbeiten', 'recruiting-playbook' ),
-				'group' => __( 'Bewerbungen', 'recruiting-playbook' ),
+				'label' => __( 'Edit applications', 'recruiting-playbook' ),
+				'group' => __( 'Applications', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'candidates_read',
-				'label' => __( 'Kandidaten lesen', 'recruiting-playbook' ),
-				'group' => __( 'Kandidaten', 'recruiting-playbook' ),
+				'label' => __( 'Read candidates', 'recruiting-playbook' ),
+				'group' => __( 'Candidates', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'candidates_write',
-				'label' => __( 'Kandidaten bearbeiten', 'recruiting-playbook' ),
-				'group' => __( 'Kandidaten', 'recruiting-playbook' ),
+				'label' => __( 'Edit candidates', 'recruiting-playbook' ),
+				'group' => __( 'Candidates', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'documents_read',
-				'label' => __( 'Dokumente lesen', 'recruiting-playbook' ),
-				'group' => __( 'Dokumente', 'recruiting-playbook' ),
+				'label' => __( 'Read documents', 'recruiting-playbook' ),
+				'group' => __( 'Documents', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'reports_read',
-				'label' => __( 'Berichte lesen', 'recruiting-playbook' ),
+				'label' => __( 'Read reports', 'recruiting-playbook' ),
 				'group' => __( 'System', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'settings_read',
-				'label' => __( 'Einstellungen lesen', 'recruiting-playbook' ),
+				'label' => __( 'Read settings', 'recruiting-playbook' ),
 				'group' => __( 'System', 'recruiting-playbook' ),
 			],
 			[
 				'key'   => 'settings_write',
-				'label' => __( 'Einstellungen bearbeiten', 'recruiting-playbook' ),
+				'label' => __( 'Edit settings', 'recruiting-playbook' ),
 				'group' => __( 'System', 'recruiting-playbook' ),
 			],
 		];
@@ -328,13 +328,13 @@ class ApiKeyController extends WP_REST_Controller {
 	private function get_create_item_args(): array {
 		return [
 			'name'        => [
-				'description'       => __( 'Key-Name', 'recruiting-playbook' ),
+				'description'       => __( 'Key name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
 			'permissions' => [
-				'description' => __( 'Berechtigungen', 'recruiting-playbook' ),
+				'description' => __( 'Permissions', 'recruiting-playbook' ),
 				'type'        => 'array',
 				'required'    => true,
 				'items'       => [
@@ -343,14 +343,14 @@ class ApiKeyController extends WP_REST_Controller {
 				],
 			],
 			'rate_limit'  => [
-				'description' => __( 'Anfragen pro Stunde', 'recruiting-playbook' ),
+				'description' => __( 'Requests per hour', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'default'     => 1000,
 				'minimum'     => 1,
 				'maximum'     => 100000,
 			],
 			'expires_at'  => [
-				'description' => __( 'Ablaufdatum (Y-m-d H:i:s)', 'recruiting-playbook' ),
+				'description' => __( 'Expiration date (Y-m-d H:i:s)', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 				'default'     => null,
@@ -367,13 +367,13 @@ class ApiKeyController extends WP_REST_Controller {
 		$args = $this->get_create_item_args();
 
 		$args['id'] = [
-			'description' => __( 'API-Key-ID', 'recruiting-playbook' ),
+			'description' => __( 'API Key ID', 'recruiting-playbook' ),
 			'type'        => 'integer',
 			'required'    => true,
 		];
 
 		$args['is_active'] = [
-			'description' => __( 'Key aktiv', 'recruiting-playbook' ),
+			'description' => __( 'Key active', 'recruiting-playbook' ),
 			'type'        => 'boolean',
 			'required'    => false,
 		];

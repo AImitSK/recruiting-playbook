@@ -74,11 +74,11 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 				</div>
 				<div className="rp-feature-gate__content">
 					<h4>
-						{ __( 'AI-Addon erforderlich', 'recruiting-playbook' ) }
+						{ __( 'AI Addon Required', 'recruiting-playbook' ) }
 					</h4>
 					<p>
 						{ __(
-							'Diese Funktion erfordert das AI-Addon für automatische Kandidatenanalyse.',
+							'This feature requires the AI Addon for automatic candidate analysis.',
 							'recruiting-playbook'
 						) }
 					</p>
@@ -90,7 +90,7 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 							rel="noopener noreferrer"
 						>
 							{ __(
-								'AI-Addon freischalten',
+								'Unlock AI Addon',
 								'recruiting-playbook'
 							) }
 						</a>

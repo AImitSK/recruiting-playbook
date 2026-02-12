@@ -33,13 +33,13 @@ import { Badge } from '../components/ui/badge';
  * Status configuration with colors
  */
 const STATUS_CONFIG = {
-	new: { label: 'Neu', color: '#2271b1', bg: '#e6f3ff' },
-	screening: { label: 'In Prüfung', color: '#dba617', bg: '#fff8e6' },
-	interview: { label: 'Interview', color: '#9b59b6', bg: '#f5e6ff' },
-	offer: { label: 'Angebot', color: '#1e8cbe', bg: '#e6f5ff' },
-	hired: { label: 'Eingestellt', color: '#2fac66', bg: '#e6f5ec' },
-	rejected: { label: 'Abgelehnt', color: '#d63638', bg: '#ffe6e6' },
-	withdrawn: { label: 'Zurückgezogen', color: '#787c82', bg: '#f0f0f0' },
+	new: { label: __( 'New', 'recruiting-playbook' ), color: '#2271b1', bg: '#e6f3ff' },
+	screening: { label: __( 'Screening', 'recruiting-playbook' ), color: '#dba617', bg: '#fff8e6' },
+	interview: { label: __( 'Interview', 'recruiting-playbook' ), color: '#9b59b6', bg: '#f5e6ff' },
+	offer: { label: __( 'Offer', 'recruiting-playbook' ), color: '#1e8cbe', bg: '#e6f5ff' },
+	hired: { label: __( 'Hired', 'recruiting-playbook' ), color: '#2fac66', bg: '#e6f5ec' },
+	rejected: { label: __( 'Rejected', 'recruiting-playbook' ), color: '#d63638', bg: '#ffe6e6' },
+	withdrawn: { label: __( 'Withdrawn', 'recruiting-playbook' ), color: '#787c82', bg: '#f0f0f0' },
 };
 
 /**
@@ -181,8 +181,8 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 		>
 			<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
 				{ totalItems > 0
-					? `${ start }-${ end } von ${ totalItems } Bewerbungen`
-					: __( 'Keine Bewerbungen', 'recruiting-playbook' ) }
+					? `${ start }-${ end } of ${ totalItems } applications`
+					: __( 'No applications', 'recruiting-playbook' ) }
 			</span>
 
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.25rem' } }>
@@ -198,7 +198,7 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 						cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
 						opacity: currentPage === 1 ? 0.5 : 1,
 					} }
-					title={ __( 'Erste Seite', 'recruiting-playbook' ) }
+					title={ __( 'First page', 'recruiting-playbook' ) }
 				>
 					<ChevronsLeft style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 				</button>
@@ -214,7 +214,7 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 						cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
 						opacity: currentPage === 1 ? 0.5 : 1,
 					} }
-					title={ __( 'Vorherige Seite', 'recruiting-playbook' ) }
+					title={ __( 'Previous page', 'recruiting-playbook' ) }
 				>
 					<ChevronLeft style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 				</button>
@@ -241,7 +241,7 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 						cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
 						opacity: currentPage >= totalPages ? 0.5 : 1,
 					} }
-					title={ __( 'Nächste Seite', 'recruiting-playbook' ) }
+					title={ __( 'Next page', 'recruiting-playbook' ) }
 				>
 					<ChevronRight style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 				</button>
@@ -257,7 +257,7 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 						cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
 						opacity: currentPage >= totalPages ? 0.5 : 1,
 					} }
-					title={ __( 'Letzte Seite', 'recruiting-playbook' ) }
+					title={ __( 'Last page', 'recruiting-playbook' ) }
 				>
 					<ChevronsRight style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 				</button>
@@ -442,15 +442,15 @@ export function ApplicationsPage() {
 		const diffMinutes = Math.floor( diffMs / ( 1000 * 60 ) );
 
 		if ( diffMinutes < 60 ) {
-			return `vor ${ diffMinutes } Min.`;
+			return `${ diffMinutes } min ago`;
 		}
 		if ( diffHours < 24 ) {
-			return `vor ${ diffHours } Std.`;
+			return `${ diffHours } hours ago`;
 		}
 		if ( diffDays < 7 ) {
-			return `vor ${ diffDays } Tagen`;
+			return `${ diffDays } days ago`;
 		}
-		return date.toLocaleDateString( 'de-DE' );
+		return date.toLocaleDateString( 'en-US' );
 	};
 
 	return (
@@ -466,7 +466,7 @@ export function ApplicationsPage() {
 						/>
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ __( 'Bewerbungen', 'recruiting-playbook' ) }
+						{ __( 'Applications', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
@@ -481,7 +481,7 @@ export function ApplicationsPage() {
 					>
 						<StatusTab
 							status=""
-							label={ __( 'Alle', 'recruiting-playbook' ) }
+							label={ __( 'All', 'recruiting-playbook' ) }
 							count={ totalCount }
 							isActive={ activeStatus === '' }
 							onClick={ () => handleStatusClick( '' ) }
@@ -530,7 +530,7 @@ export function ApplicationsPage() {
 								/>
 								<input
 									type="text"
-									placeholder={ __( 'Name oder E-Mail suchen...', 'recruiting-playbook' ) }
+									placeholder={ __( 'Search by name or email...', 'recruiting-playbook' ) }
 									value={ searchTerm }
 									onChange={ ( e ) => setSearchTerm( e.target.value ) }
 									style={ {
@@ -547,7 +547,7 @@ export function ApplicationsPage() {
 								/>
 							</div>
 							<Button type="submit" style={ { padding: '0.5rem 1rem' } }>
-								{ __( 'Suchen', 'recruiting-playbook' ) }
+								{ __( 'Search', 'recruiting-playbook' ) }
 							</Button>
 						</form>
 
@@ -576,7 +576,7 @@ export function ApplicationsPage() {
 								cursor: 'pointer',
 							} }
 						>
-							<option value="">{ __( 'Alle Stellen', 'recruiting-playbook' ) }</option>
+							<option value="">{ __( 'All jobs', 'recruiting-playbook' ) }</option>
 							{ jobs.map( ( job ) => (
 								<option key={ job.id } value={ job.id }>
 									{ job.title }
@@ -605,7 +605,7 @@ export function ApplicationsPage() {
 							} }
 						>
 							<Download style={ { width: '1rem', height: '1rem' } } />
-							{ __( 'Exportieren', 'recruiting-playbook' ) }
+							{ __( 'Export', 'recruiting-playbook' ) }
 						</a>
 					</div>
 
@@ -620,9 +620,9 @@ export function ApplicationsPage() {
 										direction={ order }
 										onClick={ () => handleSort( 'last_name' ) }
 									>
-										{ __( 'Bewerber', 'recruiting-playbook' ) }
+										{ __( 'Applicant', 'recruiting-playbook' ) }
 									</TableHead>
-									<TableHead>{ __( 'Stelle', 'recruiting-playbook' ) }</TableHead>
+									<TableHead>{ __( 'Job', 'recruiting-playbook' ) }</TableHead>
 									<TableHead
 										sortable
 										sorted={ orderBy === 'status' }
@@ -632,7 +632,7 @@ export function ApplicationsPage() {
 										{ __( 'Status', 'recruiting-playbook' ) }
 									</TableHead>
 									<TableHead>
-										{ __( 'Dokumente', 'recruiting-playbook' ) }
+										{ __( 'Documents', 'recruiting-playbook' ) }
 									</TableHead>
 									<TableHead
 										sortable
@@ -640,10 +640,10 @@ export function ApplicationsPage() {
 										direction={ order }
 										onClick={ () => handleSort( 'created_at' ) }
 									>
-										{ __( 'Eingegangen', 'recruiting-playbook' ) }
+										{ __( 'Received', 'recruiting-playbook' ) }
 									</TableHead>
 									<TableHead>
-										{ __( 'Aktionen', 'recruiting-playbook' ) }
+										{ __( 'Actions', 'recruiting-playbook' ) }
 									</TableHead>
 								</tr>
 							</thead>
@@ -680,7 +680,7 @@ export function ApplicationsPage() {
 												color: '#6b7280',
 											} }
 										>
-											{ __( 'Keine Bewerbungen gefunden.', 'recruiting-playbook' ) }
+											{ __( 'No applications found.', 'recruiting-playbook' ) }
 										</TableCell>
 									</tr>
 								) : (
@@ -712,7 +712,7 @@ export function ApplicationsPage() {
 											<TableCell>
 												{ app.job_title || (
 													<em style={ { color: '#9ca3af' } }>
-														{ __( 'Gelöscht', 'recruiting-playbook' ) }
+														{ __( 'Deleted', 'recruiting-playbook' ) }
 													</em>
 												) }
 											</TableCell>
@@ -763,7 +763,7 @@ export function ApplicationsPage() {
 														} }
 													>
 														<Eye style={ { width: '0.875rem', height: '0.875rem' } } />
-														{ __( 'Ansehen', 'recruiting-playbook' ) }
+														{ __( 'View', 'recruiting-playbook' ) }
 													</a>
 													{ app.status === 'new' && (
 														<a
@@ -780,7 +780,7 @@ export function ApplicationsPage() {
 																textDecoration: 'none',
 															} }
 														>
-															{ __( 'Prüfen', 'recruiting-playbook' ) }
+															{ __( 'Review', 'recruiting-playbook' ) }
 														</a>
 													) }
 												</div>

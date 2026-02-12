@@ -38,7 +38,7 @@ export default function SystemFieldPreview( { systemField, viewMode = 'desktop' 
 			return (
 				<div style={ { ...widthStyle, padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '0.5rem' } }>
 					<p style={ { margin: 0, color: '#92400e' } }>
-						{ __( 'Unbekanntes Systemfeld:', 'recruiting-playbook' ) } { type }
+						{ __( 'Unknown system field:', 'recruiting-playbook' ) } { type }
 					</p>
 				</div>
 			);
@@ -49,7 +49,7 @@ export default function SystemFieldPreview( { systemField, viewMode = 'desktop' 
  * Render summary field preview
  */
 function renderSummaryPreview( settings, widthStyle ) {
-	const title = settings.title || settings.label || __( 'Ihre Angaben im Überblick', 'recruiting-playbook' );
+	const title = settings.title || settings.label || __( 'Your Information Summary', 'recruiting-playbook' );
 	const additionalText = settings.additional_text || settings.help_text || '';
 
 	return (
@@ -70,26 +70,26 @@ function renderSummaryPreview( settings, widthStyle ) {
 					variant="outline"
 					style={ { marginLeft: 'auto', backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #86efac' } }
 				>
-					{ __( 'Systemfeld', 'recruiting-playbook' ) }
+					{ __( 'System Field', 'recruiting-playbook' ) }
 				</Badge>
 			</div>
 
 			<div style={ { backgroundColor: 'white', borderRadius: '0.375rem', padding: '1rem', border: '1px dashed #d1d5db' } }>
 				<div style={ { display: 'flex', flexDirection: 'column', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' } }>
 					<div style={ { display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0', borderBottom: '1px solid #f3f4f6' } }>
-						<span>{ __( 'Vorname:', 'recruiting-playbook' ) }</span>
-						<span style={ { color: '#9ca3af' } }>{ __( '(wird angezeigt)', 'recruiting-playbook' ) }</span>
+						<span>{ __( 'First Name:', 'recruiting-playbook' ) }</span>
+						<span style={ { color: '#9ca3af' } }>{ __( '(will be displayed)', 'recruiting-playbook' ) }</span>
 					</div>
 					<div style={ { display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0', borderBottom: '1px solid #f3f4f6' } }>
-						<span>{ __( 'Nachname:', 'recruiting-playbook' ) }</span>
-						<span style={ { color: '#9ca3af' } }>{ __( '(wird angezeigt)', 'recruiting-playbook' ) }</span>
+						<span>{ __( 'Last Name:', 'recruiting-playbook' ) }</span>
+						<span style={ { color: '#9ca3af' } }>{ __( '(will be displayed)', 'recruiting-playbook' ) }</span>
 					</div>
 					<div style={ { display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0' } }>
-						<span>{ __( 'E-Mail:', 'recruiting-playbook' ) }</span>
-						<span style={ { color: '#9ca3af' } }>{ __( '(wird angezeigt)', 'recruiting-playbook' ) }</span>
+						<span>{ __( 'Email:', 'recruiting-playbook' ) }</span>
+						<span style={ { color: '#9ca3af' } }>{ __( '(will be displayed)', 'recruiting-playbook' ) }</span>
 					</div>
 					<p style={ { textAlign: 'center', color: '#9ca3af', fontSize: '0.75rem', margin: '0.5rem 0 0' } }>
-						{ __( '... alle eingegebenen Felder werden hier zusammengefasst', 'recruiting-playbook' ) }
+						{ __( '... all entered fields will be summarized here', 'recruiting-playbook' ) }
 					</p>
 				</div>
 			</div>
@@ -108,8 +108,8 @@ function renderSummaryPreview( settings, widthStyle ) {
  */
 function renderPrivacyConsentPreview( settings, widthStyle ) {
 	// Support both key variants
-	const consentText = settings.checkbox_text || settings.consent_text || __( 'Ich habe die {datenschutz_link} gelesen und stimme zu.', 'recruiting-playbook' );
-	const linkText = settings.link_text || settings.privacy_link_text || __( 'Datenschutzerklärung', 'recruiting-playbook' );
+	const consentText = settings.checkbox_text || settings.consent_text || __( 'I have read the {datenschutz_link} and agree.', 'recruiting-playbook' );
+	const linkText = settings.link_text || settings.privacy_link_text || __( 'Privacy Policy', 'recruiting-playbook' );
 
 	// Replace placeholder with link text
 	let displayText = consentText
@@ -129,12 +129,12 @@ function renderPrivacyConsentPreview( settings, widthStyle ) {
 		>
 			<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' } }>
 				<CheckSquare style={ { height: '1.25rem', width: '1.25rem', color: '#16a34a' } } />
-				<span style={ { fontWeight: 600, color: '#166534' } }>{ __( 'Datenschutz-Einwilligung', 'recruiting-playbook' ) }</span>
+				<span style={ { fontWeight: 600, color: '#166534' } }>{ __( 'Privacy Consent', 'recruiting-playbook' ) }</span>
 				<Badge
 					variant="outline"
 					style={ { marginLeft: 'auto', backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #86efac' } }
 				>
-					{ __( 'Pflichtfeld', 'recruiting-playbook' ) }
+					{ __( 'Required', 'recruiting-playbook' ) }
 				</Badge>
 			</div>
 
@@ -156,7 +156,7 @@ function renderPrivacyConsentPreview( settings, widthStyle ) {
  * Render file upload field preview
  */
 function renderFileUploadPreview( settings, widthStyle ) {
-	const label = settings.label || __( 'Bewerbungsunterlagen', 'recruiting-playbook' );
+	const label = settings.label || __( 'Application Documents', 'recruiting-playbook' );
 	const allowedTypes = settings.allowed_types || 'pdf,doc,docx';
 	const maxSize = settings.max_file_size || 10;
 	const isRequired = settings.is_required !== false;
@@ -180,7 +180,7 @@ function renderFileUploadPreview( settings, widthStyle ) {
 						variant="outline"
 						style={ { marginLeft: 'auto', backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #86efac' } }
 					>
-						{ __( 'Pflichtfeld', 'recruiting-playbook' ) }
+						{ __( 'Required', 'recruiting-playbook' ) }
 					</Badge>
 				) }
 				{ ! isRequired && (
@@ -188,7 +188,7 @@ function renderFileUploadPreview( settings, widthStyle ) {
 						variant="outline"
 						style={ { marginLeft: 'auto', backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #86efac' } }
 					>
-						{ __( 'Systemfeld', 'recruiting-playbook' ) }
+						{ __( 'System Field', 'recruiting-playbook' ) }
 					</Badge>
 				) }
 			</div>
@@ -196,10 +196,10 @@ function renderFileUploadPreview( settings, widthStyle ) {
 			<div style={ { border: '2px dashed #86efac', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center', backgroundColor: 'white' } }>
 				<Upload style={ { height: '2rem', width: '2rem', margin: '0 auto 0.5rem', color: '#16a34a' } } />
 				<p style={ { fontSize: '0.875rem', color: '#4b5563', margin: 0 } }>
-					{ __( 'Dateien hierher ziehen oder klicken zum Auswählen', 'recruiting-playbook' ) }
+					{ __( 'Drag files here or click to select', 'recruiting-playbook' ) }
 				</p>
 				<p style={ { fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem', marginBottom: 0 } }>
-					{ __( 'Erlaubte Typen:', 'recruiting-playbook' ) } { allowedTypes }
+					{ __( 'Allowed Types:', 'recruiting-playbook' ) } { allowedTypes }
 					{ ' • ' }
 					{ __( 'Max.', 'recruiting-playbook' ) } { maxSize } MB
 				</p>

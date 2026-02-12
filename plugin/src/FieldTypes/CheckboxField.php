@@ -74,19 +74,19 @@ class CheckboxField extends AbstractFieldType {
 		return [
 			[
 				'key'         => 'min_checked',
-				'label'       => __( 'Minimum Auswahl', 'recruiting-playbook' ),
+				'label'       => __( 'Minimum Selection', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 0,
 				'placeholder' => '1',
-				'description' => __( 'Nur für Multi-Checkbox', 'recruiting-playbook' ),
+				'description' => __( 'Only for multi-checkbox', 'recruiting-playbook' ),
 			],
 			[
 				'key'         => 'max_checked',
-				'label'       => __( 'Maximum Auswahl', 'recruiting-playbook' ),
+				'label'       => __( 'Maximum Selection', 'recruiting-playbook' ),
 				'type'        => 'number',
 				'min'         => 1,
 				'placeholder' => '5',
-				'description' => __( 'Nur für Multi-Checkbox', 'recruiting-playbook' ),
+				'description' => __( 'Only for multi-checkbox', 'recruiting-playbook' ),
 			],
 		];
 	}
@@ -139,7 +139,7 @@ class CheckboxField extends AbstractFieldType {
 					'invalid_option',
 					sprintf(
 						/* translators: %s: Field label */
-						__( '%s enthält einen ungültigen Wert.', 'recruiting-playbook' ),
+						__( '%s contains an invalid value.', 'recruiting-playbook' ),
 						$label
 					)
 				);
@@ -152,7 +152,7 @@ class CheckboxField extends AbstractFieldType {
 				'min_checked',
 				sprintf(
 					/* translators: 1: Field label, 2: Minimum count */
-					__( 'Bitte wählen Sie mindestens %2$d Optionen für %1$s.', 'recruiting-playbook' ),
+					__( 'Please select at least %2$d options for %1$s.', 'recruiting-playbook' ),
 					$label,
 					(int) $validation['min_checked']
 				)
@@ -165,7 +165,7 @@ class CheckboxField extends AbstractFieldType {
 				'max_checked',
 				sprintf(
 					/* translators: 1: Field label, 2: Maximum count */
-					__( 'Bitte wählen Sie maximal %2$d Optionen für %1$s.', 'recruiting-playbook' ),
+					__( 'Please select no more than %2$d options for %1$s.', 'recruiting-playbook' ),
 					$label,
 					(int) $validation['max_checked']
 				)
@@ -209,9 +209,9 @@ class CheckboxField extends AbstractFieldType {
 		if ( $mode === 'single' ) {
 			// Boolean als Ja/Nein.
 			if ( $value ) {
-				return '<span class="rp-badge rp-badge--success">' . esc_html__( 'Ja', 'recruiting-playbook' ) . '</span>';
+				return '<span class="rp-badge rp-badge--success">' . esc_html__( 'Yes', 'recruiting-playbook' ) . '</span>';
 			}
-			return '<span class="rp-badge rp-badge--muted">' . esc_html__( 'Nein', 'recruiting-playbook' ) . '</span>';
+			return '<span class="rp-badge rp-badge--muted">' . esc_html__( 'No', 'recruiting-playbook' ) . '</span>';
 		}
 
 		// Multi Checkbox.

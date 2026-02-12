@@ -6,10 +6,10 @@ namespace RecruitingPlaybook\Integrations\Avada\Elements;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * RP: Featured Jobs Element für Fusion Builder
+ * RP: Featured Jobs Element for Fusion Builder
  *
- * Zeigt hervorgehobene (Featured) Stellenanzeigen an.
- * Wrapper für den [rp_featured_jobs] Shortcode.
+ * Displays featured job listings.
+ * Wrapper for the [rp_featured_jobs] shortcode.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 class FeaturedJobs extends AbstractElement {
 
 	/**
-	 * Element-Konfiguration für Fusion Builder
+	 * Element configuration for Fusion Builder
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -33,8 +33,8 @@ class FeaturedJobs extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'range',
-					'heading'     => esc_attr__( 'Anzahl', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Anzahl der Featured Jobs.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Count', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Number of featured jobs.', 'recruiting-playbook' ),
 					'param_name'  => 'limit',
 					'value'       => '3',
 					'min'         => '1',
@@ -43,8 +43,8 @@ class FeaturedJobs extends AbstractElement {
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Spalten', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Anzahl der Spalten im Grid.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Number of columns in the grid.', 'recruiting-playbook' ),
 					'param_name'  => 'columns',
 					'default'     => '3',
 					'value'       => [
@@ -56,20 +56,20 @@ class FeaturedJobs extends AbstractElement {
 				],
 				[
 					'type'        => 'textfield',
-					'heading'     => esc_attr__( 'Überschrift', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Optional: Überschrift über den Featured Jobs.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Heading', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Optional: Heading above the featured jobs.', 'recruiting-playbook' ),
 					'param_name'  => 'title',
 					'value'       => '',
 				],
 				[
 					'type'        => 'radio_button_set',
-					'heading'     => esc_attr__( 'Auszug anzeigen', 'recruiting-playbook' ),
-					'description' => esc_attr__( 'Stellenbeschreibung als Kurztext anzeigen.', 'recruiting-playbook' ),
+					'heading'     => esc_attr__( 'Show Excerpt', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Show job description as short text.', 'recruiting-playbook' ),
 					'param_name'  => 'show_excerpt',
 					'default'     => 'true',
 					'value'       => [
-						'true'  => esc_attr__( 'Ja', 'recruiting-playbook' ),
-						'false' => esc_attr__( 'Nein', 'recruiting-playbook' ),
+						'true'  => esc_attr__( 'Yes', 'recruiting-playbook' ),
+						'false' => esc_attr__( 'No', 'recruiting-playbook' ),
 					],
 				],
 			],

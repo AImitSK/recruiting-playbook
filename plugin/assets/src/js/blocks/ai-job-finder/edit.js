@@ -37,18 +37,18 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					title={ __( 'Settings', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Überschrift', 'recruiting-playbook' ) }
+						label={ __( 'Heading', 'recruiting-playbook' ) }
 						value={ title }
 						onChange={ ( value ) =>
 							setAttributes( { title: value } )
 						}
 					/>
 					<TextControl
-						label={ __( 'Untertitel', 'recruiting-playbook' ) }
+						label={ __( 'Subtitle', 'recruiting-playbook' ) }
 						value={ subtitle }
 						onChange={ ( value ) =>
 							setAttributes( { subtitle: value } )
@@ -56,7 +56,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					<RangeControl
 						label={ __(
-							'Maximale Ergebnisse',
+							'Maximum Results',
 							'recruiting-playbook'
 						) }
 						value={ limit }
@@ -66,7 +66,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						min={ 1 }
 						max={ 10 }
 						help={ __(
-							'Anzahl der vorgeschlagenen Stellen.',
+							'Number of suggested job listings.',
 							'recruiting-playbook'
 						) }
 					/>
@@ -85,14 +85,14 @@ export default function Edit( { attributes, setAttributes } ) {
 						<h3 className="rp-ai-finder-preview__title">
 							{ title ||
 								__(
-									'Finde deinen Traumjob',
+									'Find Your Dream Job',
 									'recruiting-playbook'
 								) }
 						</h3>
 						<p className="rp-ai-finder-preview__description">
 							{ subtitle ||
 								__(
-									'Lade deinen Lebenslauf hoch und entdecke passende Stellen.',
+									'Upload your resume and discover matching job listings.',
 									'recruiting-playbook'
 								) }
 						</p>
@@ -100,13 +100,13 @@ export default function Edit( { attributes, setAttributes } ) {
 							<Placeholder
 								icon="lock"
 								label={ __(
-									'AI-Addon erforderlich',
+									'AI Addon Required',
 									'recruiting-playbook'
 								) }
 							>
 								<p>
 									{ __(
-										'Der KI-Job-Finder benötigt das AI-Addon.',
+										'The AI Job Finder requires the AI Addon.',
 										'recruiting-playbook'
 									) }
 								</p>

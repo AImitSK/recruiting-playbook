@@ -153,10 +153,10 @@ export default function FormPreview( {
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 					<div>
 						<CardTitle>
-							{ i18n?.preview || __( 'Formular-Vorschau', 'recruiting-playbook' ) }
+							{ i18n?.preview || __( 'Form Preview', 'recruiting-playbook' ) }
 						</CardTitle>
 						<CardDescription>
-							{ i18n?.previewDescription || __( 'So wird das Bewerbungsformular aussehen', 'recruiting-playbook' ) }
+							{ i18n?.previewDescription || __( 'This is how the application form will look', 'recruiting-playbook' ) }
 						</CardDescription>
 					</div>
 
@@ -182,7 +182,7 @@ export default function FormPreview( {
 							variant={ viewMode === 'mobile' ? 'default' : 'ghost' }
 							size="sm"
 							onClick={ () => setViewMode( 'mobile' ) }
-							title={ i18n?.previewMobile || __( 'Mobil', 'recruiting-playbook' ) }
+							title={ i18n?.previewMobile || __( 'Mobile', 'recruiting-playbook' ) }
 						>
 							<Smartphone style={ { height: '1rem', width: '1rem' } } />
 						</Button>
@@ -197,9 +197,9 @@ export default function FormPreview( {
 				>
 					{ totalSteps === 0 ? (
 						<div style={ { textAlign: 'center', padding: '3rem 0', color: '#6b7280' } }>
-							<p style={ { margin: 0 } }>{ i18n?.noStepsToPreview || __( 'Keine Schritte zum Anzeigen vorhanden', 'recruiting-playbook' ) }</p>
+							<p style={ { margin: 0 } }>{ i18n?.noStepsToPreview || __( 'No steps to display', 'recruiting-playbook' ) }</p>
 							<p style={ { fontSize: '0.875rem', marginTop: '0.5rem' } }>
-								{ i18n?.addStepsForPreview || __( 'Fügen Sie Schritte im Formular-Tab hinzu, um sie hier zu sehen', 'recruiting-playbook' ) }
+								{ i18n?.addStepsForPreview || __( 'Add steps in the Form tab to see them here', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					) : (
@@ -209,7 +209,7 @@ export default function FormPreview( {
 								<div style={ { marginBottom: '1rem' } }>
 									<div style={ { display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' } }>
 										<span>
-											{ __( 'Schritt', 'recruiting-playbook' ) } { currentStep } { __( 'von', 'recruiting-playbook' ) } { totalSteps }
+											{ __( 'Step', 'recruiting-playbook' ) } { currentStep } { __( 'of', 'recruiting-playbook' ) } { totalSteps }
 										</span>
 										<span>{ progress }%</span>
 									</div>
@@ -234,7 +234,7 @@ export default function FormPreview( {
 									</h3>
 									{ currentStepData.is_finale && (
 										<Badge variant="outline" style={ { marginTop: '0.5rem' } }>
-											{ __( 'Abschluss', 'recruiting-playbook' ) }
+											{ __( 'Final', 'recruiting-playbook' ) }
 										</Badge>
 									) }
 								</div>
@@ -245,7 +245,7 @@ export default function FormPreview( {
 								{ currentFields.length === 0 && currentSystemFields.length === 0 ? (
 									<div style={ { textAlign: 'center', padding: '2rem 0', color: '#9ca3af', gridColumn: 'span 2 / span 2' } }>
 										<p style={ { margin: 0, fontSize: '0.875rem' } }>
-											{ __( 'Keine Felder in diesem Schritt', 'recruiting-playbook' ) }
+											{ __( 'No fields in this step', 'recruiting-playbook' ) }
 										</p>
 									</div>
 								) : (
@@ -282,23 +282,23 @@ export default function FormPreview( {
 									style={ { visibility: currentStep === 1 ? 'hidden' : 'visible' } }
 								>
 									<ChevronLeft style={ { height: '1rem', width: '1rem', marginRight: '0.25rem' } } />
-									{ __( 'Zurück', 'recruiting-playbook' ) }
+									{ __( 'Back', 'recruiting-playbook' ) }
 								</Button>
 
 								{ currentStep < totalSteps ? (
 									<Button type="button" onClick={ goToNextStep }>
-										{ __( 'Weiter', 'recruiting-playbook' ) }
+										{ __( 'Next', 'recruiting-playbook' ) }
 										<ChevronRight style={ { height: '1rem', width: '1rem', marginLeft: '0.25rem' } } />
 									</Button>
 								) : (
 									<Button type="button" disabled>
-										{ i18n?.submitApplication || __( 'Bewerbung absenden', 'recruiting-playbook' ) }
+										{ i18n?.submitApplication || __( 'Submit Application', 'recruiting-playbook' ) }
 									</Button>
 								) }
 							</div>
 
 							<p style={ { fontSize: '0.75rem', color: '#6b7280', textAlign: 'center', marginTop: '0' } }>
-								{ i18n?.previewOnly || __( 'Dies ist nur eine Vorschau. Die Buttons sind deaktiviert.', 'recruiting-playbook' ) }
+								{ i18n?.previewOnly || __( 'This is a preview only. The buttons are disabled.', 'recruiting-playbook' ) }
 							</p>
 						</form>
 					) }
@@ -331,16 +331,16 @@ export default function FormPreview( {
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', fontSize: '0.875rem', color: '#6b7280' } }>
 					<div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
 						<span>
-							{ totalSteps } { totalSteps === 1 ? __( 'Schritt', 'recruiting-playbook' ) : __( 'Schritte', 'recruiting-playbook' ) }
+							{ totalSteps } { totalSteps === 1 ? __( 'Step', 'recruiting-playbook' ) : __( 'Steps', 'recruiting-playbook' ) }
 							{ ' • ' }
-							{ totalVisibleFields } { i18n?.activeFields || __( 'aktive Felder', 'recruiting-playbook' ) }
+							{ totalVisibleFields } { i18n?.activeFields || __( 'active fields', 'recruiting-playbook' ) }
 						</span>
 						<Badge variant="outline">
-							{ totalRequiredFields } { i18n?.required || __( 'Pflicht', 'recruiting-playbook' ) }
+							{ totalRequiredFields } { i18n?.required || __( 'Required', 'recruiting-playbook' ) }
 						</Badge>
 					</div>
 					<span style={ { textTransform: 'capitalize' } }>
-						{ viewMode === 'desktop' ? 'Desktop' : viewMode === 'tablet' ? 'Tablet' : 'Mobil' }
+						{ viewMode === 'desktop' ? 'Desktop' : viewMode === 'tablet' ? 'Tablet' : 'Mobile' }
 					</span>
 				</div>
 			</CardContent>

@@ -61,13 +61,13 @@ export function ExportSettings() {
 	};
 
 	const exportItems = [
-		i18n.settingsExport || __( 'Einstellungen', 'recruiting-playbook' ),
-		i18n.jobsExport || __( 'Stellen (inkl. Meta-Daten)', 'recruiting-playbook' ),
-		i18n.taxonomiesExport || __( 'Taxonomien (Kategorien, Standorte, etc.)', 'recruiting-playbook' ),
-		i18n.candidatesExport || __( 'Kandidaten', 'recruiting-playbook' ),
-		i18n.applicationsExport || __( 'Bewerbungen', 'recruiting-playbook' ),
-		i18n.documentsExport || __( 'Dokument-Metadaten', 'recruiting-playbook' ),
-		i18n.activityLogExport || __( 'Aktivitäts-Log (letzte 1000 Einträge)', 'recruiting-playbook' ),
+		i18n.settingsExport || __( 'Settings', 'recruiting-playbook' ),
+		i18n.jobsExport || __( 'Jobs (including metadata)', 'recruiting-playbook' ),
+		i18n.taxonomiesExport || __( 'Taxonomies (categories, locations, etc.)', 'recruiting-playbook' ),
+		i18n.candidatesExport || __( 'Candidates', 'recruiting-playbook' ),
+		i18n.applicationsExport || __( 'Applications', 'recruiting-playbook' ),
+		i18n.documentsExport || __( 'Document metadata', 'recruiting-playbook' ),
+		i18n.activityLogExport || __( 'Activity log (last 1000 entries)', 'recruiting-playbook' ),
 	];
 
 	return (
@@ -75,16 +75,16 @@ export function ExportSettings() {
 			{ success && (
 				<Alert style={ { backgroundColor: '#e6f5ec', borderColor: '#2fac66' } }>
 					<AlertDescription>
-						{ i18n.downloadStarted || __( 'Download wurde gestartet.', 'recruiting-playbook' ) }
+						{ i18n.downloadStarted || __( 'Download started.', 'recruiting-playbook' ) }
 					</AlertDescription>
 				</Alert>
 			) }
 
 			<Card>
 				<CardHeader>
-					<CardTitle>{ i18n.fullBackup || __( 'Vollständiger Backup', 'recruiting-playbook' ) }</CardTitle>
+					<CardTitle>{ i18n.fullBackup || __( 'Full Backup', 'recruiting-playbook' ) }</CardTitle>
 					<CardDescription>
-						{ i18n.fullBackupDesc || __( 'Exportiert alle Plugin-Daten als JSON-Datei', 'recruiting-playbook' ) }
+						{ i18n.fullBackupDesc || __( 'Export all plugin data as JSON file', 'recruiting-playbook' ) }
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -96,7 +96,7 @@ export function ExportSettings() {
 							padding: '1rem',
 						} }>
 							<p style={ { fontWeight: 500, marginBottom: '0.75rem', color: '#374151' } }>
-								{ i18n.exportIncludes || __( 'Der Export enthält:', 'recruiting-playbook' ) }
+								{ i18n.exportIncludes || __( 'The export includes:', 'recruiting-playbook' ) }
 							</p>
 							<ul style={ {
 								display: 'grid',
@@ -123,8 +123,8 @@ export function ExportSettings() {
 						{ /* Warnung */ }
 						<Alert style={ { backgroundColor: '#fef3c7', borderColor: '#f59e0b' } }>
 							<AlertDescription style={ { color: '#92400e' } }>
-								<strong>{ i18n.note || __( 'Hinweis:', 'recruiting-playbook' ) }</strong>{ ' ' }
-								{ i18n.documentsNotIncluded || __( 'Hochgeladene Dokumente (PDFs etc.) werden aus Datenschutzgründen nicht exportiert.', 'recruiting-playbook' ) }
+								<strong>{ i18n.note || __( 'Note:', 'recruiting-playbook' ) }</strong>{ ' ' }
+								{ i18n.documentsNotIncluded || __( 'Uploaded documents (PDFs etc.) are not exported for privacy reasons.', 'recruiting-playbook' ) }
 							</AlertDescription>
 						</Alert>
 
@@ -135,8 +135,8 @@ export function ExportSettings() {
 								disabled={ downloading }
 							>
 								{ downloading
-									? ( i18n.preparing || __( 'Wird vorbereitet...', 'recruiting-playbook' ) )
-									: ( i18n.downloadBackup || __( 'Backup herunterladen', 'recruiting-playbook' ) )
+									? ( i18n.preparing || __( 'Preparing...', 'recruiting-playbook' ) )
+									: ( i18n.downloadBackup || __( 'Download Backup', 'recruiting-playbook' ) )
 								}
 							</Button>
 						</div>

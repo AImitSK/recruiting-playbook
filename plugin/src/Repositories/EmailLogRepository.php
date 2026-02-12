@@ -600,19 +600,19 @@ class EmailLogRepository {
 	private function getStatusConfig( string $status ): array {
 		$configs = [
 			'pending'   => [
-				'label' => __( 'Ausstehend', 'recruiting-playbook' ),
+				'label' => __( 'Pending', 'recruiting-playbook' ),
 				'color' => '#dba617',
 			],
 			'sent'      => [
-				'label' => __( 'Gesendet', 'recruiting-playbook' ),
+				'label' => __( 'Sent', 'recruiting-playbook' ),
 				'color' => '#00a32a',
 			],
 			'failed'    => [
-				'label' => __( 'Fehlgeschlagen', 'recruiting-playbook' ),
+				'label' => __( 'Failed', 'recruiting-playbook' ),
 				'color' => '#d63638',
 			],
 			'cancelled' => [
-				'label' => __( 'Storniert', 'recruiting-playbook' ),
+				'label' => __( 'Cancelled', 'recruiting-playbook' ),
 				'color' => '#787c82',
 			],
 		];

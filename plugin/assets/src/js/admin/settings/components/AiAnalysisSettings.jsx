@@ -1,8 +1,8 @@
 /**
  * AiAnalysisSettings Component
  *
- * KI-Analyse Tab in den Settings mit Lizenz, Verbrauch,
- * Health-Check, Einstellungen und Analyse-Verlauf.
+ * AI Analysis tab in Settings with license, usage,
+ * health check, settings and analysis history.
  *
  * @package RecruitingPlaybook
  */
@@ -29,7 +29,7 @@ import { Spinner } from '../../components/ui/spinner';
 import { useAiAnalysis } from '../hooks';
 
 /**
- * Fortschrittsbalken
+ * Progress bar
  */
 function ProgressBar( { percentage, warningThreshold } ) {
 	const color = percentage >= warningThreshold ? '#ef4444' : '#22c55e';
@@ -48,7 +48,7 @@ function ProgressBar( { percentage, warningThreshold } ) {
 }
 
 /**
- * Score-Badge nach Kategorie
+ * Score badge by category
  */
 function ScoreBadge( { score, category } ) {
 	if ( score === null || score === undefined ) {
@@ -70,13 +70,13 @@ function ScoreBadge( { score, category } ) {
 }
 
 /**
- * Status-Badge
+ * Status badge
  */
 function StatusBadge( { status } ) {
 	const map = {
-		completed: { label: __( 'Abgeschlossen', 'recruiting-playbook' ), bg: '#dcfce7', color: '#166534' },
-		pending: { label: __( 'Ausstehend', 'recruiting-playbook' ), bg: '#fef9c3', color: '#854d0e' },
-		failed: { label: __( 'Fehlgeschlagen', 'recruiting-playbook' ), bg: '#fecaca', color: '#991b1b' },
+		completed: { label: __( 'Completed', 'recruiting-playbook' ), bg: '#dcfce7', color: '#166534' },
+		pending: { label: __( 'Pending', 'recruiting-playbook' ), bg: '#fef9c3', color: '#854d0e' },
+		failed: { label: __( 'Failed', 'recruiting-playbook' ), bg: '#fecaca', color: '#991b1b' },
 	};
 	const s = map[ status ] || map.pending;
 
@@ -88,7 +88,7 @@ function StatusBadge( { status } ) {
 }
 
 /**
- * Typ-Label
+ * Type label
  */
 function TypeLabel( { type } ) {
 	const labels = {
@@ -99,7 +99,7 @@ function TypeLabel( { type } ) {
 }
 
 /**
- * Datum formatieren
+ * Format date
  */
 function formatDate( dateStr ) {
 	if ( ! dateStr ) {
@@ -139,17 +139,17 @@ export function AiAnalysisSettings() {
 		saveSettings,
 	} = useAiAnalysis();
 
-	// Lokaler State für Einstellungen-Formular.
+	// Local state for settings form.
 	const [ localSettings, setLocalSettings ] = useState( null );
 	const [ settingsNotification, setSettingsNotification ] = useState( null );
 
-	// localSettings initialisieren wenn settings geladen.
+	// Initialize localSettings when settings loaded.
 	if ( settings && ! localSettings ) {
 		setLocalSettings( { ...settings } );
 	}
 
 	/**
-	 * Einstellungen speichern
+	 * Save settings
 	 */
 	const handleSaveSettings = useCallback( async () => {
 		if ( ! localSettings ) {
@@ -158,20 +158,20 @@ export function AiAnalysisSettings() {
 		setError( null );
 		const success = await saveSettings( localSettings );
 		if ( success ) {
-			setSettingsNotification( __( 'Einstellungen gespeichert.', 'recruiting-playbook' ) );
+			setSettingsNotification( __( 'Settings saved.', 'recruiting-playbook' ) );
 			setTimeout( () => setSettingsNotification( null ), 3000 );
 		}
 	}, [ localSettings, saveSettings, setError ] );
 
 	/**
-	 * Lokale Setting-Änderung
+	 * Update local setting
 	 */
 	const updateLocalSetting = useCallback( ( key, value ) => {
 		setLocalSettings( ( prev ) => ( { ...prev, [ key ]: value } ) );
 	}, [] );
 
 	/**
-	 * Dateiformat-Checkbox toggle
+	 * Toggle file format checkbox
 	 */
 	const toggleFileType = useCallback( ( type ) => {
 		setLocalSettings( ( prev ) => {
@@ -206,52 +206,52 @@ export function AiAnalysisSettings() {
 	return (
 		<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
 
-			{ /* Card 1: Lizenz & Verbrauch */ }
+			{ /* Card 1: License & Usage */ }
 			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<CardTitle>{ __( 'Lizenz & Verbrauch', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ __( 'License & Usage', 'recruiting-playbook' ) }</CardTitle>
 						<Badge style={ license.active
 							? { backgroundColor: '#dcfce7', color: '#166534', border: 'none' }
 							: { backgroundColor: '#fecaca', color: '#991b1b', border: 'none' }
 						}>
-							{ license.active ? __( 'Aktiv', 'recruiting-playbook' ) : __( 'Inaktiv', 'recruiting-playbook' ) }
+							{ license.active ? __( 'Active', 'recruiting-playbook' ) : __( 'Inactive', 'recruiting-playbook' ) }
 						</Badge>
 					</div>
 				</CardHeader>
 				<CardContent>
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '0.75rem' } }>
 						<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' } }>
-							<span>{ usage.current_month || 0 } / { usage.limit || 100 } { __( 'Analysen', 'recruiting-playbook' ) }</span>
+							<span>{ usage.current_month || 0 } / { usage.limit || 100 } { __( 'analyses', 'recruiting-playbook' ) }</span>
 							<span style={ { color: '#6b7280' } }>{ usage.percentage || 0 }%</span>
 						</div>
 						<ProgressBar percentage={ usage.percentage || 0 } warningThreshold={ warningThreshold } />
 						{ usage.percentage >= warningThreshold && (
 							<Alert variant="destructive" style={ { marginTop: '0.5rem' } }>
 								<AlertDescription>
-									{ __( 'Achtung: Sie haben bereits', 'recruiting-playbook' ) } { usage.percentage }% { __( 'Ihres monatlichen Budgets verbraucht.', 'recruiting-playbook' ) }
+									{ __( 'Warning: You have already used', 'recruiting-playbook' ) } { usage.percentage }% { __( 'of your monthly budget.', 'recruiting-playbook' ) }
 								</AlertDescription>
 							</Alert>
 						) }
 						<p style={ { margin: 0, fontSize: '0.8125rem', color: '#6b7280' } }>
-							{ __( 'Nächster Reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( 'de-DE' ) : '—' }
+							{ __( 'Next reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( 'de-DE' ) : '—' }
 						</p>
 					</div>
 				</CardContent>
 			</Card>
 
-			{ /* Card 2: API-Status */ }
+			{ /* Card 2: API Status */ }
 			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<CardTitle>{ __( 'API-Status', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ __( 'API Status', 'recruiting-playbook' ) }</CardTitle>
 						<Button
 							variant="outline"
 							size="sm"
 							onClick={ fetchHealth }
 							disabled={ healthLoading }
 						>
-							{ healthLoading ? <Spinner size="sm" /> : __( 'Jetzt prüfen', 'recruiting-playbook' ) }
+							{ healthLoading ? <Spinner size="sm" /> : __( 'Check now', 'recruiting-playbook' ) }
 						</Button>
 					</div>
 				</CardHeader>
@@ -264,31 +264,31 @@ export function AiAnalysisSettings() {
 									? { backgroundColor: '#dcfce7', color: '#166534', border: 'none' }
 									: { backgroundColor: '#fecaca', color: '#991b1b', border: 'none' }
 								}>
-									{ health.reachable ? __( 'Erreichbar', 'recruiting-playbook' ) : __( 'Störung', 'recruiting-playbook' ) }
+									{ health.reachable ? __( 'Reachable', 'recruiting-playbook' ) : __( 'Error', 'recruiting-playbook' ) }
 								</Badge>
 							</div>
 							<div style={ { display: 'flex', justifyContent: 'space-between' } }>
-								<span>{ __( 'Antwortzeit', 'recruiting-playbook' ) }</span>
+								<span>{ __( 'Response time', 'recruiting-playbook' ) }</span>
 								<span>{ health.response_time_ms } ms</span>
 							</div>
 							<div style={ { display: 'flex', justifyContent: 'space-between' } }>
-								<span>{ __( 'Letzter Check', 'recruiting-playbook' ) }</span>
+								<span>{ __( 'Last check', 'recruiting-playbook' ) }</span>
 								<span>{ formatDate( health.checked_at ) }</span>
 							</div>
 						</div>
 					) : (
 						<p style={ { margin: 0, fontSize: '0.875rem', color: '#6b7280' } }>
-							{ __( 'Noch kein Health-Check durchgeführt. Klicken Sie auf "Jetzt prüfen".', 'recruiting-playbook' ) }
+							{ __( 'No health check performed yet. Click "Check now".', 'recruiting-playbook' ) }
 						</p>
 					) }
 				</CardContent>
 			</Card>
 
-			{ /* Card 3: Einstellungen */ }
+			{ /* Card 3: Settings */ }
 			<Card>
 				<CardHeader>
-					<CardTitle>{ __( 'Einstellungen', 'recruiting-playbook' ) }</CardTitle>
-					<CardDescription>{ __( 'Budget- und Datei-Einstellungen für die KI-Analyse.', 'recruiting-playbook' ) }</CardDescription>
+					<CardTitle>{ __( 'Settings', 'recruiting-playbook' ) }</CardTitle>
+					<CardDescription>{ __( 'Budget and file settings for AI analysis.', 'recruiting-playbook' ) }</CardDescription>
 				</CardHeader>
 				<CardContent>
 					{ settingsNotification && (
@@ -301,7 +301,7 @@ export function AiAnalysisSettings() {
 						<div style={ { display: 'flex', flexDirection: 'column', gap: '1rem' } }>
 							<div style={ { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' } }>
 								<div>
-									<Label htmlFor="budget_limit">{ __( 'Budget-Limit pro Monat', 'recruiting-playbook' ) }</Label>
+									<Label htmlFor="budget_limit">{ __( 'Budget limit per month', 'recruiting-playbook' ) }</Label>
 									<Input
 										id="budget_limit"
 										type="number"
@@ -311,12 +311,12 @@ export function AiAnalysisSettings() {
 										style={ { marginTop: '0.25rem' } }
 									/>
 									<p style={ { margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#6b7280' } }>
-										{ __( '0 = kein Limit', 'recruiting-playbook' ) }
+										{ __( '0 = no limit', 'recruiting-playbook' ) }
 									</p>
 								</div>
 
 								<div>
-									<Label htmlFor="warning_threshold">{ __( 'Warn-Schwelle (%)', 'recruiting-playbook' ) }</Label>
+									<Label htmlFor="warning_threshold">{ __( 'Warning threshold (%)', 'recruiting-playbook' ) }</Label>
 									<Input
 										id="warning_threshold"
 										type="number"
@@ -330,7 +330,7 @@ export function AiAnalysisSettings() {
 							</div>
 
 							<div>
-								<Label>{ __( 'Erlaubte Dateiformate', 'recruiting-playbook' ) }</Label>
+								<Label>{ __( 'Allowed file formats', 'recruiting-playbook' ) }</Label>
 								<div style={ { display: 'flex', gap: '1rem', marginTop: '0.5rem' } }>
 									{ [ 'pdf', 'docx', 'jpg', 'png' ].map( ( type ) => (
 										<label key={ type } style={ { display: 'flex', alignItems: 'center', gap: '0.375rem', cursor: 'pointer' } }>
@@ -346,7 +346,7 @@ export function AiAnalysisSettings() {
 							</div>
 
 							<div style={ { maxWidth: '200px' } }>
-								<Label htmlFor="max_file_size">{ __( 'Max. Dateigröße (MB)', 'recruiting-playbook' ) }</Label>
+								<Label htmlFor="max_file_size">{ __( 'Max. file size (MB)', 'recruiting-playbook' ) }</Label>
 								<Input
 									id="max_file_size"
 									type="number"
@@ -363,7 +363,7 @@ export function AiAnalysisSettings() {
 									onClick={ handleSaveSettings }
 									disabled={ saving }
 								>
-									{ saving ? __( 'Speichern...', 'recruiting-playbook' ) : __( 'Speichern', 'recruiting-playbook' ) }
+									{ saving ? __( 'Saving...', 'recruiting-playbook' ) : __( 'Save', 'recruiting-playbook' ) }
 								</Button>
 							</div>
 						</div>
@@ -371,11 +371,11 @@ export function AiAnalysisSettings() {
 				</CardContent>
 			</Card>
 
-			{ /* Card 4: Analyse-Verlauf */ }
+			{ /* Card 4: Analysis History */ }
 			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' } }>
-						<CardTitle>{ __( 'Analyse-Verlauf', 'recruiting-playbook' ) }</CardTitle>
+						<CardTitle>{ __( 'Analysis History', 'recruiting-playbook' ) }</CardTitle>
 						<div style={ { display: 'flex', gap: '0.5rem' } }>
 							<select
 								value={ historyFilters.type }
@@ -385,7 +385,7 @@ export function AiAnalysisSettings() {
 								} }
 								style={ { padding: '0.375rem 0.5rem', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.8125rem' } }
 							>
-								<option value="">{ __( 'Alle Typen', 'recruiting-playbook' ) }</option>
+								<option value="">{ __( 'All types', 'recruiting-playbook' ) }</option>
 								<option value="job_match">{ __( 'Job-Match', 'recruiting-playbook' ) }</option>
 								<option value="job_finder">{ __( 'Job-Finder', 'recruiting-playbook' ) }</option>
 							</select>
@@ -397,10 +397,10 @@ export function AiAnalysisSettings() {
 								} }
 								style={ { padding: '0.375rem 0.5rem', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.8125rem' } }
 							>
-								<option value="">{ __( 'Alle Status', 'recruiting-playbook' ) }</option>
-								<option value="completed">{ __( 'Abgeschlossen', 'recruiting-playbook' ) }</option>
-								<option value="pending">{ __( 'Ausstehend', 'recruiting-playbook' ) }</option>
-								<option value="failed">{ __( 'Fehlgeschlagen', 'recruiting-playbook' ) }</option>
+								<option value="">{ __( 'All statuses', 'recruiting-playbook' ) }</option>
+								<option value="completed">{ __( 'Completed', 'recruiting-playbook' ) }</option>
+								<option value="pending">{ __( 'Pending', 'recruiting-playbook' ) }</option>
+								<option value="failed">{ __( 'Failed', 'recruiting-playbook' ) }</option>
 							</select>
 						</div>
 					</div>
@@ -408,16 +408,16 @@ export function AiAnalysisSettings() {
 				<CardContent>
 					{ history.items.length === 0 ? (
 						<p style={ { margin: 0, fontSize: '0.875rem', color: '#6b7280', textAlign: 'center', padding: '2rem 0' } }>
-							{ __( 'Noch keine Analysen vorhanden.', 'recruiting-playbook' ) }
+							{ __( 'No analyses available yet.', 'recruiting-playbook' ) }
 						</p>
 					) : (
 						<>
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>{ __( 'Datum', 'recruiting-playbook' ) }</TableHead>
-										<TableHead>{ __( 'Typ', 'recruiting-playbook' ) }</TableHead>
-										<TableHead>{ __( 'Stelle', 'recruiting-playbook' ) }</TableHead>
+										<TableHead>{ __( 'Date', 'recruiting-playbook' ) }</TableHead>
+										<TableHead>{ __( 'Type', 'recruiting-playbook' ) }</TableHead>
+										<TableHead>{ __( 'Job', 'recruiting-playbook' ) }</TableHead>
 										<TableHead>{ __( 'Score', 'recruiting-playbook' ) }</TableHead>
 										<TableHead>{ __( 'Status', 'recruiting-playbook' ) }</TableHead>
 									</TableRow>
@@ -445,7 +445,7 @@ export function AiAnalysisSettings() {
 							{ history.pages > 1 && (
 								<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', fontSize: '0.875rem' } }>
 									<span style={ { color: '#6b7280' } }>
-										{ __( 'Seite', 'recruiting-playbook' ) } { history.page } { __( 'von', 'recruiting-playbook' ) } { history.pages }
+										{ __( 'Page', 'recruiting-playbook' ) } { history.page } { __( 'of', 'recruiting-playbook' ) } { history.pages }
 									</span>
 									<div style={ { display: 'flex', gap: '0.5rem' } }>
 										<Button
@@ -454,7 +454,7 @@ export function AiAnalysisSettings() {
 											disabled={ historyPage <= 1 }
 											onClick={ () => setHistoryPage( ( prev ) => Math.max( 1, prev - 1 ) ) }
 										>
-											{ __( 'Zurück', 'recruiting-playbook' ) }
+											{ __( 'Previous', 'recruiting-playbook' ) }
 										</Button>
 										<Button
 											variant="outline"
@@ -462,7 +462,7 @@ export function AiAnalysisSettings() {
 											disabled={ historyPage >= history.pages }
 											onClick={ () => setHistoryPage( ( prev ) => prev + 1 ) }
 										>
-											{ __( 'Weiter', 'recruiting-playbook' ) }
+											{ __( 'Next', 'recruiting-playbook' ) }
 										</Button>
 									</div>
 								</div>

@@ -2,7 +2,7 @@
 /**
  * Field Type Registry
  *
- * Verwaltet alle verfügbaren Feldtypen.
+ * Manages all available field types.
  *
  * @package RecruitingPlaybook\FieldTypes
  */
@@ -16,33 +16,33 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Contracts\FieldTypeInterface;
 
 /**
- * Registry für Feldtypen
+ * Registry for field types
  */
 class FieldTypeRegistry {
 
 	/**
-	 * Singleton-Instanz
+	 * Singleton instance
 	 *
 	 * @var self|null
 	 */
 	private static ?self $instance = null;
 
 	/**
-	 * Registrierte Feldtypen
+	 * Registered field types
 	 *
 	 * @var array<string, FieldTypeInterface>
 	 */
 	private array $types = [];
 
 	/**
-	 * Ob Standard-Typen registriert sind
+	 * Whether default types are registered
 	 *
 	 * @var bool
 	 */
 	private bool $defaults_registered = false;
 
 	/**
-	 * Singleton-Zugriff
+	 * Singleton access
 	 *
 	 * @return self
 	 */
@@ -54,14 +54,14 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Konstruktor (privat für Singleton)
+	 * Constructor (private for singleton)
 	 */
 	private function __construct() {
-		// Standard-Typen werden lazy registriert.
+		// Default types are lazy registered.
 	}
 
 	/**
-	 * Standard-Feldtypen registrieren
+	 * Register default field types
 	 *
 	 * @return void
 	 */
@@ -71,22 +71,22 @@ class FieldTypeRegistry {
 		}
 
 		$default_types = [
-			// Text Gruppe.
+			// Text group.
 			new TextField(),
 			new TextareaField(),
 			new EmailField(),
 			new PhoneField(),
 			new UrlField(),
 
-			// Choice Gruppe.
+			// Choice group.
 			new SelectField(),
 			new RadioField(),
 			new CheckboxField(),
 
-			// Special Gruppe.
+			// Special group.
 			new DateField(),
 
-			// Layout Gruppe.
+			// Layout group.
 			new HtmlField(),
 		];
 
@@ -97,18 +97,18 @@ class FieldTypeRegistry {
 		$this->defaults_registered = true;
 
 		/**
-		 * Aktion zum Registrieren weiterer Feldtypen.
+		 * Action to register additional field types.
 		 *
-		 * @param FieldTypeRegistry $registry Die Registry-Instanz.
+		 * @param FieldTypeRegistry $registry The registry instance.
 		 */
 		do_action( 'recruiting_playbook_register_field_types', $this );
 	}
 
 	/**
-	 * Feldtyp registrieren
+	 * Register field type
 	 *
-	 * @param FieldTypeInterface $type Feldtyp-Instanz.
-	 * @return self Für Method Chaining.
+	 * @param FieldTypeInterface $type Field type instance.
+	 * @return self For method chaining.
 	 */
 	public function register( FieldTypeInterface $type ): self {
 		$this->types[ $type->getType() ] = $type;
@@ -116,10 +116,10 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Feldtyp deregistrieren
+	 * Deregister field type
 	 *
-	 * @param string $type_key Typ-Schlüssel.
-	 * @return self Für Method Chaining.
+	 * @param string $type_key Type key.
+	 * @return self For method chaining.
 	 */
 	public function deregister( string $type_key ): self {
 		unset( $this->types[ $type_key ] );
@@ -127,10 +127,10 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Feldtyp abrufen
+	 * Get field type
 	 *
-	 * @param string $type_key Typ-Schlüssel.
-	 * @return FieldTypeInterface|null Feldtyp oder null.
+	 * @param string $type_key Type key.
+	 * @return FieldTypeInterface|null Field type or null.
 	 */
 	public function get( string $type_key ): ?FieldTypeInterface {
 		$this->registerDefaults();
@@ -138,10 +138,10 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Prüfen ob Feldtyp existiert
+	 * Check if field type exists
 	 *
-	 * @param string $type_key Typ-Schlüssel.
-	 * @return bool True wenn Typ existiert.
+	 * @param string $type_key Type key.
+	 * @return bool True if type exists.
 	 */
 	public function has( string $type_key ): bool {
 		$this->registerDefaults();
@@ -149,9 +149,9 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Alle Feldtypen abrufen
+	 * Get all field types
 	 *
-	 * @return array<string, FieldTypeInterface> Alle Typen.
+	 * @return array<string, FieldTypeInterface> All types.
 	 */
 	public function getAll(): array {
 		$this->registerDefaults();
@@ -159,9 +159,9 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Alle Feldtypen als Array für REST API
+	 * Get all field types as array for REST API
 	 *
-	 * @return array[] Typen als Array.
+	 * @return array[] Types as array.
 	 */
 	public function toArray(): array {
 		$this->registerDefaults();
@@ -184,9 +184,9 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Feldtypen nach Gruppe gruppieren
+	 * Group field types by group
 	 *
-	 * @return array<string, FieldTypeInterface[]> Typen nach Gruppe.
+	 * @return array<string, FieldTypeInterface[]> Types by group.
 	 */
 	public function getByGroup(): array {
 		$this->registerDefaults();
@@ -210,23 +210,23 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Gruppen-Labels abrufen
+	 * Get group labels
 	 *
-	 * @return array<string, string> Gruppe => Label.
+	 * @return array<string, string> Group => Label.
 	 */
 	public function getGroupLabels(): array {
 		return [
 			'text'    => __( 'Text', 'recruiting-playbook' ),
-			'choice'  => __( 'Auswahl', 'recruiting-playbook' ),
-			'special' => __( 'Spezial', 'recruiting-playbook' ),
+			'choice'  => __( 'Choice', 'recruiting-playbook' ),
+			'special' => __( 'Special', 'recruiting-playbook' ),
 			'layout'  => __( 'Layout', 'recruiting-playbook' ),
 		];
 	}
 
 	/**
-	 * Typ-Schlüssel aller registrierten Typen
+	 * Get type keys of all registered types
 	 *
-	 * @return string[] Liste der Typ-Schlüssel.
+	 * @return string[] List of type keys.
 	 */
 	public function getTypeKeys(): array {
 		$this->registerDefaults();
@@ -234,7 +234,7 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Registry für Tests zurücksetzen
+	 * Reset registry for tests
 	 *
 	 * @return void
 	 */
@@ -244,7 +244,7 @@ class FieldTypeRegistry {
 	}
 
 	/**
-	 * Singleton-Instanz für Tests zurücksetzen
+	 * Reset singleton instance for tests
 	 *
 	 * @return void
 	 */

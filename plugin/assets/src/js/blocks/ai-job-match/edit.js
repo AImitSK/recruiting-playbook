@@ -37,11 +37,11 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Einstellungen', 'recruiting-playbook' ) }
+					title={ __( 'Settings', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Job-ID', 'recruiting-playbook' ) }
+						label={ __( 'Job ID', 'recruiting-playbook' ) }
 						value={ jobId || '' }
 						onChange={ ( value ) =>
 							setAttributes( {
@@ -50,23 +50,23 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						type="number"
 						help={ __(
-							'Leer lassen für automatische Erkennung auf Stellenseiten.',
+							'Leave blank for automatic detection on job pages.',
 							'recruiting-playbook'
 						) }
 					/>
 					<TextControl
-						label={ __( 'Button-Text', 'recruiting-playbook' ) }
+						label={ __( 'Button Text', 'recruiting-playbook' ) }
 						value={ title }
 						onChange={ ( value ) =>
 							setAttributes( { title: value } )
 						}
 					/>
 					<SelectControl
-						label={ __( 'Button-Stil', 'recruiting-playbook' ) }
+						label={ __( 'Button Style', 'recruiting-playbook' ) }
 						value={ style }
 						options={ [
 							{
-								label: __( 'Standard', 'recruiting-playbook' ),
+								label: __( 'Default', 'recruiting-playbook' ),
 								value: '',
 							},
 							{
@@ -121,7 +121,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								<span>
 									{ title ||
 										__(
-											'Passe ich zu diesem Job?',
+											'Am I a match for this job?',
 											'recruiting-playbook'
 										) }
 								</span>
@@ -131,13 +131,13 @@ export default function Edit( { attributes, setAttributes } ) {
 							<Placeholder
 								icon="lock"
 								label={ __(
-									'AI-Addon erforderlich',
+									'AI Addon Required',
 									'recruiting-playbook'
 								) }
 							>
 								<p>
 									{ __(
-										'Der KI-Job-Match Button benötigt das AI-Addon.',
+										'The AI Job Match button requires the AI Addon.',
 										'recruiting-playbook'
 									) }
 								</p>

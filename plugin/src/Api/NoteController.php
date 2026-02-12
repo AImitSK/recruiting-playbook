@@ -59,7 +59,7 @@ class NoteController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => [
 						'application_id' => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -72,18 +72,18 @@ class NoteController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
 						'application_id' => [
-							'description' => __( 'Bewerbungs-ID', 'recruiting-playbook' ),
+							'description' => __( 'Application ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'content'        => [
-							'description'       => __( 'Notiz-Inhalt', 'recruiting-playbook' ),
+							'description'       => __( 'Note content', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'required'          => true,
 							'sanitize_callback' => 'wp_kses_post',
 						],
 						'is_private'     => [
-							'description' => __( 'Private Notiz', 'recruiting-playbook' ),
+							'description' => __( 'Private note', 'recruiting-playbook' ),
 							'type'        => 'boolean',
 							'default'     => false,
 						],
@@ -103,12 +103,12 @@ class NoteController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id'      => [
-							'description' => __( 'Notiz-ID', 'recruiting-playbook' ),
+							'description' => __( 'Note ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
 						'content' => [
-							'description'       => __( 'Notiz-Inhalt', 'recruiting-playbook' ),
+							'description'       => __( 'Note content', 'recruiting-playbook' ),
 							'type'              => 'string',
 							'required'          => true,
 							'sanitize_callback' => 'wp_kses_post',
@@ -122,7 +122,7 @@ class NoteController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'delete_item_permissions_check' ],
 					'args'                => [
 						'id' => [
-							'description' => __( 'Notiz-ID', 'recruiting-playbook' ),
+							'description' => __( 'Note ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
 						],
@@ -141,7 +141,7 @@ class NoteController extends WP_REST_Controller {
 				'permission_callback' => [ $this, 'get_items_permissions_check' ],
 				'args'                => [
 					'candidate_id' => [
-						'description' => __( 'Kandidaten-ID', 'recruiting-playbook' ),
+						'description' => __( 'Candidate ID', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'required'    => true,
 					],
@@ -244,7 +244,7 @@ class NoteController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'advanced_applicant_management' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Diese Funktion erfordert eine Pro-Lizenz.', 'recruiting-playbook' ),
+				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -267,7 +267,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! current_user_can( 'view_notes' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Lesen von Notizen.', 'recruiting-playbook' ),
+				__( 'No permission to read notes.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -290,7 +290,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! current_user_can( 'create_notes' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Erstellen von Notizen.', 'recruiting-playbook' ),
+				__( 'No permission to create notes.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -313,7 +313,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'No permission.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -322,7 +322,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! current_user_can( 'edit_own_notes' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Bearbeiten von Notizen.', 'recruiting-playbook' ),
+				__( 'No permission to edit notes.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -346,7 +346,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung.', 'recruiting-playbook' ),
+				__( 'No permission.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -355,7 +355,7 @@ class NoteController extends WP_REST_Controller {
 		if ( ! current_user_can( 'delete_notes' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'Keine Berechtigung zum Löschen von Notizen.', 'recruiting-playbook' ),
+				__( 'No permission to delete notes.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

@@ -32,7 +32,7 @@ export function ColumnsControl( {
 } ) {
 	return (
 		<RangeControl
-			label={ label || __( 'Spalten', 'recruiting-playbook' ) }
+			label={ label || __( 'Columns', 'recruiting-playbook' ) }
 			value={ value }
 			onChange={ onChange }
 			min={ min }
@@ -45,7 +45,7 @@ export function ColumnsControl( {
 			].filter( ( m ) => m.value >= min && m.value <= max ) }
 			help={
 				help ||
-				__( 'Anzahl der Spalten im Grid-Layout', 'recruiting-playbook' )
+				__( 'Number of columns in grid layout', 'recruiting-playbook' )
 			}
 		/>
 	);

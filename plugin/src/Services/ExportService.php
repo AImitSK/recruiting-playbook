@@ -70,7 +70,7 @@ class ExportService {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'CSV-Export erfordert die Pro-Version.', 'recruiting-playbook' ),
+				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -155,7 +155,7 @@ class ExportService {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'CSV-Export erfordert die Pro-Version.', 'recruiting-playbook' ),
+				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -177,39 +177,39 @@ class ExportService {
 		$overview = $stats_service->getOverview( $period );
 
 		// Abschnitt: Zusammenfassung.
-		fputcsv( $output, [ __( 'ZUSAMMENFASSUNG', 'recruiting-playbook' ) ], ';' );
+		fputcsv( $output, [ __( 'SUMMARY', 'recruiting-playbook' ) ], ';' );
 		fputcsv( $output, [ '' ], ';' );
 
 		fputcsv( $output, [
-			__( 'Kennzahl', 'recruiting-playbook' ),
-			__( 'Wert', 'recruiting-playbook' ),
+			__( 'Metric', 'recruiting-playbook' ),
+			__( 'Value', 'recruiting-playbook' ),
 		], ';' );
 
-		fputcsv( $output, [ __( 'Bewerbungen (gesamt)', 'recruiting-playbook' ), $overview['applications']['total'] ], ';' );
-		fputcsv( $output, [ __( 'Neue Bewerbungen', 'recruiting-playbook' ), $overview['applications']['new'] ], ';' );
-		fputcsv( $output, [ __( 'In Bearbeitung', 'recruiting-playbook' ), $overview['applications']['in_progress'] ], ';' );
-		fputcsv( $output, [ __( 'Eingestellt', 'recruiting-playbook' ), $overview['applications']['hired'] ], ';' );
-		fputcsv( $output, [ __( 'Abgelehnt', 'recruiting-playbook' ), $overview['applications']['rejected'] ], ';' );
-		fputcsv( $output, [ __( 'Aktive Stellen', 'recruiting-playbook' ), $overview['jobs']['active'] ], ';' );
+		fputcsv( $output, [ __( 'Applications (total)', 'recruiting-playbook' ), $overview['applications']['total'] ], ';' );
+		fputcsv( $output, [ __( 'New applications', 'recruiting-playbook' ), $overview['applications']['new'] ], ';' );
+		fputcsv( $output, [ __( 'In progress', 'recruiting-playbook' ), $overview['applications']['in_progress'] ], ';' );
+		fputcsv( $output, [ __( 'Hired', 'recruiting-playbook' ), $overview['applications']['hired'] ], ';' );
+		fputcsv( $output, [ __( 'Rejected', 'recruiting-playbook' ), $overview['applications']['rejected'] ], ';' );
+		fputcsv( $output, [ __( 'Active jobs', 'recruiting-playbook' ), $overview['jobs']['active'] ], ';' );
 
 		if ( isset( $overview['time_to_hire']['average_days'] ) ) {
-			fputcsv( $output, [ __( 'Ø Time-to-Hire (Tage)', 'recruiting-playbook' ), $overview['time_to_hire']['average_days'] ], ';' );
+			fputcsv( $output, [ __( 'Avg. Time-to-Hire (days)', 'recruiting-playbook' ), $overview['time_to_hire']['average_days'] ], ';' );
 		}
 
 		if ( isset( $overview['conversion_rate']['rate'] ) ) {
-			fputcsv( $output, [ __( 'Conversion-Rate (%)', 'recruiting-playbook' ), $overview['conversion_rate']['rate'] ], ';' );
+			fputcsv( $output, [ __( 'Conversion Rate (%)', 'recruiting-playbook' ), $overview['conversion_rate']['rate'] ], ';' );
 		}
 
 		fputcsv( $output, [ '' ], ';' );
 		fputcsv( $output, [ '' ], ';' );
 
 		// Abschnitt: Top-Stellen.
-		fputcsv( $output, [ __( 'TOP-STELLEN NACH BEWERBUNGEN', 'recruiting-playbook' ) ], ';' );
+		fputcsv( $output, [ __( 'TOP JOBS BY APPLICATIONS', 'recruiting-playbook' ) ], ';' );
 		fputcsv( $output, [ '' ], ';' );
 
 		fputcsv( $output, [
-			__( 'Stelle', 'recruiting-playbook' ),
-			__( 'Bewerbungen', 'recruiting-playbook' ),
+			__( 'Job', 'recruiting-playbook' ),
+			__( 'Applications', 'recruiting-playbook' ),
 		], ';' );
 
 		foreach ( $overview['top_jobs'] as $job ) {
@@ -220,7 +220,7 @@ class ExportService {
 		}
 
 		fputcsv( $output, [ '' ], ';' );
-		fputcsv( $output, [ sprintf( __( 'Exportiert am: %s', 'recruiting-playbook' ), gmdate( 'd.m.Y H:i' ) ) ], ';' );
+		fputcsv( $output, [ sprintf( __( 'Exported on: %s', 'recruiting-playbook' ), gmdate( 'd.m.Y H:i' ) ) ], ';' );
 
 		fclose( $output );
 		exit;
@@ -249,16 +249,16 @@ class ExportService {
 		$available = [
 			'id'              => __( 'ID', 'recruiting-playbook' ),
 			'candidate_name'  => __( 'Name', 'recruiting-playbook' ),
-			'email'           => __( 'E-Mail', 'recruiting-playbook' ),
-			'phone'           => __( 'Telefon', 'recruiting-playbook' ),
-			'job_id'          => __( 'Stellen-ID', 'recruiting-playbook' ),
-			'job_title'       => __( 'Stelle', 'recruiting-playbook' ),
+			'email'           => __( 'Email', 'recruiting-playbook' ),
+			'phone'           => __( 'Phone', 'recruiting-playbook' ),
+			'job_id'          => __( 'Job ID', 'recruiting-playbook' ),
+			'job_title'       => __( 'Job', 'recruiting-playbook' ),
 			'status'          => __( 'Status', 'recruiting-playbook' ),
-			'source'          => __( 'Quelle', 'recruiting-playbook' ),
-			'created_at'      => __( 'Bewerbungsdatum', 'recruiting-playbook' ),
-			'updated_at'      => __( 'Letzte Änderung', 'recruiting-playbook' ),
-			'hired_at'        => __( 'Einstellungsdatum', 'recruiting-playbook' ),
-			'time_in_process' => __( 'Tage im Prozess', 'recruiting-playbook' ),
+			'source'          => __( 'Source', 'recruiting-playbook' ),
+			'created_at'      => __( 'Application date', 'recruiting-playbook' ),
+			'updated_at'      => __( 'Last modified', 'recruiting-playbook' ),
+			'hired_at'        => __( 'Hired date', 'recruiting-playbook' ),
+			'time_in_process' => __( 'Days in process', 'recruiting-playbook' ),
 		];
 
 		if ( empty( $requested ) ) {
@@ -314,13 +314,13 @@ class ExportService {
 	 */
 	private function getStatusLabel( string $status ): string {
 		$labels = [
-			'new'       => __( 'Neu', 'recruiting-playbook' ),
-			'screening' => __( 'In Prüfung', 'recruiting-playbook' ),
+			'new'       => __( 'New', 'recruiting-playbook' ),
+			'screening' => __( 'Screening', 'recruiting-playbook' ),
 			'interview' => __( 'Interview', 'recruiting-playbook' ),
-			'offer'     => __( 'Angebot', 'recruiting-playbook' ),
-			'hired'     => __( 'Eingestellt', 'recruiting-playbook' ),
-			'rejected'  => __( 'Abgelehnt', 'recruiting-playbook' ),
-			'withdrawn' => __( 'Zurückgezogen', 'recruiting-playbook' ),
+			'offer'     => __( 'Offer', 'recruiting-playbook' ),
+			'hired'     => __( 'Hired', 'recruiting-playbook' ),
+			'rejected'  => __( 'Rejected', 'recruiting-playbook' ),
+			'withdrawn' => __( 'Withdrawn', 'recruiting-playbook' ),
 		];
 
 		return $labels[ $status ] ?? $status;
@@ -335,7 +335,7 @@ class ExportService {
 	private function getSourceLabel( string $source ): string {
 		$labels = [
 			'website'  => __( 'Website', 'recruiting-playbook' ),
-			'direct'   => __( 'Direkt', 'recruiting-playbook' ),
+			'direct'   => __( 'Direct', 'recruiting-playbook' ),
 			'indeed'   => 'Indeed',
 			'linkedin' => 'LinkedIn',
 			'stepstone' => 'StepStone',
@@ -444,19 +444,19 @@ class ExportService {
 			],
 			[
 				'key'      => 'email',
-				'label'    => __( 'E-Mail', 'recruiting-playbook' ),
+				'label'    => __( 'Email', 'recruiting-playbook' ),
 				'default'  => true,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'phone',
-				'label'    => __( 'Telefon', 'recruiting-playbook' ),
+				'label'    => __( 'Phone', 'recruiting-playbook' ),
 				'default'  => false,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'job_title',
-				'label'    => __( 'Stelle', 'recruiting-playbook' ),
+				'label'    => __( 'Job', 'recruiting-playbook' ),
 				'default'  => true,
 				'group'    => 'standard',
 			],
@@ -468,31 +468,31 @@ class ExportService {
 			],
 			[
 				'key'      => 'source',
-				'label'    => __( 'Quelle', 'recruiting-playbook' ),
+				'label'    => __( 'Source', 'recruiting-playbook' ),
 				'default'  => false,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'created_at',
-				'label'    => __( 'Bewerbungsdatum', 'recruiting-playbook' ),
+				'label'    => __( 'Application date', 'recruiting-playbook' ),
 				'default'  => true,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'updated_at',
-				'label'    => __( 'Letzte Änderung', 'recruiting-playbook' ),
+				'label'    => __( 'Last modified', 'recruiting-playbook' ),
 				'default'  => false,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'hired_at',
-				'label'    => __( 'Einstellungsdatum', 'recruiting-playbook' ),
+				'label'    => __( 'Hired date', 'recruiting-playbook' ),
 				'default'  => false,
 				'group'    => 'standard',
 			],
 			[
 				'key'      => 'time_in_process',
-				'label'    => __( 'Tage im Prozess', 'recruiting-playbook' ),
+				'label'    => __( 'Days in process', 'recruiting-playbook' ),
 				'default'  => false,
 				'group'    => 'standard',
 			],

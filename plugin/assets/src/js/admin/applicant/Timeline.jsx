@@ -13,12 +13,12 @@ import { Button } from '../components/ui/button';
 import { useTimeline } from './hooks/useTimeline';
 
 const CATEGORY_FILTERS = [
-	{ id: 'all', label: 'Alle' },
+	{ id: 'all', label: 'All' },
 	{ id: 'status', label: 'Status' },
-	{ id: 'note', label: 'Notizen' },
-	{ id: 'rating', label: 'Bewertungen' },
-	{ id: 'email', label: 'E-Mails' },
-	{ id: 'document', label: 'Dokumente' },
+	{ id: 'note', label: 'Notes' },
+	{ id: 'rating', label: 'Ratings' },
+	{ id: 'email', label: 'Emails' },
+	{ id: 'document', label: 'Documents' },
 ];
 
 const ACTIVITY_ICONS = {
@@ -76,8 +76,8 @@ function formatDateHeader( dateString ) {
 	const todayString = today.toISOString().split( 'T' )[ 0 ];
 	const yesterdayString = yesterday.toISOString().split( 'T' )[ 0 ];
 
-	if ( dateString === todayString ) return __( 'Heute', 'recruiting-playbook' );
-	if ( dateString === yesterdayString ) return __( 'Gestern', 'recruiting-playbook' );
+	if ( dateString === todayString ) return __( 'Today', 'recruiting-playbook' );
+	if ( dateString === yesterdayString ) return __( 'Yesterday', 'recruiting-playbook' );
 
 	return date.toLocaleDateString( 'de-DE', {
 		weekday: 'long',
@@ -180,7 +180,7 @@ export function Timeline( { applicationId, compact = false, showHeader = true, m
 		return (
 			<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', gap: '0.5rem', color: '#6b7280' } }>
 				<Spinner />
-				{ __( 'Laden...', 'recruiting-playbook' ) }
+				{ __( 'Loading...', 'recruiting-playbook' ) }
 			</div>
 		);
 	}
@@ -191,13 +191,13 @@ export function Timeline( { applicationId, compact = false, showHeader = true, m
 			{ showHeader && ! compact && (
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' } }>
 					<h3 style={ { margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' } }>
-						{ __( 'Verlauf', 'recruiting-playbook' ) }
+						{ __( 'Timeline', 'recruiting-playbook' ) }
 					</h3>
 					<button
 						type="button"
 						onClick={ refresh }
 						disabled={ loading }
-						title={ __( 'Aktualisieren', 'recruiting-playbook' ) }
+						title={ __( 'Refresh', 'recruiting-playbook' ) }
 						style={ {
 							display: 'flex',
 							alignItems: 'center',
@@ -254,7 +254,7 @@ export function Timeline( { applicationId, compact = false, showHeader = true, m
 				{ Object.keys( groupedItems ).length === 0 ? (
 					<div style={ { textAlign: 'center', padding: '2rem', color: '#6b7280' } }>
 						<Clock style={ { width: '2.5rem', height: '2.5rem', marginBottom: '0.75rem', opacity: 0.3 } } />
-						<p style={ { margin: 0 } }>{ __( 'Noch keine Aktivitäten', 'recruiting-playbook' ) }</p>
+						<p style={ { margin: 0 } }>{ __( 'No activities yet', 'recruiting-playbook' ) }</p>
 					</div>
 				) : (
 					Object.entries( groupedItems ).map( ( [ date, dateItems ] ) => (
@@ -290,10 +290,10 @@ export function Timeline( { applicationId, compact = false, showHeader = true, m
 							{ loading ? (
 								<>
 									<Spinner size="0.875rem" />
-									{ __( 'Laden...', 'recruiting-playbook' ) }
+									{ __( 'Loading...', 'recruiting-playbook' ) }
 								</>
 							) : (
-								__( 'Mehr laden', 'recruiting-playbook' )
+								__( 'Load more', 'recruiting-playbook' )
 							) }
 						</Button>
 					</div>

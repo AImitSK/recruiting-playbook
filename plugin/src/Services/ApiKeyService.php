@@ -64,7 +64,7 @@ class ApiKeyService {
 		if ( empty( $name ) ) {
 			return new WP_Error(
 				'invalid_name',
-				__( 'Name ist ein Pflichtfeld.', 'recruiting-playbook' ),
+				__( 'Name is a required field.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -76,7 +76,7 @@ class ApiKeyService {
 				'invalid_permissions',
 				sprintf(
 					/* translators: %s: comma-separated list of invalid permissions */
-					__( 'Ungültige Berechtigungen: %s', 'recruiting-playbook' ),
+					__( 'Invalid permissions: %s', 'recruiting-playbook' ),
 					implode( ', ', $invalid )
 				),
 				[ 'status' => 400 ]
@@ -86,7 +86,7 @@ class ApiKeyService {
 		if ( empty( $permissions ) ) {
 			return new WP_Error(
 				'no_permissions',
-				__( 'Mindestens eine Berechtigung muss ausgewählt werden.', 'recruiting-playbook' ),
+				__( 'At least one permission must be selected.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -123,7 +123,7 @@ class ApiKeyService {
 		if ( ! $key_id ) {
 			return new WP_Error(
 				'create_failed',
-				__( 'API-Key konnte nicht erstellt werden.', 'recruiting-playbook' ),
+				__( 'API key could not be created.', 'recruiting-playbook' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -299,7 +299,7 @@ class ApiKeyService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'API-Key nicht gefunden.', 'recruiting-playbook' ),
+				__( 'API key not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -321,7 +321,7 @@ class ApiKeyService {
 					'invalid_permissions',
 					sprintf(
 						/* translators: %s: comma-separated list of invalid permissions */
-						__( 'Ungültige Berechtigungen: %s', 'recruiting-playbook' ),
+						__( 'Invalid permissions: %s', 'recruiting-playbook' ),
 						implode( ', ', $invalid )
 					),
 					[ 'status' => 400 ]
@@ -358,7 +358,7 @@ class ApiKeyService {
 		if ( empty( $update_data ) ) {
 			return new WP_Error(
 				'no_changes',
-				__( 'Keine Änderungen übergeben.', 'recruiting-playbook' ),
+				__( 'No changes provided.', 'recruiting-playbook' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -390,7 +390,7 @@ class ApiKeyService {
 		if ( ! $existing ) {
 			return new WP_Error(
 				'not_found',
-				__( 'API-Key nicht gefunden.', 'recruiting-playbook' ),
+				__( 'API key not found.', 'recruiting-playbook' ),
 				[ 'status' => 404 ]
 			);
 		}
