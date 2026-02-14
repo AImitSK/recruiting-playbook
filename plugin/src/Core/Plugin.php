@@ -907,11 +907,11 @@ final class Plugin {
 		// Application Form JS - nur auf Einzelseiten, muss VOR Alpine.js geladen werden!
 		// Registriert die Alpine-Komponente via 'alpine:init' Event.
 		if ( is_singular( 'job_listing' ) ) {
-			$form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
+			$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';
 			if ( file_exists( $form_file ) ) {
 				wp_enqueue_script(
 					'rp-application-form',
-					RP_PLUGIN_URL . 'assets/src/js/application-form.js',
+					RP_PLUGIN_URL . 'assets/dist/js/application-form.js',
 					[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
 					RP_VERSION,
 					true

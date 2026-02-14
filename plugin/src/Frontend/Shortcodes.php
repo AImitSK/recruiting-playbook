@@ -1288,11 +1288,11 @@ class Shortcodes {
 		$alpine_deps = [ 'rp-tracking' ];
 
 		// Application Form JS - muss VOR Alpine.js geladen werden.
-		$form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
+		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';
 		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-application-form', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-application-form',
-				RP_PLUGIN_URL . 'assets/src/js/application-form.js',
+				RP_PLUGIN_URL . 'assets/dist/js/application-form.js',
 				[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
 				RP_VERSION,
 				true
