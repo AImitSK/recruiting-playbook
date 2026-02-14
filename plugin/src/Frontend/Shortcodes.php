@@ -1184,6 +1184,7 @@ class Shortcodes {
 
 		// Tracking JS.
 		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		$tracking_loaded = false;
 		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-tracking',
@@ -1192,15 +1193,19 @@ class Shortcodes {
 				RP_VERSION,
 				true
 			);
+			$tracking_loaded = true;
+		} elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
+			$tracking_loaded = true;
 		}
 
 		// Custom Fields Form JS.
 		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
 		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+			$form_deps = $tracking_loaded ? [ 'rp-tracking' ] : [];
 			wp_enqueue_script(
 				'rp-custom-fields-form',
 				RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
-				[ 'rp-tracking' ],
+				$form_deps,
 				RP_VERSION . '-' . filemtime( $form_file ),
 				true
 			);
@@ -1239,7 +1244,10 @@ class Shortcodes {
 		}
 
 		// Alpine.js.
-		$alpine_deps = [ 'rp-tracking' ];
+		$alpine_deps = [];
+		if ( $tracking_loaded ) {
+			$alpine_deps[] = 'rp-tracking';
+		}
 		if ( wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
 			$alpine_deps[] = 'rp-custom-fields-form';
 		}
@@ -1272,6 +1280,9 @@ class Shortcodes {
 	 * Form-Assets laden (Alpine.js + Application Form JS)
 	 */
 	private function enqueueFormAssets(): void {
+		// Alpine.js Abhängigkeiten.
+		$alpine_deps = [];
+
 		// Tracking JS.
 		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
@@ -1282,10 +1293,10 @@ class Shortcodes {
 				RP_VERSION,
 				true
 			);
+			$alpine_deps[] = 'rp-tracking';
+		} elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
+			$alpine_deps[] = 'rp-tracking';
 		}
-
-		// Alpine.js Abhängigkeiten.
-		$alpine_deps = [ 'rp-tracking' ];
 
 		// Application Form JS - muss VOR Alpine.js geladen werden.
 		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';

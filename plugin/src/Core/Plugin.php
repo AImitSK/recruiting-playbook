@@ -873,6 +873,9 @@ final class Plugin {
 			wp_enqueue_style( 'rp-frontend' );
 		}
 
+		// Alpine.js Abhängigkeiten sammeln.
+		$alpine_deps = [];
+
 		// Conversion Tracking (DataLayer Events für GTM).
 		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		if ( file_exists( $tracking_file ) ) {
@@ -899,10 +902,10 @@ final class Plugin {
 				] );
 				wp_add_inline_script( 'rp-tracking', 'window.rpGoogleAdsConfig = ' . $ads_config . ';', 'before' );
 			}
-		}
 
-		// Alpine.js Abhängigkeiten sammeln.
-		$alpine_deps = [ 'rp-tracking' ];
+			// Tracking als Alpine-Dependency hinzufügen (nur wenn geladen).
+			$alpine_deps[] = 'rp-tracking';
+		}
 
 		// Application Form JS - nur auf Einzelseiten, muss VOR Alpine.js geladen werden!
 		// Registriert die Alpine-Komponente via 'alpine:init' Event.
