@@ -13,7 +13,7 @@ import {
 	Placeholder,
 } from '@wordpress/components';
 
-import { AiBadge, FeatureGate } from '../components/ProBadge';
+import { ProBadge, FeatureGate } from '../components/ProBadge';
 
 /**
  * Edit component for the AI Job Match block.
@@ -30,8 +30,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		className: 'rp-block-ai-job-match-editor',
 	} );
 
-	// Check if AI addon is available.
-	const hasAiAddon = window.rpBlocksConfig?.hasAiAddon || false;
+	// Check if Pro is available (includes AI features).
+	const isPro = window.rpBlocksConfig?.isPro || false;
 
 	return (
 		<>
@@ -84,7 +84,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			<div { ...blockProps }>
 				<FeatureGate feature="ai">
 					<div className="rp-ai-match-preview">
-						<AiBadge size="small" inline />
+						<ProBadge size="small" inline />
 						<button
 							type="button"
 							className={
@@ -127,17 +127,17 @@ export default function Edit( { attributes, setAttributes } ) {
 								</span>
 							</span>
 						</button>
-						{ ! hasAiAddon && (
+						{ ! isPro && (
 							<Placeholder
 								icon="lock"
 								label={ __(
-									'AI Addon Required',
+									'Pro Required',
 									'recruiting-playbook'
 								) }
 							>
 								<p>
 									{ __(
-										'The AI Job Match button requires the AI Addon.',
+										'The AI Job Match button requires Pro.',
 										'recruiting-playbook'
 									) }
 								</p>

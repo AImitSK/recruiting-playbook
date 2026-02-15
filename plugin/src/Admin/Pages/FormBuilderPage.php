@@ -70,7 +70,7 @@ class FormBuilderPage {
 				'defaultTemplate' => $default_template ? $default_template->toArray() : null,
 				'restNamespace'   => 'recruiting/v1',
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
-				'upgradeUrl'      => admin_url( 'admin.php?page=rp-license' ),
+				'upgradeUrl'      => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]

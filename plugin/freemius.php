@@ -25,8 +25,8 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'public_key'          => 'pk_169f4df2b23e899b6b4f9c3df4548',
                 'is_premium'          => true,  // Freemius generiert Free-Version automatisch beim Deployment.
                 'has_premium_version' => true,  // Es gibt Premium-Pläne.
-                'has_addons'          => true,  // AI-Addon (recruiting-playbook-ki) als separates Add-on.
-                'has_paid_plans'      => true,  // Paid Plans verfügbar (Pro, AI, Bundle).
+                'has_addons'          => false,
+                'has_paid_plans'      => true,
                 // Sicherheits-Token für WordPress.org - wird automatisch aus Free-Version entfernt.
                 'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
                 'menu'                => array(
@@ -34,7 +34,6 @@ if ( ! function_exists( 'rp_fs' ) ) {
                     'support' => false,
                     'account' => true,   // Freemius Account-Seite im Menü aktivieren.
                     'pricing' => true,   // Upgrade/Pricing-Seite im Menü anzeigen.
-                    'addons'  => true,   // Add-ons-Seite im Menü anzeigen.
                 ),
             ) );
         }

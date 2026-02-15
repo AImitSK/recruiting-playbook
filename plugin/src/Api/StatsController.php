@@ -534,7 +534,7 @@ class StatsController extends WP_REST_Controller {
 			[
 				'status'  => 403,
 				'feature' => $feature,
-				'upgrade_url' => admin_url( 'admin.php?page=rp-license' ),
+				'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 			]
 		);
 	}

@@ -197,7 +197,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		return new WP_REST_Response( [
 			'license' => [
 				'active' => $license_active,
-				'plan'   => $license_active ? 'KI-Addon' : '',
+				'plan'   => $license_active ? 'Pro' : '',
 			],
 			'usage'   => [
 				'current_month' => $current_month,
@@ -402,23 +402,11 @@ class AiAnalysisController extends WP_REST_Controller {
 		$timestamp = gmdate( 'c' );
 		$signature = hash( 'sha256', $site->secret_key . '|' . $timestamp );
 
-		$headers = [
+		return [
 			'X-Freemius-Install-Id' => (string) $site->id,
 			'X-Freemius-Timestamp'  => $timestamp,
 			'X-Freemius-Signature'  => $signature,
 			'X-Site-Url'            => site_url(),
 		];
-
-		if ( function_exists( 'rpk_fs' ) ) {
-			$addon_site = rpk_fs()->get_site();
-			if ( $addon_site && ! empty( $addon_site->id ) ) {
-				$addon_signature                  = hash( 'sha256', $addon_site->secret_key . '|' . $timestamp );
-				$headers['X-Freemius-Addon-Id']   = (string) $addon_site->id;
-				$headers['X-Freemius-Addon-Sig']  = $addon_signature;
-				$headers['X-Freemius-Addon-Slug'] = 'recruiting-playbook-ki';
-			}
-		}
-
-		return $headers;
 	}
 }

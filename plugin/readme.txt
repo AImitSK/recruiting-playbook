@@ -54,7 +54,7 @@ Recruiting Playbook grows with your requirements.
 **Recruiting Playbook Pro:**
 Professionalize your recruiting with an interactive Kanban board for applicant tracking, customizable email templates for rejections or invitations, and a full REST API for third-party systems.
 
-**AI Addon (Coming Soon):**
+**AI Features (Pro):**
 Use cutting-edge AI for automatic job matching. Applicants receive an instant match score and valuable tips about their hiring chances based on their resume.
 
 == Screenshots ==

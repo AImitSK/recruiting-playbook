@@ -158,7 +158,7 @@ class TalentPoolPage {
 						</li>
 					</ul>
 					<p>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=rp-license' ) ); ?>" class="button button-primary button-hero">
+						<a href="<?php echo esc_url( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '' ); ?>" class="button button-primary button-hero">
 							<?php esc_html_e( 'Upgrade to Pro now', 'recruiting-playbook' ); ?>
 						</a>
 					</p>

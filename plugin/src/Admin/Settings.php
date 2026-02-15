@@ -398,7 +398,6 @@ class Settings {
 			'nonce'       => wp_create_nonce( 'rp_download_backup' ),
 			'pages'       => $this->getPages(),
 			'isPro'       => $is_pro,
-			'hasAiAddon'  => function_exists( 'rp_has_ai' ) && rp_has_ai(),
 			'i18n'        => $this->getI18nStrings(),
 		];
 

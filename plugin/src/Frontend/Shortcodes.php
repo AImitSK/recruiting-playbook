@@ -42,11 +42,11 @@ use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
  * - [rp_latest_jobs] - Neueste Stellen
  * - [rp_job_categories] - Kategorie-Übersicht
  * - [rp_application_form] - Bewerbungsformular (Auto-Detection Form Builder)
- * - [rp_ai_job_finder] - KI-Job-Finder (AI-Addon)
+ * - [rp_ai_job_finder] - KI-Job-Finder (Pro)
  *
  * Interne Shortcodes (nicht für Endanwender):
  * - [rp_custom_application_form] - Alias für rp_application_form (deprecated)
- * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (AI-Addon)
+ * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (Pro)
  */
 class Shortcodes {
 
@@ -88,10 +88,10 @@ class Shortcodes {
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
 
-		// KI-Matching Shortcode (AI-Addon Feature).
+		// KI-Matching Shortcode (Pro Feature).
 		add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
 
-		// KI-Job-Finder Shortcode (AI-Addon Feature).
+		// KI-Job-Finder Shortcode (Pro Feature).
 		add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
 	}
 
@@ -731,7 +731,7 @@ class Shortcodes {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Match', 'recruiting-playbook' ),
-				'KI'
+				'PRO'
 			);
 		}
 
@@ -901,7 +901,7 @@ class Shortcodes {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Finder', 'recruiting-playbook' ),
-				'KI'
+				'PRO'
 			);
 		}
 
@@ -1117,7 +1117,7 @@ class Shortcodes {
 	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
 		$tier_labels = [
 			'PRO' => 'Pro',
-			'KI'  => 'KI-Addon',
+			'KI'  => 'Pro',
 		];
 
 		$label = $tier_labels[ $required_tier ] ?? $required_tier;
@@ -1135,7 +1135,7 @@ class Shortcodes {
 					esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
 					'<strong>' . esc_html( $label ) . '</strong>'
 				) . '</p>
-				<a href="' . esc_url( admin_url( 'admin.php?page=recruiting-playbook-license' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
+				<a href="' . esc_url( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
 				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
 			</div>
 		</div>';

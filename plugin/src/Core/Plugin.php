@@ -777,7 +777,7 @@ final class Plugin {
 		$form_template_controller = new FormTemplateController();
 		$form_template_controller->register_routes();
 
-		// Match Controller (KI-Matching - AI-Addon Feature).
+		// Match Controller (KI-Matching - Pro Feature).
 		$match_controller = new MatchController();
 		$match_controller->register_routes();
 
@@ -793,7 +793,7 @@ final class Plugin {
 		$api_key_controller = new ApiKeyController();
 		$api_key_controller->register_routes();
 
-		// AI Analysis Controller (KI-Addon Feature).
+		// AI Analysis Controller (Pro Feature).
 		$ai_analysis_controller = new AiAnalysisController();
 		$ai_analysis_controller->register_routes();
 
@@ -941,7 +941,7 @@ final class Plugin {
 			}
 		}
 
-		// Match-Modal JS & CSS (AI-Addon Feature) - auf Archiv und Einzelseiten.
+		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
 		if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
 			// CSS.
 			$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';

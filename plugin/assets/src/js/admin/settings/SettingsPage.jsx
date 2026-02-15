@@ -149,7 +149,7 @@ export function SettingsPage() {
 								{ __( 'API', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
-						{ config.hasAiAddon && (
+						{ config.isPro && (
 							<TabsTrigger value="ai">
 								{ __( 'AI Analysis', 'recruiting-playbook' ) }
 							</TabsTrigger>
@@ -203,7 +203,7 @@ export function SettingsPage() {
 						</TabsContent>
 					) }
 
-					{ config.hasAiAddon && (
+					{ config.isPro && (
 						<TabsContent value="ai">
 							<AiAnalysisSettings />
 						</TabsContent>

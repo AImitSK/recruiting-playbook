@@ -67,7 +67,7 @@ class WidgetLoaderTest extends TestCase {
 	}
 
 	/**
-	 * Test: AI-Widgets werden registriert wenn AI-Addon aktiv.
+	 * Test: AI-Widgets werden registriert wenn Pro aktiv.
 	 */
 	public function test_ai_widgets_registered_with_ai_addon(): void {
 		Functions\when( 'rp_has_cv_matching' )->justReturn( true );
@@ -115,7 +115,7 @@ class WidgetLoaderTest extends TestCase {
 	}
 
 	/**
-	 * Test: Genau 7 Core-Widgets ohne AI-Addon.
+	 * Test: Genau 7 Core-Widgets ohne Pro.
 	 */
 	public function test_total_widget_count_without_ai(): void {
 		// rp_has_cv_matching könnte durch vorherigen Test definiert sein.

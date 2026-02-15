@@ -2,7 +2,7 @@
  * AI Job Finder Block
  *
  * Lebenslauf-Upload mit KI-gestützter Stellensuche.
- * AI-Addon Feature.
+ * Pro Feature.
  *
  * @package
  */

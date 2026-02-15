@@ -213,7 +213,7 @@ class ExportController extends WP_REST_Controller {
 				[
 					'status'      => 403,
 					'feature'     => 'csv_export',
-					'upgrade_url' => admin_url( 'admin.php?page=rp-license' ),
+					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}

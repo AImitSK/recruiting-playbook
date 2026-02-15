@@ -37,7 +37,7 @@ class BlockLoader {
 	];
 
 	/**
-	 * AI-Addon Blocks (only available with AI-Addon)
+	 * AI Blocks (only available with Pro)
 	 *
 	 * @var array<string>
 	 */
@@ -92,8 +92,8 @@ class BlockLoader {
 			$this->registerBlock( $block );
 		}
 
-		// AI blocks only if AI-Addon is active.
-		if ( $this->hasAiAddon() ) {
+		// AI blocks only if Pro is active.
+		if ( $this->hasPro() ) {
 			foreach ( $this->ai_blocks as $block ) {
 				$this->registerBlock( $block );
 			}
@@ -117,12 +117,12 @@ class BlockLoader {
 	}
 
 	/**
-	 * Check if AI-Addon is active
+	 * Check if Pro is active (includes AI features)
 	 *
-	 * @return bool True if AI-Addon is available.
+	 * @return bool True if Pro is available.
 	 */
-	private function hasAiAddon(): bool {
-		return function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching();
+	private function hasPro(): bool {
+		return function_exists( 'rp_is_pro' ) && rp_is_pro();
 	}
 
 	/**
@@ -177,7 +177,7 @@ class BlockLoader {
 			'rp-blocks-editor',
 			'rpBlocksConfig',
 			[
-				'hasAiAddon'  => $this->hasAiAddon(),
+				'isPro'       => $this->hasPro(),
 				'restUrl'     => rest_url( 'recruiting/v1/' ),
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'taxonomies'  => $this->getTaxonomiesData(),

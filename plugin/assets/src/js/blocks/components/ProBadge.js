@@ -31,28 +31,6 @@ export function ProBadge( { size = 'small', inline = false, className = '' } ) {
 }
 
 /**
- * AiBadge - Visual indicator for AI-Addon features
- *
- * @param {Object}  props           Component props.
- * @param {string}  props.size      Badge size: 'small', 'medium', 'large'.
- * @param {boolean} props.inline    Display inline with text.
- * @param {string}  props.className Additional CSS class.
- * @return {JSX.Element} The component.
- */
-export function AiBadge( { size = 'small', inline = false, className = '' } ) {
-	const sizeClass = `rp-ai-badge--${ size }`;
-	const inlineClass = inline ? 'rp-ai-badge--inline' : '';
-
-	return (
-		<span
-			className={ `rp-ai-badge ${ sizeClass } ${ inlineClass } ${ className }` }
-		>
-			{ __( 'AI', 'recruiting-playbook' ) }
-		</span>
-	);
-}
-
-/**
  * FeatureGate - Wrapper that shows upgrade prompt if feature not available
  *
  * @param {Object}      props            Component props.
@@ -62,11 +40,10 @@ export function AiBadge( { size = 'small', inline = false, className = '' } ) {
  * @return {JSX.Element} The component.
  */
 export function FeatureGate( { feature, upgradeUrl, children } ) {
-	// Check if feature is available via localized config.
 	const config = window.rpBlocksConfig || {};
 
-	// AI features require AI addon.
-	if ( feature === 'ai' && ! config.hasAiAddon ) {
+	// Pro features (including AI) require Pro plan.
+	if ( ( feature === 'ai' || feature === 'pro' ) && ! config.isPro ) {
 		return (
 			<div className="rp-feature-gate rp-feature-gate--locked">
 				<div className="rp-feature-gate__icon">
@@ -74,11 +51,11 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 				</div>
 				<div className="rp-feature-gate__content">
 					<h4>
-						{ __( 'AI Addon Required', 'recruiting-playbook' ) }
+						{ __( 'Pro Required', 'recruiting-playbook' ) }
 					</h4>
 					<p>
 						{ __(
-							'This feature requires the AI Addon for automatic candidate analysis.',
+							'This feature requires the Pro version.',
 							'recruiting-playbook'
 						) }
 					</p>
@@ -90,7 +67,7 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 							rel="noopener noreferrer"
 						>
 							{ __(
-								'Unlock AI Addon',
+								'Upgrade to Pro',
 								'recruiting-playbook'
 							) }
 						</a>
@@ -100,7 +77,6 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 		);
 	}
 
-	// Feature available, render children.
 	return children;
 }
 

@@ -52,6 +52,7 @@ class FeatureFlags {
 			'ai_job_generation'             => false,
 			'ai_text_improvement'           => false,
 			'ai_templates'                  => false,
+			'ai_cv_matching'                => false,
 			'custom_branding'               => false,
 			'priority_support'              => false,
 		],
@@ -74,9 +75,10 @@ class FeatureFlags {
 			'design_settings'               => true,
 			'avada_integration'             => true,   // Avada/Fusion Builder Elements.
 			'gutenberg_blocks'              => true,   // Native Gutenberg Blocks.
-			'ai_job_generation'             => false,
-			'ai_text_improvement'           => false,
-			'ai_templates'                  => false,
+			'ai_job_generation'             => true,
+			'ai_text_improvement'           => true,
+			'ai_templates'                  => true,
+			'ai_cv_matching'                => true,
 			'custom_branding'               => true,
 			'priority_support'              => true,
 		],

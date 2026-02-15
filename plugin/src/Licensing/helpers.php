@@ -16,15 +16,15 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Licensing\FeatureFlags;
 
 /**
- * Feature-Mapping: Welche Features gehören zu welchem Plan/Addon
+ * Feature-Mapping: Welche Features gehören zu welchem Plan
  *
- * Quelle: 'parent' = Parent-Plugin Plan, 'addon' = KI-Addon Lizenz.
+ * Quelle: 'pro' = Pro-Plan Features, 'free' = immer verfügbar.
  *
  * @return array<string, array{source: string, plans: array<string>}> Feature => Config-Array
  */
 function rp_get_feature_plan_mapping(): array {
 	return [
-		// Pro Features (Parent-Plugin Plan).
+		// Pro Features (inkl. KI).
 		'kanban_board'                  => [
 			'source' => 'parent',
 			'plans'  => [ 'pro' ],
@@ -81,12 +81,22 @@ function rp_get_feature_plan_mapping(): array {
 			'source' => 'parent',
 			'plans'  => [ 'pro' ],
 		],
-
-		// AI Features (KI-Addon Lizenz).
-		'ai_job_generation'             => [ 'source' => 'addon' ],
-		'ai_text_improvement'           => [ 'source' => 'addon' ],
-		'ai_templates'                  => [ 'source' => 'addon' ],
-		'ai_cv_matching'                => [ 'source' => 'addon' ],
+		'ai_job_generation'             => [
+			'source' => 'parent',
+			'plans'  => [ 'pro' ],
+		],
+		'ai_text_improvement'           => [
+			'source' => 'parent',
+			'plans'  => [ 'pro' ],
+		],
+		'ai_templates'                  => [
+			'source' => 'parent',
+			'plans'  => [ 'pro' ],
+		],
+		'ai_cv_matching'                => [
+			'source' => 'parent',
+			'plans'  => [ 'pro' ],
+		],
 
 		// Free Features (immer verfügbar).
 		'create_jobs'                   => [ 'source' => 'free' ],
@@ -98,7 +108,7 @@ function rp_get_feature_plan_mapping(): array {
 /**
  * Prüft ob ein Feature verfügbar ist
  *
- * Unterscheidet zwischen Parent-Plan-Features (Pro) und Addon-Features (KI).
+ * Prüft ob ein Feature im aktuellen Plan (Free/Pro) verfügbar ist.
  *
  * @param string $feature Feature-Name.
  * @return mixed Feature-Wert (bool, string, int) oder false.
@@ -129,12 +139,7 @@ function rp_can( string $feature ): mixed {
 			return true;
 		}
 
-		// AI Features → KI-Addon Lizenz prüfen.
-		if ( 'addon' === $config['source'] ) {
-			return rp_has_ai();
-		}
-
-		// Parent Features → Parent-Plan prüfen.
+		// Parent Features → Plan prüfen.
 		if ( 'parent' === $config['source'] ) {
 			if ( ! function_exists( 'rp_fs' ) ) {
 				return false;
@@ -163,8 +168,8 @@ function rp_can( string $feature ): mixed {
 /**
  * Gibt aktuellen Lizenz-Tier zurück
  *
- * Nur Parent-Plan-basiert (FREE oder PRO).
- * KI-Features werden separat über rp_has_ai() geprüft.
+ * Nur Plan-basiert (FREE oder PRO).
+ * KI-Features sind im Pro-Plan enthalten.
  *
  * @return string Tier-Name (FREE, PRO).
  */
@@ -191,23 +196,20 @@ function rp_is_pro(): bool {
 }
 
 /**
- * Prüft ob KI-Addon aktiv und lizenziert ist
+ * Prüft ob KI-Features verfügbar sind
  *
- * Prüft die Addon-eigene Freemius-Instanz (rpk_fs) statt Parent-Pläne.
+ * KI-Features sind im Pro-Plan enthalten.
  *
- * @return bool True wenn KI-Addon installiert und Lizenz aktiv.
+ * @return bool True wenn Pro-Plan aktiv.
  */
 function rp_has_ai(): bool {
-	if ( ! function_exists( 'rpk_fs' ) ) {
-		return false;
-	}
-	return rpk_fs()->is_paying() || rpk_fs()->is_trial();
+	return rp_is_pro();
 }
 
 /**
  * Prüft ob CV-Matching verfügbar ist
  *
- * @return bool True wenn KI-Addon aktiv und lizenziert.
+ * @return bool True wenn Pro-Plan aktiv.
  */
 function rp_has_cv_matching(): bool {
 	return rp_can( 'ai_cv_matching' ) === true;
@@ -352,17 +354,12 @@ function rp_check_feature_permission( string $feature, string $capability, strin
 
 	// 2. Feature-Flag-Check (Business-Logic).
 	if ( ! rp_can( $feature ) ) {
-		$mapping          = rp_get_feature_plan_mapping();
-		$is_addon_feature = isset( $mapping[ $feature ] ) && 'addon' === $mapping[ $feature ]['source'];
-
 		return new \WP_Error(
 			$error_code,
-			$is_addon_feature
-				? __( 'This feature requires the AI Addon.', 'recruiting-playbook' )
-				: __( 'This feature requires Pro.', 'recruiting-playbook' ),
+			__( 'This feature requires Pro.', 'recruiting-playbook' ),
 			[
 				'status'      => 403,
-				'upgrade_url' => rp_upgrade_url( $is_addon_feature ? 'KI' : 'PRO' ),
+				'upgrade_url' => rp_upgrade_url( 'PRO' ),
 			]
 		);
 	}
@@ -379,7 +376,7 @@ function rp_check_feature_permission( string $feature, string $capability, strin
  *
  * @param string $feature       Feature-Name (z.B. 'kanban_board', 'api_access').
  * @param string $feature_name  Anzeigename des Features für den Benutzer.
- * @param string $required_tier Benötigter Tier (PRO) oder 'KI' für Addon-Features.
+ * @param string $required_tier Benötigter Tier (PRO).
  * @return bool True wenn Feature verfügbar und Code fortgesetzt werden kann,
  *              false wenn Upgrade-Hinweis angezeigt wurde.
  *
@@ -411,7 +408,6 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 	// Upgrade-Hinweis anzeigen.
 	$tier_labels = [
 		'PRO' => 'Pro',
-		'KI'  => 'KI-Addon',
 	];
 
 	printf(

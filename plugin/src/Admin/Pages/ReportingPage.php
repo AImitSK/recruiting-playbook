@@ -35,7 +35,7 @@ class ReportingPage {
 				'canViewStats'    => $can_view_stats,
 				'canViewAdvanced' => $can_view_advanced,
 				'canExport'       => $can_export,
-				'upgradeUrl'      => admin_url( 'admin.php?page=rp-license' ),
+				'upgradeUrl'      => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]

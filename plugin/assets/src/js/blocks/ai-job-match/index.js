@@ -2,7 +2,7 @@
  * AI Job Match Block
  *
  * Button für KI-gestütztes Job-Matching.
- * AI-Addon Feature.
+ * Pro Feature.
  *
  * @package
  */
