@@ -88,11 +88,11 @@ class Shortcodes {
 		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
 
-		// KI-Matching Shortcode (Pro Feature).
-		add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
-
-		// KI-Job-Finder Shortcode (Pro Feature).
-		add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
+		// KI-Shortcodes (Pro Feature).
+		if ( rp_fs()->is__premium_only() ) {
+			add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
+			add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
+		}
 	}
 
 	/**
@@ -125,16 +125,19 @@ class Shortcodes {
 	 * @return bool True wenn Form Builder verwendet werden soll.
 	 */
 	private function shouldUseFormBuilder(): bool {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
-			return false;
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check.
+			if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+				return false;
+			}
+
+			// Prüfen ob eine veröffentlichte Konfiguration existiert.
+			$repository = $this->getFormConfigRepository();
+			$published  = $repository->getPublished();
+
+			return null !== $published;
 		}
-
-		// Prüfen ob eine veröffentlichte Konfiguration existiert.
-		$repository = $this->getFormConfigRepository();
-		$published  = $repository->getPublished();
-
-		return null !== $published;
+		return false;
 	}
 
 
@@ -659,9 +662,9 @@ class Shortcodes {
 											),
 											[
 												'a' => [
-													'href'   => [],
+													'href' => [],
 													'target' => [],
-													'class'  => [],
+													'class' => [],
 												],
 											]
 										);
@@ -1183,7 +1186,7 @@ class Shortcodes {
 		}
 
 		// Tracking JS.
-		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		$tracking_file   = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		$tracking_loaded = false;
 		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
 			wp_enqueue_script(

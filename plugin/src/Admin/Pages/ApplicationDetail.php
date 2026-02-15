@@ -123,7 +123,9 @@ class ApplicationDetail {
 		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
-		$this->processEmailSend( $id );
+		if ( rp_fs()->is__premium_only() ) {
+			$this->processEmailSend( $id );
+		}
 
 		$application = $this->getApplication( $id );
 
@@ -131,12 +133,16 @@ class ApplicationDetail {
 			wp_die( esc_html__( 'Application not found.', 'recruiting-playbook' ) );
 		}
 
-		$candidate    = $this->getCandidate( (int) $application['candidate_id'] );
-		$job          = get_post( $application['job_id'] );
-		$documents    = $this->getDocuments( $id );
-		$activity_log = $this->getActivityLog( $id );
-		$email_history = $this->getEmailHistory( $id );
-		$email_templates = $this->getEmailTemplates();
+		$candidate       = $this->getCandidate( (int) $application['candidate_id'] );
+		$job             = get_post( $application['job_id'] );
+		$documents       = $this->getDocuments( $id );
+		$activity_log    = $this->getActivityLog( $id );
+		$email_history   = [];
+		$email_templates = [];
+		if ( rp_fs()->is__premium_only() ) {
+			$email_history   = $this->getEmailHistory( $id );
+			$email_templates = $this->getEmailTemplates();
+		}
 
 		?>
 		<div class="wrap rp-application-detail">
@@ -274,7 +280,11 @@ class ApplicationDetail {
 						</div>
 					</div>
 
-					<?php $this->renderEmailHistory( $email_history ); ?>
+					<?php
+					if ( rp_fs()->is__premium_only() ) {
+						$this->renderEmailHistory( $email_history );
+					}
+					?>
 				</div>
 
 				<!-- Sidebar -->
@@ -306,7 +316,11 @@ class ApplicationDetail {
 						</div>
 					</div>
 
-					<?php $this->renderEmailComposer( $id, $candidate, $email_templates ); ?>
+					<?php
+					if ( rp_fs()->is__premium_only() ) {
+						$this->renderEmailComposer( $id, $candidate, $email_templates );
+					}
+					?>
 
 					<!-- Stelle -->
 					<div class="postbox">
@@ -578,37 +592,40 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailHistory( int $application_id ): array {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			return [];
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				return [];
+			}
+
+			global $wpdb;
+
+			$table = $wpdb->prefix . 'rp_email_log';
+
+			// Prüfen ob Tabelle existiert.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$table_exists = $wpdb->get_var(
+				$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
+			);
+
+			if ( ! $table_exists ) {
+				return [];
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT id, recipient_email, subject, status, template_id, created_at, sent_at, error_message
+					 FROM {$table}
+					 WHERE application_id = %d
+					 ORDER BY created_at DESC
+					 LIMIT 20",
+					$application_id
+				),
+				ARRAY_A
+			) ?: [];
 		}
-
-		global $wpdb;
-
-		$table = $wpdb->prefix . 'rp_email_log';
-
-		// Prüfen ob Tabelle existiert.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$table_exists = $wpdb->get_var(
-			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
-		);
-
-		if ( ! $table_exists ) {
-			return [];
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT id, recipient_email, subject, status, template_id, created_at, sent_at, error_message
-				 FROM {$table}
-				 WHERE application_id = %d
-				 ORDER BY created_at DESC
-				 LIMIT 20",
-				$application_id
-			),
-			ARRAY_A
-		) ?: [];
+		return [];
 	}
 
 	/**
@@ -617,30 +634,33 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailTemplates(): array {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			return [];
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				return [];
+			}
+
+			global $wpdb;
+
+			$table = $wpdb->prefix . 'rp_email_templates';
+
+			// Prüfen ob Tabelle existiert.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$table_exists = $wpdb->get_var(
+				$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
+			);
+
+			if ( ! $table_exists ) {
+				return [];
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $wpdb->get_results(
+				"SELECT id, name, subject FROM {$table} WHERE is_active = 1 ORDER BY name ASC",
+				ARRAY_A
+			) ?: [];
 		}
-
-		global $wpdb;
-
-		$table = $wpdb->prefix . 'rp_email_templates';
-
-		// Prüfen ob Tabelle existiert.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$table_exists = $wpdb->get_var(
-			$wpdb->prepare( 'SHOW TABLES LIKE %s', $table )
-		);
-
-		if ( ! $table_exists ) {
-			return [];
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		return $wpdb->get_results(
-			"SELECT id, name, subject FROM {$table} WHERE is_active = 1 ORDER BY name ASC",
-			ARRAY_A
-		) ?: [];
+		return [];
 	}
 
 	/**
@@ -651,16 +671,17 @@ class ApplicationDetail {
 	 * @param array $templates      Verfügbare Templates.
 	 */
 	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			if ( function_exists( 'rp_require_feature' ) ) {
-				rp_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				if ( function_exists( 'rp_require_feature' ) ) {
+					rp_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
+				}
+				return;
 			}
-			return;
-		}
 
-		if ( empty( $templates ) ) {
-			?>
+			if ( empty( $templates ) ) {
+				?>
 			<div class="postbox">
 				<h2 class="hndle"><?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?></h2>
 				<div class="inside">
@@ -674,11 +695,11 @@ class ApplicationDetail {
 					</p>
 				</div>
 			</div>
-			<?php
-			return;
-		}
+				<?php
+				return;
+			}
 
-		?>
+			?>
 		<div class="postbox">
 			<h2 class="hndle">
 				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
@@ -767,7 +788,8 @@ class ApplicationDetail {
 			});
 		});
 		</script>
-		<?php
+			<?php
+		} // End is__premium_only.
 	}
 
 	/**
@@ -776,12 +798,13 @@ class ApplicationDetail {
 	 * @param array $emails E-Mail-Einträge.
 	 */
 	private function renderEmailHistory( array $emails ): void {
-		// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			return;
-		}
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				return;
+			}
 
-		?>
+			?>
 		<div class="postbox">
 			<h2 class="hndle">
 				<span class="dashicons dashicons-email" style="margin-right: 5px;"></span>
@@ -821,7 +844,8 @@ class ApplicationDetail {
 				<?php endif; ?>
 			</div>
 		</div>
-		<?php
+			<?php
+		} // End is__premium_only.
 	}
 
 	/**
@@ -864,82 +888,84 @@ class ApplicationDetail {
 	 * @param int $application_id Application ID.
 	 */
 	private function processEmailSend( int $application_id ): void {
-		if ( ! isset( $_POST['send_email'] ) ) {
-			return;
-		}
+		if ( rp_fs()->is__premium_only() ) {
+			if ( ! isset( $_POST['send_email'] ) ) {
+				return;
+			}
 
-		check_admin_referer( 'rp_send_email_' . $application_id );
+			check_admin_referer( 'rp_send_email_' . $application_id );
 
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			add_action(
-				'admin_notices',
-				function () {
-					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'Email sending requires Pro.', 'recruiting-playbook' );
-					echo '</p></div>';
-				}
-			);
-			return;
-		}
+			// Pro-Feature Check.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				add_action(
+					'admin_notices',
+					function () {
+						echo '<div class="notice notice-error is-dismissible"><p>';
+						esc_html_e( 'Email sending requires Pro.', 'recruiting-playbook' );
+						echo '</p></div>';
+					}
+				);
+				return;
+			}
 
-		$template_id  = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
-		$signature_id = isset( $_POST['signature_id'] ) && '' !== $_POST['signature_id'] ? absint( $_POST['signature_id'] ) : null;
+			$template_id  = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+			$signature_id = isset( $_POST['signature_id'] ) && '' !== $_POST['signature_id'] ? absint( $_POST['signature_id'] ) : null;
 
-		if ( ! $template_id ) {
-			add_action(
-				'admin_notices',
-				function () {
-					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'Please select a template.', 'recruiting-playbook' );
-					echo '</p></div>';
-				}
-			);
-			return;
-		}
+			if ( ! $template_id ) {
+				add_action(
+					'admin_notices',
+					function () {
+						echo '<div class="notice notice-error is-dismissible"><p>';
+						esc_html_e( 'Please select a template.', 'recruiting-playbook' );
+						echo '</p></div>';
+					}
+				);
+				return;
+			}
 
-		// E-Mail über den Service senden (mit optionaler Signatur).
-		$email_service = new EmailService();
-		$result = $email_service->sendWithTemplate( $template_id, $application_id, [], true, $signature_id );
+			// E-Mail über den Service senden (mit optionaler Signatur).
+			$email_service = new EmailService();
+			$result        = $email_service->sendWithTemplate( $template_id, $application_id, [], true, $signature_id );
 
-		if ( false === $result ) {
-			add_action(
-				'admin_notices',
-				function () {
-					echo '<div class="notice notice-error is-dismissible"><p>';
-					esc_html_e( 'Email could not be sent.', 'recruiting-playbook' );
-					echo '</p></div>';
-				}
-			);
-			return;
-		}
+			if ( false === $result ) {
+				add_action(
+					'admin_notices',
+					function () {
+						echo '<div class="notice notice-error is-dismissible"><p>';
+						esc_html_e( 'Email could not be sent.', 'recruiting-playbook' );
+						echo '</p></div>';
+					}
+				);
+				return;
+			}
 
-		// Aktivitäts-Log eintragen.
-		global $wpdb;
-		$log_table    = $wpdb->prefix . 'rp_activity_log';
-		$current_user = wp_get_current_user();
+			// Aktivitäts-Log eintragen.
+			global $wpdb;
+			$log_table    = $wpdb->prefix . 'rp_activity_log';
+			$current_user = wp_get_current_user();
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$wpdb->insert(
-			$log_table,
-			[
-				'object_type' => 'application',
-				'object_id'   => $application_id,
-				'action'      => 'email_sent',
-				'user_id'     => $current_user->ID,
-				'user_name'   => $current_user->display_name,
-				'message'     => sprintf( 'E-Mail mit Template #%d gesendet', $template_id ),
-				'created_at'  => current_time( 'mysql' ),
-			]
-		);
+			$wpdb->insert(
+				$log_table,
+				[
+					'object_type' => 'application',
+					'object_id'   => $application_id,
+					'action'      => 'email_sent',
+					'user_id'     => $current_user->ID,
+					'user_name'   => $current_user->display_name,
+					'message'     => sprintf( 'E-Mail mit Template #%d gesendet', $template_id ),
+					'created_at'  => current_time( 'mysql' ),
+				]
+			);
 
-		add_action(
-			'admin_notices',
-			function () {
-				echo '<div class="notice notice-success is-dismissible"><p>';
-				esc_html_e( 'Email was sent.', 'recruiting-playbook' );
-				echo '</p></div>';
-			}
-		);
+			add_action(
+				'admin_notices',
+				function () {
+					echo '<div class="notice notice-success is-dismissible"><p>';
+					esc_html_e( 'Email was sent.', 'recruiting-playbook' );
+					echo '</p></div>';
+				}
+			);
+		} // End is__premium_only.
 	}
 }

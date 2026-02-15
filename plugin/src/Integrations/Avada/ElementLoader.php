@@ -14,30 +14,26 @@ defined( 'ABSPATH' ) || exit;
 class ElementLoader {
 
 	/**
-	 * Alle verfügbaren Elements
-	 *
-	 * @var array<string>
-	 */
-	private array $elements = [
-		'JobGrid',
-		'JobSearch',
-		'JobCount',
-		'FeaturedJobs',
-		'LatestJobs',
-		'JobCategories',
-		'ApplicationForm',
-		'AiJobFinder',
-		'AiJobMatch',
-	];
-
-	/**
 	 * Alle Elements registrieren
 	 *
 	 * @return void
 	 */
 	public function registerAll(): void {
-		foreach ( $this->elements as $element ) {
-			$this->registerElement( $element );
+		// Free Elements (immer registrieren).
+		$this->registerElement( 'JobGrid' );
+		$this->registerElement( 'JobSearch' );
+		$this->registerElement( 'JobCount' );
+		$this->registerElement( 'FeaturedJobs' );
+		$this->registerElement( 'LatestJobs' );
+		$this->registerElement( 'JobCategories' );
+		$this->registerElement( 'ApplicationForm' );
+
+		// Pro Elements (AI-Features).
+		if ( rp_fs()->is__premium_only() ) {
+			if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
+				$this->registerElement( 'AiJobFinder' );
+				$this->registerElement( 'AiJobMatch' );
+			}
 		}
 	}
 

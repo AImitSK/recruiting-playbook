@@ -47,7 +47,7 @@ class FeatureFlags {
 			'advanced_reporting'            => false,  // Time-to-Hire, Conversion, Trends.
 			'csv_export'                    => false,
 			'design_settings'               => false,
-			'avada_integration'             => false,   // Avada/Fusion Builder Elements.
+			'avada_integration'             => true,    // Avada/Fusion Builder Elements (Free: 7 Elements).
 			'gutenberg_blocks'              => false,   // Native Gutenberg Blocks.
 			'ai_job_generation'             => false,
 			'ai_text_improvement'           => false,

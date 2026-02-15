@@ -22,12 +22,7 @@ class AvadaIntegration {
 	 * @return void
 	 */
 	public function register(): void {
-		// Pro-Feature Check
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'avada_integration' ) ) {
-			return;
-		}
-
-		// Fusion Builder Check
+		// Fusion Builder muss aktiv sein.
 		if ( ! class_exists( 'FusionBuilder' ) ) {
 			return;
 		}

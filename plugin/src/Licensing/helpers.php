@@ -70,8 +70,7 @@ function rp_get_feature_plan_mapping(): array {
 			'plans'  => [ 'pro' ],
 		],
 		'avada_integration'             => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
+			'source' => 'free',
 		],
 		'gutenberg_blocks'              => [
 			'source' => 'parent',

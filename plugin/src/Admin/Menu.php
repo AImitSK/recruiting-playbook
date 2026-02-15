@@ -468,8 +468,15 @@ class Menu {
 	 * Kanban-Board rendern
 	 */
 	public function renderKanban(): void {
-		$kanban_page = new KanbanBoard();
-		$kanban_page->render();
+		if ( rp_fs()->is__premium_only() ) {
+			$kanban_page = new KanbanBoard();
+			$kanban_page->render();
+			return;
+		}
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
+		rp_require_feature( 'kanban_board', __( 'Kanban Board', 'recruiting-playbook' ), 'PRO' );
+		echo '</div>';
 	}
 
 	/**
@@ -540,42 +547,79 @@ class Menu {
 	 * Reporting-Seite rendern
 	 */
 	public function renderReporting(): void {
-		$reporting_page = new ReportingPage();
-		$reporting_page->render();
+		if ( rp_fs()->is__premium_only() ) {
+			$reporting_page = new ReportingPage();
+			$reporting_page->render();
+			return;
+		}
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Reports', 'recruiting-playbook' ) . '</h1>';
+		rp_require_feature( 'advanced_reporting', __( 'Reports', 'recruiting-playbook' ), 'PRO' );
+		echo '</div>';
 	}
 
 	/**
 	 * Form Builder-Seite rendern
 	 */
 	public function renderFormBuilder(): void {
-		$form_builder_page = new FormBuilderPage();
-		$form_builder_page->enqueue_assets();
-		$form_builder_page->render();
+		if ( rp_fs()->is__premium_only() ) {
+			$form_builder_page = new FormBuilderPage();
+			$form_builder_page->enqueue_assets();
+			$form_builder_page->render();
+			return;
+		}
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Form Builder', 'recruiting-playbook' ) . '</h1>';
+		rp_require_feature( 'custom_fields', __( 'Form Builder', 'recruiting-playbook' ), 'PRO' );
+		echo '</div>';
 	}
 
 	/**
 	 * Talent-Pool-Seite rendern
 	 */
 	public function renderTalentPool(): void {
-		$talent_pool_page = new Pages\TalentPoolPage();
-		$talent_pool_page->render();
+		if ( rp_fs()->is__premium_only() ) {
+			$talent_pool_page = new Pages\TalentPoolPage();
+			$talent_pool_page->render();
+			return;
+		}
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Talent Pool', 'recruiting-playbook' ) . '</h1>';
+		rp_require_feature( 'advanced_applicant_management', __( 'Talent Pool', 'recruiting-playbook' ), 'PRO' );
+		echo '</div>';
 	}
 
 	/**
 	 * Bulk-E-Mail-Seite rendern
 	 */
 	public function renderBulkEmail(): void {
-		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			wp_die(
-				esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
-				esc_html__( 'Pro feature required', 'recruiting-playbook' ),
-				[ 'response' => 403 ]
-			);
-		}
+		if ( rp_fs()->is__premium_only() ) {
+			// Pro-Feature Check.
+			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+				wp_die(
+					esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
+					esc_html__( 'Pro feature required', 'recruiting-playbook' ),
+					[ 'response' => 403 ]
+				);
+			}
 
-		$current_user = wp_get_current_user();
-		$transient_key = 'rp_bulk_email_ids_' . $current_user->ID;
+			$this->renderBulkEmailPro();
+			return;
+		}
+		// Free-Version: Nie direkt erreichbar, aber als Safety-Net.
+		wp_die(
+			esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
+			esc_html__( 'Pro feature required', 'recruiting-playbook' ),
+			[ 'response' => 403 ]
+		);
+	}
+
+	/**
+	 * Bulk-E-Mail Pro-Version rendern
+	 */
+	private function renderBulkEmailPro(): void {
+		$current_user    = wp_get_current_user();
+		$transient_key   = 'rp_bulk_email_ids_' . $current_user->ID;
 		$application_ids = get_transient( $transient_key );
 
 		// Keine IDs vorhanden.
@@ -607,8 +651,8 @@ class Menu {
 
 		// Bewerber-Informationen laden.
 		$applications_table = $wpdb->prefix . 'rp_applications';
-		$candidates_table = $wpdb->prefix . 'rp_candidates';
-		$placeholders = implode( ',', array_fill( 0, count( $application_ids ), '%d' ) );
+		$candidates_table   = $wpdb->prefix . 'rp_candidates';
+		$placeholders       = implode( ',', array_fill( 0, count( $application_ids ), '%d' ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$recipients = $wpdb->get_results(
@@ -633,12 +677,12 @@ class Menu {
 			} else {
 				$email_service = new EmailService();
 				$success_count = 0;
-				$error_count = 0;
+				$error_count   = 0;
 
 				foreach ( $application_ids as $app_id ) {
 					$result = $email_service->sendWithTemplate( $template_id, (int) $app_id );
 					if ( false !== $result ) {
-						$success_count++;
+						++$success_count;
 
 						// Aktivitäts-Log.
 						$log_table = $wpdb->prefix . 'rp_activity_log';
@@ -656,7 +700,7 @@ class Menu {
 							]
 						);
 					} else {
-						$error_count++;
+						++$error_count;
 					}
 				}
 

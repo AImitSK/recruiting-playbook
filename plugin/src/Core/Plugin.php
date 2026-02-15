@@ -91,17 +91,13 @@ final class Plugin {
 		$this->registerPostTypes();
 		$this->registerTaxonomies();
 
-		// E-Mail Queue Service initialisieren (Pro-Feature).
-		$this->initEmailQueueService();
-
-		// Auto-E-Mail Service initialisieren (Pro-Feature).
-		$this->initAutoEmailService();
-
-		// Webhook-Hooks registrieren (Pro-Feature).
-		$this->registerWebhookHooks();
-
-		// API-Key Authentifizierung registrieren (Pro-Feature).
-		$this->registerApiKeyAuth();
+		// Pro-Services initialisieren.
+		if ( rp_fs()->is__premium_only() ) {
+			$this->initEmailQueueService();
+			$this->initAutoEmailService();
+			$this->registerWebhookHooks();
+			$this->registerApiKeyAuth();
+		}
 
 		// Admin-Bereich.
 		if ( is_admin() ) {
@@ -119,13 +115,17 @@ final class Plugin {
 		}
 
 		// Gutenberg Blocks (Pro-Feature).
-		$this->initBlocks();
+		if ( rp_fs()->is__premium_only() ) {
+			$this->initBlocks();
+		}
 
 		// Avada Integration wird FRÜHER in recruiting-playbook.php registriert
 		// (auf after_setup_theme, Priority 5, VOR FusionBuilder).
 
 		// Elementor Integration (Pro-Feature).
-		$this->initElementorIntegration();
+		if ( rp_fs()->is__premium_only() ) {
+			$this->initElementorIntegration();
+		}
 
 		// Polylang Integration (Free-Feature).
 		$this->initPolylangIntegration();
@@ -204,10 +204,11 @@ final class Plugin {
 		}
 
 		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
-		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
-			if ( CustomFieldsMigration::needsMigration() ) {
-				// Migration im Hintergrund ausführen.
-				add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
+		if ( rp_fs()->is__premium_only() ) {
+			if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+				if ( CustomFieldsMigration::needsMigration() ) {
+					add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
+				}
 			}
 		}
 	}
@@ -425,9 +426,9 @@ final class Plugin {
 	/**
 	 * Rate Limiting für API-Key-authentifizierte Requests
 	 *
-	 * @param mixed            $result  Response.
-	 * @param \WP_REST_Server  $server  REST Server.
-	 * @param WP_REST_Request  $request Request.
+	 * @param mixed           $result  Response.
+	 * @param \WP_REST_Server $server  REST Server.
+	 * @param WP_REST_Request $request Request.
 	 * @return mixed Response oder WP_Error bei Rate Limit.
 	 */
 	public function checkApiKeyRateLimit( $result, $server, $request ) {
@@ -458,7 +459,7 @@ final class Plugin {
 				'rate_limit_exceeded',
 				__( 'Rate limit exceeded. Please try again later.', 'recruiting-playbook' ),
 				[
-					'status' => 429,
+					'status'      => 429,
 					'retry_after' => $rate_check['reset'] - time(),
 				]
 			);
@@ -590,18 +591,18 @@ final class Plugin {
 		$menu = new Menu();
 		add_action( 'admin_menu', [ $menu, 'register' ] );
 
-		// E-Mail-Templates Seite registrieren (eigenes Submenu).
-		new EmailSettingsPage();
-
 		// Meta-Boxen registrieren.
 		$job_meta = new JobMeta();
 		add_action( 'add_meta_boxes', [ $job_meta, 'register' ] );
 		add_action( 'save_post_job_listing', [ $job_meta, 'save' ], 10, 2 );
 
-		// Custom Fields Meta Box (Pro-Feature).
-		$custom_fields_meta = new JobCustomFieldsMeta();
-		add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
-		add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
+		// Pro Admin-Komponenten (E-Mail-Templates, Custom Fields Meta Box).
+		if ( rp_fs()->is__premium_only() ) {
+			new EmailSettingsPage();
+			$custom_fields_meta = new JobCustomFieldsMeta();
+			add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
+			add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
+		}
 
 		// Dashboard-Widget registrieren.
 		$dashboard_widget = new DashboardWidget();
@@ -720,86 +721,37 @@ final class Plugin {
 		$application_controller = new ApplicationController();
 		$application_controller->register_routes();
 
-		// Pro-Feature Controller (Notes, Ratings, Timeline, Talent-Pool).
-		$note_controller = new NoteController();
-		$note_controller->register_routes();
-
-		$rating_controller = new RatingController();
-		$rating_controller->register_routes();
-
-		$activity_controller = new ActivityController();
-		$activity_controller->register_routes();
-
-		$talent_pool_controller = new TalentPoolController();
-		$talent_pool_controller->register_routes();
-
-		// Pro-Feature Controller (E-Mail-System).
-		$email_template_controller = new EmailTemplateController();
-		$email_template_controller->register_routes();
-
-		$email_controller = new EmailController();
-		$email_controller->register_routes();
-
-		$email_log_controller = new EmailLogController();
-		$email_log_controller->register_routes();
-
-		// Signature Controller (für E-Mail-Signaturen).
-		$signature_controller = new SignatureController();
-		$signature_controller->register_routes();
-
 		// Settings Controller (für Firmendaten etc.).
 		$settings_controller = new SettingsController();
 		$settings_controller->register_routes();
 
-		// User Roles Controllers (Pro-Feature).
-		$role_controller = new RoleController();
-		$role_controller->register_routes();
-
-		$job_assignment_controller = new JobAssignmentController();
-		$job_assignment_controller->register_routes();
-
-		// Stats Controller (Reporting & Dashboard).
-		$stats_controller = new StatsController();
-		$stats_controller->register_routes();
-
-		// Export Controller (CSV-Export - Pro-Feature).
-		$export_controller = new ExportController();
-		$export_controller->register_routes();
-
-		// System Status Controller (Admin Only).
-		$system_status_controller = new SystemStatusController();
-		$system_status_controller->register_routes();
-
-		// Custom Fields Builder Controllers (Pro-Feature).
-		$field_definition_controller = new FieldDefinitionController();
-		$field_definition_controller->register_routes();
-
-		$form_template_controller = new FormTemplateController();
-		$form_template_controller->register_routes();
-
-		// Match Controller (KI-Matching - Pro Feature).
-		$match_controller = new MatchController();
-		$match_controller->register_routes();
-
-		// Form Config Controller (Form Builder - Pro Feature).
-		$form_config_controller = new FormConfigController();
-		$form_config_controller->register_routes();
-
-		// Webhook Controller (Pro-Feature).
-		$webhook_controller = new WebhookController();
-		$webhook_controller->register_routes();
-
-		// API-Key Controller (Pro-Feature).
-		$api_key_controller = new ApiKeyController();
-		$api_key_controller->register_routes();
-
-		// AI Analysis Controller (Pro Feature).
-		$ai_analysis_controller = new AiAnalysisController();
-		$ai_analysis_controller->register_routes();
-
 		// Integration Settings Controller (Free + Pro Features).
 		$integration_controller = new IntegrationController();
 		$integration_controller->register_routes();
+
+		// Pro-Feature Controller.
+		if ( rp_fs()->is__premium_only() ) {
+			( new NoteController() )->register_routes();
+			( new RatingController() )->register_routes();
+			( new ActivityController() )->register_routes();
+			( new TalentPoolController() )->register_routes();
+			( new EmailTemplateController() )->register_routes();
+			( new EmailController() )->register_routes();
+			( new EmailLogController() )->register_routes();
+			( new SignatureController() )->register_routes();
+			( new RoleController() )->register_routes();
+			( new JobAssignmentController() )->register_routes();
+			( new StatsController() )->register_routes();
+			( new ExportController() )->register_routes();
+			( new SystemStatusController() )->register_routes();
+			( new FieldDefinitionController() )->register_routes();
+			( new FormTemplateController() )->register_routes();
+			( new MatchController() )->register_routes();
+			( new FormConfigController() )->register_routes();
+			( new WebhookController() )->register_routes();
+			( new ApiKeyController() )->register_routes();
+			( new AiAnalysisController() )->register_routes();
+		}
 	}
 
 	/**
@@ -895,11 +847,13 @@ final class Plugin {
 			// Google Ads Conversion Config (Pro).
 			$integrations = get_option( 'rp_integrations', [] );
 			if ( ! empty( $integrations['google_ads_enabled'] ) && ! empty( $integrations['google_ads_conversion_id'] ) ) {
-				$ads_config = wp_json_encode( [
-					'conversionId'    => sanitize_text_field( $integrations['google_ads_conversion_id'] ),
-					'conversionLabel' => sanitize_text_field( $integrations['google_ads_conversion_label'] ?? '' ),
-					'conversionValue' => $integrations['google_ads_conversion_value'] ?? '',
-				] );
+				$ads_config = wp_json_encode(
+					[
+						'conversionId'    => sanitize_text_field( $integrations['google_ads_conversion_id'] ),
+						'conversionLabel' => sanitize_text_field( $integrations['google_ads_conversion_label'] ?? '' ),
+						'conversionValue' => $integrations['google_ads_conversion_value'] ?? '',
+					]
+				);
 				wp_add_inline_script( 'rp-tracking', 'window.rpGoogleAdsConfig = ' . $ads_config . ';', 'before' );
 			}
 
@@ -942,57 +896,59 @@ final class Plugin {
 		}
 
 		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
-		if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
-			// CSS.
-			$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
-			if ( file_exists( $match_css_file ) ) {
-				wp_enqueue_style(
-					'rp-match-modal',
-					RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
-					[ 'rp-frontend' ],
-					RP_VERSION . '-' . filemtime( $match_css_file )
-				);
+		if ( rp_fs()->is__premium_only() ) {
+			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
+				// CSS.
+				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+				if ( file_exists( $match_css_file ) ) {
+					wp_enqueue_style(
+						'rp-match-modal',
+						RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+						[ 'rp-frontend' ],
+						RP_VERSION . '-' . filemtime( $match_css_file )
+					);
+				}
+
+				// JS (muss vor Alpine.js laden).
+				$match_js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+				if ( file_exists( $match_js_file ) ) {
+					wp_enqueue_script(
+						'rp-match-modal',
+						RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+						[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
+						RP_VERSION,
+						true
+					);
+
+					// Lokalisierung.
+					wp_localize_script(
+						'rp-match-modal',
+						'rpMatchConfig',
+						[
+							'endpoints' => [
+								'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
+								'status'  => rest_url( 'recruiting/v1/match/status' ),
+							],
+							'nonce'     => wp_create_nonce( 'wp_rest' ),
+							'i18n'      => [
+								'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+								'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+								'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+								'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+								'fileTooLarge'    => __( 'File is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
+								'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
+								'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
+								'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
+							],
+						]
+					);
+
+					$alpine_deps[] = 'rp-match-modal';
+				}
+
+				// Modal-Template wird durch den Shortcode [rp_ai_job_match] eingebunden.
+				// Siehe Shortcodes::registerMatchModal().
 			}
-
-			// JS (muss vor Alpine.js laden).
-			$match_js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
-			if ( file_exists( $match_js_file ) ) {
-				wp_enqueue_script(
-					'rp-match-modal',
-					RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
-					[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
-					RP_VERSION,
-					true
-				);
-
-				// Lokalisierung.
-				wp_localize_script(
-					'rp-match-modal',
-					'rpMatchConfig',
-					[
-						'endpoints' => [
-							'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
-							'status'  => rest_url( 'recruiting/v1/match/status' ),
-						],
-						'nonce'     => wp_create_nonce( 'wp_rest' ),
-						'i18n'      => [
-							'error'           => __( 'An error occurred', 'recruiting-playbook' ),
-							'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
-							'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
-							'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
-							'fileTooLarge'    => __( 'File is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
-							'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
-							'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
-							'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
-						],
-					]
-				);
-
-				$alpine_deps[] = 'rp-match-modal';
-			}
-
-			// Modal-Template wird durch den Shortcode [rp_ai_job_match] eingebunden.
-			// Siehe Shortcodes::registerMatchModal().
 		}
 
 		// Frontend JS - MUSS VOR Alpine.js geladen werden für alpine:init Event.
@@ -1060,7 +1016,10 @@ final class Plugin {
 			// Load dependencies from generated asset file.
 			$asset = file_exists( $asset_file )
 				? require $asset_file
-				: [ 'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ], 'version' => RP_VERSION ];
+				: [
+					'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
+					'version'      => RP_VERSION,
+				];
 
 			wp_enqueue_script(
 				'rp-admin',
@@ -1084,8 +1043,10 @@ final class Plugin {
 			wp_set_script_translations( 'rp-admin', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
 		}
 
-		// E-Mail Admin App Script (für Templates & Signaturen Seite).
-		$this->enqueueEmailAdminAssets( $hook );
+		// E-Mail Admin App Script (für Templates & Signaturen Seite - Pro-Feature).
+		if ( rp_fs()->is__premium_only() ) {
+			$this->enqueueEmailAdminAssets( $hook );
+		}
 	}
 
 	/**
@@ -1121,7 +1082,10 @@ final class Plugin {
 			// Load dependencies from generated asset file.
 			$asset = file_exists( $asset_file )
 				? require $asset_file
-				: [ 'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ], 'version' => RP_VERSION ];
+				: [
+					'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
+					'version'      => RP_VERSION,
+				];
 
 			wp_enqueue_script(
 				'rp-admin-email',
@@ -1143,66 +1107,66 @@ final class Plugin {
 					'logoUrl' => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 					'i18n'    => [
 						// General.
-						'loading'        => __( 'Loading...', 'recruiting-playbook' ),
-						'save'           => __( 'Save', 'recruiting-playbook' ),
-						'saving'         => __( 'Saving...', 'recruiting-playbook' ),
-						'cancel'         => __( 'Cancel', 'recruiting-playbook' ),
-						'delete'         => __( 'Delete', 'recruiting-playbook' ),
-						'edit'           => __( 'Edit', 'recruiting-playbook' ),
-						'preview'        => __( 'Preview', 'recruiting-playbook' ),
-						'name'           => __( 'Name', 'recruiting-playbook' ),
-						'status'         => __( 'Status', 'recruiting-playbook' ),
-						'actions'        => __( 'Actions', 'recruiting-playbook' ),
-						'default'        => __( 'Default', 'recruiting-playbook' ),
-						'errorLoading'   => __( 'Error loading', 'recruiting-playbook' ),
-						'errorSaving'    => __( 'Error saving', 'recruiting-playbook' ),
-						'errorDeleting'  => __( 'Error deleting', 'recruiting-playbook' ),
+						'loading'                => __( 'Loading...', 'recruiting-playbook' ),
+						'save'                   => __( 'Save', 'recruiting-playbook' ),
+						'saving'                 => __( 'Saving...', 'recruiting-playbook' ),
+						'cancel'                 => __( 'Cancel', 'recruiting-playbook' ),
+						'delete'                 => __( 'Delete', 'recruiting-playbook' ),
+						'edit'                   => __( 'Edit', 'recruiting-playbook' ),
+						'preview'                => __( 'Preview', 'recruiting-playbook' ),
+						'name'                   => __( 'Name', 'recruiting-playbook' ),
+						'status'                 => __( 'Status', 'recruiting-playbook' ),
+						'actions'                => __( 'Actions', 'recruiting-playbook' ),
+						'default'                => __( 'Default', 'recruiting-playbook' ),
+						'errorLoading'           => __( 'Error loading', 'recruiting-playbook' ),
+						'errorSaving'            => __( 'Error saving', 'recruiting-playbook' ),
+						'errorDeleting'          => __( 'Error deleting', 'recruiting-playbook' ),
 
 						// Page.
-						'pageTitle'  => __( 'Email Templates & Signatures', 'recruiting-playbook' ),
+						'pageTitle'              => __( 'Email Templates & Signatures', 'recruiting-playbook' ),
 
 						// Tabs.
-						'templates'  => __( 'Templates', 'recruiting-playbook' ),
-						'signatures' => __( 'Signatures', 'recruiting-playbook' ),
+						'templates'              => __( 'Templates', 'recruiting-playbook' ),
+						'signatures'             => __( 'Signatures', 'recruiting-playbook' ),
 
 						// Templates.
-						'newTemplate'       => __( 'New Template', 'recruiting-playbook' ),
-						'editTemplate'      => __( 'Edit Template', 'recruiting-playbook' ),
-						'templateSaved'     => __( 'Template saved.', 'recruiting-playbook' ),
-						'templateDeleted'   => __( 'Template deleted.', 'recruiting-playbook' ),
-						'templateDuplicated' => __( 'Template duplicated.', 'recruiting-playbook' ),
-						'templateReset'     => __( 'Template reset.', 'recruiting-playbook' ),
-						'confirmDelete'     => __( 'Do you really want to delete this template?', 'recruiting-playbook' ),
-						'noTemplates'       => __( 'No templates found.', 'recruiting-playbook' ),
-						'subject'           => __( 'Subject', 'recruiting-playbook' ),
-						'category'          => __( 'Category', 'recruiting-playbook' ),
-						'body'              => __( 'Body', 'recruiting-playbook' ),
-						'active'            => __( 'Active', 'recruiting-playbook' ),
-						'system'            => __( 'System', 'recruiting-playbook' ),
-						'inactive'          => __( 'Inactive', 'recruiting-playbook' ),
-						'allCategories'     => __( 'All Categories', 'recruiting-playbook' ),
+						'newTemplate'            => __( 'New Template', 'recruiting-playbook' ),
+						'editTemplate'           => __( 'Edit Template', 'recruiting-playbook' ),
+						'templateSaved'          => __( 'Template saved.', 'recruiting-playbook' ),
+						'templateDeleted'        => __( 'Template deleted.', 'recruiting-playbook' ),
+						'templateDuplicated'     => __( 'Template duplicated.', 'recruiting-playbook' ),
+						'templateReset'          => __( 'Template reset.', 'recruiting-playbook' ),
+						'confirmDelete'          => __( 'Do you really want to delete this template?', 'recruiting-playbook' ),
+						'noTemplates'            => __( 'No templates found.', 'recruiting-playbook' ),
+						'subject'                => __( 'Subject', 'recruiting-playbook' ),
+						'category'               => __( 'Category', 'recruiting-playbook' ),
+						'body'                   => __( 'Body', 'recruiting-playbook' ),
+						'active'                 => __( 'Active', 'recruiting-playbook' ),
+						'system'                 => __( 'System', 'recruiting-playbook' ),
+						'inactive'               => __( 'Inactive', 'recruiting-playbook' ),
+						'allCategories'          => __( 'All Categories', 'recruiting-playbook' ),
 
 						// Signatures.
-						'newSignature'            => __( 'New Signature', 'recruiting-playbook' ),
-						'editSignature'           => __( 'Edit Signature', 'recruiting-playbook' ),
-						'mySignatures'            => __( 'My Signatures', 'recruiting-playbook' ),
-						'companySignature'        => __( 'Company Signature', 'recruiting-playbook' ),
-						'editCompanySignature'    => __( 'Edit Company Signature', 'recruiting-playbook' ),
-						'signatureSaved'          => __( 'Signature saved.', 'recruiting-playbook' ),
-						'signatureDeleted'        => __( 'Signature deleted.', 'recruiting-playbook' ),
-						'signatureSetDefault'     => __( 'Default signature set.', 'recruiting-playbook' ),
-						'setAsDefault'            => __( 'Set as Default', 'recruiting-playbook' ),
-						'noSignatures'            => __( 'No signatures available.', 'recruiting-playbook' ),
-						'noCompanySignature'      => __( 'No company signature available.', 'recruiting-playbook' ),
-						'confirmDeleteSignature'  => __( 'Do you really want to delete this signature?', 'recruiting-playbook' ),
-						'signatureContent'        => __( 'Signature Content', 'recruiting-playbook' ),
-						'signatureHint'           => __( 'Design your email signature with your contact details.', 'recruiting-playbook' ),
-						'companySignatureHint'    => __( 'The company signature is used when a user does not have their own signature.', 'recruiting-playbook' ),
-						'createSignatureHint'     => __( 'Create your first signature to personalize emails.', 'recruiting-playbook' ),
-						'signaturePreviewHint'    => __( 'This is how your signature will appear in emails:', 'recruiting-playbook' ),
+						'newSignature'           => __( 'New Signature', 'recruiting-playbook' ),
+						'editSignature'          => __( 'Edit Signature', 'recruiting-playbook' ),
+						'mySignatures'           => __( 'My Signatures', 'recruiting-playbook' ),
+						'companySignature'       => __( 'Company Signature', 'recruiting-playbook' ),
+						'editCompanySignature'   => __( 'Edit Company Signature', 'recruiting-playbook' ),
+						'signatureSaved'         => __( 'Signature saved.', 'recruiting-playbook' ),
+						'signatureDeleted'       => __( 'Signature deleted.', 'recruiting-playbook' ),
+						'signatureSetDefault'    => __( 'Default signature set.', 'recruiting-playbook' ),
+						'setAsDefault'           => __( 'Set as Default', 'recruiting-playbook' ),
+						'noSignatures'           => __( 'No signatures available.', 'recruiting-playbook' ),
+						'noCompanySignature'     => __( 'No company signature available.', 'recruiting-playbook' ),
+						'confirmDeleteSignature' => __( 'Do you really want to delete this signature?', 'recruiting-playbook' ),
+						'signatureContent'       => __( 'Signature Content', 'recruiting-playbook' ),
+						'signatureHint'          => __( 'Design your email signature with your contact details.', 'recruiting-playbook' ),
+						'companySignatureHint'   => __( 'The company signature is used when a user does not have their own signature.', 'recruiting-playbook' ),
+						'createSignatureHint'    => __( 'Create your first signature to personalize emails.', 'recruiting-playbook' ),
+						'signaturePreviewHint'   => __( 'This is how your signature will appear in emails:', 'recruiting-playbook' ),
 
 						// Categories.
-						'categories' => [
+						'categories'             => [
 							'application'   => __( 'Application', 'recruiting-playbook' ),
 							'status_change' => __( 'Status Change', 'recruiting-playbook' ),
 							'interview'     => __( 'Interview', 'recruiting-playbook' ),
@@ -1219,5 +1183,4 @@ final class Plugin {
 			wp_set_script_translations( 'rp-admin-email', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
 		}
 	}
-
 }
