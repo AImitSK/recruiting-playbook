@@ -259,22 +259,32 @@ export default function FormBuilder() {
 
 				{ /* Pro Upgrade Notice */ }
 				{ ! isPro && (
-					<Alert className="mb-4 border-amber-200 bg-amber-50">
-						<AlertCircle className="h-4 w-4 text-amber-600" />
-						<AlertDescription className="flex items-center justify-between">
-							<span>
-								{ i18n?.proRequired || __( 'Custom Fields are a Pro feature. System fields can be edited.', 'recruiting-playbook' ) }
-							</span>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={ () => window.location.href = upgradeUrl }
-								className="ml-4"
-							>
-								{ i18n?.upgradeToPro || __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-							</Button>
-						</AlertDescription>
-					</Alert>
+					<div
+						style={ {
+							display: 'flex',
+							alignItems: 'center',
+							gap: '12px',
+							padding: '12px 16px',
+							background: '#f0f6fc',
+							border: '1px solid #c3d9ed',
+							borderRadius: '6px',
+							marginBottom: '16px',
+						} }
+					>
+						<span
+							className="dashicons dashicons-lock"
+							style={ { fontSize: '16px', width: '16px', height: '16px', color: '#2271b1' } }
+						/>
+						<span style={ { flex: 1, color: '#50575e', fontSize: '14px' } }>
+							{ __( 'This feature requires Pro.', 'recruiting-playbook' ) }
+						</span>
+						<a
+							href={ upgradeUrl }
+							className="button button-primary button-small"
+						>
+							{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
+						</a>
+					</div>
 				) }
 
 				{ /* Error Display */ }

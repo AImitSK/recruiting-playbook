@@ -399,20 +399,13 @@ class EmailSettingsPage {
 	 * Upgrade-Hinweis für Free-Version
 	 */
 	private function renderUpgradeNotice(): void {
-		$upgrade_url = function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '#';
-
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1>';
-		echo '<div class="notice notice-info">';
-		echo '<p>';
-		echo esc_html__( 'Email Templates are a Pro feature. Upgrade to create and manage custom email templates.', 'recruiting-playbook' );
-		echo '</p>';
-		echo '<p>';
-		echo '<a href="' . esc_url( $upgrade_url ) . '" class="button button-primary">';
-		echo esc_html__( 'Upgrade to Pro', 'recruiting-playbook' );
-		echo '</a>';
-		echo '</p>';
-		echo '</div>';
+
+		if ( function_exists( 'rp_require_feature' ) ) {
+			rp_require_feature( 'email_templates', __( 'E-Mail-Vorlagen', 'recruiting-playbook' ), 'PRO' );
+		}
+
 		echo '</div>';
 	}
 

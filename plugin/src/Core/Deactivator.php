@@ -42,7 +42,6 @@ class Deactivator {
 	private static function clearScheduledTasks(): void {
 		$hooks = [
 			'rp_daily_cleanup',
-			'rp_license_check',
 		];
 
 		foreach ( $hooks as $hook ) {

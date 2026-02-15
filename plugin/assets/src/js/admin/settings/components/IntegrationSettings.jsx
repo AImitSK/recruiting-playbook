@@ -119,6 +119,7 @@ export function IntegrationSettings() {
 	const config = window.rpSettingsData || {};
 	const isPro = config.isPro || false;
 	const homeUrl = config.homeUrl || '';
+	const upgradeUrl = config.upgradeUrl || '';
 
 	/**
 	 * Speichern
@@ -353,8 +354,13 @@ export function IntegrationSettings() {
 				{ ! isPro && (
 					<CardContent>
 						<Alert>
-							<AlertDescription>
-								{ __( 'Slack notifications are a Pro feature.', 'recruiting-playbook' ) }
+							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+								<span>{ __( 'Slack notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
+								{ upgradeUrl && (
+									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
+										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
+									</a>
+								) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -439,8 +445,13 @@ export function IntegrationSettings() {
 				{ ! isPro && (
 					<CardContent>
 						<Alert>
-							<AlertDescription>
-								{ __( 'Teams notifications are a Pro feature.', 'recruiting-playbook' ) }
+							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+								<span>{ __( 'Teams notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
+								{ upgradeUrl && (
+									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
+										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
+									</a>
+								) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>
@@ -516,8 +527,13 @@ export function IntegrationSettings() {
 				{ ! isPro && (
 					<CardContent>
 						<Alert>
-							<AlertDescription>
-								{ __( 'Google Ads Conversion is a Pro feature.', 'recruiting-playbook' ) }
+							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+								<span>{ __( 'Google Ads Conversion is a Pro feature.', 'recruiting-playbook' ) }</span>
+								{ upgradeUrl && (
+									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
+										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
+									</a>
+								) }
 							</AlertDescription>
 						</Alert>
 					</CardContent>

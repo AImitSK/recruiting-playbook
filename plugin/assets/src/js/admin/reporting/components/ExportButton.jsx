@@ -7,6 +7,7 @@
  */
 
 import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { Download, ChevronDown, Lock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 
@@ -64,7 +65,7 @@ export function ExportButton( {
 				} }
 			>
 				<Lock style={ { width: '1rem', height: '1rem' } } />
-				<span>{ i18n.csvExport || 'CSV-Export' }</span>
+				<span>{ i18n.csvExport || __( 'CSV Export', 'recruiting-playbook' ) }</span>
 				<span
 					style={ {
 						fontSize: '0.625rem',
@@ -106,7 +107,7 @@ export function ExportButton( {
 						color: loading ? '#9ca3af' : '#1d71b8',
 					} }
 				/>
-				<span>{ loading ? ( i18n.loading || 'Laden...' ) : ( i18n.downloadCsv || 'CSV herunterladen' ) }</span>
+				<span>{ loading ? ( i18n.loading || __( 'Loading...', 'recruiting-playbook' ) ) : ( i18n.downloadCsv || __( 'Download CSV', 'recruiting-playbook' ) ) }</span>
 				<ChevronDown
 					style={ {
 						width: '1rem',
@@ -171,10 +172,10 @@ export function ExportButton( {
 							<Download style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 							<div>
 								<div style={ { fontWeight: 500 } }>
-									{ i18n.exportApplications || 'Bewerbungen exportieren' }
+									{ i18n.exportApplications || __( 'Export applications', 'recruiting-playbook' ) }
 								</div>
 								<div style={ { fontSize: '0.75rem', color: '#6b7280' } }>
-									CSV mit Bewerber-Daten
+									{ __( 'CSV with applicant data', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</button>
@@ -206,10 +207,10 @@ export function ExportButton( {
 							<Download style={ { width: '1rem', height: '1rem', color: '#6b7280' } } />
 							<div>
 								<div style={ { fontWeight: 500 } }>
-									{ i18n.exportStats || 'Statistik-Report exportieren' }
+									{ i18n.exportStats || __( 'Export statistics report', 'recruiting-playbook' ) }
 								</div>
 								<div style={ { fontSize: '0.75rem', color: '#6b7280' } }>
-									Zusammenfassung als CSV
+									{ __( 'Summary as CSV', 'recruiting-playbook' ) }
 								</div>
 							</div>
 						</button>

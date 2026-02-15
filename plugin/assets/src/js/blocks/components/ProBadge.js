@@ -51,11 +51,11 @@ export function FeatureGate( { feature, upgradeUrl, children } ) {
 				</div>
 				<div className="rp-feature-gate__content">
 					<h4>
-						{ __( 'Pro Required', 'recruiting-playbook' ) }
+						{ __( 'This feature requires Pro', 'recruiting-playbook' ) }
 					</h4>
 					<p>
 						{ __(
-							'This feature requires the Pro version.',
+							'Upgrade to Pro to unlock this feature.',
 							'recruiting-playbook'
 						) }
 					</p>

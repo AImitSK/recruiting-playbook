@@ -653,23 +653,9 @@ class ApplicationDetail {
 	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
 		// Pro-Feature Check.
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-			?>
-			<div class="postbox">
-				<h2 class="hndle"><?php esc_html_e( 'Send email', 'recruiting-playbook' ); ?></h2>
-				<div class="inside">
-					<p class="description">
-						<?php esc_html_e( 'Email sending is a Pro feature.', 'recruiting-playbook' ); ?>
-					</p>
-					<?php if ( function_exists( 'rp_upgrade_url' ) ) : ?>
-						<p>
-							<a href="<?php echo esc_url( rp_upgrade_url( 'PRO' ) ); ?>" class="button" target="_blank">
-								<?php esc_html_e( 'Upgrade to Pro', 'recruiting-playbook' ); ?>
-							</a>
-						</p>
-					<?php endif; ?>
-				</div>
-			</div>
-			<?php
+			if ( function_exists( 'rp_require_feature' ) ) {
+				rp_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
+			}
 			return;
 		}
 

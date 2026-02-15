@@ -71,38 +71,48 @@ export function ReportingPage() {
 		);
 	}
 
-	// Pro feature upgrade banner
+	// Pro feature upgrade banner — consistent design matching PHP rp_require_feature()
 	const ProUpgradeBanner = ( { feature } ) => (
 		<div
 			style={ {
-				padding: '2rem',
-				backgroundColor: '#fefce8',
-				borderRadius: '0.5rem',
-				textAlign: 'center',
-				border: '1px solid #fef08a',
+				display: 'flex',
+				alignItems: 'flex-start',
+				gap: '16px',
+				padding: '24px',
+				background: 'linear-gradient(135deg, #f0f6fc 0%, #fff 100%)',
+				border: '1px solid #c3d9ed',
+				borderRadius: '8px',
 			} }
 		>
-			<Lock style={ { width: '2rem', height: '2rem', color: '#ca8a04', marginBottom: '0.5rem' } } />
-			<h3 style={ { marginBottom: '0.5rem', color: '#854d0e' } }>
-				{ i18n.proFeature || 'Pro Feature' }
-			</h3>
-			<p style={ { color: '#a16207', marginBottom: '1rem' } }>
-				{ feature } { i18n.proRequired || 'requires the Pro version.' }
-			</p>
-			<a
-				href={ upgradeUrl }
+			<div
 				style={ {
-					display: 'inline-block',
-					padding: '0.625rem 1.25rem',
-					backgroundColor: '#1d71b8',
-					color: '#ffffff',
-					borderRadius: '0.375rem',
-					textDecoration: 'none',
-					fontWeight: 500,
+					flexShrink: 0,
+					width: '48px',
+					height: '48px',
+					background: '#2271b1',
+					borderRadius: '50%',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 				} }
 			>
-				{ i18n.upgradeToPro || 'Upgrade to Pro' }
-			</a>
+				<Lock style={ { width: '24px', height: '24px', color: '#fff' } } />
+			</div>
+			<div>
+				<h3 style={ { margin: '0 0 8px 0', fontSize: '16px', color: '#1d2327' } }>
+					{ feature } { __( 'is a Pro feature', 'recruiting-playbook' ) }
+				</h3>
+				<p style={ { margin: '0 0 16px 0', color: '#50575e', fontSize: '14px', lineHeight: 1.5 } }>
+					{ __( 'Upgrade to Pro to unlock this feature. You can compare plans and pricing on the upgrade page.', 'recruiting-playbook' ) }
+				</p>
+				<a
+					href={ upgradeUrl }
+					className="button button-primary button-hero"
+					style={ { textDecoration: 'none' } }
+				>
+					{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
+				</a>
+			</div>
 		</div>
 	);
 

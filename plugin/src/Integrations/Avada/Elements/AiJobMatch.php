@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * Visitors can check if their profile matches the job.
  * Wrapper for the [rp_ai_job_match] shortcode.
  *
- * Requires the AI addon.
+ * Requires the Pro plan.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0

@@ -121,50 +121,13 @@ class TalentPoolPage {
 	 * Upgrade-Hinweis für Free-User rendern
 	 */
 	private function renderUpgradeNotice(): void {
-		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Talent Pool', 'recruiting-playbook' ); ?></h1>
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Talent Pool', 'recruiting-playbook' ) . '</h1>';
 
-			<div class="rp-pro-feature-notice">
-				<div class="rp-pro-feature-notice__icon">
-					<span class="dashicons dashicons-groups"></span>
-				</div>
-				<div class="rp-pro-feature-notice__content">
-					<h2><?php esc_html_e( 'Talent Pool is a Pro feature', 'recruiting-playbook' ); ?></h2>
-					<p>
-						<?php
-						esc_html_e(
-							'With the Talent Pool you can save promising candidates for future positions. This way you always have access to qualified talent when a new position needs to be filled.',
-							'recruiting-playbook'
-						);
-						?>
-					</p>
-					<ul class="rp-pro-feature-notice__features">
-						<li>
-							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Organize candidates with tags', 'recruiting-playbook' ); ?>
-						</li>
-						<li>
-							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'GDPR-compliant storage with automatic expiration', 'recruiting-playbook' ); ?>
-						</li>
-						<li>
-							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Fast search and filtering', 'recruiting-playbook' ); ?>
-						</li>
-						<li>
-							<span class="dashicons dashicons-yes"></span>
-							<?php esc_html_e( 'Add notes and reasons', 'recruiting-playbook' ); ?>
-						</li>
-					</ul>
-					<p>
-						<a href="<?php echo esc_url( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '' ); ?>" class="button button-primary button-hero">
-							<?php esc_html_e( 'Upgrade to Pro now', 'recruiting-playbook' ); ?>
-						</a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		if ( function_exists( 'rp_require_feature' ) ) {
+			rp_require_feature( 'advanced_applicant_management', 'Talent-Pool', 'PRO' );
+		}
+
+		echo '</div>';
 	}
 }

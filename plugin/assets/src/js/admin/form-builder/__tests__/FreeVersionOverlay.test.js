@@ -4,7 +4,7 @@
  * @package RecruitingPlaybook
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FreeVersionOverlay from '../components/FreeVersionOverlay';
 
@@ -13,96 +13,35 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
 } ) );
 
-// Mock lucide-react
-jest.mock( 'lucide-react', () => ( {
-	Lock: () => <span data-testid="lock-icon">Lock</span>,
-	Sparkles: () => <span data-testid="sparkles-icon">Sparkles</span>,
-	Check: () => <span data-testid="check-icon">Check</span>,
-} ) );
-
 describe( 'FreeVersionOverlay', () => {
 	const defaultProps = {
 		upgradeUrl: 'https://example.com/upgrade',
-		i18n: {},
 	};
-
-	beforeEach( () => {
-		// Mock window.location
-		delete window.location;
-		window.location = { href: '' };
-	} );
 
 	it( 'renders overlay with title', () => {
 		render( <FreeVersionOverlay { ...defaultProps } /> );
 
-		expect( screen.getByText( 'Pro-Feature' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Form Builder is a Pro feature' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders lock icon', () => {
-		render( <FreeVersionOverlay { ...defaultProps } /> );
+		const { container } = render( <FreeVersionOverlay { ...defaultProps } /> );
 
-		expect( screen.getByTestId( 'lock-icon' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.dashicons-lock' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders description text', () => {
 		render( <FreeVersionOverlay { ...defaultProps } /> );
 
-		expect( screen.getByText( /Formular-Builder ist ein Pro-Feature/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Upgrade to Pro to unlock this feature/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders feature list', () => {
+	it( 'renders upgrade button with link', () => {
 		render( <FreeVersionOverlay { ...defaultProps } /> );
 
-		expect( screen.getByText( 'Formular-Schritte anpassen' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Felder hinzufügen und entfernen' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Eigene Felder erstellen' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Drag & Drop Sortierung' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'System-Feld Einstellungen' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders check icons for each feature', () => {
-		render( <FreeVersionOverlay { ...defaultProps } /> );
-
-		const checkIcons = screen.getAllByTestId( 'check-icon' );
-		expect( checkIcons ).toHaveLength( 5 );
-	} );
-
-	it( 'renders upgrade button with sparkles icon', () => {
-		render( <FreeVersionOverlay { ...defaultProps } /> );
-
-		expect( screen.getByText( 'Auf Pro upgraden' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'sparkles-icon' ) ).toBeInTheDocument();
-	} );
-
-	it( 'navigates to upgrade URL when button is clicked', () => {
-		render( <FreeVersionOverlay { ...defaultProps } /> );
-
-		const upgradeButton = screen.getByText( 'Auf Pro upgraden' );
-		fireEvent.click( upgradeButton );
-
-		expect( window.location.href ).toBe( 'https://example.com/upgrade' );
-	} );
-
-	it( 'renders subtext about standard form', () => {
-		render( <FreeVersionOverlay { ...defaultProps } /> );
-
-		expect( screen.getByText( 'In der Free Version wird ein Standard-Formular verwendet.' ) ).toBeInTheDocument();
-	} );
-
-	it( 'uses custom i18n strings when provided', () => {
-		const customI18n = {
-			proFeatureTitle: 'Premium Feature',
-			proFeatureDescription: 'Upgrade für mehr Funktionen',
-			upgradeToPro: 'Jetzt upgraden',
-			standardFormInfo: 'Basic Form wird verwendet',
-		};
-
-		render( <FreeVersionOverlay { ...defaultProps } i18n={ customI18n } /> );
-
-		expect( screen.getByText( 'Premium Feature' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Upgrade für mehr Funktionen' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Jetzt upgraden' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Basic Form wird verwendet' ) ).toBeInTheDocument();
+		const link = screen.getByText( 'Upgrade to Pro' );
+		expect( link ).toBeInTheDocument();
+		expect( link.closest( 'a' ) ).toHaveAttribute( 'href', 'https://example.com/upgrade' );
 	} );
 
 	it( 'has semi-transparent backdrop with blur', () => {

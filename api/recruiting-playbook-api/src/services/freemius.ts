@@ -122,10 +122,11 @@ export class FreemiusService {
   }
 
   /**
-   * Prüfen ob Plan KI-Matching beinhaltet
+   * Prüfen ob Plan KI-Features beinhaltet
+   *
+   * AI-Features sind im Pro-Plan enthalten.
    */
   hasAiFeature(planName: string): boolean {
-    const aiPlans = ['ai_addon', 'bundle', 'ai-addon'];
-    return aiPlans.includes(planName.toLowerCase());
+    return planName.toLowerCase() === 'pro';
   }
 }

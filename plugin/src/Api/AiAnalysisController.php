@@ -152,7 +152,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'ai_cv_matching' ) ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'AI addon not active.', 'recruiting-playbook' ),
+				__( 'AI features require Pro.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

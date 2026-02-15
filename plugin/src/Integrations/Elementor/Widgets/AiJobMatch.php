@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * RP: AI Job Match — Elementor Widget
  *
- * Requires the AI addon (checked by WidgetLoader).
+ * Requires the Pro plan (checked by WidgetLoader).
  *
  * @package RecruitingPlaybook
  * @since 1.3.0

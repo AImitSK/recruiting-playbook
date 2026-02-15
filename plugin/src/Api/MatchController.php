@@ -133,7 +133,7 @@ class MatchController extends WP_REST_Controller {
 		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
 			return new WP_Error(
 				'feature_not_available',
-				__( 'CV matching requires the AI addon.', 'recruiting-playbook' ),
+				__( 'CV matching requires Pro.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

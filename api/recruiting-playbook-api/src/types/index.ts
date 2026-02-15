@@ -40,7 +40,7 @@ export interface FreemiusLicense {
 export interface FreemiusPlan {
   id: number;
   plugin_id: number;
-  name: string; // "ai_addon" | "bundle" | "pro" | "free"
+  name: string; // "pro" | "free"
   title: string;
 }
 
@@ -67,8 +67,6 @@ export interface Bindings {
   ENVIRONMENT: string;
   FREEMIUS_PRODUCT_ID: string;
   FREEMIUS_BEARER_TOKEN: string; // Product-scope Bearer Token from Freemius Dashboard
-  FREEMIUS_ADDON_PRODUCT_ID: string; // KI-Addon Product ID (23996)
-  FREEMIUS_ADDON_BEARER_TOKEN: string; // KI-Addon Product-scope Bearer Token
   FREEMIUS_WEBHOOK_SECRET: string;
   PRESIDIO_URL: string;
   PRESIDIO_API_KEY?: string; // Optional wenn Presidio ohne Auth läuft

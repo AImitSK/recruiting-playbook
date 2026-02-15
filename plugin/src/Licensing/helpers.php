@@ -2,9 +2,9 @@
 /**
  * Globale Helper-Funktionen für Lizenz-System (Freemius)
  *
- * Diese Funktionen nutzen Freemius für die Lizenzierung statt
- * des eigenen LicenseManager. Die FeatureFlags-Klasse dient
- * weiterhin als Feature-Referenz.
+ * Diese Funktionen nutzen Freemius für die Lizenzierung.
+ * Zwei Pläne: Free und Pro. Die FeatureFlags-Klasse dient
+ * als Feature-Referenz für detaillierte Werte.
  *
  * @package RecruitingPlaybook
  */
@@ -122,7 +122,7 @@ function rp_can( string $feature ): mixed {
 	// Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
 	if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {
 		// Für detaillierte Werte (max_jobs etc.) trotzdem FeatureFlags nutzen.
-		$tier  = 'BUNDLE'; // Höchster Tier mit allen Features.
+		$tier  = 'PRO'; // Höchster Tier mit allen Features.
 		$flags = new FeatureFlags( $tier );
 		$value = $flags->get( $feature );
 		return $value !== false ? $value : true;
@@ -405,34 +405,28 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 		return true;
 	}
 
-	// Upgrade-Hinweis anzeigen.
-	$tier_labels = [
-		'PRO' => 'Pro',
-	];
-
-	printf(
-		'<div class="rp-upgrade-prompt">
-			<div class="rp-upgrade-prompt__icon">
-				<span class="dashicons dashicons-lock"></span>
-			</div>
-			<div class="rp-upgrade-prompt__content">
-				<h4>%s</h4>
-				<p>%s</p>
-				<a href="%s" class="button button-primary" target="_blank">%s</a>
-			</div>
-		</div>',
-		esc_html(
-			sprintf(
-				/* translators: 1: feature name, 2: tier name */
-				__( '%1$s requires %2$s', 'recruiting-playbook' ),
-				$feature_name,
-				$tier_labels[ $required_tier ] ?? $required_tier
-			)
-		),
-		esc_html__( 'Upgrade to unlock this feature.', 'recruiting-playbook' ),
-		esc_url( rp_upgrade_url( $required_tier ) ),
-		esc_html__( 'Learn more', 'recruiting-playbook' )
+	// Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
+	$upgrade_url = esc_url( rp_upgrade_url( $required_tier ) );
+	$title       = esc_html(
+		sprintf(
+			/* translators: %s: feature name */
+			__( '%s is a Pro feature', 'recruiting-playbook' ),
+			$feature_name
+		)
 	);
+	$description = esc_html__( 'Upgrade to Pro to unlock this feature. You can compare plans and pricing on the upgrade page.', 'recruiting-playbook' );
+	$button_text = esc_html__( 'Upgrade to Pro', 'recruiting-playbook' );
+
+	echo '<div style="display:flex;align-items:flex-start;gap:16px;padding:24px;background:linear-gradient(135deg,#f0f6fc 0%,#fff 100%);border:1px solid #c3d9ed;border-radius:8px;margin-top:20px;">';
+	echo '<div style="flex-shrink:0;width:48px;height:48px;background:#2271b1;border-radius:50%;display:flex;align-items:center;justify-content:center;">';
+	echo '<span class="dashicons dashicons-lock" style="font-size:24px;width:24px;height:24px;color:#fff;"></span>';
+	echo '</div>';
+	echo '<div>';
+	echo '<h3 style="margin:0 0 8px 0;font-size:16px;color:#1d2327;">' . $title . '</h3>';
+	echo '<p style="margin:0 0 16px 0;color:#50575e;font-size:14px;line-height:1.5;">' . $description . '</p>';
+	echo '<a href="' . $upgrade_url . '" class="button button-primary button-hero">' . $button_text . '</a>';
+	echo '</div>';
+	echo '</div>';
 
 	return false;
 }

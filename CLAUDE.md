@@ -28,12 +28,12 @@ This repository uses VS Code Dev Containers for a consistent development environ
 
 ### URLs (after container starts)
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| WordPress | http://localhost:8082 | admin / admin |
-| WP Admin | http://localhost:8082/wp-admin | admin / admin |
-| phpMyAdmin | http://localhost:8081 | wordpress / wordpress |
-| Mailpit | http://localhost:8025 | - |
+| Service    | URL                            | Credentials           |
+| ---------- | ------------------------------ | --------------------- |
+| WordPress  | http://localhost:8082          | admin / admin         |
+| WP Admin   | http://localhost:8082/wp-admin | admin / admin         |
+| phpMyAdmin | http://localhost:8081          | wordpress / wordpress |
+| Mailpit    | http://localhost:8025          | -                     |
 
 ### Repository Structure
 
@@ -53,21 +53,22 @@ recruiting-playbook-docs/
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | PHP 8.0+, WordPress 6.x, OOP with PSR-4 autoloading |
-| Admin UI | React (@wordpress/scripts) |
-| Frontend | Alpine.js, Tailwind CSS |
-| Database | WordPress posts (Jobs) + Custom tables (rp_*) |
-| API | REST API (recruiting/v1 namespace) |
-| AI | Anthropic Claude API |
-| Testing | PHPUnit, Jest, Playwright (post-MVP) |
+| Layer    | Technology                                          |
+| -------- | --------------------------------------------------- |
+| Backend  | PHP 8.0+, WordPress 6.x, OOP with PSR-4 autoloading |
+| Admin UI | React (@wordpress/scripts)                          |
+| Frontend | Alpine.js, Tailwind CSS                             |
+| Database | WordPress posts (Jobs) + Custom tables (rp\_\*)     |
+| API      | REST API (recruiting/v1 namespace)                  |
+| AI       | Anthropic Claude API                                |
+| Testing  | PHPUnit, Jest, Playwright (post-MVP)                |
 
 ## Build Commands
 
 All commands run from the `plugin/` directory:
 
 ### PHP
+
 ```bash
 cd plugin
 composer install                 # Install dependencies
@@ -77,6 +78,7 @@ composer test                    # Run PHPUnit tests
 ```
 
 ### Assets (Tailwind + Alpine.js)
+
 ```bash
 cd plugin
 npm install
@@ -89,6 +91,7 @@ npm run lint:css                 # Lint styles
 ## Architecture
 
 ### Layered OOP Pattern
+
 ```
 Entry Point (recruiting-playbook.php)
     ↓
@@ -106,10 +109,12 @@ Database (wp_posts + Custom Tables rp_*)
 ```
 
 ### Key Namespace
+
 - Root namespace: `RecruitingPlaybook`
 - PSR-4 autoloading from `src/`
 
 ### Plugin Constants
+
 ```php
 RP_VERSION           // Plugin version
 RP_PLUGIN_FILE       // __FILE__
@@ -119,6 +124,7 @@ RP_PLUGIN_BASENAME   // plugin_basename()
 ```
 
 ### Custom Database Tables
+
 - `rp_applications` - Job applications
 - `rp_candidates` - Applicant profiles
 - `rp_documents` - CVs, certificates
@@ -128,12 +134,14 @@ RP_PLUGIN_BASENAME   // plugin_basename()
 - `rp_email_log` - Email history (Pro)
 
 ### Custom Post Type
+
 - `job_listing` - Jobs
 - Taxonomies: `job_category`, `job_location`, `employment_type`
 
 ## Application Status Flow
 
 Applications follow defined status transitions:
+
 ```
 new → screening → interview → offer → hired
   ↓         ↓          ↓         ↓
@@ -147,13 +155,14 @@ new → screening → interview → offer → hired
 2. **Progressive Enhancement**: Frontend works without JS, Alpine.js adds interactivity
 3. **Server-Side Rendering**: PHP renders content (SEO-friendly)
 4. **Soft Deletes**: GDPR compliance with `deleted_at` field and anonymization
-5. **Freemium Model**: Free (unlimited jobs) → Pro (Kanban, API, 149€) → AI-Addon (19€/month)
+5. **Freemium Model**: Free (unlimited jobs) → Pro (Kanban, API, AI-Features, 189€) via Freemius
 
 ## Testing Strategy
 
 **Target Coverage**: 50-60% (critical paths)
 
 ### Critical Test Areas (always test)
+
 - License Manager (revenue-critical)
 - Feature Flags (freemium logic)
 - Application Service (core business logic)
@@ -161,6 +170,7 @@ new → screening → interview → offer → hired
 - Form Validation
 
 ### Test Tools
+
 - PHP: PHPUnit with Brain Monkey for WP function mocking
 - JavaScript: Jest with Testing Library
 - E2E: Playwright (post-MVP)
@@ -176,6 +186,7 @@ docs/
 ```
 
 Key technical docs:
+
 - `docs/technical/plugin-architecture.md` - Full architecture with code examples
 - `docs/technical/database-schema.md` - Complete DB schema
 - `docs/technical/api-specification.md` - REST API endpoints

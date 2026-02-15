@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * and receive matching job suggestions.
  * Wrapper for the [rp_ai_job_finder] shortcode.
  *
- * Requires the AI addon.
+ * Requires the Pro plan.
  *
  * @package RecruitingPlaybook
  * @since 1.2.0

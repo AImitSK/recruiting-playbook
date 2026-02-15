@@ -398,6 +398,7 @@ class Settings {
 			'nonce'       => wp_create_nonce( 'rp_download_backup' ),
 			'pages'       => $this->getPages(),
 			'isPro'       => $is_pro,
+			'upgradeUrl'  => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 			'i18n'        => $this->getI18nStrings(),
 		];
 
