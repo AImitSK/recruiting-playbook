@@ -8,7 +8,7 @@ export default function AccountPage() {
       <Header />
       <div className="flex-1">
         <iframe
-          src="https://customers.freemius.com/store/11342/?public_key=pk_3669ed73da9edbfbaa66011012de3"
+          src="https://customers.freemius.com/store/11769/?public_key=pk_65d66d3095ac20b7ae1924f8f8fff"
           title="Kundenportal — Recruiting Playbook"
           className="h-full w-full border-0"
           style={{ minHeight: 'calc(100vh - 140px)' }}
