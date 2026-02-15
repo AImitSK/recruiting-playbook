@@ -150,7 +150,10 @@ class IntegrationController extends WP_REST_Controller {
 		$settings = get_option( self::OPTION_NAME, [] );
 		$merged   = array_merge( self::DEFAULTS, is_array( $settings ) ? $settings : [] );
 
-		return new WP_REST_Response( $merged, 200 );
+		// Webhook-URLs für sichere Anzeige maskieren.
+		$masked = $this->maskWebhookUrls( $merged );
+
+		return new WP_REST_Response( $masked, 200 );
 	}
 
 	/**
@@ -228,10 +231,11 @@ class IntegrationController extends WP_REST_Controller {
 
 		update_option( self::OPTION_NAME, $merged );
 
-		return new WP_REST_Response(
-			array_merge( self::DEFAULTS, $merged ),
-			200
-		);
+		// Webhook-URLs für Response maskieren.
+		$response_data = array_merge( self::DEFAULTS, $merged );
+		$masked        = $this->maskWebhookUrls( $response_data );
+
+		return new WP_REST_Response( $masked, 200 );
 	}
 
 	/**
@@ -376,4 +380,87 @@ class IntegrationController extends WP_REST_Controller {
 			200
 		);
 	}
+
+	/**
+	 * Maskiert Webhook-URL für sichere Anzeige
+	 *
+	 * Ersetzt sensible Token-Teile mit Asterisken um Token-Exposition
+	 * in Browser-DevTools und Network-Logs zu verhindern.
+	 *
+	 * @param string $url Webhook-URL.
+	 * @return string Maskierte URL.
+	 */
+	private function maskWebhookUrl( string $url ): string {
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		// Slack: https://hooks.slack.com/services/T.../B.../SECRET
+		// Format: T{WORKSPACE}/B{CHANNEL}/{TOKEN}
+		// Maskiert: T.../B.../***
+		if ( str_contains( $url, 'hooks.slack.com' ) ) {
+			return preg_replace(
+				'#(/services/[^/]+/[^/]+/)([^/]+)$#',
+				'$1***',
+				$url
+			) ?? $url;
+		}
+
+		// Teams/Office365: https://...webhook.office.com/.../.../{TOKEN}
+		// Format variiert, aber Token ist meist letztes Segment
+		if ( str_contains( $url, 'webhook.office.com' ) || str_contains( $url, 'outlook.office.com' ) ) {
+			return preg_replace(
+				'#(/[^/]+)$#',
+				'/***',
+				$url
+			) ?? $url;
+		}
+
+		// Allgemein: Letzte 32+ Zeichen maskieren (Token-Teil).
+		$parsed = wp_parse_url( $url );
+		if ( ! isset( $parsed['path'] ) ) {
+			return $url;
+		}
+
+		$path_parts = explode( '/', trim( $parsed['path'], '/' ) );
+		if ( empty( $path_parts ) ) {
+			return $url;
+		}
+
+		// Letztes Segment maskieren wenn länger als 8 Zeichen.
+		$last_index = count( $path_parts ) - 1;
+		$last       = $path_parts[ $last_index ];
+		if ( strlen( $last ) > 8 ) {
+			$path_parts[ $last_index ] = substr( $last, 0, 4 ) . '***';
+		}
+
+		$masked_path = '/' . implode( '/', $path_parts );
+
+		return ( $parsed['scheme'] ?? 'https' ) . '://' .
+			( $parsed['host'] ?? '' ) .
+			$masked_path;
+	}
+
+	/**
+	 * Maskiert Webhook-URLs in Settings-Array
+	 *
+	 * Wendet maskWebhookUrl() auf alle Webhook-URL-Felder an.
+	 *
+	 * @param array<string, mixed> $settings Settings-Array.
+	 * @return array<string, mixed> Settings mit maskierten URLs.
+	 */
+	private function maskWebhookUrls( array $settings ): array {
+		$masked = $settings;
+
+		if ( ! empty( $masked['slack_webhook_url'] ) ) {
+			$masked['slack_webhook_url'] = $this->maskWebhookUrl( $masked['slack_webhook_url'] );
+		}
+
+		if ( ! empty( $masked['teams_webhook_url'] ) ) {
+			$masked['teams_webhook_url'] = $this->maskWebhookUrl( $masked['teams_webhook_url'] );
+		}
+
+		return $masked;
+	}
 }
+
