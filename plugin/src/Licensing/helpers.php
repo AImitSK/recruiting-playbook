@@ -49,6 +49,10 @@ function rp_get_feature_plan_mapping(): array {
 			'source' => 'parent',
 			'plans'  => [ 'pro' ],
 		],
+		'integrations'                  => [
+			'source' => 'parent',
+			'plans'  => [ 'pro' ],
+		],
 		'advanced_reporting'            => [
 			'source' => 'parent',
 			'plans'  => [ 'pro' ],

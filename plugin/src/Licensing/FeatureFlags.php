@@ -43,6 +43,7 @@ class FeatureFlags {
 			'custom_fields'                 => false,   // Formular-Builder, Custom Fields.
 			'api_access'                    => false,
 			'webhooks'                      => false,
+			'integrations'                  => false,   // Slack, Teams, etc.
 			'reporting'                     => 'basic',
 			'advanced_reporting'            => false,  // Time-to-Hire, Conversion, Trends.
 			'csv_export'                    => false,
@@ -68,6 +69,7 @@ class FeatureFlags {
 			'custom_fields'                 => true,   // Formular-Builder, Custom Fields.
 			'api_access'                    => true,
 			'webhooks'                      => true,
+			'integrations'                  => true,   // Slack, Teams, etc.
 			'reporting'                     => 'full',
 			'advanced_reporting'            => true,   // Time-to-Hire, Conversion, Trends.
 			'csv_export'                    => true,

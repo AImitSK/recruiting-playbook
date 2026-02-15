@@ -44,6 +44,28 @@ if ( ! rp_can( 'integrations' ) ) {
 // - FREE: ❌
 ```
 
+**Feature-Flag Definition:**
+
+Das Feature `'integrations'` muss in `FeatureFlags.php` und `helpers.php` registriert werden:
+
+```php
+// FeatureFlags.php: FEATURES Array
+'FREE' => [
+    'integrations' => false,
+    // ...
+],
+'PRO' => [
+    'integrations' => true,
+    // ...
+],
+
+// helpers.php: Feature-Mapping
+'integrations' => [
+    'source' => 'parent',
+    'plans'  => [ 'pro' ],
+],
+```
+
 ### User Stories
 
 | Als | möchte ich | damit |
