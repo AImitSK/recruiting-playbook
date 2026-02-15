@@ -47,6 +47,7 @@ use RecruitingPlaybook\Api\WebhookController;
 use RecruitingPlaybook\Api\ApiKeyController;
 use RecruitingPlaybook\Api\AiAnalysisController;
 use RecruitingPlaybook\Api\IntegrationController;
+use RecruitingPlaybook\Integrations\IntegrationManager;
 use RecruitingPlaybook\Integrations\Feed\XmlJobFeed;
 use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
@@ -99,6 +100,9 @@ final class Plugin {
 
 		// Webhook-Hooks registrieren (Pro-Feature).
 		$this->registerWebhookHooks();
+
+		// Integration-Hooks registrieren (Slack, Teams, etc. - Pro-Feature).
+		$this->registerIntegrations();
 
 		// API-Key Authentifizierung registrieren (Pro-Feature).
 		$this->registerApiKeyAuth();
@@ -349,6 +353,21 @@ final class Plugin {
 
 		// Action Scheduler Hook für asynchrone Delivery.
 		add_action( 'rp_deliver_webhook', [ $service, 'deliver' ], 10, 1 );
+	}
+
+	/**
+	 * Integrationen registrieren (Slack, Teams, etc.)
+	 *
+	 * Registriert Event-Hooks für externe Benachrichtigungen und Cron-Jobs.
+	 * Pro-Feature: Nur aktiv wenn Integrations Feature verfügbar ist.
+	 */
+	private function registerIntegrations(): void {
+		if ( function_exists( 'rp_can' ) && ! rp_can( 'integrations' ) ) {
+			return;
+		}
+
+		$integration_manager = new IntegrationManager();
+		$integration_manager->register();
 	}
 
 	/**
