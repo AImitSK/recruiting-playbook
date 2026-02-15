@@ -16,7 +16,7 @@
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "next": "^15",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "react": "^19",
     "react-dom": "^19",
     "remark-gfm": "^4.0.1",
