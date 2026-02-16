@@ -62,7 +62,8 @@ if ( ! function_exists( 'rp_fs' ) ) {
 
     // 3. Plugin Icon auf Pricing Page anpassen.
     rp_fs()->add_filter( 'plugin_icon', function() {
-        return plugin_dir_url( __FILE__ ) . 'assets/images/rp-icon.png';
+        // Lokaler Dateisystempfad (nicht URL!)
+        return dirname( __FILE__ ) . '/assets/images/rp-icon.png';
     });
 
 
