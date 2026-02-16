@@ -1,0 +1,58 @@
+/**
+ * Recruiting Playbook - Freemius Pricing Page Custom CSS
+ *
+ * Anpassungen für die Upgrade/Pricing-Seite im WordPress Admin.
+ *
+ * @package RecruitingPlaybook
+ */
+
+/* Primary Color auf Recruiting Playbook Blau setzen */
+.fs-pricing-body {
+  --primary-color: #1d71b8;
+  --primary-hover: #165a93;
+}
+
+/* Button Styling */
+.fs-pricing-body .button-primary,
+.fs-pricing-body .fs-button-primary {
+  background-color: #1d71b8 !important;
+  border-color: #1d71b8 !important;
+}
+
+.fs-pricing-body .button-primary:hover,
+.fs-pricing-body .fs-button-primary:hover {
+  background-color: #165a93 !important;
+  border-color: #165a93 !important;
+}
+
+/* Selected Plan Highlight */
+.fs-pricing-body .fs-plan.fs-selected {
+  border-color: #1d71b8 !important;
+}
+
+/* Feature List Icons */
+.fs-pricing-body .fs-feature-check {
+  color: #1d71b8 !important;
+}
+
+/* Price Display */
+.fs-pricing-body .fs-price {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+}
+
+/* Badge (z.B. "Beliebtester Plan") */
+.fs-pricing-body .fs-badge {
+  background-color: #1d71b8 !important;
+  color: #ffffff !important;
+}
+
+/* Custom Branding Footer (optional) */
+.fs-pricing-body .fs-pricing-footer::after {
+  content: 'Powered by Recruiting Playbook';
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #6b7280;
+  font-size: 12px;
+}

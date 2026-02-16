@@ -31,7 +31,8 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
                 'menu'                => array(
                     'slug'    => 'recruiting-playbook',
-                    'support' => false,
+                    'support' => false,  // Support/Forum deaktivieren.
+                    'contact' => false,  // Kontakt-Formular deaktivieren.
                     'account' => true,   // Freemius Account-Seite im Menü aktivieren.
                     'pricing' => true,   // Upgrade/Pricing-Seite im Menü anzeigen.
                 ),
@@ -47,6 +48,21 @@ if ( ! function_exists( 'rp_fs' ) ) {
     // Default-Währung auf EUR setzen.
     rp_fs()->add_filter( 'default_currency', function( $currency ) {
         return 'eur';
+    });
+
+    // Pricing Page Customizations.
+
+    // 1. Zeige Preise in Jahresbetrag (nicht monatlich hochgerechnet).
+    rp_fs()->add_filter( 'pricing/show_annual_in_monthly', '__return_false' );
+
+    // 2. Custom CSS für Pricing Page.
+    rp_fs()->add_filter( 'pricing/css_path', function( $default_path ) {
+        return plugin_dir_path( __FILE__ ) . 'assets/dist/css/freemius-pricing-custom.css';
+    });
+
+    // 3. Plugin Icon auf Pricing Page anpassen.
+    rp_fs()->add_filter( 'plugin_icon', function() {
+        return plugin_dir_path( __FILE__ ) . 'assets/images/icon-256x256.png';
     });
 
 

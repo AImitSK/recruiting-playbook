@@ -40,6 +40,7 @@
         "build:2-custom-fields-js": "esbuild assets/src/js/custom-fields-form.js --bundle --minify --outfile=assets/dist/js/custom-fields-form.js",
         "build:2-wizard-js": "esbuild assets/src/js/wizard.js --bundle --minify --outfile=assets/dist/js/wizard.js",
         "build:2-alpine": "cp node_modules/alpinejs/dist/cdn.min.js assets/dist/js/alpine.min.js",
+        "build:2-freemius-css": "cp assets/src/css/freemius-pricing-custom.css assets/dist/css/freemius-pricing-custom.css",
         "lint:js": "wp-scripts lint-js",
         "lint:css": "wp-scripts lint-style",
         "test:js": "wp-scripts test-unit-js",
