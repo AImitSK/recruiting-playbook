@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "gettext-parser": "^9.0.1"
+  }
+}

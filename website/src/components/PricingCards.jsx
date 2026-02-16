@@ -44,14 +44,13 @@ function Plan({
   featured = false,
   cta,
   download = false,
-  freemiusPlanType,
+  freemiusLicenses,
 }) {
   const handleCheckoutClick = (e) => {
-    if (freemiusPlanType) {
+    if (freemiusLicenses) {
       e.preventDefault()
       openFreemiusCheckout({
-        planType: freemiusPlanType,
-        licenses: freemiusPlanType === 'agency' ? 3 : 1,
+        licenses: freemiusLicenses,
       })
     }
   }
@@ -182,7 +181,7 @@ export function PricingCards() {
             description="Professionelles Bewerbermanagement mit KI-Features."
             href="#"
             cta="Pro kaufen"
-            freemiusPlanType="pro"
+            freemiusLicenses={1}
             features={[
               'Alles aus Free',
               'Kanban-Board (Drag & Drop)',
@@ -205,7 +204,7 @@ export function PricingCards() {
             description="Für Agenturen und Unternehmen mit mehreren Standorten."
             href="#"
             cta="Agentur kaufen"
-            freemiusPlanType="agency"
+            freemiusLicenses={3}
             features={[
               'Alles aus Pro',
               '3 Website-Lizenzen',
