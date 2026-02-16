@@ -1,21 +1,91 @@
 /**
  * Recruiting Playbook - Freemius Customer Portal CSS
  *
- * WICHTIG: DevTools öffnen und :root Element inspizieren
- * um die echten CSS-Variablen zu sehen!
+ * Angepasste CSS-Variablen für das Freemius Customer Portal
+ * basierend auf dem Recruiting Playbook Design (#1d71b8)
  *
- * Doku: https://freemius.com/help/documentation/users-account-management/applying-css-customization/
+ * @link https://freemius.com/help/documentation/users-account-management/applying-css-customization/
  */
 
 :root {
-  /* Gefundene Freemius Variablen */
-  --fsds-freemius-blue: #1d71b8;
-  --fsds-background-color: #ffffff;
-  --fsds-text-color: #1f2937;
-  --fsds-dark-background-text-color: #f5f7fa;
-  --fsds-background-overlay: rgba(29, 113, 184, 0.6);
+    /* Primary Brand Color - Recruiting Playbook Blau */
+    --fs-ds-theme-primary: #1d71b8;
+    --fs-ds-theme-primary-button-background: #1d71b8;
+    --fs-ds-theme-discount-badge-background: #1d71b8;
+    --fs-ds-theme-label-success: #1d71b8;
+    --fs-ds-theme-callout-tip-border: #1d71b8;
 
-  /* Vermutete Theme-Variablen (aus Doku-Beispiel) */
-  --fs-ds-theme-primary: #1d71b8;
-  --fs-ds-typography-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    /* Accent Color - Helleres Blau für Akzente */
+    --fs-ds-theme-accent: #5ba3d9;
+    --fs-ds-theme-table-row-background: rgba(29, 113, 184, 0.15);
+    --fs-ds-theme-callout-tip-background: rgba(29, 113, 184, 0.1);
+
+    /* Background Colors - Helle, neutrale Hintergründe */
+    --fs-ds-theme-background: #f9fafb;
+    --fs-ds-theme-toolbar-background: #ffffff;
+    --fs-ds-theme-content-background: #ffffff;
+    --fs-ds-theme-hover-background: #ffffff;
+    --fs-ds-theme-logo-background: #ffffff;
+    --fs-ds-theme-footer-background: #ffffff;
+    --fs-ds-theme-button-background: #f9fafb;
+    --fs-ds-theme-heading-background: #f9fafb;
+
+    /* Text Colors - Recruiting Playbook Grau */
+    --fs-ds-theme-foreground: #1f2937;
+    --fs-ds-theme-primary-text: #1f2937;
+    --fs-ds-theme-logo-foreground: #1f2937;
+    --fs-ds-theme-secondary-text: #6b7280;
+    --fs-ds-theme-footer-text: #4b5563;
+    --fs-ds-theme-input-text: #6b7280;
+    --fs-ds-theme-disabled-button: #9ca3af;
+
+    /* Button Text */
+    --fs-ds-theme-primary-button: #ffffff;
+    --fs-ds-theme-login-form-link-text: #ffffff;
+    --fs-ds-theme-discount-badge-text: #ffffff;
+
+    /* Warning/Error Colors - Behalten */
+    --fs-ds-theme-warn: #e62a97;
+    --fs-ds-theme-warn-button-background: #fed6ff;
+    --fs-ds-theme-warn-background: #fed6ff;
+    --fs-ds-theme-warning-text: #b20c6d;
+    --fs-ds-theme-code: #b20c6d;
+    --fs-ds-theme-code-background: #fed6ff;
+    --fs-ds-theme-label-failure: #e62a97;
+    --fs-ds-theme-chip-rejected: #e62a97;
+
+    /* Form Elements */
+    --fs-ds-theme-form-toggle-slide: #6b7280;
+    --fs-ds-theme-form-required-field: #e62a97;
+    --fs-ds-theme-form-disabled-field: #9ca3af;
+    --fs-ds-theme-form-underline-field: #d1d5db;
+    --fs-ds-theme-form-checkbox-hover: #1f2937;
+
+    /* Borders */
+    --fs-ds-theme-border: #e5e7eb;
+    --fs-ds-theme-account-deletion-border: #d1d5db;
+    --fs-ds-theme-table-row-border: rgba(31, 41, 55, 0.1);
+    --fs-ds-theme-link-hover-background: rgba(31, 41, 55, 0.05);
+
+    /* Labels & Chips */
+    --fs-ds-theme-label-accent-background: #b7ffe1;
+    --fs-ds-theme-label-warn: #6b7280;
+    --fs-ds-theme-label-info: #1d71b8;
+    --fs-ds-theme-label-input: #6b7280;
+    --fs-ds-theme-chip-default: #e5e7eb;
+    --fs-ds-theme-chip-active: #b7ffe1;
+    --fs-ds-theme-chip-pending: #ffe896;
+
+    /* Disabled Button */
+    --fs-ds-theme-disabled-button-background: #e5e7eb;
+
+    /* Callout */
+    --fs-ds-theme-callout-border: #6b7280;
+    --fs-ds-theme-callout-background: rgba(107, 114, 128, 0.1);
+
+    /* Typography - System Font Stack */
+    --fs-ds-typography-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+
+    /* Appearance - Border Radius leicht reduziert */
+    --fs-ds-appearance-border-radius: 4px;
 }
