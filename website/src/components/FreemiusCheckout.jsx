@@ -88,6 +88,7 @@ export function openFreemiusCheckout({
       plan_id: planId,
       billing_cycle: billingCycle,
       currency: currency,
+      language: 'de_DE',  // Checkout auf Deutsch anzeigen
     })
 
     checkout.open({
