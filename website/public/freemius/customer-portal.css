@@ -89,3 +89,26 @@
     /* Appearance - Border Radius leicht reduziert */
     --fs-ds-appearance-border-radius: 4px;
 }
+
+/* SVG Icons umfärben (von lila #6753ff auf blau #1d71b8) */
+img[src*="assets/img/fs/icons"],
+img[alt*="icon"],
+.mat-button img,
+.menu-item-link img {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%);
+}
+
+/* Hover States für Icons */
+.mat-button:hover img,
+.menu-item-link:hover img,
+a:hover img[src*="assets/img/fs/icons"] {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%);
+    opacity: 0.8;
+}
+
+/* Active/Focus States */
+.--active img,
+.mat-button.--active img,
+.menu-item-link.--active img {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%);
+}
