@@ -121,3 +121,23 @@ img[src*="freemius/plugins"],
 .cdk-column-icon img {
     filter: none !important;
 }
+
+/* Primary Buttons (Login, Sign in, etc.) */
+.mat-raised-button.mat-primary,
+.mat-button.mat-primary,
+.mat-flat-button.mat-primary {
+    background-color: #1d71b8 !important;
+    color: #ffffff !important;
+}
+
+.mat-raised-button.mat-primary:hover,
+.mat-button.mat-primary:hover,
+.mat-flat-button.mat-primary:hover {
+    background-color: #165a93 !important;
+}
+
+/* Primary Button Icons */
+.mat-raised-button.mat-primary .mat-icon,
+.mat-button.mat-primary .mat-icon {
+    color: #ffffff !important;
+}
