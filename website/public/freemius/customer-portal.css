@@ -1,0 +1,551 @@
+/**
+ * Recruiting Playbook - Freemius Customer Portal Custom CSS
+ *
+ * Brand Colors:
+ * - Primary Blue: #1d71b8
+ * - Green: #2fac66
+ * - Light Blue: #36a9e1
+ *
+ * Upload this file to: Freemius Dashboard → Settings → Customization → Custom CSS
+ */
+
+/* ========================================
+   1. Color Variables & Brand Colors
+   ======================================== */
+
+:root {
+  --rp-primary: #1d71b8;
+  --rp-primary-hover: #155a94;
+  --rp-primary-light: #e8f4fc;
+  --rp-green: #2fac66;
+  --rp-green-hover: #268a51;
+  --rp-blue: #36a9e1;
+  --rp-text: #1a202c;
+  --rp-text-light: #4a5568;
+  --rp-border: #e2e8f0;
+  --rp-bg-light: #f7fafc;
+}
+
+/* ========================================
+   2. Global Styles & Typography
+   ======================================== */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--rp-text);
+  line-height: 1.6;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--rp-text);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ========================================
+   3. Primary Buttons & CTAs
+   ======================================== */
+
+/* Primary Buttons */
+.button,
+.btn,
+.btn-primary,
+button[type="submit"],
+input[type="submit"],
+.fs-button--primary,
+.fs-btn--primary {
+  background-color: var(--rp-primary) !important;
+  border-color: var(--rp-primary) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.button:hover,
+.btn:hover,
+.btn-primary:hover,
+button[type="submit"]:hover,
+input[type="submit"]:hover,
+.fs-button--primary:hover,
+.fs-btn--primary:hover {
+  background-color: var(--rp-primary-hover) !important;
+  border-color: var(--rp-primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px rgba(29, 113, 184, 0.2) !important;
+}
+
+/* Secondary Buttons */
+.btn-secondary,
+.fs-button--secondary,
+.fs-btn--secondary {
+  background-color: white !important;
+  border: 2px solid var(--rp-primary) !important;
+  color: var(--rp-primary) !important;
+  border-radius: 8px !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 500 !important;
+}
+
+.btn-secondary:hover,
+.fs-button--secondary:hover,
+.fs-btn--secondary:hover {
+  background-color: var(--rp-primary-light) !important;
+  border-color: var(--rp-primary-hover) !important;
+}
+
+/* Success Buttons (Download, etc.) */
+.btn-success,
+.fs-button--success {
+  background-color: var(--rp-green) !important;
+  border-color: var(--rp-green) !important;
+  color: white !important;
+}
+
+.btn-success:hover,
+.fs-button--success:hover {
+  background-color: var(--rp-green-hover) !important;
+  border-color: var(--rp-green-hover) !important;
+}
+
+/* ========================================
+   4. Links & Navigation
+   ======================================== */
+
+a {
+  color: var(--rp-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--rp-primary-hover);
+  text-decoration: underline;
+}
+
+/* Navigation Links */
+.nav-link,
+.fs-nav-link,
+.menu-item a {
+  color: var(--rp-text-light);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover,
+.fs-nav-link:hover,
+.menu-item a:hover,
+.nav-link.active,
+.fs-nav-link.active {
+  color: var(--rp-primary);
+  background-color: var(--rp-primary-light);
+  text-decoration: none;
+}
+
+/* ========================================
+   5. Tables & Data Display
+   ======================================== */
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+thead {
+  background-color: var(--rp-bg-light);
+}
+
+thead th {
+  color: var(--rp-text);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1rem !important;
+  border-bottom: 2px solid var(--rp-border);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--rp-border);
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: var(--rp-bg-light);
+}
+
+tbody td {
+  padding: 1rem !important;
+  color: var(--rp-text-light);
+}
+
+/* ========================================
+   6. Cards & Panels
+   ======================================== */
+
+.panel,
+.card,
+.fs-panel,
+.fs-card {
+  border: 1px solid var(--rp-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  overflow: hidden;
+}
+
+.panel-heading,
+.card-header,
+.fs-panel-heading {
+  background-color: var(--rp-bg-light) !important;
+  border-bottom: 1px solid var(--rp-border) !important;
+  padding: 1rem 1.5rem !important;
+  font-weight: 600 !important;
+  color: var(--rp-text) !important;
+}
+
+.panel-body,
+.card-body,
+.fs-panel-body {
+  padding: 1.5rem !important;
+}
+
+/* ========================================
+   7. Badges & Status Indicators
+   ======================================== */
+
+.badge,
+.label,
+.fs-badge,
+.fs-label {
+  border-radius: 6px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Active/Success Badge */
+.badge-success,
+.label-success,
+.badge.active,
+.fs-badge--success {
+  background-color: var(--rp-green) !important;
+  color: white !important;
+}
+
+/* Primary Badge */
+.badge-primary,
+.label-primary,
+.fs-badge--primary {
+  background-color: var(--rp-primary) !important;
+  color: white !important;
+}
+
+/* Info Badge */
+.badge-info,
+.label-info,
+.fs-badge--info {
+  background-color: var(--rp-blue) !important;
+  color: white !important;
+}
+
+/* ========================================
+   8. Forms & Inputs
+   ======================================== */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select,
+.form-control,
+.fs-input {
+  border: 1px solid var(--rp-border) !important;
+  border-radius: 8px !important;
+  padding: 0.625rem 1rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus,
+.fs-input:focus {
+  outline: none !important;
+  border-color: var(--rp-primary) !important;
+  box-shadow: 0 0 0 3px rgba(29, 113, 184, 0.1) !important;
+}
+
+label,
+.form-label,
+.fs-label {
+  color: var(--rp-text);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ========================================
+   9. Alerts & Messages
+   ======================================== */
+
+.alert,
+.notice,
+.fs-alert,
+.fs-notice {
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+}
+
+.alert-success,
+.notice-success,
+.fs-alert--success {
+  background-color: #f0fdf4;
+  border-color: var(--rp-green);
+  color: #166534;
+}
+
+.alert-info,
+.notice-info,
+.fs-alert--info {
+  background-color: #eff6ff;
+  border-color: var(--rp-blue);
+  color: #1e40af;
+}
+
+.alert-warning,
+.notice-warning,
+.fs-alert--warning {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.alert-danger,
+.notice-error,
+.fs-alert--danger {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+/* ========================================
+   10. Header & Branding
+   ======================================== */
+
+.fs-header,
+header,
+.navbar {
+  background-color: white !important;
+  border-bottom: 1px solid var(--rp-border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Logo */
+.fs-logo,
+.logo {
+  max-height: 40px;
+  width: auto;
+}
+
+/* ========================================
+   11. Footer
+   ======================================== */
+
+.fs-footer,
+footer {
+  background-color: var(--rp-bg-light) !important;
+  border-top: 1px solid var(--rp-border) !important;
+  padding: 2rem 0 !important;
+  margin-top: 3rem !important;
+  color: var(--rp-text-light) !important;
+}
+
+.fs-footer a,
+footer a {
+  color: var(--rp-text-light);
+}
+
+.fs-footer a:hover,
+footer a:hover {
+  color: var(--rp-primary);
+}
+
+/* ========================================
+   12. License Key Display
+   ======================================== */
+
+.license-key,
+.fs-license-key,
+code {
+  background-color: var(--rp-bg-light);
+  border: 1px solid var(--rp-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: var(--rp-primary);
+  display: inline-block;
+}
+
+/* ========================================
+   13. Subscription Plans & Pricing
+   ======================================== */
+
+.plan,
+.pricing-plan,
+.fs-plan {
+  border: 2px solid var(--rp-border);
+  border-radius: 12px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.plan:hover,
+.pricing-plan:hover,
+.fs-plan:hover {
+  border-color: var(--rp-primary);
+  box-shadow: 0 8px 16px rgba(29, 113, 184, 0.1);
+  transform: translateY(-4px);
+}
+
+.plan.active,
+.pricing-plan.active,
+.fs-plan.active,
+.plan.recommended {
+  border-color: var(--rp-primary);
+  background-color: var(--rp-primary-light);
+}
+
+.plan-price,
+.fs-plan-price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--rp-primary);
+  margin: 1rem 0;
+}
+
+/* ========================================
+   14. Download Buttons & Actions
+   ======================================== */
+
+.download-btn,
+.fs-download-btn,
+a[href*="download"] {
+  background-color: var(--rp-green) !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.download-btn:hover,
+.fs-download-btn:hover,
+a[href*="download"]:hover {
+  background-color: var(--rp-green-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(47, 172, 102, 0.2) !important;
+  text-decoration: none !important;
+}
+
+/* ========================================
+   15. Mobile Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .panel-body,
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  thead th,
+  tbody td {
+    padding: 0.75rem !important;
+  }
+}
+
+/* ========================================
+   16. Utility Classes
+   ======================================== */
+
+.text-primary {
+  color: var(--rp-primary) !important;
+}
+
+.text-success {
+  color: var(--rp-green) !important;
+}
+
+.bg-primary {
+  background-color: var(--rp-primary) !important;
+  color: white !important;
+}
+
+.bg-light {
+  background-color: var(--rp-bg-light) !important;
+}
+
+.border-primary {
+  border-color: var(--rp-primary) !important;
+}
+
+/* Rounded corners */
+.rounded {
+  border-radius: 8px !important;
+}
+
+.rounded-lg {
+  border-radius: 12px !important;
+}
+
+/* Shadows */
+.shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1) !important;
+}
