@@ -50,6 +50,7 @@ yarn-error.log*
 # =============================================================
 
 # Dependencies
+node_modules/
 plugin/node_modules/
 plugin/vendor/
 
