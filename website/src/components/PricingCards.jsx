@@ -1,7 +1,10 @@
+'use client'
+
 import clsx from 'clsx'
 
 import { Button } from '@/components/Button'
 import { Container } from '@/components/Container'
+import { useFreemiusCheckout, openFreemiusCheckout } from '@/components/FreemiusCheckout'
 
 function CheckIcon({ className, ...props }) {
   return (
@@ -41,7 +44,18 @@ function Plan({
   featured = false,
   cta,
   download = false,
+  freemiusPlanType,
 }) {
+  const handleCheckoutClick = (e) => {
+    if (freemiusPlanType) {
+      e.preventDefault()
+      openFreemiusCheckout({
+        planType: freemiusPlanType,
+        licenses: freemiusPlanType === 'agency' ? 3 : 1,
+      })
+    }
+  }
+
   return (
     <section
       className={clsx(
@@ -107,6 +121,7 @@ function Plan({
       )}
       <Button
         href={href}
+        onClick={handleCheckoutClick}
         variant={featured ? 'solid' : 'outline'}
         color="white"
         className="mt-8"
@@ -120,6 +135,9 @@ function Plan({
 }
 
 export function PricingCards() {
+  // Freemius Checkout SDK laden
+  useFreemiusCheckout()
+
   return (
     <section
       aria-label="Preise"
@@ -165,6 +183,7 @@ export function PricingCards() {
             description="Professionelles Bewerbermanagement für Teams und Agenturen."
             href="#"
             cta="Pro kaufen"
+            freemiusPlanType="pro"
             features={[
               'Alles aus Free',
               'Kanban-Board (Drag & Drop)',
@@ -186,6 +205,7 @@ export function PricingCards() {
             description="Für Agenturen und Unternehmen mit mehreren Standorten."
             href="#"
             cta="Agentur kaufen"
+            freemiusPlanType="agency"
             features={[
               'Alles aus Pro',
               '3 Website-Lizenzen',
