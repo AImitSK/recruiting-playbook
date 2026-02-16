@@ -119,6 +119,52 @@ if ( ! function_exists( 'rp_fs' ) ) {
         'free-version'                      => 'Kostenlose Version',
         'features'                          => 'Features',
         'all-features'                      => 'Alle Features',
+
+        // Pricing Page.
+        'pricing'                           => 'Preise',
+        'plans'                             => 'Pläne',
+        'purchase'                          => 'Kaufen',
+        'purchase-license'                  => 'Lizenz kaufen',
+        'buy'                               => 'Jetzt kaufen',
+        'buy-license'                       => 'Lizenz kaufen',
+        'choose-plan'                       => 'Plan wählen',
+        'select-plan'                       => 'Plan auswählen',
+
+        // Billing Cycles.
+        'monthly'                           => 'Monatlich',
+        'mo'                                => '/Monat',
+        'annual'                            => 'Jährlich',
+        'annually'                          => 'Jährlich',
+        'lifetime'                          => 'Lifetime',
+        'billed-annually'                   => 'Jährliche Abrechnung',
+        'billed-monthly'                    => 'Monatliche Abrechnung',
+
+        // License Types.
+        'license-single-site'               => 'Single Site Lizenz',
+        'single-site'                       => 'Einzelne Website',
+        'license-x-sites'                   => '%s Websites Lizenz',
+        'x-sites'                           => '%s Websites',
+        'license-unlimited'                 => 'Unbegrenzte Lizenzen',
+        'unlimited'                         => 'Unbegrenzt',
+
+        // Price Display.
+        'save-x'                            => 'Spare %s',
+        'best-value'                        => 'Bester Wert',
+        'best'                              => 'Beliebt',
+        'most-popular'                      => 'Am beliebtesten',
+
+        // Features.
+        'all-features-from-x'               => 'Alle Features von %s',
+        'feature'                           => 'Feature',
+
+        // Actions.
+        'upgrade-now'                       => 'Jetzt upgraden',
+        'get-started'                       => 'Jetzt starten',
+        'start-trial'                       => 'Testphase starten',
+
+        // Support.
+        'priority-support'                  => 'Prioritäts-Support',
+        'email-support'                     => 'E-Mail Support',
     ) );
 
     // Uninstall Hook - ersetzt uninstall.php für korrektes Freemius Tracking.

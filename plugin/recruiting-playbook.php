@@ -3,7 +3,7 @@
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.4
+ * Version: 1.2.5
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Stefan Kühne, Peter Kühne
