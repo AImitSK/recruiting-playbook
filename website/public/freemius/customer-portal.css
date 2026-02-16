@@ -90,26 +90,34 @@
     --fs-ds-appearance-border-radius: 4px;
 }
 
-/* SVG Icons umfärben */
+/* SVG Icons umfärben (nur Freemius interne Icons) */
 /* Normal: Dunkelgrau wie Text (#1f2937) */
-img[src*="assets/img/fs/icons"],
-img[alt*="icon"],
-.mat-button img,
-.menu-item-link img {
-    filter: grayscale(100%) brightness(0.2) contrast(1.2);
+img[src*="/assets/img/fs/icons/"],
+img[src^="assets/img/fs/icons/"],
+.menu-item-link > .mat-button-wrapper > img[alt*="menu icon"] {
+    filter: grayscale(100%) brightness(0.2) contrast(1.2) !important;
 }
 
 /* Hover: Recruiting Playbook Blau (#1d71b8) */
-.mat-button:hover img,
-.menu-item-link:hover img,
-a:hover img[src*="assets/img/fs/icons"],
-button:hover img[src*="assets/img/fs/icons"] {
-    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%);
+.mat-button:hover > .mat-button-wrapper > img[src*="/assets/img/fs/icons/"],
+.mat-button:hover > .mat-button-wrapper > img[src^="assets/img/fs/icons/"],
+.menu-item-link:hover > .mat-button-wrapper > img[alt*="menu icon"],
+a.menu-item-link:hover img[src*="/assets/img/fs/icons/"],
+button:hover img[src*="/assets/img/fs/icons/"] {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%) !important;
 }
 
 /* Active State: Blau */
-.--active img,
-.mat-button.--active img,
-.menu-item-link.--active img {
-    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%);
+.--active > .mat-button-wrapper > img,
+.mat-button.--active > .mat-button-wrapper > img,
+.menu-item-link.--active > .mat-button-wrapper > img {
+    filter: brightness(0) saturate(100%) invert(33%) sepia(61%) saturate(1389%) hue-rotate(175deg) brightness(91%) contrast(93%) !important;
+}
+
+/* Plugin-Icons NICHT umfärben (externe Bilder) */
+img[src*="s3-us-west-2.amazonaws.com"],
+img[src*="freemius/plugins"],
+.mat-cell img,
+.cdk-column-icon img {
+    filter: none !important;
 }
