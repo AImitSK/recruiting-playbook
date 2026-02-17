@@ -300,15 +300,13 @@ final class Plugin {
 	/**
 	 * Übersetzungen laden
 	 *
-	 * Lädt Übersetzungsdateien aus dem languages/ Verzeichnis.
-	 * Unterstützt .mo-Dateien (PHP) und .json-Dateien (JavaScript).
+	 * WordPress.org lädt Übersetzungen automatisch für Plugins.
+	 * Keine manuelle Registrierung nötig seit WP 4.6+.
+	 *
+	 * @see https://make.wordpress.org/plugins/2016/08/26/language-packs-101-prepwork/
 	 */
 	private function loadI18n(): void {
-		load_plugin_textdomain(
-			'recruiting-playbook',
-			false,
-			dirname( plugin_basename( RP_PLUGIN_FILE ) ) . '/languages'
-		);
+		// WordPress.org handled automatically - no action needed.
 	}
 
 	/**

@@ -134,8 +134,17 @@ class PlaceholderService {
 		$grouped = [];
 
 		foreach ( self::GROUPS as $key => $label ) {
+			// Translate group labels individually (WordPress.org requirement).
+			$translated_label = match ( $key ) {
+				'candidate'   => __( 'Candidate', 'recruiting-playbook' ),
+				'application' => __( 'Application', 'recruiting-playbook' ),
+				'job'         => __( 'Job', 'recruiting-playbook' ),
+				'company'     => __( 'Company', 'recruiting-playbook' ),
+				default       => $label,
+			};
+
 			$grouped[ $key ] = [
-				'label'        => __( $label, 'recruiting-playbook' ),
+				'label'        => $translated_label,
 				'placeholders' => [],
 			];
 		}

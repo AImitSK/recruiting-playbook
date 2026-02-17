@@ -389,8 +389,13 @@ class CustomFieldFileService {
 
 		$destination = $upload_dir . '/' . $safe_filename;
 
-		// Datei verschieben.
-		if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
+		// Datei verschieben (WordPress WP_Filesystem API).
+		// WordPress.org requires WP_Filesystem instead of move_uploaded_file().
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem->move( $file['tmp_name'], $destination, true ) ) {
 			return new WP_Error(
 				'move_failed',
 				sprintf(
