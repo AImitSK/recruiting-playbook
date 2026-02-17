@@ -2,9 +2,9 @@
 Contributors: stefankuehne
 Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 
 == Changelog ==
 
+= 1.2.7 - 2025-02-17 =
+* Fix: Update tested up to WordPress 6.9
+* Fix: Include composer.json in distribution (WordPress.org requirement)
+
 = 1.2.6 - 2025-02-17 =
 * Add: German translations for Admin Pricing Page
 * Fix: WordPress.org plugin check compliance
@@ -94,5 +98,5 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 
 == Upgrade Notice ==
 
-= 1.2.6 =
-WordPress.org compliance fixes. Ready for WordPress.org deployment!
+= 1.2.7 =
+WordPress.org final compliance fixes (tested 6.9, composer.json included).
