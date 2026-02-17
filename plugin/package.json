@@ -1,6 +1,6 @@
 {
     "name": "recruiting-playbook",
-    "version": "1.2.5",
+    "version": "1.2.6",
     "description": "WordPress Recruiting Plugin",
     "scripts": {
         "dev": "npm-run-all --parallel dev:*",
