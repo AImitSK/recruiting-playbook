@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace RecruitingPlaybook\Integrations;
 
 use RecruitingPlaybook\Integrations\Notifications\SlackNotifier;
+use RecruitingPlaybook\Integrations\Notifications\TeamsNotifier;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,6 +36,13 @@ class IntegrationManager {
 	private ?SlackNotifier $slack_notifier = null;
 
 	/**
+	 * Teams Notifier instance
+	 *
+	 * @var TeamsNotifier|null
+	 */
+	private ?TeamsNotifier $teams_notifier = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -54,6 +62,9 @@ class IntegrationManager {
 
 		// Slack Integration registrieren.
 		$this->registerSlack();
+
+		// Microsoft Teams Integration registrieren.
+		$this->registerTeams();
 
 		// Retry Cron Job registrieren.
 		$this->registerCronJobs();
@@ -85,6 +96,31 @@ class IntegrationManager {
 	}
 
 	/**
+	 * Register Microsoft Teams integration
+	 */
+	private function registerTeams(): void {
+		// Prüfen ob Teams aktiviert und konfiguriert ist.
+		if ( empty( $this->settings['teams_enabled'] ) || empty( $this->settings['teams_webhook_url'] ) ) {
+			return;
+		}
+
+		$this->teams_notifier = new TeamsNotifier( $this->settings );
+
+		// Event Hooks registrieren.
+		if ( ! empty( $this->settings['teams_event_new_application'] ) ) {
+			add_action( 'rp_application_created', [ $this->teams_notifier, 'onNewApplication' ], 10, 1 );
+		}
+
+		if ( ! empty( $this->settings['teams_event_status_changed'] ) ) {
+			add_action( 'rp_application_status_changed', [ $this->teams_notifier, 'onStatusChanged' ], 10, 3 );
+		}
+
+		if ( ! empty( $this->settings['teams_event_job_published'] ) ) {
+			add_action( 'publish_job_listing', [ $this->teams_notifier, 'onJobPublished' ], 10, 1 );
+		}
+	}
+
+	/**
 	 * Register WP Cron jobs for retry queue
 	 */
 	private function registerCronJobs(): void {
@@ -94,6 +130,13 @@ class IntegrationManager {
 		}
 
 		add_action( 'rp_slack_retry_cron', [ $this, 'processSlackRetryQueue' ] );
+
+		// Teams Retry Cron.
+		if ( ! wp_next_scheduled( 'rp_teams_retry_cron' ) ) {
+			wp_schedule_event( time(), 'hourly', 'rp_teams_retry_cron' );
+		}
+
+		add_action( 'rp_teams_retry_cron', [ $this, 'processTeamsRetryQueue' ] );
 	}
 
 	/**
@@ -104,6 +147,17 @@ class IntegrationManager {
 	public function processSlackRetryQueue(): void {
 		if ( $this->slack_notifier ) {
 			$this->slack_notifier->processRetryQueue();
+		}
+	}
+
+	/**
+	 * Process Teams retry queue
+	 *
+	 * Called by WP Cron hourly.
+	 */
+	public function processTeamsRetryQueue(): void {
+		if ( $this->teams_notifier ) {
+			$this->teams_notifier->processRetryQueue();
 		}
 	}
 
@@ -151,5 +205,16 @@ class IntegrationManager {
 	 */
 	public function getSlackNotifier(): ?SlackNotifier {
 		return $this->slack_notifier;
+	}
+
+	/**
+	 * Get Teams notifier instance
+	 *
+	 * For testing purposes.
+	 *
+	 * @return TeamsNotifier|null
+	 */
+	public function getTeamsNotifier(): ?TeamsNotifier {
+		return $this->teams_notifier;
 	}
 }
