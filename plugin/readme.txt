@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.7
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 
 == Changelog ==
 
+= 1.2.8 - 2026-02-18 =
+* Add: Microsoft Teams integration with Adaptive Cards
+* Add: Teams webhook notifications for applications, status changes, and job publishing
+
 = 1.2.7 - 2025-02-17 =
 * Fix: Update tested up to WordPress 6.9
 * Fix: Include composer.json in distribution (WordPress.org requirement)
@@ -97,6 +101,9 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.2.8 =
+New Microsoft Teams integration with Adaptive Cards for real-time notifications.
 
 = 1.2.7 =
 WordPress.org final compliance fixes (tested 6.9, composer.json included).
