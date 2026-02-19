@@ -996,11 +996,11 @@ class Shortcodes {
 		}
 
 		// Job-Finder JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/job-finder.js';
+		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/job-finder.js';
 		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-job-finder',
-				RP_PLUGIN_URL . 'assets/src/js/components/job-finder.js',
+				RP_PLUGIN_URL . 'assets/dist/js/job-finder.js',
 				[],
 				RP_VERSION,
 				true
@@ -1064,11 +1064,11 @@ class Shortcodes {
 		}
 
 		// Match-Modal JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
 		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-match-modal',
-				RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+				RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
 				[],
 				RP_VERSION,
 				true

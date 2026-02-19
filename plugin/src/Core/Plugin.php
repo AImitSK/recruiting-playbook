@@ -925,11 +925,11 @@ final class Plugin {
 				}
 
 				// JS (muss vor Alpine.js laden).
-				$match_js_file = RP_PLUGIN_DIR . 'assets/src/js/components/match-modal.js';
+				$match_js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
 				if ( file_exists( $match_js_file ) ) {
 					wp_enqueue_script(
 						'rp-match-modal',
-						RP_PLUGIN_URL . 'assets/src/js/components/match-modal.js',
+						RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
 						[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
 						RP_VERSION,
 						true

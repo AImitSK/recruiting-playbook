@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.11
+Stable tag: 1.2.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.12 - 2026-02-19 =
+* Fix: JS-Pfade korrigiert - laden jetzt von assets/dist/ statt assets/src/
+* Fix: match-modal.js und job-finder.js werden korrekt eingebunden
 
 = 1.2.11 - 2026-02-19 =
 * Fix: KI-Matching JavaScript (match-modal.js, job-finder.js) jetzt korrekt im Build enthalten
