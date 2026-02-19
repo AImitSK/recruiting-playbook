@@ -32,21 +32,21 @@ class SlackNotifier extends NotificationService {
 		}
 
 		$app_service = new ApplicationService();
-		$application = $app_service->findById( $application_id );
+		$application = $app_service->get( $application_id );
 
 		if ( ! $application ) {
 			return;
 		}
 
-		$job = get_post( $application->job_id );
+		$job = get_post( $application['job_id'] );
 
 		$data = [
 			'event'          => 'new_application',
-			'candidate_name' => $application->first_name . ' ' . $application->last_name,
+			'candidate_name' => $application['first_name'] . ' ' . $application['last_name'],
 			'job_title'      => $job ? $job->post_title : __( 'Unknown Job', 'recruiting-playbook' ),
-			'source'         => $application->source ?? 'Website',
-			'email'          => $application->email,
-			'phone'          => $application->phone ?? '',
+			'source'         => $application['source'] ?? 'Website',
+			'email'          => $application['email'],
+			'phone'          => $application['phone'] ?? '',
 			'link'           => admin_url( 'admin.php?page=rp-applications&action=view&id=' . $application_id ),
 		];
 
@@ -66,17 +66,17 @@ class SlackNotifier extends NotificationService {
 		}
 
 		$app_service = new ApplicationService();
-		$application = $app_service->findById( $application_id );
+		$application = $app_service->get( $application_id );
 
 		if ( ! $application ) {
 			return;
 		}
 
-		$job = get_post( $application->job_id );
+		$job = get_post( $application['job_id'] );
 
 		$data = [
 			'event'          => 'status_changed',
-			'candidate_name' => $application->first_name . ' ' . $application->last_name,
+			'candidate_name' => $application['first_name'] . ' ' . $application['last_name'],
 			'job_title'      => $job ? $job->post_title : __( 'Unknown Job', 'recruiting-playbook' ),
 			'old_status'     => $this->getStatusLabel( $old_status ),
 			'new_status'     => $this->getStatusLabel( $new_status ),

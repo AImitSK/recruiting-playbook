@@ -92,21 +92,25 @@ abstract class NotificationService {
 		$service_name = $this->getServiceName();
 
 		$this->activity_service->log(
-			$success ? $service_name . '_notification' : $service_name . '_notification_failed',
-			sprintf(
-				'%s notification %s: %s',
-				ucfirst( $service_name ),
-				$success ? 'sent' : 'failed',
-				$event
-			),
-			array_merge(
-				[
-					'event'   => $event,
-					'success' => $success,
-					'service' => $service_name,
-				],
-				$meta
-			)
+			[
+				'object_type' => 'notification',
+				'object_id'   => 0,
+				'action'      => $success ? $service_name . '_notification' : $service_name . '_notification_failed',
+				'message'     => sprintf(
+					'%s notification %s: %s',
+					ucfirst( $service_name ),
+					$success ? 'sent' : 'failed',
+					$event
+				),
+				'meta'        => array_merge(
+					[
+						'event'   => $event,
+						'success' => $success,
+						'service' => $service_name,
+					],
+					$meta
+				),
+			]
 		);
 	}
 

@@ -193,9 +193,20 @@ class DocumentDownloadService {
 			wp_die( esc_html__( 'Invalid file path.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
 
-		// MIME-Type Whitelist Validierung (Header Injection Schutz).
+		// MIME-Type ermitteln: Aus DB oder aus Datei falls leer.
 		$file_type = $document['file_type'];
+		if ( empty( $file_type ) ) {
+			// Fallback: MIME-Type aus Datei ermitteln (für ältere Uploads ohne file_type).
+			$file_type = self::detectMimeType( $real_file );
+		}
+
+		// MIME-Type Whitelist Validierung (Header Injection Schutz).
 		if ( ! in_array( $file_type, self::ALLOWED_MIME_TYPES, true ) ) {
+			self::logDebug( $document_id, 'invalid_mime_type', [
+				'file_type'          => $file_type,
+				'original_name'      => $document['original_name'] ?? '',
+				'allowed_mime_types' => self::ALLOWED_MIME_TYPES,
+			] );
 			self::logFailedAccess( $document_id, 'invalid_mime_type' );
 			wp_die( esc_html__( 'Invalid file type.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
@@ -358,6 +369,37 @@ class DocumentDownloadService {
 				)
 			);
 		}
+	}
+
+	/**
+	 * MIME-Type aus Datei ermitteln
+	 *
+	 * Verwendet WordPress' wp_check_filetype_and_ext für sichere Detection.
+	 *
+	 * @param string $file_path Absoluter Pfad zur Datei.
+	 * @return string MIME-Type oder leerer String.
+	 */
+	private static function detectMimeType( string $file_path ): string {
+		// WordPress-Funktion für sichere MIME-Type Erkennung.
+		$file_info = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		if ( ! empty( $file_info['type'] ) ) {
+			return $file_info['type'];
+		}
+
+		// Fallback: PHP finfo (nur wenn WordPress-Funktion fehlschlägt).
+		if ( function_exists( 'finfo_open' ) ) {
+			$finfo = finfo_open( FILEINFO_MIME_TYPE );
+			if ( $finfo ) {
+				$mime = finfo_file( $finfo, $file_path );
+				finfo_close( $finfo );
+				if ( $mime ) {
+					return $mime;
+				}
+			}
+		}
+
+		return '';
 	}
 
 	/**

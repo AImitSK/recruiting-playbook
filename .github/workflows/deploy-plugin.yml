@@ -73,7 +73,10 @@ jobs:
             -x "tools/*" \
             -x "mu-plugins/*" \
             -x ".phpunit.cache/*" \
-            -x "assets/src/*" \
+            -x "assets/src/css/*" \
+            -x "assets/src/js/admin/*" \
+            -x "assets/src/js/blocks/*" \
+            -x "assets/src/js/*.js" \
             -x "*.lock" \
             -x "*.map" \
             -x "*.log" \

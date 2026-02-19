@@ -1,9 +1,10 @@
 <?php
 /**
- * Plugin Name: Recruiting Playbook
+ * Plugin Name: Recruiting Playbook (Premium)
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.9
+ * Version: 1.2.10
+ * Update URI: https://api.freemius.com
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Stefan Kühne, Peter Kühne
@@ -119,7 +120,7 @@ if ( function_exists( '\rp_fs' ) ) {
 	\rp_fs()->set_basename( true, __FILE__ );
 } else {
 	// Plugin-Konstanten
-	define( 'RP_VERSION', '1.2.9' );
+	define( 'RP_VERSION', '1.2.10' );
 	define( 'RP_PLUGIN_FILE', __FILE__ );
 	define( 'RP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'RP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
