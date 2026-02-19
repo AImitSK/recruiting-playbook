@@ -168,17 +168,6 @@ while ( have_posts() ) :
 						<a href="#apply-form" class="wp-element-button rp-block rp-w-full rp-py-3 rp-text-center rp-no-underline">
 							<?php esc_html_e( 'Jetzt bewerben', 'recruiting-playbook' ); ?>
 						</a>
-						<?php if ( $deadline ) : ?>
-							<p class="rp-mt-2 rp-text-sm rp-text-gray-500 rp-text-center">
-								<?php
-								printf(
-									/* translators: %s: Application deadline */
-									esc_html__( 'Bewerbungsfrist: %s', 'recruiting-playbook' ),
-									esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) )
-								);
-								?>
-							</p>
-						<?php endif; ?>
 					</div>
 
 					<!-- KI-Job-Match Button (automatisch, wenn Feature aktiv) -->
@@ -204,6 +193,13 @@ while ( have_posts() ) :
 								<div class="rp-flex rp-justify-between rp-py-3">
 									<dt class="rp-font-medium"><?php esc_html_e( 'Startdatum', 'recruiting-playbook' ); ?></dt>
 									<dd><?php echo esc_html( $start_date ); ?></dd>
+								</div>
+							<?php endif; ?>
+
+							<?php if ( $deadline ) : ?>
+								<div class="rp-flex rp-justify-between rp-py-3">
+									<dt class="rp-font-medium"><?php esc_html_e( 'Bewerbungsfrist', 'recruiting-playbook' ); ?></dt>
+									<dd><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $deadline ) ) ); ?></dd>
 								</div>
 							<?php endif; ?>
 

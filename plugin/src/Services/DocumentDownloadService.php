@@ -89,6 +89,10 @@ class DocumentDownloadService {
 		$decoded = base64_decode( $token );
 
 		if ( ! $decoded || substr_count( $decoded, ':' ) !== 3 ) {
+			self::logDebug( $document_id, 'token_decode_failed', [
+				'decoded_empty'  => empty( $decoded ),
+				'colon_count'    => $decoded ? substr_count( $decoded, ':' ) : 0,
+			] );
 			return false;
 		}
 
@@ -96,16 +100,29 @@ class DocumentDownloadService {
 
 		// Dokument-ID prüfen.
 		if ( (int) $token_doc_id !== $document_id ) {
+			self::logDebug( $document_id, 'doc_id_mismatch', [
+				'token_doc_id'    => (int) $token_doc_id,
+				'expected_doc_id' => $document_id,
+			] );
 			return false;
 		}
 
 		// Ablauf prüfen.
 		if ( (int) $expiry < time() ) {
+			self::logDebug( $document_id, 'token_expired', [
+				'expiry_time'  => (int) $expiry,
+				'current_time' => time(),
+				'expired_ago'  => time() - (int) $expiry,
+			] );
 			return false;
 		}
 
 		// User prüfen.
 		if ( (int) $token_user_id !== get_current_user_id() ) {
+			self::logDebug( $document_id, 'user_id_mismatch', [
+				'token_user_id'   => (int) $token_user_id,
+				'current_user_id' => get_current_user_id(),
+			] );
 			return false;
 		}
 
@@ -113,7 +130,15 @@ class DocumentDownloadService {
 		$data          = sprintf( '%d:%d:%d', $token_doc_id, $token_user_id, $expiry );
 		$expected_hash = hash_hmac( 'sha256', $data, wp_salt( 'auth' ) );
 
-		return hash_equals( $expected_hash, $hash );
+		if ( ! hash_equals( $expected_hash, $hash ) ) {
+			self::logDebug( $document_id, 'hash_mismatch', [
+				'token_hash_length'    => strlen( $hash ),
+				'expected_hash_length' => strlen( $expected_hash ),
+			] );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -145,6 +170,15 @@ class DocumentDownloadService {
 		$real_allowed    = realpath( $allowed_dir );
 
 		if ( ! $real_file || ! $real_allowed || strpos( $real_file, $real_allowed ) !== 0 ) {
+			self::logDebug( $document_id, 'path_validation_failed', [
+				'file_path'       => $file_path,
+				'allowed_dir'     => $allowed_dir,
+				'real_file'       => $real_file ?: 'FALSE',
+				'real_allowed'    => $real_allowed ?: 'FALSE',
+				'upload_basedir'  => $wp_upload['basedir'],
+				'file_exists'     => file_exists( $file_path ),
+				'dir_exists'      => is_dir( $allowed_dir ),
+			] );
 			self::logFailedAccess( $document_id, 'path_traversal_attempt' );
 			wp_die( esc_html__( 'Invalid file path.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
@@ -323,6 +357,32 @@ class DocumentDownloadService {
 					get_current_user_id()
 				)
 			);
+		}
+	}
+
+	/**
+	 * Debug-Logging für Token-Validierung
+	 *
+	 * @param int    $document_id Document ID.
+	 * @param string $check       Welcher Check fehlgeschlagen ist.
+	 * @param array  $details     Zusätzliche Details.
+	 */
+	private static function logDebug( int $document_id, string $check, array $details = [] ): void {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$message = sprintf(
+				'[Recruiting Playbook] Token validation failed: ID=%d, Check=%s, User=%d, IP=%s',
+				$document_id,
+				$check,
+				get_current_user_id(),
+				self::getClientIp()
+			);
+
+			if ( ! empty( $details ) ) {
+				$message .= ', Details=' . wp_json_encode( $details );
+			}
+
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( $message );
 		}
 	}
 }

@@ -52,12 +52,12 @@ msgstr ""
 #: assets/dist/js/Blocks/Blocks/ai-job-finder/render.php:16
 #: src/Blocks/Blocks/ai-job-finder/render.php:16
 msgid "Find your dream job"
-msgstr "Find your dream Stelle"
+msgstr "Finde deinen Traumjob"
 
 #: assets/dist/js/Blocks/Blocks/ai-job-finder/render.php:17
 #: src/Blocks/Blocks/ai-job-finder/render.php:17
 msgid "Upload your resume and discover matching jobs."
-msgstr "Hochladen your resume and discover matching Stellen."
+msgstr "Lade deinen Lebenslauf hoch und entdecke passende Stellen."
 
 #: assets/dist/js/Blocks/Blocks/ai-job-match/render.php:17
 #: src/Blocks/Blocks/ai-job-match/render.php:17
@@ -65,7 +65,7 @@ msgstr "Hochladen your resume and discover matching Stellen."
 #: src/Frontend/Shortcodes.php:787
 #: src/Frontend/Shortcodes.php:788
 msgid "Am I a good fit for this job?"
-msgstr "Am I a good fit for this Stelle?"
+msgstr "Passe ich zu diesem Job?"
 
 #: assets/dist/js/Blocks/Blocks/application-form/render.php:17
 #: src/Blocks/Blocks/application-form/render.php:17
@@ -79,7 +79,7 @@ msgstr "Jetzt bewerben"
 #: assets/dist/js/Blocks/Blocks/job-categories/render.php:28
 #: src/Blocks/Blocks/job-categories/render.php:28
 msgid "No categories available."
-msgstr "Nein categories available."
+msgstr "Keine Kategorien verfügbar."
 
 #: assets/dist/js/Blocks/Blocks/job-count/render.php:19
 #: src/Blocks/Blocks/job-count/render.php:19
@@ -97,7 +97,7 @@ msgstr "{count} offene Stelle"
 #: src/Blocks/Blocks/job-count/render.php:21
 #: src/Frontend/Shortcodes/JobCountShortcode.php:64
 msgid "No open positions"
-msgstr "Nein open positions"
+msgstr "Keine offenen Stellen"
 
 #: recruiting-playbook.php:60
 #. translators: 1: Required PHP version, 2: Current PHP version
@@ -307,7 +307,7 @@ msgstr "Pro-Funktion erforderlich"
 
 #: src/Admin/Menu.php:587
 msgid "No applications selected. Please select applications from the list."
-msgstr "Nein Bewerbungen selected. Please select Bewerbungen from the list."
+msgstr "Keine Bewerbungen ausgewählt. Bitte wähle Bewerbungen aus der Liste aus."
 
 #: src/Admin/Menu.php:591
 #: src/Admin/Menu.php:684
@@ -383,7 +383,7 @@ msgstr "E-Mail"
 #: src/Admin/Pages/ApplicationDetail.php:682
 #: src/Admin/Pages/EmailSettingsPage.php:525
 msgid "No email templates available."
-msgstr "Nein email templates available."
+msgstr "Keine E-Mail-Vorlagen verfügbar."
 
 #: src/Admin/Menu.php:731
 #: src/Admin/Pages/ApplicationDetail.php:686
@@ -456,23 +456,23 @@ msgstr "Bewerbungsformular"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:117
 msgid "No custom fields configured."
-msgstr "Nein custom fields configured."
+msgstr "Keine benutzerdefinierten Felder konfiguriert."
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:119
 msgid "Go to Form Builder"
-msgstr "Go to Formularular-Builder"
+msgstr "Zum Formular-Builder"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:134
 msgid "Customize fields for this job"
-msgstr "Benutzerdefiniertize fields for this Stelle"
+msgstr "Felder für diese Stelle anpassen"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:140
 msgid "Enabled fields will be displayed in the application form for this job."
-msgstr "Aktiviert fields will be displayed in the Bewerbung form for this Stelle."
+msgstr "Aktivierte Felder werden im Bewerbungsformular für diese Stelle angezeigt."
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:165
 msgid "Edit Fields"
-msgstr "Feld bearbeitens"
+msgstr "Felder bearbeiten"
 
 #: src/Admin/MetaBoxes/JobCustomFieldsMeta.php:178
 #. translators: %d: number of enabled fields
@@ -585,7 +585,7 @@ msgstr "Erneut versuchen"
 
 #: src/Admin/Pages/ApplicationDetail.php:111
 msgid "No application specified."
-msgstr "Nein Bewerbung specified."
+msgstr "Keine Bewerbung angegeben."
 
 #: src/Admin/Pages/ApplicationDetail.php:147
 #. translators: %s: Applicant name
@@ -623,7 +623,7 @@ msgstr "Anschreiben"
 
 #: src/Admin/Pages/ApplicationDetail.php:211
 msgid "No documents uploaded."
-msgstr "Nein documents uploaded."
+msgstr "Keine Dokumente hochgeladen."
 
 #: src/Admin/Pages/ApplicationDetail.php:217
 msgid "Document"
@@ -809,7 +809,7 @@ msgstr "E-Mail-Verlauf"
 
 #: src/Admin/Pages/ApplicationDetail.php:808
 msgid "No emails sent to this applicant yet."
-msgstr "Nein emails sent to this Bewerber yet."
+msgstr "Noch keine E-Mails an diesen Bewerber gesendet."
 
 #: src/Admin/Pages/ApplicationDetail.php:815
 #: src/Admin/Pages/EmailSettingsPage.php:327
@@ -1284,7 +1284,7 @@ msgstr "Feld hinzufügen"
 
 #: src/Admin/Pages/FormBuilderPage.php:147
 msgid "No fields available"
-msgstr "Nein fields available"
+msgstr "Keine Felder verfügbar"
 
 #: src/Admin/Pages/FormBuilderPage.php:148
 msgid "Drag to reorder"
@@ -1967,7 +1967,7 @@ msgstr "Erneut versuchen"
 #: assets/src/js/admin/applications/ApplicationsPage.jsx:185
 #: assets/src/js/admin/kanban/KanbanColumn.jsx:109
 msgid "No applications"
-msgstr "Nein Bewerbungen"
+msgstr "Keine Bewerbungen"
 
 #: src/Admin/Pages/KanbanBoard.php:195
 #: src/Admin/Pages/ReportingPage.php:81
@@ -2227,7 +2227,7 @@ msgstr "Abnahme"
 
 #: src/Admin/Pages/ReportingPage.php:133
 msgid "No change"
-msgstr "Nein change"
+msgstr "Keine Änderung"
 
 #: src/Admin/Pages/TalentPoolPage.php:55
 msgid "Promising candidates for future positions"
@@ -2992,7 +2992,7 @@ msgstr "SMTP konfiguriert"
 
 #: src/Admin/SetupWizard/SetupWizard.php:437
 msgid "No SMTP configured"
-msgstr "Nein SMTP configured"
+msgstr "Kein SMTP konfiguriert"
 
 #: src/Admin/SetupWizard/SetupWizard.php:443
 msgid "Install SMTP plugin"
@@ -3248,7 +3248,7 @@ msgstr "Kostenlosmius SDK not available."
 #: src/Api/AiAnalysisController.php:397
 #: src/Api/MatchController.php:555
 msgid "No valid Freemius installation found."
-msgstr "Nein valid Kostenlosmius installation found."
+msgstr "Keine gültige Freemius-Installation gefunden."
 
 #: src/Api/ApiKeyController.php:83
 #: src/Api/ApiKeyController.php:370
@@ -3751,7 +3751,7 @@ msgstr "Vorlage has been created."
 #: src/Api/EmailTemplateController.php:346
 #: src/Api/SignatureController.php:307
 msgid "No data to update."
-msgstr "Nein data to update."
+msgstr "Keine Daten zum Aktualisieren."
 
 #: src/Api/EmailTemplateController.php:356
 #: src/Services/FormTemplateService.php:180
@@ -4095,7 +4095,7 @@ msgstr "Du hast keine Berechtigung, Formular-Templates zu erstellen."
 
 #: src/Api/FormTemplateController.php:293
 msgid "No default template defined."
-msgstr "Nein default template defined."
+msgstr "Keine Standard-Vorlage definiert."
 
 #: src/Api/FormTemplateController.php:468
 msgid "Include fields in response"
@@ -4111,7 +4111,7 @@ msgstr "IDs von fields in this template"
 
 #: src/Api/IntegrationController.php:249
 msgid "No Slack webhook URL configured."
-msgstr "Nein Slack webhook URL configured."
+msgstr "Keine Slack-Webhook-URL konfiguriert."
 
 #: src/Api/IntegrationController.php:260
 msgid "Slack integration is working!"
@@ -4132,7 +4132,7 @@ msgstr "Testnachricht erfolgreich gesendet!"
 
 #: src/Api/IntegrationController.php:314
 msgid "No Teams workflow URL configured."
-msgstr "Nein Teams workflow URL configured."
+msgstr "Keine Teams-Workflow-URL konfiguriert."
 
 #: src/Api/IntegrationController.php:336
 msgid "Teams integration is working!"
@@ -4343,11 +4343,11 @@ msgstr "AI-Matching ist nicht verfügbar."
 
 #: src/Api/MatchController.php:292
 msgid "No file uploaded."
-msgstr "Nein file uploaded."
+msgstr "Keine Datei hochgeladen."
 
 #: src/Api/MatchController.php:310
 msgid "No active jobs available."
-msgstr "Nein active Stellen available."
+msgstr "Keine aktiven Stellen verfügbar."
 
 #: src/Api/MatchController.php:433
 msgid "API error"
@@ -4817,7 +4817,7 @@ msgstr "Webhook nicht gefunden."
 #: src/Api/WebhookController.php:375
 #: src/Services/ApiKeyService.php:361
 msgid "No changes provided."
-msgstr "Nein changes provided."
+msgstr "Keine Änderungen angegeben."
 
 #: src/Api/WebhookController.php:454
 msgid "Webhook was deleted."
@@ -5143,7 +5143,7 @@ msgstr "Keine Signaturen verfügbar."
 
 #: src/Core/Plugin.php:1171
 msgid "No company signature available."
-msgstr "Nein company signature available."
+msgstr "Keine Firmensignatur verfügbar."
 
 #: src/Core/Plugin.php:1172
 msgid "Do you really want to delete this signature?"
@@ -6294,11 +6294,11 @@ msgstr[1] "%d Stellen found"
 
 #: src/Frontend/Shortcodes/JobSearchShortcode.php:318
 msgid "No matching jobs found. Please try different search criteria."
-msgstr "Nein matching Stellen found. Please try different search criteria."
+msgstr "Keine passenden Stellen gefunden. Bitte versuche andere Suchkriterien."
 
 #: src/Frontend/Shortcodes/JobsShortcode.php:189
 msgid "No open positions at the moment"
-msgstr "Nein open positions at the moment"
+msgstr "Zurzeit keine offenen Stellen"
 
 #: src/Frontend/Shortcodes/JobsShortcode.php:192
 msgid "Please check back later or contact us for unsolicited applications."
@@ -6543,7 +6543,7 @@ msgstr "Formularat (Zero)"
 
 #: src/Integrations/Avada/Elements/JobCount.php:67
 msgid "Empty = \"No open positions\"."
-msgstr "Empty = \"Nein open positions\"."
+msgstr "Leer = \"Keine offenen Stellen\"."
 
 #: src/Integrations/Avada/Elements/JobGrid.php:26
 msgid "RP: Job List"
@@ -7067,7 +7067,7 @@ msgstr "Datei was only partially uploaded."
 
 #: src/Services/DocumentService.php:630
 msgid "No file was uploaded."
-msgstr "Nein file was uploaded."
+msgstr "Es wurde keine Datei hochgeladen."
 
 #: src/Services/DocumentService.php:631
 msgid "Temporary directory is missing."
@@ -7374,7 +7374,7 @@ msgstr "Feld could not be deleted."
 
 #: src/Services/FieldDefinitionService.php:482
 msgid "No positions specified."
-msgstr "Nein positions specified."
+msgstr "Keine Positionen angegeben."
 
 #: src/Services/FieldDefinitionService.php:492
 msgid "Order could not be changed."
@@ -7414,7 +7414,7 @@ msgstr "Konfiguration konnte nicht gespeichert werden."
 
 #: src/Services/FormConfigService.php:157
 msgid "No changes to publish."
-msgstr "Nein changes to publish."
+msgstr "Keine Änderungen zum Veröffentlichen."
 
 #: src/Services/FormConfigService.php:170
 msgid "Configuration could not be published."
@@ -7422,7 +7422,7 @@ msgstr "Konfiguration konnte nicht veröffentlicht werden."
 
 #: src/Services/FormConfigService.php:189
 msgid "No changes to discard."
-msgstr "Nein changes to discard."
+msgstr "Keine Änderungen zum Verwerfen."
 
 #: src/Services/FormConfigService.php:199
 msgid "Changes could not be discarded."
@@ -7880,7 +7880,7 @@ msgstr "Cron Stellen not scheduled"
 
 #: src/Services/SystemStatusService.php:219
 msgid "No orphaned data"
-msgstr "Nein orphaned data"
+msgstr "Keine verwaisten Daten"
 
 #: src/Services/SystemStatusService.php:231
 #. translators: %d: Number of orphaned entries

@@ -171,7 +171,7 @@ defined( 'ABSPATH' ) || exit;
 		</a>
 
 		<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
-			<div class="rp-relative rp-z-20" x-on:click.stop>
+			<div class="rp-relative rp-z-20" x-on:click.stop onclick="event.stopPropagation(); event.preventDefault();">
 				<?php
 				echo do_shortcode(
 					sprintf(

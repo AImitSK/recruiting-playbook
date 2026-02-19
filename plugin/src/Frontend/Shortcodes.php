@@ -92,7 +92,34 @@ class Shortcodes {
 		if ( rp_fs()->is__premium_only() ) {
 			add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
 			add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
+
+			// Assets früh laden wenn KI-Feature aktiv (vor wp_head).
+			add_action( 'wp_enqueue_scripts', [ $this, 'maybePreloadMatchModalAssets' ] );
 		}
+	}
+
+	/**
+	 * Match-Modal Assets vorladen wenn KI-Feature aktiv
+	 *
+	 * Lädt die Assets früh genug, damit sie im <head> sind,
+	 * bevor Shortcodes im Loop ausgeführt werden.
+	 */
+	public function maybePreloadMatchModalAssets(): void {
+		// Nur wenn KI-Feature aktiv.
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+			return;
+		}
+
+		// Nur im Frontend, nicht im Admin.
+		if ( is_admin() ) {
+			return;
+		}
+
+		// Assets laden.
+		$this->enqueueMatchModalAssets();
+
+		// Modal im Footer registrieren.
+		$this->registerMatchModal();
 	}
 
 	/**

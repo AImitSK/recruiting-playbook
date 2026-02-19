@@ -277,20 +277,38 @@ const matchModalComponent = () => ({
     },
 });
 
-// Register component - with fallback for different loading orders
+// Register component - with robust fallback for different loading orders
 function registerMatchModalComponent() {
     if (typeof Alpine !== 'undefined' && Alpine.data) {
-        console.log('[RP] Registering matchModal component');
-        Alpine.data('matchModal', matchModalComponent);
-    } else {
-        console.warn('[RP] Alpine not available for matchModal registration');
+        // Prüfen ob bereits registriert
+        if (!Alpine._data || !Alpine._data.matchModal) {
+            console.log('[RP] Registering matchModal component');
+            Alpine.data('matchModal', matchModalComponent);
+        }
+        return true;
     }
+    return false;
 }
 
-// Try immediate registration (if Alpine already loaded)
-if (typeof Alpine !== 'undefined') {
-    registerMatchModalComponent();
-} else {
-    // Wait for Alpine via alpine:init event
+// Mehrere Registrierungs-Strategien für maximale Kompatibilität
+(function() {
+    // 1. Sofortige Registrierung (falls Alpine bereits geladen)
+    if (registerMatchModalComponent()) {
+        return;
+    }
+
+    // 2. Alpine:init Event (Standard-Methode)
     document.addEventListener('alpine:init', registerMatchModalComponent);
-}
+
+    // 3. DOMContentLoaded Fallback
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!registerMatchModalComponent()) {
+            // 4. Letzter Fallback: kurze Verzögerung für spätes Alpine-Laden
+            setTimeout(function() {
+                if (!registerMatchModalComponent()) {
+                    console.error('[RP] matchModal: Alpine.js not found after all attempts');
+                }
+            }, 100);
+        }
+    });
+})();
