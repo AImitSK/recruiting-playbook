@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.8
+Stable tag: 1.2.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,19 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.11 - 2026-02-19 =
+* Fix: KI-Matching JavaScript (match-modal.js, job-finder.js) jetzt korrekt im Build enthalten
+* Fix: Bewerbungsformular wird korrekt geladen
+
+= 1.2.10 - 2026-02-19 =
+* Fix: Notification Service Array-Zugriff korrigiert
+* Fix: ActivityService.log() Parameter korrigiert
+* Fix: Dokument-Download MIME-Type Erkennung
+
+= 1.2.9 - 2026-02-19 =
+* Fix: TeamsNotifier/SlackNotifier findById() zu get() geaendert
+* Fix: KI-Button Navigation korrigiert
 
 = 1.2.8 - 2026-02-18 =
 * Add: Microsoft Teams integration with Adaptive Cards

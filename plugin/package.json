@@ -1,6 +1,6 @@
 {
     "name": "recruiting-playbook",
-    "version": "1.2.9",
+    "version": "1.2.11",
     "description": "WordPress Recruiting Plugin",
     "scripts": {
         "dev": "npm-run-all --parallel dev:*",
@@ -20,6 +20,8 @@
         "dev:application-form-js": "esbuild assets/src/js/application-form.js --bundle --sourcemap --outfile=assets/dist/js/application-form.js --watch",
         "dev:custom-fields-js": "esbuild assets/src/js/custom-fields-form.js --bundle --sourcemap --outfile=assets/dist/js/custom-fields-form.js --watch",
         "dev:wizard-js": "esbuild assets/src/js/wizard.js --bundle --sourcemap --outfile=assets/dist/js/wizard.js --watch",
+        "dev:match-modal-js": "esbuild assets/src/js/components/match-modal.js --bundle --sourcemap --outfile=assets/dist/js/match-modal.js --watch",
+        "dev:job-finder-js": "esbuild assets/src/js/components/job-finder.js --bundle --sourcemap --outfile=assets/dist/js/job-finder.js --watch",
         "dev:admin-js": "wp-scripts start",
         "build": "npm-run-all build:1-admin-js build:2-*",
         "build:1-admin-js": "wp-scripts build",
@@ -39,6 +41,8 @@
         "build:2-application-form-js": "esbuild assets/src/js/application-form.js --bundle --minify --outfile=assets/dist/js/application-form.js",
         "build:2-custom-fields-js": "esbuild assets/src/js/custom-fields-form.js --bundle --minify --outfile=assets/dist/js/custom-fields-form.js",
         "build:2-wizard-js": "esbuild assets/src/js/wizard.js --bundle --minify --outfile=assets/dist/js/wizard.js",
+        "build:2-match-modal-js": "esbuild assets/src/js/components/match-modal.js --bundle --minify --outfile=assets/dist/js/match-modal.js",
+        "build:2-job-finder-js": "esbuild assets/src/js/components/job-finder.js --bundle --minify --outfile=assets/dist/js/job-finder.js",
         "build:2-alpine": "cp node_modules/alpinejs/dist/cdn.min.js assets/dist/js/alpine.min.js",
         "build:2-freemius-css": "cp assets/src/css/freemius-pricing-custom.css assets/dist/css/freemius-pricing-custom.css",
         "lint:js": "wp-scripts lint-js",
