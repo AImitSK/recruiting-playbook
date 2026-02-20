@@ -6,7 +6,7 @@ const OPENROUTER_BASE_URL = 'https://openrouter.ai/api';
 
 // Modell-Konstante (OpenRouter Model ID)
 // Siehe: https://openrouter.ai/models
-const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5'; // $1/$5 pro MTok, 200K Context
+const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.6'; // $3/$15 pro MTok, 1M Context
 
 export interface MatchResult {
   score: number; // 0-100
