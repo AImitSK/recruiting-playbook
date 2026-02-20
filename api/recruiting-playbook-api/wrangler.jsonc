@@ -32,7 +32,6 @@
 	"vars": {
 		"ENVIRONMENT": "production",
 		"FREEMIUS_PRODUCT_ID": "23533",
-		"FREEMIUS_ADDON_PRODUCT_ID": "23996",
 		"PRESIDIO_URL": "https://presidio.recruiting-playbook.com"
 	},
 	"routes": [

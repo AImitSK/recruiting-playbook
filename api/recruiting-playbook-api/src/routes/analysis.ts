@@ -55,12 +55,12 @@ analysis.post('/upload', async (c) => {
     );
   }
 
-  // Validierung
-  if (!jobData.title || !jobData.requirements?.length) {
+  // Validierung: title ist Pflicht, requirements oder description reichen für die Analyse
+  if (!jobData.title || (!jobData.requirements?.length && !jobData.description)) {
     return c.json(
       {
         error: 'invalid_request',
-        message: 'jobData muss title und requirements enthalten',
+        message: 'jobData muss title und requirements oder description enthalten',
       },
       400
     );
@@ -137,12 +137,12 @@ analysis.post('/start', async (c) => {
     jobData: JobData;
   }>();
 
-  // Validierung
-  if (!body.jobData?.title || !body.jobData?.requirements?.length) {
+  // Validierung: title ist Pflicht, requirements oder description reichen für die Analyse
+  if (!body.jobData?.title || (!body.jobData?.requirements?.length && !body.jobData?.description)) {
     return c.json(
       {
         error: 'invalid_request',
-        message: 'jobData mit title und requirements erforderlich',
+        message: 'jobData mit title und requirements oder description erforderlich',
       },
       400
     );

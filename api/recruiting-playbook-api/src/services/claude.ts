@@ -285,8 +285,7 @@ Antworte NUR mit validem JSON im angegebenen Format.`;
 **Beschreibung:**
 ${jobData.description}
 
-**Anforderungen (MUSS):**
-${jobData.requirements.map((r) => `- ${r}`).join('\n')}
+${jobData.requirements?.length ? `**Anforderungen (MUSS):**\n${jobData.requirements.map((r) => `- ${r}`).join('\n')}` : '**Anforderungen:** Bitte aus der Stellenbeschreibung ableiten.'}
 
 ${jobData.niceToHave?.length ? `**Wünschenswert (KANN):**\n${jobData.niceToHave.map((r) => `- ${r}`).join('\n')}` : ''}
 
