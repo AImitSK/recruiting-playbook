@@ -456,20 +456,6 @@ export function ApplicationsPage() {
 	return (
 		<div className="rp-admin" style={ { padding: '20px 0' } }>
 			<div style={ { maxWidth: '1400px' } }>
-				{ /* Header: Logo links, Titel rechts */ }
-				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' } }>
-					{ logoUrl && (
-						<img
-							src={ logoUrl }
-							alt="Recruiting Playbook"
-							style={ { width: '150px', height: 'auto' } }
-						/>
-					) }
-					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ __( 'Applications', 'recruiting-playbook' ) }
-					</h1>
-				</div>
-
 				<Card>
 					{ /* Status Tabs */ }
 					<div

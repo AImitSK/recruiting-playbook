@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.16
+Stable tag: 1.2.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.17 - 2026-02-20 =
+* Fix: Bewerbungen-Seite Header-Layout (Systemmeldungen werden jetzt sauber über der Überschrift angezeigt)
 
 = 1.2.16 - 2026-02-20 =
 * Add: Taxonomie-Verwaltung im Admin-Menü (Standorte, Beschäftigungsart, Kategorien)
