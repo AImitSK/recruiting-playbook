@@ -43,7 +43,7 @@ class JobCategory {
 			'hierarchical'      => true,
 			'labels'            => $labels,
 			'show_ui'           => true,
-			'show_in_menu'      => 'recruiting-playbook',
+			'show_in_menu'      => false,
 			'show_admin_column' => true,
 			'query_var'         => true,
 			'rewrite'           => [ 'slug' => 'berufsfeld' ],
