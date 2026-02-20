@@ -7702,6 +7702,11 @@ msgstr "Liebe/Lieber Frau %s"
 msgid "Hello %s"
 msgstr "Hallo %s"
 
+#: src/Services/PlaceholderService.php:313
+#, php-format
+msgid "Dear Mr. / Ms. %s"
+msgstr "Hallo Herr / Frau %s"
+
 #: src/Services/PlaceholderService.php:373
 msgid "Mr. / Ms."
 msgstr "Herr / Frau"

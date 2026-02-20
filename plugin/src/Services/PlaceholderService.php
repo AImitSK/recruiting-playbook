@@ -292,9 +292,11 @@ class PlaceholderService {
 	 */
 	private function getAnredeFormal( array $candidate ): string {
 		$salutation = $candidate['salutation'] ?? '';
+		$first_name = $candidate['first_name'] ?? '';
 		$last_name  = $candidate['last_name'] ?? '';
+		$full_name  = trim( $first_name . ' ' . $last_name );
 
-		if ( empty( $last_name ) ) {
+		if ( empty( $full_name ) ) {
 			return __( 'Hello', 'recruiting-playbook' );
 		}
 
@@ -310,7 +312,8 @@ class PlaceholderService {
 			case 'ms.':
 				return sprintf( __( 'Dear Ms. %s', 'recruiting-playbook' ), $last_name );
 			default:
-				return sprintf( __( 'Hello %s', 'recruiting-playbook' ), $last_name );
+				// Ohne Anrede: Formelle geschlechtsneutrale Anrede.
+				return sprintf( __( 'Dear Mr. / Ms. %s', 'recruiting-playbook' ), $full_name );
 		}
 	}
 

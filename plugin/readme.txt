@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.14
+Stable tag: 1.2.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.15 - 2026-02-20 =
+* Fix: E-Mail Anrede zeigt jetzt vollen Namen (Hallo Herr / Frau Vorname Nachname)
+* Fix: Doppelte Signatur in E-Mail-Vorlagen entfernt
 
 = 1.2.14 - 2026-02-20 =
 * Fix: KI-Analyse Tab wird wieder korrekt angezeigt (React Hooks Reihenfolge)
