@@ -212,10 +212,24 @@ function rp_has_ai(): bool {
 /**
  * Prüft ob CV-Matching verfügbar ist
  *
- * @return bool True wenn Pro-Plan aktiv.
+ * Berücksichtigt sowohl die Lizenz (Pro-Plan) als auch die
+ * Admin-Einstellung "KI-Features deaktivieren".
+ *
+ * @return bool True wenn Pro-Plan aktiv UND KI-Features nicht deaktiviert.
  */
 function rp_has_cv_matching(): bool {
-	return rp_can( 'ai_cv_matching' ) === true;
+	// Lizenz-Check.
+	if ( rp_can( 'ai_cv_matching' ) !== true ) {
+		return false;
+	}
+
+	// Admin-Einstellung prüfen: KI-Features deaktiviert?
+	$settings = get_option( 'rp_settings', [] );
+	if ( ! empty( $settings['disable_ai_features'] ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 /**

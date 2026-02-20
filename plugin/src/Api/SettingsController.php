@@ -166,6 +166,7 @@ class SettingsController extends WP_REST_Controller {
 
 			// Pro-Features.
 			'hide_email_branding' => (bool) ( $settings['hide_email_branding'] ?? false ),
+			'disable_ai_features' => (bool) ( $settings['disable_ai_features'] ?? false ),
 		] );
 	}
 
@@ -268,6 +269,10 @@ class SettingsController extends WP_REST_Controller {
 			$settings['hide_email_branding'] = (bool) $request->get_param( 'hide_email_branding' );
 		}
 
+		if ( $request->has_param( 'disable_ai_features' ) ) {
+			$settings['disable_ai_features'] = (bool) $request->get_param( 'disable_ai_features' );
+		}
+
 		update_option( self::OPTION_NAME, $settings );
 
 		// Slug-Änderung erfordert Rewrite-Flush.
@@ -303,6 +308,7 @@ class SettingsController extends WP_REST_Controller {
 			'jobs_slug'            => 'jobs',
 			'enable_schema'        => true,
 			'hide_email_branding'  => false,
+			'disable_ai_features'  => false,
 		];
 	}
 

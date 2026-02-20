@@ -16,6 +16,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Badge } from '../../components/ui/badge';
 import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Switch } from '../../components/ui/switch';
 import {
 	Table,
 	TableBody,
@@ -26,7 +27,7 @@ import {
 } from '../../components/ui/table';
 import { Spinner } from '../../components/ui/spinner';
 
-import { useAiAnalysis } from '../hooks';
+import { useAiAnalysis, useSettings } from '../hooks';
 
 /**
  * Progress bar
@@ -139,9 +140,17 @@ export function AiAnalysisSettings() {
 		saveSettings,
 	} = useAiAnalysis();
 
+	// Global plugin settings (for disable_ai_features toggle).
+	const {
+		settings: globalSettings,
+		saveSettings: saveGlobalSettings,
+		loading: globalLoading,
+	} = useSettings();
+
 	// Local state for settings form.
 	const [ localSettings, setLocalSettings ] = useState( null );
 	const [ settingsNotification, setSettingsNotification ] = useState( null );
+	const [ disableToggleSaving, setDisableToggleSaving ] = useState( false );
 
 	// Initialize localSettings when settings loaded.
 	if ( settings && ! localSettings ) {
@@ -202,9 +211,56 @@ export function AiAnalysisSettings() {
 	const usage = stats?.usage || {};
 	const license = stats?.license || {};
 	const warningThreshold = localSettings?.warning_threshold ?? settings?.warning_threshold ?? 80;
+	const aiDisabled = globalSettings?.disable_ai_features ?? false;
+
+	/**
+	 * Toggle AI features on/off
+	 */
+	const handleToggleAiFeatures = useCallback( async ( enabled ) => {
+		setDisableToggleSaving( true );
+		const success = await saveGlobalSettings( { disable_ai_features: ! enabled } );
+		setDisableToggleSaving( false );
+
+		if ( success ) {
+			setSettingsNotification(
+				enabled
+					? __( 'AI features enabled.', 'recruiting-playbook' )
+					: __( 'AI features disabled.', 'recruiting-playbook' )
+			);
+			setTimeout( () => setSettingsNotification( null ), 3000 );
+		}
+	}, [ saveGlobalSettings ] );
 
 	return (
 		<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>
+
+			{ /* Card 0: Enable/Disable AI Features */ }
+			<Card>
+				<CardHeader>
+					<CardTitle>{ __( 'AI Features', 'recruiting-playbook' ) }</CardTitle>
+					<CardDescription>
+						{ __( 'Enable or disable AI matching features on your website.', 'recruiting-playbook' ) }
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+						<div>
+							<Label htmlFor="ai-features-toggle" style={ { fontWeight: 500 } }>
+								{ __( 'Show AI matching buttons', 'recruiting-playbook' ) }
+							</Label>
+							<p style={ { margin: '0.25rem 0 0', fontSize: '0.8125rem', color: '#6b7280' } }>
+								{ __( 'When disabled, AI buttons will be hidden in job listings and cards.', 'recruiting-playbook' ) }
+							</p>
+						</div>
+						<Switch
+							id="ai-features-toggle"
+							checked={ ! aiDisabled }
+							onCheckedChange={ handleToggleAiFeatures }
+							disabled={ globalLoading || disableToggleSaving }
+						/>
+					</div>
+				</CardContent>
+			</Card>
 
 			{ /* Card 1: License & Usage */ }
 			<Card>

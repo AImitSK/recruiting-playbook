@@ -310,6 +310,7 @@ class Settings {
 
 			// Pro-Features.
 			'hide_email_branding'  => false,
+			'disable_ai_features'  => false,
 		];
 	}
 
@@ -349,6 +350,7 @@ class Settings {
 
 		// Pro-Features.
 		$output['hide_email_branding'] = ! empty( $input['hide_email_branding'] );
+		$output['disable_ai_features'] = ! empty( $input['disable_ai_features'] );
 
 		// Slug-Änderung erfordert Rewrite-Flush.
 		$old_settings = get_option( self::OPTION_NAME, [] );
@@ -508,6 +510,8 @@ class Settings {
 			'proSettingsDesc'       => __( 'Advanced settings for Pro users.', 'recruiting-playbook' ),
 			'whiteLabel'            => __( 'White-Label Emails', 'recruiting-playbook' ),
 			'whiteLabelDesc'        => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
+			'disableAiFeatures'     => __( 'Disable AI Features', 'recruiting-playbook' ),
+			'disableAiFeaturesDesc' => __( 'Hide AI matching buttons in job listings and cards', 'recruiting-playbook' ),
 
 			// Common.
 			'saveSettings'          => __( 'Save Settings', 'recruiting-playbook' ),

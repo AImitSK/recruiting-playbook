@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.12
+Stable tag: 1.2.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,12 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.13 - 2026-02-20 =
+* Fix: Pro-Version sendet Bewerber-Bestaetigung nur wenn Automation-Template konfiguriert
+* Add: Status "Neue Bewerbung" in E-Mail-Automation verfuegbar
+* Add: Toggle zum Deaktivieren aller KI-Features in den Einstellungen
+* Fix: KI-Buttons werden ausgeblendet wenn Feature deaktiviert
 
 = 1.2.12 - 2026-02-19 =
 * Fix: JS-Pfade korrigiert - laden jetzt von assets/dist/ statt assets/src/

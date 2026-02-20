@@ -35,6 +35,13 @@ class ApplicationService {
 	private EmailService $email_service;
 
 	/**
+	 * Auto Email Service (Pro)
+	 *
+	 * @var AutoEmailService|null
+	 */
+	private ?AutoEmailService $auto_email_service = null;
+
+	/**
 	 * Custom Fields Service
 	 *
 	 * @var CustomFieldsService|null
@@ -47,6 +54,23 @@ class ApplicationService {
 	public function __construct() {
 		$this->document_service = new DocumentService();
 		$this->email_service    = new EmailService();
+	}
+
+	/**
+	 * Auto Email Service lazy-loading (nur Pro)
+	 *
+	 * @return AutoEmailService|null
+	 */
+	private function getAutoEmailService(): ?AutoEmailService {
+		// Nur in Pro-Version verfügbar.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			return null;
+		}
+
+		if ( null === $this->auto_email_service ) {
+			$this->auto_email_service = new AutoEmailService();
+		}
+		return $this->auto_email_service;
 	}
 
 	/**
@@ -143,8 +167,19 @@ class ApplicationService {
 		$this->logActivity( $application_id, 'application_received', 'New application received' );
 
 		// 5. E-Mails versenden
+		// 5a. Benachrichtigung an Admin (immer).
 		$this->email_service->sendApplicationReceived( $application_id );
-		$this->email_service->sendApplicantConfirmation( $application_id );
+
+		// 5b. Bestätigung an Bewerber (Pro: nur wenn Automation-Template konfiguriert).
+		$auto_email_service = $this->getAutoEmailService();
+		if ( $auto_email_service ) {
+			// Pro-Version: Nur senden wenn Template unter Automation konfiguriert ist.
+			// Gibt null zurück wenn nicht konfiguriert -> dann KEINE E-Mail senden.
+			$auto_email_service->sendNewApplicationEmail( $application_id );
+		} else {
+			// Free-Version: Default-Bestätigung senden.
+			$this->email_service->sendApplicantConfirmation( $application_id );
+		}
 
 		// 6. Hook für Erweiterungen
 		do_action( 'rp_application_created', $application_id, $data );
