@@ -192,6 +192,24 @@ export function AiAnalysisSettings() {
 		} );
 	}, [] );
 
+	/**
+	 * Toggle AI features on/off
+	 */
+	const handleToggleAiFeatures = useCallback( async ( enabled ) => {
+		setDisableToggleSaving( true );
+		const success = await saveGlobalSettings( { disable_ai_features: ! enabled } );
+		setDisableToggleSaving( false );
+
+		if ( success ) {
+			setSettingsNotification(
+				enabled
+					? __( 'AI features enabled.', 'recruiting-playbook' )
+					: __( 'AI features disabled.', 'recruiting-playbook' )
+			);
+			setTimeout( () => setSettingsNotification( null ), 3000 );
+		}
+	}, [ saveGlobalSettings ] );
+
 	if ( loading ) {
 		return (
 			<div style={ { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '3rem' } }>
@@ -212,24 +230,6 @@ export function AiAnalysisSettings() {
 	const license = stats?.license || {};
 	const warningThreshold = localSettings?.warning_threshold ?? settings?.warning_threshold ?? 80;
 	const aiDisabled = globalSettings?.disable_ai_features ?? false;
-
-	/**
-	 * Toggle AI features on/off
-	 */
-	const handleToggleAiFeatures = useCallback( async ( enabled ) => {
-		setDisableToggleSaving( true );
-		const success = await saveGlobalSettings( { disable_ai_features: ! enabled } );
-		setDisableToggleSaving( false );
-
-		if ( success ) {
-			setSettingsNotification(
-				enabled
-					? __( 'AI features enabled.', 'recruiting-playbook' )
-					: __( 'AI features disabled.', 'recruiting-playbook' )
-			);
-			setTimeout( () => setSettingsNotification( null ), 3000 );
-		}
-	}, [ saveGlobalSettings ] );
 
 	return (
 		<div style={ { display: 'flex', flexDirection: 'column', gap: '1.5rem' } }>

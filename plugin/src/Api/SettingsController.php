@@ -462,7 +462,7 @@ class SettingsController extends WP_REST_Controller {
 
 		// Sanitize each status setting.
 		$sanitized = [];
-		$allowed_statuses = [ 'new', 'rejected', 'withdrawn' ];
+		$allowed_statuses = [ 'new', 'rejected', 'interview', 'offer', 'hired' ];
 
 		foreach ( $allowed_statuses as $status ) {
 			if ( isset( $settings[ $status ] ) && is_array( $settings[ $status ] ) ) {
