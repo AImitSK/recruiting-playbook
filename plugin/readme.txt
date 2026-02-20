@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.18
+Stable tag: 1.2.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.19 - 2026-02-20 =
+* Add: Löschen-Button in Bewerbungsliste (React-Komponente)
+* Fix: Import-Script sendet jetzt korrekten Taxonomy-Slug für Beschäftigungsart
 
 = 1.2.18 - 2026-02-20 =
 * Fix: Taxonomie-Verwaltung im Admin-Menü korrigiert (Standorte, Beschäftigungsart, Kategorien jetzt korrekt verlinkt)

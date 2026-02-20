@@ -18,6 +18,7 @@ import {
 	Mail,
 	MoreHorizontal,
 	Download,
+	Trash2,
 } from 'lucide-react';
 import {
 	Card,
@@ -767,6 +768,29 @@ export function ApplicationsPage() {
 															} }
 														>
 															{ __( 'Review', 'recruiting-playbook' ) }
+														</a>
+													) }
+													{ app.status !== 'deleted' && (
+														<a
+															href={ `${ adminUrl }admin.php?page=recruiting-playbook&action=delete&id=${ app.id }&_wpnonce=${ app.delete_nonce }` }
+															onClick={ ( e ) => {
+																if ( ! window.confirm( __( 'Are you sure you want to delete this application?', 'recruiting-playbook' ) ) ) {
+																	e.preventDefault();
+																}
+															} }
+															style={ {
+																display: 'inline-flex',
+																alignItems: 'center',
+																padding: '0.375rem',
+																backgroundColor: '#fff',
+																color: '#b32d2e',
+																border: '1px solid #b32d2e',
+																borderRadius: '0.375rem',
+																textDecoration: 'none',
+															} }
+															title={ __( 'Delete', 'recruiting-playbook' ) }
+														>
+															<Trash2 style={ { width: '0.875rem', height: '0.875rem' } } />
 														</a>
 													) }
 												</div>

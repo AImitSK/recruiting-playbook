@@ -246,6 +246,9 @@ class ApplicationsPage {
 			// Add document count.
 			$row['documents_count'] = $document_counts[ $row['id'] ] ?? 0;
 
+			// Add nonces for actions.
+			$row['delete_nonce'] = wp_create_nonce( 'rp_delete_' . $row['id'] );
+
 			$applications[] = $row;
 		}
 
