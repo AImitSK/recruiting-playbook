@@ -423,6 +423,25 @@ class ApplicationList extends \WP_List_Table {
 			);
 		}
 
+		if ( 'deleted' !== $item['status'] ) {
+			$delete_url = wp_nonce_url(
+				admin_url(
+					sprintf(
+						'admin.php?page=recruiting-playbook&action=delete&id=%d',
+						absint( $item['id'] )
+					)
+				),
+				'rp_delete_' . $item['id']
+			);
+
+			$actions[] = sprintf(
+				'<a href="%s" class="button button-small" style="color: #b32d2e; border-color: #b32d2e;" onclick="return confirm(\'%s\');" title="%s"><span class="dashicons dashicons-trash" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span></a>',
+				esc_url( $delete_url ),
+				esc_js( __( 'Are you sure you want to delete this application?', 'recruiting-playbook' ) ),
+				esc_attr__( 'Delete', 'recruiting-playbook' )
+			);
+		}
+
 		return implode( ' ', $actions );
 	}
 
