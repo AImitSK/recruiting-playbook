@@ -7773,11 +7773,11 @@ msgstr "Standort der Stelle"
 
 #: src/Services/PlaceholderService.php:432
 msgid "Location of the job"
-msgstr "Standort von the Stelle"
+msgstr "Standort der Stelle"
 
 #: src/Services/PlaceholderService.php:437
 msgid "Full-time, part-time, etc."
-msgstr "Vollzeit, part-time, etc."
+msgstr "Vollzeit, Teilzeit, etc."
 
 #: src/Services/PlaceholderService.php:440
 msgid "Job URL"

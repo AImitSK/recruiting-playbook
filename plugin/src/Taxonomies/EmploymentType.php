@@ -41,6 +41,7 @@ class EmploymentType {
 			'hierarchical'      => false,
 			'labels'            => $labels,
 			'show_ui'           => true,
+			'show_in_menu'      => 'recruiting-playbook',
 			'show_admin_column' => true,
 			'query_var'         => true,
 			'rewrite'           => [ 'slug' => 'beschaeftigung' ],
@@ -63,13 +64,13 @@ class EmploymentType {
 		}
 
 		$defaults = [
-			'vollzeit'      => __( 'Full-time', 'recruiting-playbook' ),
-			'teilzeit'      => __( 'Part-time', 'recruiting-playbook' ),
-			'minijob'       => __( 'Minijob', 'recruiting-playbook' ),
-			'ausbildung'    => __( 'Apprenticeship', 'recruiting-playbook' ),
-			'praktikum'     => __( 'Internship', 'recruiting-playbook' ),
-			'werkstudent'   => __( 'Working Student', 'recruiting-playbook' ),
-			'freiberuflich' => __( 'Freelance', 'recruiting-playbook' ),
+			'vollzeit'      => _x( 'Full-time', 'employment type', 'recruiting-playbook' ),
+			'teilzeit'      => _x( 'Part-time', 'employment type', 'recruiting-playbook' ),
+			'minijob'       => _x( 'Minijob', 'employment type', 'recruiting-playbook' ),
+			'ausbildung'    => _x( 'Apprenticeship', 'employment type', 'recruiting-playbook' ),
+			'praktikum'     => _x( 'Internship', 'employment type', 'recruiting-playbook' ),
+			'werkstudent'   => _x( 'Working Student', 'employment type', 'recruiting-playbook' ),
+			'freiberuflich' => _x( 'Freelance', 'employment type', 'recruiting-playbook' ),
 		];
 
 		foreach ( $defaults as $slug => $name ) {

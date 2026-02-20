@@ -41,6 +41,7 @@ class JobLocation {
 			'hierarchical'      => false,
 			'labels'            => $labels,
 			'show_ui'           => true,
+			'show_in_menu'      => 'recruiting-playbook',
 			'show_admin_column' => true,
 			'query_var'         => true,
 			'rewrite'           => [ 'slug' => 'standort' ],

@@ -4,7 +4,7 @@ Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.15
+Stable tag: 1.2.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unbegrenzt! Sowohl in Free als auch Pro.
 5. Design & Branding Einstellungen
 
 == Changelog ==
+
+= 1.2.16 - 2026-02-20 =
+* Add: Taxonomie-Verwaltung im Admin-Menü (Standorte, Beschäftigungsart, Kategorien)
+* Fix: Übersetzungsfehler korrigiert
 
 = 1.2.15 - 2026-02-20 =
 * Fix: E-Mail Anrede zeigt jetzt vollen Namen (Hallo Herr / Frau Vorname Nachname)
