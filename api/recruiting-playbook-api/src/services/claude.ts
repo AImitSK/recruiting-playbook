@@ -293,10 +293,15 @@ ${cvSection}
 
 ## Aufgabe
 
-Analysiere, wie gut der Lebenslauf zur Stelle passt. Beachte:
-1. MUSS-Anforderungen sind wichtiger als KANN-Anforderungen
-2. Berufserfahrung in ähnlichen Positionen ist ein Plus
-3. Fehlende Anforderungen sind nicht automatisch ein Ausschluss
+Analysiere, wie gut der Lebenslauf zur Stelle passt.
+
+## Scoring-Regeln (STRIKT EINHALTEN)
+
+1. Kernqualifikation passt exakt zur Stelle (z.B. geforderte Fachweiterbildung vorhanden, geforderte Ausbildung/Studium vorhanden, geforderte Zertifizierung vorhanden) → Basis-Score mindestens 90%
+2. Zusätzliche Erfahrung in anderen Bereichen ist NEUTRAL – niemals Abzug dafür geben
+3. Abzüge NUR für tatsächlich fehlende MUSS-Anforderungen (je nach Gewicht 3-10% pro fehlender Anforderung)
+4. Fehlende Nice-to-have-Kriterien → maximal 5% Abzug gesamt
+5. Berufserfahrung in ähnlichen Positionen → Bonus (+2-5%)
 
 WICHTIG: Die Antwort ist für den Bewerber selbst bestimmt. Sprich den Bewerber direkt mit "Sie" an (z.B. "Sie erfüllen..." oder "Ihre Erfahrung..."). Sprich NICHT über "den Kandidaten" in der dritten Person.
 

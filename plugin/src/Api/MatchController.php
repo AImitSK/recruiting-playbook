@@ -662,15 +662,25 @@ class MatchController extends WP_REST_Controller {
 			return [];
 		}
 
-		// Überschriften, die auf Anforderungen hindeuten.
+		// Überschriften, die auf Anforderungen hindeuten (Sie- und Du-Form).
 		$headings = [
+			// Sie-Form.
 			'Ihr Profil',
-			'Anforderungen',
-			'Voraussetzungen',
 			'Was Sie mitbringen',
 			'Das bringen Sie mit',
-			'Qualifikationen',
 			'Was wir erwarten',
+			'Was wir von Ihnen erwarten',
+			// Du-Form (viele Arbeitgeber duzen in Stellenanzeigen).
+			'Dein Profil',
+			'Was du mitbringst',
+			'Das bringst du mit',
+			'Was wir von dir erwarten',
+			// Neutral.
+			'Anforderungen',
+			'Voraussetzungen',
+			'Qualifikationen',
+			'Profil',
+			'Requirements',
 		];
 
 		$escaped  = array_map( static function ( $h ) { return preg_quote( $h, '#' ); }, $headings );
