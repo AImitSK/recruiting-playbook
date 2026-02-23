@@ -15,6 +15,7 @@ use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
 use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
+use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
 use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\ReportingPage;
@@ -37,11 +38,27 @@ class Menu {
 	private Settings $settings;
 
 	/**
+	 * EmailSettingsPage instance (nur Premium)
+	 *
+	 * @var EmailSettingsPage|null
+	 */
+	private ?EmailSettingsPage $email_settings_page = null;
+
+	/**
 	 * Constructor - Filter für Menü-Highlighting registrieren
 	 */
 	public function __construct() {
 		// parent_file Filter - setzt auch $submenu_file.
 		add_filter( 'parent_file', [ $this, 'filterParentFile' ] );
+	}
+
+	/**
+	 * EmailSettingsPage setzen (für Premium)
+	 *
+	 * @param EmailSettingsPage $page EmailSettingsPage Instanz.
+	 */
+	public function setEmailSettingsPage( EmailSettingsPage $page ): void {
+		$this->email_settings_page = $page;
 	}
 
 	/**
@@ -114,6 +131,20 @@ class Menu {
 			'rp_manage_forms',
 			'rp-form-builder',
 			[ $this, 'renderFormBuilder' ]
+		);
+
+		// E-Mail-Vorlagen (Pro-Feature) - vor Einstellungen registriert.
+		$email_callback = $this->email_settings_page
+			? [ $this->email_settings_page, 'render' ]
+			: [ $this, 'renderEmailTemplatesPlaceholder' ];
+
+		add_submenu_page(
+			'recruiting-playbook',
+			__( 'Email Templates', 'recruiting-playbook' ),
+			$this->getEmailTemplatesMenuLabel(),
+			'manage_options',
+			'rp-email-templates',
+			$email_callback
 		);
 
 		// Einstellungen (Export ist jetzt als Tab integriert).
@@ -541,6 +572,36 @@ class Menu {
 		}
 
 		return $label;
+	}
+
+	/**
+	 * E-Mail-Vorlagen Menü-Label mit Lock-Icon für Free-User
+	 *
+	 * @return string Menü-Label.
+	 */
+	private function getEmailTemplatesMenuLabel(): string {
+		$label = __( 'Email Templates', 'recruiting-playbook' );
+
+		// Lock-Icon für Free-User.
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
+		}
+
+		return $label;
+	}
+
+	/**
+	 * E-Mail-Vorlagen Platzhalter-Renderer (wird von EmailSettingsPage überschrieben)
+	 */
+	public function renderEmailTemplatesPlaceholder(): void {
+		// EmailSettingsPage überschreibt diesen Callback via admin_menu Hook.
+		// Falls nicht geladen (Free-Version), zeige Upgrade-Hinweis.
+		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1>';
+		if ( function_exists( 'rp_require_feature' ) ) {
+			rp_require_feature( 'email_templates', __( 'Email Templates', 'recruiting-playbook' ), 'PRO' );
+		}
+		echo '</div>';
 	}
 
 	/**

@@ -604,20 +604,23 @@ final class Plugin {
 
 		// Admin-Menü registrieren.
 		$menu = new Menu();
+
+		// Pro Admin-Komponenten (E-Mail-Templates, Custom Fields Meta Box).
+		if ( rp_fs()->is__premium_only() ) {
+			$email_page = new EmailSettingsPage();
+			$menu->setEmailSettingsPage( $email_page );
+
+			$custom_fields_meta = new JobCustomFieldsMeta();
+			add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
+			add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
+		}
+
 		add_action( 'admin_menu', [ $menu, 'register' ] );
 
 		// Meta-Boxen registrieren.
 		$job_meta = new JobMeta();
 		add_action( 'add_meta_boxes', [ $job_meta, 'register' ] );
 		add_action( 'save_post_job_listing', [ $job_meta, 'save' ], 10, 2 );
-
-		// Pro Admin-Komponenten (E-Mail-Templates, Custom Fields Meta Box).
-		if ( rp_fs()->is__premium_only() ) {
-			new EmailSettingsPage();
-			$custom_fields_meta = new JobCustomFieldsMeta();
-			add_action( 'add_meta_boxes', [ $custom_fields_meta, 'register' ] );
-			add_action( 'save_post_job_listing', [ $custom_fields_meta, 'save' ], 10, 2 );
-		}
 
 		// Dashboard-Widget registrieren.
 		$dashboard_widget = new DashboardWidget();

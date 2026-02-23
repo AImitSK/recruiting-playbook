@@ -25,38 +25,7 @@ class EmailSettingsPage {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', [ $this, 'registerSubmenu' ] );
 		add_action( 'admin_init', [ $this, 'handleActions' ] );
-	}
-
-	/**
-	 * Submenu registrieren
-	 */
-	public function registerSubmenu(): void {
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Email Templates', 'recruiting-playbook' ),
-			$this->getMenuLabel(),
-			'manage_options',
-			'rp-email-templates',
-			[ $this, 'render' ]
-		);
-	}
-
-	/**
-	 * Menü-Label mit Lock-Icon für Free-User
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getMenuLabel(): string {
-		$label = __( 'Email Templates', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
 	}
 
 	/**
