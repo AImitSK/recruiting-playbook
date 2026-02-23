@@ -37,6 +37,7 @@ class JobCategories extends AbstractWidget {
 
 	protected function get_shortcode_mapping(): array {
 		return [
+			'layout'     => 'layout',
 			'columns'    => 'columns',
 			'show_count' => 'show_count',
 			'hide_empty' => 'hide_empty',
@@ -55,17 +56,33 @@ class JobCategories extends AbstractWidget {
 		);
 
 		$this->add_control(
+			'layout',
+			[
+				'label'   => esc_html__( 'Layout', 'recruiting-playbook' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'grid',
+				'options' => [
+					'grid' => esc_html__( 'Grid', 'recruiting-playbook' ),
+					'list' => esc_html__( 'List', 'recruiting-playbook' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'columns',
 			[
-				'label'   => esc_html__( 'Columns', 'recruiting-playbook' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => '4',
-				'options' => [
+				'label'     => esc_html__( 'Columns', 'recruiting-playbook' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '4',
+				'options'   => [
 					'2' => '2',
 					'3' => '3',
 					'4' => '4',
 					'5' => '5',
 					'6' => '6',
+				],
+				'condition' => [
+					'layout' => 'grid',
 				],
 			]
 		);

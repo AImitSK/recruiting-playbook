@@ -24,7 +24,7 @@ import { BlockPlaceholder } from '../components/BlockPlaceholder';
  * @return {JSX.Element} The editor component.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { columns, showCount, hideEmpty, orderby } = attributes;
+	const { layout, columns, showCount, hideEmpty, orderby } = attributes;
 
 	const blockProps = useBlockProps( {
 		className: 'rp-block-job-categories-editor',
@@ -33,9 +33,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	const getSummary = () => {
 		const parts = [];
 		parts.push(
-			columns === 1
-				? __( '1 column', 'recruiting-playbook' )
-				: `${ columns } ${ __( 'columns', 'recruiting-playbook' ) }`
+			layout === 'list'
+				? __( 'List', 'recruiting-playbook' )
+				: columns === 1
+					? __( '1 column', 'recruiting-playbook' )
+					: `${ columns } ${ __( 'columns', 'recruiting-playbook' ) }`
 		);
 		if ( showCount ) {
 			parts.push( __( 'with counter', 'recruiting-playbook' ) );
@@ -50,6 +52,28 @@ export default function Edit( { attributes, setAttributes } ) {
 					title={ __( 'Display', 'recruiting-playbook' ) }
 					initialOpen={ true }
 				>
+					<SelectControl
+						label={ __( 'Layout', 'recruiting-playbook' ) }
+						value={ layout }
+						options={ [
+							{
+								label: __( 'Grid', 'recruiting-playbook' ),
+								value: 'grid',
+							},
+							{
+								label: __( 'List', 'recruiting-playbook' ),
+								value: 'list',
+							},
+						] }
+						onChange={ ( value ) =>
+							setAttributes( { layout: value } )
+						}
+						help={ __(
+							'Grid shows cards in columns, List shows a vertical list with dividers.',
+							'recruiting-playbook'
+						) }
+					/>
+					{ layout !== 'list' && (
 					<RangeControl
 						label={ __( 'Columns', 'recruiting-playbook' ) }
 						value={ columns }
@@ -63,6 +87,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							'recruiting-playbook'
 						) }
 					/>
+					) }
 					<ToggleControl
 						label={ __(
 							'Show job count',

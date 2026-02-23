@@ -1092,3 +1092,55 @@
 .rp-plugin .rp-job-category-card__count {
     /* Nutzt .rp-badge Styles */
 }
+
+/* ─────────────────────────────────────────────────────────────────────
+   [rp_job_categories layout="list"] - Listenansicht
+   ───────────────────────────────────────────────────────────────────── */
+.rp-plugin .rp-job-categories-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.rp-plugin .rp-job-category-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rp-space-3);
+    padding: var(--rp-space-4) 0;
+    border-bottom: 1px solid var(--rp-color-border);
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--rp-transition);
+}
+
+.rp-plugin .rp-job-category-list-item:first-child {
+    border-top: 1px solid var(--rp-color-border);
+}
+
+.rp-plugin .rp-job-category-list-item:hover {
+    text-decoration: none;
+    color: var(--rp-color-primary);
+}
+
+.rp-plugin .rp-job-category-list-item__name {
+    flex: 1 1 auto;
+    font-size: var(--rp-text-base);
+    font-weight: 500;
+    color: inherit;
+}
+
+.rp-plugin .rp-job-category-list-item__count {
+    flex: 0 0 auto;
+}
+
+.rp-plugin .rp-job-category-list-item__icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rp-color-primary);
+}
+
+.rp-plugin .rp-job-category-list-item__icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}

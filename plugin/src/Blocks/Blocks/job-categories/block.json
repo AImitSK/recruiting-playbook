@@ -10,6 +10,11 @@
 	"textdomain": "recruiting-playbook",
 	"icon": "category",
 	"attributes": {
+		"layout": {
+			"type": "string",
+			"default": "grid",
+			"enum": ["grid", "list"]
+		},
 		"columns": {
 			"type": "number",
 			"default": 4

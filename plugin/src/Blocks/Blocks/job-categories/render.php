@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 // Convert attributes to shortcode attributes.
 $shortcode_atts = [
+	'layout'     => $attributes['layout'] ?? 'grid',
 	'columns'    => $attributes['columns'] ?? 4,
 	'show_count' => ! empty( $attributes['showCount'] ) ? 'true' : 'false',
 	'hide_empty' => ! empty( $attributes['hideEmpty'] ) ? 'true' : 'false',

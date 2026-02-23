@@ -33,6 +33,17 @@ class JobCategories extends AbstractElement {
 			'params' => [
 				[
 					'type'        => 'radio_button_set',
+					'heading'     => esc_attr__( 'Layout', 'recruiting-playbook' ),
+					'description' => esc_attr__( 'Grid shows cards in columns, List shows a vertical list with dividers.', 'recruiting-playbook' ),
+					'param_name'  => 'layout',
+					'default'     => 'grid',
+					'value'       => [
+						'grid' => esc_attr__( 'Grid', 'recruiting-playbook' ),
+						'list' => esc_attr__( 'List', 'recruiting-playbook' ),
+					],
+				],
+				[
+					'type'        => 'radio_button_set',
 					'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
 					'description' => esc_attr__( 'Number of columns in the grid.', 'recruiting-playbook' ),
 					'param_name'  => 'columns',
@@ -43,6 +54,13 @@ class JobCategories extends AbstractElement {
 						'4' => '4',
 						'5' => '5',
 						'6' => '6',
+					],
+					'dependency'  => [
+						[
+							'element'  => 'layout',
+							'value'    => 'grid',
+							'operator' => '==',
+						],
 					],
 				],
 				[

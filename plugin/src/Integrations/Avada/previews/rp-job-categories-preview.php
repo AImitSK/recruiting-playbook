@@ -13,7 +13,11 @@ defined( 'ABSPATH' ) || exit;
 		<span class="fusion-module-icon {{ fusionAllElements[element_type].icon }}"></span>
 		{{ fusionAllElements[element_type].name }}
 	</h4>
-	<span>Spalten: {{ params.columns || '4' }} | Sortierung: {{ params.orderby || 'name' }}</span>
+	<# if ( params.layout === 'list' ) { #>
+		<span>Layout: Liste | Sortierung: {{ params.orderby || 'name' }}</span>
+	<# } else { #>
+		<span>Layout: Grid | Spalten: {{ params.columns || '4' }} | Sortierung: {{ params.orderby || 'name' }}</span>
+	<# } #>
 	<# if ( params.show_count === 'false' ) { #>
 		<br><span>Ohne Anzahl</span>
 	<# } #>

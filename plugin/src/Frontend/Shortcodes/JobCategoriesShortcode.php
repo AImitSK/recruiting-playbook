@@ -29,7 +29,8 @@ class JobCategoriesShortcode {
 	 * Shortcode rendern
 	 *
 	 * Attribute:
-	 * - columns: Spalten im Grid (1-6, default: 4)
+	 * - layout: Darstellung (grid/list, default: grid)
+	 * - columns: Spalten im Grid (1-6, default: 4) — nur bei layout=grid
 	 * - show_count: Anzahl pro Kategorie anzeigen (true/false, default: true)
 	 * - hide_empty: Leere Kategorien verstecken (true/false, default: true)
 	 * - orderby: Sortierung (name, count, default: name)
@@ -42,6 +43,7 @@ class JobCategoriesShortcode {
 
 		$atts = shortcode_atts(
 			[
+				'layout'     => 'grid',
 				'columns'    => 4,
 				'show_count' => 'true',
 				'hide_empty' => 'true',
@@ -51,6 +53,7 @@ class JobCategoriesShortcode {
 			'rp_job_categories'
 		);
 
+		$layout     = in_array( $atts['layout'], [ 'grid', 'list' ], true ) ? $atts['layout'] : 'grid';
 		$show_count = filter_var( $atts['show_count'], FILTER_VALIDATE_BOOLEAN );
 		$hide_empty = filter_var( $atts['hide_empty'], FILTER_VALIDATE_BOOLEAN );
 		$columns    = min( 6, max( 1, absint( $atts['columns'] ) ) );
@@ -69,6 +72,24 @@ class JobCategoriesShortcode {
 		}
 
 		ob_start();
+
+		if ( 'list' === $layout ) {
+			$this->renderList( $terms, $show_count );
+		} else {
+			$this->renderGrid( $terms, $columns, $show_count );
+		}
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Grid-Layout rendern
+	 *
+	 * @param \WP_Term[] $terms      Kategorien.
+	 * @param int        $columns    Spaltenanzahl.
+	 * @param bool       $show_count Anzahl anzeigen.
+	 */
+	private function renderGrid( array $terms, int $columns, bool $show_count ): void {
 		?>
 		<div class="rp-plugin">
 			<div class="rp-job-categories rp-grid rp-grid-cols-1 sm:rp-grid-cols-2 md:rp-grid-cols-<?php echo esc_attr( $columns ); ?> rp-gap-4">
@@ -83,8 +104,32 @@ class JobCategoriesShortcode {
 			</div>
 		</div>
 		<?php
+	}
 
-		return ob_get_clean();
+	/**
+	 * List-Layout rendern
+	 *
+	 * @param \WP_Term[] $terms      Kategorien.
+	 * @param bool       $show_count Anzahl anzeigen.
+	 */
+	private function renderList( array $terms, bool $show_count ): void {
+		?>
+		<div class="rp-plugin">
+			<div class="rp-job-categories-list">
+				<?php foreach ( $terms as $term ) : ?>
+					<a href="<?php echo esc_url( get_term_link( $term ) ); ?>" class="rp-job-category-list-item">
+						<span class="rp-job-category-list-item__name"><?php echo esc_html( $term->name ); ?></span>
+						<?php if ( $show_count ) : ?>
+							<span class="rp-job-category-list-item__count rp-badge rp-badge-gray"><?php echo esc_html( number_format_i18n( $term->count ) ); ?></span>
+						<?php endif; ?>
+						<span class="rp-job-category-list-item__icon">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4"/><path d="M8 12h8"/></svg>
+						</span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
