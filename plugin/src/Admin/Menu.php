@@ -20,6 +20,7 @@ use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
 use RecruitingPlaybook\Admin\Pages\KanbanBoard;
 use RecruitingPlaybook\Admin\Pages\ReportingPage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
+use RecruitingPlaybook\Admin\Import\BackupImporter;
 use RecruitingPlaybook\Services\GdprService;
 use RecruitingPlaybook\Services\DocumentService;
 use RecruitingPlaybook\Services\EmailService;
@@ -224,6 +225,9 @@ class Menu {
 	public function handleEarlyActions(): void {
 		// Backup-Download (muss vor jeglichem Output passieren).
 		$this->handleBackupDownload();
+
+		// Backup-Import (muss vor jeglichem Output passieren).
+		$this->handleBackupImport();
 
 		// Nur auf Bewerbungen-Seite.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
@@ -488,6 +492,100 @@ class Menu {
 		$exporter->download();
 		// exit wird in download() aufgerufen.
 	}
+	/**
+	 * Backup-Import verarbeiten (vor Output)
+	 */
+	private function handleBackupImport(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten geprüft.
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'rp-settings' !== $page ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wird direkt danach geprüft.
+		if ( ! isset( $_POST['upload_backup'] ) ) {
+			return;
+		}
+
+		// Berechtigung prüfen.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Nonce prüfen.
+		check_admin_referer( 'rp_upload_backup' );
+
+		// Datei-Validierung.
+		if ( empty( $_FILES['backup_file'] ) || empty( $_FILES['backup_file']['tmp_name'] ) ) {
+			set_transient(
+				'rp_import_result',
+				[ 'errors' => [ __( 'No file uploaded.', 'recruiting-playbook' ) ] ],
+				60
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
+			exit;
+		}
+
+		$file = $_FILES['backup_file'];
+
+		// Größe prüfen (max 50 MB).
+		$max_size = 50 * 1024 * 1024;
+		if ( $file['size'] > $max_size ) {
+			set_transient(
+				'rp_import_result',
+				[ 'errors' => [ __( 'File exceeds 50 MB limit.', 'recruiting-playbook' ) ] ],
+				60
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
+			exit;
+		}
+
+		// Dateiendung prüfen.
+		$ext = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
+		if ( 'json' !== $ext ) {
+			set_transient(
+				'rp_import_result',
+				[ 'errors' => [ __( 'Only .json files are allowed.', 'recruiting-playbook' ) ] ],
+				60
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
+			exit;
+		}
+
+		// Datei lesen.
+		$json = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading uploaded temp file
+
+		$importer = new BackupImporter();
+		$data     = $importer->validateBackup( $json );
+
+		if ( is_wp_error( $data ) ) {
+			set_transient(
+				'rp_import_result',
+				[ 'errors' => [ $data->get_error_message() ] ],
+				60
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
+			exit;
+		}
+
+		// Import-Optionen aus POST.
+		$options = [
+			'settings_mode'        => isset( $_POST['settings_mode'] ) ? sanitize_text_field( wp_unslash( $_POST['settings_mode'] ) ) : 'skip',
+			'duplicate_candidates' => isset( $_POST['duplicate_candidates'] ) ? sanitize_text_field( wp_unslash( $_POST['duplicate_candidates'] ) ) : 'skip',
+			'duplicate_jobs'       => isset( $_POST['duplicate_jobs'] ) ? sanitize_text_field( wp_unslash( $_POST['duplicate_jobs'] ) ) : 'skip',
+			'import_activity_log'  => ! empty( $_POST['import_activity_log'] ),
+			'import_email_log'     => ! empty( $_POST['import_email_log'] ),
+		];
+
+		// Import durchführen.
+		$result = $importer->import( $data, $options );
+
+		set_transient( 'rp_import_result', $result->toArray(), 60 );
+		wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
+		exit;
+	}
+
 	/**
 	 * Einstellungen rendern
 	 */

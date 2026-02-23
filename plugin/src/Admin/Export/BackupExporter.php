@@ -24,14 +24,26 @@ class BackupExporter {
 	 */
 	public function createBackup(): array {
 		return [
-			'meta'         => $this->getMetaData(),
-			'settings'     => $this->getSettings(),
-			'jobs'         => $this->getJobs(),
-			'taxonomies'   => $this->getTaxonomies(),
-			'candidates'   => $this->getCandidates(),
-			'applications' => $this->getApplications(),
-			'documents'    => $this->getDocumentsMeta(),
-			'activity_log' => $this->getActivityLog(),
+			'meta'              => $this->getMetaData(),
+			'settings'          => $this->getSettings(),
+			'jobs'              => $this->getJobs(),
+			'taxonomies'        => $this->getTaxonomies(),
+			'candidates'        => $this->getCandidates(),
+			'applications'      => $this->getApplications(),
+			'documents'         => $this->getDocumentsMeta(),
+			'notes'             => $this->getNotes(),
+			'ratings'           => $this->getRatings(),
+			'talent_pool'       => $this->getTalentPool(),
+			'email_templates'   => $this->getEmailTemplates(),
+			'signatures'        => $this->getSignatures(),
+			'field_definitions' => $this->getFieldDefinitions(),
+			'form_templates'    => $this->getFormTemplates(),
+			'form_config'       => $this->getFormConfig(),
+			'webhooks'          => $this->getWebhooks(),
+			'job_assignments'   => $this->getJobAssignments(),
+			'email_log'         => $this->getEmailLog(),
+			'ai_analyses'       => $this->getAiAnalyses(),
+			'activity_log'      => $this->getActivityLog(),
 		];
 	}
 
@@ -42,12 +54,13 @@ class BackupExporter {
 	 */
 	private function getMetaData(): array {
 		return [
-			'plugin_version' => RP_VERSION,
-			'wp_version'     => get_bloginfo( 'version' ),
-			'php_version'    => PHP_VERSION,
-			'site_url'       => get_site_url(),
-			'export_date'    => current_time( 'mysql' ),
-			'export_user'    => wp_get_current_user()->user_login,
+			'backup_format_version' => '2.0',
+			'plugin_version'        => RP_VERSION,
+			'wp_version'            => get_bloginfo( 'version' ),
+			'php_version'           => PHP_VERSION,
+			'site_url'              => get_site_url(),
+			'export_date'           => current_time( 'mysql' ),
+			'export_user'           => wp_get_current_user()->user_login,
 		];
 	}
 
@@ -218,6 +231,177 @@ class BackupExporter {
 			$wpdb->prepare( "SELECT * FROM {$table} ORDER BY created_at DESC LIMIT %d", 1000 ),
 			ARRAY_A
 		) ?: [];
+	}
+
+	/**
+	 * Notizen exportieren
+	 *
+	 * @return array
+	 */
+	private function getNotes(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_notes';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Bewertungen exportieren
+	 *
+	 * @return array
+	 */
+	private function getRatings(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_ratings';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Talent-Pool exportieren
+	 *
+	 * @return array
+	 */
+	private function getTalentPool(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_talent_pool';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * E-Mail-Vorlagen exportieren
+	 *
+	 * @return array
+	 */
+	private function getEmailTemplates(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_email_templates';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * E-Mail-Signaturen exportieren
+	 *
+	 * @return array
+	 */
+	private function getSignatures(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_signatures';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Feld-Definitionen exportieren
+	 *
+	 * @return array
+	 */
+	private function getFieldDefinitions(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_field_definitions';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Formular-Vorlagen exportieren
+	 *
+	 * @return array
+	 */
+	private function getFormTemplates(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_form_templates';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Formular-Konfigurationen exportieren
+	 *
+	 * @return array
+	 */
+	private function getFormConfig(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_form_config';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Webhooks exportieren
+	 *
+	 * @return array
+	 */
+	private function getWebhooks(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_webhooks';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * Job-Zuweisungen exportieren
+	 *
+	 * @return array
+	 */
+	private function getJobAssignments(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_user_job_assignments';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
+	}
+
+	/**
+	 * E-Mail-Log exportieren (limitiert auf 5000)
+	 *
+	 * @return array
+	 */
+	private function getEmailLog(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_email_log';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded, LIMIT is constant
+		return $wpdb->get_results(
+			$wpdb->prepare( "SELECT * FROM {$table} ORDER BY created_at DESC LIMIT %d", 5000 ),
+			ARRAY_A
+		) ?: [];
+	}
+
+	/**
+	 * AI-Analysen exportieren
+	 *
+	 * @return array
+	 */
+	private function getAiAnalyses(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'rp_ai_analyses';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is hardcoded
+		return $wpdb->get_results( "SELECT * FROM {$table}", ARRAY_A ) ?: [];
 	}
 
 	/**

@@ -129,7 +129,7 @@ export function SettingsPage() {
 							{ i18n.tabCompany || __( 'Company Information', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						<TabsTrigger value="export">
-							{ i18n.tabExport || __( 'Export', 'recruiting-playbook' ) }
+							{ i18n.tabExport || __( 'Export & Import', 'recruiting-playbook' ) }
 						</TabsTrigger>
 						{ config.isPro && (
 							<TabsTrigger value="roles">

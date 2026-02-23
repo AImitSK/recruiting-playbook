@@ -397,15 +397,23 @@ class Settings {
 		$is_pro = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
 
 		// Konfiguration für React.
+		// Import-Ergebnis aus Transient lesen (falls vorhanden).
+		$import_result = get_transient( 'rp_import_result' );
+		if ( false !== $import_result ) {
+			delete_transient( 'rp_import_result' );
+		}
+
 		$data = [
-			'logoUrl'     => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-			'homeUrl'     => home_url(),
-			'exportUrl'   => admin_url( 'admin.php?page=rp-settings' ),
-			'nonce'       => wp_create_nonce( 'rp_download_backup' ),
-			'pages'       => $this->getPages(),
-			'isPro'       => $is_pro,
-			'upgradeUrl'  => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
-			'i18n'        => $this->getI18nStrings(),
+			'logoUrl'      => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			'homeUrl'      => home_url(),
+			'exportUrl'    => admin_url( 'admin.php?page=rp-settings' ),
+			'nonce'        => wp_create_nonce( 'rp_download_backup' ),
+			'importNonce'  => wp_create_nonce( 'rp_upload_backup' ),
+			'importResult' => $import_result ?: null,
+			'pages'        => $this->getPages(),
+			'isPro'        => $is_pro,
+			'upgradeUrl'   => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+			'i18n'         => $this->getI18nStrings(),
 		];
 
 		// Pro-Feature: Benutzerrollen-Daten für React-UI.
@@ -454,7 +462,7 @@ class Settings {
 			'pageTitle'             => __( 'Settings', 'recruiting-playbook' ),
 			'tabGeneral'            => __( 'General', 'recruiting-playbook' ),
 			'tabCompany'            => __( 'Company Data', 'recruiting-playbook' ),
-			'tabExport'             => __( 'Export', 'recruiting-playbook' ),
+			'tabExport'             => __( 'Export & Import', 'recruiting-playbook' ),
 
 			// General Settings.
 			'notifications'         => __( 'Notifications', 'recruiting-playbook' ),
@@ -503,11 +511,50 @@ class Settings {
 			'applicationsExport'    => __( 'Applications', 'recruiting-playbook' ),
 			'documentsExport'       => __( 'Document metadata', 'recruiting-playbook' ),
 			'activityLogExport'     => __( 'Activity log (last 1000 entries)', 'recruiting-playbook' ),
+			'notesExport'           => __( 'Notes', 'recruiting-playbook' ),
+			'ratingsExport'         => __( 'Ratings', 'recruiting-playbook' ),
+			'talentPoolExport'      => __( 'Talent Pool', 'recruiting-playbook' ),
+			'emailTemplatesExport'  => __( 'Email templates', 'recruiting-playbook' ),
+			'signaturesExport'      => __( 'Email signatures', 'recruiting-playbook' ),
+			'fieldDefinitionsExport' => __( 'Field definitions', 'recruiting-playbook' ),
+			'formTemplatesExport'   => __( 'Form templates', 'recruiting-playbook' ),
+			'formConfigExport'      => __( 'Form configuration', 'recruiting-playbook' ),
+			'webhooksExport'        => __( 'Webhooks', 'recruiting-playbook' ),
+			'jobAssignmentsExport'  => __( 'Job assignments', 'recruiting-playbook' ),
+			'emailLogExport'        => __( 'Email log (last 5000 entries)', 'recruiting-playbook' ),
+			'aiAnalysesExport'      => __( 'AI analyses', 'recruiting-playbook' ),
 			'note'                  => __( 'Note:', 'recruiting-playbook' ),
 			'documentsNotIncluded'  => __( 'Uploaded documents (PDFs etc.) are not exported for privacy reasons.', 'recruiting-playbook' ),
 			'downloadBackup'        => __( 'Download Backup', 'recruiting-playbook' ),
 			'downloadStarted'       => __( 'Download has been started.', 'recruiting-playbook' ),
 			'preparing'             => __( 'Preparing...', 'recruiting-playbook' ),
+
+			// Import Settings.
+			'importBackup'          => __( 'Import Backup', 'recruiting-playbook' ),
+			'importBackupDesc'      => __( 'Restore plugin data from a JSON backup file', 'recruiting-playbook' ),
+			'selectFile'            => __( 'Select backup file', 'recruiting-playbook' ),
+			'settingsMode'          => __( 'Settings', 'recruiting-playbook' ),
+			'settingsModeSkip'      => __( 'Skip (keep current)', 'recruiting-playbook' ),
+			'settingsModeMerge'     => __( 'Merge (add missing)', 'recruiting-playbook' ),
+			'settingsModeOverwrite' => __( 'Overwrite', 'recruiting-playbook' ),
+			'duplicateCandidates'   => __( 'Duplicate candidates (same email)', 'recruiting-playbook' ),
+			'duplicateJobs'         => __( 'Duplicate jobs (same title)', 'recruiting-playbook' ),
+			'duplicateSkip'         => __( 'Skip', 'recruiting-playbook' ),
+			'duplicateUpdate'       => __( 'Update existing', 'recruiting-playbook' ),
+			'importActivityLog'     => __( 'Import activity log', 'recruiting-playbook' ),
+			'importEmailLog'        => __( 'Import email log', 'recruiting-playbook' ),
+			'importWarning'         => __( 'It is recommended to create a backup before importing.', 'recruiting-playbook' ),
+			'startImport'           => __( 'Start Import', 'recruiting-playbook' ),
+			'importing'             => __( 'Importing...', 'recruiting-playbook' ),
+			'importResult'          => __( 'Import Result', 'recruiting-playbook' ),
+			'importType'            => __( 'Type', 'recruiting-playbook' ),
+			'importCreated'         => __( 'Created', 'recruiting-playbook' ),
+			'importSkipped'         => __( 'Skipped', 'recruiting-playbook' ),
+			'importUpdated'         => __( 'Updated', 'recruiting-playbook' ),
+			'importWarnings'        => __( 'Warnings', 'recruiting-playbook' ),
+			'importErrors'          => __( 'Errors', 'recruiting-playbook' ),
+			'importSuccess'         => __( 'Import completed successfully.', 'recruiting-playbook' ),
+			'noFileSelected'        => __( 'Please select a file.', 'recruiting-playbook' ),
 
 			// Pro Settings.
 			'proSettings'           => __( 'Pro Settings', 'recruiting-playbook' ),
