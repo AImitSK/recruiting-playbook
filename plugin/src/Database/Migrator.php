@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Migrator {
 
-	private const SCHEMA_VERSION = '2.3.0';
+	private const SCHEMA_VERSION = '2.3.1';
 	private const SCHEMA_OPTION  = 'rp_db_version';
 
 	/**
@@ -127,6 +127,11 @@ class Migrator {
 		// Migration 2.0.2: phone und message zu Custom Fields machen (editierbar).
 		if ( version_compare( $from_version, '2.0.2', '<' ) ) {
 			$this->migratePhoneMessageToCustomFields();
+		}
+
+		// Migration 2.3.1: Firmen-Signatur is_default sicherstellen.
+		if ( version_compare( $from_version, '2.3.1', '<' ) ) {
+			$this->migrateEnsureCompanySignatureDefault();
 		}
 	}
 
@@ -1278,6 +1283,49 @@ class Migrator {
 
 		if ( $updated > 0 ) {
 			$this->log( "Migrated phone and message to custom fields ({$updated} rows updated)" );
+		}
+	}
+
+	/**
+	 * Migration 2.3.1: Sicherstellen, dass eine Firmen-Signatur als Default markiert ist
+	 *
+	 * Falls keine Firmen-Signatur is_default=1 hat, wird die älteste auf is_default=1 gesetzt.
+	 */
+	private function migrateEnsureCompanySignatureDefault(): void {
+		global $wpdb;
+
+		$table = Schema::getTables()['signatures'];
+
+		// Prüfen ob eine Firmen-Signatur mit is_default=1 existiert.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$has_default = $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$table} WHERE user_id IS NULL AND is_default = 1"
+		);
+
+		if ( $has_default > 0 ) {
+			return;
+		}
+
+		// Älteste Firmen-Signatur auf is_default=1 setzen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$first_id = $wpdb->get_var(
+			"SELECT id FROM {$table} WHERE user_id IS NULL ORDER BY id ASC LIMIT 1"
+		);
+
+		if ( $first_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->update(
+				$table,
+				[
+					'is_default' => 1,
+					'updated_at' => current_time( 'mysql' ),
+				],
+				[ 'id' => (int) $first_id ],
+				[ '%d', '%s' ],
+				[ '%d' ]
+			);
+
+			$this->log( 'Set company signature #' . $first_id . ' as default' );
 		}
 	}
 

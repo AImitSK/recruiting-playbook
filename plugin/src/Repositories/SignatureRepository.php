@@ -152,14 +152,16 @@ class SignatureRepository {
 	/**
 	 * Firmen-Signatur finden (user_id = NULL)
 	 *
+	 * Fallback-Kette:
+	 * 1. Firmen-Signatur mit is_default = 1
+	 * 2. Erste vorhandene Firmen-Signatur (älteste)
+	 *
 	 * @return array|null
 	 */
 	public function findCompanyDefault(): ?array {
 		global $wpdb;
 
-		// Nur Firmen-Signaturen die explizit als Standard markiert sind.
-		// Kein Fallback - wenn keine als Standard markiert ist, wird null zurückgegeben
-		// und renderMinimalSignature() aus den Einstellungen verwendet.
+		// Erst nach explizit als Standard markierter Firmen-Signatur suchen.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$signature = $wpdb->get_row(
 			"SELECT * FROM {$this->table}
@@ -167,6 +169,18 @@ class SignatureRepository {
 			LIMIT 1",
 			ARRAY_A
 		);
+
+		// Fallback: Erste vorhandene Firmen-Signatur (älteste).
+		if ( ! $signature ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$signature = $wpdb->get_row(
+				"SELECT * FROM {$this->table}
+				WHERE user_id IS NULL
+				ORDER BY id ASC
+				LIMIT 1",
+				ARRAY_A
+			);
+		}
 
 		if ( ! $signature ) {
 			return null;

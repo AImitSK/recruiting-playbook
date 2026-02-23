@@ -775,6 +775,11 @@ class EmailService {
 	 * @return string E-Mail-Body mit Signatur.
 	 */
 	private function appendSignature( string $body_html, ?int $signature_id = null, ?int $user_id = null ): string {
+		// Prüfen ob bereits eine Signatur vorhanden ist (verhindert doppelte Signaturen).
+		if ( preg_match( '/<div class="rp-signature[\s"-]/', $body_html ) ) {
+			return $body_html;
+		}
+
 		// User-ID für Fallback bestimmen.
 		if ( null === $user_id ) {
 			$user_id = get_current_user_id() ?: null;
