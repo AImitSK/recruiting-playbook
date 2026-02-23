@@ -41,6 +41,10 @@ jobs:
         working-directory: plugin
         run: npm run build
 
+      - name: Merge JSON translation files for webpack bundles
+        working-directory: plugin
+        run: python3 tools/merge-json-translations.py languages
+
       - name: Clean up and create plugin ZIP
         run: |
           cd plugin
