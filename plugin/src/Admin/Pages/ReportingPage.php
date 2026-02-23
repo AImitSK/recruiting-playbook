@@ -43,6 +43,8 @@ class ReportingPage {
 
 		?>
 		<div class="wrap rp-admin">
+			<h1 class="screen-reader-text"><?php esc_html_e( 'Reports & Statistics', 'recruiting-playbook' ); ?></h1>
+			<hr class="wp-header-end">
 			<div id="rp-reporting-root"></div>
 		</div>
 		<?php

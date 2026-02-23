@@ -78,6 +78,8 @@ class FormBuilderPage {
 
 		?>
 		<div class="wrap">
+			<h1 class="screen-reader-text"><?php esc_html_e( 'Form Builder', 'recruiting-playbook' ); ?></h1>
+			<hr class="wp-header-end">
 			<div id="rp-form-builder-root"></div>
 		</div>
 		<?php

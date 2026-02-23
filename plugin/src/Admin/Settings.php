@@ -376,10 +376,14 @@ class Settings {
 
 		// React-Mount-Point.
 		?>
-		<div id="rp-settings-root">
-			<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
-				<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
-				<?php esc_html_e( 'Loading settings...', 'recruiting-playbook' ); ?>
+		<div class="wrap">
+			<h1 class="screen-reader-text"><?php esc_html_e( 'Settings', 'recruiting-playbook' ); ?></h1>
+			<hr class="wp-header-end">
+			<div id="rp-settings-root">
+				<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
+					<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
+					<?php esc_html_e( 'Loading settings...', 'recruiting-playbook' ); ?>
+				</div>
 			</div>
 		</div>
 		<?php

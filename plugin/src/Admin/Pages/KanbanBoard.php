@@ -41,11 +41,17 @@ class KanbanBoard {
 		// Assets laden.
 		$this->enqueue_assets();
 
+		// Wrapper mit Notice-Boundary für WordPress Admin Notices.
+		echo '<div class="wrap">';
+		echo '<h1 class="screen-reader-text">' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
+		echo '<hr class="wp-header-end">';
+
 		// React-Mount-Point (React übernimmt das gesamte Layout).
 		echo '<div id="rp-kanban-root">';
 		echo '<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">';
 		echo '<span class="spinner is-active" style="float: none; margin-right: 10px;"></span> ';
 		echo esc_html__( 'Loading Kanban board...', 'recruiting-playbook' );
+		echo '</div>';
 		echo '</div>';
 		echo '</div>';
 	}

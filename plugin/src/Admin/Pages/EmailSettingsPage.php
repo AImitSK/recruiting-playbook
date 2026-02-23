@@ -128,23 +128,27 @@ class EmailSettingsPage {
 
 		echo '<div class="wrap rp-email-page">';
 
+		// Notice-Boundary: h1 + hr sorgen dafür, dass WordPress Admin Notices oben landen.
+		if ( 'list' === $action && 'templates' === $tab ) {
+			// React App: verstecktes h1 für Notice-Platzierung.
+			echo '<h1 class="screen-reader-text">' . esc_html__( 'Email Templates & Signatures', 'recruiting-playbook' ) . '</h1>';
+		} else {
+			// Legacy-Seiten: sichtbares h1.
+			echo '<h1 class="wp-heading-inline">' . esc_html__( 'Email Templates & Signatures', 'recruiting-playbook' ) . '</h1>';
+		}
+		echo '<hr class="wp-header-end">';
+
 		// Erfolgsmeldungen.
 		$this->renderMessages();
 
 		// Auto-E-Mail Tab (legacy PHP) vs. React App.
 		if ( 'auto-email' === $tab && 'list' === $action ) {
-			// WordPress-Standard-Header für Legacy-Seiten.
-			echo '<h1 class="wp-heading-inline">' . esc_html__( 'Email Templates & Signatures', 'recruiting-playbook' ) . '</h1>';
-			echo '<hr class="wp-header-end">';
 			$this->renderTabs( $tab );
 			$this->renderAutoEmailSettings();
 		} elseif ( 'new' === $action || 'edit' === $action ) {
-			// WordPress-Standard-Header für Legacy-Formulare.
-			echo '<h1 class="wp-heading-inline">' . esc_html__( 'Email Templates & Signatures', 'recruiting-playbook' ) . '</h1>';
-			echo '<hr class="wp-header-end">';
 			$this->renderForm( $template_id );
 		} else {
-			// React App für Templates & Signaturen - keine PHP-Überschrift (React App hat eigene).
+			// React App für Templates & Signaturen.
 			$this->renderList();
 		}
 

@@ -33,7 +33,7 @@ class ApplicationsPage {
 
 		?>
 		<div class="wrap rp-admin">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Applications', 'recruiting-playbook' ); ?></h1>
+			<h1 class="screen-reader-text"><?php esc_html_e( 'Applications', 'recruiting-playbook' ); ?></h1>
 			<hr class="wp-header-end">
 			<div id="rp-applications-root"></div>
 		</div>
