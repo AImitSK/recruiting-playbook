@@ -41,7 +41,7 @@ class JobLocation {
 			'hierarchical'      => false,
 			'labels'            => $labels,
 			'show_ui'           => true,
-			'show_in_menu'      => false,
+			'show_in_menu'      => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
 			'rewrite'           => [ 'slug' => 'standort' ],

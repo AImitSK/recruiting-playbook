@@ -126,36 +126,6 @@ class Menu {
 			[ $this, 'renderSettings' ]
 		);
 
-		// Taxonomie-Verwaltung: Standorte.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Locations', 'recruiting-playbook' ),
-			__( 'Locations', 'recruiting-playbook' ),
-			'manage_categories',
-			'edit-tags.php?taxonomy=job_location&post_type=job_listing',
-			''
-		);
-
-		// Taxonomie-Verwaltung: Beschäftigungsart.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Employment Types', 'recruiting-playbook' ),
-			__( 'Employment Types', 'recruiting-playbook' ),
-			'manage_categories',
-			'edit-tags.php?taxonomy=employment_type&post_type=job_listing',
-			''
-		);
-
-		// Taxonomie-Verwaltung: Kategorien.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Categories', 'recruiting-playbook' ),
-			__( 'Categories', 'recruiting-playbook' ),
-			'manage_categories',
-			'edit-tags.php?taxonomy=job_category&post_type=job_listing',
-			''
-		);
-
 		// Bewerbung-Detailansicht (unter Parent registriert für Menü-Highlighting).
 		add_submenu_page(
 			'recruiting-playbook',
@@ -197,7 +167,7 @@ class Menu {
 	 * @return string Korrigiertes Parent-File.
 	 */
 	public function filterParentFile( $parent_file ) {
-		global $submenu_file, $pagenow, $taxonomy;
+		global $submenu_file;
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
@@ -212,19 +182,6 @@ class Menu {
 		if ( 'rp-bulk-email' === $current_page ) {
 			$submenu_file = 'recruiting-playbook';
 			return 'recruiting-playbook';
-		}
-
-		// Taxonomie-Seiten → Recruiting-Menü.
-		if ( 'edit-tags.php' === $pagenow || 'term.php' === $pagenow ) {
-			$job_taxonomies = [ 'job_location', 'employment_type', 'job_category' ];
-			if ( isset( $taxonomy ) && in_array( $taxonomy, $job_taxonomies, true ) ) {
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
-				if ( 'job_listing' === $post_type ) {
-					$submenu_file = "edit-tags.php?taxonomy={$taxonomy}&post_type=job_listing";
-					return 'recruiting-playbook';
-				}
-			}
 		}
 
 		return $parent_file;

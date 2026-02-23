@@ -55,7 +55,7 @@ class JobListing {
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => 'recruiting-playbook',
+			'show_in_menu'          => true,
 			'query_var'             => true,
 			'rewrite'               => [
 				'slug'       => $this->getSlug(),
@@ -65,7 +65,7 @@ class JobListing {
 			'map_meta_cap'          => true,
 			'has_archive'           => true,
 			'hierarchical'          => false,
-			'menu_position'         => null,
+			'menu_position'         => 24,
 			'menu_icon'             => 'dashicons-businessman',
 			'supports'              => [
 				'title',
