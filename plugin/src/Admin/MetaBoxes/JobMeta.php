@@ -24,6 +24,11 @@ class JobMeta {
 	 * Meta-Felder Definitionen
 	 */
 	private const FIELDS = [
+		'_rp_featured'            => [
+			'type'     => 'checkbox',
+			'label'    => 'Hervorgehobene Stelle (Top-Job)',
+			'sanitize' => 'boolval',
+		],
 		'_rp_salary_min'          => [
 			'type'     => 'number',
 			'label'    => 'Gehalt (Min)',
@@ -130,6 +135,11 @@ class JobMeta {
 
 		echo '<div class="rp-meta-fields">';
 
+		// Featured / Hervorgehobene Stelle.
+		echo '<div class="rp-featured-toggle">';
+		$this->renderField( '_rp_featured', $post );
+		echo '</div>';
+
 		// Gehalt.
 		echo '<fieldset class="rp-fieldset">';
 		echo '<legend>' . esc_html__( 'Salary', 'recruiting-playbook' ) . '</legend>';
@@ -176,6 +186,8 @@ class JobMeta {
 			.rp-field input, .rp-field select { width: 100%; }
 			.rp-field-checkbox { flex-direction: row; align-items: center; }
 			.rp-field-checkbox input { width: auto; margin-right: 8px; }
+			.rp-featured-toggle { background: #f0f6fc; border: 1px solid #c3c4c7; border-left: 4px solid #2271b1; padding: 12px 15px; }
+			.rp-featured-toggle .rp-field-checkbox label { font-weight: 600; font-size: 13px; }
 		</style>
 		<?php
 	}
