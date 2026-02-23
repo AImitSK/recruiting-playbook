@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Translate untranslated PO entries for recruiting-playbook de_DE.
+Translate untranslated PO entries for recruiting-playbook.
 Run from plugin/languages/ directory:
-    python3 ../tools/translate_po.py
+    python3 ../tools/translate_po.py <po_file> [<json_dict>]
+
+If <json_dict> is provided, translations are loaded from JSON instead of built-in German dict.
+JSON format: {"translations": {...}, "plural_translations": {...}, "force_translations": {...}}
 """
+import json
 import re
 import sys
 import os
@@ -654,7 +658,7 @@ FORCE_TRANSLATIONS = {
 }
 
 
-def translate_po_file(filepath):
+def translate_po_file(filepath, translations, plural_translations, force_translations):
     """Translate PO file using binary find-and-replace. Preserves all bytes except msgstr values."""
     with open(filepath, 'rb') as f:
         content = f.read()
@@ -664,26 +668,26 @@ def translate_po_file(filepath):
     # Try both line endings (file may have mixed CRLF/LF after msgmerge on Linux)
     eols = [b'\r\n', b'\n'] if b'\r\n' in content else [b'\n']
 
-    # Singular translations: replace msgid "X"\nmsgstr "" with msgid "X"\nmsgstr "German"
-    for english, german in TRANSLATIONS.items():
+    # Singular translations: replace msgid "X"\nmsgstr "" with msgid "X"\nmsgstr "translated"
+    for english, translated in translations.items():
         eng_bytes = english.encode('utf-8')
-        ger_bytes = german.encode('utf-8')
+        trans_bytes = translated.encode('utf-8')
 
         for eol in eols:
             old = b'msgid "' + eng_bytes + b'"' + eol + b'msgstr ""'
-            new = b'msgid "' + eng_bytes + b'"' + eol + b'msgstr "' + ger_bytes + b'"'
+            new = b'msgid "' + eng_bytes + b'"' + eol + b'msgstr "' + trans_bytes + b'"'
 
             if old in content:
                 content = content.replace(old, new)
                 translated_count += 1
                 break
 
-    # Plural translations: replace msgstr[0] ""/msgstr[1] "" with German forms
-    for (eng_sing, eng_plur), (ger_sing, ger_plur) in PLURAL_TRANSLATIONS.items():
+    # Plural translations
+    for (eng_sing, eng_plur), (trans_sing, trans_plur) in plural_translations.items():
         es = eng_sing.encode('utf-8')
         ep = eng_plur.encode('utf-8')
-        gs = ger_sing.encode('utf-8')
-        gp = ger_plur.encode('utf-8')
+        ts = trans_sing.encode('utf-8')
+        tp = trans_plur.encode('utf-8')
 
         for eol in eols:
             old = (b'msgid "' + es + b'"' + eol +
@@ -692,8 +696,8 @@ def translate_po_file(filepath):
                    b'msgstr[1] ""')
             new = (b'msgid "' + es + b'"' + eol +
                    b'msgid_plural "' + ep + b'"' + eol +
-                   b'msgstr[0] "' + gs + b'"' + eol +
-                   b'msgstr[1] "' + gp + b'"')
+                   b'msgstr[0] "' + ts + b'"' + eol +
+                   b'msgstr[1] "' + tp + b'"')
 
             if old in content:
                 content = content.replace(old, new)
@@ -701,7 +705,7 @@ def translate_po_file(filepath):
                 break
 
     # Force-update entries with wrong existing translations
-    for english, (wrong, correct) in FORCE_TRANSLATIONS.items():
+    for english, (wrong, correct) in force_translations.items():
         eng_bytes = english.encode('utf-8')
         wrong_bytes = wrong.encode('utf-8')
         correct_bytes = correct.encode('utf-8')
@@ -721,11 +725,42 @@ def translate_po_file(filepath):
     return translated_count
 
 
+def load_json_dict(json_path):
+    """Load translations from a JSON dictionary file."""
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    translations = data.get('translations', {})
+
+    # Convert plural_translations from JSON format to tuple-keyed dict
+    plural_translations = {}
+    for key, val in data.get('plural_translations', {}).items():
+        parts = key.split('|')
+        if len(parts) == 2 and len(val) == 2:
+            plural_translations[(parts[0], parts[1])] = (val[0], val[1])
+
+    # Convert force_translations from JSON format
+    force_translations = {}
+    for key, val in data.get('force_translations', {}).items():
+        if len(val) == 2:
+            force_translations[key] = (val[0], val[1])
+
+    return translations, plural_translations, force_translations
+
+
 def main():
     po_file = sys.argv[1] if len(sys.argv) > 1 else 'recruiting-playbook-de_DE.po'
+    json_dict = sys.argv[2] if len(sys.argv) > 2 else None
 
-    print(f"Translating {po_file}...")
-    count = translate_po_file(po_file)
+    if json_dict:
+        translations, plural_translations, force_translations = load_json_dict(json_dict)
+    else:
+        translations = TRANSLATIONS
+        plural_translations = PLURAL_TRANSLATIONS
+        force_translations = FORCE_TRANSLATIONS
+
+    print(f"Translating {po_file} ({len(translations)} entries)...")
+    count = translate_po_file(po_file, translations, plural_translations, force_translations)
     print(f"Translated {count} entries in {po_file}")
 
 
