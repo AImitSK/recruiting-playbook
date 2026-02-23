@@ -7,7 +7,7 @@
  */
 
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Star, Briefcase, Users, TrendingUp } from 'lucide-react';
 import { useRating } from './hooks/useRating';
 
@@ -336,7 +336,7 @@ export function RatingBadge( { average, count = 0 } ) {
 				fontSize: '0.75rem',
 				fontWeight: 500,
 			} }
-			title={ `${ count } ${ count === 1 ? __( 'rating', 'recruiting-playbook' ) : __( 'ratings', 'recruiting-playbook' ) }` }
+			title={ sprintf( _n( '%d rating', '%d ratings', count, 'recruiting-playbook' ), count ) }
 		>
 			<Star style={ { width: '0.75rem', height: '0.75rem', fill: '#f59e0b', color: '#f59e0b' } } />
 			<span>{ average.toFixed( 1 ) }</span>

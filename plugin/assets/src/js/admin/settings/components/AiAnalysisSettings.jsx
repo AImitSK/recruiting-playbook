@@ -10,6 +10,7 @@
 import { useState, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
+import { getWpLocale } from '../../utils/locale';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -107,7 +108,7 @@ function formatDate( dateStr ) {
 		return '—';
 	}
 	const d = new Date( dateStr );
-	return d.toLocaleDateString( 'de-DE', {
+	return d.toLocaleDateString( getWpLocale(), {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
@@ -290,7 +291,7 @@ export function AiAnalysisSettings() {
 							</Alert>
 						) }
 						<p style={ { margin: 0, fontSize: '0.8125rem', color: '#6b7280' } }>
-							{ __( 'Next reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( 'de-DE' ) : '—' }
+							{ __( 'Next reset:', 'recruiting-playbook' ) } { usage.reset_date ? new Date( usage.reset_date ).toLocaleDateString( getWpLocale() ) : '—' }
 						</p>
 					</div>
 				</CardContent>

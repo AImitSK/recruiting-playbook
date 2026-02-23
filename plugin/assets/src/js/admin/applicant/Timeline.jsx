@@ -10,15 +10,16 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { RefreshCw, Clock, MessageSquare, Star, Mail, FileText, UserCheck } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { getWpLocale } from '../utils/locale';
 import { useTimeline } from './hooks/useTimeline';
 
 const CATEGORY_FILTERS = [
-	{ id: 'all', label: 'All' },
-	{ id: 'status', label: 'Status' },
-	{ id: 'note', label: 'Notes' },
-	{ id: 'rating', label: 'Ratings' },
-	{ id: 'email', label: 'Emails' },
-	{ id: 'document', label: 'Documents' },
+	{ id: 'all', label: __( 'All', 'recruiting-playbook' ) },
+	{ id: 'status', label: __( 'Status', 'recruiting-playbook' ) },
+	{ id: 'note', label: __( 'Notes', 'recruiting-playbook' ) },
+	{ id: 'rating', label: __( 'Ratings', 'recruiting-playbook' ) },
+	{ id: 'email', label: __( 'Emails', 'recruiting-playbook' ) },
+	{ id: 'document', label: __( 'Documents', 'recruiting-playbook' ) },
 ];
 
 const ACTIVITY_ICONS = {
@@ -79,7 +80,7 @@ function formatDateHeader( dateString ) {
 	if ( dateString === todayString ) return __( 'Today', 'recruiting-playbook' );
 	if ( dateString === yesterdayString ) return __( 'Yesterday', 'recruiting-playbook' );
 
-	return date.toLocaleDateString( 'de-DE', {
+	return date.toLocaleDateString( getWpLocale(), {
 		weekday: 'long',
 		day: 'numeric',
 		month: 'long',
@@ -88,7 +89,7 @@ function formatDateHeader( dateString ) {
 }
 
 function formatTime( dateString ) {
-	return new Date( dateString ).toLocaleTimeString( 'de-DE', {
+	return new Date( dateString ).toLocaleTimeString( getWpLocale(), {
 		hour: '2-digit',
 		minute: '2-digit',
 	} );

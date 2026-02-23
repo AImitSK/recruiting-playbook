@@ -1,33 +1,35 @@
 /**
  * Timeline Item Component
  *
- * Einzelner Eintrag in der Activity Timeline
+ * Single entry in the activity timeline
  *
  * @package RecruitingPlaybook
  */
 
+import { __ } from '@wordpress/i18n';
+import { getWpLocale } from '../utils/locale';
+
 /**
- * Status-Labels
+ * Status labels
  */
 const STATUS_LABELS = {
-	new: 'Neu',
-	screening: 'In Prüfung',
-	interview: 'Interview',
-	offer: 'Angebot',
-	hired: 'Eingestellt',
-	rejected: 'Abgelehnt',
-	withdrawn: 'Zurückgezogen',
+	new: __( 'New', 'recruiting-playbook' ),
+	screening: __( 'Screening', 'recruiting-playbook' ),
+	interview: __( 'Interview', 'recruiting-playbook' ),
+	offer: __( 'Offer', 'recruiting-playbook' ),
+	hired: __( 'Hired', 'recruiting-playbook' ),
+	rejected: __( 'Rejected', 'recruiting-playbook' ),
+	withdrawn: __( 'Withdrawn', 'recruiting-playbook' ),
 };
 
 /**
- * Status-Label ermitteln
+ * Get status label
  *
- * @param {string} status Status-Schlüssel
- * @return {string} Lokalisiertes Label
+ * @param {string} status Status key
+ * @return {string} Localized label
  */
 function getStatusLabel( status ) {
-	const i18n = window.rpApplicant?.i18n?.statuses || {};
-	return i18n[ status ] || STATUS_LABELS[ status ] || status;
+	return STATUS_LABELS[ status ] || status;
 }
 
 /**
@@ -38,17 +40,15 @@ function getStatusLabel( status ) {
  * @return {JSX.Element} Komponente
  */
 export function TimelineItem( { item } ) {
-	const i18n = window.rpApplicant?.i18n || {};
-
 	/**
-	 * Zeit formatieren
+	 * Format time
 	 *
-	 * @param {string} dateString ISO-Datum
-	 * @return {string} Formatierte Zeit
+	 * @param {string} dateString ISO date
+	 * @return {string} Formatted time
 	 */
 	const formatTime = ( dateString ) => {
 		const date = new Date( dateString );
-		return date.toLocaleTimeString( 'de-DE', {
+		return date.toLocaleTimeString( getWpLocale(), {
 			hour: '2-digit',
 			minute: '2-digit',
 		} );
@@ -137,7 +137,7 @@ export function TimelineItem( { item } ) {
 				{ item.action === 'email_sent' && item.meta && (
 					<div className="rp-timeline-item__detail rp-timeline-email">
 						<span className="dashicons dashicons-email"></span>
-						{ item.meta.subject || item.meta.template || i18n.emailSent || 'E-Mail gesendet' }
+						{ item.meta.subject || item.meta.template || __( 'Email sent', 'recruiting-playbook' ) }
 					</div>
 				) }
 
@@ -162,17 +162,17 @@ export function TimelineItem( { item } ) {
 }
 
 /**
- * Kategorie-Label ermitteln
+ * Get category label
  *
- * @param {string} category Kategorie-Schlüssel
- * @return {string} Lokalisiertes Label
+ * @param {string} category Category key
+ * @return {string} Localized label
  */
 function getCategoryLabel( category ) {
 	const labels = {
-		overall: 'Gesamt',
-		skills: 'Fachkompetenz',
-		culture_fit: 'Kulturelle Passung',
-		experience: 'Erfahrung',
+		overall: __( 'Overall', 'recruiting-playbook' ),
+		skills: __( 'Professional competence', 'recruiting-playbook' ),
+		culture_fit: __( 'Cultural fit', 'recruiting-playbook' ),
+		experience: __( 'Experience', 'recruiting-playbook' ),
 	};
 	return labels[ category ] || category;
 }

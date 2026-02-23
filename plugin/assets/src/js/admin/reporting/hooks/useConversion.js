@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden von Conversion-Rate Statistiken
@@ -36,7 +37,7 @@ export function useConversion( period = '30days', jobId = null ) {
 			setData( result );
 		} catch ( err ) {
 			console.error( 'Error fetching conversion:', err );
-			setError( err.message || 'Fehler beim Laden der Conversion Daten' );
+			setError( err.message || __( 'Error loading conversion data', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}

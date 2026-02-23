@@ -9,6 +9,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten der Design-Einstellungen
@@ -64,7 +65,7 @@ export function useDesignSettings() {
 				return;
 			}
 			if ( isMountedRef.current ) {
-				setError( 'Fehler beim Laden der Design-Einstellungen' );
+				setError( __( 'Error loading design settings', 'recruiting-playbook' ) );
 				console.error( 'Error fetching design settings:', err );
 			}
 		} finally {
@@ -133,7 +134,7 @@ export function useDesignSettings() {
 				return false;
 			}
 
-			const errorMessage = err?.message || 'Fehler beim Speichern';
+			const errorMessage = err?.message || __( 'Error saving', 'recruiting-playbook' );
 			setError( errorMessage );
 			console.error( 'Error saving design settings:', err );
 			return false;
@@ -175,7 +176,7 @@ export function useDesignSettings() {
 				return false;
 			}
 
-			const errorMessage = err?.message || 'Fehler beim Zurücksetzen';
+			const errorMessage = err?.message || __( 'Error resetting', 'recruiting-playbook' );
 			setError( errorMessage );
 			console.error( 'Error resetting design settings:', err );
 			return false;

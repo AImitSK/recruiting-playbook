@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { getWpLocale } from '../utils/locale';
 
 /**
  * Generate initials from name
@@ -49,7 +50,7 @@ function formatDate( dateString ) {
 		return '-';
 	}
 	const date = new Date( dateString );
-	return date.toLocaleDateString( 'de-DE', {
+	return date.toLocaleDateString( getWpLocale(), {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
@@ -108,7 +109,6 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 	const [ editTags, setEditTags ] = useState( entry.tags || '' );
 
 	const config = window.rpTalentPool || {};
-	const i18n = config.i18n || {};
 
 	const daysUntilExpiry = getDaysUntilExpiry( entry.expires_at );
 	const tags = parseTags( entry.tags );
@@ -124,7 +124,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 		}
 		if ( daysUntilExpiry <= 0 ) {
 			return {
-				label: i18n.expired || __( 'Expired', 'recruiting-playbook' ),
+				label: __( 'Expired', 'recruiting-playbook' ),
 				bgColor: '#fef2f2',
 				textColor: '#dc2626',
 				borderColor: '#fecaca',
@@ -132,7 +132,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 		}
 		if ( daysUntilExpiry <= 30 ) {
 			return {
-				label: i18n.expiresSoon || __( 'Expires soon', 'recruiting-playbook' ),
+				label: __( 'Expires soon', 'recruiting-playbook' ),
 				bgColor: '#fffbeb',
 				textColor: '#d97706',
 				borderColor: '#fde68a',
@@ -161,7 +161,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 			}
 		} catch ( err ) {
 			console.error( 'Error removing from pool:', err );
-			setError( err.message || ( i18n.errorRemoving || __( 'Error removing from pool.', 'recruiting-playbook' ) ) );
+			setError( err.message || __( 'Error removing from pool.', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -191,7 +191,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 			setIsEditing( false );
 		} catch ( err ) {
 			console.error( 'Error saving:', err );
-			setError( err.message || ( i18n.errorSaving || __( 'Error saving.', 'recruiting-playbook' ) ) );
+			setError( err.message || __( 'Error saving.', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -285,7 +285,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 					{ config.applicationUrl && entry.application_id && (
 						<a
 							href={ `${ config.applicationUrl }${ entry.application_id }` }
-							title={ i18n.viewApplication || __( 'View application', 'recruiting-playbook' ) }
+							title={ __( 'View application', 'recruiting-playbook' ) }
 							style={ {
 								display: 'inline-flex',
 								alignItems: 'center',
@@ -356,7 +356,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 						} }
 					>
 						<p style={ { margin: '0 0 0.75rem 0', color: '#1f2937', fontSize: '0.875rem' } }>
-							{ i18n.confirmRemove || __( 'Really remove candidate from talent pool?', 'recruiting-playbook' ) }
+							{ __( 'Really remove candidate from talent pool?', 'recruiting-playbook' ) }
 						</p>
 						<div style={ { display: 'flex', gap: '0.5rem' } }>
 							<Button
@@ -367,7 +367,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								style={ { flex: 1 } }
 							>
 								<X style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-								{ i18n.cancel || __( 'Cancel', 'recruiting-playbook' ) }
+								{ __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								size="sm"
@@ -393,7 +393,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) : (
 									<>
 										<Trash2 style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-										{ i18n.removeFromPool || __( 'Remove', 'recruiting-playbook' ) }
+										{ __( 'Remove', 'recruiting-playbook' ) }
 									</>
 								) }
 							</Button>
@@ -413,7 +413,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 									marginBottom: '0.25rem',
 								} }
 							>
-								{ i18n.reason || __( 'Reason', 'recruiting-playbook' ) }
+								{ __( 'Reason', 'recruiting-playbook' ) }
 							</label>
 							<textarea
 								id={ `reason-${ entry.id }` }
@@ -444,7 +444,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 									marginBottom: '0.25rem',
 								} }
 							>
-								{ i18n.tags || __( 'Tags', 'recruiting-playbook' ) }
+								{ __( 'Tags', 'recruiting-playbook' ) }
 							</label>
 							<input
 								type="text"
@@ -472,7 +472,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								style={ { flex: 1 } }
 							>
 								<X style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-								{ i18n.cancel || __( 'Cancel', 'recruiting-playbook' ) }
+								{ __( 'Cancel', 'recruiting-playbook' ) }
 							</Button>
 							<Button
 								size="sm"
@@ -494,7 +494,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) : (
 									<>
 										<Check style={ { width: '0.875rem', height: '0.875rem', marginRight: '0.25rem' } } />
-										{ i18n.save || __( 'Save', 'recruiting-playbook' ) }
+										{ __( 'Save', 'recruiting-playbook' ) }
 									</>
 								) }
 							</Button>
@@ -540,7 +540,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 								) )
 							) : (
 								<span style={ { fontSize: '0.75rem', color: '#9ca3af', fontStyle: 'italic' } }>
-									{ i18n.noTags || __( 'No tags', 'recruiting-playbook' ) }
+									{ __( 'No tags', 'recruiting-playbook' ) }
 								</span>
 							) }
 						</div>
@@ -595,7 +595,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 							<button
 								type="button"
 								onClick={ () => setIsEditing( true ) }
-								title={ i18n.edit || __( 'Edit', 'recruiting-playbook' ) }
+								title={ __( 'Edit', 'recruiting-playbook' ) }
 								style={ {
 									padding: '0.375rem',
 									background: 'none',
@@ -613,7 +613,7 @@ export function TalentPoolCard( { entry, onRemoved } ) {
 							<button
 								type="button"
 								onClick={ () => setShowConfirmRemove( true ) }
-								title={ i18n.removeFromPool || __( 'Remove from pool', 'recruiting-playbook' ) }
+								title={ __( 'Remove from pool', 'recruiting-playbook' ) }
 								style={ {
 									padding: '0.375rem',
 									background: 'none',

@@ -6,6 +6,9 @@
  * @package RecruitingPlaybook
  */
 
+import { __ } from '@wordpress/i18n';
+
+import { getWpLocale } from '../../utils/locale';
 import {
 	Card,
 	CardContent,
@@ -29,31 +32,29 @@ export function ConversionFunnel( {
 	data = {},
 	loading = false,
 } ) {
-	const i18n = window.rpReportingData?.i18n || {};
-
 	// Funnel-Stufen definieren
 	const stages = [
 		{
 			key: 'job_list_views',
-			label: i18n.jobViews || 'Stellen-Aufrufe',
+			label: __( 'Job views', 'recruiting-playbook' ),
 			value: data.job_list_views || 0,
 			color: '#1d71b8',
 		},
 		{
 			key: 'job_detail_views',
-			label: i18n.jobDetailViews || 'Detail-Aufrufe',
+			label: __( 'Detail views', 'recruiting-playbook' ),
 			value: data.job_detail_views || 0,
 			color: '#36a9e1',
 		},
 		{
 			key: 'form_starts',
-			label: i18n.formStarts || 'Formular gestartet',
+			label: __( 'Form started', 'recruiting-playbook' ),
 			value: data.form_starts || 0,
 			color: '#2fac66',
 		},
 		{
 			key: 'form_completions',
-			label: i18n.formSubmitted || 'Bewerbung eingereicht',
+			label: __( 'Application submitted', 'recruiting-playbook' ),
 			value: data.form_completions || 0,
 			color: '#22c55e',
 		},
@@ -163,7 +164,7 @@ export function ConversionFunnel( {
 													fontSize: '0.875rem',
 												} }
 											>
-												{ stage.value.toLocaleString( 'de-DE' ) }
+												{ stage.value.toLocaleString( getWpLocale() ) }
 											</span>
 										</div>
 									</div>
@@ -236,7 +237,7 @@ export function ConversionFunnel( {
 								marginBottom: '0.25rem',
 							} }
 						>
-							Gesamt-Conversion
+							{ __( 'Total conversion', 'recruiting-playbook' ) }
 						</div>
 						<div
 							style={ {

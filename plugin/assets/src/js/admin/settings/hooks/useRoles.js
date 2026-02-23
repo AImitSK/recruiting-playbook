@@ -6,6 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten der Rollen und Capabilities
@@ -43,7 +44,7 @@ export function useRoles() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden der Rollen' );
+				setError( err?.message || __( 'Error loading roles', 'recruiting-playbook' ) );
 			}
 		} finally {
 			if ( isMountedRef.current ) {
@@ -92,7 +93,7 @@ export function useRoles() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Speichern' );
+				setError( err?.message || __( 'Error saving', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {
@@ -148,7 +149,7 @@ export function useJobAssignments() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden' );
+				setError( err?.message || __( 'Error loading', 'recruiting-playbook' ) );
 			}
 		} finally {
 			if ( isMountedRef.current ) {
@@ -185,7 +186,7 @@ export function useJobAssignments() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden der Zuweisungen' );
+				setError( err?.message || __( 'Error loading assignments', 'recruiting-playbook' ) );
 				setAssignedJobs( [] );
 			}
 		}
@@ -238,7 +239,7 @@ export function useJobAssignments() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Zuweisen' );
+				setError( err?.message || __( 'Error assigning', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {
@@ -281,7 +282,7 @@ export function useJobAssignments() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Entfernen' );
+				setError( err?.message || __( 'Error removing', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {
@@ -330,7 +331,7 @@ export function useJobAssignments() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler bei der Bulk-Zuweisung' );
+				setError( err?.message || __( 'Error during bulk assignment', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {

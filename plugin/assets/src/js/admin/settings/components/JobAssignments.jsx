@@ -8,6 +8,8 @@
 
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+import { getWpLocale } from '../../utils/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Alert, AlertDescription } from '../../components/ui/alert';
@@ -148,7 +150,7 @@ export function JobAssignments() {
 															? __( 'Draft', 'recruiting-playbook' )
 															: job.status
 													}
-													{ job.assigned_at && ` · ${ __( 'Assigned on', 'recruiting-playbook' ) } ${ new Date( job.assigned_at ).toLocaleDateString( 'de-DE' ) }` }
+													{ job.assigned_at && ` · ${ __( 'Assigned on', 'recruiting-playbook' ) } ${ new Date( job.assigned_at ).toLocaleDateString( getWpLocale() ) }` }
 												</div>
 											</div>
 											<Button

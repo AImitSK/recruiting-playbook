@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 // Globaler Cache für aktive Felder (bleibt über Re-Renders hinweg erhalten)
 let fieldsCache = null;
@@ -75,7 +76,7 @@ export function useActiveFields( { includeSystem = true, forceRefresh = false } 
 			console.error( 'Error loading active fields:', err );
 			// RACE CONDITION FIX: Nur Fehler setzen wenn Request noch aktuell
 			if ( currentRequestRef.current === requestId && mountedRef.current ) {
-				setError( err.message || 'Fehler beim Laden der Felder' );
+				setError( err.message || __( 'Error loading fields', 'recruiting-playbook' ) );
 			}
 		} finally {
 			// RACE CONDITION FIX: Nur Loading-State ändern wenn Request noch aktuell

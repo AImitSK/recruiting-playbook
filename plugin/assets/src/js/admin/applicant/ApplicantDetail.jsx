@@ -29,6 +29,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '../components/ui/card';
+import { getWpLocale } from '../utils/locale';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import { Spinner } from '../components/ui/spinner';
@@ -45,13 +46,13 @@ import { useActiveFields } from '../hooks/useActiveFields';
  * Status configuration with colors
  */
 const STATUS_CONFIG = {
-	new: { label: 'New', color: '#2271b1', bg: '#e6f3ff' },
-	screening: { label: 'Screening', color: '#dba617', bg: '#fff8e6' },
-	interview: { label: 'Interview', color: '#9b59b6', bg: '#f5e6ff' },
-	offer: { label: 'Offer', color: '#1e8cbe', bg: '#e6f5ff' },
-	hired: { label: 'Hired', color: '#2fac66', bg: '#e6f5ec' },
-	rejected: { label: 'Rejected', color: '#d63638', bg: '#ffe6e6' },
-	withdrawn: { label: 'Withdrawn', color: '#787c82', bg: '#f0f0f0' },
+	new: { label: __( 'New', 'recruiting-playbook' ), color: '#2271b1', bg: '#e6f3ff' },
+	screening: { label: __( 'Screening', 'recruiting-playbook' ), color: '#dba617', bg: '#fff8e6' },
+	interview: { label: __( 'Interview', 'recruiting-playbook' ), color: '#9b59b6', bg: '#f5e6ff' },
+	offer: { label: __( 'Offer', 'recruiting-playbook' ), color: '#1e8cbe', bg: '#e6f5ff' },
+	hired: { label: __( 'Hired', 'recruiting-playbook' ), color: '#2fac66', bg: '#e6f5ec' },
+	rejected: { label: __( 'Rejected', 'recruiting-playbook' ), color: '#d63638', bg: '#ffe6e6' },
+	withdrawn: { label: __( 'Withdrawn', 'recruiting-playbook' ), color: '#787c82', bg: '#f0f0f0' },
 };
 
 const STATUS_OPTIONS = Object.entries( STATUS_CONFIG ).map( ( [ value, config ] ) => ( {
@@ -68,7 +69,7 @@ function getInitials( firstName, lastName ) {
 
 function formatDate( dateString ) {
 	if ( ! dateString ) return '-';
-	return new Date( dateString ).toLocaleDateString( 'de-DE', {
+	return new Date( dateString ).toLocaleDateString( getWpLocale(), {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
@@ -194,7 +195,7 @@ export function ApplicantDetail( { applicationId } ) {
 			<div className="rp-admin" style={ { padding: '20px 0' } }>
 				<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '0.75rem', color: '#6b7280' } }>
 					<Spinner size="default" />
-					<span>{ __( 'Loading application...', 'recruiting-playbook' ) }</span>
+					<span>{ __( 'Loading application\u2026', 'recruiting-playbook' ) }</span>
 				</div>
 			</div>
 		);
@@ -280,7 +281,7 @@ export function ApplicantDetail( { applicationId } ) {
 						</TabsTrigger>
 						{ canSendEmails && (
 							<TabsTrigger value="email" count={ emailsCount }>
-								{ __( 'Email', 'recruiting-playbook' ) }
+								{ __( 'E-Mail', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
 					</TabsList>
@@ -367,7 +368,7 @@ export function ApplicantDetail( { applicationId } ) {
 								{ /* Candidate details - dynamic based on form config */ }
 								<Card>
 									<CardHeader style={ { paddingBottom: 0 } }>
-										<CardTitle>{ __( 'Candidate Details', 'recruiting-playbook' ) }</CardTitle>
+										<CardTitle>{ __( 'Applicant details', 'recruiting-playbook' ) }</CardTitle>
 									</CardHeader>
 									<CardContent style={ { padding: '1rem 1.5rem' } }>
 										{ /* Dynamic fields from form configuration */ }
@@ -401,10 +402,11 @@ export function ApplicantDetail( { applicationId } ) {
 											<div style={ { display: 'grid', gridTemplateColumns: '1fr', gap: '0' } }>
 												<div style={ { display: 'flex', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
 													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Name', 'recruiting-playbook' ) }</span>
+
 													<span style={ { color: '#1f2937', fontSize: '0.875rem' } }>{ application.first_name } { application.last_name }</span>
 												</div>
 												<div style={ { display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f3f4f6' } }>
-													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'Email', 'recruiting-playbook' ) }</span>
+													<span style={ { color: '#6b7280', fontSize: '0.875rem', width: '100px', flexShrink: 0 } }>{ __( 'E-Mail', 'recruiting-playbook' ) }</span>
 													{ application.email ? (
 														<a href={ `mailto:${ application.email }` } style={ { color: '#1d71b8', fontSize: '0.875rem', textDecoration: 'none' } }>{ application.email }</a>
 													) : <span style={ { color: '#1f2937', fontSize: '0.875rem' } }>-</span> }
@@ -521,7 +523,7 @@ export function ApplicantDetail( { applicationId } ) {
 						{ activeTab === 'email' && canSendEmails && (
 							<Card>
 								<CardHeader>
-									<CardTitle>{ __( 'Email', 'recruiting-playbook' ) }</CardTitle>
+									<CardTitle>{ __( 'E-Mail', 'recruiting-playbook' ) }</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<EmailTab

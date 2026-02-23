@@ -6,6 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten der KI-Analyse Daten
@@ -51,7 +52,7 @@ export function useAiAnalysis() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden des Verlaufs' );
+				setError( err?.message || __( 'Error loading history', 'recruiting-playbook' ) );
 			}
 		}
 	}, [] );
@@ -77,7 +78,7 @@ export function useAiAnalysis() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden der KI-Analyse Daten' );
+				setError( err?.message || __( 'Error loading AI analysis data', 'recruiting-playbook' ) );
 			}
 		} finally {
 			if ( isMountedRef.current ) {
@@ -155,7 +156,7 @@ export function useAiAnalysis() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Speichern' );
+				setError( err?.message || __( 'Error saving', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {

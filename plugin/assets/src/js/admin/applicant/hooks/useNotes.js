@@ -6,6 +6,7 @@
 
 import { useState, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten von Notizen
@@ -42,7 +43,7 @@ export function useNotes( applicationId ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorLoadingNotes ||
-				'Fehler beim Laden der Notizen'
+				__( 'Error loading notes', 'recruiting-playbook' )
 			);
 		} finally {
 			setLoading( false );
@@ -84,7 +85,7 @@ export function useNotes( applicationId ) {
 				setError(
 					err.message ||
 					window.rpApplicant?.i18n?.errorCreatingNote ||
-					'Fehler beim Erstellen der Notiz'
+					__( 'Error creating note', 'recruiting-playbook' )
 				);
 				return null;
 			} finally {
@@ -129,7 +130,7 @@ export function useNotes( applicationId ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorUpdatingNote ||
-				'Fehler beim Aktualisieren der Notiz'
+				__( 'Error updating note', 'recruiting-playbook' )
 			);
 			return null;
 		} finally {
@@ -173,7 +174,7 @@ export function useNotes( applicationId ) {
 			setError(
 				err.message ||
 				window.rpApplicant?.i18n?.errorDeletingNote ||
-				'Fehler beim Löschen der Notiz'
+				__( 'Error deleting note', 'recruiting-playbook' )
 			);
 			return false;
 		} finally {

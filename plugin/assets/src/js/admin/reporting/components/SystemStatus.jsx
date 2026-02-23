@@ -7,6 +7,9 @@
  */
 
 import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+
+import { getWpLocale } from '../../utils/locale';
 import {
 	CheckCircle,
 	XCircle,
@@ -124,7 +127,7 @@ function CheckItem( { type, check, onCleanup, cleanupLoading } ) {
 							} }
 						>
 							<Trash2 style={ { width: 14, height: 14 } } />
-							Bereinigen
+							{ __( 'Clean up', 'recruiting-playbook' ) }
 						</Button>
 					) }
 
@@ -141,7 +144,7 @@ function CheckItem( { type, check, onCleanup, cleanupLoading } ) {
 								fontSize: '0.75rem',
 							} }
 						>
-							{ expanded ? 'Weniger' : 'Details' }
+							{ expanded ? __( 'Less', 'recruiting-playbook' ) : __( 'Details', 'recruiting-playbook' ) }
 						</button>
 					) }
 				</div>
@@ -184,12 +187,12 @@ function CheckItem( { type, check, onCleanup, cleanupLoading } ) {
  */
 function getCheckLabel( type ) {
 	const labels = {
-		database: 'Datenbank',
-		uploads: 'Upload-Verzeichnis',
-		cron: 'Cron-Jobs',
-		orphaned_data: 'Verwaiste Daten',
-		license: 'Lizenz',
-		action_scheduler: 'Action Scheduler',
+		database: __( 'Database', 'recruiting-playbook' ),
+		uploads: __( 'Upload directory', 'recruiting-playbook' ),
+		cron: __( 'Cron jobs', 'recruiting-playbook' ),
+		orphaned_data: __( 'Orphaned data', 'recruiting-playbook' ),
+		license: __( 'License', 'recruiting-playbook' ),
+		action_scheduler: __( 'Action Scheduler', 'recruiting-playbook' ),
 	};
 	return labels[ type ] || type;
 }
@@ -199,25 +202,25 @@ function getCheckLabel( type ) {
  */
 function formatDetailKey( key ) {
 	const labels = {
-		tables_expected: 'Erwartete Tabellen',
-		tables_found: 'Gefundene Tabellen',
-		missing: 'Fehlend',
-		path: 'Pfad',
-		writable: 'Beschreibbar',
-		files_count: 'Dateien',
-		total_size: 'Größe',
-		next_cleanup: 'Nächster Cleanup',
-		last_run: 'Letzter Lauf',
-		wp_cron_disabled: 'WP-Cron deaktiviert',
-		orphaned_documents: 'Verwaiste Dokumente',
-		orphaned_applications: 'Verwaiste Bewerbungen',
-		type: 'Typ',
-		expires: 'Läuft ab',
-		domain: 'Domain',
-		available: 'Verfügbar',
-		pending: 'Ausstehend',
-		running: 'Laufend',
-		failed: 'Fehlgeschlagen',
+		tables_expected: __( 'Expected tables', 'recruiting-playbook' ),
+		tables_found: __( 'Found tables', 'recruiting-playbook' ),
+		missing: __( 'Missing', 'recruiting-playbook' ),
+		path: __( 'Path', 'recruiting-playbook' ),
+		writable: __( 'Writable', 'recruiting-playbook' ),
+		files_count: __( 'Files', 'recruiting-playbook' ),
+		total_size: __( 'Size', 'recruiting-playbook' ),
+		next_cleanup: __( 'Next cleanup', 'recruiting-playbook' ),
+		last_run: __( 'Last run', 'recruiting-playbook' ),
+		wp_cron_disabled: __( 'WP-Cron disabled', 'recruiting-playbook' ),
+		orphaned_documents: __( 'Orphaned documents', 'recruiting-playbook' ),
+		orphaned_applications: __( 'Orphaned applications', 'recruiting-playbook' ),
+		type: __( 'Type', 'recruiting-playbook' ),
+		expires: __( 'Expires', 'recruiting-playbook' ),
+		domain: __( 'Domain', 'recruiting-playbook' ),
+		available: __( 'Available', 'recruiting-playbook' ),
+		pending: __( 'Pending', 'recruiting-playbook' ),
+		running: __( 'Running', 'recruiting-playbook' ),
+		failed: __( 'Failed', 'recruiting-playbook' ),
 	};
 	return labels[ key ] || key;
 }
@@ -227,10 +230,10 @@ function formatDetailKey( key ) {
  */
 function formatDetailValue( value ) {
 	if ( value === true ) {
-		return 'Ja';
+		return __( 'Yes', 'recruiting-playbook' );
 	}
 	if ( value === false ) {
-		return 'Nein';
+		return __( 'No', 'recruiting-playbook' );
 	}
 	if ( value === null || value === undefined ) {
 		return '-';
@@ -278,12 +281,13 @@ export function SystemStatus() {
 
 			setCleanupMessage( {
 				type: 'success',
-				text: `${ totalDeleted } verwaiste Einträge wurden gelöscht.`,
+				/* translators: %d: number of deleted orphaned entries */
+				text: __( totalDeleted + ' orphaned entries have been deleted.', 'recruiting-playbook' ),
 			} );
 		} catch ( err ) {
 			setCleanupMessage( {
 				type: 'error',
-				text: 'Fehler beim Bereinigen: ' + ( err.message || 'Unbekannter Fehler' ),
+				text: __( 'Error cleaning up: ', 'recruiting-playbook' ) + ( err.message || __( 'Unknown error', 'recruiting-playbook' ) ),
 			} );
 		}
 	};
@@ -304,13 +308,13 @@ export function SystemStatus() {
 	const getOverallStatusLabel = () => {
 		switch ( status?.status ) {
 			case 'healthy':
-				return 'Alles OK';
+				return __( 'All OK', 'recruiting-playbook' );
 			case 'degraded':
-				return 'Warnungen';
+				return __( 'Warnings', 'recruiting-playbook' );
 			case 'unhealthy':
-				return 'Fehler';
+				return __( 'Error', 'recruiting-playbook' );
 			default:
-				return 'Unbekannt';
+				return __( 'Unknown', 'recruiting-playbook' );
 		}
 	};
 
@@ -350,7 +354,7 @@ export function SystemStatus() {
 		return (
 			<Card>
 				<CardHeader>
-					<CardTitle>Systemstatus</CardTitle>
+					<CardTitle>{ __( 'System status', 'recruiting-playbook' ) }</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<Alert style={ { backgroundColor: '#fef2f2', borderColor: '#fecaca' } }>
@@ -364,7 +368,7 @@ export function SystemStatus() {
 						style={ { marginTop: '1rem' } }
 					>
 						<RefreshCw style={ { width: 16, height: 16, marginRight: '0.5rem' } } />
-						Erneut versuchen
+						{ __( 'Retry', 'recruiting-playbook' ) }
 					</Button>
 				</CardContent>
 			</Card>
@@ -376,9 +380,9 @@ export function SystemStatus() {
 			<CardHeader>
 				<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 					<div>
-						<CardTitle>Systemstatus</CardTitle>
+						<CardTitle>{ __( 'System status', 'recruiting-playbook' ) }</CardTitle>
 						<CardDescription>
-							Zuletzt geprüft: { status?.checked_at ? new Date( status.checked_at ).toLocaleString( 'de-DE' ) : '-' }
+							{ __( 'Last checked:', 'recruiting-playbook' ) } { status?.checked_at ? new Date( status.checked_at ).toLocaleString( getWpLocale() ) : '-' }
 						</CardDescription>
 					</div>
 					<div style={ { display: 'flex', alignItems: 'center', gap: '1rem' } }>
@@ -443,7 +447,7 @@ export function SystemStatus() {
 				{ status?.recommendations?.length > 0 && (
 					<div style={ { padding: '1rem', backgroundColor: '#fffbeb' } }>
 						<div style={ { fontWeight: 600, color: '#92400e', marginBottom: '0.5rem' } }>
-							Empfehlungen
+							{ __( 'Recommendations', 'recruiting-playbook' ) }
 						</div>
 						{ status.recommendations.map( ( rec, index ) => (
 							<div

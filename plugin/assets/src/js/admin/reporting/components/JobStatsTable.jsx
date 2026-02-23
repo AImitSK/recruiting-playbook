@@ -6,6 +6,9 @@
  * @package RecruitingPlaybook
  */
 
+import { __ } from '@wordpress/i18n';
+
+import { getWpLocale } from '../../utils/locale';
 import { ExternalLink } from 'lucide-react';
 import {
 	Card,
@@ -88,7 +91,7 @@ export function JobStatsTable( {
 							color: '#6b7280',
 						} }
 					>
-						Keine Stellen gefunden
+						{ __( 'No jobs found', 'recruiting-playbook' ) }
 					</div>
 				) : (
 					<div style={ { overflowX: 'auto' } }>
@@ -110,7 +113,7 @@ export function JobStatsTable( {
 											borderBottom: '1px solid #e5e7eb',
 										} }
 									>
-										Stelle
+										{ __( 'Job', 'recruiting-playbook' ) }
 									</th>
 									<th
 										style={ {
@@ -121,7 +124,7 @@ export function JobStatsTable( {
 											borderBottom: '1px solid #e5e7eb',
 										} }
 									>
-										Bewerbungen
+										{ __( 'Applications', 'recruiting-playbook' ) }
 									</th>
 									<th
 										style={ {
@@ -133,7 +136,7 @@ export function JobStatsTable( {
 											width: '60px',
 										} }
 									>
-										Status
+										{ __( 'Status', 'recruiting-playbook' ) }
 									</th>
 								</tr>
 							</thead>
@@ -187,7 +190,7 @@ export function JobStatsTable( {
 												color: '#1d71b8',
 											} }
 										>
-											{ job.applications?.toLocaleString( 'de-DE' ) || 0 }
+											{ job.applications?.toLocaleString( getWpLocale() ) || 0 }
 										</td>
 										<td
 											style={ {
@@ -203,7 +206,7 @@ export function JobStatsTable( {
 													color: job.status === 'publish' ? '#166534' : '#6b7280',
 												} }
 											>
-												{ job.status === 'publish' ? 'Aktiv' : 'Entwurf' }
+												{ job.status === 'publish' ? __( 'Active', 'recruiting-playbook' ) : __( 'Draft', 'recruiting-playbook' ) }
 											</Badge>
 										</td>
 									</tr>
@@ -223,7 +226,7 @@ export function JobStatsTable( {
 							fontSize: '0.875rem',
 						} }
 					>
-						{ jobs.length - limit } weitere Stellen nicht angezeigt
+						{ ( jobs.length - limit ) + ' ' + __( 'more jobs not displayed', 'recruiting-playbook' ) }
 					</div>
 				) }
 			</CardContent>

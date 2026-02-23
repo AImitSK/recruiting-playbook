@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	Search,
@@ -29,6 +29,7 @@ import {
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { getWpLocale } from '../utils/locale';
 
 /**
  * Status configuration with colors
@@ -182,7 +183,11 @@ function Pagination( { currentPage, totalPages, totalItems, perPage, onPageChang
 		>
 			<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
 				{ totalItems > 0
-					? `${ start }-${ end } of ${ totalItems } applications`
+					? sprintf(
+						/* translators: 1: start index, 2: end index, 3: total count */
+						__( '%1$d\u2013%2$d of %3$d applications', 'recruiting-playbook' ),
+						start, end, totalItems
+					)
 					: __( 'No applications', 'recruiting-playbook' ) }
 			</span>
 
@@ -443,15 +448,24 @@ export function ApplicationsPage() {
 		const diffMinutes = Math.floor( diffMs / ( 1000 * 60 ) );
 
 		if ( diffMinutes < 60 ) {
-			return `${ diffMinutes } min ago`;
+			return sprintf(
+				_n( '%d minute ago', '%d minutes ago', diffMinutes, 'recruiting-playbook' ),
+				diffMinutes
+			);
 		}
 		if ( diffHours < 24 ) {
-			return `${ diffHours } hours ago`;
+			return sprintf(
+				_n( '%d hour ago', '%d hours ago', diffHours, 'recruiting-playbook' ),
+				diffHours
+			);
 		}
 		if ( diffDays < 7 ) {
-			return `${ diffDays } days ago`;
+			return sprintf(
+				_n( '%d day ago', '%d days ago', diffDays, 'recruiting-playbook' ),
+				diffDays
+			);
 		}
-		return date.toLocaleDateString( 'en-US' );
+		return date.toLocaleDateString( getWpLocale() );
 	};
 
 	return (
@@ -544,7 +558,7 @@ export function ApplicationsPage() {
 								/>
 								<input
 									type="text"
-									placeholder={ __( 'Search by name or email...', 'recruiting-playbook' ) }
+									placeholder={ __( 'Search by name or email\u2026', 'recruiting-playbook' ) }
 									value={ searchTerm }
 									onChange={ ( e ) => setSearchTerm( e.target.value ) }
 									style={ {

@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden des Systemstatus
@@ -33,7 +34,7 @@ export function useSystemStatus() {
 			setStatus( data );
 		} catch ( err ) {
 			console.error( 'Error fetching system status:', err );
-			setError( err.message || 'Fehler beim Laden des Systemstatus' );
+			setError( err.message || __( 'Error loading system status', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}

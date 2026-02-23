@@ -6,6 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten der API-Keys
@@ -40,7 +41,7 @@ export function useApiKeys() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden der API-Keys' );
+				setError( err?.message || __( 'Error loading API keys', 'recruiting-playbook' ) );
 			}
 		} finally {
 			if ( isMountedRef.current ) {
@@ -84,7 +85,7 @@ export function useApiKeys() {
 			return result;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Erstellen' );
+				setError( err?.message || __( 'Error creating', 'recruiting-playbook' ) );
 			}
 			return null;
 		} finally {
@@ -123,7 +124,7 @@ export function useApiKeys() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Aktualisieren' );
+				setError( err?.message || __( 'Error updating', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {
@@ -156,7 +157,7 @@ export function useApiKeys() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Loeschen' );
+				setError( err?.message || __( 'Error deleting', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {

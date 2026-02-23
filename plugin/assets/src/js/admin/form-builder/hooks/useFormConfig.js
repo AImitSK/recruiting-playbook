@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Generate unique ID for new steps
@@ -79,7 +80,7 @@ export function useFormConfig() {
 			setPublishedVersion( response.published_version || 1 );
 			setHasChanges( response.has_changes || false );
 		} catch ( err ) {
-			setError( err.message || 'Fehler beim Laden der Konfiguration' );
+			setError( err.message || __( 'Error loading configuration', 'recruiting-playbook' ) );
 			console.error( 'Failed to fetch form config:', err );
 		} finally {
 			setIsLoading( false );
@@ -134,10 +135,10 @@ export function useFormConfig() {
 				} );
 
 				setHasChanges( response.has_changes ?? true );
-				showSuccess( 'Entwurf gespeichert' );
+				showSuccess( __( 'Draft saved', 'recruiting-playbook' ) );
 				return true;
 			} catch ( err ) {
-				setError( err.message || 'Fehler beim Speichern' );
+				setError( err.message || __( 'Error saving', 'recruiting-playbook' ) );
 				console.error( 'Failed to save draft:', err );
 				return false;
 			} finally {
@@ -206,10 +207,10 @@ export function useFormConfig() {
 
 			setPublishedVersion( response.published_version || publishedVersion + 1 );
 			setHasChanges( false );
-			showSuccess( 'Formular veröffentlicht' );
+			showSuccess( __( 'Form published', 'recruiting-playbook' ) );
 			return true;
 		} catch ( err ) {
-			setError( err.message || 'Fehler beim Veröffentlichen' );
+			setError( err.message || __( 'Error publishing', 'recruiting-playbook' ) );
 			console.error( 'Failed to publish:', err );
 			return false;
 		} finally {
@@ -239,10 +240,10 @@ export function useFormConfig() {
 
 			setDraft( response.draft || null );
 			setHasChanges( false );
-			showSuccess( 'Änderungen verworfen' );
+			showSuccess( __( 'Changes discarded', 'recruiting-playbook' ) );
 			return true;
 		} catch ( err ) {
-			setError( err.message || 'Fehler beim Verwerfen' );
+			setError( err.message || __( 'Error discarding', 'recruiting-playbook' ) );
 			console.error( 'Failed to discard draft:', err );
 			return false;
 		} finally {
@@ -263,7 +264,7 @@ export function useFormConfig() {
 
 		// Confirmation dialog
 		const confirmed = window.confirm(
-			'Möchten Sie das Formular wirklich auf die Standardeinstellungen zurücksetzen? Alle Anpassungen gehen verloren.'
+			__( 'Do you really want to reset the form to default settings? All customizations will be lost.', 'recruiting-playbook' )
 		);
 
 		if ( ! confirmed ) {
@@ -282,10 +283,10 @@ export function useFormConfig() {
 			setDraft( response.draft || null );
 			setHasChanges( false );
 			setPublishedVersion( 1 );
-			showSuccess( 'Formular auf Standard zurückgesetzt' );
+			showSuccess( __( 'Form reset to defaults', 'recruiting-playbook' ) );
 			return true;
 		} catch ( err ) {
-			setError( err.message || 'Fehler beim Zurücksetzen' );
+			setError( err.message || __( 'Error resetting', 'recruiting-playbook' ) );
 			console.error( 'Failed to reset config:', err );
 			return false;
 		} finally {
@@ -309,7 +310,7 @@ export function useFormConfig() {
 
 			const newStep = {
 				id: newStepId,
-				title: stepData.title || 'Neuer Schritt',
+				title: stepData.title || __( 'New Step', 'recruiting-playbook' ),
 				position: maxPosition + 1,
 				deletable: true,
 				is_finale: false,
@@ -360,7 +361,7 @@ export function useFormConfig() {
 			const step = draft?.steps?.find( ( s ) => s.id === stepId );
 
 			if ( ! step || ! step.deletable || step.is_finale ) {
-				setError( 'Dieser Schritt kann nicht gelöscht werden' );
+				setError( __( 'This step cannot be deleted', 'recruiting-playbook' ) );
 				return false;
 			}
 

@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden von Statistiken
@@ -39,7 +40,7 @@ export function useStats( period = '30days', jobId = null ) {
 			setOverview( data );
 		} catch ( err ) {
 			console.error( 'Error fetching stats overview:', err );
-			setError( err.message || 'Fehler beim Laden der Statistiken' );
+			setError( err.message || __( 'Error loading statistics', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -86,7 +87,7 @@ export function useApplicationStats( period = '30days', jobId = null ) {
 			setStats( data );
 		} catch ( err ) {
 			console.error( 'Error fetching application stats:', err );
-			setError( err.message || 'Fehler beim Laden' );
+			setError( err.message || __( 'Error loading data', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -127,7 +128,7 @@ export function useJobStats( period = '30days' ) {
 			setStats( data );
 		} catch ( err ) {
 			console.error( 'Error fetching job stats:', err );
-			setError( err.message || 'Fehler beim Laden' );
+			setError( err.message || __( 'Error loading data', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}
@@ -175,7 +176,7 @@ export function useTrends( period = '30days', granularity = 'day', jobId = null 
 			setTrends( data );
 		} catch ( err ) {
 			console.error( 'Error fetching trends:', err );
-			setError( err.message || 'Fehler beim Laden' );
+			setError( err.message || __( 'Error loading data', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}

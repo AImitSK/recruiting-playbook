@@ -6,6 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden und Verwalten der Plugin-Einstellungen
@@ -52,7 +53,7 @@ export function useSettings() {
 				return;
 			}
 			if ( isMountedRef.current ) {
-				setError( i18n.errorLoading || 'Fehler beim Laden der Einstellungen' );
+				setError( i18n.errorLoading || __( 'Error loading settings', 'recruiting-playbook' ) );
 				console.error( 'Error fetching settings:', err );
 			}
 		} finally {
@@ -108,7 +109,7 @@ export function useSettings() {
 				return false;
 			}
 
-			const errorMessage = err?.message || i18n.errorSaving || 'Fehler beim Speichern';
+			const errorMessage = err?.message || i18n.errorSaving || __( 'Error saving settings', 'recruiting-playbook' );
 			setError( errorMessage );
 			console.error( 'Error saving settings:', err );
 			return false;

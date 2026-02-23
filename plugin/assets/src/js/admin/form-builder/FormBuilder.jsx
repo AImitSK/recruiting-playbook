@@ -93,10 +93,10 @@ export default function FormBuilder() {
 						<div style={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem 0', textAlign: 'center' } }>
 							<Lock style={ { height: '3rem', width: '3rem', color: '#9ca3af' } } />
 							<h2 style={ { fontSize: '1.25rem', fontWeight: 600, margin: 0 } }>
-								{ i18n?.noPermission || __( 'No Permission', 'recruiting-playbook' ) }
+								{ __( 'No Permission', 'recruiting-playbook' ) }
 							</h2>
 							<p style={ { color: '#4b5563', margin: 0 } }>
-								{ i18n?.noPermissionText || __( 'You do not have permission to use the Form Builder.', 'recruiting-playbook' ) }
+								{ __( 'You do not have permission to use the Form Builder.', 'recruiting-playbook' ) }
 							</p>
 						</div>
 					</CardContent>
@@ -253,7 +253,7 @@ export default function FormBuilder() {
 						<img src={ logoUrl } alt="Recruiting Playbook" style={ { width: '150px', height: 'auto' } } />
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ i18n?.pageTitle || __( 'Form Builder', 'recruiting-playbook' ) }
+						{ __( 'Form Builder', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
@@ -302,10 +302,10 @@ export default function FormBuilder() {
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' } }>
 						<TabsList>
 							<TabsTrigger value="form">
-								{ i18n?.tabForm || __( 'Form', 'recruiting-playbook' ) }
+								{ __( 'Form', 'recruiting-playbook' ) }
 							</TabsTrigger>
 							<TabsTrigger value="preview">
-								{ i18n?.tabPreview || __( 'Preview', 'recruiting-playbook' ) }
+								{ __( 'Preview', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						</TabsList>
 

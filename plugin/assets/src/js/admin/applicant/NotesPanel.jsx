@@ -7,9 +7,10 @@
  */
 
 import { useState, useEffect, useRef } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Plus, Edit2, Trash2, Lock, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { getWpLocale } from '../utils/locale';
 import { useNotes } from './hooks/useNotes';
 
 /**
@@ -42,11 +43,26 @@ function formatRelativeTime( dateString ) {
 	const days = Math.floor( diff / 86400000 );
 
 	if ( minutes < 1 ) return __( 'Just now', 'recruiting-playbook' );
-	if ( minutes < 60 ) return `${ minutes } ${ minutes === 1 ? 'minute' : 'minutes' } ago`;
-	if ( hours < 24 ) return `${ hours } ${ hours === 1 ? 'hour' : 'hours' } ago`;
-	if ( days < 7 ) return `${ days } ${ days === 1 ? 'day' : 'days' } ago`;
+	if ( minutes < 60 ) {
+		return sprintf(
+			_n( '%d minute ago', '%d minutes ago', minutes, 'recruiting-playbook' ),
+			minutes
+		);
+	}
+	if ( hours < 24 ) {
+		return sprintf(
+			_n( '%d hour ago', '%d hours ago', hours, 'recruiting-playbook' ),
+			hours
+		);
+	}
+	if ( days < 7 ) {
+		return sprintf(
+			_n( '%d day ago', '%d days ago', days, 'recruiting-playbook' ),
+			days
+		);
+	}
 
-	return date.toLocaleDateString( 'de-DE', {
+	return date.toLocaleDateString( getWpLocale(), {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
@@ -402,7 +418,7 @@ export function NotesPanel( { applicationId, showHeader = true } ) {
 						onSave={ handleCreateNote }
 						onCancel={ () => setShowNewNote( false ) }
 						saving={ saving }
-						saveLabel={ __( 'Notiz hinzufügen', 'recruiting-playbook' ) }
+						saveLabel={ __( 'Add note', 'recruiting-playbook' ) }
 					/>
 				</div>
 			) }

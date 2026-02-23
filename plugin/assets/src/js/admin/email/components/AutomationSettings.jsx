@@ -5,8 +5,10 @@
  */
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import apiFetch from '@wordpress/api-fetch';
+
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Select, SelectOption } from '../../components/ui/select';
@@ -29,24 +31,22 @@ export function AutomationSettings( { templates = [] } ) {
 	const [ error, setError ] = useState( null );
 	const [ success, setSuccess ] = useState( false );
 
-	const i18n = window.rpEmailData?.i18n || {};
-
 	// Verfügbare Status für automatische E-Mails
 	const statuses = [
-		{ key: 'new', label: i18n.statusNew || 'Neue Bewerbung (Eingangsbestätigung)' },
-		{ key: 'rejected', label: i18n.statusRejected || 'Abgelehnt (Absage)' },
-		{ key: 'withdrawn', label: i18n.statusWithdrawn || 'Zurückgezogen' },
+		{ key: 'new', label: __( 'New application (confirmation)', 'recruiting-playbook' ) },
+		{ key: 'rejected', label: __( 'Rejected (rejection)', 'recruiting-playbook' ) },
+		{ key: 'withdrawn', label: __( 'Withdrawn', 'recruiting-playbook' ) },
 	];
 
 	// Verzögerungsoptionen
 	const delayOptions = [
-		{ value: 0, label: i18n.immediately || 'Sofort' },
-		{ value: 5, label: '5 ' + ( i18n.minutes || 'Minuten' ) },
-		{ value: 15, label: '15 ' + ( i18n.minutes || 'Minuten' ) },
-		{ value: 30, label: '30 ' + ( i18n.minutes || 'Minuten' ) },
-		{ value: 60, label: '1 ' + ( i18n.hour || 'Stunde' ) },
-		{ value: 120, label: '2 ' + ( i18n.hours || 'Stunden' ) },
-		{ value: 1440, label: '24 ' + ( i18n.hours || 'Stunden' ) },
+		{ value: 0, label: __( 'Immediately', 'recruiting-playbook' ) },
+		{ value: 5, label: '5 ' + __( 'minutes', 'recruiting-playbook' ) },
+		{ value: 15, label: '15 ' + __( 'minutes', 'recruiting-playbook' ) },
+		{ value: 30, label: '30 ' + __( 'minutes', 'recruiting-playbook' ) },
+		{ value: 60, label: '1 ' + __( 'hour', 'recruiting-playbook' ) },
+		{ value: 120, label: '2 ' + __( 'hours', 'recruiting-playbook' ) },
+		{ value: 1440, label: '24 ' + __( 'hours', 'recruiting-playbook' ) },
 	];
 
 	// Einstellungen laden
@@ -103,11 +103,11 @@ export function AutomationSettings( { templates = [] } ) {
 			setTimeout( () => setSuccess( false ), 3000 );
 		} catch ( err ) {
 			console.error( 'Error saving auto-email settings:', err );
-			setError( i18n.errorSaving || 'Fehler beim Speichern' );
+			setError( __( 'Error saving', 'recruiting-playbook' ) );
 		} finally {
 			setSaving( false );
 		}
-	}, [ settings, i18n.errorSaving ] );
+	}, [ settings ] );
 
 	if ( loading ) {
 		return (
@@ -127,34 +127,34 @@ export function AutomationSettings( { templates = [] } ) {
 
 			{ success && (
 				<Alert style={ { marginBottom: '1rem', backgroundColor: '#e6f5ec', borderColor: '#2fac66' } }>
-					<AlertDescription>{ i18n.settingsSaved || 'Einstellungen wurden gespeichert.' }</AlertDescription>
+					<AlertDescription>{ __( 'Settings saved.', 'recruiting-playbook' ) }</AlertDescription>
 				</Alert>
 			) }
 
 			<Card>
 				<CardHeader>
-					<CardTitle>{ i18n.autoEmailSettings || 'Automatische E-Mails bei Status-Änderungen' }</CardTitle>
+					<CardTitle>{ __( 'Automatic emails on status changes', 'recruiting-playbook' ) }</CardTitle>
 				</CardHeader>
 
 				<CardContent>
 					<p style={ { color: '#6b7280', marginBottom: '1.5rem' } }>
-						{ i18n.autoEmailDescription || 'Konfigurieren Sie, welche E-Mails automatisch gesendet werden, wenn sich der Status einer Bewerbung ändert.' }
+						{ __( 'Configure which emails are sent automatically when an application status changes.', 'recruiting-playbook' ) }
 					</p>
 
 					<table style={ { width: '100%', borderCollapse: 'collapse' } }>
 						<thead>
 							<tr style={ { borderBottom: '2px solid #e5e7eb' } }>
 								<th style={ { padding: '0.75rem', textAlign: 'left', fontWeight: 600, width: '60px' } }>
-									{ i18n.active || 'Aktiv' }
+									{ __( 'Active', 'recruiting-playbook' ) }
 								</th>
 								<th style={ { padding: '0.75rem', textAlign: 'left', fontWeight: 600 } }>
-									{ i18n.status || 'Bei Status' }
+									{ __( 'On status', 'recruiting-playbook' ) }
 								</th>
 								<th style={ { padding: '0.75rem', textAlign: 'left', fontWeight: 600 } }>
-									{ i18n.template || 'E-Mail-Template' }
+									{ __( 'Email template', 'recruiting-playbook' ) }
 								</th>
 								<th style={ { padding: '0.75rem', textAlign: 'left', fontWeight: 600, width: '180px' } }>
-									{ i18n.delay || 'Verzögerung' }
+									{ __( 'Delay', 'recruiting-playbook' ) }
 								</th>
 							</tr>
 						</thead>
@@ -179,7 +179,7 @@ export function AutomationSettings( { templates = [] } ) {
 												disabled={ ! statusSettings.enabled }
 												style={ { width: '100%' } }
 											>
-												<SelectOption value="">{ i18n.noTemplate || '— Kein Template —' }</SelectOption>
+												<SelectOption value="">{ __( '— No template —', 'recruiting-playbook' ) }</SelectOption>
 												{ templates.map( ( template ) => (
 													<SelectOption key={ template.id } value={ template.id }>
 														{ template.name } ({ template.subject })
@@ -212,10 +212,10 @@ export function AutomationSettings( { templates = [] } ) {
 							{ saving ? (
 								<>
 									<Spinner size="sm" style={ { marginRight: '0.5rem' } } />
-									{ i18n.saving || 'Speichern...' }
+									{ __( 'Saving...', 'recruiting-playbook' ) }
 								</>
 							) : (
-								i18n.saveSettings || 'Einstellungen speichern'
+								__( 'Save settings', 'recruiting-playbook' )
 							) }
 						</Button>
 					</div>

@@ -8,6 +8,8 @@ import { useState, useMemo, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import PropTypes from 'prop-types';
+
+import { getWpLocale } from '../../utils/locale';
 import {
 	Eye,
 	RefreshCw,
@@ -215,7 +217,7 @@ export function EmailHistory( {
 		if ( ! date ) {
 			return '-';
 		}
-		return new Date( date ).toLocaleString( 'de-DE', {
+		return new Date( date ).toLocaleString( getWpLocale(), {
 			day: '2-digit',
 			month: '2-digit',
 			year: 'numeric',

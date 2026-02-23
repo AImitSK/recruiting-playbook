@@ -7,6 +7,7 @@
  */
 
 import { useState, useRef, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Notiz-Editor Komponente
@@ -33,8 +34,6 @@ export function NoteEditor( {
 	const [ content, setContent ] = useState( initialContent );
 	const [ isPrivate, setIsPrivate ] = useState( initialPrivate );
 	const textareaRef = useRef( null );
-
-	const i18n = window.rpApplicant?.i18n || {};
 
 	// Fokus auf Textarea setzen
 	useEffect( () => {
@@ -81,7 +80,7 @@ export function NoteEditor( {
 				value={ content }
 				onChange={ ( e ) => setContent( e.target.value ) }
 				onKeyDown={ handleKeyDown }
-				placeholder={ i18n.notePlaceholder || 'Enter note...' }
+				placeholder={ __( 'Enter note\u2026', 'recruiting-playbook' ) }
 				rows={ 4 }
 				disabled={ saving }
 			/>
@@ -97,7 +96,7 @@ export function NoteEditor( {
 								disabled={ saving }
 							/>
 							<span className="dashicons dashicons-lock"></span>
-							{ i18n.privateNote || 'Visible only to me' }
+							{ __( 'Visible only to me', 'recruiting-playbook' ) }
 						</label>
 					) }
 				</div>
@@ -110,7 +109,7 @@ export function NoteEditor( {
 							onClick={ onCancel }
 							disabled={ saving }
 						>
-							{ i18n.cancel || 'Cancel' }
+							{ __( 'Cancel', 'recruiting-playbook' ) }
 						</button>
 					) }
 					<button
@@ -122,17 +121,17 @@ export function NoteEditor( {
 						{ saving ? (
 							<>
 								<span className="spinner is-active"></span>
-								{ i18n.saving || 'Saving...' }
+								{ __( 'Saving\u2026', 'recruiting-playbook' ) }
 							</>
 						) : (
-							saveLabel || i18n.save || 'Save'
+							saveLabel || __( 'Save', 'recruiting-playbook' )
 						) }
 					</button>
 				</div>
 			</div>
 
 			<div className="rp-note-editor__hint">
-				<kbd>Ctrl</kbd> + <kbd>Enter</kbd> { i18n.toSave || 'to save' }
+				<kbd>Ctrl</kbd> + <kbd>Enter</kbd> { __( 'to save', 'recruiting-playbook' ) }
 			</div>
 		</div>
 	);

@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	Search,
 	Users,
@@ -30,7 +30,6 @@ export function TalentPoolList() {
 	const [ searchInput, setSearchInput ] = useState( '' );
 
 	const config = window.rpTalentPool || {};
-	const i18n = config.i18n || {};
 	const logoUrl = config.logoUrl || '';
 
 	const {
@@ -109,7 +108,7 @@ export function TalentPoolList() {
 					<CardContent style={ { padding: '3rem', textAlign: 'center' } }>
 						<p style={ { color: '#d63638', marginBottom: '1.5rem' } }>{ error }</p>
 						<Button onClick={ refetch }>
-							{ i18n.retry || __( 'Retry', 'recruiting-playbook' ) }
+							{ __( 'Retry', 'recruiting-playbook' ) }
 						</Button>
 					</CardContent>
 				</Card>
@@ -130,7 +129,7 @@ export function TalentPoolList() {
 						/>
 					) }
 					<h1 style={ { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' } }>
-						{ i18n.title || __( 'Talent Pool', 'recruiting-playbook' ) }
+						{ __( 'Talent Pool', 'recruiting-playbook' ) }
 					</h1>
 				</div>
 
@@ -153,7 +152,7 @@ export function TalentPoolList() {
 								/>
 								<input
 									type="text"
-									placeholder={ i18n.search || __( 'Search candidates...', 'recruiting-playbook' ) }
+									placeholder={ __( 'Search candidates\u2026', 'recruiting-playbook' ) }
 									value={ searchInput }
 									onChange={ ( e ) => setSearchInput( e.target.value ) }
 									style={ {
@@ -203,7 +202,7 @@ export function TalentPoolList() {
 									minWidth: '150px',
 								} }
 							>
-								<option value="">{ i18n.allTags || __( 'All Tags', 'recruiting-playbook' ) }</option>
+								<option value="">{ __( 'All tags', 'recruiting-playbook' ) }</option>
 								{ allTags.map( ( tag ) => (
 									<option key={ tag } value={ tag }>
 										{ tag }
@@ -216,7 +215,7 @@ export function TalentPoolList() {
 
 							{ /* Total Count */ }
 							<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
-								{ total } { total === 1 ? ( i18n.candidate || __( 'Candidate', 'recruiting-playbook' ) ) : ( i18n.candidates || __( 'Candidates', 'recruiting-playbook' ) ) }
+								{ sprintf( _n( '%d candidate', '%d candidates', total, 'recruiting-playbook' ), total ) }
 							</span>
 						</div>
 					</CardContent>
@@ -237,7 +236,7 @@ export function TalentPoolList() {
 					} }
 				>
 					<Info style={ { width: '1rem', height: '1rem', flexShrink: 0 } } />
-					{ i18n.gdprNotice || __( 'GDPR notice: Candidates are automatically removed from the pool after expiry.', 'recruiting-playbook' ) }
+					{ __( 'GDPR notice: Candidates are automatically removed from the pool after expiry.', 'recruiting-playbook' ) }
 				</div>
 
 				{ /* Content */ }
@@ -246,14 +245,14 @@ export function TalentPoolList() {
 						<CardContent style={ { padding: '4rem 2rem', textAlign: 'center' } }>
 							<Users style={ { width: '4rem', height: '4rem', color: '#d1d5db', marginBottom: '1rem' } } />
 							<h2 style={ { margin: '0 0 0.5rem 0', fontSize: '1.25rem', fontWeight: 600, color: '#1f2937' } }>
-								{ i18n.emptyPool || __( 'The talent pool is still empty.', 'recruiting-playbook' ) }
+								{ __( 'The talent pool is still empty.', 'recruiting-playbook' ) }
 							</h2>
 							<p style={ { margin: '0 0 1.5rem 0', color: '#6b7280' } }>
-								{ i18n.emptyPoolHint || __( 'Add promising candidates from the application detail page to the talent pool.', 'recruiting-playbook' ) }
+								{ __( 'Add promising candidates from the application detail page to the talent pool.', 'recruiting-playbook' ) }
 							</p>
 							<Button asChild>
 								<a href={ config.applicationsUrl || '#' }>
-									{ i18n.goToApplications || __( 'Go to Applications', 'recruiting-playbook' ) }
+									{ __( 'Go to Applications', 'recruiting-playbook' ) }
 								</a>
 							</Button>
 						</CardContent>
@@ -284,7 +283,7 @@ export function TalentPoolList() {
 								<CardContent style={ { padding: '0.75rem 1rem' } }>
 									<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 										<span style={ { fontSize: '0.875rem', color: '#6b7280' } }>
-											{ i18n.page || __( 'Page', 'recruiting-playbook' ) } { page } { i18n.of || __( 'of', 'recruiting-playbook' ) } { totalPages }
+											{ __( 'Page', 'recruiting-playbook' ) } { page } { __( 'of', 'recruiting-playbook' ) } { totalPages }
 										</span>
 										<div style={ { display: 'flex', gap: '0.5rem' } }>
 											<Button
@@ -294,7 +293,7 @@ export function TalentPoolList() {
 												disabled={ page <= 1 || loading }
 											>
 												<ChevronLeft style={ { width: '1rem', height: '1rem', marginRight: '0.25rem' } } />
-												{ i18n.previous || __( 'Previous', 'recruiting-playbook' ) }
+												{ __( 'Previous', 'recruiting-playbook' ) }
 											</Button>
 											<Button
 												variant="outline"
@@ -302,7 +301,7 @@ export function TalentPoolList() {
 												onClick={ () => setPage( page + 1 ) }
 												disabled={ page >= totalPages || loading }
 											>
-												{ i18n.next || __( 'Next', 'recruiting-playbook' ) }
+												{ __( 'Next', 'recruiting-playbook' ) }
 												<ChevronRight style={ { width: '1rem', height: '1rem', marginLeft: '0.25rem' } } />
 											</Button>
 										</div>

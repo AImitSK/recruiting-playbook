@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook zum Laden von Time-to-Hire Statistiken
@@ -36,7 +37,7 @@ export function useTimeToHire( period = '30days', jobId = null ) {
 			setData( result );
 		} catch ( err ) {
 			console.error( 'Error fetching time-to-hire:', err );
-			setError( err.message || 'Fehler beim Laden der Time-to-Hire Daten' );
+			setError( err.message || __( 'Error loading time-to-hire data', 'recruiting-playbook' ) );
 		} finally {
 			setLoading( false );
 		}

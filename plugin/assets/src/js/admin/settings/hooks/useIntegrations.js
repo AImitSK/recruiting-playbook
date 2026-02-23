@@ -6,6 +6,7 @@
 
 import { useState, useCallback, useEffect, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Default-Werte für alle Integrationen
@@ -76,7 +77,7 @@ export function useIntegrations() {
 			}
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Laden der Einstellungen' );
+				setError( err?.message || __( 'Error loading settings', 'recruiting-playbook' ) );
 			}
 		} finally {
 			if ( isMountedRef.current ) {
@@ -106,7 +107,7 @@ export function useIntegrations() {
 			return true;
 		} catch ( err ) {
 			if ( isMountedRef.current ) {
-				setError( err?.message || 'Fehler beim Speichern' );
+				setError( err?.message || __( 'Error saving', 'recruiting-playbook' ) );
 			}
 			return false;
 		} finally {
@@ -146,7 +147,7 @@ export function useIntegrations() {
 				setTestResult( {
 					service,
 					success: false,
-					message: err?.message || 'Test fehlgeschlagen',
+					message: err?.message || __( 'Test failed', 'recruiting-playbook' ),
 				} );
 			}
 		} finally {
