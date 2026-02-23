@@ -25,7 +25,6 @@ class WidgetLoader {
 		'FeaturedJobs',
 		'LatestJobs',
 		'JobCategories',
-		'ApplicationForm',
 		'AiJobFinder',
 		'AiJobMatch',
 	];

@@ -33,7 +33,6 @@ class BlockLoader {
 		'featured-jobs',
 		'latest-jobs',
 		'job-categories',
-		'application-form',
 	];
 
 	/**

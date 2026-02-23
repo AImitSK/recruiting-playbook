@@ -26,7 +26,6 @@ class ElementLoader {
 		$this->registerElement( 'FeaturedJobs' );
 		$this->registerElement( 'LatestJobs' );
 		$this->registerElement( 'JobCategories' );
-		$this->registerElement( 'ApplicationForm' );
 
 		// Pro Elements (AI-Features).
 		if ( rp_fs()->is__premium_only() ) {

@@ -92,6 +92,10 @@ final class Plugin {
 		$this->registerPostTypes();
 		$this->registerTaxonomies();
 
+		// Rewrite-Rules flushen wenn sich die Plugin-Version geändert hat.
+		// Stellt sicher, dass Taxonomy-Rewrites (z.B. /berufsfeld/) nach Updates funktionieren.
+		add_action( 'init', [ $this, 'maybeFlushRewriteRules' ], 99 );
+
 		// Pro-Services initialisieren.
 		if ( rp_fs()->is__premium_only() ) {
 			$this->initEmailQueueService();
@@ -514,6 +518,21 @@ final class Plugin {
 		}
 		if ( ! taxonomy_exists( EmploymentType::TAXONOMY ) ) {
 			add_action( 'init', [ new EmploymentType(), 'register' ] );
+		}
+	}
+
+	/**
+	 * Rewrite-Rules flushen wenn Plugin-Version sich geändert hat
+	 *
+	 * Stellt sicher, dass Taxonomy-Rewrites (z.B. /berufsfeld/) nach
+	 * Plugin-Updates korrekt funktionieren und keine 404-Fehler auftreten.
+	 */
+	public function maybeFlushRewriteRules(): void {
+		$stored_version = get_transient( 'rp_rewrite_version' );
+
+		if ( $stored_version !== RP_VERSION ) {
+			flush_rewrite_rules();
+			set_transient( 'rp_rewrite_version', RP_VERSION );
 		}
 	}
 
