@@ -27,7 +27,7 @@ Diese Widgets können auf jeder Seite verwendet werden:
 | RP: Stellen-Zähler | `rp_job_count` | Dynamischer Zähler für Headlines | Pro |
 | RP: Featured Jobs | `rp_featured_jobs` | Hervorgehobene Stellen | Pro |
 | RP: Neueste Stellen | `rp_latest_jobs` | Aktuellste Stellenanzeigen | Pro |
-| RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten | Pro |
+| RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten oder -Liste | Pro |
 | RP: KI-Job-Finder | `rp_ai_job_finder` | Lebenslauf-Upload mit KI-Matching | AI-Addon |
 
 ### Stellen-Widgets
@@ -36,11 +36,14 @@ Diese Widgets sind für Stellen-Einzelseiten gedacht und erkennen die aktuelle S
 
 | Widget | Shortcode | Beschreibung | Feature |
 |--------|-----------|--------------|---------|
-| RP: Bewerbungsformular | `rp_application_form` | Mehrstufiges Bewerbungsformular | Pro |
 | RP: KI-Job-Match | `rp_ai_job_match` | "Passe ich zu diesem Job?" Button | AI-Addon |
 
 <Callout type="info">
 Die Stellen-Widgets erkennen die aktuelle Stelle automatisch, wenn sie auf einer Stellen-Einzelseite platziert werden. Sie können aber auch eine Stelle manuell auswählen.
+</Callout>
+
+<Callout type="info">
+Das Bewerbungsformular wird automatisch auf Stellen-Einzelseiten eingebunden und steht als [Shortcode](/docs/shortcodes#rp_application_form) zur Verfügung. Ein separates Elementor Widget ist nicht nötig.
 </Callout>
 
 ## Widgets einfügen
@@ -130,29 +133,17 @@ Zeigt die neuesten Stellenanzeigen an.
 
 ## RP: Job-Kategorien
 
-Zeigt alle Kategorien als klickbare Karten an.
+Zeigt alle Kategorien als klickbare Karten oder vertikale Liste an.
 
 ### Einstellungen
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Spalten | Grid-Spalten (2-6) | `4` |
+| Layout | Grid (Karten) oder Liste (vertikale Liste mit Trennlinien) | Grid |
+| Spalten | Grid-Spalten (2-6, nur bei Grid-Layout) | `4` |
 | Anzahl anzeigen | Jobs pro Kategorie anzeigen | Ja |
 | Leere verstecken | Kategorien ohne Jobs ausblenden | Ja |
 | Sortierung | Nach Name oder Anzahl | Name |
-
-## RP: Bewerbungsformular
-
-Mehrstufiges Bewerbungsformular mit Datei-Upload.
-
-### Einstellungen
-
-| Einstellung | Beschreibung | Standard |
-|-------------|--------------|----------|
-| Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
-| Überschrift | Formular-Überschrift | "Jetzt bewerben" |
-| Stellentitel anzeigen | Name der Stelle über dem Formular | Ja |
-| Fortschrittsanzeige | Schritt-Anzeige bei mehrstufigem Formular | Ja |
 
 ## RP: KI-Job-Finder
 
@@ -198,11 +189,11 @@ Das CSS wird automatisch geladen, sobald ein Widget auf der Seite verwendet wird
 
 ## Elementor Template für Stellenanzeigen
 
-Um das Bewerbungsformular und den KI-Job-Match-Button auf allen Stellen-Einzelseiten zu platzieren:
+Um den KI-Job-Match-Button auf allen Stellen-Einzelseiten zu platzieren:
 
 1. **Templates** → **Theme Builder** → **Single** → Neu erstellen
 2. Bedingung: Post-Typ = **Stellenanzeige** (`job_listing`)
-3. Die Stellen-Widgets (Bewerbungsformular, KI-Job-Match) im Template platzieren
+3. Das KI-Job-Match Widget im Template platzieren
 4. Template veröffentlichen
 
 <Callout type="info">

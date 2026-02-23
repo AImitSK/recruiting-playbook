@@ -184,7 +184,7 @@ Zeigt die neuesten Stellenanzeigen an. Ideal für Sidebars.
 
 ## rp_job_categories
 
-Zeigt alle Job-Kategorien als klickbare Karten an.
+Zeigt alle Job-Kategorien als klickbare Karten oder Liste an.
 
 ![Kategorie-Karten mit Stellenanzahl](/screenshots/sc-kategorie.png)
 
@@ -192,23 +192,36 @@ Zeigt alle Job-Kategorien als klickbare Karten an.
 
 | Attribut | Beschreibung | Standard |
 |----------|-------------|----------|
-| `columns` | Spalten im Grid (1-6) | `4` |
+| `layout` | Darstellung: `grid` (Karten) oder `list` (vertikale Liste) | `grid` |
+| `columns` | Spalten im Grid (1-6, nur bei `layout="grid"`) | `4` |
 | `show_count` | Anzahl pro Kategorie anzeigen | `true` |
 | `hide_empty` | Leere Kategorien verstecken | `true` |
 | `orderby` | Sortierung (`name`, `count`) | `name` |
 
 ### Beispiele
 
-**Standard Kategorie-Übersicht:**
+**Standard Kategorie-Übersicht (Grid):**
 
 ```html
 [rp_job_categories]
+```
+
+**Listenansicht mit Trennlinien und Pfeil-Icon:**
+
+```html
+[rp_job_categories layout="list"]
 ```
 
 **3 Spalten, sortiert nach Anzahl:**
 
 ```html
 [rp_job_categories columns="3" orderby="count"]
+```
+
+**Liste ohne Stellen-Anzahl:**
+
+```html
+[rp_job_categories layout="list" show_count="false"]
 ```
 
 **Alle Kategorien (auch leere):**

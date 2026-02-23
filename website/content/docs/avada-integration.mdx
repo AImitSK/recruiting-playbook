@@ -28,7 +28,7 @@ Diese Elemente können auf jeder Seite verwendet werden:
 | RP: Stellen-Zähler | `rp_job_count` | Dynamischer Zähler für Headlines | Pro |
 | RP: Featured Jobs | `rp_featured_jobs` | Hervorgehobene Stellen | Pro |
 | RP: Neueste Stellen | `rp_latest_jobs` | Aktuellste Stellenanzeigen | Pro |
-| RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten | Pro |
+| RP: Job-Kategorien | `rp_job_categories` | Klickbare Kategorie-Karten oder -Liste | Pro |
 | RP: KI-Job-Finder | `rp_ai_job_finder` | Lebenslauf-Upload mit KI-Matching | AI-Addon |
 
 ### Layout-Komponenten (Template Builder)
@@ -37,11 +37,14 @@ Diese Elemente sind nur im **Template Builder** (Layout Sections) verfügbar und
 
 | Element | Shortcode | Beschreibung | Feature |
 |---------|-----------|--------------|---------|
-| RP: Bewerbungs-Formular | `rp_application_form` | Mehrstufiges Bewerbungsformular | Pro |
 | RP: KI-Job-Match | `rp_ai_job_match` | "Passe ich zu diesem Job?" Button | AI-Addon |
 
 <Callout type="info">
 Layout-Komponenten erkennen die aktuelle Stelle automatisch. Sie funktionieren nur in Layout Sections für den Post-Typ "Stellenanzeige".
+</Callout>
+
+<Callout type="info">
+Das Bewerbungsformular wird automatisch auf Stellen-Einzelseiten eingebunden und steht als [Shortcode](/docs/shortcodes#rp_application_form) zur Verfügung. Ein separates Fusion Builder Element ist nicht nötig.
 </Callout>
 
 ## Elemente einfügen
@@ -139,33 +142,17 @@ Zeigt die neuesten Stellenanzeigen an.
 
 ## RP: Job-Kategorien
 
-Zeigt alle Kategorien als klickbare Karten an.
+Zeigt alle Kategorien als klickbare Karten oder vertikale Liste an.
 
 ### Einstellungen
 
 | Einstellung | Beschreibung | Standard |
 |-------------|--------------|----------|
-| Spalten | Grid-Spalten (2-6) | `4` |
+| Layout | Grid (Karten) oder Liste (vertikale Liste mit Trennlinien) | Grid |
+| Spalten | Grid-Spalten (2-6, nur bei Grid-Layout) | `4` |
 | Anzahl anzeigen | Jobs pro Kategorie anzeigen | Ja |
 | Leere verstecken | Kategorien ohne Jobs ausblenden | Ja |
 | Sortierung | Nach Name oder Anzahl | Name |
-
-## RP: Bewerbungs-Formular
-
-Mehrstufiges Bewerbungsformular mit Datei-Upload.
-
-<Callout type="info">
-Dieses Element ist eine **Layout-Komponente** und nur im Template Builder verfügbar. Auf Stellen-Einzelseiten wird die Stelle automatisch erkannt.
-</Callout>
-
-### Einstellungen
-
-| Einstellung | Beschreibung | Standard |
-|-------------|--------------|----------|
-| Stelle | Job-Auswahl (leer = automatisch) | Automatisch |
-| Überschrift | Formular-Überschrift | "Jetzt bewerben" |
-| Stellentitel anzeigen | Name der Stelle über dem Formular | Ja |
-| Fortschrittsanzeige | Schritt-Anzeige bei mehrstufigem Formular | Ja |
 
 ## RP: KI-Job-Finder
 
@@ -217,12 +204,12 @@ Zusätzlich werden bei aktivem Avada Theme die **Button-Styles aus den Avada Glo
 
 ## Layout Section für Stellenanzeigen
 
-Um das Bewerbungsformular und den KI-Job-Match-Button auf Stellen-Einzelseiten zu platzieren:
+Um den KI-Job-Match-Button auf Stellen-Einzelseiten zu platzieren:
 
 1. **Avada** → **Layouts** → Neues Layout erstellen
 2. Bedingung: Post-Typ = **Stellenanzeige** (`job_listing`)
 3. **Content Layout Section** erstellen
-4. Im Builder die Layout-Komponenten (Bewerbungs-Formular, KI-Job-Match) platzieren
+4. Im Builder die Layout-Komponente (KI-Job-Match) platzieren
 5. Layout veröffentlichen
 
 <Callout type="info">
