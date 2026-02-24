@@ -8,7 +8,6 @@ import clsx from 'clsx'
 import { Container } from '@/components/Container'
 import screenshotKanban from '../../public/screenshots/kanban-board.png'
 import screenshotReports from '../../public/screenshots/berichte-conversion.png'
-import screenshotGoogle from '../../public/screenshots/grid.png'
 import screenshotFormBuilder from '../../public/screenshots/formular-builder.png'
 
 const features = [
@@ -16,7 +15,7 @@ const features = [
     title: 'Google for Jobs',
     description:
       'Ihre Stellen erscheinen automatisch in der Google-Jobsuche ohne technisches Wissen. Kostenloses Schema-Markup, das andere Plugins für 799 €/Jahr verkaufen.',
-    image: screenshotGoogle,
+    video: 'oX8_9z7C0vU',
   },
   {
     title: 'Kanban-Board',
@@ -127,13 +126,25 @@ export function PrimaryFeatures() {
                       </p>
                     </div>
                     <div className="mt-10 w-180 overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-271.25">
-                      <Image
-                        className="w-full"
-                        src={feature.image}
-                        alt=""
-                        priority
-                        sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem"
-                      />
+                      {feature.video ? (
+                        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                          <iframe
+                            className="absolute inset-0 h-full w-full"
+                            src={`https://www.youtube-nocookie.com/embed/${feature.video}`}
+                            title={feature.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      ) : (
+                        <Image
+                          className="w-full"
+                          src={feature.image}
+                          alt=""
+                          priority
+                          sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem"
+                        />
+                      )}
                     </div>
                   </TabPanel>
                 ))}
