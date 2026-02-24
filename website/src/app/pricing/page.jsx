@@ -7,9 +7,8 @@ import { PricingFaqs } from '@/components/PricingFaqs'
 import { SectionCta } from '@/components/SectionCta'
 
 export const metadata = {
-  title: 'Preise',
-  description:
-    'Einfache, faire Preise für Recruiting Playbook. Kostenlos starten, bei Bedarf upgraden.',
+  title: 'Preise: Einmalzahlung statt Abo',
+  description: 'Recruiting Playbook',
 }
 
 export default function PricingPage() {

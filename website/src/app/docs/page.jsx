@@ -3,9 +3,8 @@ import { docsNav } from '@/lib/docs-nav'
 import { Breadcrumbs } from '@/components/docs/Breadcrumbs'
 
 export const metadata = {
-  title: 'Dokumentation',
-  description:
-    'Vollstaendige Dokumentation fuer das Recruiting Playbook WordPress-Plugin. Installation, Shortcodes, Templates, Hooks und mehr.',
+  title: 'Dokumentation & Anleitung',
+  description: 'Recruiting Playbook',
 }
 
 export default function DocsIndex() {

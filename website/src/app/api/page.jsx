@@ -12,9 +12,8 @@ const descriptions = {
 }
 
 export const metadata = {
-  title: 'API-Referenz',
-  description:
-    'Complete REST API reference for the Recruiting Playbook WordPress plugin. Endpoints for jobs, applications, webhooks, and reports.',
+  title: 'API Reference for Developers',
+  description: 'Recruiting Playbook',
 }
 
 export default function ApiIndex() {

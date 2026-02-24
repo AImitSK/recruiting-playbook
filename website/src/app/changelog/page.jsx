@@ -3,9 +3,8 @@ import { Footer } from '@/components/Footer'
 import { Container } from '@/components/Container'
 
 export const metadata = {
-  title: 'Changelog',
-  description:
-    'Versionshistorie von Recruiting Playbook. Alle Änderungen, neue Features und Bugfixes im Überblick.',
+  title: 'Changelog & Updates',
+  description: 'Recruiting Playbook',
 }
 
 const changelog = [

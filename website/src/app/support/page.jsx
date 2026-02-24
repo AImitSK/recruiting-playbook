@@ -4,9 +4,8 @@ import { Footer } from '@/components/Footer'
 import { Container } from '@/components/Container'
 
 export const metadata = {
-  title: 'Support',
-  description:
-    'Hilfe und Support für Recruiting Playbook. Dokumentation, FAQ, GitHub Issues und E-Mail-Support für Pro-Kunden.',
+  title: 'Hilfe & Support',
+  description: 'Recruiting Playbook',
 }
 
 const supportChannels = [

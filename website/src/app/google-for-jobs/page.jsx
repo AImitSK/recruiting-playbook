@@ -7,7 +7,7 @@ import { SectionCta } from '@/components/SectionCta'
 export const metadata = {
   title: 'Google for Jobs WordPress Plugin',
   description:
-    'Stellenanzeigen automatisch in der Google-Jobsuche anzeigen. Kostenloses Schema-Markup mit Recruiting Playbook — ohne technisches Wissen.',
+    'Automatisch bei Google Jobs erscheinen',
 }
 
 function CheckIcon() {

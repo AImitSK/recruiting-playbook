@@ -1,5 +1,6 @@
 export const metadata = {
   title: 'Datenschutzerklärung',
+  description: 'Recruiting Playbook',
 }
 
 export default function Privacy() {

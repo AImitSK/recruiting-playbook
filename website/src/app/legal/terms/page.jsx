@@ -1,5 +1,6 @@
 export const metadata = {
-  title: 'Allgemeine Geschäftsbedingungen',
+  title: 'AGB – Allgemeine Geschäftsbedingungen',
+  description: 'Recruiting Playbook',
 }
 
 export default function Terms() {

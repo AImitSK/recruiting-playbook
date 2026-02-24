@@ -7,10 +7,10 @@ export const metadata = {
   title: {
     template: '%s - Recruiting Playbook',
     default:
-      'Recruiting Playbook - Professionelles Bewerbermanagement für WordPress',
+      'Recruiting Playbook: Das WordPress Recruiting Plugin',
   },
   description:
-    'WordPress Recruiting Plugin mit automatischem Google for Jobs, DSGVO-konformem Bewerbermanagement und KI-Analyse. Stellenanzeigen erstellen, Bewerbungen verwalten. Kostenlos starten.',
+    'Erstelle Stellenanzeigen mit Google Jobs Integration & KI-Analyse. Profi-Recruiting für WordPress zum Einmalpreis statt Abo.',
   manifest: '/manifest.webmanifest',
   metadataBase: new URL('https://recruiting-playbook.com'),
   openGraph: {

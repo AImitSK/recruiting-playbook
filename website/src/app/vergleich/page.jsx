@@ -7,7 +7,7 @@ import { SectionCta } from '@/components/SectionCta'
 export const metadata = {
   title: 'Vergleich: Recruiting Playbook vs. Wettbewerber',
   description:
-    'Recruiting Playbook vs. WP Job Manager, MatadorJobs und andere WordPress Recruiting Plugins im direkten Vergleich. Features, Preise, DSGVO.',
+    'Warum Recruiting Playbook die bessere Wahl ist: Einmalpreis, KI-Features und volle Datenkontrolle im Vergleich zu anderen Lösungen.',
 }
 
 function CheckIcon() {

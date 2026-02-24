@@ -1,5 +1,6 @@
 export const metadata = {
   title: 'Impressum',
+  description: 'Recruiting Playbook',
 }
 
 export default function Imprint() {

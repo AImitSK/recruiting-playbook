@@ -8,9 +8,8 @@ import { FeaturesIconGrid } from '@/components/FeaturesIconGrid'
 import { SectionCta } from '@/components/SectionCta'
 
 export const metadata = {
-  title: 'Features',
-  description:
-    'Alle Features von Recruiting Playbook im Überblick. Stellenanzeigen, Bewerbermanagement, KI-Analyse und mehr.',
+  title: 'Features & KI-Funktionen',
+  description: 'Recruiting Playbook',
 }
 
 export default function FeaturesPage() {
