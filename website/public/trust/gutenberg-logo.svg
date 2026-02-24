@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282 50" fill="currentColor" width="282" height="50">
+  <!-- Gutenberg block icon -->
+  <rect x="0" y="3" width="44" height="44" rx="8" fill="currentColor" opacity="0.15"/>
+  <rect x="7" y="10" width="13" height="30" rx="2" fill="currentColor"/>
+  <rect x="24" y="10" width="13" height="13" rx="2" fill="currentColor"/>
+  <rect x="24" y="27" width="13" height="13" rx="2" fill="currentColor"/>
+  <!-- "Gutenberg" text -->
+  <text x="56" y="36" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600" fill="currentColor">Gutenberg</text>
+</svg>
