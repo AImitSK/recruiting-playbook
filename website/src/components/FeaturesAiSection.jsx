@@ -9,9 +9,9 @@ const modes = [
     description:
       'Bewerber laden ihren Lebenslauf auf einer Stellen-Einzelseite hoch. Die KI analysiert die Qualifikation und liefert einen Match-Score mit erfüllten und fehlenden Anforderungen.',
     features: [
-      'Match-Score (0\u2013100%)',
-      'Erf\u00fcllte & fehlende Anforderungen',
-      'Automatische Formular-Vorausf\u00fcllung',
+      'Match-Score (0–100%)',
+      'Erfüllte & fehlende Anforderungen',
+      'Automatische Formular-Vorausfüllung',
     ],
     icon: (
       <svg
@@ -59,10 +59,10 @@ const modes = [
     name: 'Chancen-Check',
     question: 'Wie stehen meine Chancen?',
     description:
-      'Tiefenanalyse nach dem Upload. Die KI berechnet realistische Einstellungschancen, zeigt St\u00e4rken und Schw\u00e4chen und gibt konkrete Tipps zur Verbesserung.',
+      'Tiefenanalyse nach dem Upload. Die KI berechnet realistische Einstellungschancen, zeigt Stärken und Schwächen und gibt konkrete Tipps zur Verbesserung.',
     features: [
-      'Einstellungschance (0\u2013100%)',
-      'St\u00e4rken & Schw\u00e4chen-Analyse',
+      'Einstellungschance (0–100%)',
+      'Stärken & Schwächen-Analyse',
       'Konkrete Verbesserungstipps',
     ],
     icon: (
@@ -137,7 +137,7 @@ export function FeaturesAiSection() {
                 </h3>
               </div>
               <p className="mt-2 text-sm font-medium text-blue-200">
-                \u201e{mode.question}\u201c
+                „{mode.question}"
               </p>
               <p className="mt-3 flex-1 text-sm text-blue-100">
                 {mode.description}

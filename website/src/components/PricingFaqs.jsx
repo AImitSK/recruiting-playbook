@@ -8,32 +8,32 @@ const faqs = [
   {
     question: 'Was bedeutet "Einmalig"?',
     answer:
-      'Sie zahlen einmalig und erhalten die aktuelle Version dauerhaft plus 12 Monate Updates und Support. Danach funktioniert Ihr Plugin weiter \u2014 Sie erhalten nur keine neuen Updates mehr. Optional k\u00f6nnen Sie die Wartung verl\u00e4ngern.',
+      'Sie zahlen einmalig und erhalten die aktuelle Version dauerhaft plus 12 Monate Updates und Support. Danach funktioniert Ihr Plugin weiter — Sie erhalten nur keine neuen Updates mehr. Optional können Sie die Wartung verlängern.',
   },
   {
     question: 'Was ist der Unterschied zwischen Pro und Agentur?',
     answer:
-      'Pro ist f\u00fcr eine einzelne Website. Die Agentur-Lizenz enth\u00e4lt alle Pro-Features f\u00fcr bis zu 3 Websites, eine zentrale Lizenzverwaltung und Priorit\u00e4ts-Support.',
+      'Pro ist für eine einzelne Website. Die Agentur-Lizenz enthält alle Pro-Features für bis zu 3 Websites, eine zentrale Lizenzverwaltung und Prioritäts-Support.',
   },
   {
     question: 'Kann ich die Domain meiner Lizenz wechseln?',
     answer:
-      'Ja. Sie k\u00f6nnen eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agentur-Lizenz k\u00f6nnen Sie bis zu 3 Domains gleichzeitig nutzen.',
+      'Ja. Sie können eine Lizenz im Kundenportal deaktivieren und auf einer neuen Domain aktivieren. Bei der Agentur-Lizenz können Sie bis zu 3 Domains gleichzeitig nutzen.',
   },
   {
     question: 'Gibt es eine Testversion von Pro?',
     answer:
-      'Wir bieten eine 14-Tage-Geld-zur\u00fcck-Garantie. Testen Sie Pro und wenn es nicht passt, erhalten Sie Ihr Geld zur\u00fcck \u2014 ohne Fragen.',
+      'Wir bieten eine 14-Tage-Geld-zurück-Garantie. Testen Sie Pro und wenn es nicht passt, erhalten Sie Ihr Geld zurück — ohne Fragen.',
   },
   {
     question: 'Was passiert nach den 12 Monaten Updates?',
     answer:
-      'Ihr Plugin funktioniert weiterhin ohne Einschr\u00e4nkungen. Sie erhalten nur keine neuen Features und Sicherheitsupdates mehr. Die Wartungsverl\u00e4ngerung gibt Ihnen wieder Zugang zu allen Updates.',
+      'Ihr Plugin funktioniert weiterhin ohne Einschränkungen. Sie erhalten nur keine neuen Features und Sicherheitsupdates mehr. Die Wartungsverlängerung gibt Ihnen wieder Zugang zu allen Updates.',
   },
   {
     question: 'Wie funktionieren die KI-Funktionen?',
     answer:
-      'Die KI-Analyse ist in der Pro- und Agentur-Lizenz enthalten. Sie erhalten 100 KI-Analysen pro Monat (Match-Score, Job-Finder, Chancen-Check). Zus\u00e4tzliche Analysen k\u00f6nnen bei Bedarf nachgebucht werden.',
+      'Die KI-Analyse ist in der Pro- und Agentur-Lizenz enthalten. Sie erhalten 100 KI-Analysen pro Monat (Match-Score, Job-Finder, Chancen-Check). Zusätzliche Analysen können bei Bedarf nachgebucht werden.',
   },
   {
     question: 'Welche Zahlungsmethoden werden akzeptiert?',
@@ -41,9 +41,9 @@ const faqs = [
       'Wir akzeptieren Kreditkarte, PayPal und SEPA-Lastschrift. Pro und Agentur sind Einmalzahlungen.',
   },
   {
-    question: 'Gibt es Rabatte f\u00fcr gemeinn\u00fctzige Organisationen?',
+    question: 'Gibt es Rabatte für gemeinnützige Organisationen?',
     answer:
-      'Ja, gemeinn\u00fctzige Organisationen und Bildungseinrichtungen erhalten 30% Rabatt auf Pro- und Agentur-Lizenzen. Kontaktieren Sie uns mit einem Nachweis.',
+      'Ja, gemeinnützige Organisationen und Bildungseinrichtungen erhalten 30% Rabatt auf Pro- und Agentur-Lizenzen. Kontaktieren Sie uns mit einem Nachweis.',
   },
 ]
 
@@ -71,10 +71,10 @@ export function PricingFaqs() {
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            H\u00e4ufige Fragen zu Preisen & Lizenzen
+            Häufige Fragen zu Preisen & Lizenzen
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Alles was Sie \u00fcber unsere Preismodelle wissen m\u00fcssen.
+            Alles was Sie über unsere Preismodelle wissen müssen.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-3xl divide-y divide-slate-200">
