@@ -35,7 +35,7 @@ const tiers = [
     name: 'KI-Analyse',
     icon: SparklesIcon,
     description: 'Intelligente Bewerberanalyse in Pro inkl.',
-    href: '/ai',
+    href: '/features#ki',
     cta: 'Mehr erfahren',
     highlights: [
       'Job-Match Score (0–100%)',

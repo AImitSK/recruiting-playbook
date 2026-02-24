@@ -133,7 +133,6 @@ function MobileNavigation() {
         className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
       >
         <MobileNavLink href="/features">Features</MobileNavLink>
-        <MobileNavLink href="/ai">KI-Addon</MobileNavLink>
         <MobileNavLink href="/pricing">Preise</MobileNavLink>
         <hr className="m-2 border-slate-300/40" />
         <MobileNavLink href="/docs">Dokumentation</MobileNavLink>
@@ -164,7 +163,6 @@ export function Header() {
             </Link>
             <div className="hidden md:flex md:items-center md:gap-x-6">
               <NavLink href="/features">Features</NavLink>
-              <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/pricing">Preise</NavLink>
               <ResourcesDropdown />
             </div>

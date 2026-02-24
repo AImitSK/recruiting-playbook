@@ -23,7 +23,6 @@ export function Footer() {
             <div className="-my-1 flex flex-wrap justify-center gap-x-6 gap-y-2">
               <NavLink href="/features">Features</NavLink>
               <NavLink href="/pricing">Preise</NavLink>
-              <NavLink href="/ai">KI-Addon</NavLink>
               <NavLink href="/docs">Dokumentation</NavLink>
               <NavLink href="/api">API</NavLink>
               <NavLink href="/changelog">Changelog</NavLink>

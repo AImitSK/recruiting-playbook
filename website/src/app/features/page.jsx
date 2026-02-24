@@ -2,6 +2,7 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { FeaturesHeroBadges } from '@/components/FeaturesHeroBadges'
 import { FeaturesBentoGrid } from '@/components/FeaturesBentoGrid'
+import { FeaturesAiSection } from '@/components/FeaturesAiSection'
 import { FeaturesAlternating } from '@/components/FeaturesAlternating'
 import { FeaturesIconGrid } from '@/components/FeaturesIconGrid'
 import { SectionCta } from '@/components/SectionCta'
@@ -19,6 +20,7 @@ export default function FeaturesPage() {
       <main>
         <FeaturesHeroBadges />
         <FeaturesBentoGrid />
+        <FeaturesAiSection />
         <FeaturesAlternating />
         <FeaturesIconGrid />
         <SectionCta
