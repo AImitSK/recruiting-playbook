@@ -15,13 +15,13 @@ const features = [
   {
     title: 'Google for Jobs',
     description:
-      'Ihre Stellen erscheinen automatisch in der Google-Jobsuche — ohne technisches Wissen. Kostenloses Schema-Markup, das andere Plugins für 799 €/Jahr verkaufen.',
+      'Ihre Stellen erscheinen automatisch in der Google-Jobsuche ohne technisches Wissen. Kostenloses Schema-Markup, das andere Plugins für 799 €/Jahr verkaufen.',
     image: screenshotGoogle,
   },
   {
     title: 'Kanban-Board',
     description:
-      'Bewerbungen visuell managen wie in Trello. Per Drag & Drop durch die Pipeline ziehen — von Eingang bis Einstellung.',
+      'Bewerbungen visuell managen wie in Trello. Per Drag & Drop durch die Pipeline ziehen, von Eingang bis Einstellung.',
     image: screenshotKanban,
   },
   {

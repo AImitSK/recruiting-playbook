@@ -1,8 +1,4 @@
-'use client'
-
-import { Fragment } from 'react'
-import { CheckIcon, MinusIcon } from '@heroicons/react/16/solid'
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { PlusIcon, SparklesIcon } from '@heroicons/react/16/solid'
 
 import { Container } from '@/components/Container'
 import { Button } from '@/components/Button'
@@ -10,87 +6,53 @@ import { Button } from '@/components/Button'
 const tiers = [
   {
     name: 'Free',
-    price: '0 €',
     description: 'Alles Wichtige. Kostenlos und ohne Limits.',
-    cta: 'Kostenlos herunterladen',
     href: '/recruiting-playbook.zip',
-    featured: false,
+    download: true,
+    cta: 'Kostenlos herunterladen',
+    highlights: [
+      'Unbegrenzte Stellenanzeigen',
+      'Mehrstufiges Bewerbungsformular',
+      'Google for Jobs Schema',
+      'Dokument-Upload',
+      'E-Mail-Benachrichtigungen',
+    ],
   },
   {
     name: 'Pro',
-    price: '149 €',
-    description: 'Bewerbermanagement, KI-Analyse und Premium-Support.',
-    cta: 'Pro freischalten',
+    description: 'Bewerbermanagement mit KI-Features.',
     href: '/pricing',
-    featured: true,
-  },
-]
-
-const sections = [
-  {
-    name: 'Stellenanzeigen',
-    features: [
-      { name: 'Unbegrenzte Stellenanzeigen', tiers: { Free: true, Pro: true } },
-      { name: 'Google for Jobs Schema', tiers: { Free: true, Pro: true } },
-      { name: 'WordPress Shortcodes & Blöcke', tiers: { Free: true, Pro: true } },
-      { name: 'KI-Stellentexte generieren', tiers: { Free: false, Pro: true } },
-      { name: 'SEO-Optimierung für Stellenanzeigen', tiers: { Free: false, Pro: true } },
+    cta: 'Pro freischalten',
+    highlights: [
+      'Erweitertes Bewerbermanagement',
+      'Kanban-Board (Drag & Drop)',
+      'Formular Builder',
+      'Integrations Library',
+      'REST API & Webhooks',
     ],
   },
   {
-    name: 'Bewerbungen',
-    features: [
-      { name: 'Mehrstufiges Bewerbungsformular', tiers: { Free: true, Pro: true } },
-      { name: 'Dokument-Upload (Lebenslauf, Zeugnisse)', tiers: { Free: true, Pro: true } },
-      { name: 'E-Mail-Benachrichtigungen', tiers: { Free: true, Pro: true } },
-      { name: 'Kanban-Board (Drag & Drop)', tiers: { Free: false, Pro: true } },
-      { name: 'Erweiterte E-Mail-Templates', tiers: { Free: false, Pro: true } },
-      { name: 'Status-Workflow Anpassung', tiers: { Free: false, Pro: true } },
-    ],
-  },
-  {
-    name: 'KI & Analyse',
-    features: [
-      { name: 'Job-Match Score (0–100%)', tiers: { Free: false, Pro: true } },
-      { name: 'Job-Finder: „Welche Jobs passen zu mir?"', tiers: { Free: false, Pro: true } },
-      { name: 'Chancen-Check für Bewerber', tiers: { Free: false, Pro: true } },
-      { name: 'Stärken/Schwächen-Analyse', tiers: { Free: false, Pro: true } },
-      { name: '100 KI-Analysen / Monat', tiers: { Free: false, Pro: true } },
-    ],
-  },
-  {
-    name: 'Datenschutz & Integration',
-    features: [
-      { name: 'DSGVO-Consent & Datenschutz', tiers: { Free: true, Pro: true } },
-      { name: 'CSV-Export', tiers: { Free: 'Basis', Pro: 'Erweitert' } },
-      { name: 'Automatische Löschfristen (DSGVO)', tiers: { Free: false, Pro: true } },
-      { name: 'REST API Zugang', tiers: { Free: false, Pro: true } },
-      { name: 'Webhook-System', tiers: { Free: false, Pro: true } },
-      { name: 'Premium Support (1 Jahr)', tiers: { Free: false, Pro: true } },
+    name: 'KI-Analyse',
+    icon: SparklesIcon,
+    description: 'Intelligente Bewerberanalyse in Pro inkl.',
+    href: '/ai',
+    cta: 'Mehr erfahren',
+    highlights: [
+      'Job-Match Score (0–100%)',
+      'Job-Finder: Passende Jobs finden',
+      'Chancen-Check für Bewerber',
+      'Stärken/Schwächen-Analyse',
+      '100 KI-Analysen/Monat inklusive',
     ],
   },
 ]
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
-function TierValue({ value }) {
-  if (value === true) {
-    return <CheckIcon aria-hidden="true" className="inline-block size-4 text-[#1d71b8]" />
-  }
-  if (value === false || value === undefined) {
-    return <MinusIcon aria-hidden="true" className="inline-block size-4 text-gray-400" />
-  }
-  return <span className="text-sm/6 text-gray-950">{value}</span>
-}
 
 export function SecondaryFeatures() {
   return (
     <section
       id="tiers"
-      aria-label="Feature-Vergleich"
-      className="pt-20 pb-14 sm:pt-32 sm:pb-20 lg:pb-32"
+      aria-label="Feature-Übersicht"
+      className="py-20 sm:py-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl text-center">
@@ -105,206 +67,64 @@ export function SecondaryFeatures() {
             KI-Analyse und Premium-Support. Einmalpreis, kein Abo.
           </p>
         </div>
+      </Container>
 
-        {/* Mobile: Tabs */}
-        <div className="mx-auto mt-12 max-w-md lg:hidden">
-          <TabGroup>
-            <TabList className="grid grid-cols-2">
-              {tiers.map((tier) => (
-                <Tab
-                  key={tier.name}
-                  className={classNames(
-                    'border-b-2 py-4 text-sm/6 font-semibold focus:outline-none data-[selected]:border-[#1d71b8] data-[selected]:text-[#1d71b8]',
-                    'border-transparent text-gray-500 hover:text-gray-700',
-                  )}
-                >
-                  {tier.name}
-                </Tab>
-              ))}
-            </TabList>
-            <TabPanels className="mt-4">
-              {tiers.map((tier) => (
-                <TabPanel key={tier.name}>
-                  <div className="rounded-3xl p-8 ring-1 ring-gray-900/10">
-                    <p className="text-sm/6 font-semibold text-gray-900">
+      {/* Pricing Cards */}
+      <div className="relative py-16 sm:py-24">
+        <div className="absolute inset-x-0 top-48 h-[32rem] bg-[radial-gradient(circle_at_center_center,#1d71b8,#0f3d6b,#030712_70%)]" />
+        <div className="relative mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+            {tiers.map((tier) => (
+              <div
+                key={tier.name}
+                className="-m-2 grid grid-cols-1 rounded-[2rem] shadow-[inset_0_0_2px_1px_#ffffff4d] ring-1 ring-black/5 max-lg:mx-auto max-lg:w-full max-lg:max-w-md"
+              >
+                <div className="grid grid-cols-1 rounded-[2rem] p-2 shadow-md shadow-black/5">
+                  <div className="flex flex-col rounded-3xl bg-white p-10 pb-9 shadow-2xl ring-1 ring-black/5">
+                    <h3 className="flex items-center gap-2 font-display text-2xl font-semibold text-gray-950">
+                      {tier.icon && <tier.icon className="size-6 text-[#1d71b8]" />}
                       {tier.name}
-                    </p>
-                    <p className="mt-2 flex items-baseline gap-x-1">
-                      <span className="text-4xl font-semibold tracking-tight text-gray-900">
-                        {tier.price}
-                      </span>
-                      {tier.name === 'Pro' && (
-                        <span className="text-sm/6 text-gray-500">einmalig</span>
-                      )}
-                    </p>
-                    <p className="mt-4 text-sm/6 text-gray-600">
+                    </h3>
+                    <p className="mt-2 text-sm/6 text-pretty text-gray-600">
                       {tier.description}
                     </p>
-                    <Button
-                      href={tier.href}
-                      color={tier.featured ? 'blue' : 'slate'}
-                      className="mt-6 w-full"
-                      {...(tier.name === 'Free' ? { download: true } : {})}
-                    >
-                      {tier.cta}
-                    </Button>
-                    <ul role="list" className="mt-8 space-y-4">
-                      {sections.map((section) => (
-                        <Fragment key={section.name}>
-                          <li>
-                            <p className="text-sm/6 font-semibold text-gray-950">
-                              {section.name}
-                            </p>
-                          </li>
-                          {section.features.map((feature) => (
-                            <li key={feature.name} className="flex items-center gap-x-3">
-                              <TierValue value={feature.tiers[tier.name]} />
-                              <span
-                                className={classNames(
-                                  feature.tiers[tier.name]
-                                    ? 'text-gray-600'
-                                    : 'text-gray-400',
-                                  'text-sm/6',
-                                )}
-                              >
-                                {feature.name}
-                              </span>
-                            </li>
-                          ))}
-                        </Fragment>
-                      ))}
-                    </ul>
-                  </div>
-                </TabPanel>
-              ))}
-            </TabPanels>
-          </TabGroup>
-        </div>
-
-        {/* Desktop: Table */}
-        <div className="isolate mx-auto mt-20 hidden max-w-2xl lg:block lg:max-w-none">
-          <table className="w-full table-fixed text-left">
-            <caption className="sr-only">Feature-Vergleich</caption>
-            <colgroup>
-              <col className="w-2/4" />
-              <col className="w-1/4" />
-              <col className="w-1/4" />
-            </colgroup>
-            <thead>
-              <tr>
-                <td className="p-0" />
-                {tiers.map((tier) => (
-                  <th
-                    key={tier.name}
-                    scope="col"
-                    className="p-0"
-                  >
-                    <div
-                      className={classNames(
-                        tier.featured
-                          ? 'rounded-t-2xl ring-1 ring-[#1d71b8]'
-                          : 'rounded-t-2xl ring-1 ring-gray-200',
-                        'px-6 pt-6 pb-4',
-                      )}
-                    >
-                      <p className="text-sm/6 font-semibold text-gray-900">
-                        {tier.name}
-                      </p>
-                      <p className="mt-1 flex items-baseline gap-x-1">
-                        <span className="text-4xl font-semibold tracking-tight text-gray-900">
-                          {tier.price}
-                        </span>
-                        {tier.name === 'Pro' && (
-                          <span className="text-sm/6 text-gray-500">
-                            einmalig
-                          </span>
-                        )}
-                      </p>
-                      <p className="mt-3 text-sm/6 text-gray-600">
-                        {tier.description}
-                      </p>
+                    <div className="mt-8">
                       <Button
                         href={tier.href}
-                        color={tier.featured ? 'blue' : 'slate'}
-                        className="mt-6 w-full"
-                        {...(tier.name === 'Free' ? { download: true } : {})}
+                        color="blue"
+                        {...(tier.download ? { download: true } : {})}
                       >
                         {tier.cta}
                       </Button>
                     </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            {sections.map((section) => (
-              <tbody key={section.name} className="group">
-                <tr>
-                  <th
-                    scope="colgroup"
-                    colSpan={3}
-                    className="px-0 pb-0 pt-10 group-first-of-type:pt-6"
-                  >
-                    <p className="-mx-0 rounded-lg bg-gray-50 px-6 py-3 text-sm/6 font-semibold text-gray-950">
-                      {section.name}
-                    </p>
-                  </th>
-                </tr>
-                {section.features.map((feature) => (
-                  <tr key={feature.name}>
-                    <th
-                      scope="row"
-                      className="px-6 py-4 text-sm/6 font-normal text-gray-600"
-                    >
-                      {feature.name}
-                    </th>
-                    {tiers.map((tier) => (
-                      <td
-                        key={tier.name}
-                        className={classNames(
-                          tier.featured
-                            ? 'ring-1 ring-[#1d71b8]'
-                            : 'ring-1 ring-gray-200',
-                          'px-6 py-4 text-center text-sm/6',
-                        )}
-                      >
-                        <TierValue value={feature.tiers[tier.name]} />
-                        <span className="sr-only">{tier.name}</span>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
+                    <div className="mt-8 flex-1">
+                      <h4 className="text-sm/6 font-medium text-gray-950">
+                        Enthalten:
+                      </h4>
+                      <ul className="mt-3 space-y-3">
+                        {tier.highlights.map((highlight) => (
+                          <li
+                            key={highlight}
+                            className="flex items-start gap-4 text-sm/6 text-gray-600"
+                          >
+                            <span className="inline-flex h-6 items-center">
+                              <PlusIcon
+                                aria-hidden="true"
+                                className="size-4 fill-gray-400"
+                              />
+                            </span>
+                            {highlight}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
-            <tfoot>
-              <tr>
-                <th scope="row" className="p-0">
-                  <span className="sr-only">Auswählen</span>
-                </th>
-                {tiers.map((tier) => (
-                  <td
-                    key={tier.name}
-                    className={classNames(
-                      tier.featured
-                        ? 'rounded-b-2xl ring-1 ring-[#1d71b8]'
-                        : 'rounded-b-2xl ring-1 ring-gray-200',
-                      'px-6 pt-4 pb-6',
-                    )}
-                  >
-                    <Button
-                      href={tier.href}
-                      color={tier.featured ? 'blue' : 'slate'}
-                      className="w-full"
-                      {...(tier.name === 'Free' ? { download: true } : {})}
-                    >
-                      {tier.cta}
-                    </Button>
-                  </td>
-                ))}
-              </tr>
-            </tfoot>
-          </table>
+          </div>
         </div>
-      </Container>
+      </div>
     </section>
   )
 }
