@@ -1,9 +1,9 @@
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-import { FeaturesHero } from '@/components/FeaturesHero'
-import { FeatureHighlights } from '@/components/FeatureHighlights'
-import { FeaturesByTier } from '@/components/FeaturesByTier'
-import { FeatureComparisonTable } from '@/components/FeatureComparisonTable'
+import { FeaturesHeroBadges } from '@/components/FeaturesHeroBadges'
+import { FeaturesBentoGrid } from '@/components/FeaturesBentoGrid'
+import { FeaturesAlternating } from '@/components/FeaturesAlternating'
+import { FeaturesIconGrid } from '@/components/FeaturesIconGrid'
 import { SectionCta } from '@/components/SectionCta'
 
 export const metadata = {
@@ -17,10 +17,10 @@ export default function FeaturesPage() {
     <>
       <Header />
       <main>
-        <FeaturesHero />
-        <FeatureHighlights />
-        <FeaturesByTier />
-        <FeatureComparisonTable />
+        <FeaturesHeroBadges />
+        <FeaturesBentoGrid />
+        <FeaturesAlternating />
+        <FeaturesIconGrid />
         <SectionCta
           headline="Bereit loszulegen?"
           text="Installieren Sie das Plugin und erstellen Sie Ihre erste Stellenanzeige. Kostenlos und in wenigen Minuten."
