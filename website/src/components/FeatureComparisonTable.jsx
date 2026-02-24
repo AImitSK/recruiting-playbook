@@ -75,6 +75,17 @@ const categories = [
     ],
   },
   {
+    name: 'KI-Funktionen',
+    features: [
+      { name: 'KI-Match-Score (0–100%)', free: false, pro: true, agentur: true },
+      { name: 'KI-Job-Finder für Bewerber', free: false, pro: true, agentur: true },
+      { name: 'Chancen-Check mit Stärken/Schwächen', free: false, pro: true, agentur: true },
+      { name: 'KI-Stellentexte generieren & optimieren', free: false, pro: true, agentur: true },
+      { name: 'SEO-Vorschläge per KI', free: false, pro: true, agentur: true },
+      { name: 'Inkludierte KI-Analysen/Monat', free: false, pro: '100', agentur: '100' },
+    ],
+  },
+  {
     name: 'DSGVO & Datenschutz',
     features: [
       { name: 'Consent-Checkbox mit Zeitstempel', free: true, pro: true, agentur: true },

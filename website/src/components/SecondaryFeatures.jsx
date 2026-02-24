@@ -32,8 +32,8 @@ const features = [
     color: 'bg-[#1d71b8]',
   },
   {
-    name: 'KI-Addon',
-    summary: 'Intelligente Bewerberanalyse mit Claude AI.',
+    name: 'KI-Analyse',
+    summary: 'Intelligente Bewerberanalyse — inklusive in Pro.',
     features: [
       'Job-Match Score (0-100%)',
       'Job-Finder: "Welche Jobs passen zu mir?"',
@@ -42,7 +42,7 @@ const features = [
       'SEO-Optimierung für Stellenanzeigen',
       'Stärken/Schwächen-Analyse',
       'Verbesserungsvorschläge',
-      'Fair-Use: 100 Analysen/Monat',
+      '100 Analysen/Monat inklusive',
     ],
     color: 'bg-[#2fac66]',
   },
@@ -58,11 +58,11 @@ export function SecondaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            Drei Versionen. Ein Plugin.
+            Kostenlos starten. Bei Bedarf upgraden.
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Starten Sie kostenlos und erweitern Sie bei Bedarf. Kein Vendor
-            Lock-in, Ihre Daten bleiben in WordPress.
+            Free für unbegrenzte Stellenanzeigen. Pro für Bewerbermanagement und
+            KI-Analyse. Kein Abo, Ihre Daten bleiben in WordPress.
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-3">

@@ -24,6 +24,10 @@ export default function ApiIndex() {
       <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
         API-Referenz
       </h1>
+      <p className="mt-2 text-sm text-slate-500">
+        Die API-Dokumentation ist bewusst auf Englisch gehalten, da dies
+        der internationale Standard für technische API-Referenzen ist.
+      </p>
       <p className="mt-4 text-base leading-7 text-slate-700">
         The Recruiting Playbook REST API lets you integrate job listings and
         applicant management into any system. All endpoints use the{' '}

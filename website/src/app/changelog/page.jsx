@@ -10,6 +10,98 @@ export const metadata = {
 
 const changelog = [
   {
+    version: '1.2.21',
+    date: '2026-02-23',
+    label: 'Aktuell',
+    sections: [
+      {
+        type: 'added',
+        items: [
+          'Checkbox zum Hervorheben von Stellen im Job-Editor',
+          'Übersetzungen für ES, FR, IT, NL',
+          'Deutsche Übersetzungen für 429 Admin-UI-Strings',
+        ],
+      },
+      {
+        type: 'fixed',
+        items: [
+          'JSON-Übersetzungen für webpack-Bundles korrekt zusammengeführt',
+        ],
+      },
+    ],
+  },
+  {
+    version: '1.2.20',
+    date: '2026-02-20',
+    label: 'i18n',
+    sections: [
+      {
+        type: 'changed',
+        items: [
+          'React Admin-UI auf englische Source-Strings umgestellt (Basis für Mehrsprachigkeit)',
+          'POT-Datei mit neuen englischen Source-Strings regeneriert',
+        ],
+      },
+      {
+        type: 'added',
+        items: [
+          'Listenansicht für [rp_job_categories] Shortcode',
+        ],
+      },
+      {
+        type: 'fixed',
+        items: [
+          'Bewerbungsformular aus Page-Buildern entfernt (wird automatisch eingebunden)',
+          'Job-Kategorien 404-Fehler behoben',
+        ],
+      },
+    ],
+  },
+  {
+    version: '1.2.16',
+    date: '2026-02-10',
+    sections: [
+      {
+        type: 'added',
+        items: [
+          'Export/Import-Feature mit ID-Mapping',
+          'Taxonomie-Verwaltung (Kategorien, Standorte, Beschäftigungsarten) im Admin-Menü',
+          'Löschen-Button in Bewerbungsliste',
+          'E-Mail-Vorlagen im Menü vor Einstellungen',
+          'Stellenangebote als eigener Menüpunkt',
+        ],
+      },
+      {
+        type: 'fixed',
+        items: [
+          'WordPress Admin Notices Header-Layout auf React-Seiten',
+          'E-Mail-Signaturen bei Auto-E-Mails',
+          'E-Mail-Begrüßung zeigt vollen Namen',
+        ],
+      },
+    ],
+  },
+  {
+    version: '1.2.14',
+    date: '2026-02-01',
+    sections: [
+      {
+        type: 'changed',
+        items: [
+          'KI-Analyse-Modell auf Claude Sonnet 4.6 aktualisiert',
+        ],
+      },
+      {
+        type: 'fixed',
+        items: [
+          'KI-Matching Scoring-Kalibrierung und Requirements-Extraktion',
+          'KI-Analyse Tab und E-Mail-Automatisierung',
+          'E-Mail-Automatisierung und KI Feature-Toggle',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.0.0',
     date: '2025-03-01',
     label: 'Erster Release',

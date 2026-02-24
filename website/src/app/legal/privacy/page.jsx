@@ -93,24 +93,26 @@ export default function Privacy() {
             .
           </p>
           <h3 className="mt-4 font-semibold text-slate-900">
-            LemonSqueezy
+            Freemius
           </h3>
           <p className="mt-2">
-            Für die Zahlungsabwicklung nutzen wir LemonSqueezy (Lemon
-            Squeezy LLC, 222 S Main St, Suite 500, Salt Lake City, UT
-            84101, USA). Bei einem Kauf werden Ihre Zahlungsdaten direkt
-            von LemonSqueezy verarbeitet. Wir erhalten lediglich
-            Informationen über den Kaufstatus (z.&nbsp;B. Lizenzschlüssel,
-            Käufer-E-Mail). Die Verarbeitung erfolgt auf Grundlage von
-            Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung). Weitere
-            Informationen finden Sie in der{' '}
+            Für die Zahlungsabwicklung und Lizenzverwaltung nutzen wir
+            Freemius (Freemius Inc., 2093 Philadelphia Pike #8057,
+            Claymont, DE 19703, USA). Bei einem Kauf werden Ihre
+            Zahlungsdaten direkt von Freemius verarbeitet. Wir erhalten
+            lediglich Informationen über den Kaufstatus (z.&nbsp;B.
+            Lizenzschlüssel, Käufer-E-Mail). Die Verarbeitung erfolgt
+            auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO
+            (Vertragserfüllung). Freemius hat sich dem EU-US Data
+            Privacy Framework angeschlossen. Weitere Informationen
+            finden Sie in der{' '}
             <a
-              href="https://www.lemonsqueezy.com/privacy"
+              href="https://freemius.com/privacy/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#1d71b8] underline hover:text-[#1a63a3]"
             >
-              Datenschutzerklärung von LemonSqueezy
+              Datenschutzerklärung von Freemius
             </a>
             .
           </p>
@@ -197,7 +199,7 @@ export default function Privacy() {
             8. Aktualität
           </h2>
           <p className="mt-4">
-            Stand: Januar 2025
+            Stand: Februar 2026
           </p>
         </section>
       </div>

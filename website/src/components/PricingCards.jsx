@@ -185,11 +185,12 @@ export function PricingCards() {
             features={[
               'Alles aus Free',
               'Kanban-Board (Drag & Drop)',
-              'KI-Lebenslauf-Matching',
+              'KI-Analyse: Match-Score & Job-Finder',
+              'KI-Stellentexte generieren',
+              '100 KI-Analysen/Monat inklusive',
               'Erweiterte E-Mail-Templates',
               'REST API & Webhooks',
               'Automatische DSGVO-Löschfristen',
-              'Bewerber-Datenexport',
               '1 Jahr Updates & Support',
             ]}
             extras={[

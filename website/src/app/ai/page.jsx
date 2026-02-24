@@ -4,13 +4,12 @@ import { AiHero } from '@/components/AiHero'
 import { AiModes } from '@/components/AiModes'
 import { AiTextGeneration } from '@/components/AiTextGeneration'
 import { AiBenefits } from '@/components/AiBenefits'
-import { AiPricing } from '@/components/AiPricing'
 import { SectionCta } from '@/components/SectionCta'
 
 export const metadata = {
-  title: 'KI-Addon',
+  title: 'KI-Funktionen',
   description:
-    'Der erste WordPress-Recruiter mit eingebauter KI. Match-Score, Job-Finder, Chancen-Check und KI-Stellentexte.',
+    'Der erste WordPress-Recruiter mit eingebauter KI. Match-Score, Job-Finder, Chancen-Check und KI-Stellentexte – inklusive in der Pro-Version.',
 }
 
 export default function AiPage() {
@@ -22,12 +21,11 @@ export default function AiPage() {
         <AiModes />
         <AiTextGeneration />
         <AiBenefits />
-        <AiPricing />
         <SectionCta
-          headline="Testen Sie die KI-Analyse"
-          text="Aktivieren Sie das KI-Addon und erleben Sie, wie intelligente Bewerberanalyse Ihr Recruiting verändert."
-          cta="KI-Addon aktivieren"
-          href="#"
+          headline="KI-Analyse inklusive in Pro"
+          text="100 KI-Analysen pro Monat sind in der Pro-Version enthalten. Erleben Sie, wie intelligente Bewerberanalyse Ihr Recruiting verändert."
+          cta="Pro kaufen – 149 €"
+          href="/pricing"
           download={false}
         />
       </main>

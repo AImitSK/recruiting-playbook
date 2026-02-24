@@ -40,13 +40,10 @@ export default function Terms() {
             </li>
             <li>
               <strong>Pro</strong> – Erweiterte Version mit
-              Kanban-Board, REST-API, E-Mail-Templates, Webhooks und
-              Prioritäts-Support. Einmaliger Kaufpreis (Lifetime-Lizenz).
-            </li>
-            <li>
-              <strong>AI-Addon</strong> – Zusatzmodul mit
-              KI-gestützter Kandidatenanalyse, automatischem Screening und
-              CV-Parsing. Monatliches Abonnement, setzt Pro-Lizenz voraus.
+              Kanban-Board, REST-API, E-Mail-Templates, Webhooks,
+              KI-gestützter Kandidatenanalyse (100 Nutzungen/Monat
+              inklusive) und Prioritäts-Support. Einmaliger Kaufpreis
+              (Lifetime-Lizenz).
             </li>
           </ul>
         </section>
@@ -58,7 +55,7 @@ export default function Terms() {
           <p className="mt-4">
             Die Darstellung der Produkte auf der Website stellt kein
             rechtlich bindendes Angebot dar. Durch das Absenden einer
-            Bestellung über LemonSqueezy gibt der Kunde ein verbindliches
+            Bestellung über Freemius gibt der Kunde ein verbindliches
             Kaufangebot ab. Der Vertrag kommt mit der Bestätigung der
             Bestellung und Bereitstellung des Lizenzschlüssels zustande.
           </p>
@@ -71,7 +68,7 @@ export default function Terms() {
           <p className="mt-4">
             Alle Preise verstehen sich als Endpreise. Gemäß § 19 UStG wird
             keine Umsatzsteuer erhoben (Kleinunternehmerregelung). Die
-            Zahlungsabwicklung erfolgt über LemonSqueezy. Es gelten die
+            Zahlungsabwicklung erfolgt über Freemius. Es gelten die
             dort angebotenen Zahlungsmethoden (Kreditkarte, PayPal u.&nbsp;a.).
           </p>
         </section>
@@ -92,15 +89,16 @@ export default function Terms() {
             erhältlich.
           </p>
           <h3 className="mt-4 font-semibold text-slate-900">
-            AI-Addon (Abonnement)
+            KI-Funktionen (in Pro enthalten)
           </h3>
           <p className="mt-2">
-            Das AI-Addon wird als monatliches Abonnement bereitgestellt.
-            Es setzt eine aktive Pro-Lizenz voraus. Das Abonnement
-            verlängert sich automatisch um einen Monat, sofern es nicht vor
-            Ablauf der Laufzeit gekündigt wird. Die Kündigung ist jederzeit
-            zum Ende des laufenden Abrechnungszeitraums über das
-            LemonSqueezy-Kundenportal möglich.
+            Die Pro-Lizenz umfasst KI-gestützte Funktionen wie
+            Kandidatenanalyse, Match-Score, Job-Finder und
+            KI-Stellentexte. Inklusive sind 100 KI-Analysen pro Monat.
+            Zusätzliche Analysen können als Erweiterungspaket erworben
+            werden. Die KI-Funktionen werden über die Anthropic Claude
+            API bereitgestellt und erfordern eine aktive
+            Internetverbindung.
           </p>
           <h3 className="mt-4 font-semibold text-slate-900">
             Nutzungsumfang
@@ -199,7 +197,7 @@ export default function Terms() {
             die Wirksamkeit der übrigen Bestimmungen unberührt.
           </p>
           <p className="mt-4">
-            Stand: Januar 2025
+            Stand: Februar 2026
           </p>
         </section>
       </div>

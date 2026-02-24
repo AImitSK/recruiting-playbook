@@ -9,7 +9,7 @@ export const metadata = {
     default: 'API-Referenz - Recruiting Playbook',
   },
   description:
-    'REST API documentation for the Recruiting Playbook WordPress plugin.',
+    'REST API Dokumentation für das Recruiting Playbook WordPress Plugin. Endpoints für Jobs, Bewerbungen, Webhooks und Berichte.',
 }
 
 export default function ApiLayout({ children }) {

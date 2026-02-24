@@ -13,28 +13,28 @@ import screenshotFormBuilder from '../../public/screenshots/formular-builder.png
 
 const features = [
   {
+    title: 'Google for Jobs',
+    description:
+      'Ihre Stellen erscheinen automatisch in der Google-Jobsuche — ohne technisches Wissen. Kostenloses Schema-Markup, das andere Plugins für 799 €/Jahr verkaufen.',
+    image: screenshotGoogle,
+  },
+  {
     title: 'Kanban-Board',
     description:
       'Bewerbungen visuell managen wie in Trello. Per Drag & Drop durch die Pipeline ziehen — von Eingang bis Einstellung.',
     image: screenshotKanban,
   },
   {
-    title: 'Berichte',
-    description:
-      'Conversion-Raten, Bewerberquellen und Zeiträume auf einen Blick. Datenbasierte Entscheidungen für Ihr Recruiting.',
-    image: screenshotReports,
-  },
-  {
-    title: 'Google for Jobs',
-    description:
-      'Ihre Stellen erscheinen direkt in der Google-Suche. Automatisches Schema-Markup ohne technisches Wissen.',
-    image: screenshotGoogle,
-  },
-  {
     title: 'Formular-Builder',
     description:
       'Bewerbungsformulare per Drag & Drop bauen. Mehrstufig, mit Datei-Upload und eingebautem Spam-Schutz.',
     image: screenshotFormBuilder,
+  },
+  {
+    title: 'Berichte & Analytics',
+    description:
+      'Conversion-Raten, Bewerberquellen und Time-to-Hire auf einen Blick. Datenbasierte Entscheidungen für Ihr Recruiting.',
+    image: screenshotReports,
   },
 ]
 

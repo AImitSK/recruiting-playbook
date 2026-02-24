@@ -2,7 +2,7 @@ import { Button } from '@/components/Button'
 import { Container } from '@/components/Container'
 
 const features = [
-  'Benötigt Pro-Lizenz (149 € einmalig)',
+  'In der Pro-Lizenz enthalten (149 €)',
   'Job-Match Score (0–100%)',
   'Job-Finder für Bewerber',
   'Chancen-Check mit Stärken/Schwächen',
@@ -38,16 +38,14 @@ export function AiPricing() {
           <div className="rounded-3xl bg-slate-50 p-8 ring-1 ring-slate-200 sm:p-12">
             <div className="text-center">
               <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-                KI-Addon
+                KI-Funktionen
               </h2>
               <p className="mt-4 text-lg tracking-tight text-slate-700">
-                Intelligente Bewerberanalyse und Textgenerierung.
+                Intelligente Bewerberanalyse und Textgenerierung – inklusive
+                in der Pro-Version.
               </p>
-              <p className="mt-6 font-display text-5xl font-light tracking-tight text-[#1d71b8]">
-                19 €<span className="text-2xl text-slate-500">/Monat</span>
-              </p>
-              <p className="mt-2 text-sm text-slate-500">
-                oder 179 €/Jahr (2 Monate gratis)
+              <p className="mt-6 inline-flex items-center gap-x-2 rounded-full bg-[#1d71b8]/10 px-4 py-2 text-sm font-semibold text-[#1d71b8]">
+                In Pro enthalten
               </p>
             </div>
             <ul role="list" className="mt-8 flex flex-col gap-y-3">
@@ -62,8 +60,8 @@ export function AiPricing() {
               ))}
             </ul>
             <div className="mt-8 flex flex-col gap-y-3">
-              <Button href="#" color="blue" className="w-full justify-center">
-                KI-Addon aktivieren
+              <Button href="/pricing" color="blue" className="w-full justify-center">
+                Pro kaufen – 149 €
               </Button>
               <Button
                 href="/pricing"

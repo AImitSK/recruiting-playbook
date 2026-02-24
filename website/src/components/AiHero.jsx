@@ -15,11 +15,11 @@ export function AiHero() {
           Zeitverschwendung.
         </p>
         <div className="mt-10 flex justify-center gap-x-6">
-          <Button href="#" color="blue">
-            KI-Addon aktivieren
+          <Button href="/pricing" color="blue">
+            Pro kaufen – 149 €
           </Button>
           <Button href="/pricing" variant="outline">
-            Preise ansehen
+            Alle Features vergleichen
           </Button>
         </div>
       </div>
