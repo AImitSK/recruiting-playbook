@@ -80,8 +80,6 @@ const categories = [
       { name: 'KI-Match-Score (0–100%)', free: false, pro: true, agentur: true },
       { name: 'KI-Job-Finder für Bewerber', free: false, pro: true, agentur: true },
       { name: 'Chancen-Check mit Stärken/Schwächen', free: false, pro: true, agentur: true },
-      { name: 'KI-Stellentexte generieren & optimieren', free: false, pro: true, agentur: true },
-      { name: 'SEO-Vorschläge per KI', free: false, pro: true, agentur: true },
       { name: 'Inkludierte KI-Analysen/Monat', free: false, pro: '100', agentur: '100' },
     ],
   },

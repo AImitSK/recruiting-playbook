@@ -177,7 +177,7 @@ export function PricingCards() {
             featured
             name="Pro"
             price="149 €"
-            priceDetail="Einmalig. Lifetime-Lizenz (1 Website)"
+            priceDetail="Einmalig (1 Website)"
             description="Professionelles Bewerbermanagement mit KI-Features."
             href="#"
             cta="Pro kaufen"
@@ -186,7 +186,6 @@ export function PricingCards() {
               'Alles aus Free',
               'Kanban-Board (Drag & Drop)',
               'KI-Analyse: Match-Score & Job-Finder',
-              'KI-Stellentexte generieren',
               '100 KI-Analysen/Monat inklusive',
               'Erweiterte E-Mail-Templates',
               'REST API & Webhooks',
@@ -201,7 +200,7 @@ export function PricingCards() {
           <Plan
             name="Agentur"
             price="249 €"
-            priceDetail="Einmalig. Lifetime-Lizenz (3 Websites)"
+            priceDetail="Einmalig (3 Websites)"
             description="Für Agenturen und Unternehmen mit mehreren Standorten."
             href="#"
             cta="Agentur kaufen"

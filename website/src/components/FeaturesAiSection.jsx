@@ -83,29 +83,6 @@ const modes = [
   },
 ]
 
-const textFeatures = [
-  {
-    title: 'Stellentexte generieren',
-    description:
-      'Jobtitel, Branche und Stichpunkte eingeben \u2014 die KI erstellt eine komplette Stellenausschreibung mit Einleitung, Aufgaben, Anforderungen und Benefits.',
-  },
-  {
-    title: 'Texte optimieren & umschreiben',
-    description:
-      'Bestehende Stellentexte k\u00fcrzer, l\u00e4nger, formeller oder lockerer machen. Per Knopfdruck den Tonfall anpassen.',
-  },
-  {
-    title: 'SEO-Vorschl\u00e4ge',
-    description:
-      'Die KI analysiert Ihre Stellenanzeige und schl\u00e4gt Optimierungen f\u00fcr bessere Sichtbarkeit in Suchmaschinen und Google for Jobs vor.',
-  },
-  {
-    title: 'Branchenspezifische Textbausteine',
-    description:
-      'Vorlagen und Best-Practice-Formulierungen f\u00fcr Pflege, Handwerk, B\u00fcro und weitere Branchen. Sofort einsetzbar.',
-  },
-]
-
 function CheckIcon() {
   return (
     <svg
@@ -137,11 +114,10 @@ export function FeaturesAiSection() {
             </span>
           </div>
           <h2 className="mt-4 font-display text-3xl tracking-tight text-white sm:text-4xl">
-            KI-gest\u00fctztes Recruiting
+            KI-gestütztes Recruiting
           </h2>
           <p className="mt-4 text-lg tracking-tight text-blue-100">
-            Intelligente Bewerberanalyse und automatische Textgenerierung \u2014
-            direkt im Plugin.
+            Intelligente Bewerberanalyse — direkt im Plugin.
           </p>
         </div>
 
@@ -181,30 +157,6 @@ export function FeaturesAiSection() {
           ))}
         </div>
 
-        {/* KI-Stellentexte */}
-        <div className="mx-auto mt-20 max-w-4xl">
-          <h3 className="text-center font-display text-2xl tracking-tight text-white sm:text-3xl">
-            KI-Stellentexte auf Knopfdruck
-          </h3>
-          <p className="mt-4 text-center text-base text-blue-100">
-            Professionelle Stellenausschreibungen in Sekunden statt Stunden.
-          </p>
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {textFeatures.map((feature) => (
-              <div key={feature.title} className="flex gap-x-3">
-                <CheckIcon />
-                <div>
-                  <h4 className="text-sm font-semibold text-white">
-                    {feature.title}
-                  </h4>
-                  <p className="mt-1 text-sm text-blue-100">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </Container>
     </section>
   )

@@ -1,7 +1,6 @@
 import { Container } from '@/components/Container'
 
 const badges = [
-  { label: 'Lifetime-Lizenz', icon: 'shield' },
   { label: '14-Tage-Geld-zurück', icon: 'refresh' },
   { label: 'Keine versteckten Kosten', icon: 'check' },
   { label: 'Sofort einsatzbereit', icon: 'bolt' },
