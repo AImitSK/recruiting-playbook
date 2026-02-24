@@ -49,29 +49,6 @@ const supportChannels = [
   },
 ]
 
-const supportTiers = [
-  {
-    tier: 'Free',
-    channels: ['Dokumentation & FAQ', 'GitHub Issues (Community)'],
-  },
-  {
-    tier: 'Pro',
-    channels: [
-      'Alles aus Free',
-      'E-Mail-Support (12 Monate inkl.)',
-      'Prioritäre Bearbeitung',
-    ],
-  },
-  {
-    tier: 'Agentur',
-    channels: [
-      'Alles aus Pro',
-      'Prioritäts-Support',
-      'Zentrale Lizenzverwaltung',
-    ],
-  },
-]
-
 export default function SupportPage() {
   return (
     <>
@@ -116,35 +93,6 @@ export default function SupportPage() {
                 </Link>
               </div>
             ))}
-          </div>
-
-          {/* Support nach Lizenz */}
-          <div className="mt-20 max-w-2xl">
-            <h2 className="font-display text-2xl tracking-tight text-slate-900">
-              Support nach Lizenz
-            </h2>
-            <div className="mt-8 space-y-6">
-              {supportTiers.map((tier) => (
-                <div
-                  key={tier.tier}
-                  className="rounded-xl border border-slate-200 px-6 py-5"
-                >
-                  <h3 className="font-display text-base font-semibold text-slate-900">
-                    {tier.tier}
-                  </h3>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                    {tier.channels.map((channel) => (
-                      <li key={channel} className="flex items-center gap-2">
-                        <svg className="h-4 w-4 flex-none text-[#2fac66]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        {channel}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Direkter Kontakt */}
