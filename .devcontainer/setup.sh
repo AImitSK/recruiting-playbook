@@ -56,6 +56,7 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     wp config set WP_DEBUG_LOG true --raw --allow-root
     wp config set WP_DEBUG_DISPLAY true --raw --allow-root
     wp config set SCRIPT_DEBUG true --raw --allow-root
+    wp config set WP_ENVIRONMENT_TYPE "'development'" --raw --allow-root
 
     # Recruiting Playbook Dev-Modus: Alle Pro-Features aktiviert
     wp config set RP_DEV_MODE true --raw --allow-root
@@ -69,6 +70,9 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
     echo -e "${GREEN}✓ wp-config.php erstellt${NC}"
 else
     echo -e "${YELLOW}✓ wp-config.php bereits vorhanden${NC}"
+
+    # Environment Type für Mailpit SMTP und Dev-Features
+    wp config set WP_ENVIRONMENT_TYPE "'development'" --raw --allow-root 2>/dev/null || true
 
     # Recruiting Playbook Dev-Modus (falls noch nicht vorhanden)
     wp config set RP_DEV_MODE true --raw --allow-root 2>/dev/null || true
