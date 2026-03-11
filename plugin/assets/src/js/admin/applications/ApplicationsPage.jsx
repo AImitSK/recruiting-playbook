@@ -282,13 +282,13 @@ export function ApplicationsPage() {
 	const [ jobs, setJobs ] = useState( initialData.jobs || [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 
-	// Filters
-	const [ activeStatus, setActiveStatus ] = useState( '' );
-	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ selectedJob, setSelectedJob ] = useState( '' );
+	// Filters - initialize from server-side data to preserve URL parameters across page reloads
+	const [ activeStatus, setActiveStatus ] = useState( initialData.activeStatus || '' );
+	const [ searchTerm, setSearchTerm ] = useState( initialData.searchTerm || '' );
+	const [ selectedJob, setSelectedJob ] = useState( initialData.activeJobId ? String( initialData.activeJobId ) : '' );
 
 	// Pagination
-	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const [ currentPage, setCurrentPage ] = useState( initialData.currentPage || 1 );
 	const [ totalItems, setTotalItems ] = useState( initialData.total || 0 );
 	const [ perPage ] = useState( 20 );
 

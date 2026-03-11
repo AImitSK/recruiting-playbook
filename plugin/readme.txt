@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.19
+Stable tag: 1.2.24
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.24 - 2026-03-11 =
+* Fix: Application status filter tabs now persist correctly after page reload
+* Fix: WordPress.org Plugin Check errors and warnings resolved (91 files)
 
 = 1.2.19 - 2026-02-20 =
 * Add: Delete button in application list (React component)
