@@ -279,8 +279,11 @@ class FormRenderService {
 			'maxFiles'         => $max_files,
 			'maxSize'          => $max_file_size,
 			'allowedTypes'     => $allowed_types,
+			/* translators: %d: maximum number of files */
 			'errorMaxFiles'    => sprintf( __( 'Maximum %d files allowed', 'recruiting-playbook' ), $max_files ),
+			/* translators: %s: allowed file types */
 			'errorInvalidType' => sprintf( __( 'Invalid file type. Allowed: %s', 'recruiting-playbook' ), strtoupper( implode( ', ', $allowed_types ) ) ),
+			/* translators: %d: maximum file size in MB */
 			'errorTooLarge'    => sprintf( __( 'File too large (max. %d MB)', 'recruiting-playbook' ), $max_file_size ),
 		];
 
@@ -973,8 +976,11 @@ class FormRenderService {
 			'required'        => __( 'This field is required', 'recruiting-playbook' ),
 			'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
 			'invalidPhone'    => __( 'Please enter a valid phone number', 'recruiting-playbook' ),
+			/* translators: %d: minimum number of characters */
 			'minLength'       => __( 'At least %d characters required', 'recruiting-playbook' ),
+			/* translators: %d: maximum number of characters */
 			'maxLength'       => __( 'Maximum %d characters allowed', 'recruiting-playbook' ),
+			/* translators: %d: maximum file size in MB */
 			'fileTooLarge'    => __( 'File is too large (max. %d MB)', 'recruiting-playbook' ),
 			'invalidFileType' => __( 'This file type is not allowed', 'recruiting-playbook' ),
 		];

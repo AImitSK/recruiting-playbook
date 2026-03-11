@@ -436,7 +436,7 @@ final class Plugin {
 		}
 
 		// Key-Daten für spätere Permission-Prüfungen speichern.
-		$GLOBALS['rp_authenticated_api_key'] = $key_data;
+		$GLOBALS['rp_authenticated_api_key'] = $key_data; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 		// created_by als authentifizierten User zurückgeben.
 		return (int) $key_data->created_by;
@@ -467,7 +467,7 @@ final class Plugin {
 		$rate_check = $service->checkRateLimit( $key_data );
 
 		// Rate-Limit-Headers für Response speichern.
-		$GLOBALS['rp_rate_limit_headers'] = [
+		$GLOBALS['rp_rate_limit_headers'] = [ // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 			'X-RateLimit-Limit'     => $rate_check['limit'],
 			'X-RateLimit-Remaining' => $rate_check['remaining'],
 			'X-RateLimit-Reset'     => $rate_check['reset'],
@@ -799,7 +799,7 @@ final class Plugin {
 			delete_option( 'rp_activation_redirect' );
 
 			// Nicht bei Multi-Aktivierung oder wenn Wizard bereits abgeschlossen.
-			if ( isset( $_GET['activate-multi'] ) ) {
+			if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				return;
 			}
 

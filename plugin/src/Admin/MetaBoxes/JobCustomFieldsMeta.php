@@ -176,7 +176,7 @@ class JobCustomFieldsMeta {
 					printf(
 						/* translators: %d: number of enabled fields */
 						esc_html__( 'Default configuration: %d fields active', 'recruiting-playbook' ),
-						$enabled_count
+						absint( $enabled_count )
 					);
 					?>
 				</p>

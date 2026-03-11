@@ -260,7 +260,7 @@ class JobSearchShortcode {
 				printf(
 					/* translators: %d: Number of jobs found */
 					esc_html( _n( '%d job found', '%d jobs found', $query->found_posts, 'recruiting-playbook' ) ),
-					$query->found_posts
+					absint( $query->found_posts )
 				);
 				?>
 			</div>

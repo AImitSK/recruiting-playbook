@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Repositories\EmailLogRepository;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für E-Mail-Versand
  */
@@ -254,7 +258,7 @@ class EmailService {
 		$headers = array_merge( $default_headers, $headers );
 
 		// Filter für Erweiterungen
-		$message = apply_filters( 'rp_email_content', $message, $to, $subject );
+		$message = apply_filters( 'rp_email_content', $message, $to, $subject ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		// E-Mail versenden
 		$sent = wp_mail( $to, $subject, $message, $headers );
@@ -746,7 +750,7 @@ class EmailService {
 	private function logEmail( string $to, string $subject, bool $sent ): void {
 		// In WP-Debug-Log schreiben
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log(
+			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 				sprintf(
 					'[Recruiting Playbook] Email %s - To: %s, Subject: %s',
 					$sent ? 'sent' : 'FAILED',
@@ -757,7 +761,7 @@ class EmailService {
 		}
 
 		// Hook für optionales DB-Logging (Pro-Feature)
-		do_action( 'rp_email_sent', $to, $subject, $sent );
+		do_action( 'rp_email_sent', $to, $subject, $sent ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**

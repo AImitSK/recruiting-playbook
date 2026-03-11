@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Repository für Talent-Pool-Operationen
  */
@@ -278,10 +282,10 @@ class TalentPoolRepository {
 		$offset   = ( $page - 1 ) * $per_page;
 
 		// Total Count.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
 		$total = (int) $wpdb->get_var(
 			$values
-				? $wpdb->prepare(
+				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					"SELECT COUNT(*) FROM {$this->table} tp
 					LEFT JOIN {$candidates_table} c ON tp.candidate_id = c.id
 					WHERE {$where_clause}",

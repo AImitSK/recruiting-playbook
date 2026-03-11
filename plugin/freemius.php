@@ -11,8 +11,8 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! function_exists( 'rp_fs' ) ) {
     // Create a helper function for easy SDK access.
-    function rp_fs() {
-        global $rp_fs;
+    function rp_fs() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+        global $rp_fs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
         if ( ! isset( $rp_fs ) ) {
             // Include Freemius SDK.
@@ -171,7 +171,7 @@ if ( ! function_exists( 'rp_fs' ) ) {
     rp_fs()->add_action( 'after_uninstall', 'rp_fs_uninstall_cleanup' );
 
     // Signal that SDK was initiated.
-    do_action( 'rp_fs_loaded' );
+    do_action( 'rp_fs_loaded' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 }
 
 /**
@@ -180,7 +180,7 @@ if ( ! function_exists( 'rp_fs' ) ) {
  * Wird von Freemius nach dem Uninstall-Event aufgerufen.
  * Dadurch kann Freemius das Uninstall-Feedback erfassen.
  */
-function rp_fs_uninstall_cleanup() {
+function rp_fs_uninstall_cleanup() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
     // Option prüfen: Daten behalten?
     $keep_data = get_option( 'rp_keep_data_on_uninstall', false );
 
@@ -268,11 +268,13 @@ function rp_fs_uninstall_cleanup() {
 
         foreach ( $files as $file ) {
             if ( $file->isDir() ) {
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Direct filesystem cleanup during uninstall
                 rmdir( $file->getRealPath() );
             } else {
                 wp_delete_file( $file->getRealPath() );
             }
         }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Direct filesystem cleanup during uninstall
         rmdir( $rp_upload_dir );
     }
 

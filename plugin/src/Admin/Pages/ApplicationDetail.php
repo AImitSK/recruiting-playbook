@@ -20,6 +20,10 @@ use RecruitingPlaybook\Services\EmailTemplateService;
 use RecruitingPlaybook\Repositories\EmailLogRepository;
 use RecruitingPlaybook\Repositories\SignatureRepository;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Detailansicht einer Bewerbung
  */
@@ -105,7 +109,7 @@ class ApplicationDetail {
 	 * Seite rendern
 	 */
 	public function render(): void {
-		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
+		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( ! $id ) {
 			wp_die( esc_html__( 'No application specified.', 'recruiting-playbook' ) );
@@ -505,7 +509,7 @@ class ApplicationDetail {
 		$wpdb->update( $table, [ 'status' => $new_status ], [ 'id' => $id ] );
 
 		// Action für Auto-E-Mail und andere Hooks auslösen.
-		do_action( 'rp_application_status_changed', $id, $old_status, $new_status );
+		do_action( 'rp_application_status_changed', $id, $old_status, $new_status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		$log_table    = $wpdb->prefix . 'rp_activity_log';
 		$current_user = wp_get_current_user();

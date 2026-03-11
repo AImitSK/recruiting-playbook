@@ -136,7 +136,7 @@ class FileField extends AbstractFieldType {
 		$label     = $field->getLabel();
 
 		// Prüfen ob Dateien hochgeladen wurden.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$files = $_FILES[ $field_key ] ?? null;
 
 		if ( $field->isRequired() && ( empty( $files ) || empty( $files['name'] ) || ( is_array( $files['name'] ) && empty( array_filter( $files['name'] ) ) ) ) ) {

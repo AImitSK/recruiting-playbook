@@ -154,7 +154,7 @@ class JobSchema {
 	 * @return string HTML description.
 	 */
 	private function getDescription( \WP_Post $post ): string {
-		$content = apply_filters( 'the_content', $post->post_content );
+		$content = apply_filters( 'the_content', $post->post_content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 		// HTML erlaubt, aber Script-Tags entfernen.
 		$content = wp_kses_post( $content );
 		return $content;

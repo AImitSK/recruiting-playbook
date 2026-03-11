@@ -265,7 +265,7 @@ class JobMeta {
 		// Felder speichern.
 		foreach ( self::FIELDS as $key => $field ) {
 			if ( isset( $_POST[ $key ] ) ) {
-				$value = wp_unslash( $_POST[ $key ] );
+				$value = wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 				// Sanitization.
 				if ( isset( $field['sanitize'] ) ) {

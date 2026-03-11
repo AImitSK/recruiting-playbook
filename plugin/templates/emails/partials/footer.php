@@ -15,6 +15,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 // Variablen mit Fallbacks.
 $company         = $company ?? get_bloginfo( 'name' );
 $footer_text     = $footer_text ?? '';

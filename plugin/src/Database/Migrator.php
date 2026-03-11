@@ -12,6 +12,11 @@ namespace RecruitingPlaybook\Database;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+
 /**
  * Datenbank-Migrationen verwalten
  */

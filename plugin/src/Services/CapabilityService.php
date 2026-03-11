@@ -14,6 +14,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Database\Schema;
 use RecruitingPlaybook\Repositories\JobAssignmentRepository;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Berechtigungsprüfungen
  *

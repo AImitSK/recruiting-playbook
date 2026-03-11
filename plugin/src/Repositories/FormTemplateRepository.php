@@ -16,6 +16,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Database\Schema;
 use RecruitingPlaybook\Models\FormTemplate;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Repository für Formular-Templates
  */

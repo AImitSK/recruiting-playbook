@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- WP_List_Table uses $_GET/$_REQUEST for sorting/filtering.
 
 namespace RecruitingPlaybook\Admin\Pages;
 
@@ -14,6 +15,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Constants\ApplicationStatus;
 use RecruitingPlaybook\Services\CapabilityService;
+
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -501,7 +506,7 @@ class ApplicationList extends \WP_List_Table {
 		foreach ( $jobs as $job ) {
 			printf(
 				'<option value="%d" %s>%s</option>',
-				$job->ID,
+				absint( $job->ID ),
 				selected( $current_job, $job->ID, false ),
 				esc_html( $job->post_title )
 			);

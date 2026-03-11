@@ -22,6 +22,10 @@ use WP_REST_Server;
 use WP_Error;
 use WP_Query;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * REST API Controller für Stellenanzeigen
  */

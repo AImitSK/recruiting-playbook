@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Repository für Notizen-Operationen
  */

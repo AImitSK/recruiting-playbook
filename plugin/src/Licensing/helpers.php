@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- All functions use 'rp_' prefix
+
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Licensing\FeatureFlags;
@@ -439,8 +441,11 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
 	echo '<span class="dashicons dashicons-lock" style="font-size:24px;width:24px;height:24px;color:#fff;"></span>';
 	echo '</div>';
 	echo '<div>';
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $title is escaped with esc_html() above
 	echo '<h3 style="margin:0 0 8px 0;font-size:16px;color:#1d2327;">' . $title . '</h3>';
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $description is escaped with esc_html__() above
 	echo '<p style="margin:0 0 16px 0;color:#50575e;font-size:14px;line-height:1.5;">' . $description . '</p>';
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $upgrade_url and $button_text are escaped above
 	echo '<a href="' . $upgrade_url . '" class="button button-primary button-hero">' . $button_text . '</a>';
 	echo '</div>';
 	echo '</div>';

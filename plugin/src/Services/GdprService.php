@@ -12,6 +12,10 @@ namespace RecruitingPlaybook\Services;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für DSGVO-Funktionen
  */

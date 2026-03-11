@@ -18,10 +18,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
 ?>
 
-<div class="rp-plugin rp-job-finder<?php echo $extra_class; ?>"
+<div class="rp-plugin rp-job-finder<?php echo esc_attr( $extra_class ); ?>"
     x-data="rpJobFinder({
         limit: <?php echo esc_attr( $limit ); ?>,
         jobCount: <?php echo esc_attr( $job_count ); ?>
@@ -142,8 +144,9 @@ $extra_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : ''
                 <p class="rp-text-sm rp-text-gray-500 rp-mt-2">
                     <?php
                     printf(
+                        /* translators: %d: Number of jobs being analyzed */
                         esc_html__( 'Analysiere %d Stellen...', 'recruiting-playbook' ),
-                        $job_count
+                        absint( $job_count )
                     );
                     ?>
                 </p>

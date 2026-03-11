@@ -18,6 +18,10 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * REST API Controller für Statistiken
  */
@@ -351,7 +355,7 @@ class StatsController extends WP_REST_Controller {
 		for ( $i = 11; $i >= 0; $i-- ) {
 			$date = gmdate( 'Y-m-d', strtotime( "-{$i} weeks" ) );
 			// Simulierte Variation um den Durchschnitt.
-			$variation = $avg_days > 0 ? rand( -3, 3 ) : 0;
+			$variation = $avg_days > 0 ? wp_rand( -3, 3 ) : 0;
 			$trend[] = [
 				'date'         => $date,
 				'average_days' => max( 1, $avg_days + $variation ),

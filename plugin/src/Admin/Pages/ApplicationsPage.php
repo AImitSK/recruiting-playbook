@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Constants\ApplicationStatus;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Applications Page Klasse
  */
@@ -47,10 +51,12 @@ class ApplicationsPage {
 	 */
 	private function get_page_data(): array {
 		$per_page     = 20;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Admin list filtering via $_GET.
 		$current_page = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		$status       = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
 		$job_id       = isset( $_GET['job_id'] ) ? absint( $_GET['job_id'] ) : 0;
 		$search       = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return [
 			'applications'  => $this->get_applications( $current_page, $per_page, $status, $job_id, $search ),

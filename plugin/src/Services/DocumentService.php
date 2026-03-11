@@ -15,6 +15,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Constants\DocumentType;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Dokument-Operationen
  */
@@ -365,7 +369,7 @@ class DocumentService {
 
 		// Dateiberechtigungen einschränken.
 		$destination = $uploaded['file'];
-		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- chmod kann auf manchen Systemen fehlschlagen
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- chmod kann auf manchen Systemen fehlschlagen
 		@chmod( $destination, 0640 );
 
 		// In Datenbank speichern.

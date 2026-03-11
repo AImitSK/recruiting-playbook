@@ -18,6 +18,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 $placeholders = $placeholders ?? [];
 ?>
 <p><?php esc_html_e( 'Hallo,', 'recruiting-playbook' ); ?></p>

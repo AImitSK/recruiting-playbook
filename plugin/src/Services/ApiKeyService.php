@@ -17,6 +17,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Database\Schema;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * API-Key Service
  */

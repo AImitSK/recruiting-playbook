@@ -200,6 +200,7 @@ class KanbanBoard {
 			'noApplications' => __( 'No applications', 'recruiting-playbook' ),
 			'today'          => __( 'Today', 'recruiting-playbook' ),
 			'yesterday'      => __( 'Yesterday', 'recruiting-playbook' ),
+			/* translators: %d: number of days ago */
 			'daysAgo'        => __( '%d days ago', 'recruiting-playbook' ),
 			'expand'         => __( 'Expand', 'recruiting-playbook' ),
 			'collapse'       => __( 'Collapse', 'recruiting-playbook' ),

@@ -9,6 +9,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 $max_files     = $settings['max_files'] ?? 5;
 $max_file_size = $validation['max_file_size'] ?? 10; // MB
 $allowed_types = $validation['allowed_types'] ?? '.pdf,.doc,.docx,.jpg,.jpeg,.png';

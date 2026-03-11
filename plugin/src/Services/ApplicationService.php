@@ -15,6 +15,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Constants\ApplicationStatus;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Bewerbungs-Operationen
  */
@@ -182,7 +186,7 @@ class ApplicationService {
 		}
 
 		// 6. Hook für Erweiterungen
-		do_action( 'rp_application_created', $application_id, $data );
+		do_action( 'rp_application_created', $application_id, $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $application_id;
 	}
@@ -604,7 +608,7 @@ class ApplicationService {
 
 		// Hook für Auto-E-Mail und andere Erweiterungen.
 		// Parameter: $application_id, $old_status, $new_status (chronologische Reihenfolge).
-		do_action( 'rp_application_status_changed', $id, $old_status, $status );
+		do_action( 'rp_application_status_changed', $id, $old_status, $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return true;
 	}

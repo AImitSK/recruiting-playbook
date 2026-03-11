@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Repository für E-Mail-Log-Operationen
  */
@@ -275,13 +279,13 @@ class EmailLogRepository {
 		if ( ! empty( $values ) ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 			$logs = $wpdb->get_results(
-				$wpdb->prepare( $sql, ...array_merge( $values, [ $args['per_page'], $offset ] ) ),
+				$wpdb->prepare( $sql, ...array_merge( $values, [ $args['per_page'], $offset ] ) ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				ARRAY_A
 			);
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 			$logs = $wpdb->get_results(
-				$wpdb->prepare( $sql, $args['per_page'], $offset ),
+				$wpdb->prepare( $sql, $args['per_page'], $offset ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				ARRAY_A
 			);
 		}

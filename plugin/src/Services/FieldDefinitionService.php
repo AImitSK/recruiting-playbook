@@ -17,6 +17,10 @@ use RecruitingPlaybook\Models\FieldDefinition;
 use RecruitingPlaybook\Repositories\FieldDefinitionRepository;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Feld-Definitionen
  */

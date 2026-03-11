@@ -16,6 +16,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Models\FieldDefinition;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Custom Field Datei-Uploads
  */
@@ -407,7 +411,7 @@ class CustomFieldFileService {
 		}
 
 		// Berechtigungen einschränken.
-		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Direct chmod for security
 		@chmod( $destination, 0640 );
 
 		// MIME-Typ ermitteln.

@@ -159,7 +159,7 @@ class XmlJobFeed {
 
 		// Beschreibung.
 		if ( $html_description ) {
-			$content = apply_filters( 'the_content', $post->post_content );
+			$content = apply_filters( 'the_content', $post->post_content ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 			$content = wp_kses_post( $content );
 			$this->addCdataElement( $dom, $job, 'description', $content );
 		} else {

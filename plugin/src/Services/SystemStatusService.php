@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Database\Schema;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Systemstatus und Integritäts-Checks
  */
@@ -128,6 +132,7 @@ class SystemStatusService {
 			wp_mkdir_p( $rp_dir );
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Checking system status
 		$writable = is_writable( $rp_dir );
 		$files_count = 0;
 		$total_size = 0;

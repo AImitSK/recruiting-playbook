@@ -18,13 +18,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 // Standardwerte.
 $company         = $company ?? get_bloginfo( 'name' );
 $logo_url        = $logo_url ?? '';
 $footer_text     = $footer_text ?? '';
 $unsubscribe_url = $unsubscribe_url ?? '';
-$primary_color   = apply_filters( 'rp_email_primary_color', '#0073aa' );
-$text_color      = apply_filters( 'rp_email_text_color', '#333333' );
+$primary_color   = apply_filters( 'rp_email_primary_color', '#0073aa' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+$text_color      = apply_filters( 'rp_email_text_color', '#333333' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 ?>
 <!DOCTYPE html>
 <html lang="de">

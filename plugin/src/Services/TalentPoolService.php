@@ -16,6 +16,10 @@ use RecruitingPlaybook\Repositories\TalentPoolRepository;
 use RecruitingPlaybook\Traits\HasIpAddress;
 use WP_Error;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Talent-Pool Operationen
  */

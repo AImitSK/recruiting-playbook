@@ -98,7 +98,7 @@ class SetupWizard {
 		delete_option( 'rp_activation_redirect' );
 
 		// Nicht bei Multisite-Aktivierung.
-		if ( isset( $_GET['activate-multi'] ) ) {
+		if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -150,8 +150,9 @@ class SetupWizard {
 	 */
 	public function render(): void {
 		// Aktuellen Schritt ermitteln.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$this->current_step = isset( $_GET['step'] )
-			? sanitize_key( $_GET['step'] )
+			? sanitize_key( $_GET['step'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			: 'welcome';
 
 		if ( ! isset( $this->steps[ $this->current_step ] ) ) {
@@ -782,7 +783,7 @@ class SetupWizard {
 		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$step = isset( $_POST['step'] ) ? sanitize_key( wp_unslash( $_POST['step'] ) ) : '';
+		$step = isset( $_POST['step'] ) ? sanitize_key( wp_unslash( $_POST['step'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		if ( ! isset( $this->steps[ $step ] ) || ! is_callable( $this->steps[ $step ]['save'] ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid step.', 'recruiting-playbook' ) ] );

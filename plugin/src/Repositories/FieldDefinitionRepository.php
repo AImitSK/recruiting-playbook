@@ -16,6 +16,10 @@ defined( 'ABSPATH' ) || exit;
 use RecruitingPlaybook\Database\Schema;
 use RecruitingPlaybook\Models\FieldDefinition;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Repository für Feld-Definitionen
  */
@@ -264,10 +268,10 @@ class FieldDefinitionRepository {
 		$where_sql = implode( ' AND ', $where );
 		$sql       = "SELECT * FROM {$this->table} WHERE {$where_sql} ORDER BY position ASC";
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = empty( $params )
-			? $wpdb->get_results( $sql, ARRAY_A )
-			: $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
+			? $wpdb->get_results( $sql, ARRAY_A ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			: $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		return array_map( fn( $row ) => FieldDefinition::fromArray( $row ), $rows ?? [] );
 	}

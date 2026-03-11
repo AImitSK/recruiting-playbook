@@ -198,7 +198,7 @@ class SpamProtection {
 		$user_agent = $request->get_header( 'user-agent' ) ?: '';
 
 		// In Error-Log schreiben
-		error_log(
+		error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			sprintf(
 				'[Recruiting Playbook] Spam blocked - Type: %s, IP: %s, UA: %s, Job: %d',
 				$type,
@@ -209,7 +209,7 @@ class SpamProtection {
 		);
 
 		// Optional: In DB loggen für Statistiken
-		do_action( 'rp_spam_blocked', $type, $ip, $request );
+		do_action( 'rp_spam_blocked', $type, $ip, $request ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**

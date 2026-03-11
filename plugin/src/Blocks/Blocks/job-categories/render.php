@@ -11,6 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 // Convert attributes to shortcode attributes.
 $shortcode_atts = [
 	'layout'     => $attributes['layout'] ?? 'grid',
@@ -34,6 +36,7 @@ $wrapper_attributes = get_block_wrapper_attributes( [
 	'class' => 'rp-block-job-categories',
 ] );
 
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes from get_block_wrapper_attributes(), $output from shortcode render
 printf(
 	'<div %s>%s</div>',
 	$wrapper_attributes,

@@ -18,6 +18,8 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
 ?>
 
 <article class="<?php echo esc_attr( $card_class ); ?> rp-relative rp-transition-all hover:rp-shadow-lg">
@@ -29,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 	<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs rp-flex-wrap">
 		<?php
 		// "Neu" Badge - Jobs die weniger als X Tage alt sind.
-		$new_days    = apply_filters( 'rp_new_job_days', 14 );
+		$new_days    = apply_filters( 'rp_new_job_days', 14 ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$post_date   = get_the_date( 'U' );
 		$days_ago    = floor( ( time() - $post_date ) / DAY_IN_SECONDS );
 		$is_new      = $days_ago <= $new_days;

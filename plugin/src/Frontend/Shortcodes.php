@@ -859,7 +859,7 @@ class Shortcodes {
 			>
 				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
 					<?php echo $icon_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<span><?php echo $button_text; ?></span>
+					<span><?php echo esc_html( $button_text ); ?></span>
 				</span>
 			</button>
 		</div>

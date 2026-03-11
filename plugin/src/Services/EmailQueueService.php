@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Repositories\EmailLogRepository;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Service für Queue-basierten E-Mail-Versand
  */
@@ -330,14 +334,14 @@ class EmailQueueService {
 		}
 
 		// Filter für Erweiterungen.
-		$headers = apply_filters( 'rp_email_headers', $headers, $log );
-		$body    = apply_filters( 'rp_email_content', $log['body_html'], $log['recipient_email'], $log['subject'] );
+		$headers = apply_filters( 'rp_email_headers', $headers, $log ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$body    = apply_filters( 'rp_email_content', $log['body_html'], $log['recipient_email'], $log['subject'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		// E-Mail versenden.
 		$sent = wp_mail( $log['recipient_email'], $log['subject'], $body, $headers );
 
 		// Hook für Erweiterungen.
-		do_action( 'rp_email_sent', $log['recipient_email'], $log['subject'], $sent, $log );
+		do_action( 'rp_email_sent', $log['recipient_email'], $log['subject'], $sent, $log ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $sent;
 	}

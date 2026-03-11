@@ -69,6 +69,7 @@ class EmailSettingsPage {
 		$repository = new EmailTemplateRepository();
 		$service    = new EmailTemplateService( $repository, new PlaceholderService() );
 
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in caller.
 		$template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
 
 		$data = [
@@ -79,6 +80,7 @@ class EmailSettingsPage {
 			'category'  => isset( $_POST['template_category'] ) ? sanitize_text_field( wp_unslash( $_POST['template_category'] ) ) : 'custom',
 			'is_active' => isset( $_POST['template_active'] ) ? 1 : 0,
 		];
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		if ( $template_id > 0 ) {
 			$service->update( $template_id, $data );
@@ -362,7 +364,8 @@ class EmailSettingsPage {
 
 		foreach ( $placeholders as $key => $info ) {
 			$code = '<code style="cursor: pointer; background: #f0f0f0; padding: 2px 5px;" onclick="navigator.clipboard.writeText(\'{' . esc_attr( $key ) . '}\').then(() => alert(\'Copied!\'))" title="' . esc_attr__( 'Click to copy', 'recruiting-playbook' ) . '">{' . esc_html( $key ) . '}</code>';
-			echo '<div>' . $code . ' <small style="color: #666;">' . esc_html( $info['label'] ?? $key ) . '</small></div>';
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $code is built with esc_attr() and esc_html() above
+		echo '<div>' . $code . ' <small style="color: #666;">' . esc_html( $info['label'] ?? $key ) . '</small></div>';
 		}
 
 		echo '</div>';
@@ -435,7 +438,7 @@ class EmailSettingsPage {
 										printf(
 											/* translators: %s: status name */
 											esc_html__( 'When status is set to "%s"', 'recruiting-playbook' ),
-											$status_label
+											esc_html( $status_label )
 										);
 										?>
 									</p>

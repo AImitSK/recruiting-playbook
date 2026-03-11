@@ -72,8 +72,8 @@ class EmailRenderer {
 		$logo_url        = $options['logo_url'] ?? $settings['company_logo'] ?? '';
 		$footer_text     = $options['footer_text'] ?? '';
 		$unsubscribe_url = $options['unsubscribe_url'] ?? '';
-		$primary_color   = $options['primary_color'] ?? apply_filters( 'rp_email_primary_color', '#0073aa' );
-		$text_color      = $options['text_color'] ?? apply_filters( 'rp_email_text_color', '#333333' );
+		$primary_color   = $options['primary_color'] ?? apply_filters( 'rp_email_primary_color', '#0073aa' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$text_color      = $options['text_color'] ?? apply_filters( 'rp_email_text_color', '#333333' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		// Base-Layout rendern.
 		ob_start();

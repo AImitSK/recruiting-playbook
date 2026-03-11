@@ -12,6 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 /*
  * Block Theme Detection & Header
  * Block Themes (FSE) benötigen block_template_part() statt get_header()

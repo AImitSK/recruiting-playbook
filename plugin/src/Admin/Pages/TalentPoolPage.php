@@ -76,7 +76,8 @@ class TalentPoolPage {
 						'retry'                => __( 'Retry', 'recruiting-playbook' ),
 						'expiresSoon'          => __( 'Expires soon', 'recruiting-playbook' ),
 						'expired'              => __( 'Expired', 'recruiting-playbook' ),
-						'expiresInDays'        => __( 'Expires in %d days', 'recruiting-playbook' ),
+						/* translators: %d: number of days until expiry */
+					'expiresInDays'        => __( 'Expires in %d days', 'recruiting-playbook' ),
 						'total'                => __( 'Total', 'recruiting-playbook' ),
 						'perPage'              => __( 'per page', 'recruiting-playbook' ),
 						'page'                 => __( 'Page', 'recruiting-playbook' ),

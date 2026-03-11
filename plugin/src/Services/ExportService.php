@@ -87,6 +87,7 @@ class ExportService {
 		$output = fopen( 'php://output', 'w' );
 
 		// BOM für Excel UTF-8 Kompatibilität.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- Writing to php://output stream
 		fwrite( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		// Header-Zeile (Standard-Spalten).
@@ -140,6 +141,7 @@ class ExportService {
 
 		} while ( count( $applications ) === self::BATCH_SIZE );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing php://output stream
 		fclose( $output );
 		exit;
 	}
@@ -168,6 +170,7 @@ class ExportService {
 		$this->sendDownloadHeaders( $filename );
 
 		$output = fopen( 'php://output', 'w' );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- Writing to php://output stream
 		fwrite( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		$stats_service = new StatsService( $this->repository );
@@ -220,8 +223,10 @@ class ExportService {
 		}
 
 		fputcsv( $output, [ '' ], ';' );
+		/* translators: %s: export date and time */
 		fputcsv( $output, [ sprintf( __( 'Exported on: %s', 'recruiting-playbook' ), gmdate( 'd.m.Y H:i' ) ) ], ';' );
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing php://output stream
 		fclose( $output );
 		exit;
 	}

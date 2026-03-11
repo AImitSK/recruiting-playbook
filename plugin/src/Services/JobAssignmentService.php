@@ -277,9 +277,10 @@ class JobAssignmentService {
 				'user_id'     => get_current_user_id() ?: null,
 				'user_name'   => $current_user->ID ? $current_user->display_name : null,
 				'message'     => sprintf(
-					/* translators: %s: user display name */
 					'job_assigned' === $action
+						/* translators: %s: user display name */
 						? __( '%s assigned to job', 'recruiting-playbook' )
+						/* translators: %s: user display name */
 						: __( '%s removed from job', 'recruiting-playbook' ),
 					$target ? $target->display_name : __( 'Unknown', 'recruiting-playbook' )
 				),

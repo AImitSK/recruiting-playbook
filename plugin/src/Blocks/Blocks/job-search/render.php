@@ -11,6 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 // Attribute zu Shortcode-Attributen konvertieren.
 $shortcode_atts = [
 	'show_search'   => ! empty( $attributes['showSearch'] ) ? 'true' : 'false',
@@ -30,6 +32,7 @@ $wrapper_attributes = get_block_wrapper_attributes( [
 	'class' => 'rp-block-job-search',
 ] );
 
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes from get_block_wrapper_attributes(), $output from shortcode render
 printf(
 	'<div %s>%s</div>',
 	$wrapper_attributes,

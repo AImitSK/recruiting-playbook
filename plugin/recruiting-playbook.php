@@ -120,15 +120,15 @@ if ( function_exists( '\rp_fs' ) ) {
 	\rp_fs()->set_basename( true, __FILE__ );
 } else {
 	// Plugin-Konstanten
-	define( 'RP_VERSION', '1.2.23' );
-	define( 'RP_PLUGIN_FILE', __FILE__ );
-	define( 'RP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-	define( 'RP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-	define( 'RP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+	define( 'RP_VERSION', '1.2.23' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+	define( 'RP_PLUGIN_FILE', __FILE__ ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+	define( 'RP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+	define( 'RP_PLUGIN_URL', plugin_dir_url( __FILE__ ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+	define( 'RP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 
 	// Minimum Requirements
-	define( 'RP_MIN_PHP_VERSION', '8.0' );
-	define( 'RP_MIN_WP_VERSION', '6.0' );
+	define( 'RP_MIN_PHP_VERSION', '8.0' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+	define( 'RP_MIN_WP_VERSION', '6.0' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 
 	// Autoloader
 	if ( file_exists( RP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {

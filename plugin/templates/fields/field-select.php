@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables from parent scope
+
 $options     = $settings['options'] ?? [];
 $allow_other = $settings['allow_other'] ?? false;
 ?>

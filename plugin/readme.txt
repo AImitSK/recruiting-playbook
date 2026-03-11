@@ -1,6 +1,6 @@
 === Recruiting Playbook ===
 Contributors: stefankuehne
-Tags: recruiting, jobs, stellenanzeigen, bewerbermanagement, ats
+Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
@@ -8,112 +8,112 @@ Stable tag: 1.2.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Professionelles Bewerbermanagement für WordPress. Stellenanzeigen erstellen, Bewerbungen verwalten, DSGVO-konform.
+Professional applicant tracking system for WordPress. Create job listings, manage applications, GDPR-compliant.
 
 == Description ==
 
-**Recruiting Playbook** ist ein professionelles Applicant Tracking System (ATS) für WordPress. Verwalten Sie Stellenanzeigen und Bewerbungen direkt in Ihrem WordPress-Dashboard.
+**Recruiting Playbook** is a professional Applicant Tracking System (ATS) for WordPress. Manage job listings and applications directly from your WordPress dashboard. Built with German companies in mind, fully GDPR-compliant.
 
 ### Features (Free)
 
-* ✅ **Unbegrenzte Stellenanzeigen** - Keine Limits
-* ✅ **Mehrstufiges Bewerbungsformular** - CV-Upload, Anschreiben, DSGVO-Checkboxen
-* ✅ **Bewerbungsverwaltung** - Übersichtliche Tabelle mit Filterung & Sortierung
-* ✅ **Status-Workflow** - New → Screening → Interview → Offer → Hired
-* ✅ **E-Mail-Benachrichtigungen** - Automatisch bei neuen Bewerbungen
-* ✅ **DSGVO-konform** - Datenschutz-Checkboxen, Soft-Deletes, Anonymisierung
-* ✅ **Responsive Design** - Funktioniert auf allen Geräten
-* ✅ **Page Builder Support** - Gutenberg Blocks, Shortcodes
+* Unlimited job listings - No limits
+* Multi-step application form - CV upload, cover letter, GDPR checkboxes
+* Application management - Clear table view with filtering & sorting
+* Status workflow - New, Screening, Interview, Offer, Hired
+* Email notifications - Automatic notifications for new applications
+* GDPR-compliant - Privacy checkboxes, soft deletes, anonymization
+* Responsive design - Works on all devices
+* Page Builder support - Gutenberg Blocks, Shortcodes
 
 ### Premium Features (Pro)
 
-* 🎯 **Kanban-Board** - Drag & Drop Bewerbermanagement
-* 🎯 **KI-Lebenslauf-Matching** - Automatische Bewertung von Bewerbungen
-* 🎯 **Erweiterte E-Mail-Templates** - Vorlagen mit Platzhaltern
-* 🎯 **Talent Pool** - Kandidaten für zukünftige Stellen speichern
-* 🎯 **Notizen & Ratings** - Interne Kandidaten-Bewertungen
-* 🎯 **Reporting & Analytics** - Conversion-Rate, Time-to-Hire
-* 🎯 **Custom Fields** - Eigene Formularfelder
-* 🎯 **API & Webhooks** - Integration mit externen Tools
-* 🎯 **Avada & Elementor Integration** - Premium Page Builder Elemente
+* Kanban Board - Drag & drop application management
+* AI Resume Matching - Automatic evaluation of applications
+* Advanced email templates - Templates with placeholders
+* Talent Pool - Save candidates for future positions
+* Notes & Ratings - Internal candidate evaluations
+* Reporting & Analytics - Conversion rate, time-to-hire
+* Custom Fields - Custom form fields
+* API & Webhooks - Integration with external tools
+* Avada & Elementor Integration - Premium page builder elements
 
-[Mehr erfahren →](https://recruiting-playbook.com/)
+[Learn more](https://recruiting-playbook.com/)
 
 == Installation ==
 
-1. Plugin installieren und aktivieren
-2. Setup-Wizard durchlaufen
-3. Erste Stellenanzeige erstellen
-4. Fertig! 🎉
+1. Install and activate the plugin
+2. Complete the setup wizard
+3. Create your first job listing
+4. Done!
 
 == Frequently Asked Questions ==
 
-= Ist das Plugin DSGVO-konform? =
+= Is the plugin GDPR-compliant? =
 
-Ja, das Plugin enthält alle erforderlichen Datenschutz-Features.
+Yes, the plugin includes all required privacy features including consent checkboxes, soft deletes, and data anonymization.
 
-= Kann ich das Design anpassen? =
+= Can I customize the design? =
 
-Ja, über Design & Branding Einstellungen.
+Yes, via Design & Branding settings in the plugin admin area.
 
-= Wie viele Stellenanzeigen kann ich erstellen? =
+= How many job listings can I create? =
 
-Unbegrenzt! Sowohl in Free als auch Pro.
+Unlimited! Both in Free and Pro versions.
 
 == Screenshots ==
 
-1. Job-Übersicht im Frontend
-2. Bewerbungsformular mit DSGVO-Checkboxen
-3. Admin-Dashboard - Bewerbungsübersicht
-4. Kanban-Board (Pro)
-5. Design & Branding Einstellungen
+1. Job listing overview on the frontend
+2. Application form with GDPR checkboxes
+3. Admin dashboard - Application overview
+4. Kanban Board (Pro)
+5. Design & Branding settings
 
 == Changelog ==
 
 = 1.2.19 - 2026-02-20 =
-* Add: Löschen-Button in Bewerbungsliste (React-Komponente)
-* Fix: Import-Script sendet jetzt korrekten Taxonomy-Slug für Beschäftigungsart
+* Add: Delete button in application list (React component)
+* Fix: Import script now sends correct taxonomy slug for employment type
 
 = 1.2.18 - 2026-02-20 =
-* Fix: Taxonomie-Verwaltung im Admin-Menü korrigiert (Standorte, Beschäftigungsart, Kategorien jetzt korrekt verlinkt)
+* Fix: Taxonomy management in admin menu corrected (locations, employment type, categories now properly linked)
 
 = 1.2.17 - 2026-02-20 =
-* Fix: Bewerbungen-Seite Header-Layout (Systemmeldungen werden jetzt sauber über der Überschrift angezeigt)
+* Fix: Applications page header layout (system messages now displayed cleanly above the heading)
 
 = 1.2.16 - 2026-02-20 =
-* Add: Taxonomie-Verwaltung im Admin-Menü (Standorte, Beschäftigungsart, Kategorien)
-* Fix: Übersetzungsfehler korrigiert
+* Add: Taxonomy management in admin menu (locations, employment type, categories)
+* Fix: Translation errors corrected
 
 = 1.2.15 - 2026-02-20 =
-* Fix: E-Mail Anrede zeigt jetzt vollen Namen (Hallo Herr / Frau Vorname Nachname)
-* Fix: Doppelte Signatur in E-Mail-Vorlagen entfernt
+* Fix: Email salutation now shows full name
+* Fix: Removed duplicate signature in email templates
 
 = 1.2.14 - 2026-02-20 =
-* Fix: KI-Analyse Tab wird wieder korrekt angezeigt (React Hooks Reihenfolge)
-* Fix: E-Mail-Automation speichert jetzt alle Status (interview, offer, hired)
+* Fix: AI analysis tab displays correctly again (React Hooks order)
+* Fix: Email automation now saves all statuses (interview, offer, hired)
 
 = 1.2.13 - 2026-02-20 =
-* Fix: Pro-Version sendet Bewerber-Bestaetigung nur wenn Automation-Template konfiguriert
-* Add: Status "Neue Bewerbung" in E-Mail-Automation verfuegbar
-* Add: Toggle zum Deaktivieren aller KI-Features in den Einstellungen
-* Fix: KI-Buttons werden ausgeblendet wenn Feature deaktiviert
+* Fix: Pro version sends applicant confirmation only when automation template is configured
+* Add: Status "New Application" available in email automation
+* Add: Toggle to disable all AI features in settings
+* Fix: AI buttons are hidden when feature is disabled
 
 = 1.2.12 - 2026-02-19 =
-* Fix: JS-Pfade korrigiert - laden jetzt von assets/dist/ statt assets/src/
-* Fix: match-modal.js und job-finder.js werden korrekt eingebunden
+* Fix: JS paths corrected - now loading from assets/dist/ instead of assets/src/
+* Fix: match-modal.js and job-finder.js are correctly included
 
 = 1.2.11 - 2026-02-19 =
-* Fix: KI-Matching JavaScript (match-modal.js, job-finder.js) jetzt korrekt im Build enthalten
-* Fix: Bewerbungsformular wird korrekt geladen
+* Fix: AI Matching JavaScript (match-modal.js, job-finder.js) now correctly included in build
+* Fix: Application form loads correctly
 
 = 1.2.10 - 2026-02-19 =
-* Fix: Notification Service Array-Zugriff korrigiert
-* Fix: ActivityService.log() Parameter korrigiert
-* Fix: Dokument-Download MIME-Type Erkennung
+* Fix: Notification Service array access corrected
+* Fix: ActivityService.log() parameters corrected
+* Fix: Document download MIME type detection
 
 = 1.2.9 - 2026-02-19 =
-* Fix: TeamsNotifier/SlackNotifier findById() zu get() geaendert
-* Fix: KI-Button Navigation korrigiert
+* Fix: TeamsNotifier/SlackNotifier findById() changed to get()
+* Fix: AI button navigation corrected
 
 = 1.2.8 - 2026-02-18 =
 * Add: Microsoft Teams integration with Adaptive Cards

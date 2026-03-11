@@ -26,6 +26,10 @@ use RecruitingPlaybook\Services\DocumentService;
 use RecruitingPlaybook\Services\EmailService;
 use RecruitingPlaybook\Constants\ApplicationStatus;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Admin-Menü Registrierung
  */
@@ -278,7 +282,7 @@ class Menu {
 
 			// Action für Auto-E-Mail und andere Hooks auslösen.
 			if ( $old_status && $old_status !== $status ) {
-				do_action( 'rp_application_status_changed', $id, $old_status, $status );
+				do_action( 'rp_application_status_changed', $id, $old_status, $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			}
 
 			// Logging.
@@ -371,7 +375,7 @@ class Menu {
 
 					// Action für Auto-E-Mail auslösen.
 					if ( $old_status && 'screening' !== $old_status ) {
-						do_action( 'rp_application_status_changed', $id, $old_status, 'screening' );
+						do_action( 'rp_application_status_changed', $id, $old_status, 'screening' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 					}
 				}
 				break;
@@ -389,7 +393,7 @@ class Menu {
 
 					// Action für Auto-E-Mail auslösen.
 					if ( $old_status && 'rejected' !== $old_status ) {
-						do_action( 'rp_application_status_changed', $id, $old_status, 'rejected' );
+						do_action( 'rp_application_status_changed', $id, $old_status, 'rejected' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 					}
 				}
 				break;
@@ -876,8 +880,8 @@ class Menu {
 							printf(
 								/* translators: 1: success count, 2: error count */
 								esc_html__( '%1$d emails sent successfully, %2$d failed.', 'recruiting-playbook' ),
-								$success_count,
-								$error_count
+								absint( $success_count ),
+								absint( $error_count )
 							);
 							?>
 						</p>

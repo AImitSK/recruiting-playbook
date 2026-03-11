@@ -9,4 +9,8 @@
  * @package RecruitingPlaybook
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 require_once dirname( __DIR__ ) . '/vendor/freemius/wordpress-sdk/start.php';

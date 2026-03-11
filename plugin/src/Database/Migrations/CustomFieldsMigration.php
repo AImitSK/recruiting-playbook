@@ -13,6 +13,10 @@ namespace RecruitingPlaybook\Database\Migrations;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 /**
  * Migration für Custom Fields
  */
@@ -151,7 +155,7 @@ class CustomFieldsMigration {
 		}
 
 		// Aktivitätslog.
-		do_action( 'rp_application_migrated', $application_id, $custom_fields );
+		do_action( 'rp_application_migrated', $application_id, $custom_fields ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return true;
 	}

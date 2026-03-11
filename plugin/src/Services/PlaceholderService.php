@@ -304,15 +304,18 @@ class PlaceholderService {
 			case 'herr':
 			case 'mr':
 			case 'mr.':
+				/* translators: %s: last name of the applicant */
 				return sprintf( __( 'Dear Mr. %s', 'recruiting-playbook' ), $last_name );
 			case 'frau':
 			case 'mrs':
 			case 'mrs.':
 			case 'ms':
 			case 'ms.':
+				/* translators: %s: last name of the applicant */
 				return sprintf( __( 'Dear Ms. %s', 'recruiting-playbook' ), $last_name );
 			default:
 				// Ohne Anrede: Formelle geschlechtsneutrale Anrede.
+				/* translators: %s: full name of the applicant */
 				return sprintf( __( 'Dear Mr. / Ms. %s', 'recruiting-playbook' ), $full_name );
 		}
 	}
