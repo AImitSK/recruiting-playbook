@@ -509,7 +509,7 @@ class ApplicationDetail {
 		$wpdb->update( $table, [ 'status' => $new_status ], [ 'id' => $id ] );
 
 		// Action für Auto-E-Mail und andere Hooks auslösen.
-		do_action( 'rp_application_status_changed', $id, $old_status, $new_status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recruiting_playbook_application_status_changed', $id, $old_status, $new_status );
 
 		$log_table    = $wpdb->prefix . 'rp_activity_log';
 		$current_user = wp_get_current_user();

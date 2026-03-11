@@ -82,7 +82,7 @@ class AutoEmailService {
 		}
 
 		// Hook für Status-Änderungen.
-		add_action( 'rp_application_status_changed', [ $this, 'handleStatusChange' ], 10, 3 );
+		add_action( 'recruiting_playbook_application_status_changed', [ $this, 'handleStatusChange' ], 10, 3 );
 
 		// Hook für verzögerten E-Mail-Versand (Action Scheduler Callback).
 		add_action( 'rp_send_auto_email', [ $this, 'processScheduledEmail' ], 10, 3 );

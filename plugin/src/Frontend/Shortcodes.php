@@ -268,7 +268,7 @@ class Shortcodes {
 					</p>
 				<?php endif; ?>
 
-				<?php echo $this->getFormHtml( $job_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses_post( $this->getFormHtml( $job_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
 		<?php
@@ -310,7 +310,7 @@ class Shortcodes {
 					</p>
 				<?php endif; ?>
 
-				<?php echo $this->getCustomFormHtml( $job_id, $show_progress ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo wp_kses_post( $this->getCustomFormHtml( $job_id, $show_progress ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
 		<?php
@@ -383,13 +383,13 @@ class Shortcodes {
 					<?php endif; ?>
 
 					<form x-on:submit.prevent="submit">
-						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo wp_kses_post( SpamProtection::getHoneypotField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo wp_kses_post( SpamProtection::getTimestampField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 						<input type="hidden" name="job_id" :value="formData.job_id">
 
 						<!-- Dynamische Felder (nur Steps, ohne Wrapper) -->
-						<?php echo $form_service->render( $job_id, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo wp_kses_post( $form_service->render( $job_id, false ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 						<!-- Navigation -->
 						<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">
@@ -471,8 +471,8 @@ class Shortcodes {
 					</div>
 
 					<form x-on:submit.prevent="submit">
-						<?php echo SpamProtection::getHoneypotField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php echo SpamProtection::getTimestampField(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo wp_kses_post( SpamProtection::getHoneypotField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo wp_kses_post( SpamProtection::getTimestampField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 						<!-- Schritt 1: Persönliche Daten -->
 						<div x-show="step === 1" x-transition>
@@ -858,7 +858,7 @@ class Shortcodes {
 				x-on:click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
 			>
 				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
-					<?php echo $icon_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo wp_kses_post( $icon_svg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<span><?php echo esc_html( $button_text ); ?></span>
 				</span>
 			</button>

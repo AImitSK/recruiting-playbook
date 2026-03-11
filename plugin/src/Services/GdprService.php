@@ -265,7 +265,7 @@ class GdprService {
 		$activities = [];
 		if ( ! empty( $application_ids ) ) {
 			$ids_placeholder = implode( ',', array_fill( 0, count( $application_ids ), '%d' ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$activities = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$log_table}

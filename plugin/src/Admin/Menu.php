@@ -275,14 +275,14 @@ class Menu {
 			// Alten Status für Hook abrufen.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$old_status = $wpdb->get_var(
-				$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+				$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			);
 
 			$wpdb->update( $table, [ 'status' => $status ], [ 'id' => $id ] );
 
 			// Action für Auto-E-Mail und andere Hooks auslösen.
 			if ( $old_status && $old_status !== $status ) {
-				do_action( 'rp_application_status_changed', $id, $old_status, $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+				do_action( 'recruiting_playbook_application_status_changed', $id, $old_status, $status );
 			}
 
 			// Logging.
@@ -367,7 +367,7 @@ class Menu {
 					// Alten Status abrufen.
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$old_status = $wpdb->get_var(
-						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 					);
 
 					$wpdb->update( $table, [ 'status' => 'screening' ], [ 'id' => $id ] );
@@ -375,7 +375,7 @@ class Menu {
 
 					// Action für Auto-E-Mail auslösen.
 					if ( $old_status && 'screening' !== $old_status ) {
-						do_action( 'rp_application_status_changed', $id, $old_status, 'screening' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+						do_action( 'recruiting_playbook_application_status_changed', $id, $old_status, 'screening' );
 					}
 				}
 				break;
@@ -385,7 +385,7 @@ class Menu {
 					// Alten Status abrufen.
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$old_status = $wpdb->get_var(
-						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id )
+						$wpdb->prepare( "SELECT status FROM {$table} WHERE id = %d", $id ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 					);
 
 					$wpdb->update( $table, [ 'status' => 'rejected' ], [ 'id' => $id ] );
@@ -393,7 +393,7 @@ class Menu {
 
 					// Action für Auto-E-Mail auslösen.
 					if ( $old_status && 'rejected' !== $old_status ) {
-						do_action( 'rp_application_status_changed', $id, $old_status, 'rejected' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+						do_action( 'recruiting_playbook_application_status_changed', $id, $old_status, 'rejected' );
 					}
 				}
 				break;
@@ -531,6 +531,7 @@ class Menu {
 			exit;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $_FILES['backup_file'] is a file upload; individual fields are validated below (size, extension, MIME type via wp_check_filetype).
 		$file = $_FILES['backup_file'];
 
 		// Größe prüfen (max 50 MB).
@@ -817,7 +818,7 @@ class Menu {
 		$candidates_table   = $wpdb->prefix . 'rp_candidates';
 		$placeholders       = implode( ',', array_fill( 0, count( $application_ids ), '%d' ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$recipients = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT a.id, c.first_name, c.last_name, c.email

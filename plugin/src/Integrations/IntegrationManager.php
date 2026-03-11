@@ -87,7 +87,7 @@ class IntegrationManager {
 		}
 
 		if ( ! empty( $this->settings['slack_event_status_changed'] ) ) {
-			add_action( 'rp_application_status_changed', [ $this->slack_notifier, 'onStatusChanged' ], 10, 3 );
+			add_action( 'recruiting_playbook_application_status_changed', [ $this->slack_notifier, 'onStatusChanged' ], 10, 3 );
 		}
 
 		if ( ! empty( $this->settings['slack_event_job_published'] ) ) {
@@ -112,7 +112,7 @@ class IntegrationManager {
 		}
 
 		if ( ! empty( $this->settings['teams_event_status_changed'] ) ) {
-			add_action( 'rp_application_status_changed', [ $this->teams_notifier, 'onStatusChanged' ], 10, 3 );
+			add_action( 'recruiting_playbook_application_status_changed', [ $this->teams_notifier, 'onStatusChanged' ], 10, 3 );
 		}
 
 		if ( ! empty( $this->settings['teams_event_job_published'] ) ) {

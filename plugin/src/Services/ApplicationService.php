@@ -306,7 +306,7 @@ class ApplicationService {
 		$offset = ( $page - 1 ) * $per_page;
 
 		// Gesamtzahl ermitteln
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are hardcoded (plugin prefix + constant suffix), $where_clause uses prepared placeholders
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names are hardcoded (plugin prefix + constant suffix), $where_clause uses prepared placeholders
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) FROM {$table} a
@@ -317,7 +317,7 @@ class ApplicationService {
 		);
 
 		// Daten abrufen
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names hardcoded, $orderby/$order from whitelist, LIMIT/OFFSET prepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names hardcoded, $orderby/$order from whitelist, LIMIT/OFFSET prepared
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT a.*, c.first_name, c.last_name, c.email, c.phone, c.salutation
@@ -437,7 +437,7 @@ class ApplicationService {
 		// Query mit documents_count, notes_count, average_rating, in_talent_pool
 		// Verwendet LEFT JOINs und Subqueries für optimale Performance.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $orderby/$order aus Whitelist, Tabellennamen hardcoded mit Prefix.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
@@ -608,7 +608,7 @@ class ApplicationService {
 
 		// Hook für Auto-E-Mail und andere Erweiterungen.
 		// Parameter: $application_id, $old_status, $new_status (chronologische Reihenfolge).
-		do_action( 'rp_application_status_changed', $id, $old_status, $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recruiting_playbook_application_status_changed', $id, $old_status, $status );
 
 		return true;
 	}

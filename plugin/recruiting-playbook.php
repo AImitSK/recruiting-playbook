@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Recruiting Playbook (Premium)
+ * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
  * Version: 1.2.24
@@ -106,11 +106,9 @@
  *   /assets/css/elementor-editor.css,
  */
 
-declare(strict_types=1);
-
 namespace RecruitingPlaybook;
 
-// Direkten Zugriff verhindern
+// Direkten Zugriff verhindern.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

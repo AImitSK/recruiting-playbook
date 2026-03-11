@@ -130,7 +130,7 @@ class ApplicationsPage {
 
 			$where_sql = implode( ' AND ', $where_parts );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT id, job_id, candidate_id, status, created_at
@@ -167,7 +167,7 @@ class ApplicationsPage {
 
 			$where_sql = implode( ' AND ', $where_parts );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT a.id, a.job_id, a.candidate_id, a.status, a.created_at
@@ -193,7 +193,7 @@ class ApplicationsPage {
 
 		if ( ! empty( $candidate_ids ) ) {
 			$ids_placeholder = implode( ',', array_fill( 0, count( $candidate_ids ), '%d' ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$candidate_rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT id, first_name, last_name, email, phone FROM {$candidates_table} WHERE id IN ({$ids_placeholder})",
@@ -217,7 +217,7 @@ class ApplicationsPage {
 
 		if ( $docs_table_exists && ! empty( $app_ids ) ) {
 			$ids_placeholder = implode( ',', array_fill( 0, count( $app_ids ), '%d' ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$doc_rows = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT application_id, COUNT(*) as count FROM {$documents_table} WHERE application_id IN ({$ids_placeholder}) GROUP BY application_id",
@@ -304,7 +304,7 @@ class ApplicationsPage {
 
 			$where_sql = implode( ' AND ', $where_parts );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			return (int) $wpdb->get_var(
 				"SELECT COUNT(*) FROM {$applications_table} WHERE {$where_sql}"
 			);
@@ -333,7 +333,7 @@ class ApplicationsPage {
 
 		$where_sql = implode( ' AND ', $where_parts );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return (int) $wpdb->get_var(
 			"SELECT COUNT(a.id) FROM {$applications_table} a LEFT JOIN {$candidates_table} c ON a.candidate_id = c.id WHERE {$where_sql}"
 		);
@@ -359,7 +359,7 @@ class ApplicationsPage {
 			return [];
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			"SELECT status, COUNT(*) as count FROM {$table} GROUP BY status",
 			ARRAY_A

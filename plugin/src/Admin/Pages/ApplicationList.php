@@ -121,7 +121,7 @@ class ApplicationList extends \WP_List_Table {
 		// Count Query mit sicheren Prepared Statements
 		if ( empty( $where_data['values'] ) ) {
 			// Keine Filter - einfache Query
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$total_items = (int) $wpdb->get_var(
 				"SELECT COUNT(a.id)
 				 FROM {$applications_table} a
@@ -129,7 +129,7 @@ class ApplicationList extends \WP_List_Table {
 			);
 		} else {
 			// Mit Filtern - Prepared Statement
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$total_items = (int) $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(a.id)
@@ -145,7 +145,7 @@ class ApplicationList extends \WP_List_Table {
 		$query_values = array_merge( $where_data['values'], [ $per_page, $offset ] );
 		$where_sql    = empty( $where_data['values'] ) ? '1=1' : $where_data['clause'];
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$this->items = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT a.*, c.first_name, c.last_name, c.email, c.phone

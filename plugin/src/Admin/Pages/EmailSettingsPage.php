@@ -505,7 +505,7 @@ class EmailSettingsPage {
 	 * Auto-E-Mail Einstellungen speichern
 	 */
 	private function saveAutoEmailSettings(): void {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Wird in AutoEmailService sanitiert
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- Wird in AutoEmailService sanitiert; Nonce ist bereits durch den Aufrufer (handleActions) via check_admin_referer() geprüft.
 		$settings = isset( $_POST['auto_email'] ) ? wp_unslash( $_POST['auto_email'] ) : [];
 
 		$auto_email_service = new AutoEmailService();

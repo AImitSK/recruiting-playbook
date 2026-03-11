@@ -541,7 +541,7 @@ class CustomFieldFileService {
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders sind %d
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $placeholders sind %d
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, document_type, file_name, original_name, file_type, file_size, created_at

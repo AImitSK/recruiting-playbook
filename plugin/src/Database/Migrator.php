@@ -497,7 +497,7 @@ class Migrator {
 
 		$placeholders = implode( ', ', array_fill( 0, count( $system_slugs ), '%s' ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$updated = $wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$table} SET is_system = 1 WHERE slug IN ({$placeholders}) AND is_system = 0",

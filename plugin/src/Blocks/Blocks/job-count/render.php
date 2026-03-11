@@ -32,9 +32,4 @@ $wrapper_attributes = get_block_wrapper_attributes( [
 	'class' => 'rp-block-job-count',
 ] );
 
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes from get_block_wrapper_attributes(), $output from shortcode render
-printf(
-	'<span %s>%s</span>',
-	$wrapper_attributes,
-	$output
-);
+echo wp_kses_post( sprintf( '<span %s>%s</span>', $wrapper_attributes, $output ) );

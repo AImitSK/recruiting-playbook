@@ -345,7 +345,7 @@ final class Plugin {
 
 		// Application Events.
 		add_action( 'rp_application_created', [ $service, 'onApplicationCreated' ], 10, 2 );
-		add_action( 'rp_application_status_changed', [ $service, 'onApplicationStatusChanged' ], 10, 3 );
+		add_action( 'recruiting_playbook_application_status_changed', [ $service, 'onApplicationStatusChanged' ], 10, 3 );
 
 		// Job Events (über WP-Hooks).
 		add_action( 'transition_post_status', [ $service, 'onJobStatusTransition' ], 10, 3 );
@@ -389,7 +389,9 @@ final class Plugin {
 		add_filter(
 			'rest_post_dispatch',
 			function ( $response ) {
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Set by checkApiKeyRateLimit(); intentional rp_ prefix for API rate limit headers.
 				if ( ! empty( $GLOBALS['rp_rate_limit_headers'] ) && $response instanceof \WP_REST_Response ) {
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 					foreach ( $GLOBALS['rp_rate_limit_headers'] as $header => $value ) {
 						$response->header( $header, (string) $value );
 					}

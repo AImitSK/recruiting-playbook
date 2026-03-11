@@ -835,7 +835,7 @@ class SetupWizard {
 			wp_send_json_error( [ 'message' => __( 'No permission.', 'recruiting-playbook' ) ] );
 		}
 
-		$email = sanitize_email( $_POST['email'] ?? '' );
+		$email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
 
 		if ( ! is_email( $email ) ) {
 			wp_send_json_error( [ 'message' => __( 'Invalid email address.', 'recruiting-playbook' ) ] );

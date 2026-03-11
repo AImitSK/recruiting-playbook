@@ -171,7 +171,7 @@ if ( ! function_exists( 'rp_fs' ) ) {
     rp_fs()->add_action( 'after_uninstall', 'rp_fs_uninstall_cleanup' );
 
     // Signal that SDK was initiated.
-    do_action( 'rp_fs_loaded' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+    do_action( 'recruiting_playbook_fs_loaded' );
 }
 
 /**
@@ -239,7 +239,7 @@ function rp_fs_uninstall_cleanup() { // phpcs:ignore WordPress.NamingConventions
     );
 
     foreach ( $tables as $table ) {
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are hardcoded from $wpdb->prefix + known rp_ suffixes; safe for DDL statements.
         $wpdb->query( "DROP TABLE IF EXISTS {$table}" );
     }
 

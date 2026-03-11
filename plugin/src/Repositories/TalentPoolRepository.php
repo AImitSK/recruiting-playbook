@@ -282,7 +282,7 @@ class TalentPoolRepository {
 		$offset   = ( $page - 1 ) * $per_page;
 
 		// Total Count.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$total = (int) $wpdb->get_var(
 			$values
 				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -293,11 +293,11 @@ class TalentPoolRepository {
 				)
 				: "SELECT COUNT(*) FROM {$this->table} tp
 					LEFT JOIN {$candidates_table} c ON tp.candidate_id = c.id
-					WHERE {$where_clause}"
+					WHERE {$where_clause}" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		);
 
 		// Daten laden.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$items = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT tp.*, c.first_name, c.last_name, c.email, c.phone

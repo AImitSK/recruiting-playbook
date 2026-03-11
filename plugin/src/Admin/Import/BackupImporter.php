@@ -11,6 +11,10 @@ namespace RecruitingPlaybook\Admin\Import;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery -- Bulk import operations require direct DB access; caching would interfere with data integrity.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk import: no caching needed for write operations.
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are built from $wpdb->prefix + hardcoded rp_ suffixes; column names are validated/hardcoded in context.
+
 /**
  * Backup-Import Klasse
  */

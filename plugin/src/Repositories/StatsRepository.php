@@ -62,14 +62,14 @@ class StatsRepository {
 			$params[] = $job_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					"SELECT status, COUNT(*) as count FROM {$table} WHERE {$where} GROUP BY status",
 					...$params
 				)
-				: "SELECT status, COUNT(*) as count FROM {$table} WHERE {$where} GROUP BY status",
+				: "SELECT status, COUNT(*) as count FROM {$table} WHERE {$where} GROUP BY status", // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			ARRAY_A
 		);
 
@@ -107,11 +107,11 @@ class StatsRepository {
 			$params[] = $job_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return (int) $wpdb->get_var(
 			$params
 				? $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$where}", ...$params ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				: "SELECT COUNT(*) FROM {$table} WHERE {$where}"
+				: "SELECT COUNT(*) FROM {$table} WHERE {$where}" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		);
 	}
 
@@ -199,7 +199,7 @@ class StatsRepository {
 			$params[] = $job_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -255,11 +255,11 @@ class StatsRepository {
 			$params[] = $job_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return (int) $wpdb->get_var(
 			$params
 				? $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$where}", ...$params ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				: "SELECT COUNT(*) FROM {$table} WHERE {$where}"
+				: "SELECT COUNT(*) FROM {$table} WHERE {$where}" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		);
 	}
 
@@ -290,7 +290,7 @@ class StatsRepository {
 			$params[] = $object_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return (int) $wpdb->get_var(
 			$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$where}", ...$params )
 		);
@@ -330,7 +330,7 @@ class StatsRepository {
 			$params[] = $job_id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -410,7 +410,7 @@ class StatsRepository {
 		$params[] = $limit;
 		$params[] = $offset;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$jobs = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
@@ -517,7 +517,7 @@ class StatsRepository {
 			$params[] = $date_range['to'];
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			$params
 				? $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -622,7 +622,7 @@ class StatsRepository {
 		$params[] = $limit;
 		$params[] = $offset;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
@@ -687,11 +687,11 @@ class StatsRepository {
 			$params[] = $args['job_id'];
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		return (int) $wpdb->get_var(
 			$params
 				? $wpdb->prepare( "SELECT COUNT(*) FROM {$apps_table} WHERE {$where}", ...$params ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				: "SELECT COUNT(*) FROM {$apps_table} WHERE {$where}"
+				: "SELECT COUNT(*) FROM {$apps_table} WHERE {$where}" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		);
 	}
 }
