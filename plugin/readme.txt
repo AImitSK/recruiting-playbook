@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.24
+Stable tag: 1.2.25
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,14 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.25 - 2026-03-11 =
+* Fix: WordPress.org Plugin Check - output escaping with wp_kses_post()
+* Fix: Plugin name mismatch between header and readme.txt resolved
+* Fix: ABSPATH direct access protection detection improved
+* Fix: Hook prefix changed to recruiting_playbook_ for WordPress.org compliance
+* Fix: SQL prepared statement phpcs annotations corrected
+* Fix: Input sanitization and nonce verification improved
 
 = 1.2.24 - 2026-03-11 =
 * Fix: Application status filter tabs now persist correctly after page reload
