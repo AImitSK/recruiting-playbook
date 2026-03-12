@@ -27,6 +27,8 @@ if ( ! function_exists( 'rp_fs' ) ) {
                 'has_premium_version' => true,  // Es gibt Premium-Pläne.
                 'has_addons'          => false,
                 'has_paid_plans'      => true,
+                // WordPress.org Guidelines: Freemius-kompatiblen Modus aktivieren.
+                'is_org_compliant'    => true,
                 // Sicherheits-Token für WordPress.org - wird automatisch aus Free-Version entfernt.
                 'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
                 'menu'                => array(

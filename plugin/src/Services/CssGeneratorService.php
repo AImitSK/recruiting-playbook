@@ -39,16 +39,17 @@ class CssGeneratorService {
 	/**
 	 * CSS-Variablen registrieren
 	 *
-	 * Registriert den wp_head Hook für die CSS-Ausgabe.
+	 * Registriert den wp_enqueue_scripts Hook für die CSS-Ausgabe.
+	 * WordPress.org Guidelines: CSS über wp_add_inline_style() statt inline <style>.
 	 */
 	public function register(): void {
-		add_action( 'wp_head', [ $this, 'output_css_variables' ], 5 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'output_css_variables' ], 20 );
 	}
 
 	/**
-	 * CSS-Variablen im <head> ausgeben
+	 * CSS-Variablen über wp_add_inline_style() ausgeben
 	 *
-	 * Diese Methode wird vom wp_head Hook aufgerufen.
+	 * Diese Methode wird vom wp_enqueue_scripts Hook aufgerufen.
 	 * WICHTIG: Prüft NICHT auf Pro-Lizenz - Design bleibt nach Ablauf erhalten.
 	 */
 	public function output_css_variables(): void {
@@ -58,8 +59,9 @@ class CssGeneratorService {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS ist sicher generiert.
-		echo '<style id="rp-design-variables">' . $css . '</style>' . "\n";
+		// WordPress.org Guidelines: CSS über wp_add_inline_style() hinzufügen.
+		// Füge zum rp-frontend Handle hinzu (wird in Plugin.php registriert).
+		wp_add_inline_style( 'rp-frontend', $css );
 	}
 
 	/**

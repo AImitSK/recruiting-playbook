@@ -123,6 +123,42 @@ class JobMeta {
 				]
 			);
 		}
+
+		// Styles über wp_add_inline_style() hinzufügen (WordPress.org Guidelines).
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueStyles' ] );
+	}
+
+	/**
+	 * Meta Box Styles über wp_add_inline_style() hinzufügen.
+	 *
+	 * @param string $hook_suffix Admin-Seiten-Hook.
+	 */
+	public function enqueueStyles( string $hook_suffix ): void {
+		global $post_type;
+
+		if ( ! in_array( $hook_suffix, [ 'post.php', 'post-new.php' ], true ) ) {
+			return;
+		}
+
+		if ( JobListing::POST_TYPE !== $post_type ) {
+			return;
+		}
+
+		$css = '
+			.rp-meta-fields { display: grid; gap: 20px; }
+			.rp-fieldset { border: 1px solid #ccd0d4; padding: 15px; }
+			.rp-fieldset legend { font-weight: 600; padding: 0 10px; }
+			.rp-field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+			.rp-field { display: flex; flex-direction: column; gap: 5px; }
+			.rp-field label { font-weight: 500; }
+			.rp-field input, .rp-field select { width: 100%; }
+			.rp-field-checkbox { flex-direction: row; align-items: center; }
+			.rp-field-checkbox input { width: auto; margin-right: 8px; }
+			.rp-featured-toggle { background: #f0f6fc; border: 1px solid #c3c4c7; border-left: 4px solid #2271b1; padding: 12px 15px; }
+			.rp-featured-toggle .rp-field-checkbox label { font-weight: 600; font-size: 13px; }
+		';
+
+		wp_add_inline_style( 'wp-admin', $css );
 	}
 
 	/**
@@ -173,23 +209,7 @@ class JobMeta {
 		echo '</fieldset>';
 
 		echo '</div>';
-
-		// Inline Styles.
-		?>
-		<style>
-			.rp-meta-fields { display: grid; gap: 20px; }
-			.rp-fieldset { border: 1px solid #ccd0d4; padding: 15px; }
-			.rp-fieldset legend { font-weight: 600; padding: 0 10px; }
-			.rp-field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-			.rp-field { display: flex; flex-direction: column; gap: 5px; }
-			.rp-field label { font-weight: 500; }
-			.rp-field input, .rp-field select { width: 100%; }
-			.rp-field-checkbox { flex-direction: row; align-items: center; }
-			.rp-field-checkbox input { width: auto; margin-right: 8px; }
-			.rp-featured-toggle { background: #f0f6fc; border: 1px solid #c3c4c7; border-left: 4px solid #2271b1; padding: 12px 15px; }
-			.rp-featured-toggle .rp-field-checkbox label { font-weight: 600; font-size: 13px; }
-		</style>
-		<?php
+		// Styles werden über enqueueStyles() hinzugefügt (WordPress.org Guidelines).
 	}
 
 	/**

@@ -40,8 +40,19 @@ document.addEventListener('alpine:init', () => {
          * Initialize form
          */
         init() {
-            // Load configuration from PHP-generated window.rpFormConfig
-            const config = window.rpFormConfig || {};
+            // Load configuration from data attribute (WordPress.org compliant).
+            // Fallback to window.rpFormConfig for backwards compatibility.
+            let config = {};
+            const configAttr = this.$el.getAttribute('data-rp-form-config');
+            if (configAttr) {
+                try {
+                    config = JSON.parse(configAttr);
+                } catch (e) {
+                    console.error('Failed to parse form config:', e);
+                }
+            } else if (window.rpFormConfig) {
+                config = window.rpFormConfig;
+            }
 
             // Set total steps from config
             this.totalSteps = config.steps || 3;

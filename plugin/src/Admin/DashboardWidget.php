@@ -45,6 +45,37 @@ class DashboardWidget {
 			$title,
 			[ $this, 'render' ]
 		);
+
+		// Styles über wp_add_inline_style() hinzufügen (WordPress.org Guidelines).
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueWidgetStyles' ] );
+	}
+
+	/**
+	 * Widget-Styles über wp_add_inline_style() hinzufügen.
+	 *
+	 * @param string $hook_suffix Admin-Seiten-Hook.
+	 */
+	public function enqueueWidgetStyles( string $hook_suffix ): void {
+		if ( 'index.php' !== $hook_suffix ) {
+			return;
+		}
+
+		$css = '
+			#rp_dashboard_widget .rp-dw-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+			#rp_dashboard_widget .rp-dw-stat { flex: 1; text-align: center; padding: 12px 8px; background: #f6f7f7; border-radius: 4px; border: 1px solid #dcdcde; }
+			#rp_dashboard_widget .rp-dw-stat-number { display: block; font-size: 28px; font-weight: 600; line-height: 1.2; color: #1d71b8; }
+			#rp_dashboard_widget .rp-dw-stat-label { display: block; font-size: 12px; color: #646970; margin-top: 4px; }
+			#rp_dashboard_widget .rp-dw-table { width: 100%; border-collapse: collapse; }
+			#rp_dashboard_widget .rp-dw-table th { text-align: left; padding: 6px 8px; border-bottom: 1px solid #dcdcde; font-size: 12px; color: #646970; font-weight: 400; }
+			#rp_dashboard_widget .rp-dw-table td { padding: 8px; border-bottom: 1px solid #f0f0f1; font-size: 13px; }
+			#rp_dashboard_widget .rp-dw-table tr:last-child td { border-bottom: none; }
+			#rp_dashboard_widget .rp-dw-badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
+			#rp_dashboard_widget .rp-dw-links { display: flex; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #dcdcde; }
+			#rp_dashboard_widget .rp-dw-links a { text-decoration: none; font-weight: 500; font-size: 13px; }
+			#rp_dashboard_widget .rp-dw-empty { color: #646970; font-style: italic; padding: 12px 0; }
+		';
+
+		wp_add_inline_style( 'dashboard', $css );
 	}
 
 	/**
@@ -55,82 +86,8 @@ class DashboardWidget {
 		$applications = $this->getRecentApplications();
 		$status_labels = ApplicationStatus::getAll();
 
+		// Styles werden über enqueueWidgetStyles() hinzugefügt (WordPress.org Guidelines).
 		?>
-		<style>
-			#rp_dashboard_widget .rp-dw-stats {
-				display: flex;
-				gap: 12px;
-				margin-bottom: 16px;
-			}
-			#rp_dashboard_widget .rp-dw-stat {
-				flex: 1;
-				text-align: center;
-				padding: 12px 8px;
-				background: #f6f7f7;
-				border-radius: 4px;
-				border: 1px solid #dcdcde;
-			}
-			#rp_dashboard_widget .rp-dw-stat-number {
-				display: block;
-				font-size: 28px;
-				font-weight: 600;
-				line-height: 1.2;
-				color: #1d71b8;
-			}
-			#rp_dashboard_widget .rp-dw-stat-label {
-				display: block;
-				font-size: 12px;
-				color: #646970;
-				margin-top: 4px;
-			}
-			#rp_dashboard_widget .rp-dw-table {
-				width: 100%;
-				border-collapse: collapse;
-			}
-			#rp_dashboard_widget .rp-dw-table th {
-				text-align: left;
-				padding: 6px 8px;
-				border-bottom: 1px solid #dcdcde;
-				font-size: 12px;
-				color: #646970;
-				font-weight: 400;
-			}
-			#rp_dashboard_widget .rp-dw-table td {
-				padding: 8px;
-				border-bottom: 1px solid #f0f0f1;
-				font-size: 13px;
-			}
-			#rp_dashboard_widget .rp-dw-table tr:last-child td {
-				border-bottom: none;
-			}
-			#rp_dashboard_widget .rp-dw-badge {
-				display: inline-block;
-				padding: 2px 8px;
-				border-radius: 9999px;
-				font-size: 11px;
-				font-weight: 500;
-				line-height: 1.5;
-				white-space: nowrap;
-			}
-			#rp_dashboard_widget .rp-dw-links {
-				display: flex;
-				gap: 12px;
-				margin-top: 16px;
-				padding-top: 12px;
-				border-top: 1px solid #dcdcde;
-			}
-			#rp_dashboard_widget .rp-dw-links a {
-				text-decoration: none;
-				font-weight: 500;
-				font-size: 13px;
-			}
-			#rp_dashboard_widget .rp-dw-empty {
-				color: #646970;
-				font-style: italic;
-				padding: 12px 0;
-			}
-		</style>
-
 		<div class="rp-dw-stats">
 			<div class="rp-dw-stat">
 				<span class="rp-dw-stat-number"><?php echo esc_html( (string) $stats['active_jobs'] ); ?></span>

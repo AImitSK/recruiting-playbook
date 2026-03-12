@@ -43,7 +43,19 @@ document.addEventListener('alpine:init', () => {
          * Initialize form
          */
         init() {
-            const config = window.rpCustomFieldsConfig || {};
+            // Load configuration from data attribute (WordPress.org compliant).
+            // Fallback to window.rpCustomFieldsConfig for backwards compatibility.
+            let config = {};
+            const configAttr = this.$el.getAttribute('data-rp-custom-fields-config');
+            if (configAttr) {
+                try {
+                    config = JSON.parse(configAttr);
+                } catch (e) {
+                    console.error('Failed to parse custom fields config:', e);
+                }
+            } else if (window.rpCustomFieldsConfig) {
+                config = window.rpCustomFieldsConfig;
+            }
 
             // Load field definitions
             this.fields = config.fields || [];

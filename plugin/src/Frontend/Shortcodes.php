@@ -346,10 +346,12 @@ class Shortcodes {
 		// Konfiguration für rpCustomFieldsForm vorbereiten.
 		$config = $form_service->getCustomFieldsConfig( $job_id );
 
+		// WordPress.org Guidelines: Config als data-Attribut statt inline Script.
+		$json_config = wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
+
 		ob_start();
 		?>
-		<script>window.rpCustomFieldsConfig = <?php echo wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE ); ?>;</script>
-		<div x-data="rpCustomFieldsForm()" x-cloak>
+		<div x-data="rpCustomFieldsForm()" x-cloak data-rp-custom-fields-config="<?php echo esc_attr( $json_config ); ?>">
 			<!-- Erfolgs-Meldung -->
 			<template x-if="submitted">
 				<div class="rp-text-center rp-py-12">

@@ -75,14 +75,15 @@ class FormRenderService {
 			// Alpine.js Daten vorbereiten.
 			$alpine_data = $this->prepareAlpineData( $config, $field_definitions, $job_id );
 
-			// Alpine.js Konfiguration ausgeben.
-			$output .= sprintf(
-				'<script>window.rpFormConfig = %s;</script>',
-				wp_json_encode( $alpine_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE )
-			);
+			// Alpine.js Konfiguration als data-Attribut statt inline Script.
+			// WordPress.org Guidelines: Keine inline <script> Tags.
+			$json_config = wp_json_encode( $alpine_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
 
-			// Alpine.js Container mit applicationForm Komponente.
-			$output .= '<div x-data="applicationForm" x-cloak>';
+			// Alpine.js Container mit applicationForm Komponente und Config als data-Attribut.
+			$output .= sprintf(
+				'<div x-data="applicationForm" x-cloak data-rp-form-config="%s">',
+				esc_attr( $json_config )
+			);
 
 			// Erfolgs-Meldung.
 			$output .= $this->renderSuccessMessage();

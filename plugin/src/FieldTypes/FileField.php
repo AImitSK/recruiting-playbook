@@ -200,7 +200,7 @@ class FileField extends AbstractFieldType {
 					sprintf(
 						/* translators: %s: File name */
 						__( 'Error uploading %s.', 'recruiting-playbook' ),
-						$file['name']
+						esc_html( $file['name'] )
 					)
 				);
 			}
@@ -212,7 +212,7 @@ class FileField extends AbstractFieldType {
 					sprintf(
 						/* translators: 1: File name, 2: Maximum size in MB */
 						__( 'The file %1$s is too large. Maximum: %2$d MB.', 'recruiting-playbook' ),
-						$file['name'],
+						esc_html( $file['name'] ),
 						$max_size_mb
 					)
 				);
@@ -246,8 +246,8 @@ class FileField extends AbstractFieldType {
 				sprintf(
 					/* translators: 1: File name, 2: Allowed extensions */
 					__( 'The file type of %1$s is not allowed. Allowed: %2$s.', 'recruiting-playbook' ),
-					$file['name'],
-					$allowed_exts
+					esc_html( $file['name'] ),
+					esc_html( $allowed_exts )
 				)
 			);
 		}
@@ -257,6 +257,8 @@ class FileField extends AbstractFieldType {
 
 	/**
 	 * Files-Array normalisieren
+	 *
+	 * WordPress.org Security: Sanitizes file names from $_FILES.
 	 *
 	 * @param array $files $_FILES Array.
 	 * @return array[] Liste von Datei-Arrays.
@@ -272,17 +274,23 @@ class FileField extends AbstractFieldType {
 					continue;
 				}
 				$result[] = [
-					'name'     => $files['name'][ $i ],
-					'type'     => $files['type'][ $i ],
+					'name'     => sanitize_file_name( $files['name'][ $i ] ),
+					'type'     => sanitize_mime_type( $files['type'][ $i ] ),
 					'tmp_name' => $files['tmp_name'][ $i ],
-					'error'    => $files['error'][ $i ],
-					'size'     => $files['size'][ $i ],
+					'error'    => absint( $files['error'][ $i ] ),
+					'size'     => absint( $files['size'][ $i ] ),
 				];
 			}
 		} else {
 			// Single Upload.
 			if ( ! empty( $files['name'] ) ) {
-				$result[] = $files;
+				$result[] = [
+					'name'     => sanitize_file_name( $files['name'] ),
+					'type'     => sanitize_mime_type( $files['type'] ),
+					'tmp_name' => $files['tmp_name'],
+					'error'    => absint( $files['error'] ),
+					'size'     => absint( $files['size'] ),
+				];
 			}
 		}
 

@@ -343,7 +343,7 @@ class CustomFieldFileService {
 			return true;
 		}
 		$mime_type = finfo_file( $finfo, $file['tmp_name'] );
-		finfo_close( $finfo );
+		// finfo_close() entfernt - seit PHP 8.1 deprecated, Ressource wird automatisch freigegeben.
 
 		return in_array( $mime_type, $allowed_types, true );
 	}
@@ -421,7 +421,7 @@ class CustomFieldFileService {
 			$mime_type = mime_content_type( $destination ) ?: 'application/octet-stream';
 		} else {
 			$mime_type = finfo_file( $finfo, $destination );
-			finfo_close( $finfo );
+			// finfo_close() entfernt - seit PHP 8.1 deprecated, Ressource wird automatisch freigegeben.
 		}
 
 		// In DB speichern.

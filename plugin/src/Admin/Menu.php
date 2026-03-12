@@ -78,6 +78,7 @@ class Menu {
 		add_action( 'admin_init', [ $this, 'handleEarlyActions' ] );
 
 		// Hauptmenü → Bewerbungen als Startseite.
+		// Position 56: Nach Comments (25), vor Appearance (60) - WordPress.org Guidelines.
 		add_menu_page(
 			__( 'Recruiting Playbook', 'recruiting-playbook' ),
 			__( 'Recruiting', 'recruiting-playbook' ),
@@ -85,7 +86,7 @@ class Menu {
 			'recruiting-playbook',
 			[ $this, 'renderApplications' ],
 			'dashicons-groups',
-			25
+			56
 		);
 
 		// Bewerbungen (ersetzt Hauptmenü-Eintrag).

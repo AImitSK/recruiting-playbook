@@ -94,6 +94,16 @@ docs/website/
 *.zip
 
 # =============================================================
+# Local dev scripts & data (not for repo)
+# =============================================================
+*.py
+job*.json
+new-job*.json
+update*.json
+publish.json
+plugin/recruiting-playbook-premium/
+
+# =============================================================
 # Avada Theme (temp files for development/analysis)
 # =============================================================
 .avada-temp/

@@ -164,33 +164,21 @@ final class Plugin {
 			1
 		);
 
-		// Fallback: Entferne Module-Scripts via Output Buffer falls Deregistrierung nicht wirkt.
-		add_action(
-			'template_redirect',
-			function () {
+		// Fallback: Entferne Module-Scripts via script_loader_tag Filter.
+		// Ersetzt ob_start() Lösung die von WordPress.org nicht akzeptiert wird.
+		add_filter(
+			'script_loader_tag',
+			function ( $tag, $handle, $src ) {
 				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
-					ob_start(
-						function ( $html ) {
-							// Entferne alle script type="module" Tags.
-							$html = preg_replace( '/<script[^>]*type=["\']module["\'][^>]*>.*?<\/script>/s', '', $html );
-							return $html;
-						}
-					);
-				}
-			}
-		);
-
-		// Output Buffer beenden.
-		add_action(
-			'shutdown',
-			function () {
-				if ( is_post_type_archive( 'job_listing' ) || is_singular( 'job_listing' ) ) {
-					if ( ob_get_level() > 0 ) {
-						ob_end_flush();
+					// Entferne script type="module" Tags die Alpine.js blockieren.
+					if ( strpos( $tag, 'type="module"' ) !== false || strpos( $tag, "type='module'" ) !== false ) {
+						return '';
 					}
 				}
+				return $tag;
 			},
-			0
+			10,
+			3
 		);
 	}
 

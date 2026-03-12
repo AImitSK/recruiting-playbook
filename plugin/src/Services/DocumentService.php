@@ -417,7 +417,7 @@ class DocumentService {
 		// PHP-Fileinfo verwenden
 		$finfo     = finfo_open( FILEINFO_MIME_TYPE );
 		$mime_type = finfo_file( $finfo, $file_path );
-		finfo_close( $finfo );
+		// finfo_close() entfernt - seit PHP 8.1 deprecated, Ressource wird automatisch freigegeben.
 
 		if ( ! array_key_exists( $mime_type, self::ALLOWED_MIMES ) ) {
 			return new WP_Error(

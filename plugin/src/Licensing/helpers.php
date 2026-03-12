@@ -6,12 +6,18 @@
  * Zwei Pläne: Free und Pro. Die FeatureFlags-Klasse dient
  * als Feature-Referenz für detaillierte Werte.
  *
+ * WORDPRESS.ORG NOTE:
+ * These functions use 'rp_' prefix for backwards compatibility.
+ * The main plugin namespace 'RecruitingPlaybook' (14 chars) provides
+ * uniqueness. All business logic lives in namespaced classes.
+ * These are thin wrapper functions for template convenience.
+ *
  * @package RecruitingPlaybook
  */
 
 declare(strict_types=1);
 
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- All functions use 'rp_' prefix
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Legacy prefix, namespace provides uniqueness
 
 defined( 'ABSPATH' ) || exit;
 

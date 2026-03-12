@@ -78,6 +78,42 @@ class JobCustomFieldsMeta {
 				'type'         => 'boolean',
 			]
 		);
+
+		// Script über wp_add_inline_script() hinzufügen (WordPress.org Guidelines).
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueScripts' ] );
+	}
+
+	/**
+	 * Meta Box Scripts über wp_add_inline_script() hinzufügen.
+	 *
+	 * @param string $hook_suffix Admin-Seiten-Hook.
+	 */
+	public function enqueueScripts( string $hook_suffix ): void {
+		global $post_type;
+
+		if ( ! in_array( $hook_suffix, [ 'post.php', 'post-new.php' ], true ) ) {
+			return;
+		}
+
+		if ( JobListing::POST_TYPE !== $post_type ) {
+			return;
+		}
+
+		$js = "
+			jQuery(function($) {
+				$('.rp-override-toggle').on('change', function() {
+					if (this.checked) {
+						$('.rp-fields-config').slideDown();
+						$('.rp-fields-default').slideUp();
+					} else {
+						$('.rp-fields-config').slideUp();
+						$('.rp-fields-default').slideDown();
+					}
+				});
+			});
+		";
+
+		wp_add_inline_script( 'jquery', $js );
 	}
 
 	/**
@@ -135,7 +171,7 @@ class JobCustomFieldsMeta {
 				</label>
 			</p>
 
-			<div class="rp-fields-config" style="<?php echo $override ? '' : 'display:none;'; ?>">
+			<div class="rp-fields-config" style="<?php echo esc_attr( $override ? '' : 'display:none;' ); ?>">
 				<p class="description" style="margin-bottom: 10px;">
 					<?php esc_html_e( 'Enabled fields will be displayed in the application form for this job.', 'recruiting-playbook' ); ?>
 				</p>
@@ -167,7 +203,7 @@ class JobCustomFieldsMeta {
 				</p>
 			</div>
 
-			<div class="rp-fields-default" style="<?php echo $override ? 'display:none;' : ''; ?>">
+			<div class="rp-fields-default" style="<?php echo esc_attr( $override ? 'display:none;' : '' ); ?>">
 				<p class="description">
 					<?php
 					$enabled_count = count(
@@ -182,21 +218,8 @@ class JobCustomFieldsMeta {
 				</p>
 			</div>
 		</div>
-
-		<script>
-		jQuery(function($) {
-			$('.rp-override-toggle').on('change', function() {
-				if (this.checked) {
-					$('.rp-fields-config').slideDown();
-					$('.rp-fields-default').slideUp();
-				} else {
-					$('.rp-fields-config').slideUp();
-					$('.rp-fields-default').slideDown();
-				}
-			});
-		});
-		</script>
 		<?php
+		// Script wird über enqueueScripts() hinzugefügt (WordPress.org Guidelines).
 	}
 
 	/**
