@@ -8,6 +8,10 @@
  * @package RecruitingPlaybook
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 namespace RecruitingPlaybook;
 
 // Freemius SDK: Premium/Free Version Handling
