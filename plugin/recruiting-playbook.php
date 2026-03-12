@@ -3,7 +3,7 @@
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.29
+ * Version: 1.2.30
  * Update URI: https://api.freemius.com
  * Requires at least: 6.0
  * Requires PHP: 8.0
@@ -104,165 +104,34 @@
  *   /assets/src/js/components/match-modal.js,
  *   /assets/src/js/components/job-finder.js,
  *   /assets/css/elementor-editor.css,
+ *
+ * @package RecruitingPlaybook
  */
 
-// Direkten Zugriff verhindern (muss VOR namespace stehen für WordPress.org).
+// Prevent direct access (WordPress.org requirement - must be before any code).
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-namespace RecruitingPlaybook;
+// Plugin-Konstanten (WordPress.org: min. 4 Zeichen Prefix).
+define( 'RECPL_VERSION', '1.2.30' );
+define( 'RECPL_PLUGIN_FILE', __FILE__ );
+define( 'RECPL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'RECPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'RECPL_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'RECPL_MIN_PHP_VERSION', '8.0' );
+define( 'RECPL_MIN_WP_VERSION', '6.0' );
 
-// Freemius SDK: Premium/Free Version Handling
-if ( function_exists( '\rp_fs' ) ) {
-	\rp_fs()->set_basename( true, __FILE__ );
-} else {
-	// Plugin-Konstanten (WordPress.org: min. 4 Zeichen Prefix).
-	define( 'RECPL_VERSION', '1.2.29' );
-	define( 'RECPL_PLUGIN_FILE', __FILE__ );
-	define( 'RECPL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-	define( 'RECPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-	define( 'RECPL_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-	define( 'RECPL_MIN_PHP_VERSION', '8.0' );
-	define( 'RECPL_MIN_WP_VERSION', '6.0' );
+// Backwards Compatibility Aliase (für bestehenden Code).
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
+define( 'RP_VERSION', RECPL_VERSION );
+define( 'RP_PLUGIN_FILE', RECPL_PLUGIN_FILE );
+define( 'RP_PLUGIN_DIR', RECPL_PLUGIN_DIR );
+define( 'RP_PLUGIN_URL', RECPL_PLUGIN_URL );
+define( 'RP_PLUGIN_BASENAME', RECPL_PLUGIN_BASENAME );
+define( 'RP_MIN_PHP_VERSION', RECPL_MIN_PHP_VERSION );
+define( 'RP_MIN_WP_VERSION', RECPL_MIN_WP_VERSION );
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 
-	// Backwards Compatibility Aliase (für bestehenden Code).
-	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-	define( 'RP_VERSION', RECPL_VERSION );
-	define( 'RP_PLUGIN_FILE', RECPL_PLUGIN_FILE );
-	define( 'RP_PLUGIN_DIR', RECPL_PLUGIN_DIR );
-	define( 'RP_PLUGIN_URL', RECPL_PLUGIN_URL );
-	define( 'RP_PLUGIN_BASENAME', RECPL_PLUGIN_BASENAME );
-	define( 'RP_MIN_PHP_VERSION', RECPL_MIN_PHP_VERSION );
-	define( 'RP_MIN_WP_VERSION', RECPL_MIN_WP_VERSION );
-	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-
-	// Autoloader
-	if ( file_exists( RP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
-		require_once RP_PLUGIN_DIR . 'vendor/autoload.php';
-	}
-
-	// Freemius SDK initialisieren (für Lizenzierung & Updates).
-	if ( file_exists( RP_PLUGIN_DIR . 'freemius.php' ) ) {
-		require_once RP_PLUGIN_DIR . 'freemius.php';
-	}
-
-	/**
-	 * Requirements prüfen
-	 */
-	function rp_check_requirements(): bool {
-		if ( version_compare( PHP_VERSION, RP_MIN_PHP_VERSION, '<' ) ) {
-			add_action(
-				'admin_notices',
-				function () {
-					echo '<div class="notice notice-error"><p>';
-					printf(
-					/* translators: 1: Required PHP version, 2: Current PHP version */
-						esc_html__( 'Recruiting Playbook benötigt PHP %1$s oder höher. Sie nutzen PHP %2$s.', 'recruiting-playbook' ),
-						esc_html( RP_MIN_PHP_VERSION ),
-						esc_html( PHP_VERSION )
-					);
-					echo '</p></div>';
-				}
-			);
-			return false;
-		}
-
-		global $wp_version;
-		if ( version_compare( $wp_version, RP_MIN_WP_VERSION, '<' ) ) {
-			add_action(
-				'admin_notices',
-				function () {
-					global $wp_version;
-					echo '<div class="notice notice-error"><p>';
-					printf(
-					/* translators: 1: Required WP version, 2: Current WP version */
-						esc_html__( 'Recruiting Playbook benötigt WordPress %1$s oder höher. Sie nutzen WordPress %2$s.', 'recruiting-playbook' ),
-						esc_html( RP_MIN_WP_VERSION ),
-						esc_html( $wp_version )
-					);
-					echo '</p></div>';
-				}
-			);
-			return false;
-		}
-
-		return true;
-	}
-
-	// Aktivierung
-	register_activation_hook(
-		__FILE__,
-		function () {
-			if ( ! rp_check_requirements() ) {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				wp_die( esc_html__( 'Plugin-Aktivierung fehlgeschlagen. Anforderungen nicht erfüllt.', 'recruiting-playbook' ) );
-			}
-
-			require_once RP_PLUGIN_DIR . 'src/Core/Activator.php';
-			Core\Activator::activate();
-		}
-	);
-
-	// Deaktivierung
-	register_deactivation_hook(
-		__FILE__,
-		function () {
-			require_once RP_PLUGIN_DIR . 'src/Core/Deactivator.php';
-			Core\Deactivator::deactivate();
-		}
-	);
-
-	// Avada/Fusion Builder Integration FRÜH registrieren.
-	// MUSS vor 'after_setup_theme' Priority 10 laufen, wo FusionBuilder startet!
-	add_action(
-		'after_setup_theme',
-		function () {
-			// Nur wenn Autoloader verfügbar ist.
-			if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\Avada\\AvadaIntegration' ) ) {
-				return;
-			}
-
-			// Taxonomien VOR Fusion Builder registrieren, damit getTaxonomyOptions()
-			// in den Element-Konfigurationen die Terms laden kann.
-			// (Normalerweise erst bei init:10, aber Fusion Builder braucht sie bei after_setup_theme:10.)
-			if ( class_exists( 'FusionBuilder' ) ) {
-				( new \RecruitingPlaybook\Taxonomies\JobCategory() )->register();
-				( new \RecruitingPlaybook\Taxonomies\JobLocation() )->register();
-				( new \RecruitingPlaybook\Taxonomies\EmploymentType() )->register();
-			}
-
-			// Avada Integration registrieren (Hook auf fusion_builder_before_init).
-			$avada_integration = new \RecruitingPlaybook\Integrations\Avada\AvadaIntegration();
-			$avada_integration->register();
-		},
-		5
-	); // Priority 5 = VOR FusionBuilder (Priority 10)
-
-	// Plugin initialisieren (im init Hook mit Priorität 5 - vor Standard-Hooks)
-	add_action(
-		'init',
-		function () {
-			if ( ! rp_check_requirements() ) {
-				return;
-			}
-
-			// Autoloader muss vorhanden sein
-			if ( ! class_exists( 'RecruitingPlaybook\Core\Plugin' ) ) {
-				add_action(
-					'admin_notices',
-					function () {
-						echo '<div class="notice notice-error"><p>';
-						esc_html_e( 'Recruiting Playbook: Bitte führen Sie "composer install" aus.', 'recruiting-playbook' );
-						echo '</p></div>';
-					}
-				);
-				return;
-			}
-
-			Core\Plugin::get_instance();
-		},
-		5
-	);
-
-} // End else block for Freemius SDK
+// Bootstrap the plugin (namespace code in separate file for Freemius compatibility).
+require_once __DIR__ . '/src/bootstrap.php';
