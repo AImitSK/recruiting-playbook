@@ -3,7 +3,7 @@
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.31
+ * Version: 1.2.32
  * Update URI: https://api.freemius.com
  * Requires at least: 6.0
  * Requires PHP: 8.0
@@ -113,7 +113,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin-Konstanten (WordPress.org: min. 4 Zeichen Prefix).
-define( 'RECPL_VERSION', '1.2.31' );
+define( 'RECPL_VERSION', '1.2.32' );
 define( 'RECPL_PLUGIN_FILE', __FILE__ );
 define( 'RECPL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RECPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

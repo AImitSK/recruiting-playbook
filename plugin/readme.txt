@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.31
+Stable tag: 1.2.32
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.32 - 2026-03-12 =
+* Fix: ABSPATH check after namespace declaration for Freemius compatibility
 
 = 1.2.31 - 2026-03-12 =
 * Fix: ABSPATH check format for WordPress.org Plugin Checker detection

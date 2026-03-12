@@ -8,11 +8,9 @@
  * @package RecruitingPlaybook
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
 namespace RecruitingPlaybook;
+
+defined( 'ABSPATH' ) || exit;
 
 // Freemius SDK: Premium/Free Version Handling
 if ( function_exists( '\rp_fs' ) ) {
