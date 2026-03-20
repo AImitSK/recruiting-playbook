@@ -210,7 +210,7 @@ class ApplicationController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'export_candidate_data' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'permission_callback' => [ $this, 'export_candidate_permissions_check' ],
 					'args'                => [
 						'id' => [
 							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
@@ -567,6 +567,86 @@ class ApplicationController extends WP_REST_Controller {
 	 */
 	public function get_item_permissions_check( $request ) {
 		return $this->get_items_permissions_check( $request );
+	}
+
+	/**
+	 * Berechtigung für Kandidaten-Export prüfen (kandidaten-spezifisch)
+	 *
+	 * Prüft nicht nur allgemeine Berechtigungen, sondern auch ob der User
+	 * Zugriff auf die Jobs des Kandidaten hat.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function export_candidate_permissions_check( $request ) {
+		// Erst allgemeine Berechtigungen prüfen.
+		$general_check = $this->get_items_permissions_check( $request );
+		if ( is_wp_error( $general_check ) ) {
+			return $general_check;
+		}
+
+		// Admins haben Zugriff auf alle Kandidaten.
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		// Kandidaten-ID aus Request.
+		$candidate_id = (int) $request->get_param( 'id' );
+		if ( $candidate_id <= 0 ) {
+			return new WP_Error(
+				'rest_invalid_candidate_id',
+				__( 'Invalid candidate ID.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Prüfen ob Kandidat existiert und User Zugriff auf dessen Jobs hat.
+		global $wpdb;
+		$candidates_table   = $wpdb->prefix . 'rp_candidates';
+		$applications_table = $wpdb->prefix . 'rp_applications';
+
+		// Alle Job-IDs des Kandidaten abrufen.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$job_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT a.job_id FROM {$applications_table} a
+				 INNER JOIN {$candidates_table} c ON a.candidate_id = c.id
+				 WHERE c.id = %d",
+				$candidate_id
+			)
+		);
+
+		if ( empty( $job_ids ) ) {
+			return new WP_Error(
+				'rest_candidate_not_found',
+				__( 'Candidate not found or has no applications.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		// Für Nicht-Admins: Prüfen ob User Zugriff auf mindestens einen Job hat.
+		$capability_service = new CapabilityService();
+		$assigned_job_ids   = $capability_service->getAssignedJobIds( get_current_user_id() );
+
+		// Wenn User keine Job-Zuweisung hat, hat er keinen spezifischen Zugriff.
+		if ( empty( $assigned_job_ids ) ) {
+			// User hat allgemeine Berechtigung aber keine Job-Zuweisung - Zugriff erlauben.
+			// (Dies betrifft z.B. HR-Manager die alle Jobs sehen können)
+			return true;
+		}
+
+		// Prüfen ob mindestens ein Job des Kandidaten in den zugewiesenen Jobs ist.
+		$has_access = ! empty( array_intersect( $job_ids, $assigned_job_ids ) );
+
+		if ( ! $has_access ) {
+			return new WP_Error(
+				'rest_forbidden_candidate',
+				__( 'You do not have permission to export this candidate\'s data.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
 	}
 
 	/**

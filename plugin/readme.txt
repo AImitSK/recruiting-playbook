@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.33
+Stable tag: 1.2.34
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,13 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.34 - 2026-03-20 =
+* Fix: Terms/Privacy URLs corrected to /legal/terms and /legal/privacy
+* Fix: Alpine.js updated from 3.15.4 to 3.15.8
+* Add: External services documentation for Microsoft Teams integration
+* Add: Developer documentation service with Terms/Privacy links
+* Fix: REST API export endpoint now checks candidate-specific permissions
 
 = 1.2.33 - 2026-03-12 =
 * Fix: ABSPATH check at very beginning of file for WordPress.org Plugin Checker
@@ -219,8 +226,8 @@ The AI Resume Matching feature sends uploaded CVs and job descriptions to our AI
 * Only for published job listings
 
 **Service provider:** Recruiting Playbook GmbH
-* [Terms of Service](https://recruiting-playbook.com/terms/)
-* [Privacy Policy](https://recruiting-playbook.com/privacy/)
+* [Terms of Service](https://recruiting-playbook.com/legal/terms)
+* [Privacy Policy](https://recruiting-playbook.com/legal/privacy)
 
 The service anonymizes all personal data before AI analysis and does not store CVs longer than necessary for processing.
 
@@ -241,13 +248,35 @@ This plugin uses Freemius for licensing, updates, and analytics.
 * [Terms of Service](https://freemius.com/terms/)
 * [Privacy Policy](https://freemius.com/privacy/)
 
+= Microsoft Teams Integration =
+
+The plugin can send notifications to Microsoft Teams channels using Adaptive Cards.
+
+**What is sent:**
+* Application notifications (new applications, status changes)
+* Job publishing notifications
+* Formatted as Microsoft Adaptive Cards
+
+**When data is sent:**
+* Only when Teams webhook is configured in plugin settings
+* Only for explicitly enabled notification types
+
+**Service provider:** Microsoft Corporation
+* [Adaptive Cards Schema](http://adaptivecards.io/schemas/adaptive-card.json)
+* [Microsoft Teams Terms](https://www.microsoft.com/servicesagreement)
+* [Microsoft Privacy Policy](https://privacy.microsoft.com/privacystatement)
+
 = Developer Documentation =
 
 The plugin documentation website provides guides and API references.
 
-**Service:** developer.recruiting-playbook.de
-* Used for in-app help links
+**Service:** developer.recruiting-playbook.dev
+* Used for in-app help links (Avada/Elementor element documentation)
 * No user data is transmitted
+
+**Service provider:** Recruiting Playbook GmbH
+* [Terms of Service](https://recruiting-playbook.com/legal/terms)
+* [Privacy Policy](https://recruiting-playbook.com/legal/privacy)
 
 == Source Code ==
 
