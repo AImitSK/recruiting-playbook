@@ -281,264 +281,225 @@ export function IntegrationSettings() {
 				) }
 			</Card>
 
-			{ /* ═══════════ Slack ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
-				<CardHeader>
-					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<div>
-							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-								{ __( 'Slack', 'recruiting-playbook' ) }
-								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
-							</CardTitle>
-							<CardDescription>
-								{ __( 'Notifications for new applications and status changes in a Slack channel.', 'recruiting-playbook' ) }
-							</CardDescription>
-						</div>
-						<Switch
-							checked={ settings.slack_enabled }
-							onCheckedChange={ ( val ) => updateSetting( 'slack_enabled', val ) }
-							disabled={ ! isPro }
-						/>
-					</div>
-				</CardHeader>
-				{ settings.slack_enabled && isPro && (
-					<CardContent>
-						<Label style={ { marginBottom: '6px', display: 'block' } }>
-							{ __( 'Webhook URL', 'recruiting-playbook' ) }
-						</Label>
-						<Input
-							type="url"
-							placeholder="https://hooks.slack.com/services/T.../B.../xxx"
-							value={ settings.slack_webhook_url }
-							onChange={ ( e ) => updateSetting( 'slack_webhook_url', e.target.value ) }
-							style={ { marginBottom: '16px' } }
-						/>
-
-						<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
-							<CheckboxRow
-								label={ __( 'New application received', 'recruiting-playbook' ) }
-								checked={ settings.slack_event_new_application }
-								onChange={ ( val ) => updateSetting( 'slack_event_new_application', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'Application status changed', 'recruiting-playbook' ) }
-								checked={ settings.slack_event_status_changed }
-								onChange={ ( val ) => updateSetting( 'slack_event_status_changed', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'New job published', 'recruiting-playbook' ) }
-								checked={ settings.slack_event_job_published }
-								onChange={ ( val ) => updateSetting( 'slack_event_job_published', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
-								checked={ settings.slack_event_deadline_reminder }
-								onChange={ ( val ) => updateSetting( 'slack_event_deadline_reminder', val ) }
-							/>
-						</SettingsSection>
-
-						<div style={ { marginTop: '16px' } }>
-							<Button
-								variant="outline"
-								onClick={ () => sendTestMessage( 'slack' ) }
-								disabled={ ! settings.slack_webhook_url || testing === 'slack' }
-							>
-								{ testing === 'slack'
-									? __( 'Sending...', 'recruiting-playbook' )
-									: __( 'Send test message', 'recruiting-playbook' )
-								}
-							</Button>
-						</div>
-					</CardContent>
-				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Slack notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
-			</Card>
-
-			{ /* ═══════════ Microsoft Teams ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
-				<CardHeader>
-					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<div>
-							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-								{ __( 'Microsoft Teams', 'recruiting-playbook' ) }
-								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
-							</CardTitle>
-							<CardDescription>
-								{ __( 'Notifications in a Microsoft Teams channel.', 'recruiting-playbook' ) }
-							</CardDescription>
-						</div>
-						<Switch
-							checked={ settings.teams_enabled }
-							onCheckedChange={ ( val ) => updateSetting( 'teams_enabled', val ) }
-							disabled={ ! isPro }
-						/>
-					</div>
-				</CardHeader>
-				{ settings.teams_enabled && isPro && (
-					<CardContent>
-						<Label style={ { marginBottom: '6px', display: 'block' } }>
-							{ __( 'Workflow Webhook URL', 'recruiting-playbook' ) }
-						</Label>
-						<Input
-							type="url"
-							placeholder="https://prod-xx.westeurope.logic.azure.com/workflows/..."
-							value={ settings.teams_webhook_url }
-							onChange={ ( e ) => updateSetting( 'teams_webhook_url', e.target.value ) }
-							style={ { marginBottom: '8px' } }
-						/>
-						<Alert style={ { marginBottom: '16px' } }>
-							<AlertDescription style={ { fontSize: '13px' } }>
-								{ __( 'Teams → Channel → ... → Workflows → "When a Teams webhook request is received"', 'recruiting-playbook' ) }
-							</AlertDescription>
-						</Alert>
-
-						<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
-							<CheckboxRow
-								label={ __( 'New application received', 'recruiting-playbook' ) }
-								checked={ settings.teams_event_new_application }
-								onChange={ ( val ) => updateSetting( 'teams_event_new_application', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'Application status changed', 'recruiting-playbook' ) }
-								checked={ settings.teams_event_status_changed }
-								onChange={ ( val ) => updateSetting( 'teams_event_status_changed', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'New job published', 'recruiting-playbook' ) }
-								checked={ settings.teams_event_job_published }
-								onChange={ ( val ) => updateSetting( 'teams_event_job_published', val ) }
-							/>
-							<CheckboxRow
-								label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
-								checked={ settings.teams_event_deadline_reminder }
-								onChange={ ( val ) => updateSetting( 'teams_event_deadline_reminder', val ) }
-							/>
-						</SettingsSection>
-
-						<div style={ { marginTop: '16px' } }>
-							<Button
-								variant="outline"
-								onClick={ () => sendTestMessage( 'teams' ) }
-								disabled={ ! settings.teams_webhook_url || testing === 'teams' }
-							>
-								{ testing === 'teams'
-									? __( 'Sending...', 'recruiting-playbook' )
-									: __( 'Send test message', 'recruiting-playbook' )
-								}
-							</Button>
-						</div>
-					</CardContent>
-				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Teams notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
-			</Card>
-
-			{ /* ═══════════ Google Ads Conversion ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
-				<CardHeader>
-					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-						<div>
-							<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-								{ __( 'Google Ads Conversion', 'recruiting-playbook' ) }
-								<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
-							</CardTitle>
-							<CardDescription>
-								{ __( 'Conversion tracking directly with Google Ads – without Google Tag Manager.', 'recruiting-playbook' ) }
-							</CardDescription>
-						</div>
-						<Switch
-							checked={ settings.google_ads_enabled }
-							onCheckedChange={ ( val ) => updateSetting( 'google_ads_enabled', val ) }
-							disabled={ ! isPro }
-						/>
-					</div>
-				</CardHeader>
-				{ settings.google_ads_enabled && isPro && (
-					<CardContent>
-						<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
+			{ /* ═══════════ Slack (Pro Only - hidden in Free) ═══════════ */ }
+			{ isPro && (
+				<Card>
+					<CardHeader>
+						<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 							<div>
-								<Label style={ { marginBottom: '6px', display: 'block' } }>
-									{ __( 'Conversion ID', 'recruiting-playbook' ) }
-								</Label>
-								<Input
-									placeholder="AW-XXXXXXXXX"
-									value={ settings.google_ads_conversion_id }
-									onChange={ ( e ) => updateSetting( 'google_ads_conversion_id', e.target.value ) }
-								/>
+								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+									{ __( 'Slack', 'recruiting-playbook' ) }
+									<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
+								</CardTitle>
+								<CardDescription>
+									{ __( 'Notifications for new applications and status changes in a Slack channel.', 'recruiting-playbook' ) }
+								</CardDescription>
 							</div>
-							<div>
-								<Label style={ { marginBottom: '6px', display: 'block' } }>
-									{ __( 'Conversion Label', 'recruiting-playbook' ) }
-								</Label>
-								<Input
-									placeholder={ __( 'Copy from Google Ads', 'recruiting-playbook' ) }
-									value={ settings.google_ads_conversion_label }
-									onChange={ ( e ) => updateSetting( 'google_ads_conversion_label', e.target.value ) }
-								/>
-							</div>
-							<div>
-								<Label style={ { marginBottom: '6px', display: 'block' } }>
-									{ __( 'Conversion Value (EUR)', 'recruiting-playbook' ) }
-								</Label>
-								<Input
-									type="number"
-									min="0"
-									step="0.01"
-									placeholder="0.00"
-									value={ settings.google_ads_conversion_value }
-									onChange={ ( e ) => updateSetting( 'google_ads_conversion_value', e.target.value ) }
-									style={ { width: '150px' } }
-								/>
-							</div>
+							<Switch
+								checked={ settings.slack_enabled }
+								onCheckedChange={ ( val ) => updateSetting( 'slack_enabled', val ) }
+							/>
 						</div>
+					</CardHeader>
+					{ settings.slack_enabled && (
+						<CardContent>
+							<Label style={ { marginBottom: '6px', display: 'block' } }>
+								{ __( 'Webhook URL', 'recruiting-playbook' ) }
+							</Label>
+							<Input
+								type="url"
+								placeholder="https://hooks.slack.com/services/T.../B.../xxx"
+								value={ settings.slack_webhook_url }
+								onChange={ ( e ) => updateSetting( 'slack_webhook_url', e.target.value ) }
+								style={ { marginBottom: '16px' } }
+							/>
 
-						<Alert style={ { marginTop: '16px' } }>
-							<AlertDescription style={ { fontSize: '13px' } }>
-								{ __( 'Automatically reported to Google Ads as a conversion for every successful application.', 'recruiting-playbook' ) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Google Ads Conversion is a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
-			</Card>
+							<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
+								<CheckboxRow
+									label={ __( 'New application received', 'recruiting-playbook' ) }
+									checked={ settings.slack_event_new_application }
+									onChange={ ( val ) => updateSetting( 'slack_event_new_application', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'Application status changed', 'recruiting-playbook' ) }
+									checked={ settings.slack_event_status_changed }
+									onChange={ ( val ) => updateSetting( 'slack_event_status_changed', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'New job published', 'recruiting-playbook' ) }
+									checked={ settings.slack_event_job_published }
+									onChange={ ( val ) => updateSetting( 'slack_event_job_published', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
+									checked={ settings.slack_event_deadline_reminder }
+									onChange={ ( val ) => updateSetting( 'slack_event_deadline_reminder', val ) }
+								/>
+							</SettingsSection>
+
+							<div style={ { marginTop: '16px' } }>
+								<Button
+									variant="outline"
+									onClick={ () => sendTestMessage( 'slack' ) }
+									disabled={ ! settings.slack_webhook_url || testing === 'slack' }
+								>
+									{ testing === 'slack'
+										? __( 'Sending...', 'recruiting-playbook' )
+										: __( 'Send test message', 'recruiting-playbook' )
+									}
+								</Button>
+							</div>
+						</CardContent>
+					) }
+				</Card>
+			) }
+
+			{ /* ═══════════ Microsoft Teams (Pro Only - hidden in Free) ═══════════ */ }
+			{ isPro && (
+				<Card>
+					<CardHeader>
+						<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
+							<div>
+								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+									{ __( 'Microsoft Teams', 'recruiting-playbook' ) }
+									<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
+								</CardTitle>
+								<CardDescription>
+									{ __( 'Notifications in a Microsoft Teams channel.', 'recruiting-playbook' ) }
+								</CardDescription>
+							</div>
+							<Switch
+								checked={ settings.teams_enabled }
+								onCheckedChange={ ( val ) => updateSetting( 'teams_enabled', val ) }
+							/>
+						</div>
+					</CardHeader>
+					{ settings.teams_enabled && (
+						<CardContent>
+							<Label style={ { marginBottom: '6px', display: 'block' } }>
+								{ __( 'Workflow Webhook URL', 'recruiting-playbook' ) }
+							</Label>
+							<Input
+								type="url"
+								placeholder="https://prod-xx.westeurope.logic.azure.com/workflows/..."
+								value={ settings.teams_webhook_url }
+								onChange={ ( e ) => updateSetting( 'teams_webhook_url', e.target.value ) }
+								style={ { marginBottom: '8px' } }
+							/>
+							<Alert style={ { marginBottom: '16px' } }>
+								<AlertDescription style={ { fontSize: '13px' } }>
+									{ __( 'Teams → Channel → ... → Workflows → "When a Teams webhook request is received"', 'recruiting-playbook' ) }
+								</AlertDescription>
+							</Alert>
+
+							<SettingsSection title={ __( 'Notify on', 'recruiting-playbook' ) }>
+								<CheckboxRow
+									label={ __( 'New application received', 'recruiting-playbook' ) }
+									checked={ settings.teams_event_new_application }
+									onChange={ ( val ) => updateSetting( 'teams_event_new_application', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'Application status changed', 'recruiting-playbook' ) }
+									checked={ settings.teams_event_status_changed }
+									onChange={ ( val ) => updateSetting( 'teams_event_status_changed', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'New job published', 'recruiting-playbook' ) }
+									checked={ settings.teams_event_job_published }
+									onChange={ ( val ) => updateSetting( 'teams_event_job_published', val ) }
+								/>
+								<CheckboxRow
+									label={ __( 'Application deadline expiring (3 days before)', 'recruiting-playbook' ) }
+									checked={ settings.teams_event_deadline_reminder }
+									onChange={ ( val ) => updateSetting( 'teams_event_deadline_reminder', val ) }
+								/>
+							</SettingsSection>
+
+							<div style={ { marginTop: '16px' } }>
+								<Button
+									variant="outline"
+									onClick={ () => sendTestMessage( 'teams' ) }
+									disabled={ ! settings.teams_webhook_url || testing === 'teams' }
+								>
+									{ testing === 'teams'
+										? __( 'Sending...', 'recruiting-playbook' )
+										: __( 'Send test message', 'recruiting-playbook' )
+									}
+								</Button>
+							</div>
+						</CardContent>
+					) }
+				</Card>
+			) }
+
+			{ /* ═══════════ Google Ads Conversion (Pro Only - hidden in Free) ═══════════ */ }
+			{ isPro && (
+				<Card>
+					<CardHeader>
+						<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
+							<div>
+								<CardTitle style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+									{ __( 'Google Ads Conversion', 'recruiting-playbook' ) }
+									<Badge style={ { backgroundColor: '#1d71b8', color: '#fff', border: 'none', fontSize: '11px' } }>Pro</Badge>
+								</CardTitle>
+								<CardDescription>
+									{ __( 'Conversion tracking directly with Google Ads – without Google Tag Manager.', 'recruiting-playbook' ) }
+								</CardDescription>
+							</div>
+							<Switch
+								checked={ settings.google_ads_enabled }
+								onCheckedChange={ ( val ) => updateSetting( 'google_ads_enabled', val ) }
+							/>
+						</div>
+					</CardHeader>
+					{ settings.google_ads_enabled && (
+						<CardContent>
+							<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
+								<div>
+									<Label style={ { marginBottom: '6px', display: 'block' } }>
+										{ __( 'Conversion ID', 'recruiting-playbook' ) }
+									</Label>
+									<Input
+										placeholder="AW-XXXXXXXXX"
+										value={ settings.google_ads_conversion_id }
+										onChange={ ( e ) => updateSetting( 'google_ads_conversion_id', e.target.value ) }
+									/>
+								</div>
+								<div>
+									<Label style={ { marginBottom: '6px', display: 'block' } }>
+										{ __( 'Conversion Label', 'recruiting-playbook' ) }
+									</Label>
+									<Input
+										placeholder={ __( 'Copy from Google Ads', 'recruiting-playbook' ) }
+										value={ settings.google_ads_conversion_label }
+										onChange={ ( e ) => updateSetting( 'google_ads_conversion_label', e.target.value ) }
+									/>
+								</div>
+								<div>
+									<Label style={ { marginBottom: '6px', display: 'block' } }>
+										{ __( 'Conversion Value (EUR)', 'recruiting-playbook' ) }
+									</Label>
+									<Input
+										type="number"
+										min="0"
+										step="0.01"
+										placeholder="0.00"
+										value={ settings.google_ads_conversion_value }
+										onChange={ ( e ) => updateSetting( 'google_ads_conversion_value', e.target.value ) }
+										style={ { width: '150px' } }
+									/>
+								</div>
+							</div>
+
+							<Alert style={ { marginTop: '16px' } }>
+								<AlertDescription style={ { fontSize: '13px' } }>
+									{ __( 'Automatically reported to Google Ads as a conversion for every successful application.', 'recruiting-playbook' ) }
+								</AlertDescription>
+							</Alert>
+						</CardContent>
+					) }
+				</Card>
+			) }
 
 			{ /* ═══════════ Speichern ═══════════ */ }
 			<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
