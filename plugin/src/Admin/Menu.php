@@ -148,6 +148,12 @@ class Menu {
      * Aktionen früh verarbeiten (vor jeglichem Output)
      */
     public function handleEarlyActions() : void {
+        // Redirect alte rp-export Seite zu Settings (Export ist jetzt als Tab integriert).
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if ( isset( $_GET['page'] ) && 'rp-export' === $_GET['page'] ) {
+            wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&tab=export' ) );
+            exit;
+        }
         // Backup-Download (muss vor jeglichem Output passieren).
         $this->handleBackupDownload();
         // Backup-Import (muss vor jeglichem Output passieren).
