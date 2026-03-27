@@ -371,19 +371,67 @@ class Settings {
 			delete_transient( 'rp_flush_rewrite_rules' );
 		}
 
-		// Assets laden.
-		$this->enqueueAssets();
+		// WordPress.org Compliance: Free-Version verwendet PHP-basierte UI.
+		// React-UI nur in Premium-Version (enthält Pro-Features).
+		$use_react_ui = function_exists( 'rp_fs' ) && rp_fs()->is__premium_only();
 
-		// React-Mount-Point.
+		if ( $use_react_ui ) {
+			// Premium-Version: React-UI laden.
+			$this->enqueueAssets();
+			?>
+			<div class="wrap">
+				<h1 class="screen-reader-text"><?php esc_html_e( 'Settings', 'recruiting-playbook' ); ?></h1>
+				<hr class="wp-header-end">
+				<div id="rp-settings-root">
+					<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
+						<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
+						<?php esc_html_e( 'Loading settings...', 'recruiting-playbook' ); ?>
+					</div>
+				</div>
+			</div>
+			<?php
+		} else {
+			// Free-Version: Klassische WordPress Settings-UI.
+			$this->renderFreeVersionPage();
+		}
+	}
+
+	/**
+	 * Free-Version Settings-Seite rendern (PHP-basiert)
+	 *
+	 * WordPress.org Compliance: Keine Pro-Features, keine Upgrade-Hinweise.
+	 */
+	private function renderFreeVersionPage(): void {
 		?>
 		<div class="wrap">
-			<h1 class="screen-reader-text"><?php esc_html_e( 'Settings', 'recruiting-playbook' ); ?></h1>
-			<hr class="wp-header-end">
-			<div id="rp-settings-root">
-				<div style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: #6b7280;">
-					<span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
-					<?php esc_html_e( 'Loading settings...', 'recruiting-playbook' ); ?>
-				</div>
+			<h1><?php esc_html_e( 'Settings', 'recruiting-playbook' ); ?></h1>
+
+			<form method="post" action="options.php">
+				<?php
+				settings_fields( 'rp_settings_group' );
+				do_settings_sections( 'rp-settings' );
+				submit_button( __( 'Save Settings', 'recruiting-playbook' ) );
+				?>
+			</form>
+
+			<hr style="margin: 30px 0;">
+
+			<!-- Export Section -->
+			<h2><?php esc_html_e( 'Export & Import', 'recruiting-playbook' ); ?></h2>
+			<div class="card" style="max-width: 600px; padding: 20px;">
+				<h3><?php esc_html_e( 'Full Backup', 'recruiting-playbook' ); ?></h3>
+				<p class="description">
+					<?php esc_html_e( 'Exports all plugin data as JSON file', 'recruiting-playbook' ); ?>
+				</p>
+				<form method="post">
+					<?php wp_nonce_field( 'rp_download_backup' ); ?>
+					<p>
+						<button type="submit" name="download_backup" class="button button-secondary">
+							<span class="dashicons dashicons-download" style="margin-top: 3px;"></span>
+							<?php esc_html_e( 'Download Backup', 'recruiting-playbook' ); ?>
+						</button>
+					</p>
+				</form>
 			</div>
 		</div>
 		<?php
@@ -798,7 +846,7 @@ class Settings {
 			name="<?php echo esc_attr( self::OPTION_NAME . '[' . $id . ']' ); ?>"
 			value="<?php echo esc_attr( $value ); ?>"
 			class="regular-text"
-			pattern="[a-z0-9-]+"
+			pattern="[a-z0-9\-]+"
 		>
 		<code>/</code>
 		<?php if ( ! empty( $args['description'] ) ) : ?>

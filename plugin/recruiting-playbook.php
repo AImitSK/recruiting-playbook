@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.37
+ * Version: 1.2.38
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Stefan Kühne, Peter Kühne
@@ -93,6 +93,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   /src/Database/Migrations/CustomFieldsMigration.php,
  *   /src/Integrations/Avada/Elements/AiJobFinder.php,
  *   /src/Integrations/Avada/Elements/AiJobMatch.php,
+ *   /assets/dist/js/admin.js,
+ *   /assets/dist/js/admin.asset.php,
  *   /assets/dist/js/admin-email.js,
  *   /assets/dist/js/admin-email.asset.php,
  *   /assets/dist/js/admin-form-builder.js,

@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.37
+Stable tag: 1.2.38
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,11 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.38 - 2026-03-27 =
+* Fix: Free version uses PHP-based Settings UI (no Pro features visible)
+* Fix: admin.js marked as premium-only (React UI only in Pro)
+* Fix: Regex pattern in slug field corrected for browser compatibility
 
 = 1.2.37 - 2026-03-27 =
 * Fix: Free version UI correctly hides Pro features (WordPress.org Guideline 5)
