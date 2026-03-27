@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.39
+Stable tag: 1.2.40
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,12 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.40 - 2026-03-27 =
+* Fix: Privacy consent validation now works correctly in standard form
+* Fix: Time display improved - shows "Just now", "Today at HH:MM", "Yesterday" instead of wrong "1 Tage her"
+* Fix: German translations corrected for singular/plural time strings (Tag/Tage, Stunde/Stunden)
+* Fix: Nonce verification accepts both generic and ID-specific nonces for status changes
 
 = 1.2.39 - 2026-03-27 =
 * Fix: Pro integration cards (Slack, Teams, Google Ads) completely hidden in Free version

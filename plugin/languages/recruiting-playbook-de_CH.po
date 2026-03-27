@@ -9858,6 +9858,10 @@ msgstr "Listenansicht"
 msgid "Just now"
 msgstr "Gerade eben"
 
+#: assets/src/js/admin/applications/ApplicationsPage.jsx:466
+msgid "Today at %s"
+msgstr "Heute um %s"
+
 #: assets/dist/js/admin.js:1
  assets/dist/js/admin.js:2
 #: assets/src/js/admin/applicant/NotesPanel.jsx:48
@@ -9872,21 +9876,19 @@ msgstr[1] "5 Minuten"
  assets/dist/js/admin.js:2
 #: assets/src/js/admin/applicant/NotesPanel.jsx:54
 #: assets/src/js/admin/applications/ApplicationsPage.jsx:458
-#, fuzzy
 msgid "%d hour ago"
 msgid_plural "%d hours ago"
-msgstr[0] "%d Tage her"
-msgstr[1] "%d Tage her"
+msgstr[0] "vor %d Stunde"
+msgstr[1] "vor %d Stunden"
 
 #: assets/dist/js/admin.js:1
  assets/dist/js/admin.js:2
 #: assets/src/js/admin/applicant/NotesPanel.jsx:60
 #: assets/src/js/admin/applications/ApplicationsPage.jsx:464
-#, fuzzy
 msgid "%d day ago"
 msgid_plural "%d days ago"
-msgstr[0] "%d Tage her"
-msgstr[1] "%d Tage her"
+msgstr[0] "vor %d Tag"
+msgstr[1] "vor %d Tagen"
 
 #: assets/dist/js/admin.js:1
  assets/src/js/admin/applicant/NotesPanel.jsx:109

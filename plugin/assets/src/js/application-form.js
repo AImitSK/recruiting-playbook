@@ -68,11 +68,11 @@ document.addEventListener('alpine:init', () => {
                 privacy_consent: false
             };
 
-            // Load validation rules
-            this.validationRules = config.validation || {};
+            // Load validation rules (from config or fallback to rpForm.validation)
+            this.validationRules = config.validation || window.rpForm?.validation || {};
 
-            // Load i18n strings
-            this.i18n = config.i18n || {};
+            // Load i18n strings (from config or fallback to rpForm.i18n)
+            this.i18n = config.i18n || window.rpForm?.i18n || {};
 
             // Fallback: Get job_id from data attribute if not in config
             if (!this.formData.job_id) {

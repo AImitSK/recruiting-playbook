@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.39
+ * Version: 1.2.40
  * Requires at least: 6.0
  * Requires PHP: 8.0
  * Author: Stefan Kühne, Peter Kühne
@@ -117,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 // Plugin-Konstanten (WordPress.org: min. 4 Zeichen Prefix).
-define( 'RECPL_VERSION', '1.2.39' );
+define( 'RECPL_VERSION', '1.2.40' );
 define( 'RECPL_PLUGIN_FILE', __FILE__ );
 define( 'RECPL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RECPL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

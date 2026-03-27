@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shortcodes für Recruiting Playbook
  *
@@ -13,14 +14,10 @@
  *
  * @package RecruitingPlaybook
  */
-
-declare(strict_types=1);
-
-
+declare (strict_types = 1);
 namespace RecruitingPlaybook\Frontend;
 
 defined( 'ABSPATH' ) || exit;
-
 use RecruitingPlaybook\Services\SpamProtection;
 use RecruitingPlaybook\Services\FormRenderService;
 use RecruitingPlaybook\Repositories\FormConfigRepository;
@@ -30,7 +27,6 @@ use RecruitingPlaybook\Frontend\Shortcodes\JobCountShortcode;
 use RecruitingPlaybook\Frontend\Shortcodes\FeaturedJobsShortcode;
 use RecruitingPlaybook\Frontend\Shortcodes\LatestJobsShortcode;
 use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
-
 /**
  * Shortcode-Handler
  *
@@ -49,317 +45,329 @@ use RecruitingPlaybook\Frontend\Shortcodes\JobCategoriesShortcode;
  * - [rp_ai_job_match] - KI-Matching, automatisch in Job-Cards eingebunden (Pro)
  */
 class Shortcodes {
+    /**
+     * FormRenderService
+     *
+     * @var FormRenderService|null
+     */
+    private ?FormRenderService $form_render_service = null;
 
-	/**
-	 * FormRenderService
-	 *
-	 * @var FormRenderService|null
-	 */
-	private ?FormRenderService $form_render_service = null;
+    /**
+     * FormConfigRepository für Auto-Detection
+     *
+     * @var FormConfigRepository|null
+     */
+    private ?FormConfigRepository $form_config_repository = null;
 
-	/**
-	 * FormConfigRepository für Auto-Detection
-	 *
-	 * @var FormConfigRepository|null
-	 */
-	private ?FormConfigRepository $form_config_repository = null;
+    /**
+     * Flag ob Match-Modal bereits für Footer registriert wurde
+     *
+     * @var bool
+     */
+    private bool $match_modal_registered = false;
 
-	/**
-	 * Flag ob Match-Modal bereits für Footer registriert wurde
-	 *
-	 * @var bool
-	 */
-	private bool $match_modal_registered = false;
+    /**
+     * Shortcodes registrieren
+     */
+    public function register() : void {
+        // Job-Listen Shortcodes (modulare Klassen).
+        ( new JobsShortcode() )->register();
+        ( new JobSearchShortcode() )->register();
+        ( new JobCountShortcode() )->register();
+        ( new FeaturedJobsShortcode() )->register();
+        ( new LatestJobsShortcode() )->register();
+        ( new JobCategoriesShortcode() )->register();
+        // Bewerbungsformular Shortcodes.
+        add_shortcode( 'rp_application_form', [$this, 'renderApplicationForm'] );
+        add_shortcode( 'rp_custom_application_form', [$this, 'renderCustomApplicationForm'] );
+    }
 
+    /**
+     * Match-Modal Assets vorladen wenn KI-Feature aktiv
+     *
+     * Lädt die Assets früh genug, damit sie im <head> sind,
+     * bevor Shortcodes im Loop ausgeführt werden.
+     */
+    public function maybePreloadMatchModalAssets() : void {
+        // Nur wenn KI-Feature aktiv.
+        if ( !function_exists( 'rp_has_cv_matching' ) || !rp_has_cv_matching() ) {
+            return;
+        }
+        // Nur im Frontend, nicht im Admin.
+        if ( is_admin() ) {
+            return;
+        }
+        // Assets laden.
+        $this->enqueueMatchModalAssets();
+        // Modal im Footer registrieren.
+        $this->registerMatchModal();
+    }
 
-	/**
-	 * Shortcodes registrieren
-	 */
-	public function register(): void {
-		// Job-Listen Shortcodes (modulare Klassen).
-		( new JobsShortcode() )->register();
-		( new JobSearchShortcode() )->register();
-		( new JobCountShortcode() )->register();
-		( new FeaturedJobsShortcode() )->register();
-		( new LatestJobsShortcode() )->register();
-		( new JobCategoriesShortcode() )->register();
+    /**
+     * FormRenderService lazy laden
+     *
+     * @return FormRenderService
+     */
+    private function getFormRenderService() : FormRenderService {
+        if ( null === $this->form_render_service ) {
+            $this->form_render_service = new FormRenderService();
+        }
+        return $this->form_render_service;
+    }
 
-		// Bewerbungsformular Shortcodes.
-		add_shortcode( 'rp_application_form', [ $this, 'renderApplicationForm' ] );
-		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
+    /**
+     * FormConfigRepository lazy laden
+     *
+     * @return FormConfigRepository
+     */
+    private function getFormConfigRepository() : FormConfigRepository {
+        if ( null === $this->form_config_repository ) {
+            $this->form_config_repository = new FormConfigRepository();
+        }
+        return $this->form_config_repository;
+    }
 
-		// KI-Shortcodes (Pro Feature).
-		if ( rp_fs()->is__premium_only() ) {
-			add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
-			add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
+    /**
+     * Prüfen ob Form Builder aktiv ist (Pro + veröffentlichte Konfiguration)
+     *
+     * @return bool True wenn Form Builder verwendet werden soll.
+     */
+    private function shouldUseFormBuilder() : bool {
+        return false;
+    }
 
-			// Assets früh laden wenn KI-Feature aktiv (vor wp_head).
-			add_action( 'wp_enqueue_scripts', [ $this, 'maybePreloadMatchModalAssets' ] );
-		}
-	}
-
-	/**
-	 * Match-Modal Assets vorladen wenn KI-Feature aktiv
-	 *
-	 * Lädt die Assets früh genug, damit sie im <head> sind,
-	 * bevor Shortcodes im Loop ausgeführt werden.
-	 */
-	public function maybePreloadMatchModalAssets(): void {
-		// Nur wenn KI-Feature aktiv.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
-			return;
-		}
-
-		// Nur im Frontend, nicht im Admin.
-		if ( is_admin() ) {
-			return;
-		}
-
-		// Assets laden.
-		$this->enqueueMatchModalAssets();
-
-		// Modal im Footer registrieren.
-		$this->registerMatchModal();
-	}
-
-	/**
-	 * FormRenderService lazy laden
-	 *
-	 * @return FormRenderService
-	 */
-	private function getFormRenderService(): FormRenderService {
-		if ( null === $this->form_render_service ) {
-			$this->form_render_service = new FormRenderService();
-		}
-		return $this->form_render_service;
-	}
-
-	/**
-	 * FormConfigRepository lazy laden
-	 *
-	 * @return FormConfigRepository
-	 */
-	private function getFormConfigRepository(): FormConfigRepository {
-		if ( null === $this->form_config_repository ) {
-			$this->form_config_repository = new FormConfigRepository();
-		}
-		return $this->form_config_repository;
-	}
-
-	/**
-	 * Prüfen ob Form Builder aktiv ist (Pro + veröffentlichte Konfiguration)
-	 *
-	 * @return bool True wenn Form Builder verwendet werden soll.
-	 */
-	private function shouldUseFormBuilder(): bool {
-		if ( rp_fs()->is__premium_only() ) {
-			// Pro-Feature Check.
-			if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
-				return false;
-			}
-
-			// Prüfen ob eine veröffentlichte Konfiguration existiert.
-			$repository = $this->getFormConfigRepository();
-			$published  = $repository->getPublished();
-
-			return null !== $published;
-		}
-		return false;
-	}
-
-
-	/**
-	 * Bewerbungsformular rendern
-	 *
-	 * Erkennt automatisch ob der Form Builder (Pro) verwendet werden soll:
-	 * - Wenn Pro-Lizenz aktiv UND veröffentlichte Form Builder Konfiguration existiert
-	 *   → Dynamisches Multi-Step Formular mit Custom Fields
-	 * - Sonst → Standard 3-Step Formular
-	 *
-	 * Attribute:
-	 * - job_id: ID der Stelle (required oder aktueller Job)
-	 * - title: Überschrift (default: "Jetzt bewerben")
-	 * - show_job_title: Job-Titel anzeigen (true/false)
-	 * - show_progress: Fortschrittsanzeige (true/false, default: true)
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
-	 */
-	public function renderApplicationForm( $atts ): string {
-		$atts = shortcode_atts(
-			[
-				'job_id'         => 0,
-				'title'          => __( 'Apply Now', 'recruiting-playbook' ),
-				'show_job_title' => 'true',
-				'show_progress'  => 'true',
-			],
-			$atts,
-			'rp_application_form'
-		);
-
-		$job_id = absint( $atts['job_id'] );
-
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
-		if ( ! $job_id && is_singular( 'job_listing' ) ) {
-			$job_id = get_the_ID();
-		}
-
-		// Validieren.
-		if ( ! $job_id ) {
-			return '<div class="rp-plugin">
+    /**
+     * Bewerbungsformular rendern
+     *
+     * Erkennt automatisch ob der Form Builder (Pro) verwendet werden soll:
+     * - Wenn Pro-Lizenz aktiv UND veröffentlichte Form Builder Konfiguration existiert
+     *   → Dynamisches Multi-Step Formular mit Custom Fields
+     * - Sonst → Standard 3-Step Formular
+     *
+     * Attribute:
+     * - job_id: ID der Stelle (required oder aktueller Job)
+     * - title: Überschrift (default: "Jetzt bewerben")
+     * - show_job_title: Job-Titel anzeigen (true/false)
+     * - show_progress: Fortschrittsanzeige (true/false, default: true)
+     *
+     * @param array|string $atts Shortcode-Attribute.
+     * @return string HTML-Ausgabe.
+     */
+    public function renderApplicationForm( $atts ) : string {
+        $atts = shortcode_atts( [
+            'job_id'         => 0,
+            'title'          => __( 'Apply Now', 'recruiting-playbook' ),
+            'show_job_title' => 'true',
+            'show_progress'  => 'true',
+        ], $atts, 'rp_application_form' );
+        $job_id = absint( $atts['job_id'] );
+        // Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
+        if ( !$job_id && is_singular( 'job_listing' ) ) {
+            $job_id = get_the_ID();
+        }
+        // Validieren.
+        if ( !$job_id ) {
+            return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
 					' . esc_html__( 'Error: No job specified. Please set the job_id attribute.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
-		}
-
-		$job = get_post( $job_id );
-		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
-			return '<div class="rp-plugin">
+        }
+        $job = get_post( $job_id );
+        if ( !$job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
+            return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error">
 					' . esc_html__( 'Error: The specified job does not exist or is not available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
-		}
+        }
+        $show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
+        $show_progress = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
+        // Auto-Detection: Form Builder verwenden?
+        if ( $this->shouldUseFormBuilder() ) {
+            return $this->renderFormBuilderForm(
+                $job_id,
+                $job,
+                $atts,
+                $show_job_title,
+                $show_progress
+            );
+        }
+        // Standard-Formular rendern.
+        return $this->renderStandardForm(
+            $job_id,
+            $job,
+            $atts,
+            $show_job_title
+        );
+    }
 
-		$show_job_title = filter_var( $atts['show_job_title'], FILTER_VALIDATE_BOOLEAN );
-		$show_progress  = filter_var( $atts['show_progress'], FILTER_VALIDATE_BOOLEAN );
-
-		// Auto-Detection: Form Builder verwenden?
-		if ( $this->shouldUseFormBuilder() ) {
-			return $this->renderFormBuilderForm( $job_id, $job, $atts, $show_job_title, $show_progress );
-		}
-
-		// Standard-Formular rendern.
-		return $this->renderStandardForm( $job_id, $job, $atts, $show_job_title );
-	}
-
-	/**
-	 * Standard 3-Step Formular rendern
-	 *
-	 * @param int      $job_id         Job ID.
-	 * @param \WP_Post $job            Job Post Object.
-	 * @param array    $atts           Shortcode Attribute.
-	 * @param bool     $show_job_title Job-Titel anzeigen.
-	 * @return string HTML-Ausgabe.
-	 */
-	private function renderStandardForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title ): string {
-		// Assets laden.
-		$this->enqueueAssets();
-		$this->enqueueFormAssets();
-
-		ob_start();
-		?>
+    /**
+     * Standard 3-Step Formular rendern
+     *
+     * @param int      $job_id         Job ID.
+     * @param \WP_Post $job            Job Post Object.
+     * @param array    $atts           Shortcode Attribute.
+     * @param bool     $show_job_title Job-Titel anzeigen.
+     * @return string HTML-Ausgabe.
+     */
+    private function renderStandardForm(
+        int $job_id,
+        \WP_Post $job,
+        array $atts,
+        bool $show_job_title
+    ) : string {
+        // Assets laden.
+        $this->enqueueAssets();
+        $this->enqueueFormAssets();
+        ob_start();
+        ?>
 		<div class="rp-plugin">
-			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( $job_id ); ?>" data-rp-application-form>
-				<?php if ( ! empty( $atts['title'] ) ) : ?>
-					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php echo esc_html( $atts['title'] ); ?></h2>
-				<?php endif; ?>
+			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php 
+        echo esc_attr( $job_id );
+        ?>" data-rp-application-form>
+				<?php 
+        if ( !empty( $atts['title'] ) ) {
+            ?>
+					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php 
+            echo esc_html( $atts['title'] );
+            ?></h2>
+				<?php 
+        }
+        ?>
 
-				<?php if ( $show_job_title ) : ?>
+				<?php 
+        if ( $show_job_title ) {
+            ?>
 					<p class="rp-text-gray-600 rp-mb-6">
-						<?php
-						printf(
-							/* translators: %s: Job title */
-							esc_html__( 'Application for: %s', 'recruiting-playbook' ),
-							'<strong>' . esc_html( $job->post_title ) . '</strong>'
-						);
-						?>
+						<?php 
+            printf( 
+                /* translators: %s: Job title */
+                esc_html__( 'Application for: %s', 'recruiting-playbook' ),
+                '<strong>' . esc_html( $job->post_title ) . '</strong>'
+             );
+            ?>
 					</p>
-				<?php endif; ?>
+				<?php 
+        }
+        ?>
 
-				<?php echo wp_kses_post( $this->getFormHtml( $job_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php 
+        echo wp_kses_post( $this->getFormHtml( $job_id ) );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
 			</div>
 		</div>
-		<?php
+		<?php 
+        return ob_get_clean();
+    }
 
-		return ob_get_clean();
-	}
-
-	/**
-	 * Form Builder Formular rendern (Pro)
-	 *
-	 * @param int      $job_id         Job ID.
-	 * @param \WP_Post $job            Job Post Object.
-	 * @param array    $atts           Shortcode Attribute.
-	 * @param bool     $show_job_title Job-Titel anzeigen.
-	 * @param bool     $show_progress  Fortschrittsanzeige.
-	 * @return string HTML-Ausgabe.
-	 */
-	private function renderFormBuilderForm( int $job_id, \WP_Post $job, array $atts, bool $show_job_title, bool $show_progress ): string {
-		// Custom Fields Assets laden.
-		$this->enqueueCustomFieldsAssets();
-
-		ob_start();
-		?>
+    /**
+     * Form Builder Formular rendern (Pro)
+     *
+     * @param int      $job_id         Job ID.
+     * @param \WP_Post $job            Job Post Object.
+     * @param array    $atts           Shortcode Attribute.
+     * @param bool     $show_job_title Job-Titel anzeigen.
+     * @param bool     $show_progress  Fortschrittsanzeige.
+     * @return string HTML-Ausgabe.
+     */
+    private function renderFormBuilderForm(
+        int $job_id,
+        \WP_Post $job,
+        array $atts,
+        bool $show_job_title,
+        bool $show_progress
+    ) : string {
+        // Custom Fields Assets laden.
+        $this->enqueueCustomFieldsAssets();
+        ob_start();
+        ?>
 		<div class="rp-plugin">
-			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php echo esc_attr( $job_id ); ?>" data-rp-custom-application-form>
-				<?php if ( ! empty( $atts['title'] ) ) : ?>
-					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php echo esc_html( $atts['title'] ); ?></h2>
-				<?php endif; ?>
+			<div class="rp-rounded-lg rp-p-6 md:rp-p-8 rp-border rp-border-gray-200" data-job-id="<?php 
+        echo esc_attr( $job_id );
+        ?>" data-rp-custom-application-form>
+				<?php 
+        if ( !empty( $atts['title'] ) ) {
+            ?>
+					<h2 class="rp-text-2xl rp-font-bold rp-text-gray-900 rp-mb-2"><?php 
+            echo esc_html( $atts['title'] );
+            ?></h2>
+				<?php 
+        }
+        ?>
 
-				<?php if ( $show_job_title ) : ?>
+				<?php 
+        if ( $show_job_title ) {
+            ?>
 					<p class="rp-text-gray-600 rp-mb-6">
-						<?php
-						printf(
-							/* translators: %s: Job title */
-							esc_html__( 'Application for: %s', 'recruiting-playbook' ),
-							'<strong>' . esc_html( $job->post_title ) . '</strong>'
-						);
-						?>
+						<?php 
+            printf( 
+                /* translators: %s: Job title */
+                esc_html__( 'Application for: %s', 'recruiting-playbook' ),
+                '<strong>' . esc_html( $job->post_title ) . '</strong>'
+             );
+            ?>
 					</p>
-				<?php endif; ?>
+				<?php 
+        }
+        ?>
 
-				<?php echo wp_kses_post( $this->getCustomFormHtml( $job_id, $show_progress ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php 
+        echo wp_kses_post( $this->getCustomFormHtml( $job_id, $show_progress ) );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
 			</div>
 		</div>
-		<?php
+		<?php 
+        return ob_get_clean();
+    }
 
-		return ob_get_clean();
-	}
+    /**
+     * Custom Application Form Shortcode (Alias für rp_application_form)
+     *
+     * DEPRECATED: Dieser Shortcode wird in einer zukünftigen Version entfernt.
+     * Bitte [rp_application_form] verwenden - erkennt automatisch ob Form Builder aktiv ist.
+     *
+     * @param array|string $atts Shortcode-Attribute.
+     * @return string HTML-Ausgabe.
+     */
+    public function renderCustomApplicationForm( $atts ) : string {
+        // Direkt an renderApplicationForm delegieren.
+        // Die Auto-Detection dort entscheidet ob Form Builder verwendet wird.
+        return $this->renderApplicationForm( $atts );
+    }
 
-	/**
-	 * Custom Application Form Shortcode (Alias für rp_application_form)
-	 *
-	 * DEPRECATED: Dieser Shortcode wird in einer zukünftigen Version entfernt.
-	 * Bitte [rp_application_form] verwenden - erkennt automatisch ob Form Builder aktiv ist.
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
-	 */
-	public function renderCustomApplicationForm( $atts ): string {
-		// Direkt an renderApplicationForm delegieren.
-		// Die Auto-Detection dort entscheidet ob Form Builder verwendet wird.
-		return $this->renderApplicationForm( $atts );
-	}
-
-	/**
-	 * Custom Form HTML mit dynamischen Feldern generieren
-	 *
-	 * @param int  $job_id        Job ID.
-	 * @param bool $show_progress Fortschrittsanzeige anzeigen.
-	 * @return string HTML.
-	 */
-	private function getCustomFormHtml( int $job_id, bool $show_progress = true ): string {
-		$form_service = $this->getFormRenderService();
-
-		// Konfiguration für rpCustomFieldsForm vorbereiten.
-		$config = $form_service->getCustomFieldsConfig( $job_id );
-
-		// WordPress.org Guidelines: Config als data-Attribut statt inline Script.
-		$json_config = wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
-
-		ob_start();
-		?>
-		<div x-data="rpCustomFieldsForm()" x-cloak data-rp-custom-fields-config="<?php echo esc_attr( $json_config ); ?>">
+    /**
+     * Custom Form HTML mit dynamischen Feldern generieren
+     *
+     * @param int  $job_id        Job ID.
+     * @param bool $show_progress Fortschrittsanzeige anzeigen.
+     * @return string HTML.
+     */
+    private function getCustomFormHtml( int $job_id, bool $show_progress = true ) : string {
+        $form_service = $this->getFormRenderService();
+        // Konfiguration für rpCustomFieldsForm vorbereiten.
+        $config = $form_service->getCustomFieldsConfig( $job_id );
+        // WordPress.org Guidelines: Config als data-Attribut statt inline Script.
+        $json_config = wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
+        ob_start();
+        ?>
+		<div x-data="rpCustomFieldsForm()" x-cloak data-rp-custom-fields-config="<?php 
+        echo esc_attr( $json_config );
+        ?>">
 			<!-- Erfolgs-Meldung -->
 			<template x-if="submitted">
 				<div class="rp-text-center rp-py-12">
 					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
-					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' ); ?></h3>
-					<p class="rp-text-gray-600"><?php esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' ); ?></p>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php 
+        esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' );
+        ?></h3>
+					<p class="rp-text-gray-600"><?php 
+        esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' );
+        ?></p>
 				</div>
 			</template>
 
@@ -371,27 +379,44 @@ class Shortcodes {
 						<p class="rp-text-error rp-text-sm" x-text="error"></p>
 					</div>
 
-					<?php if ( $show_progress ) : ?>
+					<?php 
+        if ( $show_progress ) {
+            ?>
 					<!-- Fortschrittsanzeige (Multi-Step) -->
 					<div x-show="totalSteps > 1" class="rp-mb-8">
 						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-							<span><?php esc_html_e( 'Step', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'of', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span><?php 
+            esc_html_e( 'Step', 'recruiting-playbook' );
+            ?> <span x-text="step"></span> <?php 
+            esc_html_e( 'of', 'recruiting-playbook' );
+            ?> <span x-text="totalSteps"></span></span>
 							<span x-text="progress + '%'"></span>
 						</div>
 						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
 							<div class="rp-h-full rp-bg-primary rp-transition-all rp-duration-300" :style="'width: ' + progress + '%'"></div>
 						</div>
 					</div>
-					<?php endif; ?>
+					<?php 
+        }
+        ?>
 
 					<form x-on:submit.prevent="submit">
-						<?php echo wp_kses_post( SpamProtection::getHoneypotField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php echo wp_kses_post( SpamProtection::getTimestampField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php 
+        echo wp_kses_post( SpamProtection::getHoneypotField() );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
+						<?php 
+        echo wp_kses_post( SpamProtection::getTimestampField() );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
 
 						<input type="hidden" name="job_id" :value="formData.job_id">
 
 						<!-- Dynamische Felder (nur Steps, ohne Wrapper) -->
-						<?php echo wp_kses_post( $form_service->render( $job_id, false ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php 
+        echo wp_kses_post( $form_service->render( $job_id, false ) );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
 
 						<!-- Navigation -->
 						<div class="rp-flex rp-justify-between rp-items-center rp-mt-8 rp-pt-6 rp-border-t rp-border-gray-200">
@@ -401,7 +426,9 @@ class Shortcodes {
 								@click="prevStep"
 								class="wp-element-button is-style-outline"
 							>
-								<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
+								<?php 
+        esc_html_e( 'Back', 'recruiting-playbook' );
+        ?>
 							</button>
 							<div x-show="step === 1 || totalSteps === 1"></div>
 
@@ -411,7 +438,9 @@ class Shortcodes {
 								@click="nextStep"
 								class="wp-element-button"
 							>
-								<?php esc_html_e( 'Next', 'recruiting-playbook' ); ?>
+								<?php 
+        esc_html_e( 'Next', 'recruiting-playbook' );
+        ?>
 							</button>
 
 							<button
@@ -420,27 +449,31 @@ class Shortcodes {
 								:disabled="loading"
 								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
 							>
-								<span x-show="!loading"><?php esc_html_e( 'Submit Application', 'recruiting-playbook' ); ?></span>
-								<span x-show="loading"><?php esc_html_e( 'Submitting...', 'recruiting-playbook' ); ?></span>
+								<span x-show="!loading"><?php 
+        esc_html_e( 'Submit Application', 'recruiting-playbook' );
+        ?></span>
+								<span x-show="loading"><?php 
+        esc_html_e( 'Submitting...', 'recruiting-playbook' );
+        ?></span>
 							</button>
 						</div>
 					</form>
 				</div>
 			</template>
 		</div>
-		<?php
-		return ob_get_clean();
-	}
+		<?php 
+        return ob_get_clean();
+    }
 
-	/**
-	 * Formular-HTML generieren (wiederverwendbar)
-	 *
-	 * @param int $job_id Job ID.
-	 * @return string HTML.
-	 */
-	private function getFormHtml( int $job_id ): string {
-		ob_start();
-		?>
+    /**
+     * Formular-HTML generieren (wiederverwendbar)
+     *
+     * @param int $job_id Job ID.
+     * @return string HTML.
+     */
+    private function getFormHtml( int $job_id ) : string {
+        ob_start();
+        ?>
 		<div x-data="applicationForm" x-cloak>
 			<!-- Erfolgs-Meldung -->
 			<template x-if="submitted">
@@ -448,8 +481,12 @@ class Shortcodes {
 					<svg class="rp-w-16 rp-h-16 rp-text-success rp-mx-auto rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 					</svg>
-					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' ); ?></h3>
-					<p class="rp-text-gray-600"><?php esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' ); ?></p>
+					<h3 class="rp-text-xl rp-font-semibold rp-text-gray-900 rp-mb-2"><?php 
+        esc_html_e( 'Application submitted successfully!', 'recruiting-playbook' );
+        ?></h3>
+					<p class="rp-text-gray-600"><?php 
+        esc_html_e( 'Thank you for your application. You will receive a confirmation email shortly.', 'recruiting-playbook' );
+        ?></p>
 				</div>
 			</template>
 
@@ -464,7 +501,11 @@ class Shortcodes {
 					<!-- Fortschrittsanzeige -->
 					<div class="rp-mb-8">
 						<div class="rp-flex rp-justify-between rp-text-sm rp-text-gray-600 rp-mb-2">
-							<span><?php esc_html_e( 'Step', 'recruiting-playbook' ); ?> <span x-text="step"></span> <?php esc_html_e( 'of', 'recruiting-playbook' ); ?> <span x-text="totalSteps"></span></span>
+							<span><?php 
+        esc_html_e( 'Step', 'recruiting-playbook' );
+        ?> <span x-text="step"></span> <?php 
+        esc_html_e( 'of', 'recruiting-playbook' );
+        ?> <span x-text="totalSteps"></span></span>
 							<span x-text="progress + '%'"></span>
 						</div>
 						<div class="rp-h-2 rp-bg-gray-200 rp-rounded-full rp-overflow-hidden">
@@ -473,30 +514,50 @@ class Shortcodes {
 					</div>
 
 					<form x-on:submit.prevent="submit">
-						<?php echo wp_kses_post( SpamProtection::getHoneypotField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php echo wp_kses_post( SpamProtection::getTimestampField() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php 
+        echo wp_kses_post( SpamProtection::getHoneypotField() );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
+						<?php 
+        echo wp_kses_post( SpamProtection::getTimestampField() );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
 
 						<!-- Schritt 1: Persönliche Daten -->
 						<div x-show="step === 1" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Personal Information', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php 
+        esc_html_e( 'Personal Information', 'recruiting-playbook' );
+        ?></h3>
 
 							<div class="rp-space-y-4">
 								<!-- Anrede, Vorname & Nachname -->
 								<div class="rp-grid rp-grid-cols-1 sm:rp-grid-cols-5 rp-gap-4">
 									<!-- Anrede (1/5) -->
 									<div class="sm:rp-col-span-1">
-										<label class="rp-label"><?php esc_html_e( 'Title', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label"><?php 
+        esc_html_e( 'Title', 'recruiting-playbook' );
+        ?></label>
 										<select x-model="formData.salutation" class="rp-input rp-select">
-											<option value=""><?php esc_html_e( 'Please select', 'recruiting-playbook' ); ?></option>
-											<option value="Herr"><?php esc_html_e( 'Mr.', 'recruiting-playbook' ); ?></option>
-											<option value="Frau"><?php esc_html_e( 'Ms.', 'recruiting-playbook' ); ?></option>
-											<option value="Divers"><?php esc_html_e( 'Mx.', 'recruiting-playbook' ); ?></option>
+											<option value=""><?php 
+        esc_html_e( 'Please select', 'recruiting-playbook' );
+        ?></option>
+											<option value="Herr"><?php 
+        esc_html_e( 'Mr.', 'recruiting-playbook' );
+        ?></option>
+											<option value="Frau"><?php 
+        esc_html_e( 'Ms.', 'recruiting-playbook' );
+        ?></option>
+											<option value="Divers"><?php 
+        esc_html_e( 'Mx.', 'recruiting-playbook' );
+        ?></option>
 										</select>
 									</div>
 									<!-- Vorname (2/5) -->
 									<div class="sm:rp-col-span-2">
 										<label class="rp-label">
-											<?php esc_html_e( 'First Name', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php 
+        esc_html_e( 'First Name', 'recruiting-playbook' );
+        ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="text" x-model="formData.first_name"
 											class="rp-input"
@@ -507,7 +568,9 @@ class Shortcodes {
 									<!-- Nachname (2/5) -->
 									<div class="sm:rp-col-span-2">
 										<label class="rp-label">
-											<?php esc_html_e( 'Last Name', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php 
+        esc_html_e( 'Last Name', 'recruiting-playbook' );
+        ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="text" x-model="formData.last_name"
 											class="rp-input"
@@ -522,7 +585,9 @@ class Shortcodes {
 									<!-- E-Mail -->
 									<div>
 										<label class="rp-label">
-											<?php esc_html_e( 'Email Address', 'recruiting-playbook' ); ?> <span class="rp-text-error">*</span>
+											<?php 
+        esc_html_e( 'Email Address', 'recruiting-playbook' );
+        ?> <span class="rp-text-error">*</span>
 										</label>
 										<input type="email" x-model="formData.email"
 											class="rp-input"
@@ -532,7 +597,9 @@ class Shortcodes {
 									</div>
 									<!-- Telefon -->
 									<div>
-										<label class="rp-label"><?php esc_html_e( 'Phone', 'recruiting-playbook' ); ?></label>
+										<label class="rp-label"><?php 
+        esc_html_e( 'Phone', 'recruiting-playbook' );
+        ?></label>
 										<input type="tel" x-model="formData.phone" class="rp-input">
 									</div>
 								</div>
@@ -541,11 +608,15 @@ class Shortcodes {
 
 						<!-- Schritt 2: Dokumente -->
 						<div x-show="step === 2" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Application Documents', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php 
+        esc_html_e( 'Application Documents', 'recruiting-playbook' );
+        ?></h3>
 
 							<!-- Lebenslauf -->
 							<div class="rp-mb-6">
-								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Resume', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label rp-mb-2"><?php 
+        esc_html_e( 'Resume', 'recruiting-playbook' );
+        ?></label>
 								<div
 									x-on:dragover.prevent="$el.classList.add('rp-border-primary', 'rp-bg-primary-light')"
 									x-on:dragleave.prevent="$el.classList.remove('rp-border-primary', 'rp-bg-primary-light')"
@@ -558,12 +629,18 @@ class Shortcodes {
 											<svg class="rp-w-10 rp-h-10 rp-text-gray-400 rp-mx-auto rp-mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
 											</svg>
-											<p class="rp-text-gray-600 rp-mb-2"><?php esc_html_e( 'Drag file here or', 'recruiting-playbook' ); ?></p>
+											<p class="rp-text-gray-600 rp-mb-2"><?php 
+        esc_html_e( 'Drag file here or', 'recruiting-playbook' );
+        ?></p>
 											<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-												<?php esc_html_e( 'Select file', 'recruiting-playbook' ); ?>
+												<?php 
+        esc_html_e( 'Select file', 'recruiting-playbook' );
+        ?>
 												<input type="file" x-on:change="handleFileSelect($event, 'resume')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="rp-hidden">
 											</label>
-											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' ); ?></p>
+											<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php 
+        esc_html_e( 'PDF, DOC, DOCX, JPG, PNG (max. 10 MB)', 'recruiting-playbook' );
+        ?></p>
 										</div>
 									</template>
 									<template x-if="files.resume">
@@ -590,17 +667,23 @@ class Shortcodes {
 
 							<!-- Weitere Dokumente -->
 							<div class="rp-mb-6">
-								<label class="rp-label rp-mb-2"><?php esc_html_e( 'Additional Documents (References, Certificates)', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label rp-mb-2"><?php 
+        esc_html_e( 'Additional Documents (References, Certificates)', 'recruiting-playbook' );
+        ?></label>
 								<div
 									x-on:dragover.prevent
 									x-on:drop.prevent="handleDrop($event, 'documents')"
 									class="rp-border-2 rp-border-dashed rp-border-gray-300 rp-rounded-lg rp-p-6 rp-text-center"
 								>
 									<label class="rp-text-primary hover:rp-text-primary-hover rp-font-medium rp-cursor-pointer">
-										<?php esc_html_e( 'Select files', 'recruiting-playbook' ); ?>
+										<?php 
+        esc_html_e( 'Select files', 'recruiting-playbook' );
+        ?>
 										<input type="file" x-on:change="handleFileSelect($event, 'documents')" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple class="rp-hidden">
 									</label>
-									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php esc_html_e( 'Multiple files allowed (max. 5 files, 10 MB each)', 'recruiting-playbook' ); ?></p>
+									<p class="rp-text-xs rp-text-gray-400 rp-mt-2"><?php 
+        esc_html_e( 'Multiple files allowed (max. 5 files, 10 MB each)', 'recruiting-playbook' );
+        ?></p>
 								</div>
 
 								<!-- Hochgeladene Dateien -->
@@ -622,44 +705,62 @@ class Shortcodes {
 
 							<!-- Anschreiben -->
 							<div>
-								<label class="rp-label"><?php esc_html_e( 'Cover Letter / Message', 'recruiting-playbook' ); ?></label>
+								<label class="rp-label"><?php 
+        esc_html_e( 'Cover Letter / Message', 'recruiting-playbook' );
+        ?></label>
 								<textarea x-model="formData.cover_letter" rows="4"
 									class="rp-input rp-textarea"
-									placeholder="<?php esc_attr_e( 'Optional: Add a brief cover letter...', 'recruiting-playbook' ); ?>"></textarea>
+									placeholder="<?php 
+        esc_attr_e( 'Optional: Add a brief cover letter...', 'recruiting-playbook' );
+        ?>"></textarea>
 							</div>
 						</div>
 
 						<!-- Schritt 3: Datenschutz & Absenden -->
 						<div x-show="step === 3" x-transition>
-							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php esc_html_e( 'Privacy & Submit', 'recruiting-playbook' ); ?></h3>
+							<h3 class="rp-text-lg rp-font-semibold rp-text-gray-900 rp-mb-6"><?php 
+        esc_html_e( 'Privacy & Submit', 'recruiting-playbook' );
+        ?></h3>
 
 							<!-- Zusammenfassung -->
 							<div class="rp-border rp-border-gray-200 rp-rounded-lg rp-p-5 rp-mb-6">
-								<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php esc_html_e( 'Your Information', 'recruiting-playbook' ); ?></h4>
+								<h4 class="rp-font-semibold rp-text-gray-900 rp-mb-3"><?php 
+        esc_html_e( 'Your Information', 'recruiting-playbook' );
+        ?></h4>
 								<dl class="rp-text-sm rp-space-y-2">
 									<div class="rp-flex">
-										<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Name:', 'recruiting-playbook' ); ?></dt>
+										<dt class="rp-w-28 rp-text-gray-500"><?php 
+        esc_html_e( 'Name:', 'recruiting-playbook' );
+        ?></dt>
 										<dd class="rp-text-gray-900" x-text="formData.salutation + ' ' + formData.first_name + ' ' + formData.last_name"></dd>
 									</div>
 									<div class="rp-flex">
-										<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Email:', 'recruiting-playbook' ); ?></dt>
+										<dt class="rp-w-28 rp-text-gray-500"><?php 
+        esc_html_e( 'Email:', 'recruiting-playbook' );
+        ?></dt>
 										<dd class="rp-text-gray-900" x-text="formData.email"></dd>
 									</div>
 									<template x-if="formData.phone">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Phone:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php 
+        esc_html_e( 'Phone:', 'recruiting-playbook' );
+        ?></dt>
 											<dd class="rp-text-gray-900" x-text="formData.phone"></dd>
 										</div>
 									</template>
 									<template x-if="files.resume">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Resume:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php 
+        esc_html_e( 'Resume:', 'recruiting-playbook' );
+        ?></dt>
 											<dd class="rp-text-gray-900" x-text="files.resume.name"></dd>
 										</div>
 									</template>
 									<template x-if="files.documents.length > 0">
 										<div class="rp-flex">
-											<dt class="rp-w-28 rp-text-gray-500"><?php esc_html_e( 'Documents:', 'recruiting-playbook' ); ?></dt>
+											<dt class="rp-w-28 rp-text-gray-500"><?php 
+        esc_html_e( 'Documents:', 'recruiting-playbook' );
+        ?></dt>
 											<dd class="rp-text-gray-900" x-text="files.documents.length + ' Datei(en)'"></dd>
 										</div>
 									</template>
@@ -667,37 +768,30 @@ class Shortcodes {
 							</div>
 
 							<!-- Datenschutz-Checkbox -->
-							<div class="rp-mb-6">
+							<div class="rp-mb-6" data-field="privacy_consent">
 								<label class="rp-flex rp-items-start rp-gap-3 rp-cursor-pointer">
-									<input type="checkbox" x-model="formData.privacy_consent" class="rp-checkbox rp-mt-1">
+									<input type="checkbox" x-model="formData.privacy_consent" class="rp-checkbox rp-mt-1" required>
 									<span class="rp-text-sm rp-leading-relaxed">
 										<span class="rp-text-error">*</span>
-										<?php
-										$privacy_url = get_privacy_policy_url();
-										if ( $privacy_url ) {
-											$privacy_link = sprintf(
-												'<a href="%s" target="_blank" class="rp-underline">%s</a>',
-												esc_url( $privacy_url ),
-												esc_html__( 'Privacy Policy', 'recruiting-playbook' )
-											);
-										} else {
-											$privacy_link = esc_html__( 'Privacy Policy', 'recruiting-playbook' );
-										}
-										echo wp_kses(
-											sprintf(
-												/* translators: %s: privacy policy link */
-												__( 'I have read the %s and agree to the processing of my data for the purpose of this application.', 'recruiting-playbook' ),
-												$privacy_link
-											),
-											[
-												'a' => [
-													'href' => [],
-													'target' => [],
-													'class' => [],
-												],
-											]
-										);
-										?>
+										<?php 
+        $privacy_url = get_privacy_policy_url();
+        if ( $privacy_url ) {
+            $privacy_link = sprintf( '<a href="%s" target="_blank" class="rp-underline">%s</a>', esc_url( $privacy_url ), esc_html__( 'Privacy Policy', 'recruiting-playbook' ) );
+        } else {
+            $privacy_link = esc_html__( 'Privacy Policy', 'recruiting-playbook' );
+        }
+        echo wp_kses( sprintf( 
+            /* translators: %s: privacy policy link */
+            __( 'I have read the %s and agree to the processing of my data for the purpose of this application.', 'recruiting-playbook' ),
+            $privacy_link
+         ), [
+            'a' => [
+                'href'   => [],
+                'target' => [],
+                'class'  => [],
+            ],
+        ] );
+        ?>
 									</span>
 								</label>
 								<p x-show="errors.privacy_consent" x-text="errors.privacy_consent" class="rp-error-text rp-mt-2"></p>
@@ -712,7 +806,9 @@ class Shortcodes {
 								@click="prevStep"
 								class="wp-element-button is-style-outline"
 							>
-								<?php esc_html_e( 'Back', 'recruiting-playbook' ); ?>
+								<?php 
+        esc_html_e( 'Back', 'recruiting-playbook' );
+        ?>
 							</button>
 							<div x-show="step === 1"></div>
 
@@ -722,7 +818,9 @@ class Shortcodes {
 								@click="nextStep"
 								class="wp-element-button"
 							>
-								<?php esc_html_e( 'Next', 'recruiting-playbook' ); ?>
+								<?php 
+        esc_html_e( 'Next', 'recruiting-playbook' );
+        ?>
 							</button>
 
 							<button
@@ -731,659 +829,587 @@ class Shortcodes {
 								:disabled="loading"
 								class="wp-element-button disabled:rp-opacity-50 disabled:rp-cursor-not-allowed"
 							>
-								<span x-show="!loading"><?php esc_html_e( 'Submit Application', 'recruiting-playbook' ); ?></span>
-								<span x-show="loading"><?php esc_html_e( 'Submitting...', 'recruiting-playbook' ); ?></span>
+								<span x-show="!loading"><?php 
+        esc_html_e( 'Submit Application', 'recruiting-playbook' );
+        ?></span>
+								<span x-show="loading"><?php 
+        esc_html_e( 'Submitting...', 'recruiting-playbook' );
+        ?></span>
 							</button>
 						</div>
 					</form>
 				</div>
 			</template>
 		</div>
-		<?php
-		return ob_get_clean();
-	}
+		<?php 
+        return ob_get_clean();
+    }
 
-	/**
-	 * KI-Job-Match rendern (Mode A - Einzelstelle)
-	 *
-	 * Shortcode: [rp_ai_job_match]
-	 *
-	 * Attribute:
-	 * - job_id: ID der Stelle (default: aktuelle Stelle)
-	 * - title: Button-Text (default: "Passe ich zu diesem Job?")
-	 * - display: Darstellung - "button" (default), "inline", "modal"
-	 * - class: Zusätzliche CSS-Klassen für den Button
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
-	 */
-	public function renderAiJobMatch( $atts ): string {
-		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
-			return $this->renderUpgradePrompt(
-				'ai_cv_matching',
-				__( 'AI Job Match', 'recruiting-playbook' ),
-				'PRO'
-			);
-		}
-
-		$atts = shortcode_atts(
-			[
-				'job_id'  => 0,
-				'title'   => __( 'Am I a good fit for this job?', 'recruiting-playbook' ),
-				'display' => 'button',
-				'style'   => '',        // primary (default), secondary, outline.
-				'size'    => '',        // small, large.
-				'class'   => '',
-			],
-			$atts,
-			'rp_ai_job_match'
-		);
-
-		$job_id = absint( $atts['job_id'] );
-
-		// Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
-		if ( ! $job_id && is_singular( 'job_listing' ) ) {
-			$job_id = get_the_ID();
-		}
-
-		// Validieren.
-		if ( ! $job_id ) {
-			return '<div class="rp-plugin">
+    /**
+     * KI-Job-Match rendern (Mode A - Einzelstelle)
+     *
+     * Shortcode: [rp_ai_job_match]
+     *
+     * Attribute:
+     * - job_id: ID der Stelle (default: aktuelle Stelle)
+     * - title: Button-Text (default: "Passe ich zu diesem Job?")
+     * - display: Darstellung - "button" (default), "inline", "modal"
+     * - class: Zusätzliche CSS-Klassen für den Button
+     *
+     * @param array|string $atts Shortcode-Attribute.
+     * @return string HTML-Ausgabe.
+     */
+    public function renderAiJobMatch( $atts ) : string {
+        // Feature-Check.
+        if ( !function_exists( 'rp_has_cv_matching' ) || !rp_has_cv_matching() ) {
+            return $this->renderUpgradePrompt( 'ai_cv_matching', __( 'AI Job Match', 'recruiting-playbook' ), 'PRO' );
+        }
+        $atts = shortcode_atts( [
+            'job_id'  => 0,
+            'title'   => __( 'Am I a good fit for this job?', 'recruiting-playbook' ),
+            'display' => 'button',
+            'style'   => '',
+            'size'    => '',
+            'class'   => '',
+        ], $atts, 'rp_ai_job_match' );
+        $job_id = absint( $atts['job_id'] );
+        // Wenn keine job_id, versuche aktuelle Stelle zu verwenden.
+        if ( !$job_id && is_singular( 'job_listing' ) ) {
+            $job_id = get_the_ID();
+        }
+        // Validieren.
+        if ( !$job_id ) {
+            return '<div class="rp-plugin">
 				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
 					' . esc_html__( 'Note: No job specified. Please set the job_id attribute or use on a job listing page.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
-		}
-
-		$job = get_post( $job_id );
-		if ( ! $job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
-			return '<div class="rp-plugin">
+        }
+        $job = get_post( $job_id );
+        if ( !$job || 'job_listing' !== $job->post_type || 'publish' !== $job->post_status ) {
+            return '<div class="rp-plugin">
 				<div class="rp-bg-error-light rp-border rp-border-error rp-rounded-md rp-p-4 rp-text-error rp-text-sm">
 					' . esc_html__( 'Error: The specified job does not exist or is not available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
-		}
-
-		// Assets laden.
-		$this->enqueueMatchModalAssets();
-
-		// Modal im Footer registrieren (nur einmal).
-		$this->registerMatchModal();
-
-		// Design-Settings für KI-Button laden.
-		$design_settings = get_option( 'rp_design_settings', [] );
-		$ai_button_style = $design_settings['ai_button_style'] ?? 'preset';
-
-		// Button-Text: Shortcode-Attribut hat Priorität, dann Design-Setting, dann Default.
-		$default_text = $design_settings['ai_match_button_text'] ?? __( 'Am I a good fit for this job?', 'recruiting-playbook' );
-		$button_text  = ( $atts['title'] !== __( 'Am I a good fit for this job?', 'recruiting-playbook' ) )
-			? esc_html( $atts['title'] )
-			: esc_html( $default_text );
-
-		// Icon aus Design-Settings.
-		$icon_type = $design_settings['ai_match_button_icon'] ?? 'sparkles';
-		$icon_svg  = $this->getAiButtonIcon( $icon_type );
-
-		$job_title = esc_attr( $job->post_title );
-
-		// Button-Klassen basierend auf ai_button_style.
-		$btn_classes = [];
-
-		if ( 'theme' === $ai_button_style ) {
-			// Theme-Styling: wp-element-button.
-			$btn_classes[] = 'wp-element-button';
-		} else {
-			// Preset oder Manual: rp-btn-ai für Custom-Styling via CSS-Variablen.
-			$btn_classes[] = 'rp-btn';
-			$btn_classes[] = 'rp-btn-ai';
-		}
-
-		// Style-Variante (outline verwendet WordPress is-style-outline).
-		if ( 'outline' === $atts['style'] ) {
-			$btn_classes[] = 'is-style-outline';
-		}
-
-		// Extra-Klassen vom User.
-		if ( ! empty( $atts['class'] ) ) {
-			$btn_classes[] = esc_attr( $atts['class'] );
-		}
-
-		$btn_class_string = implode( ' ', $btn_classes );
-
-		ob_start();
-		?>
+        }
+        // Assets laden.
+        $this->enqueueMatchModalAssets();
+        // Modal im Footer registrieren (nur einmal).
+        $this->registerMatchModal();
+        // Design-Settings für KI-Button laden.
+        $design_settings = get_option( 'rp_design_settings', [] );
+        $ai_button_style = $design_settings['ai_button_style'] ?? 'preset';
+        // Button-Text: Shortcode-Attribut hat Priorität, dann Design-Setting, dann Default.
+        $default_text = $design_settings['ai_match_button_text'] ?? __( 'Am I a good fit for this job?', 'recruiting-playbook' );
+        $button_text = ( $atts['title'] !== __( 'Am I a good fit for this job?', 'recruiting-playbook' ) ? esc_html( $atts['title'] ) : esc_html( $default_text ) );
+        // Icon aus Design-Settings.
+        $icon_type = $design_settings['ai_match_button_icon'] ?? 'sparkles';
+        $icon_svg = $this->getAiButtonIcon( $icon_type );
+        $job_title = esc_attr( $job->post_title );
+        // Button-Klassen basierend auf ai_button_style.
+        $btn_classes = [];
+        if ( 'theme' === $ai_button_style ) {
+            // Theme-Styling: wp-element-button.
+            $btn_classes[] = 'wp-element-button';
+        } else {
+            // Preset oder Manual: rp-btn-ai für Custom-Styling via CSS-Variablen.
+            $btn_classes[] = 'rp-btn';
+            $btn_classes[] = 'rp-btn-ai';
+        }
+        // Style-Variante (outline verwendet WordPress is-style-outline).
+        if ( 'outline' === $atts['style'] ) {
+            $btn_classes[] = 'is-style-outline';
+        }
+        // Extra-Klassen vom User.
+        if ( !empty( $atts['class'] ) ) {
+            $btn_classes[] = esc_attr( $atts['class'] );
+        }
+        $btn_class_string = implode( ' ', $btn_classes );
+        ob_start();
+        ?>
 		<div class="rp-plugin rp-ai-job-match" x-data>
 			<button
 				type="button"
-				class="<?php echo esc_attr( $btn_class_string ); ?>"
-				x-on:click="$dispatch('open-match-modal', { jobId: <?php echo esc_attr( $job_id ); ?>, jobTitle: '<?php echo esc_js( $job->post_title ); ?>' })"
+				class="<?php 
+        echo esc_attr( $btn_class_string );
+        ?>"
+				x-on:click="$dispatch('open-match-modal', { jobId: <?php 
+        echo esc_attr( $job_id );
+        ?>, jobTitle: '<?php 
+        echo esc_js( $job->post_title );
+        ?>' })"
 			>
 				<span style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
-					<?php echo wp_kses_post( $icon_svg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<span><?php echo esc_html( $button_text ); ?></span>
+					<?php 
+        echo wp_kses_post( $icon_svg );
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        ?>
+					<span><?php 
+        echo esc_html( $button_text );
+        ?></span>
 				</span>
 			</button>
 		</div>
-		<?php
+		<?php 
+        return ob_get_clean();
+    }
 
-		return ob_get_clean();
-	}
+    /**
+     * Icon-SVG für KI-Button generieren
+     *
+     * @param string $icon_type Icon-Typ (sparkles, checkmark, star, lightning, target, user).
+     * @return string SVG-HTML.
+     */
+    private function getAiButtonIcon( string $icon_type ) : string {
+        $icons = [
+            'sparkles'  => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>',
+            'checkmark' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+            'star'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>',
+            'lightning' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
+            'target'    => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+            'user'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+        ];
+        return $icons[$icon_type] ?? $icons['sparkles'];
+    }
 
-	/**
-	 * Icon-SVG für KI-Button generieren
-	 *
-	 * @param string $icon_type Icon-Typ (sparkles, checkmark, star, lightning, target, user).
-	 * @return string SVG-HTML.
-	 */
-	private function getAiButtonIcon( string $icon_type ): string {
-		$icons = [
-			'sparkles'  => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>',
-			'checkmark' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
-			'star'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>',
-			'lightning' => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
-			'target'    => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
-			'user'      => '<svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
-		];
+    /**
+     * Match-Modal im Footer registrieren
+     *
+     * Fügt das Modal-Template einmalig im Footer ein.
+     */
+    private function registerMatchModal() : void {
+        if ( $this->match_modal_registered ) {
+            return;
+        }
+        $this->match_modal_registered = true;
+        add_action( 'wp_footer', function () {
+            $template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+            if ( file_exists( $template ) ) {
+                include $template;
+            }
+        }, 20 );
+    }
 
-		return $icons[ $icon_type ] ?? $icons['sparkles'];
-	}
-
-	/**
-	 * Match-Modal im Footer registrieren
-	 *
-	 * Fügt das Modal-Template einmalig im Footer ein.
-	 */
-	private function registerMatchModal(): void {
-		if ( $this->match_modal_registered ) {
-			return;
-		}
-
-		$this->match_modal_registered = true;
-
-		add_action(
-			'wp_footer',
-			function () {
-				$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
-				if ( file_exists( $template ) ) {
-					include $template;
-				}
-			},
-			20
-		);
-	}
-
-	/**
-	 * KI-Job-Finder rendern (Mode B - Alle Stellen)
-	 *
-	 * Shortcode: [rp_ai_job_finder]
-	 *
-	 * Attribute:
-	 * - title: Überschrift (default: "Finde deinen Traumjob")
-	 * - subtitle: Untertitel
-	 * - limit: Max. Anzahl Matches (1-10, default: 5)
-	 * - class: Zusätzliche CSS-Klassen
-	 *
-	 * @param array|string $atts Shortcode-Attribute.
-	 * @return string HTML-Ausgabe.
-	 */
-	public function renderAiJobFinder( $atts ): string {
-		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
-			return $this->renderUpgradePrompt(
-				'ai_cv_matching',
-				__( 'AI Job Finder', 'recruiting-playbook' ),
-				'PRO'
-			);
-		}
-
-		$atts = shortcode_atts(
-			[
-				'title'    => __( 'Find Your Dream Job', 'recruiting-playbook' ),
-				'subtitle' => __( 'Upload your resume and discover matching positions.', 'recruiting-playbook' ),
-				'limit'    => 5,
-				'class'    => '',
-			],
-			$atts,
-			'rp_ai_job_finder'
-		);
-
-		// Aktive Jobs zählen.
-		$job_count = wp_count_posts( 'job_listing' )->publish ?? 0;
-
-		if ( 0 === $job_count ) {
-			return '<div class="rp-plugin">
+    /**
+     * KI-Job-Finder rendern (Mode B - Alle Stellen)
+     *
+     * Shortcode: [rp_ai_job_finder]
+     *
+     * Attribute:
+     * - title: Überschrift (default: "Finde deinen Traumjob")
+     * - subtitle: Untertitel
+     * - limit: Max. Anzahl Matches (1-10, default: 5)
+     * - class: Zusätzliche CSS-Klassen
+     *
+     * @param array|string $atts Shortcode-Attribute.
+     * @return string HTML-Ausgabe.
+     */
+    public function renderAiJobFinder( $atts ) : string {
+        // Feature-Check.
+        if ( !function_exists( 'rp_has_cv_matching' ) || !rp_has_cv_matching() ) {
+            return $this->renderUpgradePrompt( 'ai_cv_matching', __( 'AI Job Finder', 'recruiting-playbook' ), 'PRO' );
+        }
+        $atts = shortcode_atts( [
+            'title'    => __( 'Find Your Dream Job', 'recruiting-playbook' ),
+            'subtitle' => __( 'Upload your resume and discover matching positions.', 'recruiting-playbook' ),
+            'limit'    => 5,
+            'class'    => '',
+        ], $atts, 'rp_ai_job_finder' );
+        // Aktive Jobs zählen.
+        $job_count = wp_count_posts( 'job_listing' )->publish ?? 0;
+        if ( 0 === $job_count ) {
+            return '<div class="rp-plugin">
 				<div class="rp-bg-yellow-50 rp-border rp-border-yellow-200 rp-rounded-md rp-p-4 rp-text-yellow-800 rp-text-sm">
 					' . esc_html__( 'Currently no open positions available.', 'recruiting-playbook' ) . '
 				</div>
 			</div>';
-		}
+        }
+        // Assets laden.
+        $this->enqueueJobFinderAssets();
+        $limit = max( 1, min( 10, absint( $atts['limit'] ) ) );
+        $show_profile = true;
+        $show_skills = true;
+        ob_start();
+        // Template direkt einbinden mit Variablen.
+        $template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
+        if ( file_exists( $template ) ) {
+            include $template;
+        }
+        return ob_get_clean();
+    }
 
-		// Assets laden.
-		$this->enqueueJobFinderAssets();
+    /**
+     * Job-Finder Assets laden
+     *
+     * Lädt CSS und JS für den KI-Job-Finder.
+     */
+    private function enqueueJobFinderAssets() : void {
+        // Basis-Assets.
+        $this->enqueueAssets();
+        // Job-Finder CSS.
+        $css_file = RP_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
+        if ( file_exists( $css_file ) && !wp_style_is( 'rp-job-finder', 'enqueued' ) ) {
+            wp_enqueue_style(
+                'rp-job-finder',
+                RP_PLUGIN_URL . 'assets/dist/css/job-finder.css',
+                ['rp-frontend'],
+                RP_VERSION . '-' . filemtime( $css_file )
+            );
+        }
+        // Job-Finder JS - muss VOR Alpine.js geladen werden.
+        $js_file = RP_PLUGIN_DIR . 'assets/dist/js/job-finder.js';
+        if ( file_exists( $js_file ) && !wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
+            wp_enqueue_script(
+                'rp-job-finder',
+                RP_PLUGIN_URL . 'assets/dist/js/job-finder.js',
+                [],
+                RP_VERSION,
+                true
+            );
+            // Konfiguration für den Job-Finder.
+            wp_localize_script( 'rp-job-finder', 'rpJobFinderConfig', [
+                'endpoints' => [
+                    'analyze' => rest_url( 'recruiting/v1/match/job-finder' ),
+                    'status'  => rest_url( 'recruiting/v1/match/status' ),
+                ],
+                'nonce'     => wp_create_nonce( 'wp_rest' ),
+                'i18n'      => [
+                    'uploading'       => __( 'Uploading resume...', 'recruiting-playbook' ),
+                    'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
+                    'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+                    'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+                    'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+                    'noMatches'       => __( 'Unfortunately, no matching positions were found.', 'recruiting-playbook' ),
+                    'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+                    'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
+                    'matchHigh'       => __( 'Excellent fit', 'recruiting-playbook' ),
+                    'matchMedium'     => __( 'Good fit', 'recruiting-playbook' ),
+                    'matchLow'        => __( 'Conditional fit', 'recruiting-playbook' ),
+                    'viewJob'         => __( 'View job', 'recruiting-playbook' ),
+                    'applyNow'        => __( 'Apply now', 'recruiting-playbook' ),
+                    'matchedSkills'   => __( 'Matched skills', 'recruiting-playbook' ),
+                    'missingSkills'   => __( 'Missing skills', 'recruiting-playbook' ),
+                    'tryAgain'        => __( 'Try again', 'recruiting-playbook' ),
+                    'newSearch'       => __( 'New search', 'recruiting-playbook' ),
+                ],
+            ] );
+        }
+        // Alpine.js laden.
+        $this->enqueueAlpine( ['rp-job-finder'] );
+    }
 
-		$limit        = max( 1, min( 10, absint( $atts['limit'] ) ) );
-		$show_profile = true;
-		$show_skills  = true;
+    /**
+     * Match-Modal Assets laden
+     *
+     * Lädt CSS und JS für das KI-Matching Modal.
+     */
+    private function enqueueMatchModalAssets() : void {
+        // Basis-Assets.
+        $this->enqueueAssets();
+        // Match-Modal CSS.
+        $css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+        if ( file_exists( $css_file ) && !wp_style_is( 'rp-match-modal', 'enqueued' ) ) {
+            wp_enqueue_style(
+                'rp-match-modal',
+                RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+                ['rp-frontend'],
+                RP_VERSION . '-' . filemtime( $css_file )
+            );
+        }
+        // Match-Modal JS - muss VOR Alpine.js geladen werden.
+        $js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
+        if ( file_exists( $js_file ) && !wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
+            wp_enqueue_script(
+                'rp-match-modal',
+                RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
+                [],
+                RP_VERSION,
+                true
+            );
+            // Konfiguration für das Match-Modal.
+            wp_localize_script( 'rp-match-modal', 'rpMatchConfig', [
+                'endpoints' => [
+                    'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
+                    'status'  => rest_url( 'recruiting/v1/match/status' ),
+                ],
+                'nonce'     => wp_create_nonce( 'wp_rest' ),
+                'i18n'      => [
+                    'uploading'       => __( 'Uploading document...', 'recruiting-playbook' ),
+                    'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
+                    'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
+                    'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
+                    'error'           => __( 'An error occurred', 'recruiting-playbook' ),
+                    'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
+                    'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
+                    'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
+                    'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
+                    'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
+                ],
+            ] );
+        }
+        // Alpine.js laden.
+        $this->enqueueAlpine( ['rp-match-modal'] );
+    }
 
-		ob_start();
+    /**
+     * Alpine.js laden mit optionalen Abhängigkeiten
+     *
+     * @param array $additional_deps Zusätzliche Script-Abhängigkeiten.
+     */
+    private function enqueueAlpine( array $additional_deps = [] ) : void {
+        $alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+        if ( !wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+            wp_enqueue_script(
+                'rp-alpine',
+                RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+                $additional_deps,
+                '3.14.3',
+                true
+            );
+            // Defer-Attribut hinzufügen.
+            add_filter(
+                'script_loader_tag',
+                function ( $tag, $handle ) {
+                    if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+                        return str_replace( ' src', ' defer src', $tag );
+                    }
+                    return $tag;
+                },
+                10,
+                2
+            );
+        }
+    }
 
-		// Template direkt einbinden mit Variablen.
-		$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
-		if ( file_exists( $template ) ) {
-			include $template;
-		}
-
-		return ob_get_clean();
-	}
-
-	/**
-	 * Job-Finder Assets laden
-	 *
-	 * Lädt CSS und JS für den KI-Job-Finder.
-	 */
-	private function enqueueJobFinderAssets(): void {
-		// Basis-Assets.
-		$this->enqueueAssets();
-
-		// Job-Finder CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
-		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-job-finder', 'enqueued' ) ) {
-			wp_enqueue_style(
-				'rp-job-finder',
-				RP_PLUGIN_URL . 'assets/dist/css/job-finder.css',
-				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
-			);
-		}
-
-		// Job-Finder JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/job-finder.js';
-		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'rp-job-finder',
-				RP_PLUGIN_URL . 'assets/dist/js/job-finder.js',
-				[],
-				RP_VERSION,
-				true
-			);
-
-			// Konfiguration für den Job-Finder.
-			wp_localize_script(
-				'rp-job-finder',
-				'rpJobFinderConfig',
-				[
-					'endpoints' => [
-						'analyze' => rest_url( 'recruiting/v1/match/job-finder' ),
-						'status'  => rest_url( 'recruiting/v1/match/status' ),
-					],
-					'nonce'     => wp_create_nonce( 'wp_rest' ),
-					'i18n'      => [
-						'uploading'       => __( 'Uploading resume...', 'recruiting-playbook' ),
-						'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
-						'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
-						'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
-						'error'           => __( 'An error occurred', 'recruiting-playbook' ),
-						'noMatches'       => __( 'Unfortunately, no matching positions were found.', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
-						'matchHigh'       => __( 'Excellent fit', 'recruiting-playbook' ),
-						'matchMedium'     => __( 'Good fit', 'recruiting-playbook' ),
-						'matchLow'        => __( 'Conditional fit', 'recruiting-playbook' ),
-						'viewJob'         => __( 'View job', 'recruiting-playbook' ),
-						'applyNow'        => __( 'Apply now', 'recruiting-playbook' ),
-						'matchedSkills'   => __( 'Matched skills', 'recruiting-playbook' ),
-						'missingSkills'   => __( 'Missing skills', 'recruiting-playbook' ),
-						'tryAgain'        => __( 'Try again', 'recruiting-playbook' ),
-						'newSearch'       => __( 'New search', 'recruiting-playbook' ),
-					],
-				]
-			);
-		}
-
-		// Alpine.js laden.
-		$this->enqueueAlpine( [ 'rp-job-finder' ] );
-	}
-
-	/**
-	 * Match-Modal Assets laden
-	 *
-	 * Lädt CSS und JS für das KI-Matching Modal.
-	 */
-	private function enqueueMatchModalAssets(): void {
-		// Basis-Assets.
-		$this->enqueueAssets();
-
-		// Match-Modal CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
-		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-match-modal', 'enqueued' ) ) {
-			wp_enqueue_style(
-				'rp-match-modal',
-				RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
-				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
-			);
-		}
-
-		// Match-Modal JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
-		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'rp-match-modal',
-				RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
-				[],
-				RP_VERSION,
-				true
-			);
-
-			// Konfiguration für das Match-Modal.
-			wp_localize_script(
-				'rp-match-modal',
-				'rpMatchConfig',
-				[
-					'endpoints' => [
-						'analyze' => rest_url( 'recruiting/v1/match/analyze' ),
-						'status'  => rest_url( 'recruiting/v1/match/status' ),
-					],
-					'nonce'     => wp_create_nonce( 'wp_rest' ),
-					'i18n'      => [
-						'uploading'       => __( 'Uploading document...', 'recruiting-playbook' ),
-						'processing'      => __( 'Analysis running...', 'recruiting-playbook' ),
-						'analysisFailed'  => __( 'Analysis failed', 'recruiting-playbook' ),
-						'timeout'         => __( 'The analysis is taking too long. Please try again later.', 'recruiting-playbook' ),
-						'error'           => __( 'An error occurred', 'recruiting-playbook' ),
-						'resultHigh'      => __( 'Good match', 'recruiting-playbook' ),
-						'resultMedium'    => __( 'Partial match', 'recruiting-playbook' ),
-						'resultLow'       => __( 'Low match', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'Please upload a PDF, JPG, PNG or DOCX file.', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'The file is too large. Maximum: 10 MB.', 'recruiting-playbook' ),
-					],
-				]
-			);
-		}
-
-		// Alpine.js laden.
-		$this->enqueueAlpine( [ 'rp-match-modal' ] );
-	}
-
-	/**
-	 * Alpine.js laden mit optionalen Abhängigkeiten
-	 *
-	 * @param array $additional_deps Zusätzliche Script-Abhängigkeiten.
-	 */
-	private function enqueueAlpine( array $additional_deps = [] ): void {
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
-
-		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
-			wp_enqueue_script(
-				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
-				$additional_deps,
-				'3.14.3',
-				true
-			);
-
-			// Defer-Attribut hinzufügen.
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
-						return str_replace( ' src', ' defer src', $tag );
-					}
-					return $tag;
-				},
-				10,
-				2
-			);
-		}
-	}
-
-	/**
-	 * Upgrade-Prompt für nicht verfügbare Features
-	 *
-	 * @param string $feature       Feature-Name.
-	 * @param string $feature_name  Anzeige-Name.
-	 * @param string $required_tier Benötigter Tier.
-	 * @return string HTML.
-	 */
-	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
-		$tier_labels = [
-			'PRO' => 'Pro',
-			'KI'  => 'Pro',
-		];
-
-		$label = $tier_labels[ $required_tier ] ?? $required_tier;
-
-		return '<div class="rp-plugin">
+    /**
+     * Upgrade-Prompt für nicht verfügbare Features
+     *
+     * @param string $feature       Feature-Name.
+     * @param string $feature_name  Anzeige-Name.
+     * @param string $required_tier Benötigter Tier.
+     * @return string HTML.
+     */
+    private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ) : string {
+        $tier_labels = [
+            'PRO' => 'Pro',
+            'KI'  => 'Pro',
+        ];
+        $label = $tier_labels[$required_tier] ?? $required_tier;
+        return '<div class="rp-plugin">
 			<div class="rp-bg-gray-50 rp-rounded-lg rp-p-6 rp-text-center">
 				<svg class="rp-w-12 rp-h-12 rp-mx-auto rp-text-gray-400 rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
 				</svg>
-				<h3 class="rp-font-semibold rp-text-gray-900 rp-mb-2">' .
-				esc_html( $feature_name ) . '</h3>
-				<p class="rp-text-gray-600 rp-mb-4">' .
-				sprintf(
-					/* translators: %s: Required tier name */
-					esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
-					'<strong>' . esc_html( $label ) . '</strong>'
-				) . '</p>
-				<a href="' . esc_url( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
-				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
+				<h3 class="rp-font-semibold rp-text-gray-900 rp-mb-2">' . esc_html( $feature_name ) . '</h3>
+				<p class="rp-text-gray-600 rp-mb-4">' . sprintf( 
+            /* translators: %s: Required tier name */
+            esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
+            '<strong>' . esc_html( $label ) . '</strong>'
+         ) . '</p>
+				<a href="' . esc_url( ( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' . esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
 			</div>
 		</div>';
-	}
+    }
 
-	/**
-	 * Basis-Assets laden (CSS)
-	 */
-	private function enqueueAssets(): void {
-		// Frontend CSS laden (falls noch nicht geladen).
-		if ( ! wp_style_is( 'rp-frontend', 'enqueued' ) ) {
-			$css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
-			if ( file_exists( $css_file ) ) {
-				wp_enqueue_style(
-					'rp-frontend',
-					RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
-					[],
-					RP_VERSION . '-' . filemtime( $css_file )
-				);
-			}
-		}
+    /**
+     * Basis-Assets laden (CSS)
+     */
+    private function enqueueAssets() : void {
+        // Frontend CSS laden (falls noch nicht geladen).
+        if ( !wp_style_is( 'rp-frontend', 'enqueued' ) ) {
+            $css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
+            if ( file_exists( $css_file ) ) {
+                wp_enqueue_style(
+                    'rp-frontend',
+                    RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
+                    [],
+                    RP_VERSION . '-' . filemtime( $css_file )
+                );
+            }
+        }
+        // x-cloak CSS für Alpine.js.
+        wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
+    }
 
-		// x-cloak CSS für Alpine.js.
-		wp_add_inline_style( 'rp-frontend', '[x-cloak] { display: none !important; }' );
-	}
+    /**
+     * Custom Fields Form Assets laden
+     *
+     * Lädt CSS und JS für dynamische Formulare mit Custom Fields.
+     */
+    public function enqueueCustomFieldsAssets() : void {
+        // Basis-Assets.
+        $this->enqueueAssets();
+        // Custom Fields CSS.
+        $css_file = RP_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
+        if ( file_exists( $css_file ) && !wp_style_is( 'rp-custom-fields', 'enqueued' ) ) {
+            wp_enqueue_style(
+                'rp-custom-fields',
+                RP_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
+                ['rp-frontend'],
+                RP_VERSION . '-' . filemtime( $css_file )
+            );
+        }
+        // Tracking JS.
+        $tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+        $tracking_loaded = false;
+        if ( file_exists( $tracking_file ) && !wp_script_is( 'rp-tracking', 'enqueued' ) ) {
+            wp_enqueue_script(
+                'rp-tracking',
+                RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+                [],
+                RP_VERSION,
+                true
+            );
+            $tracking_loaded = true;
+        } elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
+            $tracking_loaded = true;
+        }
+        // Custom Fields Form JS.
+        $form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
+        if ( file_exists( $form_file ) && !wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+            $form_deps = ( $tracking_loaded ? ['rp-tracking'] : [] );
+            wp_enqueue_script(
+                'rp-custom-fields-form',
+                RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
+                $form_deps,
+                RP_VERSION . '-' . filemtime( $form_file ),
+                true
+            );
+            // Lokalisierung.
+            wp_localize_script( 'rp-custom-fields-form', 'rpForm', [
+                'apiUrl' => rest_url( 'recruiting/v1/' ),
+                'nonce'  => wp_create_nonce( 'wp_rest' ),
+                'i18n'   => [
+                    'required'        => __( 'This field is required', 'recruiting-playbook' ),
+                    'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+                    'invalidUrl'      => __( 'Please enter a valid URL', 'recruiting-playbook' ),
+                    'invalidPhone'    => __( 'Please enter a valid phone number', 'recruiting-playbook' ),
+                    'invalidNumber'   => __( 'Please enter a valid number', 'recruiting-playbook' ),
+                    'invalidDate'     => __( 'Please enter a valid date', 'recruiting-playbook' ),
+                    'minLength'       => __( 'At least {min} characters required', 'recruiting-playbook' ),
+                    'maxLength'       => __( 'Maximum {max} characters allowed', 'recruiting-playbook' ),
+                    'numberMin'       => __( 'Minimum value: {min}', 'recruiting-playbook' ),
+                    'numberMax'       => __( 'Maximum value: {max}', 'recruiting-playbook' ),
+                    'dateMin'         => __( 'Date must be after {date}', 'recruiting-playbook' ),
+                    'dateMax'         => __( 'Date must be before {date}', 'recruiting-playbook' ),
+                    'fileTooLarge'    => __( 'The file is too large (max. {size} MB)', 'recruiting-playbook' ),
+                    'invalidFileType' => __( 'File type not allowed', 'recruiting-playbook' ),
+                    'fileRequired'    => __( 'Please upload a file', 'recruiting-playbook' ),
+                    'maxFilesReached' => __( 'Maximum {max} files allowed', 'recruiting-playbook' ),
+                    'minSelections'   => __( 'Please select at least {min} options', 'recruiting-playbook' ),
+                    'maxSelections'   => __( 'Please select at most {max} options', 'recruiting-playbook' ),
+                    'patternMismatch' => __( 'The format is invalid', 'recruiting-playbook' ),
+                    'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
+                ],
+            ] );
+        }
+        // Alpine.js.
+        $alpine_deps = [];
+        if ( $tracking_loaded ) {
+            $alpine_deps[] = 'rp-tracking';
+        }
+        if ( wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
+            $alpine_deps[] = 'rp-custom-fields-form';
+        }
+        $alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+        if ( !wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+            wp_enqueue_script(
+                'rp-alpine',
+                RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+                $alpine_deps,
+                '3.14.3',
+                true
+            );
+            add_filter(
+                'script_loader_tag',
+                function ( $tag, $handle ) {
+                    if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+                        return str_replace( ' src', ' defer src', $tag );
+                    }
+                    return $tag;
+                },
+                10,
+                2
+            );
+        }
+    }
 
-	/**
-	 * Custom Fields Form Assets laden
-	 *
-	 * Lädt CSS und JS für dynamische Formulare mit Custom Fields.
-	 */
-	public function enqueueCustomFieldsAssets(): void {
-		// Basis-Assets.
-		$this->enqueueAssets();
+    /**
+     * Form-Assets laden (Alpine.js + Application Form JS)
+     */
+    private function enqueueFormAssets() : void {
+        // Alpine.js Abhängigkeiten.
+        $alpine_deps = [];
+        // Tracking JS.
+        $tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+        if ( file_exists( $tracking_file ) && !wp_script_is( 'rp-tracking', 'enqueued' ) ) {
+            wp_enqueue_script(
+                'rp-tracking',
+                RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+                [],
+                RP_VERSION,
+                true
+            );
+            $alpine_deps[] = 'rp-tracking';
+        } elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
+            $alpine_deps[] = 'rp-tracking';
+        }
+        // Application Form JS - muss VOR Alpine.js geladen werden.
+        // Note: Dieses Script ist plain JS (kein Build nötig), daher aus src/ laden.
+        $form_file = RP_PLUGIN_DIR . 'assets/src/js/application-form.js';
+        if ( file_exists( $form_file ) && !wp_script_is( 'rp-application-form', 'enqueued' ) ) {
+            wp_enqueue_script(
+                'rp-application-form',
+                RP_PLUGIN_URL . 'assets/src/js/application-form.js',
+                [],
+                // Keine Abhängigkeit zu Alpine - muss vorher laden!
+                RP_VERSION,
+                true
+            );
+            // Lokalisierung für das Formular.
+            wp_localize_script( 'rp-application-form', 'rpForm', [
+                'apiUrl'     => rest_url( 'recruiting/v1/' ),
+                'nonce'      => wp_create_nonce( 'wp_rest' ),
+                'validation' => [
+                    'first_name'      => [ 'required' => true ],
+                    'last_name'       => [ 'required' => true ],
+                    'email'           => [ 'required' => true, 'email' => true ],
+                    'privacy_consent' => [ 'required' => true ],
+                ],
+                'i18n'       => [
+                    'required'        => __( 'This field is required', 'recruiting-playbook' ),
+                    'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
+                    'fileTooLarge'    => __( 'The file is too large (max. 10 MB)', 'recruiting-playbook' ),
+                    'invalidFileType' => __( 'File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
+                    'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
+                ],
+            ] );
+            $alpine_deps[] = 'rp-application-form';
+        }
+        // Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
+        $alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+        if ( !wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
+            wp_enqueue_script(
+                'rp-alpine',
+                RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+                $alpine_deps,
+                '3.14.3',
+                true
+            );
+            // Defer-Attribut hinzufügen.
+            add_filter(
+                'script_loader_tag',
+                function ( $tag, $handle ) {
+                    if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
+                        return str_replace( ' src', ' defer src', $tag );
+                    }
+                    return $tag;
+                },
+                10,
+                2
+            );
+        }
+    }
 
-		// Custom Fields CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
-		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-custom-fields', 'enqueued' ) ) {
-			wp_enqueue_style(
-				'rp-custom-fields',
-				RP_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
-				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
-			);
-		}
-
-		// Tracking JS.
-		$tracking_file   = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
-		$tracking_loaded = false;
-		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'rp-tracking',
-				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
-				[],
-				RP_VERSION,
-				true
-			);
-			$tracking_loaded = true;
-		} elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
-			$tracking_loaded = true;
-		}
-
-		// Custom Fields Form JS.
-		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
-		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
-			$form_deps = $tracking_loaded ? [ 'rp-tracking' ] : [];
-			wp_enqueue_script(
-				'rp-custom-fields-form',
-				RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
-				$form_deps,
-				RP_VERSION . '-' . filemtime( $form_file ),
-				true
-			);
-
-			// Lokalisierung.
-			wp_localize_script(
-				'rp-custom-fields-form',
-				'rpForm',
-				[
-					'apiUrl' => rest_url( 'recruiting/v1/' ),
-					'nonce'  => wp_create_nonce( 'wp_rest' ),
-					'i18n'   => [
-						'required'        => __( 'This field is required', 'recruiting-playbook' ),
-						'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
-						'invalidUrl'      => __( 'Please enter a valid URL', 'recruiting-playbook' ),
-						'invalidPhone'    => __( 'Please enter a valid phone number', 'recruiting-playbook' ),
-						'invalidNumber'   => __( 'Please enter a valid number', 'recruiting-playbook' ),
-						'invalidDate'     => __( 'Please enter a valid date', 'recruiting-playbook' ),
-						'minLength'       => __( 'At least {min} characters required', 'recruiting-playbook' ),
-						'maxLength'       => __( 'Maximum {max} characters allowed', 'recruiting-playbook' ),
-						'numberMin'       => __( 'Minimum value: {min}', 'recruiting-playbook' ),
-						'numberMax'       => __( 'Maximum value: {max}', 'recruiting-playbook' ),
-						'dateMin'         => __( 'Date must be after {date}', 'recruiting-playbook' ),
-						'dateMax'         => __( 'Date must be before {date}', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'The file is too large (max. {size} MB)', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'File type not allowed', 'recruiting-playbook' ),
-						'fileRequired'    => __( 'Please upload a file', 'recruiting-playbook' ),
-						'maxFilesReached' => __( 'Maximum {max} files allowed', 'recruiting-playbook' ),
-						'minSelections'   => __( 'Please select at least {min} options', 'recruiting-playbook' ),
-						'maxSelections'   => __( 'Please select at most {max} options', 'recruiting-playbook' ),
-						'patternMismatch' => __( 'The format is invalid', 'recruiting-playbook' ),
-						'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
-					],
-				]
-			);
-		}
-
-		// Alpine.js.
-		$alpine_deps = [];
-		if ( $tracking_loaded ) {
-			$alpine_deps[] = 'rp-tracking';
-		}
-		if ( wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
-			$alpine_deps[] = 'rp-custom-fields-form';
-		}
-
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
-		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
-			wp_enqueue_script(
-				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
-				$alpine_deps,
-				'3.14.3',
-				true
-			);
-
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
-						return str_replace( ' src', ' defer src', $tag );
-					}
-					return $tag;
-				},
-				10,
-				2
-			);
-		}
-	}
-
-	/**
-	 * Form-Assets laden (Alpine.js + Application Form JS)
-	 */
-	private function enqueueFormAssets(): void {
-		// Alpine.js Abhängigkeiten.
-		$alpine_deps = [];
-
-		// Tracking JS.
-		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
-		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'rp-tracking',
-				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
-				[],
-				RP_VERSION,
-				true
-			);
-			$alpine_deps[] = 'rp-tracking';
-		} elseif ( wp_script_is( 'rp-tracking', 'enqueued' ) || wp_script_is( 'rp-tracking', 'registered' ) ) {
-			$alpine_deps[] = 'rp-tracking';
-		}
-
-		// Application Form JS - muss VOR Alpine.js geladen werden.
-		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';
-		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-application-form', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'rp-application-form',
-				RP_PLUGIN_URL . 'assets/dist/js/application-form.js',
-				[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
-				RP_VERSION,
-				true
-			);
-
-			// Lokalisierung für das Formular.
-			wp_localize_script(
-				'rp-application-form',
-				'rpForm',
-				[
-					'apiUrl' => rest_url( 'recruiting/v1/' ),
-					'nonce'  => wp_create_nonce( 'wp_rest' ),
-					'i18n'   => [
-						'required'        => __( 'This field is required', 'recruiting-playbook' ),
-						'invalidEmail'    => __( 'Please enter a valid email address', 'recruiting-playbook' ),
-						'fileTooLarge'    => __( 'The file is too large (max. 10 MB)', 'recruiting-playbook' ),
-						'invalidFileType' => __( 'File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG', 'recruiting-playbook' ),
-						'privacyRequired' => __( 'Please agree to the privacy policy', 'recruiting-playbook' ),
-					],
-				]
-			);
-
-			$alpine_deps[] = 'rp-application-form';
-		}
-
-		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
-		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
-			wp_enqueue_script(
-				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
-				$alpine_deps,
-				'3.14.3',
-				true
-			);
-
-			// Defer-Attribut hinzufügen.
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					if ( 'rp-alpine' === $handle && false === strpos( $tag, 'defer' ) ) {
-						return str_replace( ' src', ' defer src', $tag );
-					}
-					return $tag;
-				},
-				10,
-				2
-			);
-		}
-	}
 }

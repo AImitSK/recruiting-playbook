@@ -437,34 +437,52 @@ export function ApplicationsPage() {
 	};
 
 	/**
-	 * Format relative date
+	 * Format relative date with better UX
 	 */
 	const formatRelativeDate = ( dateString ) => {
 		const date = new Date( dateString );
 		const now = new Date();
 		const diffMs = now - date;
-		const diffDays = Math.floor( diffMs / ( 1000 * 60 * 60 * 24 ) );
-		const diffHours = Math.floor( diffMs / ( 1000 * 60 * 60 ) );
 		const diffMinutes = Math.floor( diffMs / ( 1000 * 60 ) );
+		const diffHours = Math.floor( diffMs / ( 1000 * 60 * 60 ) );
 
-		if ( diffMinutes < 60 ) {
+		// Check if same day (today)
+		const isToday = date.toDateString() === now.toDateString();
+
+		// Check if yesterday
+		const yesterday = new Date( now );
+		yesterday.setDate( yesterday.getDate() - 1 );
+		const isYesterday = date.toDateString() === yesterday.toDateString();
+
+		// Just now (< 5 minutes)
+		if ( diffMinutes < 5 ) {
+			return __( 'Just now', 'recruiting-playbook' );
+		}
+
+		// Today: show time
+		if ( isToday ) {
 			return sprintf(
-				_n( '%d minute ago', '%d minutes ago', diffMinutes, 'recruiting-playbook' ),
-				diffMinutes
+				/* translators: %s: time like "14:30" */
+				__( 'Today at %s', 'recruiting-playbook' ),
+				date.toLocaleTimeString( getWpLocale(), { hour: '2-digit', minute: '2-digit' } )
 			);
 		}
-		if ( diffHours < 24 ) {
-			return sprintf(
-				_n( '%d hour ago', '%d hours ago', diffHours, 'recruiting-playbook' ),
-				diffHours
-			);
+
+		// Yesterday
+		if ( isYesterday ) {
+			return __( 'Yesterday', 'recruiting-playbook' );
 		}
+
+		// Within last 7 days
+		const diffDays = Math.floor( diffMs / ( 1000 * 60 * 60 * 24 ) );
 		if ( diffDays < 7 ) {
 			return sprintf(
 				_n( '%d day ago', '%d days ago', diffDays, 'recruiting-playbook' ),
 				diffDays
 			);
 		}
+
+		// Older: show date
 		return date.toLocaleDateString( getWpLocale() );
 	};
 
