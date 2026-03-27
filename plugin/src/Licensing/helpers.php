@@ -129,6 +129,12 @@ function rp_get_feature_plan_mapping(): array {
  * if ( rp_can( 'ai_cv_matching' ) ) { ... }
  */
 function rp_can( string $feature ): mixed {
+	// WordPress.org Compliance: In der Free-Version alle Features aktiviert.
+	// Pro-Code existiert dort nicht, daher keine Feature-Checks nötig.
+	if ( ! rp_fs()->is__premium_only() ) {
+		return true;
+	}
+
 	// Development Mode: Alle Features aktiviert.
 	// Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
 	if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {

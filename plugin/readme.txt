@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.35
+Stable tag: 1.2.36
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,10 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.36 - 2026-03-27 =
+* Fix: rp_can() function now returns true in Free version (WordPress.org Guideline 5 compliance)
+* Fix: All API endpoints and services fully functional without license checks
 
 = 1.2.35 - 2026-03-26 =
 * Fix: WordPress.org Plugin Review - All feature gates removed (Guideline 5 Trialware compliance)
