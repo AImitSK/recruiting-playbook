@@ -2924,7 +2924,7 @@ msgstr "Standard-Absenderdaten für automatische und manuelle E-Mails."
  assets/dist/js/admin.js:2
 #: assets/src/js/admin/settings/components/ExportSettings.jsx:211
 msgid "Full Backup"
-msgstr "Full Zurückup"
+msgstr "Vollständiges Backup"
 
 #: src/Admin/Settings.php:505
 msgid "Exports all plugin data as JSON file"

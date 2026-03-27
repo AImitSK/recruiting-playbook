@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Globale Helper-Funktionen für Lizenz-System (Freemius)
  *
@@ -14,15 +15,10 @@
  *
  * @package RecruitingPlaybook
  */
-
-declare(strict_types=1);
-
+declare (strict_types = 1);
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Legacy prefix, namespace provides uniqueness
-
 defined( 'ABSPATH' ) || exit;
-
 use RecruitingPlaybook\Licensing\FeatureFlags;
-
 /**
  * Feature-Mapping: Welche Features gehören zu welchem Plan
  *
@@ -30,90 +26,93 @@ use RecruitingPlaybook\Licensing\FeatureFlags;
  *
  * @return array<string, array{source: string, plans: array<string>}> Feature => Config-Array
  */
-function rp_get_feature_plan_mapping(): array {
-	return [
-		// Pro Features (inkl. KI).
-		'kanban_board'                  => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'advanced_applicant_management' => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'email_templates'               => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'custom_fields'                 => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'api_access'                    => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'webhooks'                      => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'integrations'                  => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'advanced_reporting'            => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'csv_export'                    => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'design_settings'               => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'custom_branding'               => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'user_roles'                    => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'avada_integration'             => [
-			'source' => 'free',
-		],
-		'gutenberg_blocks'              => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'priority_support'              => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'ai_job_generation'             => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'ai_text_improvement'           => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'ai_templates'                  => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-		'ai_cv_matching'                => [
-			'source' => 'parent',
-			'plans'  => [ 'pro' ],
-		],
-
-		// Free Features (immer verfügbar).
-		'create_jobs'                   => [ 'source' => 'free' ],
-		'unlimited_jobs'                => [ 'source' => 'free' ],
-		'application_list'              => [ 'source' => 'free' ],
-	];
+function rp_get_feature_plan_mapping() : array {
+    return [
+        'kanban_board'                  => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'advanced_applicant_management' => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'email_templates'               => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'custom_fields'                 => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'api_access'                    => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'webhooks'                      => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'integrations'                  => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'advanced_reporting'            => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'csv_export'                    => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'design_settings'               => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'custom_branding'               => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'user_roles'                    => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'avada_integration'             => [
+            'source' => 'free',
+        ],
+        'gutenberg_blocks'              => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'priority_support'              => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'ai_job_generation'             => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'ai_text_improvement'           => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'ai_templates'                  => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'ai_cv_matching'                => [
+            'source' => 'parent',
+            'plans'  => ['pro'],
+        ],
+        'create_jobs'                   => [
+            'source' => 'free',
+        ],
+        'unlimited_jobs'                => [
+            'source' => 'free',
+        ],
+        'application_list'              => [
+            'source' => 'free',
+        ],
+    ];
 }
 
 /**
@@ -128,58 +127,62 @@ function rp_get_feature_plan_mapping(): array {
  * if ( rp_can( 'kanban_board' ) ) { ... }
  * if ( rp_can( 'ai_cv_matching' ) ) { ... }
  */
-function rp_can( string $feature ): mixed {
-	// WordPress.org Compliance: In der Free-Version alle Features aktiviert.
-	// Pro-Code existiert dort nicht, daher keine Feature-Checks nötig.
-	if ( ! rp_fs()->is__premium_only() ) {
-		return true;
-	}
+function rp_can(  string $feature  ) : mixed {
+    // WordPress.org Compliance: In Free-Version Pro-Features deaktiviert.
+    // Die Free-Version enthält keinen Pro-Code (Freemius entfernt ihn).
+    // Daher müssen Pro-Features hier als nicht verfügbar markiert werden.
+    if ( ! function_exists( 'rp_fs' ) || ! rp_fs()->is__premium_only() ) {
+        $mapping = rp_get_feature_plan_mapping();
+        if ( isset( $mapping[$feature] ) ) {
+            $config = $mapping[$feature];
+            // Free Features sind immer verfügbar.
+            if ( 'free' === $config['source'] ) {
+                return true;
+            }
+            // Pro-Features in Free-Version nicht verfügbar.
+            return false;
+        }
+        // Unbekanntes Feature = nicht verfügbar.
+        return false;
+    }
 
-	// Development Mode: Alle Features aktiviert.
-	// Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
-	if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {
-		// Für detaillierte Werte (max_jobs etc.) trotzdem FeatureFlags nutzen.
-		$tier  = 'PRO'; // Höchster Tier mit allen Features.
-		$flags = new FeatureFlags( $tier );
-		$value = $flags->get( $feature );
-		return $value !== false ? $value : true;
-	}
+    // --- Ab hier: Premium-Version ---
 
-	$mapping = rp_get_feature_plan_mapping();
-
-	// Feature in Mapping definiert.
-	if ( isset( $mapping[ $feature ] ) ) {
-		$config = $mapping[ $feature ];
-
-		// Free Features sind immer verfügbar.
-		if ( 'free' === $config['source'] ) {
-			return true;
-		}
-
-		// Parent Features → Plan prüfen.
-		if ( 'parent' === $config['source'] ) {
-			if ( ! function_exists( 'rp_fs' ) ) {
-				return false;
-			}
-
-			if ( ! rp_fs()->is_paying() && ! rp_fs()->is_trial() ) {
-				return false;
-			}
-
-			foreach ( $config['plans'] as $plan ) {
-				if ( rp_fs()->is_plan( $plan ) ) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-
-	// Fallback: FeatureFlags-Klasse für detaillierte Werte (z.B. max_jobs, reporting level).
-	$tier  = rp_tier();
-	$flags = new FeatureFlags( $tier );
-	return $flags->get( $feature );
+    // Development Mode: Alle Features aktiviert.
+    // Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
+    if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {
+        // Für detaillierte Werte (max_jobs etc.) trotzdem FeatureFlags nutzen.
+        $tier = 'PRO';
+        // Höchster Tier mit allen Features.
+        $flags = new FeatureFlags($tier);
+        $value = $flags->get( $feature );
+        return ( $value !== false ? $value : true );
+    }
+    $mapping = rp_get_feature_plan_mapping();
+    // Feature in Mapping definiert.
+    if ( isset( $mapping[$feature] ) ) {
+        $config = $mapping[$feature];
+        // Free Features sind immer verfügbar.
+        if ( 'free' === $config['source'] ) {
+            return true;
+        }
+        // Parent Features → Plan prüfen.
+        if ( 'parent' === $config['source'] ) {
+            if ( !rp_fs()->is_paying() && !rp_fs()->is_trial() ) {
+                return false;
+            }
+            foreach ( $config['plans'] as $plan ) {
+                if ( rp_fs()->is_plan( $plan ) ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    // Fallback: FeatureFlags-Klasse für detaillierte Werte (z.B. max_jobs, reporting level).
+    $tier = rp_tier();
+    $flags = new FeatureFlags($tier);
+    return $flags->get( $feature );
 }
 
 /**
@@ -190,14 +193,13 @@ function rp_can( string $feature ): mixed {
  *
  * @return string Tier-Name (FREE, PRO).
  */
-function rp_tier(): string {
-	if ( function_exists( 'rp_fs' ) && ( rp_fs()->is_paying() || rp_fs()->is_trial() ) ) {
-		if ( rp_fs()->is_plan( 'pro' ) ) {
-			return 'PRO';
-		}
-	}
-
-	return 'FREE';
+function rp_tier() : string {
+    if ( function_exists( 'rp_fs' ) && (rp_fs()->is_paying() || rp_fs()->is_trial()) ) {
+        if ( rp_fs()->is_plan( 'pro' ) ) {
+            return 'PRO';
+        }
+    }
+    return 'FREE';
 }
 
 /**
@@ -205,11 +207,11 @@ function rp_tier(): string {
  *
  * @return bool True wenn Pro-Plan auf dem Parent-Plugin aktiv.
  */
-function rp_is_pro(): bool {
-	if ( ! function_exists( 'rp_fs' ) ) {
-		return false;
-	}
-	return ( rp_fs()->is_paying() || rp_fs()->is_trial() ) && rp_fs()->is_plan( 'pro' );
+function rp_is_pro() : bool {
+    if ( !function_exists( 'rp_fs' ) ) {
+        return false;
+    }
+    return (rp_fs()->is_paying() || rp_fs()->is_trial()) && rp_fs()->is_plan( 'pro' );
 }
 
 /**
@@ -219,8 +221,8 @@ function rp_is_pro(): bool {
  *
  * @return bool True wenn Pro-Plan aktiv.
  */
-function rp_has_ai(): bool {
-	return rp_is_pro();
+function rp_has_ai() : bool {
+    return rp_is_pro();
 }
 
 /**
@@ -231,19 +233,17 @@ function rp_has_ai(): bool {
  *
  * @return bool True wenn Pro-Plan aktiv UND KI-Features nicht deaktiviert.
  */
-function rp_has_cv_matching(): bool {
-	// Lizenz-Check.
-	if ( rp_can( 'ai_cv_matching' ) !== true ) {
-		return false;
-	}
-
-	// Admin-Einstellung prüfen: KI-Features deaktiviert?
-	$settings = get_option( 'rp_settings', [] );
-	if ( ! empty( $settings['disable_ai_features'] ) ) {
-		return false;
-	}
-
-	return true;
+function rp_has_cv_matching() : bool {
+    // Lizenz-Check.
+    if ( rp_can( 'ai_cv_matching' ) !== true ) {
+        return false;
+    }
+    // Admin-Einstellung prüfen: KI-Features deaktiviert?
+    $settings = get_option( 'rp_settings', [] );
+    if ( !empty( $settings['disable_ai_features'] ) ) {
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -252,11 +252,11 @@ function rp_has_cv_matching(): bool {
  * @param string|null $tier Optional: Spezifischer Tier für Deep-Link.
  * @return string Upgrade-URL.
  */
-function rp_upgrade_url( ?string $tier = null ): string {
-	if ( ! function_exists( 'rp_fs' ) ) {
-		return 'https://recruiting-playbook.com/pricing/';
-	}
-	return rp_fs()->get_upgrade_url();
+function rp_upgrade_url(  ?string $tier = null  ) : string {
+    if ( !function_exists( 'rp_fs' ) ) {
+        return 'https://recruiting-playbook.com/pricing/';
+    }
+    return rp_fs()->get_upgrade_url();
 }
 
 /**
@@ -264,19 +264,16 @@ function rp_upgrade_url( ?string $tier = null ): string {
  *
  * @return bool True wenn Lizenz gültig (oder FREE).
  */
-function rp_license_is_valid(): bool {
-	$tier = rp_tier();
-
-	if ( 'FREE' === $tier ) {
-		return true;
-	}
-
-	if ( ! function_exists( 'rp_fs' ) ) {
-		return false;
-	}
-
-	// Freemius prüft automatisch die Lizenzgültigkeit.
-	return rp_fs()->is_paying();
+function rp_license_is_valid() : bool {
+    $tier = rp_tier();
+    if ( 'FREE' === $tier ) {
+        return true;
+    }
+    if ( !function_exists( 'rp_fs' ) ) {
+        return false;
+    }
+    // Freemius prüft automatisch die Lizenzgültigkeit.
+    return rp_fs()->is_paying();
 }
 
 /**
@@ -284,41 +281,35 @@ function rp_license_is_valid(): bool {
  *
  * @return array<string, mixed> Status-Array.
  */
-function rp_license_status(): array {
-	$tier = rp_tier();
-
-	$tier_labels = [
-		'FREE' => 'Free',
-		'PRO'  => 'Pro',
-	];
-
-	if ( ! function_exists( 'rp_fs' ) || 'FREE' === $tier ) {
-		return [
-			'tier'        => 'FREE',
-			'has_ai'      => rp_has_ai(),
-			'is_active'   => false,
-			'is_valid'    => true,
-			'message'     => __( 'Free version', 'recruiting-playbook' ),
-			'upgrade_url' => rp_upgrade_url(),
-		];
-	}
-
-	$is_paying = rp_fs()->is_paying();
-
-	return [
-		'tier'        => $tier,
-		'has_ai'      => rp_has_ai(),
-		'is_active'   => $is_paying,
-		'is_valid'    => $is_paying,
-		'message'     => $is_paying
-			? sprintf(
-				/* translators: %s: tier name */
-				__( '%s license active', 'recruiting-playbook' ),
-				$tier_labels[ $tier ] ?? $tier
-			)
-			: __( 'License invalid or expired.', 'recruiting-playbook' ),
-		'upgrade_url' => rp_upgrade_url(),
-	];
+function rp_license_status() : array {
+    $tier = rp_tier();
+    $tier_labels = [
+        'FREE' => 'Free',
+        'PRO'  => 'Pro',
+    ];
+    if ( !function_exists( 'rp_fs' ) || 'FREE' === $tier ) {
+        return [
+            'tier'        => 'FREE',
+            'has_ai'      => rp_has_ai(),
+            'is_active'   => false,
+            'is_valid'    => true,
+            'message'     => __( 'Free version', 'recruiting-playbook' ),
+            'upgrade_url' => rp_upgrade_url(),
+        ];
+    }
+    $is_paying = rp_fs()->is_paying();
+    return [
+        'tier'        => $tier,
+        'has_ai'      => rp_has_ai(),
+        'is_active'   => $is_paying,
+        'is_valid'    => $is_paying,
+        'message'     => ( $is_paying ? sprintf( 
+            /* translators: %s: tier name */
+            __( '%s license active', 'recruiting-playbook' ),
+            $tier_labels[$tier] ?? $tier
+         ) : __( 'License invalid or expired.', 'recruiting-playbook' ) ),
+        'upgrade_url' => rp_upgrade_url(),
+    ];
 }
 
 /**
@@ -326,10 +317,10 @@ function rp_license_status(): array {
  *
  * @return array<string, mixed> Feature-Array.
  */
-function rp_features(): array {
-	$tier  = rp_tier();
-	$flags = new FeatureFlags( $tier );
-	return $flags->all();
+function rp_features() : array {
+    $tier = rp_tier();
+    $flags = new FeatureFlags($tier);
+    return $flags->all();
 }
 
 /**
@@ -347,18 +338,16 @@ function rp_features(): array {
  *     return new WP_Error( 'forbidden', 'Keine Berechtigung', [ 'status' => 403 ] );
  * }
  */
-function rp_user_can_use_feature( string $feature, string $capability ): bool {
-	// 1. Capability-Check (WordPress-Core-Security).
-	if ( ! current_user_can( $capability ) ) {
-		return false;
-	}
-
-	// 2. Feature-Flag-Check (Business-Logic).
-	if ( ! rp_can( $feature ) ) {
-		return false;
-	}
-
-	return true;
+function rp_user_can_use_feature(  string $feature, string $capability  ) : bool {
+    // 1. Capability-Check (WordPress-Core-Security).
+    if ( !current_user_can( $capability ) ) {
+        return false;
+    }
+    // 2. Feature-Flag-Check (Business-Logic).
+    if ( !rp_can( $feature ) ) {
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -373,29 +362,26 @@ function rp_user_can_use_feature( string $feature, string $capability ): bool {
  * @param string $error_message Fehlermeldung.
  * @return bool|\WP_Error True bei Erfolg, WP_Error bei Fehler.
  */
-function rp_check_feature_permission( string $feature, string $capability, string $error_code, string $error_message ) {
-	// 1. Capability-Check (WordPress-Core-Security).
-	if ( ! current_user_can( $capability ) ) {
-		return new \WP_Error(
-			'rest_forbidden',
-			$error_message,
-			[ 'status' => 403 ]
-		);
-	}
-
-	// 2. Feature-Flag-Check (Business-Logic).
-	if ( ! rp_can( $feature ) ) {
-		return new \WP_Error(
-			$error_code,
-			__( 'This feature requires Pro.', 'recruiting-playbook' ),
-			[
-				'status'      => 403,
-				'upgrade_url' => rp_upgrade_url( 'PRO' ),
-			]
-		);
-	}
-
-	return true;
+function rp_check_feature_permission(
+    string $feature,
+    string $capability,
+    string $error_code,
+    string $error_message
+) {
+    // 1. Capability-Check (WordPress-Core-Security).
+    if ( !current_user_can( $capability ) ) {
+        return new \WP_Error('rest_forbidden', $error_message, [
+            'status' => 403,
+        ]);
+    }
+    // 2. Feature-Flag-Check (Business-Logic).
+    if ( !rp_can( $feature ) ) {
+        return new \WP_Error($error_code, __( 'This feature requires Pro.', 'recruiting-playbook' ), [
+            'status'      => 403,
+            'upgrade_url' => rp_upgrade_url( 'PRO' ),
+        ]);
+    }
+    return true;
 }
 
 /**
@@ -431,44 +417,39 @@ function rp_check_feature_permission( string $feature, string $capability, strin
  * </div>
  * ```
  */
-function rp_require_feature( string $feature, string $feature_name, string $required_tier = 'PRO' ): bool {
-	// WordPress.org Compliance: In der Free-Version keine Upgrade-Hinweise zeigen.
-	// Pro-Seiten existieren dort nicht, daher immer true zurückgeben.
-	if ( ! rp_fs()->is__premium_only() ) {
-		return true;
-	}
+function rp_require_feature(  string $feature, string $feature_name, string $required_tier = 'PRO'  ) : bool {
+    // WordPress.org Compliance: In Free-Version keine Upgrade-Hinweise anzeigen.
+    // Pro-Features sind in der Free-Version einfach nicht verfügbar.
+    if ( ! function_exists( 'rp_fs' ) || ! rp_fs()->is__premium_only() ) {
+        return rp_can( $feature ); // Gibt false für Pro-Features zurück.
+    }
 
-	if ( rp_can( $feature ) ) {
-		return true;
-	}
-
-	// Pro-Version: Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
-	$upgrade_url = esc_url( rp_upgrade_url( $required_tier ) );
-	$title       = esc_html(
-		sprintf(
-			/* translators: %s: feature name */
-			__( '%s is a Pro feature', 'recruiting-playbook' ),
-			$feature_name
-		)
-	);
-	$description = esc_html__( 'Upgrade to Pro to unlock this feature. You can compare plans and pricing on the upgrade page.', 'recruiting-playbook' );
-	$button_text = esc_html__( 'Upgrade to Pro', 'recruiting-playbook' );
-
-	echo '<div style="display:flex;align-items:flex-start;gap:16px;padding:24px;background:linear-gradient(135deg,#f0f6fc 0%,#fff 100%);border:1px solid #c3d9ed;border-radius:8px;margin-top:20px;">';
-	echo '<div style="flex-shrink:0;width:48px;height:48px;background:#2271b1;border-radius:50%;display:flex;align-items:center;justify-content:center;">';
-	echo '<span class="dashicons dashicons-lock" style="font-size:24px;width:24px;height:24px;color:#fff;"></span>';
-	echo '</div>';
-	echo '<div>';
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $title is escaped with esc_html() above
-	echo '<h3 style="margin:0 0 8px 0;font-size:16px;color:#1d2327;">' . $title . '</h3>';
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $description is escaped with esc_html__() above
-	echo '<p style="margin:0 0 16px 0;color:#50575e;font-size:14px;line-height:1.5;">' . $description . '</p>';
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $upgrade_url and $button_text are escaped above
-	echo '<a href="' . $upgrade_url . '" class="button button-primary button-hero">' . $button_text . '</a>';
-	echo '</div>';
-	echo '</div>';
-
-	return false;
+    if ( rp_can( $feature ) ) {
+        return true;
+    }
+    // Pro-Version: Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
+    $upgrade_url = esc_url( rp_upgrade_url( $required_tier ) );
+    $title = esc_html( sprintf( 
+        /* translators: %s: feature name */
+        __( '%s is a Pro feature', 'recruiting-playbook' ),
+        $feature_name
+     ) );
+    $description = esc_html__( 'Upgrade to Pro to unlock this feature. You can compare plans and pricing on the upgrade page.', 'recruiting-playbook' );
+    $button_text = esc_html__( 'Upgrade to Pro', 'recruiting-playbook' );
+    echo '<div style="display:flex;align-items:flex-start;gap:16px;padding:24px;background:linear-gradient(135deg,#f0f6fc 0%,#fff 100%);border:1px solid #c3d9ed;border-radius:8px;margin-top:20px;">';
+    echo '<div style="flex-shrink:0;width:48px;height:48px;background:#2271b1;border-radius:50%;display:flex;align-items:center;justify-content:center;">';
+    echo '<span class="dashicons dashicons-lock" style="font-size:24px;width:24px;height:24px;color:#fff;"></span>';
+    echo '</div>';
+    echo '<div>';
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $title is escaped with esc_html() above
+    echo '<h3 style="margin:0 0 8px 0;font-size:16px;color:#1d2327;">' . $title . '</h3>';
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $description is escaped with esc_html__() above
+    echo '<p style="margin:0 0 16px 0;color:#50575e;font-size:14px;line-height:1.5;">' . $description . '</p>';
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $upgrade_url and $button_text are escaped above
+    echo '<a href="' . $upgrade_url . '" class="button button-primary button-hero">' . $button_text . '</a>';
+    echo '</div>';
+    echo '</div>';
+    return false;
 }
 
 /**
@@ -476,8 +457,8 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
  *
  * @return object|null Key-DB-Objekt oder null wenn kein API-Key-Auth.
  */
-function rp_get_api_key_data(): ?object {
-	return $GLOBALS['rp_authenticated_api_key'] ?? null;
+function rp_get_api_key_data() : ?object {
+    return $GLOBALS['rp_authenticated_api_key'] ?? null;
 }
 
 /**
@@ -489,11 +470,12 @@ function rp_get_api_key_data(): ?object {
  * @param string $permission Permission-String (z.B. 'jobs_read').
  * @return bool
  */
-function rp_api_key_can( string $permission ): bool {
-	$key_data = rp_get_api_key_data();
-	if ( ! $key_data ) {
-		return true; // WordPress-Auth = alles erlaubt.
-	}
-	$service = new \RecruitingPlaybook\Services\ApiKeyService();
-	return $service->hasPermission( $key_data, $permission );
+function rp_api_key_can(  string $permission  ) : bool {
+    $key_data = rp_get_api_key_data();
+    if ( !$key_data ) {
+        return true;
+        // WordPress-Auth = alles erlaubt.
+    }
+    $service = new \RecruitingPlaybook\Services\ApiKeyService();
+    return $service->hasPermission( $key_data, $permission );
 }

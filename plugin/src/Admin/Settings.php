@@ -393,8 +393,11 @@ class Settings {
 	 * Assets laden
 	 */
 	private function enqueueAssets(): void {
-		// Pro-Status prüfen.
-		$is_pro = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		// Pro-Status prüfen: Nur in Premium-Version UND mit gültigem Pro-Plan.
+		$is_pro = function_exists( 'rp_fs' )
+			&& rp_fs()->is__premium_only()
+			&& function_exists( 'rp_can' )
+			&& rp_can( 'custom_branding' );
 
 		// Konfiguration für React.
 		// Import-Ergebnis aus Transient lesen (falls vorhanden).
