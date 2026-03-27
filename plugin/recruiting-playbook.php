@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Recruiting Playbook
  * Plugin URI: https://recruiting-playbook.com/
  * Description: Professionelles Bewerbermanagement für WordPress
- * Version: 1.2.34
+ * Version: 1.2.35
  * Update URI: https://api.freemius.com
  * Requires at least: 6.0
  * Requires PHP: 8.0

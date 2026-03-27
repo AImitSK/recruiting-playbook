@@ -48,7 +48,7 @@ export function BlockPlaceholder( {
 	docAnchor = '',
 	shortcode = '',
 } ) {
-	const baseUrl = 'https://developer.recruiting-playbook.de/docs/gutenberg-blocks';
+	const baseUrl = 'https://developer.recruiting-playbook.dev/docs/gutenberg-blocks';
 	const docUrl = docAnchor ? `${ baseUrl }#${ docAnchor }` : baseUrl;
 
 	return (

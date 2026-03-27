@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.34
+Stable tag: 1.2.35
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,20 +14,13 @@ Professional applicant tracking system for WordPress. Create job listings, manag
 
 **Recruiting Playbook** is a professional Applicant Tracking System (ATS) for WordPress. Manage job listings and applications directly from your WordPress dashboard. Built with German companies in mind, fully GDPR-compliant.
 
-### Features (Free)
+### Features
 
-* Unlimited job listings - No limits
+* Unlimited job listings - No limits on creating jobs
 * Multi-step application form - CV upload, cover letter, GDPR checkboxes
+* Kanban Board - Drag & drop application management
 * Application management - Clear table view with filtering & sorting
 * Status workflow - New, Screening, Interview, Offer, Hired
-* Email notifications - Automatic notifications for new applications
-* GDPR-compliant - Privacy checkboxes, soft deletes, anonymization
-* Responsive design - Works on all devices
-* Page Builder support - Gutenberg Blocks, Shortcodes
-
-### Premium Features (Pro)
-
-* Kanban Board - Drag & drop application management
 * AI Resume Matching - Automatic evaluation of applications
 * Advanced email templates - Templates with placeholders
 * Talent Pool - Save candidates for future positions
@@ -35,7 +28,10 @@ Professional applicant tracking system for WordPress. Create job listings, manag
 * Reporting & Analytics - Conversion rate, time-to-hire
 * Custom Fields - Custom form fields
 * API & Webhooks - Integration with external tools
-* Avada & Elementor Integration - Premium page builder elements
+* Email notifications - Automatic notifications for new applications
+* GDPR-compliant - Privacy checkboxes, soft deletes, anonymization
+* Responsive design - Works on all devices
+* Page Builder support - Gutenberg Blocks, Shortcodes, Avada, Elementor
 
 [Learn more](https://recruiting-playbook.com/)
 
@@ -69,6 +65,14 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.2.35 - 2026-03-26 =
+* Fix: WordPress.org Plugin Review - All feature gates removed (Guideline 5 Trialware compliance)
+* Fix: All features now fully unlocked without license restrictions
+* Fix: Freemius SDK updated to 2.13.1
+* Fix: SettingsController company endpoint now requires manage_options capability
+* Fix: Developer documentation URL corrected to .dev domain
+* Fix: Removed Pro/Premium feature labels from readme
 
 = 1.2.34 - 2026-03-20 =
 * Fix: Terms/Privacy URLs corrected to /legal/terms and /legal/privacy
@@ -212,7 +216,7 @@ WordPress.org final compliance fixes (tested 6.9, composer.json included).
 
 This plugin connects to external services for specific functionality. By using these features, you agree to their respective terms of service and privacy policies.
 
-= AI Resume Matching (Pro Feature) =
+= AI Resume Matching =
 
 The AI Resume Matching feature sends uploaded CVs and job descriptions to our AI analysis service for anonymous evaluation.
 

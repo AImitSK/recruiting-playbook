@@ -5,7 +5,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "php": ">=8.0",
-        "freemius/wordpress-sdk": "^2.13",
+        "freemius/wordpress-sdk": "2.13.1",
         "woocommerce/action-scheduler": "^3.7"
     },
     "require-dev": {

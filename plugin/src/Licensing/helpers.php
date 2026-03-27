@@ -426,11 +426,17 @@ function rp_check_feature_permission( string $feature, string $capability, strin
  * ```
  */
 function rp_require_feature( string $feature, string $feature_name, string $required_tier = 'PRO' ): bool {
+	// WordPress.org Compliance: In der Free-Version keine Upgrade-Hinweise zeigen.
+	// Pro-Seiten existieren dort nicht, daher immer true zurückgeben.
+	if ( ! rp_fs()->is__premium_only() ) {
+		return true;
+	}
+
 	if ( rp_can( $feature ) ) {
 		return true;
 	}
 
-	// Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
+	// Pro-Version: Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
 	$upgrade_url = esc_url( rp_upgrade_url( $required_tier ) );
 	$title       = esc_html(
 		sprintf(
