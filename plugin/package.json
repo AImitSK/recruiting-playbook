@@ -1,0 +1,12 @@
+{
+  "name": "recruiting-playbook",
+  "version": "1.3.3",
+  "description": "Professional Applicant Tracking System for WordPress",
+  "scripts": {
+    "build": "echo 'Build skipped - assets already compiled in assets/dist/'",
+    "postinstall": "echo 'Dependencies installed'"
+  },
+  "devDependencies": {
+    "gettext-parser": "^9.0.1"
+  }
+}
