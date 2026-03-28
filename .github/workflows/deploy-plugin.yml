@@ -41,9 +41,14 @@ jobs:
         working-directory: plugin
         run: npm run build
 
-      - name: Merge JSON translation files for webpack bundles
+      - name: Merge JSON translation files for webpack bundles (optional)
         working-directory: plugin
-        run: python3 tools/merge-json-translations.py languages
+        run: |
+          if [ -f "tools/merge-json-translations.py" ]; then
+            python3 tools/merge-json-translations.py languages
+          else
+            echo "Skipping translation merge - script not found (assets already built)"
+          fi
 
       - name: Clean up and create plugin ZIP
         run: |
