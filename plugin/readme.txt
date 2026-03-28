@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,17 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.3.2 - 2026-03-28 =
+* Fix: REST API get_company permission now uses manage_options (WordPress.org Review Issue #2)
+* Add: Microsoft Teams / adaptivecards.io external service documentation (WordPress.org Review Issue #4)
+* WordPress.org Guideline 5 (Trialware) compliance - critical issues resolved
+
+= 1.3.1 - 2026-03-28 =
+* Fix: @fs_premium_only meta-tag syntax for Freemius preprocessor (WordPress.org Review Issue #1)
+* Fix: Premium files now correctly removed from Free version by Freemius
+* Add: WordPress.org compliance test tool (tools/wordpress-org-compliance-test.sh)
+* Add: Comprehensive solution plan documentation for Freemius premium code handling
 
 = 1.2.33 - 2026-03-12 =
 * Fix: ABSPATH check at very beginning of file for WordPress.org Plugin Checker
@@ -248,6 +259,26 @@ The plugin documentation website provides guides and API references.
 **Service:** developer.recruiting-playbook.de
 * Used for in-app help links
 * No user data is transmitted
+
+= Microsoft Teams Integration (Pro Feature) =
+
+The Microsoft Teams notification feature sends job and application updates to Microsoft Teams channels using Adaptive Cards.
+
+**What data is sent:**
+* Job titles and application status updates
+* Applicant names (no CVs or sensitive documents)
+* Links to admin dashboard for review
+
+**When data is sent:**
+* Only when Microsoft Teams webhook is configured and enabled
+* On new applications, status changes, or job publishing
+
+**Service provider:** Microsoft Corporation
+* Adaptive Cards Schema: https://adaptivecards.io
+* [Microsoft Teams Privacy](https://privacy.microsoft.com/)
+* [Microsoft Teams Terms](https://www.microsoft.com/licensing/terms/)
+
+The plugin validates Adaptive Card JSON against the official schema (adaptivecards.io) to ensure proper formatting. Webhook URLs remain on your Microsoft Teams account and are not transmitted to third parties.
 
 == Source Code ==
 

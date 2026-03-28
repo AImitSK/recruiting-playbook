@@ -405,8 +405,8 @@ class SettingsController extends WP_REST_Controller {
 	 * @return bool|WP_Error True if permission granted.
 	 */
 	public function get_company_permissions_check( WP_REST_Request $request ) {
-		// Any logged-in user with edit_posts can read company settings.
-		if ( ! current_user_can( 'edit_posts' ) ) {
+		// Only admins can read company settings (sensitive data).
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'You do not have permission to read company data.', 'recruiting-playbook' ),
