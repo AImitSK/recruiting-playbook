@@ -198,3 +198,88 @@ Key technical docs:
 - PHP 8.0+ features allowed (typed properties, union types, etc.)
 - Admin UI uses @wordpress/scripts conventions
 - Translations: Text domain `recruiting-playbook`, domain path `/languages`
+
+---
+
+## 🚨 WordPress.org Compliance Problem (Stand: 28. März 2026)
+
+### Problem
+
+WordPress.org lehnt das Plugin ab wegen **Guideline 5 Violation (Trialware)**:
+- Premium-Dateien sind im Free-ZIP enthalten (KanbanBoard, TalentPool, etc.)
+- Freemius `@fs_premium_only` Meta-Tags entfernen die Dateien NICHT
+
+### Lösung in Arbeit
+
+**Dokumentation:**
+- **Lösungsplan:** `docs/technical/freemius-premium-code-problem-loesungsplan.md`
+- **Freemius Doku:** `docs/technical/freemius-premium-code-handling.md`
+
+**Test-Tool:**
+```bash
+cd tools
+./wordpress-org-compliance-test.sh path/to/free-version.zip
+# Exit 0 = PASSED, Exit 1 = FAILED
+```
+
+### Workflow nach Code-Änderungen
+
+```bash
+# 1. Version bumpen + Deploy
+git add plugin/recruiting-playbook.php plugin/readme.txt
+git commit -m "fix: [Beschreibung]"
+git tag v1.3.x
+git push origin main v1.3.x
+
+# 2. GitHub Action wartet (~3 Min)
+
+# 3. User muss Free-Version downloaden:
+#    Freemius Dashboard → Recruiting Playbook → Versions → v1.3.x → Download Free Version
+#    → Pfad mitteilen: c:\Users\...\recruiting-playbook-free.1.3.x.zip
+
+# 4. Compliance Test ausführen
+cd tools
+./wordpress-org-compliance-test.sh "c:\Users\...\recruiting-playbook-free.1.3.x.zip"
+
+# 5. Ergebnis:
+#    ✅ PASSED → Bereit für WordPress.org
+#    ❌ FAILED → Nächsten Fix versuchen
+```
+
+### Aktueller Stand
+
+**Baseline (v1.3.0):**
+- ❌ 14 Premium-Dateien im Free-ZIP
+- ❌ get_company REST API Permission zu permissiv
+- ⚠️ 40 Dateien mit rp_can() checks
+- ⚠️ 18 weitere Warnings
+
+**Geplante Lösungen (in Reihenfolge):**
+1. **Plan A:** `@fs_premium_only` Syntax fixen (Leerzeichen entfernen)
+2. **Plan B:** Naming Convention (`KanbanBoard__premium_only.php`)
+3. **Plan C:** `is__premium_only()` Runtime-Wrapper (garantiert funktionierend)
+
+### Wichtige Dateien
+
+- `recruiting-playbook.php` Zeile 25-115: `@fs_premium_only` Liste
+- `tools/wordpress-org-compliance-test.sh`: Automated Test
+- `tools/README.md`: Test-Tool Dokumentation
+
+### Freemius Feature-Gating
+
+**So funktioniert es AKTUELL:**
+```php
+// Menu.php Zeile 606
+if ( rp_fs()->is__premium_only() ) {
+    // Premium Code
+    $kanban_page = new KanbanBoard();
+    $kanban_page->render();
+} else {
+    // Free: Upgrade-Hinweis
+    rp_require_feature( 'kanban_board', 'Kanban Board', 'PRO' );
+}
+```
+
+**Problem:** Die `KanbanBoard.php` Datei IST im Free-ZIP → WordPress.org Violation
+
+**Ziel:** Datei sollte physisch entfernt sein ODER Code-Block sollte leer sein
