@@ -15,20 +15,50 @@ use RecruitingPlaybook\Taxonomies\JobLocation;
 use RecruitingPlaybook\Taxonomies\EmploymentType;
 use RecruitingPlaybook\Admin\Menu;
 use RecruitingPlaybook\Admin\MetaBoxes\JobMeta;
+use RecruitingPlaybook\Admin\MetaBoxes\JobCustomFieldsMeta;
 use RecruitingPlaybook\Admin\SetupWizard\SetupWizard;
+use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
 use RecruitingPlaybook\Admin\DashboardWidget;
 use RecruitingPlaybook\Frontend\JobSchema;
 use RecruitingPlaybook\Frontend\Shortcodes;
 use RecruitingPlaybook\Api\JobController;
 use RecruitingPlaybook\Api\ApplicationController;
+use RecruitingPlaybook\Api\NoteController;
+use RecruitingPlaybook\Api\RatingController;
+use RecruitingPlaybook\Api\ActivityController;
+use RecruitingPlaybook\Api\TalentPoolController;
+use RecruitingPlaybook\Api\EmailTemplateController;
+use RecruitingPlaybook\Api\EmailController;
+use RecruitingPlaybook\Api\EmailLogController;
+use RecruitingPlaybook\Api\SignatureController;
 use RecruitingPlaybook\Api\SettingsController;
+use RecruitingPlaybook\Api\RoleController;
+use RecruitingPlaybook\Api\JobAssignmentController;
+use RecruitingPlaybook\Api\StatsController;
+use RecruitingPlaybook\Api\ExportController;
+use RecruitingPlaybook\Api\SystemStatusController;
+use RecruitingPlaybook\Api\FieldDefinitionController;
+use RecruitingPlaybook\Api\FormTemplateController;
+use RecruitingPlaybook\Api\MatchController;
+use RecruitingPlaybook\Api\FormConfigController;
+use RecruitingPlaybook\Api\WebhookController;
+use RecruitingPlaybook\Api\ApiKeyController;
+use RecruitingPlaybook\Api\AiAnalysisController;
 use RecruitingPlaybook\Api\IntegrationController;
 use RecruitingPlaybook\Integrations\IntegrationManager;
 use RecruitingPlaybook\Integrations\Feed\XmlJobFeed;
+use RecruitingPlaybook\Services\ApiKeyService;
 use RecruitingPlaybook\Services\DocumentDownloadService;
+use RecruitingPlaybook\Services\WebhookService;
+use RecruitingPlaybook\Services\EmailQueueService;
+use RecruitingPlaybook\Services\AutoEmailService;
 use RecruitingPlaybook\Services\CssGeneratorService;
+use RecruitingPlaybook\Blocks\BlockLoader;
+use RecruitingPlaybook\Integrations\Avada\AvadaIntegration;
+use RecruitingPlaybook\Integrations\Elementor\ElementorIntegration;
 use RecruitingPlaybook\Integration\PolylangIntegration;
 use RecruitingPlaybook\Database\Migrator;
+use RecruitingPlaybook\Database\Migrations\CustomFieldsMigration;
 use RecruitingPlaybook\Traits\Singleton;
 /**
  * Haupt-Plugin-Klasse (Singleton)
@@ -198,11 +228,11 @@ final class Plugin {
         if ( function_exists( 'rp_can' ) && !rp_can( 'email_templates' ) ) {
             return;
         }
-        // Free-Version: Service existiert nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Services\\EmailQueueService' ) ) {
             return;
         }
-        $email_queue_service = new \RecruitingPlaybook\Services\EmailQueueService();
+        $email_queue_service = new EmailQueueService();
         $email_queue_service->registerHooks();
         // Queue-Verarbeitung bei Aktivierung starten.
         add_action( 'init', [$email_queue_service, 'scheduleQueueProcessing'] );
@@ -231,11 +261,11 @@ final class Plugin {
         if ( function_exists( 'rp_can' ) && !rp_can( 'email_templates' ) ) {
             return;
         }
-        // Free-Version: Service existiert nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Services\\AutoEmailService' ) ) {
             return;
         }
-        $auto_email_service = new \RecruitingPlaybook\Services\AutoEmailService();
+        $auto_email_service = new AutoEmailService();
         $auto_email_service->registerHooks();
     }
 
@@ -250,11 +280,11 @@ final class Plugin {
         if ( function_exists( 'rp_can' ) && !rp_can( 'webhooks' ) ) {
             return;
         }
-        // Free-Version: Service existiert nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Services\\WebhookService' ) ) {
             return;
         }
-        $service = new \RecruitingPlaybook\Services\WebhookService();
+        $service = new WebhookService();
         // Application Events.
         add_action(
             'rp_application_created',
@@ -470,11 +500,11 @@ final class Plugin {
      * Blocks werden nur geladen wenn Pro-Lizenz aktiv ist.
      */
     private function initBlocks() : void {
-        // Free-Version: Blocks existieren nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Blocks\\BlockLoader' ) ) {
             return;
         }
-        $block_loader = new \RecruitingPlaybook\Blocks\BlockLoader();
+        $block_loader = new BlockLoader();
         $block_loader->register();
     }
 
@@ -489,11 +519,11 @@ final class Plugin {
         if ( !did_action( 'elementor/loaded' ) ) {
             return;
         }
-        // Free-Version: Integration existiert nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\Elementor\\ElementorIntegration' ) ) {
             return;
         }
-        $elementor_integration = new \RecruitingPlaybook\Integrations\Elementor\ElementorIntegration();
+        $elementor_integration = new ElementorIntegration();
         $elementor_integration->register();
     }
 
@@ -539,11 +569,11 @@ final class Plugin {
         if ( !class_exists( 'FusionBuilder' ) ) {
             return;
         }
-        // Free-Version: Integration existiert nicht.
+        // Free-Version: Klasse existiert nicht.
         if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\Avada\\AvadaIntegration' ) ) {
             return;
         }
-        $avada_integration = new \RecruitingPlaybook\Integrations\Avada\AvadaIntegration();
+        $avada_integration = new AvadaIntegration();
         $avada_integration->register();
     }
 
@@ -694,10 +724,9 @@ final class Plugin {
             [
                 'methods'             => 'GET',
                 'callback'            => function() {
-                    // Free-Version: Keine Custom Fields, leeres Array zurückgeben.
                     return rest_ensure_response( [] );
                 },
-                'permission_callback' => '__return_true', // Public endpoint.
+                'permission_callback' => '__return_true',
             ]
         );
 

@@ -13,6 +13,10 @@ use RecruitingPlaybook\Admin\Settings;
 use RecruitingPlaybook\Admin\Pages\ApplicationList;
 use RecruitingPlaybook\Admin\Pages\ApplicationDetail;
 use RecruitingPlaybook\Admin\Pages\ApplicationsPage;
+use RecruitingPlaybook\Admin\Pages\EmailSettingsPage;
+use RecruitingPlaybook\Admin\Pages\FormBuilderPage;
+use RecruitingPlaybook\Admin\Pages\KanbanBoard;
+use RecruitingPlaybook\Admin\Pages\ReportingPage;
 use RecruitingPlaybook\Admin\Export\BackupExporter;
 use RecruitingPlaybook\Admin\Import\BackupImporter;
 use RecruitingPlaybook\Services\GdprService;
@@ -36,9 +40,9 @@ class Menu {
     /**
      * EmailSettingsPage instance (nur Premium)
      *
-     * @var object|null
+     * @var EmailSettingsPage|null
      */
-    private ?object $email_settings_page = null;
+    private ?EmailSettingsPage $email_settings_page = null;
 
     /**
      * Constructor - Filter für Menü-Highlighting registrieren
@@ -51,9 +55,9 @@ class Menu {
     /**
      * EmailSettingsPage setzen (für Premium)
      *
-     * @param object $page EmailSettingsPage Instanz.
+     * @param EmailSettingsPage $page EmailSettingsPage Instanz.
      */
-    public function setEmailSettingsPage( object $page ) : void {
+    public function setEmailSettingsPage( EmailSettingsPage $page ) : void {
         $this->email_settings_page = $page;
     }
 
@@ -108,15 +112,17 @@ class Menu {
                 [$this, 'renderTalentPool']
             );
         }
-        // Reporting & Dashboard.
-        add_submenu_page(
-            'recruiting-playbook',
-            __( 'Reports', 'recruiting-playbook' ),
-            $this->getReportingMenuLabel(),
-            'rp_view_stats',
-            'rp-reporting',
-            [$this, 'renderReporting']
-        );
+        // Reporting & Dashboard (Pro-Feature) - nur wenn verfügbar.
+        if ( function_exists( 'rp_can' ) && rp_can( 'reporting' ) ) {
+            add_submenu_page(
+                'recruiting-playbook',
+                __( 'Reports', 'recruiting-playbook' ),
+                __( 'Reports', 'recruiting-playbook' ),
+                'rp_view_stats',
+                'rp-reporting',
+                [$this, 'renderReporting']
+            );
+        }
         // Formular-Builder (Pro-Feature) - nur wenn verfügbar.
         if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
             add_submenu_page(

@@ -83,7 +83,7 @@ class Shortcodes {
 
         // Stub-Shortcodes für Premium-Features (Free-Version Fallbacks).
         // Verhindert dass rohe Shortcode-Tags angezeigt werden wenn Handler fehlt.
-        if ( ! rp_can( 'ai_cv_matching' ) ) {
+        if ( ! ( function_exists( 'rp_can' ) && rp_can( 'ai_cv_matching' ) ) ) {
             add_shortcode( 'rp_ai_job_match', '__return_empty_string' );
             add_shortcode( 'rp_ai_job_finder', '__return_empty_string' );
         }
