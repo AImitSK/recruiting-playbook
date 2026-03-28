@@ -153,6 +153,39 @@ class IntegrationController extends WP_REST_Controller {
 		// Webhook-URLs für sichere Anzeige maskieren.
 		$masked = $this->maskWebhookUrls( $merged );
 
+		// Free-Version: Premium-Integrationen komplett ausblenden.
+		// Frontend prüft auf Existenz der Feature-Keys um Integrations-Cards anzuzeigen.
+		if ( ! ( function_exists( 'rp_can' ) && rp_can( 'slack_integration' ) ) ) {
+			unset(
+				$masked['slack_enabled'],
+				$masked['slack_webhook_url'],
+				$masked['slack_event_new_application'],
+				$masked['slack_event_status_changed'],
+				$masked['slack_event_job_published'],
+				$masked['slack_event_deadline_reminder']
+			);
+		}
+
+		if ( ! ( function_exists( 'rp_can' ) && rp_can( 'teams_integration' ) ) ) {
+			unset(
+				$masked['teams_enabled'],
+				$masked['teams_webhook_url'],
+				$masked['teams_event_new_application'],
+				$masked['teams_event_status_changed'],
+				$masked['teams_event_job_published'],
+				$masked['teams_event_deadline_reminder']
+			);
+		}
+
+		if ( ! ( function_exists( 'rp_can' ) && rp_can( 'google_ads_conversion' ) ) ) {
+			unset(
+				$masked['google_ads_enabled'],
+				$masked['google_ads_conversion_id'],
+				$masked['google_ads_conversion_label'],
+				$masked['google_ads_conversion_value']
+			);
+		}
+
 		return new WP_REST_Response( $masked, 200 );
 	}
 

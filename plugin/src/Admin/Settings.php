@@ -414,6 +414,13 @@ class Settings {
 			'isPro'        => $is_pro,
 			'upgradeUrl'   => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 			'i18n'         => $this->getI18nStrings(),
+			// Feature-Flags für Tab-Visibility (Free-Version).
+			'features'     => [
+				'api_access'      => function_exists( 'rp_can' ) && rp_can( 'api_access' ),
+				'webhooks'        => function_exists( 'rp_can' ) && rp_can( 'webhooks' ),
+				'custom_fields'   => function_exists( 'rp_can' ) && rp_can( 'custom_fields' ),
+				'email_templates' => function_exists( 'rp_can' ) && rp_can( 'email_templates' ),
+			],
 		];
 
 		// Pro-Feature: Benutzerrollen-Daten für React-UI.

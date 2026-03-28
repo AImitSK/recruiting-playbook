@@ -1,0 +1,1569 @@
+Recruiting Playbook
+Active Jobs
+New Applications
+This Week
+No applications yet.
+Applicant
+Job
+Status
+Date
+All Applications
+Create New Job
+Recruiting
+Applications
+Kanban Board
+Talent Pool
+Reports
+Form Builder
+Settings
+Application
+Bulk Email
+Bulk email requires Pro.
+Pro feature required
+No applications selected. Please select applications from the list.
+Back to list
+%1$d emails sent successfully, %2$d failed.
+Please select a template.
+Send Bulk Email
+%d recipients selected
+Name
+Email
+Email Template
+— Select template —
+Manage templates
+Warning:
+The emails will be sent immediately to all selected recipients.
+Send %d emails
+Cancel
+No email templates available.
+Create templates
+General Settings
+Notification Email
+Email address for new applications.
+Privacy Page
+Page with privacy policy for the application form.
+Company Data
+Company Name
+Displayed in schema, emails, and on the careers page.
+Street & Number
+Postal Code & City
+Phone
+Website
+Contact Email
+General contact email of the company (for email signatures).
+Default Sender
+Sender Name
+Name displayed as sender in emails.
+HR Department
+Sender Email
+Email address from which emails are sent.
+Job Listings
+Jobs Per Page
+URL Slug
+URL path for the jobs overview (e.g., "jobs" for /jobs/).
+Google for Jobs Schema
+Enable JSON-LD schema for Google for Jobs
+Structured data for better visibility in Google.
+Pro Settings
+White-Label Emails
+Hide "Sent via Recruiting Playbook" notice in emails
+Removes the branding notice from the footer of all emails.
+Loading settings...
+General
+Export
+Notifications
+Email notifications for new applications
+— Select Page —
+Settings for job listings and careers page
+URL path for the jobs overview.
+JSON-LD schema for better visibility in Google
+This data is used in email signatures and the Google for Jobs schema.
+Postal Code
+City
+Default sender data for automatic and manual emails.
+Full Backup
+Exports all plugin data as JSON file
+The export includes:
+Jobs (incl. metadata)
+Taxonomies (categories, locations, etc.)
+Candidates
+Document metadata
+Activity log (last 1000 entries)
+Note:
+Uploaded documents (PDFs etc.) are not exported for privacy reasons.
+Download Backup
+Download has been started.
+Preparing...
+Advanced settings for Pro users.
+Save Settings
+Saving...
+Settings have been saved.
+Error loading settings
+Error saving
+Email Configuration:
+Recommended SMTP plugins: %s
+Basic settings for the Recruiting Playbook plugin.
+Settings for job listings and careers page.
+Application ID
+Entries per page
+Page
+Filter activity types
+Candidate ID
+This feature requires a Pro license.
+No permission to view the timeline.
+No permission.
+AI addon not active.
+Freemius SDK not available.
+No valid Freemius installation found.
+API Key ID
+API Keys require Pro.
+You do not have permission to manage API Keys.
+API Key has been deleted.
+Read jobs
+Jobs
+Create/edit jobs
+Read applications
+Edit applications
+Read candidates
+Edit candidates
+Read documents
+Documents
+Read reports
+System
+Read settings
+Edit settings
+Key name
+Permissions
+Requests per hour
+Expiration date (Y-m-d H:i:s)
+Key active
+New status
+Note for status change
+Position on Kanban board
+Permanently delete
+Document ID
+Status/column of applications to sort
+Array with ID and new position
+Job ID
+Salutation
+First name
+Last name
+Email address
+Phone number
+Cover letter
+Cover letter (alias)
+Privacy consent
+Honeypot field
+Form timestamp
+Custom field values (Pro feature)
+Your application has been submitted successfully. You will receive a confirmation email shortly.
+Application not found.
+Status has been updated.
+REST API access requires Pro.
+You do not have permission to view applications.
+You do not have permission to edit applications.
+Filter by job
+Filter by status
+Search in name, email
+Results per page
+Page number
+Sort field
+Sort direction
+Context for query (kanban: with document count)
+Invalid job ID.
+The specified job does not exist or is not available.
+Name must not be empty.
+Name is too long (max. 100 characters).
+Invalid email address.
+Consent to the privacy policy is required.
+Application could not be deleted.
+Application has been permanently deleted.
+Application has been deleted.
+You do not have permission to delete applications.
+Candidate not found.
+Deleted
+Invalid security token. Please reload the page.
+Too many requests. Please wait a moment.
+Invalid positions.
+Positions have been updated.
+Email log ID
+Array of application IDs
+Template ID
+Global placeholder values for all emails
+Send immediately (not queued)
+Either template ID or subject and body required.
+Email could not be sent.
+Template not found.
+Template could not be rendered.
+Email could not be cancelled. It may have already been sent.
+Scheduled email has been cancelled.
+Application IDs must be provided as an array.
+Application not found
+Email could not be sent
+%1$d emails queued, %2$d failed.
+You do not have permission to send emails.
+Email sending requires Pro.
+Template ID (optional for custom)
+Subject (overrides template)
+Body (overrides template)
+Additional placeholder values
+Scheduled send time (ISO 8601)
+Signature ID (null = automatic, 0 = none)
+Application ID (optional for preview data)
+Subject
+Body
+Signature ID for preview
+Log ID
+Email log not found.
+Email could not be resent.
+Email has been queued for sending again.
+You do not have permission to view the email history.
+Email history requires Pro.
+You do not have permission to resend emails.
+Resending emails requires Pro.
+Filter by application
+Filter by candidate
+Filter by template
+Date from (Y-m-d)
+Date to (Y-m-d)
+Search in subject, recipient
+New name for the duplicate
+Category for default template
+System templates cannot be created manually.
+Template could not be created.
+Template has been created.
+No data to update.
+Template could not be updated.
+Template has been updated.
+Template could not be deleted. System templates cannot be deleted.
+Template has been deleted.
+Template could not be duplicated.
+Template has been duplicated.
+Template could not be reset. No default content exists for this template.
+Template has been reset to default.
+Template could not be set as default.
+Template has been set as default.
+You do not have permission to view email templates.
+Email templates require Pro.
+You do not have permission to create email templates.
+You do not have permission to edit email templates.
+You do not have permission to delete email templates.
+Filter by category
+Only active templates
+Search term
+Template name
+Email subject
+HTML content
+Text content
+Category
+Template active
+Additional settings
+Set as default template
+Start date (Y-m-d)
+End date (Y-m-d)
+Status filter
+Export columns
+Time period
+You must be logged in.
+No permission for export.
+CSV export requires the Pro version.
+Field ID
+Ordered list of field IDs
+List of field IDs for this job
+You do not have permission to manage form fields.
+You do not have permission to create form fields.
+Field not found.
+Invalid field IDs.
+Job not found.
+Filter by template ID
+Filter by field type
+Show only system fields
+Unique field key
+Field type
+Field label
+Placeholder text
+Help text
+Required field
+System field (not deletable)
+Sort position
+Selection options (for Select/Radio/Checkbox)
+Validation rules
+Conditional Logic
+Field-specific settings
+Associated template ID
+Job-specific field for this job ID
+Custom Fields requires a Pro license.
+Step configuration
+Form settings
+You do not have permission to use the form builder.
+You do not have permission to edit the form configuration.
+Draft saved.
+Form published.
+Changes discarded.
+Error loading active fields
+Form reset to default.
+The form builder requires a Pro license.
+Template ID to duplicate
+Name for the new template
+You do not have permission to manage form templates.
+You do not have permission to create form templates.
+No default template defined.
+Include fields in response
+Description
+Default template
+IDs of fields in this template
+No Slack webhook URL configured.
+Slack integration is working!
+Slack responded with status %d.
+Test message sent successfully!
+No Teams workflow URL configured.
+Teams integration is working!
+Teams responded with status %d.
+User ID
+List of job IDs
+You do not have permission to view job assignments.
+You do not have permission to manage job assignments.
+Permanently delete instead of archiving
+REST API Zugang erfordert Pro.
+You do not have permission to view jobs.
+You do not have permission to create jobs.
+You do not have permission to edit jobs.
+You do not have permission to delete jobs.
+Stelle nicht gefunden.
+You do not have permission to view this job.
+The title is a required field.
+Job could not be deleted.
+Job was permanently deleted.
+Job was archived.
+/hr
+/month
+/year
+Up to 
+From 
+Full-text search in title/description
+Filter by location (slug)
+Filter by employment type (slug)
+Job title
+Job description (HTML)
+Short description
+Post status
+Location object
+Employment type (slug)
+Salary object
+Contact person object
+Application deadline (YYYY-MM-DD)
+Start date (YYYY-MM-DD)
+Categories (array of names)
+Hide salary
+Remote work possible
+Job listing ID
+Analysis job ID
+Number of top matches (1-10)
+CV matching requires the AI addon.
+Please upload a file.
+Job ID required.
+Analysis service not reachable.
+Analysis failed.
+Service not reachable.
+AI matching is not available.
+No file uploaded.
+No active jobs available.
+API error
+Please upload a PDF, JPG, PNG or DOCX file.
+The file is too large. Maximum: 10 MB.
+Error uploading file.
+Note content
+Private note
+Note ID
+No permission to read notes.
+No permission to create notes.
+No permission to edit notes.
+No permission to delete notes.
+Rating (1-5)
+Rating category
+No permission to view ratings.
+No permission to rate applications.
+No permission to delete ratings.
+Role slug
+Capability configuration
+You do not have permission to manage roles.
+Only administrators can change role permissions.
+Only custom recruiting roles can be edited.
+Role not found.
+Invalid notification email address.
+Invalid contact email address.
+Invalid sender email address.
+Settings saved.
+Company name is required.
+A valid contact email is required.
+You do not have permission to read company data.
+You do not have permission to update company data.
+Company name
+Street and number
+Postal code
+Website URL
+Contact email
+Default sender name
+Default sender email
+Firmenname
+Straße und Hausnummer
+Postleitzahl
+Stadt
+Telefonnummer
+Kontakt-E-Mail
+Standard-Absender Name
+Standard-Absender E-Mail
+Invalid settings.
+Settings could not be saved.
+Design settings saved.
+Design settings reset.
+Signature ID
+Signature not found.
+Signature could not be created.
+Signature created.
+Signature could not be updated.
+Signature updated.
+Signature could not be deleted. The default company signature cannot be deleted.
+Signature deleted.
+Signature could not be set as default.
+Signature set as default.
+Company Signature
+Company signature could not be created.
+Company signature created.
+You do not have permission to view this signature.
+Only administrators can edit company signatures.
+You do not have permission to edit this signature.
+Only administrators can delete company signatures.
+You do not have permission to delete this signature.
+Only administrators have access to this function.
+Signature name
+Greeting
+Signature content
+Set as default
+Include company data
+Signatur-ID
+Period
+Grouping
+Sort by
+Sort order
+Metrics for trend
+Granularity
+Time-to-Hire Statistics
+Conversion Statistics
+No permission to view statistics.
+Advanced statistics require the Pro version.
+%s is a Pro feature. Please upgrade to the Pro version.
+%d orphaned documents deleted
+%d orphaned applications deleted
+No permission to view system status.
+No permission to run cleanup.
+Filter tags
+Items per page
+Reason for inclusion
+Tags (comma-separated)
+Expiration date (YYYY-MM-DD)
+Candidate not in talent pool
+No permission to view the talent pool.
+No permission to add candidates to the talent pool.
+No permission to edit the talent pool.
+No permission to remove from the talent pool.
+Webhook ID
+Webhooks require Pro.
+You do not have permission to manage webhooks.
+Webhook could not be created.
+Webhook not found.
+No changes provided.
+Webhook was deleted.
+Test ping failed.
+Test ping successful.
+URL is a required field.
+Invalid URL.
+Webhook URLs must use HTTPS.
+At least one event must be selected.
+Invalid events: %s
+Webhook name
+Webhook URL (HTTPS)
+Events that trigger the webhook
+HMAC secret (auto-generated if empty)
+Webhook active
+New
+Screening
+Interview
+Offer
+Hired
+Rejected
+Withdrawn
+Resume
+Cover Letter
+Certificate
+Reference
+Portfolio
+Other
+Recruiting Playbook:
+Action Scheduler library is missing. Please run %s in the plugin directory.
+Action Scheduler was loaded, but its functions are not available. Email queue may not be functional.
+Rate limit exceeded. Please try again later.
+This field is required
+Please enter a valid email address
+File is too large (max. 10 MB)
+File type not allowed. Allowed: PDF, DOC, DOCX, JPG, PNG
+Please agree to the privacy policy
+An error occurred
+Analysis failed
+The analysis is taking too long. Please try again later.
+File is too large. Maximum: 10 MB.
+Low match
+Partial match
+Good match
+Loading...
+Save
+Delete
+Edit
+Preview
+Actions
+Default
+Error loading
+Error deleting
+Email Templates & Signatures
+Templates
+Signatures
+New Template
+Edit Template
+Template saved.
+Template deleted.
+Template duplicated.
+Template reset.
+Do you really want to delete this template?
+No templates found.
+Active
+Inactive
+All Categories
+New Signature
+Edit Signature
+My Signatures
+Edit Company Signature
+Signature saved.
+Default signature set.
+Set as Default
+No signatures available.
+No company signature available.
+Do you really want to delete this signature?
+Signature Content
+Design your email signature with your contact details.
+The company signature is used when a user does not have their own signature.
+Create your first signature to personalize emails.
+This is how your signature will appear in emails:
+Status Change
+Rejection
+Custom
+Recruiter
+Hiring Manager
+View applications
+Delete applications
+Notes
+View notes
+Create notes
+Edit own notes
+Edit others notes
+Delete notes
+Ratings & Talent Pool
+Rate applications
+Manage talent pool
+View activity log
+Email System
+View templates
+Edit templates
+Delete templates
+Send emails
+View email history
+Administration
+Manage roles
+Assign jobs
+Reporting & Dashboard
+View statistics
+View advanced statistics
+Export data
+View system status
+Run cleanup
+Manage form fields & templates
+Application Documents
+PDF, Word - max. 10 MB per file
+Your Information at a Glance
+Please review your information before submitting.
+I have read the {datenschutz_link} and consent to the processing of my data.
+Privacy Policy
+Best regards
+Your HR Team
+First Name
+John
+Last Name
+Doe
+john.doe@example.com
++1 234 567890
+Why do you want to work with us?
+Optional: Tell us why you are interested in this position.
+Personal Information
+Summary
+Application Confirmation
+Your application at {firma}: {stelle}
+Your application for {stelle}
+Application Withdrawn
+Confirmation: Application withdrawn
+Added to Talent Pool
+Welcome to the Talent Pool of {firma}
+Interview Invitation
+Invitation to interview: {stelle}
+Interview Reminder
+Reminder: Your interview on ___
+Job Offer
+Job offer: {stelle} at {firma}
+Contract Documents
+Your contract documents for {stelle}
+Matching Job Found
+New job at {firma}: {stelle}
+%s is a required field.
+%1$s must be at least %2$d characters long.
+%1$s must not exceed %2$d characters.
+%s has an invalid format.
+Checkbox
+Minimum Selection
+Only for multi-checkbox
+Maximum Selection
+%s contains an invalid value.
+Please select at least %2$d options for %1$s.
+Please select no more than %2$d options for %1$s.
+Yes
+No
+Earliest Date
+Relative date (e.g. "today", "-18 years") or absolute (YYYY-MM-DD)
+Latest Date
+Relative date (e.g. "today", "+1 year") or absolute (YYYY-MM-DD)
+%s must be a valid date.
+%1$s must be on or after %2$s.
+%1$s must be on or before %2$s.
+%s must be a valid email address.
+Text
+Choice
+Special
+Layout
+File Upload
+Max. file size (MB)
+Min. files
+For multi-upload only
+Max. files
+Only one file is allowed for %s.
+A maximum of %2$d files are allowed for %1$s.
+Error uploading %s.
+The file %1$s is too large. Maximum: %2$d MB.
+The file type of %1$s is not allowed. Allowed: %2$s.
+Drop files here or click to select
+Allowed formats
+Remove
+Already uploaded
+Heading
+HTML / Text Block
+Number
+Minimum value
+Maximum value
+Step
+%s must be a number.
+%1$s must be at least %2$s.
+%1$s must not exceed %2$s.
+Minimum length
+Maximum length
+%s must be a valid phone number.
+Radio Buttons
+Please specify...
+Dropdown
+Please select...
+Other...
+Textarea
+Text Field
+Minimum Length
+Maximum Length
+Regex Pattern
+Pattern Error Message
+Invalid format
+URL/Link
+%s must be a valid URL.
+Invalid post
+Job title is missing
+Job description is very short (minimum 100 characters recommended)
+Job description is missing
+Company name is missing (in plugin settings or WordPress settings)
+Location is missing (recommended for better ranking)
+Employment type is missing (full-time, part-time, etc.)
+Salary is missing (important for Google for Jobs ranking)
+Application deadline has expired
+Application deadline is missing
+Apply Now
+Error: No job specified. Please set the job_id attribute.
+Error: The specified job does not exist or is not available.
+Application for: %s
+Application submitted successfully!
+Thank you for your application. You will receive a confirmation email shortly.
+of
+Back
+Next
+Submit Application
+Submitting...
+Title
+Please select
+Mr.
+Ms.
+Mx.
+Email Address
+Drag file here or
+Select file
+PDF, DOC, DOCX, JPG, PNG (max. 10 MB)
+Additional Documents (References, Certificates)
+Select files
+Multiple files allowed (max. 5 files, 10 MB each)
+Cover Letter / Message
+Optional: Add a brief cover letter...
+Privacy & Submit
+Your Information
+Name:
+Email:
+Phone:
+Resume:
+Documents:
+I have read the %s and agree to the processing of my data for the purpose of this application.
+AI Job Match
+Am I a good fit for this job?
+Note: No job specified. Please set the job_id attribute or use on a job listing page.
+AI Job Finder
+Find Your Dream Job
+Upload your resume and discover matching positions.
+Currently no open positions available.
+Uploading resume...
+Analysis running...
+Unfortunately, no matching positions were found.
+Excellent fit
+Good fit
+Conditional fit
+View job
+Apply now
+Matched skills
+Missing skills
+Try again
+New search
+Uploading document...
+This feature is part of %s.
+Upgrade Info
+Please enter a valid URL
+Please enter a valid phone number
+Please enter a valid number
+Please enter a valid date
+At least {min} characters required
+Maximum {max} characters allowed
+Minimum value: {min}
+Maximum value: {max}
+Date must be after {date}
+Date must be before {date}
+The file is too large (max. {size} MB)
+File type not allowed
+Please upload a file
+Maximum {max} files allowed
+Please select at least {min} options
+Please select at most {max} options
+The format is invalid
+The file is too large (max. 10 MB)
+Free version
+%s license active
+License invalid or expired.
+This feature requires the AI Addon.
+This feature requires Pro.
+%1$s requires %2$s
+Upgrade to unlock this feature.
+Learn more
+Add New
+Add New Job
+New Job
+Edit Job
+View Job
+All Jobs
+Search Jobs
+Parent Job:
+No jobs found.
+No jobs found in trash.
+Job Image
+Set job image
+Remove job image
+Use as job image
+Job Archives
+Insert into job
+Uploaded to this job
+Filter jobs list
+Jobs list navigation
+Jobs list
+Pending
+Sent
+Failed
+Cancelled
+(Copy)
+%s (Copy)
+Name is a required field.
+Invalid permissions: %s
+At least one permission must be selected.
+API key could not be created.
+API key not found.
+Application could not be saved.
+Invalid status.
+Status could not be updated.
+Status changed from "%1$s" to "%2$s"
+Candidate could not be created.
+Custom fields could not be saved.
+The file %s could not be saved.
+Document could not be saved in the database.
+Please correct the errors in the form.
+Document not found.
+Invalid file path.
+File not found.
+Invalid file type.
+Invalid request.
+Download link expired or invalid.
+Download limit reached. Please try again later.
+Document protection configured. Please test direct access to documents.
+Apache server with .htaccess protection detected.
+Nginx server detected: Please ensure that the Nginx configuration includes document protection.
+Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt).
+File is too large. Maximum size: %s
+Invalid application ID.
+File type "%s" is not allowed. Allowed types: PDF, DOC, DOCX, JPG, PNG
+File extension does not match file content.
+Document could not be saved to the database.
+File exceeds the maximum allowed size.
+File was only partially uploaded.
+No file was uploaded.
+Temporary directory is missing.
+File could not be written.
+Upload stopped by PHP extension.
+Unknown upload error.
+Maximum retries reached
+Email sent: %s
+HR: New Application
+[New Application] %1$s for %2$s
+Application received: %s
+Your Application: %s
+New application received
+A new application for the position "%s" has been received.
+Received on
+View application
+Dear %1$s %2$s
+Dear %s
+Application received
+Thank you for your application! We have received your documents and will carefully review them.
+We will get back to you as soon as we have reviewed your application.
+If you have any questions, please feel free to contact us.
+Your Application
+Thank you for your interest in the position "%s" and the time you invested in your application.
+After careful consideration, we regret to inform you that we have decided to move forward with other candidates whose profile better matches our current requirements.
+We wish you all the best and much success in your future career.
+Sent via %s
+SMTP plugin detected. Emails should be delivered reliably.
+Email configuration detected.
+No SMTP configuration detected. We recommend installing an SMTP plugin for reliable email delivery.
+Templates for application process
+Templates for interview invitations
+Templates for job offers
+Custom templates
+Name is required.
+Subject is required.
+Content is required.
+This slug already exists.
+Invalid category.
+Your application as {stelle}
+Welcome to the talent pool of {firma}
+Interview invitation: {stelle}
+Reminder: Your interview on ____
+New position at {firma}: {stelle}
+SUMMARY
+Metric
+Value
+Applications (total)
+New applications
+In progress
+Active jobs
+Avg. Time-to-Hire (days)
+Conversion Rate (%)
+TOP JOBS BY APPLICATIONS
+Exported on: %s
+ID
+Source
+Application date
+Last modified
+Hired date
+Days in process
+Direct
+Invalid field key. Only lowercase letters, numbers, and underscores are allowed.
+A field with this key already exists.
+Field could not be created.
+Invalid field key.
+Invalid field type.
+Field could not be updated.
+System fields cannot be deleted.
+Field could not be deleted.
+No positions specified.
+Order could not be changed.
+Text field
+Text area
+Radio buttons
+File upload
+Field key is required.
+Field type is required.
+Label is required.
+Configuration could not be saved.
+No changes to publish.
+Configuration could not be published.
+No changes to discard.
+Changes could not be discarded.
+Configuration could not be reset.
+Default configuration could not be published.
+Form configuration must contain steps.
+At least one step is required.
+A finale step is required.
+The privacy consent field is required and must be visible.
+The field "%s" is required and must be visible.
+Step %d: ID is required.
+Step %d: Title is required.
+Step %d: Fields must be an array.
+Your Information Overview
+I have read the {datenschutz_link} and agree to the processing of my data.
+Application successfully submitted!
+Maximum %d files allowed
+Invalid file type. Allowed: %s
+File too large (max. %d MB)
+%1$s (max. %2$d MB per file)
+Maximum %d files
+Remove file
+Add another file
+You must agree to the Privacy Policy.
+Submit application
+At least %d characters required
+Maximum %d characters allowed
+File is too large (max. %d MB)
+This file type is not allowed
+Form could not be loaded. Please contact the administrator.
+A template with this name already exists.
+Ein Template mit diesem Namen existiert bereits.
+Template cannot be deleted. It is used by %d job(s).
+The default template cannot be deleted. Set another template as default first.
+Template could not be deleted.
+Template name is required.
+Template name may not exceed 255 characters.
+%1$s (Copy %2$d)
+Validation failed.
+equals
+does not equal
+contains
+is filled
+is empty
+is greater than
+is less than
+is one of
+User not found.
+Invalid job.
+User is already assigned to this job.
+Assignment could not be created.
+Assignment not found.
+%s assigned to job
+%s removed from job
+Unknown
+Note could not be created
+Note added
+Note not found
+No permission
+Note edited
+Note deleted
+Under Review
+Hello
+Dear Mr. %s
+Dear Ms. %s
+Hello %s
+Mr. / Ms.
+Formal Salutation
+Dear Mr. Doe
+Candidate's first name
+Candidate's last name
+Full Name
+First and last name
+Candidate's email address
+Candidate's phone number
+Application reference number
+Application Date
+Application submission date
+Application Status
+Current application status
+Job Title
+Title of the job
+Job Location
+Location of the job
+Employment Type
+Full-time, part-time, etc.
+Job URL
+Link to job listing
+Name of the company
+Company Address
+Address of the company
+Company Website
+Website of the company
+Rating could not be saved
+Rating submitted
+Rating changed
+Rating not found
+Kind regards
+Your %s Team
+(Company)
+No signature
+Your request was detected as potential spam.
+Please take a bit more time to fill out the form.
+You have reached the maximum number of applications. Please try again later.
+Website (do not fill out)
+All tables present
+%d table(s) missing
+Upload directory is writable
+Upload directory is not writable
+Cron jobs active
+Cron jobs not scheduled
+No orphaned data
+%d orphaned entries found
+Free version active
+License invalid or expired
+Action Scheduler not available
+Action Scheduler running
+%d failed actions
+Please deactivate and reactivate the plugin to create missing tables.
+Please set write permissions for the upload directory.
+%d orphaned documents can be deleted
+%d orphaned applications can be deleted
+Please review the failed background jobs.
+Candidate is already in the talent pool
+Candidate not found
+Error adding to talent pool
+Added to talent pool
+Removed from talent pool
+[Recruiting Playbook] Talent pool entry expiring: %s
+The talent pool entry for %1$s expires on %2$s.
+
+Please review whether you would like to extend the entry.
+
+Basic information:
+- Email: %3$s
+- Added on: %4$s
+Employment Types
+Search Employment Types
+All Employment Types
+Edit Employment Type
+Update Employment Type
+New Employment Type
+New Name
+Full-time
+Part-time
+Minijob
+Apprenticeship
+Internship
+Working Student
+Freelance
+Job Categories
+Job Category
+Search Job Categories
+All Job Categories
+Parent Job Category
+Parent Job Category:
+Edit Job Category
+Update Job Category
+New Job Category
+New Job Category Name
+Locations
+Location
+Search Locations
+All Locations
+Edit Location
+Update Location
+New Location
+New Location Name
+Application Form
+No custom fields configured.
+Go to Form Builder
+Customize fields for this job
+Enabled fields will be displayed in the application form for this job.
+Edit Fields
+Default configuration: %d fields active
+Job Details
+Salary
+Contact Person
+Additional Details
+Loading application...
+Error loading application
+Error changing status
+Rating
+View
+Download
+Applied on
+Retry
+No application specified.
+Application from %s
+Contact information
+Document
+Type
+Size
+Action
+No documents uploaded.
+Activity log
+No activities recorded.
+Update status
+Job was deleted.
+Details
+Received:
+Last updated:
+Source:
+GDPR
+Really delete this application?
+Delete application
+Status was updated.
+Status changed: %1$s → %2$s
+Document downloaded
+Email sent
+Application deleted
+Send email
+Email sending is a Pro feature.
+Upgrade to Pro
+To:
+Template:
+Signature:
+— No signature —
+Company signature
+Subject:
+Email history
+No emails sent to this applicant yet.
+Queued
+Email was sent.
+Received
+Status: Screening
+Status: Rejected
+✉️ Send Email
+%s ago
+Screen
+No applications found.
+All Statuses
+🗑️ Deleted
+From
+To
+Filter
+Email Templates
+Automatic Emails
+Template created.
+Template updated.
+System templates cannot be renamed.
+Slug
+Unique identifier (optional, will be auto-generated).
+Placeholders like {first_name} or {job_title} can be used.
+Content (HTML)
+HTML content of the email. Placeholders will be automatically replaced.
+Template is active
+Save Template
+Insert Placeholders
+Click to copy
+Email Templates are a Pro feature. Upgrade to create and manage custom email templates.
+Automatic Emails on Status Changes
+Configure which emails are sent automatically when an application status changes.
+On Status
+Delay
+When status is set to "%s"
+— No Template —
+Immediately
+5 minutes
+15 minutes
+30 minutes
+1 hour
+2 hours
+24 hours
+Wait time before sending
+Tip:
+A delay gives you time to correct accidental status changes before the email is sent.
+Create a template first.
+Manage application form fields and templates
+Fields
+Field List
+System Fields
+Custom Fields
+Add Field
+No fields available
+Drag to reorder
+Select field type
+Basic Fields
+Choice Fields
+Advanced Fields
+Layout Elements
+Edit Field
+Field Key
+Unique identifier (no special characters)
+Label
+Placeholder
+Required
+Enabled
+Width
+Full Width
+Half Width
+One Third
+Two Thirds
+Validation
+Minimum Value
+Maximum Value
+Error Message
+Options
+Add Option
+Remove Option
+Default Value
+Allow "Other"
+Conditional Display
+Enable conditional display
+Show this field only when...
+Show when
+Hide when
+Field
+Operator
+Logic
+AND
+OR
+Add Condition
+Remove Condition
+does not contain
+is not empty
+is checked
+is not checked
+greater than
+less than
+starts with
+ends with
+File Settings
+Allowed File Types
+Maximum File Size (MB)
+Maximum Number of Files
+Drag files here
+Form Templates
+Create Template
+Duplicate Template
+Delete Template
+Template Name
+Default Template
+The default template will be used for new jobs
+No templates available
+Template Fields
+Select Fields
+Form Preview
+This is how the application form will look
+Desktop
+Tablet
+Mobile
+Duplicate
+Close
+Really delete?
+Do you really want to delete this field? Existing data will be preserved.
+Saved
+Error
+Success
+Field created
+Field updated
+Field deleted
+Order updated
+Template created
+Template updated
+Template deleted
+System fields cannot be deleted
+Required fields must be filled out
+This field key already exists
+Invalid field key (only letters, numbers, underscores)
+Pro Feature
+This feature requires Pro
+Conditional Logic (Pro)
+Advanced Field Types (Pro)
+Multiple Templates (Pro)
+Help
+Documentation
+The field key is used for the API and export
+Conditional display allows you to show/hide fields based on other field values
+Templates enable different form configurations for different jobs
+You do not have permission to view this page.
+Access denied
+Loading Kanban board...
+The Kanban board is a Pro feature.
+Loading applications...
+No applications
+Today
+Yesterday
+%d days ago
+Expand
+Collapse
+Drag to change status
+Status changed
+Update failed
+Reports & Statistics
+Overview of applications, jobs and recruiting metrics
+Overview
+Trends
+Total applications
+Avg. time-to-hire
+Conversion rate
+days
+Last 7 days
+Last 30 days
+Last 90 days
+This year
+All time
+Custom range
+Applications over time
+Status distribution
+Source distribution
+Top jobs
+Conversion funnel
+Time-to-hire trend
+Job views
+Form started
+Form submitted
+Export applications
+Export statistics report
+Select columns
+Select period
+All statuses
+All jobs
+Download CSV
+Pro feature
+Advanced reports
+CSV export
+Error loading data
+No data available
+Compared to previous month
+Increase
+Decrease
+No change
+Promising candidates for future positions
+Loading talent pool...
+The talent pool is still empty.
+Add promising candidates from the application detail page to the talent pool.
+Go to Applications
+Search candidates...
+Filter by tags
+All tags
+Candidate
+Added on
+Expires on
+Reason
+Tags
+No tags
+Remove from pool
+Really remove candidate from talent pool?
+Candidate has been removed from talent pool.
+Error removing from talent pool.
+Error loading talent pool.
+Expires soon
+Expired
+Expires in %d days
+Total
+per page
+Previous
+Changes saved.
+Error saving.
+GDPR notice: Candidates are automatically removed from the pool after expiration.
+Talent Pool is a Pro feature
+With the Talent Pool you can save promising candidates for future positions. This way you always have access to qualified talent when a new position needs to be filled.
+Organize candidates with tags
+GDPR-compliant storage with automatic expiration
+Fast search and filtering
+Add notes and reasons
+Upgrade to Pro now
+Welcome
+Company Details
+First Job
+Complete
+Setup Wizard
+Saved!
+An error occurred.
+Sending email...
+Test email sent!
+Welcome to Recruiting Playbook!
+This wizard will help you set up the plugin in just a few minutes.
+Manage job listings
+Create and manage your job listings directly in WordPress.
+Receive applications
+Candidates can apply directly on your website.
+Manage applications
+Keep track of all applications.
+Let's go!
+Set up later
+This information will be used in emails and in the Google for Jobs schema.
+Company Logo URL
+URL to your company logo (recommended for Google for Jobs).
+Street
+Country
+Privacy Policy URL
+Link to the privacy policy for the application form.
+Continue
+Email Settings
+Configure how email notifications will be sent.
+No SMTP configured
+Install SMTP plugin
+SMTP configured
+Notifications about new applications will be sent to this address.
+Send test email
+Send test
+Create first job
+Create your first job listing now or skip this step.
+e.g. Senior Developer (m/f/d)
+e.g. Berlin
+Temporary
+Skip
+Create job & Continue
+Setup complete!
+Recruiting Playbook is now ready to use.
+Next steps:
+Complete your first job
+Configure additional settings
+Go to Dashboard
+Shortcodes for your pages:
+Displays all job listings
+Search form for jobs
+Application form (on job page)
+Invalid step.
+Recruiting Playbook - Test Email
+This is a test email from Recruiting Playbook.
+
+If you receive this email, email delivery is working correctly.
+
+Sent at: %s
+Email could not be sent. Please check your SMTP configuration.
+Pre-made layouts for career pages
+Career Page
+Complete career page with hero, featured jobs and job search.
+Careers at our company
+Join our team and shape the future with us.
+Top Job Listings
+All Job Listings
+Job Sidebar
+Compact job list for sidebars and widgets.
+Current Positions
+Featured Jobs Hero
+Large display of top job listings.
+Our Top Job Listings
+Discover our outstanding career opportunities.
+Complete Job Search
+Job search with all filters and job counter.
+Open Positions
+Category Overview
+Overview of all job categories as cards.
+Discover Career Fields
+Find positions in your field.
+{count} open positions
+{count} open position
+No open positions
+Search
+Keyword, job title...
+All Types
+Reset filters
+[PLURAL] %d job found
+No matching jobs found. Please try different search criteria.
+No open positions at the moment
+Please check back later or contact us for unsolicited applications.
+Recruiting Playbook Setup
+Find your dream job
+Upload your resume and discover matching jobs.
+No categories available.
+— All —
+— Automatic —
+RP: AI Job Finder
+Heading of the job finder.
+Subtitle
+Explanatory text below the heading.
+Max. Suggestions
+Maximum number of AI suggestions.
+CSS Classes
+Additional CSS classes for custom styling.
+RP: AI Job Match
+Empty = auto-detect (on job pages).
+Button Text
+Text displayed on the button.
+Button Style
+Visual style of the button.
+Default (filled)
+Outline (border only)
+RP: Application Form
+Heading of the form.
+Show job title
+Display job title above the form.
+Progress indicator
+Display progress bar for multi-step form.
+RP: Featured Jobs
+Count
+Number of featured jobs.
+Columns
+Number of columns in the grid.
+Optional: Heading above the featured jobs.
+Show Excerpt
+Show job description as short text.
+RP: Job Categories
+Show Count
+Display the number of jobs per category.
+Hide Empty
+Hide categories without jobs.
+Order By
+Sort order for categories.
+RP: Job Count
+Optional: Count only jobs in this category.
+Optional: Count only jobs at this location.
+Format (Plural)
+Empty = Default. Placeholder: {count}. Example: {count} open positions
+Format (Singular)
+Empty = Default. Placeholder: {count}. Example: {count} open position
+Format (Zero)
+Empty = "No open positions".
+RP: Job List
+Number of Jobs
+How many jobs should be displayed?
+Filter by category.
+Filter by location.
+Filter by employment type.
+Featured Only
+Show only featured jobs.
+Sort By
+Random
+Order
+Descending
+Ascending
+RP: Job Search
+Show search field
+Text search for job title and description.
+Category filter
+Dropdown to select category.
+Location filter
+Dropdown to select location.
+Employment type filter
+Dropdown to select employment type.
+Jobs per page
+Number of jobs per page.
+Number of columns for the results list.
+RP: Latest Jobs
+Limit
+Number of latest jobs to display.
+0 = List view without grid.
+List
+Optional: Heading above the latest jobs.
+Optional: Show only jobs in this category.
+Show Date
+Display publication date.
+Display job description as short text.
+Max. suggestions
+Empty = auto-detect.
+Outline
+Empty = auto-detect (on job listing pages).
+Show Job Title
+Show Progress Indicator
+Show excerpt
+Show count
+Hide empty
+RP: Job Counter
+Use {count} as placeholder.
+RP: Job Listing
+Sorting
+Number of jobs
+1 = List view

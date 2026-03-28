@@ -1,0 +1,27 @@
+<?php
+/**
+ * Fusion Builder Live Preview Template für RP: Stellenzähler
+ *
+ * @package RecruitingPlaybook
+ * @since 1.2.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+?>
+<script type="text/template" id="fusion-builder-block-module-rp-job-count-preview-template">
+	<h4 class="fusion_module_title">
+		<span class="fusion-module-icon {{ fusionAllElements[element_type].icon }}"></span>
+		{{ fusionAllElements[element_type].name }}
+	</h4>
+	<# if ( params.format ) { #>
+		<span>Format: {{ params.format }}</span>
+	<# } else { #>
+		<span>Dynamischer Stellen-Z&auml;hler</span>
+	<# } #>
+	<# if ( params.category ) { #>
+		<br><span>Kategorie: {{ params.category }}</span>
+	<# } #>
+	<# if ( params.location ) { #>
+		<br><span>Standort: {{ params.location }}</span>
+	<# } #>
+</script>

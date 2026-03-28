@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,18 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.3.3 - 2026-03-28 =
+* Fix: Free-Version komplett funktionsfähig - alle CRITICAL Bugs behoben
+* Fix: Bewerbungsformular lädt korrekt (Stub-Endpoints für Premium-Features)
+* Fix: Bewerbungs-Detailseite zeigt Daten (notes/timeline/emails Fallbacks)
+* Fix: Einstellungen laden ohne Fehler (class_exists Guards für Premium-Services)
+* Fix: Export Button Redirect zu Settings-Tab
+* Fix: Premium-Menüpunkte ausgeblendet in Free-Version (Kanban, Talent Pool, Form Builder, Email Templates)
+* Fix: Job-Cards zeigen keine Raw-Shortcodes mehr (Stub-Handler für AI-Features)
+* Fix: Premium-Tabs Feature-Flags für React-Frontend
+* Fix: Integrationen-Tab blendet Premium-Features aus (Slack, Teams, Google Ads)
+* WordPress.org Guideline 5 Compliance: Keine sichtbaren Premium-Features in Free-Version
 
 = 1.3.2 - 2026-03-28 =
 * Fix: REST API get_company permission now uses manage_options (WordPress.org Review Issue #2)
