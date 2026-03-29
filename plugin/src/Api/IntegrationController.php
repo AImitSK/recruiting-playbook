@@ -153,6 +153,32 @@ class IntegrationController extends WP_REST_Controller {
 		// Webhook-URLs für sichere Anzeige maskieren.
 		$masked = $this->maskWebhookUrls( $merged );
 
+		// Premium-Integration-Schlüssel in Free-Version entfernen (WordPress.org Guideline 5).
+		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'integrations' ) ) {
+			$premium_keys = [
+				'slack_enabled',
+				'slack_webhook_url',
+				'slack_event_new_application',
+				'slack_event_status_changed',
+				'slack_event_job_published',
+				'slack_event_deadline_reminder',
+				'teams_enabled',
+				'teams_webhook_url',
+				'teams_event_new_application',
+				'teams_event_status_changed',
+				'teams_event_job_published',
+				'teams_event_deadline_reminder',
+				'google_ads_enabled',
+				'google_ads_conversion_id',
+				'google_ads_conversion_label',
+				'google_ads_conversion_value',
+			];
+
+			foreach ( $premium_keys as $key ) {
+				unset( $masked[ $key ] );
+			}
+		}
+
 		return new WP_REST_Response( $masked, 200 );
 	}
 
