@@ -282,7 +282,8 @@ export function IntegrationSettings() {
 			</Card>
 
 			{ /* ═══════════ Slack ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
+			{ isPro && (
+			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 						<div>
@@ -351,24 +352,12 @@ export function IntegrationSettings() {
 						</div>
 					</CardContent>
 				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Slack notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
 			</Card>
+			) }
 
 			{ /* ═══════════ Microsoft Teams ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
+			{ isPro && (
+			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 						<div>
@@ -442,24 +431,12 @@ export function IntegrationSettings() {
 						</div>
 					</CardContent>
 				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Teams notifications are a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
 			</Card>
+			) }
 
 			{ /* ═══════════ Google Ads Conversion ═══════════ */ }
-			<Card style={ ! isPro ? { opacity: 0.7 } : undefined }>
+			{ isPro && (
+			<Card>
 				<CardHeader>
 					<div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 						<div>
@@ -524,21 +501,8 @@ export function IntegrationSettings() {
 						</Alert>
 					</CardContent>
 				) }
-				{ ! isPro && (
-					<CardContent>
-						<Alert>
-							<AlertDescription style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-								<span>{ __( 'Google Ads Conversion is a Pro feature.', 'recruiting-playbook' ) }</span>
-								{ upgradeUrl && (
-									<a href={ upgradeUrl } className="button button-primary button-small" style={ { marginLeft: '12px', whiteSpace: 'nowrap' } }>
-										{ __( 'Upgrade to Pro', 'recruiting-playbook' ) }
-									</a>
-								) }
-							</AlertDescription>
-						</Alert>
-					</CardContent>
-				) }
 			</Card>
+			) }
 
 			{ /* ═══════════ Speichern ═══════════ */ }
 			<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
