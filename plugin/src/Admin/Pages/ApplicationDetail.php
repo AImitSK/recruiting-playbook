@@ -203,7 +203,7 @@ class ApplicationDetail {
 						<h2 class="hndle"><?php esc_html_e( 'Cover letter', 'recruiting-playbook' ); ?></h2>
 						<div class="inside">
 							<div class="rp-cover-letter">
-								<?php echo wp_kses_post( nl2br( $application['cover_letter'] ) ); ?>
+								<?php echo wp_kses_post( wpautop( $application['cover_letter'] ) ); ?>
 							</div>
 						</div>
 					</div>
