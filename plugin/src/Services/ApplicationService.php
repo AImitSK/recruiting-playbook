@@ -188,6 +188,9 @@ class ApplicationService {
 		} elseif ( $this->email_service ) {
 			// Free-Version: Default-Bestätigung senden (falls EmailService verfügbar).
 			$this->email_service->sendApplicantConfirmation( $application_id );
+		} else {
+			// Free-Version Fallback: Native WordPress wp_mail() verwenden.
+			$this->sendBasicConfirmationEmail( $application_id, $data );
 		}
 
 		// 6. Hook für Erweiterungen
@@ -865,5 +868,83 @@ class ApplicationService {
 		}
 
 		return $updated;
+	}
+
+	/**
+	 * Send basic confirmation email using WordPress native wp_mail()
+	 * 
+	 * Fallback für Free-Version wenn EmailService nicht verfügbar ist.
+	 *
+	 * @param int   $application_id Application ID.
+	 * @param array $data          Application data.
+	 */
+	private function sendBasicConfirmationEmail( int $application_id, array $data ): void {
+		// Load job post.
+		$job = get_post( (int) $data['job_id'] );
+		if ( ! $job ) {
+			return;
+		}
+
+		$candidate_email = $data['email'] ?? '';
+		$candidate_name  = ( $data['first_name'] ?? '' ) . ' ' . ( $data['last_name'] ?? '' );
+		$candidate_name  = trim( $candidate_name );
+
+		if ( empty( $candidate_email ) ) {
+			return;
+		}
+
+		// Applicant confirmation email.
+		$subject = sprintf(
+			/* translators: %s: job title */
+			__( 'Application received: %s', 'recruiting-playbook' ),
+			$job->post_title
+		);
+
+		$message = sprintf(
+			/* translators: 1: candidate name, 2: job title, 3: site name */
+			__( 'Hello %1$s,
+
+Thank you for your application for the position "%2$s".
+
+We have received your application and will review it shortly.
+
+Best regards,
+%3$s', 'recruiting-playbook' ),
+			$candidate_name,
+			$job->post_title,
+			get_bloginfo( 'name' )
+		);
+
+		$headers = [
+			'Content-Type: text/plain; charset=UTF-8',
+			'From: ' . get_bloginfo( 'name' ) . ' <' . get_option( 'admin_email' ) . '>',
+		];
+
+		wp_mail( $candidate_email, $subject, $message, $headers );
+
+		// Admin notification email.
+		$admin_email = get_option( 'admin_email' );
+		$admin_subject = sprintf(
+			/* translators: 1: candidate name, 2: job title */
+			__( 'New application: %1$s for %2$s', 'recruiting-playbook' ),
+			$candidate_name,
+			$job->post_title
+		);
+
+		$admin_message = sprintf(
+			/* translators: 1: candidate name, 2: candidate email, 3: job title, 4: admin URL */
+			__( 'A new application was received:
+
+Applicant: %1$s (%2$s)
+Position: %3$s
+
+View application: %4$s', 'recruiting-playbook' ),
+			$candidate_name,
+			$candidate_email,
+			$job->post_title,
+			admin_url( 'admin.php?page=rp-application-detail&id=' . $application_id )
+		);
+
+		wp_mail( $admin_email, $admin_subject, $admin_message, $headers );
 	}
 }
