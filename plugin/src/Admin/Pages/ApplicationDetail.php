@@ -127,7 +127,7 @@ class ApplicationDetail {
 		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			$this->processEmailSend( $id );
 		}
 
@@ -143,7 +143,7 @@ class ApplicationDetail {
 		$activity_log    = $this->getActivityLog( $id );
 		$email_history   = [];
 		$email_templates = [];
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			$email_history   = $this->getEmailHistory( $id );
 			$email_templates = $this->getEmailTemplates();
 		}
@@ -285,7 +285,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( rp_fs()->is__premium_only() ) {
+					if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 						$this->renderEmailHistory( $email_history );
 					}
 					?>
@@ -321,7 +321,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( rp_fs()->is__premium_only() ) {
+					if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 						$this->renderEmailComposer( $id, $candidate, $email_templates );
 					}
 					?>
@@ -596,7 +596,7 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailHistory( int $application_id ): array {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
 			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 				return [];
@@ -638,7 +638,7 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailTemplates(): array {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
 			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 				return [];
@@ -675,7 +675,7 @@ class ApplicationDetail {
 	 * @param array $templates      Verfügbare Templates.
 	 */
 	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
 			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 				if ( function_exists( 'rp_require_feature' ) ) {
@@ -802,7 +802,7 @@ class ApplicationDetail {
 	 * @param array $emails E-Mail-Einträge.
 	 */
 	private function renderEmailHistory( array $emails ): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
 			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 				return;
@@ -892,7 +892,7 @@ class ApplicationDetail {
 	 * @param int $application_id Application ID.
 	 */
 	private function processEmailSend( int $application_id ): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
 			if ( ! isset( $_POST['send_email'] ) ) {
 				return;
 			}
