@@ -22,9 +22,10 @@ import { Select, SelectOption } from '../../../components/ui/select';
  * @param {Object}   props.meta                Meta info (computed values)
  * @param {Function} props.onUpdate            Update single setting
  * @param {string}   props.computedPrimaryColor Computed primary color
+ * @param {boolean}  props.isPro               Pro version active
  * @return {JSX.Element} Component
  */
-export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor } ) {
+export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor, isPro } ) {
 	return (
 		<div className="rp-space-y-4">
 			{ /* Card: Colors */ }
@@ -87,7 +88,8 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 				</CardContent>
 			</Card>
 
-			{ /* Card: Logo */ }
+			{ /* Card: Logo (Pro only) */ }
+			{ isPro && (
 			<Card>
 				<CardHeader>
 					<CardTitle>{ __( 'Logo', 'recruiting-playbook' ) }</CardTitle>
@@ -162,8 +164,10 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 					) }
 				</CardContent>
 			</Card>
+			) }
 
-			{ /* Card: White-Label */ }
+			{ /* Card: White-Label (Pro only) */ }
+			{ isPro && (
 			<Card>
 				<CardHeader>
 					<CardTitle>{ __( 'White-Label', 'recruiting-playbook' ) }</CardTitle>
@@ -207,6 +211,7 @@ export function BrandingPanel( { settings, meta, onUpdate, computedPrimaryColor 
 					</div>
 				</CardContent>
 			</Card>
+			) }
 		</div>
 	);
 }

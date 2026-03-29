@@ -33,6 +33,8 @@ export function DesignTab() {
 	const [ notification, setNotification ] = useState( null );
 
 	const notificationTimeoutRef = useRef( null );
+	const config = window.rpSettingsData || {};
+	const isPro = config.isPro || false;
 
 	const {
 		settings,
@@ -167,21 +169,31 @@ export function DesignTab() {
 						<TabsTrigger value="branding">
 							{ __( 'Branding', 'recruiting-playbook' ) }
 						</TabsTrigger>
-						<TabsTrigger value="typography">
-							{ __( 'Typography', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="cards">
-							{ __( 'Cards', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="buttons">
-							{ __( 'Buttons', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="joblist">
-							{ __( 'Job List', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						<TabsTrigger value="aibutton">
-							{ __( 'AI Button', 'recruiting-playbook' ) }
-						</TabsTrigger>
+						{ isPro && (
+							<TabsTrigger value="typography">
+								{ __( 'Typography', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
+						{ isPro && (
+							<TabsTrigger value="cards">
+								{ __( 'Cards', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
+						{ isPro && (
+							<TabsTrigger value="buttons">
+								{ __( 'Buttons', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
+						{ isPro && (
+							<TabsTrigger value="joblist">
+								{ __( 'Job List', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
+						{ isPro && (
+							<TabsTrigger value="aibutton">
+								{ __( 'AI Button', 'recruiting-playbook' ) }
+							</TabsTrigger>
+						) }
 					</TabsList>
 
 					<TabsContent value="branding">
@@ -190,46 +202,57 @@ export function DesignTab() {
 							meta={ meta }
 							onUpdate={ updateSetting }
 							computedPrimaryColor={ computedPrimaryColor }
+							isPro={ isPro }
 						/>
 					</TabsContent>
 
-					<TabsContent value="typography">
-						<TypographyPanel
-							settings={ settings }
-							onUpdate={ updateSetting }
-							computedPrimaryColor={ computedPrimaryColor }
-						/>
-					</TabsContent>
+					{ isPro && (
+						<TabsContent value="typography">
+							<TypographyPanel
+								settings={ settings }
+								onUpdate={ updateSetting }
+								computedPrimaryColor={ computedPrimaryColor }
+							/>
+						</TabsContent>
+					) }
 
-					<TabsContent value="cards">
-						<CardsPanel
-							settings={ settings }
-							onUpdate={ updateSetting }
-						/>
-					</TabsContent>
+					{ isPro && (
+						<TabsContent value="cards">
+							<CardsPanel
+								settings={ settings }
+								onUpdate={ updateSetting }
+							/>
+						</TabsContent>
+					) }
 
-					<TabsContent value="buttons">
-						<ButtonsPanel
-							settings={ settings }
-							onUpdate={ updateSetting }
-							computedPrimaryColor={ computedPrimaryColor }
-						/>
-					</TabsContent>
+					{ isPro && (
+						<TabsContent value="buttons">
+							<ButtonsPanel
+								settings={ settings }
+								onUpdate={ updateSetting }
+								computedPrimaryColor={ computedPrimaryColor }
+							/>
+						</TabsContent>
+					) }
 
-					<TabsContent value="joblist">
-						<JobListPanel
-							settings={ settings }
-							onUpdate={ updateSetting }
-						/>
-					</TabsContent>
+					{ isPro && (
+						<TabsContent value="joblist">
+							<JobListPanel
+								settings={ settings }
+								onUpdate={ updateSetting }
+							/>
+						</TabsContent>
+					) }
 
-					<TabsContent value="aibutton">
-						<AiButtonPanel
-							settings={ settings }
-							onUpdate={ updateSetting }
-							computedPrimaryColor={ computedPrimaryColor }
-						/>
-					</TabsContent>
+					{ isPro && (
+						<TabsContent value="aibutton">
+							<AiButtonPanel
+								settings={ settings }
+								onUpdate={ updateSetting }
+								computedPrimaryColor={ computedPrimaryColor }
+							/>
+						</TabsContent>
+					) }
 				</Tabs>
 
 				{ /* Action Buttons */ }

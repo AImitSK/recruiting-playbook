@@ -136,11 +136,9 @@ export function SettingsPage() {
 								{ __( 'User Roles', 'recruiting-playbook' ) }
 							</TabsTrigger>
 						) }
-						{ config.isPro && (
 							<TabsTrigger value="design">
 								{ __( 'Design & Branding', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
 						<TabsTrigger value="integrations">
 							{ __( 'Integrations', 'recruiting-playbook' ) }
 						</TabsTrigger>
