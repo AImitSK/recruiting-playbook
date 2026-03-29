@@ -36,6 +36,10 @@ export function DesignTab() {
 	const config = window.rpSettingsData || {};
 	const isPro = config.isPro || false;
 
+	// Debug logging
+	console.log('[DesignTab] isPro:', isPro);
+	console.log('[DesignTab] config:', config);
+
 	const {
 		settings,
 		schema,
@@ -116,8 +120,14 @@ export function DesignTab() {
 		}
 	}, [ isDirty, discardChanges ] );
 
+	// Debug logging
+	console.log('[DesignTab] loading:', loading);
+	console.log('[DesignTab] settings:', settings);
+	console.log('[DesignTab] error:', error);
+
 	// Loading state
 	if ( loading ) {
+		console.log('[DesignTab] Rendering LOADING state');
 		return (
 			<div className="rp-flex rp-items-center rp-justify-center rp-py-12">
 				<div className="rp-animate-spin rp-rounded-full rp-h-8 rp-w-8 rp-border-b-2 rp-border-blue-600" />
@@ -127,6 +137,7 @@ export function DesignTab() {
 
 	// No settings
 	if ( ! settings ) {
+		console.log('[DesignTab] Rendering NO SETTINGS state');
 		return (
 			<Alert variant="destructive">
 				<AlertCircle className="rp-h-4 rp-w-4" />
@@ -136,6 +147,8 @@ export function DesignTab() {
 			</Alert>
 		);
 	}
+
+	console.log('[DesignTab] Rendering CONTENT (isPro=' + isPro + ')');
 
 	return (
 		<div className="rp-flex rp-gap-6">
@@ -163,50 +176,40 @@ export function DesignTab() {
 					</Alert>
 				) }
 
-				{ /* Sub-Tabs */ }
-				<Tabs value={ activeSubTab } onValueChange={ setActiveSubTab }>
-					<TabsList className="rp-mb-4">
-						<TabsTrigger value="branding">
-							{ __( 'Branding', 'recruiting-playbook' ) }
-						</TabsTrigger>
-						{ isPro && (
+				{ /* Sub-Tabs (nur in Pro, in Free direkt Content anzeigen) */ }
+				{ isPro ? (
+					<Tabs value={ activeSubTab } onValueChange={ setActiveSubTab }>
+						<TabsList className="rp-mb-4">
+							<TabsTrigger value="branding">
+								{ __( 'Branding', 'recruiting-playbook' ) }
+							</TabsTrigger>
 							<TabsTrigger value="typography">
 								{ __( 'Typography', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
-						{ isPro && (
 							<TabsTrigger value="cards">
 								{ __( 'Cards', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
-						{ isPro && (
 							<TabsTrigger value="buttons">
 								{ __( 'Buttons', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
-						{ isPro && (
 							<TabsTrigger value="joblist">
 								{ __( 'Job List', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
-						{ isPro && (
 							<TabsTrigger value="aibutton">
 								{ __( 'AI Button', 'recruiting-playbook' ) }
 							</TabsTrigger>
-						) }
-					</TabsList>
+						</TabsList>
 
-					<TabsContent value="branding">
-						<BrandingPanel
-							settings={ settings }
-							meta={ meta }
-							onUpdate={ updateSetting }
-							computedPrimaryColor={ computedPrimaryColor }
-							isPro={ isPro }
-						/>
-					</TabsContent>
+						<TabsContent value="branding">
+							<BrandingPanel
+								settings={ settings }
+								meta={ meta }
+								onUpdate={ updateSetting }
+								computedPrimaryColor={ computedPrimaryColor }
+								isPro={ isPro }
+							/>
+						</TabsContent>
 
-					{ isPro && (
 						<TabsContent value="typography">
 							<TypographyPanel
 								settings={ settings }
@@ -214,18 +217,14 @@ export function DesignTab() {
 								computedPrimaryColor={ computedPrimaryColor }
 							/>
 						</TabsContent>
-					) }
 
-					{ isPro && (
 						<TabsContent value="cards">
 							<CardsPanel
 								settings={ settings }
 								onUpdate={ updateSetting }
 							/>
 						</TabsContent>
-					) }
 
-					{ isPro && (
 						<TabsContent value="buttons">
 							<ButtonsPanel
 								settings={ settings }
@@ -233,18 +232,14 @@ export function DesignTab() {
 								computedPrimaryColor={ computedPrimaryColor }
 							/>
 						</TabsContent>
-					) }
 
-					{ isPro && (
 						<TabsContent value="joblist">
 							<JobListPanel
 								settings={ settings }
 								onUpdate={ updateSetting }
 							/>
 						</TabsContent>
-					) }
 
-					{ isPro && (
 						<TabsContent value="aibutton">
 							<AiButtonPanel
 								settings={ settings }
@@ -252,8 +247,17 @@ export function DesignTab() {
 								computedPrimaryColor={ computedPrimaryColor }
 							/>
 						</TabsContent>
-					) }
-				</Tabs>
+					</Tabs>
+				) : (
+					// Free: Direkt Branding-Content ohne Sub-Tabs
+					<BrandingPanel
+						settings={ settings }
+						meta={ meta }
+						onUpdate={ updateSetting }
+						computedPrimaryColor={ computedPrimaryColor }
+						isPro={ isPro }
+					/>
+				) }
 
 				{ /* Action Buttons */ }
 				<div className="rp-flex rp-items-center rp-justify-between rp-mt-6 rp-pt-4 rp-border-t rp-border-gray-200">

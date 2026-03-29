@@ -32,6 +32,11 @@ export function SettingsPage() {
 	const logoUrl = config.logoUrl || '';
 	const pages = config.pages || [];
 
+	// Debug logging
+	console.log('[SettingsPage] config:', config);
+	console.log('[SettingsPage] isPro:', config.isPro);
+	console.log('[SettingsPage] activeTab:', activeTab);
+
 	const {
 		settings,
 		loading,
@@ -185,11 +190,9 @@ export function SettingsPage() {
 						</TabsContent>
 					) }
 
-					{ config.isPro && (
-						<TabsContent value="design">
+					<TabsContent value="design">
 							<DesignTab />
 						</TabsContent>
-					) }
 
 					<TabsContent value="integrations">
 						<IntegrationSettings />
