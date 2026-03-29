@@ -99,59 +99,69 @@ class Menu {
 			[ $this, 'renderApplications' ]
 		);
 
-		// Kanban-Board (Pro-Feature).
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Kanban Board', 'recruiting-playbook' ),
-			$this->getKanbanMenuLabel(),
-			'rp_view_applications',
-			'rp-kanban',
-			[ $this, 'renderKanban' ]
-		);
+		// Kanban-Board (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'kanban_board' ) ) {
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Kanban Board', 'recruiting-playbook' ),
+				__( 'Kanban Board', 'recruiting-playbook' ),
+				'rp_view_applications',
+				'rp-kanban',
+				[ $this, 'renderKanban' ]
+			);
+		}
 
-		// Talent-Pool (Pro-Feature).
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Talent Pool', 'recruiting-playbook' ),
-			$this->getTalentPoolMenuLabel(),
-			'rp_manage_talent_pool',
-			'rp-talent-pool',
-			[ $this, 'renderTalentPool' ]
-		);
+		// Talent-Pool (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'advanced_applicant_management' ) ) {
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Talent Pool', 'recruiting-playbook' ),
+				__( 'Talent Pool', 'recruiting-playbook' ),
+				'rp_manage_talent_pool',
+				'rp-talent-pool',
+				[ $this, 'renderTalentPool' ]
+			);
+		}
 
-		// Reporting & Dashboard.
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Reports', 'recruiting-playbook' ),
-			$this->getReportingMenuLabel(),
-			'rp_view_stats',
-			'rp-reporting',
-			[ $this, 'renderReporting' ]
-		);
+		// Reporting & Dashboard (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'advanced_reporting' ) ) {
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Reports', 'recruiting-playbook' ),
+				__( 'Reports', 'recruiting-playbook' ),
+				'rp_view_stats',
+				'rp-reporting',
+				[ $this, 'renderReporting' ]
+			);
+		}
 
-		// Formular-Builder (Pro-Feature).
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Form Builder', 'recruiting-playbook' ),
-			$this->getFormBuilderMenuLabel(),
-			'rp_manage_forms',
-			'rp-form-builder',
-			[ $this, 'renderFormBuilder' ]
-		);
+		// Formular-Builder (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'custom_fields' ) ) {
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Form Builder', 'recruiting-playbook' ),
+				__( 'Form Builder', 'recruiting-playbook' ),
+				'rp_manage_forms',
+				'rp-form-builder',
+				[ $this, 'renderFormBuilder' ]
+			);
+		}
 
-		// E-Mail-Vorlagen (Pro-Feature) - vor Einstellungen registriert.
-		$email_callback = $this->email_settings_page
-			? [ $this->email_settings_page, 'render' ]
-			: [ $this, 'renderEmailTemplatesPlaceholder' ];
+		// E-Mail-Vorlagen (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'email_templates' ) ) {
+			$email_callback = $this->email_settings_page
+				? [ $this->email_settings_page, 'render' ]
+				: [ $this, 'renderEmailTemplatesPlaceholder' ];
 
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Email Templates', 'recruiting-playbook' ),
-			$this->getEmailTemplatesMenuLabel(),
-			'manage_options',
-			'rp-email-templates',
-			$email_callback
-		);
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Email Templates', 'recruiting-playbook' ),
+				__( 'Email Templates', 'recruiting-playbook' ),
+				'manage_options',
+				'rp-email-templates',
+				$email_callback
+			);
+		}
 
 		// Einstellungen (Export ist jetzt als Tab integriert).
 		add_submenu_page(
@@ -173,15 +183,17 @@ class Menu {
 			[ $this, 'renderApplicationDetail' ]
 		);
 
-		// Bulk-E-Mail-Seite (unter Parent registriert für Menü-Highlighting).
-		add_submenu_page(
-			'recruiting-playbook',
-			__( 'Bulk Email', 'recruiting-playbook' ),
-			__( 'Bulk Email', 'recruiting-playbook' ),
-			'rp_send_emails',
-			'rp-bulk-email',
-			[ $this, 'renderBulkEmail' ]
-		);
+		// Bulk-E-Mail-Seite (Pro-Feature) - nur in Pro anzeigen.
+		if ( rp_can( 'email_templates' ) ) {
+			add_submenu_page(
+				'recruiting-playbook',
+				__( 'Bulk Email', 'recruiting-playbook' ),
+				__( 'Bulk Email', 'recruiting-playbook' ),
+				'rp_send_emails',
+				'rp-bulk-email',
+				[ $this, 'renderBulkEmail' ]
+			);
+		}
 
 		// Versteckte Seiten aus Menü entfernen (aber Routing bleibt erhalten).
 		add_action( 'admin_head', [ $this, 'hideSubmenuPages' ] );
@@ -839,7 +851,7 @@ class Menu {
 
 			if ( ! $template_id ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Please select a template.', 'recruiting-playbook' ) . '</p></div>';
-			} elseif ( ! class_exists( 'RecruitingPlaybook\\Services\\EmailService' ) ) {
+			} elseif ( ! rp_can( 'email_templates' ) ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Email service not available.', 'recruiting-playbook' ) . '</p></div>';
 			} else {
 				$email_service = new EmailService();

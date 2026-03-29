@@ -282,6 +282,9 @@ export function ApplicationsPage() {
 	const [ jobs, setJobs ] = useState( initialData.jobs || [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 
+	// Feature flags
+	const canExport = initialData.canExport || false;
+
 	// Filters - initialize from server-side data to preserve URL parameters across page reloads
 	const [ activeStatus, setActiveStatus ] = useState( initialData.activeStatus || '' );
 	const [ searchTerm, setSearchTerm ] = useState( initialData.searchTerm || '' );
@@ -615,7 +618,8 @@ export function ApplicationsPage() {
 						{ /* Spacer */ }
 						<div style={ { flexGrow: 1 } } />
 
-						{ /* Export Button */ }
+						{ /* Export Button (Pro-Feature) */ }
+						{ canExport && (
 						<a
 							href={ `${ adminUrl }admin.php?page=rp-export` }
 							style={ {
@@ -634,7 +638,8 @@ export function ApplicationsPage() {
 						>
 							<Download style={ { width: '1rem', height: '1rem' } } />
 							{ __( 'Export', 'recruiting-playbook' ) }
-						</a>
+							</a>
+						) }
 					</div>
 
 					{ /* Table */ }
