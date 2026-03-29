@@ -839,6 +839,8 @@ class Menu {
 
 			if ( ! $template_id ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Please select a template.', 'recruiting-playbook' ) . '</p></div>';
+			} elseif ( ! class_exists( 'RecruitingPlaybook\\Services\\EmailService' ) ) {
+				echo '<div class="notice notice-error"><p>' . esc_html__( 'Email service not available.', 'recruiting-playbook' ) . '</p></div>';
 			} else {
 				$email_service = new EmailService();
 				$success_count = 0;
