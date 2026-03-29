@@ -282,6 +282,11 @@ final class Plugin {
 			return;
 		}
 
+		// Prüfen ob Service-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\EmailQueueService' ) ) {
+			return;
+		}
+
 		$email_queue_service = new EmailQueueService();
 		$email_queue_service->registerHooks();
 
@@ -313,6 +318,11 @@ final class Plugin {
 			return;
 		}
 
+		// Prüfen ob Service-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\AutoEmailService' ) ) {
+			return;
+		}
+
 		$auto_email_service = new AutoEmailService();
 		$auto_email_service->registerHooks();
 	}
@@ -326,6 +336,11 @@ final class Plugin {
 	 */
 	private function registerWebhookHooks(): void {
 		if ( function_exists( 'rp_can' ) && ! rp_can( 'webhooks' ) ) {
+			return;
+		}
+
+		// Prüfen ob Service-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\WebhookService' ) ) {
 			return;
 		}
 
@@ -533,6 +548,11 @@ final class Plugin {
 	 * Blocks werden nur geladen wenn Pro-Lizenz aktiv ist.
 	 */
 	private function initBlocks(): void {
+		// Prüfen ob BlockLoader-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Blocks\\BlockLoader' ) ) {
+			return;
+		}
+
 		$block_loader = new BlockLoader();
 		$block_loader->register();
 	}
@@ -546,6 +566,11 @@ final class Plugin {
 	private function initElementorIntegration(): void {
 		// Nur laden wenn Elementor verfügbar ist.
 		if ( ! did_action( 'elementor/loaded' ) ) {
+			return;
+		}
+
+		// Prüfen ob Integration-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\Elementor\\ElementorIntegration' ) ) {
 			return;
 		}
 
@@ -596,6 +621,11 @@ final class Plugin {
 	private function initAvadaIntegration(): void {
 		// Nur laden wenn Avada/Fusion Builder verfügbar ist.
 		if ( ! class_exists( 'FusionBuilder' ) ) {
+			return;
+		}
+
+		// Prüfen ob Integration-Klasse verfügbar ist.
+		if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\Avada\\AvadaIntegration' ) ) {
 			return;
 		}
 
@@ -758,26 +788,66 @@ final class Plugin {
 
 		// Pro-Feature Controller.
 		if ( rp_fs()->is__premium_only() ) {
-			( new NoteController() )->register_routes();
-			( new RatingController() )->register_routes();
-			( new ActivityController() )->register_routes();
-			( new TalentPoolController() )->register_routes();
-			( new EmailTemplateController() )->register_routes();
-			( new EmailController() )->register_routes();
-			( new EmailLogController() )->register_routes();
-			( new SignatureController() )->register_routes();
-			( new RoleController() )->register_routes();
-			( new JobAssignmentController() )->register_routes();
-			( new StatsController() )->register_routes();
-			( new ExportController() )->register_routes();
-			( new SystemStatusController() )->register_routes();
-			( new FieldDefinitionController() )->register_routes();
-			( new FormTemplateController() )->register_routes();
-			( new MatchController() )->register_routes();
-			( new FormConfigController() )->register_routes();
-			( new WebhookController() )->register_routes();
-			( new ApiKeyController() )->register_routes();
-			( new AiAnalysisController() )->register_routes();
+			if ( class_exists( 'RecruitingPlaybook\\Api\\NoteController' ) ) {
+				( new NoteController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\RatingController' ) ) {
+				( new RatingController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\ActivityController' ) ) {
+				( new ActivityController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\TalentPoolController' ) ) {
+				( new TalentPoolController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\EmailTemplateController' ) ) {
+				( new EmailTemplateController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\EmailController' ) ) {
+				( new EmailController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\EmailLogController' ) ) {
+				( new EmailLogController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\SignatureController' ) ) {
+				( new SignatureController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\RoleController' ) ) {
+				( new RoleController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\JobAssignmentController' ) ) {
+				( new JobAssignmentController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\StatsController' ) ) {
+				( new StatsController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\ExportController' ) ) {
+				( new ExportController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\SystemStatusController' ) ) {
+				( new SystemStatusController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\FieldDefinitionController' ) ) {
+				( new FieldDefinitionController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\FormTemplateController' ) ) {
+				( new FormTemplateController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\MatchController' ) ) {
+				( new MatchController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\FormConfigController' ) ) {
+				( new FormConfigController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\WebhookController' ) ) {
+				( new WebhookController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\ApiKeyController' ) ) {
+				( new ApiKeyController() )->register_routes();
+			}
+			if ( class_exists( 'RecruitingPlaybook\\Api\\AiAnalysisController' ) ) {
+				( new AiAnalysisController() )->register_routes();
+			}
 		}
 	}
 
