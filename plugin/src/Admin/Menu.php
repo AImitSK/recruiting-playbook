@@ -274,7 +274,7 @@ class Menu {
 		// Status setzen.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird direkt danach geprüft.
 		if ( 'set_status' === $action && ! empty( $_GET['status'] ) ) {
-			check_admin_referer( 'rp_set_status_' . $id );
+			check_admin_referer( 'rp_set_status' );
 
 			$status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
 

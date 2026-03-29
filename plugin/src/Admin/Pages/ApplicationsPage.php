@@ -72,7 +72,7 @@ class ApplicationsPage {
 			'canExport'     => function_exists( 'rp_can' ) && rp_can( 'csv_export' ),
 			'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 			'adminUrl'      => admin_url(),
-			'nonce'         => wp_create_nonce( 'rp_set_status_' ),
+			'nonce'         => wp_create_nonce( 'rp_set_status' ),
 		];
 	}
 
