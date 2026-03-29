@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,13 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.3.3 - 2026-03-29 =
+* Fix: Add class_exists guards for EmailService in ApplicationService.php
+* Fix: Add class_exists guards for EmailService in Menu.php
+* Fix: Add class_exists guards for all Premium services and controllers in Plugin.php
+* Fix: Prevents fatal errors in Free version when Premium classes are removed by Freemius
+* Stability: Free version now activates and runs without crashes
 
 = 1.3.2 - 2026-03-28 =
 * Fix: REST API get_company permission now uses manage_options (WordPress.org Review Issue #2)
