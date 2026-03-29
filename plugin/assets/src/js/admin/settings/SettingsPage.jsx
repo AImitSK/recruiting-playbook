@@ -14,6 +14,7 @@ import { Spinner } from '../components/ui/spinner';
 
 import { GeneralSettings, CompanySettings, ExportSettings, RolesSettings, ApiKeySettings, IntegrationSettings, AiAnalysisSettings } from './components';
 import { DesignTab } from './tabs/DesignTab';
+import { GettingStartedTab } from './tabs/GettingStartedTab';
 import { useSettings } from './hooks';
 
 /**
@@ -22,7 +23,7 @@ import { useSettings } from './hooks';
  * @return {JSX.Element} Component
  */
 export function SettingsPage() {
-	const [ activeTab, setActiveTab ] = useState( 'general' );
+	const [ activeTab, setActiveTab ] = useState( 'getting-started' );
 	const [ notification, setNotification ] = useState( null );
 
 	const notificationTimeoutRef = useRef( null );
@@ -127,6 +128,9 @@ export function SettingsPage() {
 				{ /* Tabs */ }
 				<Tabs value={ activeTab } onValueChange={ setActiveTab }>
 					<TabsList>
+						<TabsTrigger value="getting-started">
+							{ __( 'Getting Started', 'recruiting-playbook' ) }
+						</TabsTrigger>
 						<TabsTrigger value="general">
 							{ i18n.tabGeneral || __( 'General', 'recruiting-playbook' ) }
 						</TabsTrigger>
@@ -158,6 +162,10 @@ export function SettingsPage() {
 							</TabsTrigger>
 						) }
 					</TabsList>
+
+					<TabsContent value="getting-started">
+						<GettingStartedTab />
+					</TabsContent>
 
 					<TabsContent value="general">
 						<GeneralSettings

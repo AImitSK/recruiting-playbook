@@ -1,8 +1,22 @@
 # Freemius Premium-Code Problem - Lösungsplan
 
+## 🔴 AKTUELLER STATUS - 29. März 2026
+
+**Code zurückgesetzt auf:** v1.3.2 (Commit `fb4b049`)
+
+**PROBLEM:** Free-Version crasht komplett - REST API lädt nicht, Bewerbungen leer, Einstellungen Endlos-Loader
+
+**ROOT CAUSE:** Premium-Klassen werden ohne Guards instantiiert:
+- `ApplicationService.php` Zeile 60: `new EmailService()` → Fatal Error
+- Menu.php, Plugin.php: Weitere ungeguardete Premium-Service Instantiierungen
+
+**NÄCHSTE SCHRITTE:** Siehe `STATUS-FUER-NAECHSTEN-CHAT.md`
+
+---
+
 **Datum:** 28. März 2026
 **Problem:** `@fs_premium_only` Meta-Tags entfernen Pro-Dateien NICHT aus Free-Version
-**Status:** Root Cause Analysis erforderlich
+**Status:** @fs_premium_only funktioniert (v1.3.1), aber Code crasht ohne Guards
 
 ---
 

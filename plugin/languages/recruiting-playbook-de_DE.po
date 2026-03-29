@@ -3829,7 +3829,7 @@ msgstr "Benutzerdefinierte Feldwerte (Pro-Funktion)"
 
 #: src/Api/ApplicationController.php:435
 msgid "Your application has been submitted successfully. You will receive a confirmation email shortly."
-msgstr "Deine Bewerbung wurde erfolgreich eingereicht. Du erhältst in Kürze eine Bestätigungs-E-Mail."
+msgstr "Ihre Bewerbung wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigungs-E-Mail."
 
 #: src/Api/ApplicationController.php:522
 msgid "Status has been updated."
@@ -5746,11 +5746,11 @@ msgstr "Datenschutzerklärung"
 
 #: src/Database/Migrator.php:595
 msgid "Best regards"
-msgstr "Beste Grüße"
+msgstr "Viele Grüße"
 
 #: src/Database/Migrator.php:598
 msgid "Your HR Team"
-msgstr "Dein HR-Team"
+msgstr "Ihr HR-Team"
 
 #: src/Database/Migrator.php:628
  src/Frontend/Shortcodes.php:497
@@ -6364,7 +6364,7 @@ msgstr "Bewerbung erfolgreich eingereicht!"
  src/Frontend/Shortcodes.php:450
 #: src/Services/FormRenderService.php:134
 msgid "Thank you for your application. You will receive a confirmation email shortly."
-msgstr "Vielen Dank für deine Bewerbung. Du erhältst in Kürze eine Bestätigungs-E-Mail."
+msgstr "Vielen Dank für Ihre Bewerbung. Sie erhalten in Kürze eine Bestätigungs-E-Mail."
 
 #: src/Frontend/Shortcodes.php:421
  src/Frontend/Shortcodes.php:732
@@ -7580,30 +7580,30 @@ msgstr "Eingegangen am"
  src/Services/EmailService.php:667
 #, php-format
 msgid "Dear %1$s %2$s"
-msgstr "Liebe/Lieber %1$s %2$s"
+msgstr "Sehr geehrte/Sehr geehrter %1$s %2$s"
 
 #. translators: %s: First name
 #: src/Services/EmailService.php:644
  src/Services/EmailService.php:669
 #, php-format
 msgid "Dear %s"
-msgstr "Liebe/Lieber %s"
+msgstr "Hallo Herr/Frau %s"
 
 #: src/Services/EmailService.php:656
 msgid "Thank you for your application! We have received your documents and will carefully review them."
-msgstr "Vielen Dank für deine Bewerbung! Wir haben deine Unterlagen erhalten und werden sie sorgfältig prüfen."
+msgstr "Vielen Dank für Ihre Bewerbung! Wir haben Ihre Unterlagen erhalten und werden sie sorgfältig prüfen."
 
 #: src/Services/EmailService.php:659
 msgid "We will get back to you as soon as we have reviewed your application."
-msgstr "Wir melden uns bei dir, sobald wir deine Bewerbung geprüft haben."
+msgstr "Wir melden uns bei Ihnen, sobald wir Ihre Bewerbung geprüft haben."
 
 #: src/Services/EmailService.php:660
 msgid "If you have any questions, please feel free to contact us."
-msgstr "Bei Fragen stehen wir dir gerne zur Verfügung."
+msgstr "Bei Fragen stehen wir Ihnen gerne zur Verfügung."
 
 #: src/Services/EmailService.php:678
 msgid "Your Application"
-msgstr "Deine Bewerbung"
+msgstr "Ihre Bewerbung"
 
 #. translators: %s: Job title
 #: src/Services/EmailService.php:682
@@ -8105,17 +8105,17 @@ msgstr "Hallo"
 #: src/Services/PlaceholderService.php:307
 #, php-format
 msgid "Dear Mr. %s"
-msgstr "Liebe/Lieber Herr %s"
+msgstr "Sehr geehrter Herr %s"
 
 #: src/Services/PlaceholderService.php:313
 #, php-format
 msgid "Dear Ms. %s"
-msgstr "Liebe/Lieber Frau %s"
+msgstr "Sehr geehrte Frau %s"
 
 #: src/Services/PlaceholderService.php:316
 #, php-format
 msgid "Dear Mr. / Ms. %s"
-msgstr "Hallo Herr / Frau %s"
+msgstr "Sehr geehrte Damen und Herren"
 
 #: src/Services/PlaceholderService.php:385
 msgid "Mr. / Ms."
@@ -8127,7 +8127,7 @@ msgstr "Formularal Anrede"
 
 #: src/Services/PlaceholderService.php:390
 msgid "Dear Mr. Doe"
-msgstr "Liebe/Lieber Herr Doe"
+msgstr "Sehr geehrter Herr Doe"
 
 #: src/Services/PlaceholderService.php:395
 msgid "Candidate's first name"
@@ -8241,7 +8241,7 @@ msgstr "Viele Grüße"
 #: src/Services/SignatureService.php:210
 #, php-format
 msgid "Your %s Team"
-msgstr "Dein %s Team"
+msgstr "Ihr %s Team"
 
 #: src/Services/SignatureService.php:275
 msgid "(Company)"

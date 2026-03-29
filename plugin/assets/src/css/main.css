@@ -577,8 +577,10 @@
         box-shadow: 0 0 0 3px var(--rp-color-primary-light);
     }
 
-    .rp-plugin .rp-input::placeholder {
-        color: var(--rp-color-text-light);
+    .rp-plugin .rp-input::placeholder,
+    .rp-plugin input::placeholder,
+    .rp-plugin textarea::placeholder {
+        color: #9ca3af !important;
     }
 
     .rp-plugin .rp-input-error {

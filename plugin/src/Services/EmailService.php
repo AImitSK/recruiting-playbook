@@ -644,8 +644,8 @@ class EmailService {
 				$greeting = ! empty( $app['salutation'] )
 					/* translators: 1: Salutation (e.g. Mr./Ms.), 2: Last name */
 					? sprintf( __( 'Dear %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
-					/* translators: %s: First name */
-					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['first_name'] );
+					/* translators: %s: Last name (formal address) */
+					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['last_name'] );
 
 				// Signature will be appended via appendSignature() in sendApplicantConfirmation().
 				$content = sprintf(
@@ -669,8 +669,8 @@ class EmailService {
 				$greeting = ! empty( $app['salutation'] )
 					/* translators: 1: Salutation (e.g. Mr./Ms.), 2: Last name */
 					? sprintf( __( 'Dear %1$s %2$s', 'recruiting-playbook' ), $app['salutation'], $app['last_name'] )
-					/* translators: %s: First name */
-					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['first_name'] );
+					/* translators: %s: Last name (formal address) */
+					: sprintf( __( 'Dear %s', 'recruiting-playbook' ), $app['last_name'] );
 
 				// Signature will be appended via appendSignature() in sendRejectionEmail().
 				$content = sprintf(

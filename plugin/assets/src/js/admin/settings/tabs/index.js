@@ -7,3 +7,4 @@
  */
 
 export { DesignTab } from './DesignTab';
+export { GettingStartedTab } from './GettingStartedTab';

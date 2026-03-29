@@ -151,8 +151,9 @@ class CssGeneratorService {
 			'strong' => '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
 		];
 
-		// Individuelle Überschreibungen (nur wenn gesetzt).
-		// Diese überschreiben die Preset-Defaults via CSS-Variablen.
+		// In Free-Version: Vernünftige Defaults für Cards (dezenter hellgrauer Rahmen).
+		// In Pro-Version: Custom-Einstellungen verwenden.
+		$can_customize_cards = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
 
 		// Border-Radius.
 		if ( isset( $settings['card_border_radius'] ) ) {
@@ -167,8 +168,15 @@ class CssGeneratorService {
 		// Border.
 		if ( isset( $settings['card_border_show'] ) ) {
 			if ( $settings['card_border_show'] ) {
-				$border_color = $settings['card_border_color'] ?: '#e5e7eb';
-				$border_width = ( $settings['card_border_width'] ?? 1 ) . 'px';
+				if ( $can_customize_cards ) {
+					// Pro: Custom-Einstellungen verwenden.
+					$border_color = $settings['card_border_color'] ?: '#e5e7eb';
+					$border_width = ( $settings['card_border_width'] ?? 1 ) . 'px';
+				} else {
+					// Free: Dezenter hellgrauer Rahmen (1px).
+					$border_color = '#e5e7eb';
+					$border_width = '1px';
+				}
 				$vars['--rp-card-border'] = $border_width . ' solid ' . $border_color;
 				$vars['--rp-card-border-color'] = $border_color;
 			} else {
@@ -232,12 +240,23 @@ class CssGeneratorService {
 	private function generate_button_variables( array $settings, string $primary ): array {
 		$vars = [];
 
-		// Custom Design aktiv: Verwende Custom-Farben aus Settings.
-		// Fallback auf Primärfarbe wenn nicht explizit gesetzt.
-		$vars['--rp-btn-bg']         = $settings['button_bg_color'] ?: $primary;
-		$vars['--rp-btn-bg-hover']   = $settings['button_bg_color_hover'] ?: $this->design_service->adjust_color_brightness( $settings['button_bg_color'] ?: $primary, -15 );
-		$vars['--rp-btn-text']       = $settings['button_text_color'] ?: '#ffffff';
-		$vars['--rp-btn-text-hover'] = $settings['button_text_color_hover'] ?: '#ffffff';
+		// In Free-Version: Ignoriere button_bg_color und verwende immer Primärfarbe.
+		// In Pro-Version: Verwende Custom-Farben wenn gesetzt.
+		$can_customize_buttons = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+
+		if ( $can_customize_buttons ) {
+			// Pro: Verwende Custom-Farben aus Settings, Fallback auf Primärfarbe.
+			$vars['--rp-btn-bg']         = $settings['button_bg_color'] ?: $primary;
+			$vars['--rp-btn-bg-hover']   = $settings['button_bg_color_hover'] ?: $this->design_service->adjust_color_brightness( $settings['button_bg_color'] ?: $primary, -15 );
+			$vars['--rp-btn-text']       = $settings['button_text_color'] ?: '#ffffff';
+			$vars['--rp-btn-text-hover'] = $settings['button_text_color_hover'] ?: '#ffffff';
+		} else {
+			// Free: Immer Primärfarbe verwenden, ignoriere button_bg_color Settings.
+			$vars['--rp-btn-bg']         = $primary;
+			$vars['--rp-btn-bg-hover']   = $this->design_service->adjust_color_brightness( $primary, -15 );
+			$vars['--rp-btn-text']       = '#ffffff';
+			$vars['--rp-btn-text-hover'] = '#ffffff';
+		}
 
 		// Border-Radius.
 		$vars['--rp-btn-radius'] = $settings['button_border_radius'] . 'px';
@@ -707,6 +726,26 @@ class CssGeneratorService {
 		$css .= "  color: var(--rp-link-color);\n";
 		$css .= "  text-decoration: var(--rp-link-decoration);\n";
 		$css .= "}\n";
+
+		// Basis-Button-Styles: Primärfarbe auch ohne Custom Button Design.
+		// Gilt nur wenn button_use_custom_design NICHT aktiv ist (Custom Design überschreibt).
+		if ( empty( $settings['button_use_custom_design'] ) ) {
+			$primary = $this->design_service->get_primary_color();
+			$primary_hover = $this->design_service->adjust_color_brightness( $primary, -15 );
+
+			$css .= ".rp-plugin .wp-element-button,\n";
+			$css .= ".rp-plugin .wp-block-button__link {\n";
+			$css .= "  background-color: {$primary} !important;\n";
+			$css .= "  border-color: {$primary} !important;\n";
+			$css .= "  color: #ffffff !important;\n";
+			$css .= "}\n";
+
+			$css .= ".rp-plugin .wp-element-button:hover,\n";
+			$css .= ".rp-plugin .wp-block-button__link:hover {\n";
+			$css .= "  background-color: {$primary_hover} !important;\n";
+			$css .= "  border-color: {$primary_hover} !important;\n";
+			$css .= "}\n";
+		}
 
 		return $css;
 	}
