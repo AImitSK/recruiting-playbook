@@ -34,9 +34,9 @@ class ApplicationService {
 	/**
 	 * Email Service
 	 *
-	 * @var EmailService
+	 * @var EmailService|null
 	 */
-	private EmailService $email_service;
+	private ?EmailService $email_service = null;
 
 	/**
 	 * Auto Email Service (Pro)
@@ -57,7 +57,10 @@ class ApplicationService {
 	 */
 	public function __construct() {
 		$this->document_service = new DocumentService();
-		$this->email_service    = new EmailService();
+		// EmailService nur in Premium-Version verfügbar.
+		if ( class_exists( 'RecruitingPlaybook\\Services\\EmailService' ) ) {
+			$this->email_service = new EmailService();
+		}
 	}
 
 	/**
@@ -171,8 +174,10 @@ class ApplicationService {
 		$this->logActivity( $application_id, 'application_received', 'New application received' );
 
 		// 5. E-Mails versenden
-		// 5a. Benachrichtigung an Admin (immer).
-		$this->email_service->sendApplicationReceived( $application_id );
+		// 5a. Benachrichtigung an Admin (nur Premium).
+		if ( $this->email_service ) {
+			$this->email_service->sendApplicationReceived( $application_id );
+		}
 
 		// 5b. Bestätigung an Bewerber (Pro: nur wenn Automation-Template konfiguriert).
 		$auto_email_service = $this->getAutoEmailService();
@@ -180,8 +185,8 @@ class ApplicationService {
 			// Pro-Version: Nur senden wenn Template unter Automation konfiguriert ist.
 			// Gibt null zurück wenn nicht konfiguriert -> dann KEINE E-Mail senden.
 			$auto_email_service->sendNewApplicationEmail( $application_id );
-		} else {
-			// Free-Version: Default-Bestätigung senden.
+		} elseif ( $this->email_service ) {
+			// Free-Version: Default-Bestätigung senden (falls EmailService verfügbar).
 			$this->email_service->sendApplicantConfirmation( $application_id );
 		}
 
