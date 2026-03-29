@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.4.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,20 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.6.1 - 2026-03-29 =
+* Feature: Design & Branding tab now accessible in Free version with color customization
+* Feature: Basic branding (primary color, button colors, card colors) available to all users
+* Feature: Added Getting Started documentation tab with shortcode examples and copy-to-clipboard
+* UX: Professional German email formatting (formal "Sie" instead of informal "Du")
+* UX: Improved email salutation format (Hallo Herr/Frau [Nachname])
+* UX: Lighter placeholder text colors (#9ca3af) for better form field visibility
+* Fix: Button colors now respect primary color selection in Free version
+* Fix: Card borders now subtle gray (1px) instead of thick blue in Free version
+* Technical: CssGeneratorService feature flag checks for Free vs Pro styling
+* Technical: EmailService uses last_name for formal German salutation
+* WordPress.org: Complete compliance with all automated review guidelines
+* WordPress.org: readme.txt stable tag now matches plugin version
 
 = 1.4.0 - 2026-03-29 =
 * Fix: Add class_exists guards for EmailService in ApplicationService.php
