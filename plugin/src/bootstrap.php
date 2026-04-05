@@ -29,7 +29,7 @@ if ( function_exists( '\recpl_fs' ) ) {
 	/**
 	 * Requirements prüfen
 	 */
-	function rp_check_requirements(): bool {
+	function recpl_check_requirements(): bool {
 		if ( version_compare( PHP_VERSION, RECPL_MIN_PHP_VERSION, '<' ) ) {
 			add_action(
 				'admin_notices',
@@ -73,7 +73,7 @@ if ( function_exists( '\recpl_fs' ) ) {
 	register_activation_hook(
 		RECPL_PLUGIN_FILE,
 		function () {
-			if ( ! rp_check_requirements() ) {
+			if ( ! recpl_check_requirements() ) {
 				deactivate_plugins( plugin_basename( RECPL_PLUGIN_FILE ) );
 				wp_die( esc_html__( 'Plugin-Aktivierung fehlgeschlagen. Anforderungen nicht erfüllt.', 'recruiting-playbook' ) );
 			}
@@ -122,7 +122,7 @@ if ( function_exists( '\recpl_fs' ) ) {
 	add_action(
 		'init',
 		function () {
-			if ( ! rp_check_requirements() ) {
+			if ( ! recpl_check_requirements() ) {
 				return;
 			}
 
