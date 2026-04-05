@@ -199,7 +199,7 @@ final class Plugin {
 
 		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+			if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
 				if ( CustomFieldsMigration::needsMigration() ) {
 					add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
 				}
@@ -278,7 +278,7 @@ final class Plugin {
 	 */
 	private function initEmailQueueService(): void {
 		// Prüfen ob Feature verfügbar ist.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return;
 		}
 
@@ -314,7 +314,7 @@ final class Plugin {
 	 */
 	private function initAutoEmailService(): void {
 		// Prüfen ob Feature verfügbar ist.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return;
 		}
 
@@ -335,7 +335,7 @@ final class Plugin {
 	 * Pro-Feature: Nur aktiv wenn Webhooks Feature verfügbar ist.
 	 */
 	private function registerWebhookHooks(): void {
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'webhooks' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'webhooks' ) ) {
 			return;
 		}
 
@@ -366,7 +366,7 @@ final class Plugin {
 	 * Pro-Feature: Nur aktiv wenn Integrations Feature verfügbar ist.
 	 */
 	private function registerIntegrations(): void {
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'integrations' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'integrations' ) ) {
 			return;
 		}
 
@@ -381,7 +381,7 @@ final class Plugin {
 	 * oder api_key Query-Parameter. Pro-Feature.
 	 */
 	private function registerApiKeyAuth(): void {
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'api_access' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
 			return;
 		}
 
@@ -992,7 +992,7 @@ final class Plugin {
 
 		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
+			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && recpl_has_cv_matching() ) {
 				// CSS.
 				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 				if ( file_exists( $match_css_file ) ) {

@@ -96,7 +96,7 @@ class EmailRenderer {
 	 */
 	private function isTemplateAllowed( string $template_slug ): bool {
 		// Pro-Feature Check: Alle Templates erlaubt.
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			return true;
 		}
 

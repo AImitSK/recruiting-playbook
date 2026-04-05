@@ -114,7 +114,7 @@ class EmailSettingsPage {
 	 */
 	public function render(): void {
 		// Pro-Feature-Check.
-		$is_pro = function_exists( 'rp_can' ) && rp_can( 'email_templates' );
+		$is_pro = function_exists( 'recpl_can' ) && recpl_can( 'email_templates' );
 
 		if ( ! $is_pro ) {
 			$this->renderUpgradeNotice();
@@ -378,8 +378,8 @@ class EmailSettingsPage {
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1>';
 
-		if ( function_exists( 'rp_require_feature' ) ) {
-			rp_require_feature( 'email_templates', __( 'E-Mail-Vorlagen', 'recruiting-playbook' ), 'PRO' );
+		if ( function_exists( 'recpl_require_feature' ) ) {
+			recpl_require_feature( 'email_templates', __( 'E-Mail-Vorlagen', 'recruiting-playbook' ), 'PRO' );
 		}
 
 		echo '</div>';

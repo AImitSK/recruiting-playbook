@@ -21,7 +21,7 @@ class ElementorIntegration {
 	 */
 	public function register(): void {
 		// Pro feature check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'elementor_integration' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'elementor_integration' ) ) {
 			return;
 		}
 

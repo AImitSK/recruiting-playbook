@@ -40,7 +40,7 @@ if ( ! empty( $settings['company_email'] ) ) {
 <!-- Footer -->
 <?php
 $settings            = get_option( 'rp_settings', [] );
-$hide_branding       = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+$hide_branding       = ! empty( $settings['hide_email_branding'] ) && function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
 $recruiting_url      = 'https://recruiting-playbook.de';
 ?>
 <?php if ( ! $hide_branding || ! empty( $unsubscribe_url ) ) : ?>

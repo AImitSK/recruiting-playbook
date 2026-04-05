@@ -290,7 +290,7 @@ class EmailService {
 	 */
 	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
 		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
 			return false;
 		}
 
@@ -434,7 +434,7 @@ class EmailService {
 	 */
 	public function scheduleEmail( int $template_id, int $application_id, string $scheduled_at, array $custom_data = [] ): int|false {
 		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
 			return false;
 		}
 
@@ -709,7 +709,7 @@ class EmailService {
 
 		// Branding-Hinweis (Pro-User können es abschalten).
 		$settings      = get_option( 'rp_settings', [] );
-		$hide_branding = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$hide_branding = ! empty( $settings['hide_email_branding'] ) && function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
 		$footer_html   = '';
 
 		if ( ! $hide_branding ) {

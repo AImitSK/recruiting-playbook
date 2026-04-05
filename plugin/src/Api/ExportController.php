@@ -209,14 +209,14 @@ class ExportController extends WP_REST_Controller {
 		}
 
 		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'pro_feature_required',
 				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
 					'feature'     => 'csv_export',
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}

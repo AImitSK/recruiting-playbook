@@ -86,7 +86,7 @@ class ApplicationList extends \WP_List_Table {
 		];
 
 		// Pro-Feature: Bulk-E-Mail.
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			$actions['bulk_email'] = __( '✉️ Send Email', 'recruiting-playbook' );
 		}
 

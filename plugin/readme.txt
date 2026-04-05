@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,14 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.1 - 2026-04-05 =
+* WordPress.org: Complete prefix migration from rp_ to recpl_ for all helper functions
+* WordPress.org: recpl_can(), recpl_tier(), recpl_is_pro(), recpl_require_feature() and 11 more functions
+* WordPress.org: Updated all 49 files using these functions throughout the codebase
+* WordPress.org: Extended compliance test script with new checks (Update URI, prefix length, hidden files)
+* Technical: Compliance test now validates 4+ character prefix requirement
+* Technical: Compliance test now checks for application/config files in release ZIP
 
 = 1.7.0 - 2026-04-04 =
 * WordPress.org: Changed function prefix from rp_fs to recpl_fs (4+ character requirement)

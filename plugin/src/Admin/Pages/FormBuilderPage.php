@@ -25,7 +25,7 @@ class FormBuilderPage {
 	 */
 	public function render(): void {
 		// Pro-Feature Check.
-		$is_pro     = function_exists( 'rp_is_pro' ) && rp_is_pro();
+		$is_pro     = function_exists( 'recpl_is_pro' ) && recpl_is_pro();
 		$can_manage = current_user_can( 'rp_manage_forms' );
 
 		// Field Type Registry für verfügbare Typen.
@@ -70,7 +70,7 @@ class FormBuilderPage {
 				'defaultTemplate' => $default_template ? $default_template->toArray() : null,
 				'restNamespace'   => 'recruiting/v1',
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
-				'upgradeUrl'      => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				'upgradeUrl'      => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]

@@ -5,7 +5,7 @@
  * Diese Klasse dient als Referenz für Feature-Definitionen und detaillierte
  * Feature-Werte (z.B. max_jobs, reporting level). Die Hauptlogik für
  * Feature-Checks erfolgt über die Freemius-basierten Helper-Funktionen
- * in helpers.php (rp_can(), rp_tier(), etc.).
+ * in helpers.php (recpl_can(), recpl_tier(), etc.).
  *
  * @package RecruitingPlaybook
  * @see helpers.php für die Freemius-Integration
@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Verwaltet welche Features pro Lizenz-Tier verfügbar sind.
  * Wird primär für detaillierte Feature-Werte verwendet (z.B. max_jobs = -1).
- * Für boolean Feature-Checks wird rp_can() aus helpers.php empfohlen.
+ * Für boolean Feature-Checks wird recpl_can() aus helpers.php empfohlen.
  */
 class FeatureFlags {
 

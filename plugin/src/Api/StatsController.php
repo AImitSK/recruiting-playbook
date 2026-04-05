@@ -519,7 +519,7 @@ class StatsController extends WP_REST_Controller {
 		}
 
 		// Feature-Flag Check (Pro-Lizenz).
-		if ( function_exists( 'rp_can' ) && rp_can( 'advanced_reporting' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'advanced_reporting' ) ) {
 			return true;
 		}
 
@@ -544,7 +544,7 @@ class StatsController extends WP_REST_Controller {
 			[
 				'status'      => 403,
 				'feature'     => $feature,
-				'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+				'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 			]
 		);
 	}

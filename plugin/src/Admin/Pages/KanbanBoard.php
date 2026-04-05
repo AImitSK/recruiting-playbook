@@ -33,7 +33,7 @@ class KanbanBoard {
 		}
 
 		// Feature-Check (Pro-Lizenz).
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'kanban_board' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'kanban_board' ) ) {
 			$this->render_upgrade_notice();
 			return;
 		}
@@ -63,8 +63,8 @@ class KanbanBoard {
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
 
-		if ( function_exists( 'rp_require_feature' ) ) {
-			rp_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' );
+		if ( function_exists( 'recpl_require_feature' ) ) {
+			recpl_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' );
 		} else {
 			// Fallback wenn Helper nicht geladen.
 			echo '<div class="notice notice-warning">';

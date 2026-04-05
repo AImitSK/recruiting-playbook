@@ -121,7 +121,7 @@ class BlockLoader {
 	 * @return bool True if Pro is available.
 	 */
 	private function hasPro(): bool {
-		return function_exists( 'rp_is_pro' ) && rp_is_pro();
+		return function_exists( 'recpl_is_pro' ) && recpl_is_pro();
 	}
 
 	/**

@@ -67,7 +67,7 @@ class ExportService {
 	 */
 	public function exportApplications( array $args ) {
 		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'feature_not_available',
 				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
@@ -95,7 +95,7 @@ class ExportService {
 
 		// Custom Fields Header ermitteln (Pro-Feature).
 		$custom_field_headers  = [];
-		$include_custom_fields = function_exists( 'rp_can' ) && rp_can( 'custom_fields' );
+		$include_custom_fields = function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' );
 		if ( $include_custom_fields ) {
 			$custom_field_headers = $this->getCustomFieldHeaders( $args['job_id'] ?? null );
 		}
@@ -153,7 +153,7 @@ class ExportService {
 	 */
 	public function exportStats( array $args ) {
 		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'csv_export' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'csv_export' ) ) {
 			return new WP_Error(
 				'feature_not_available',
 				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
@@ -515,7 +515,7 @@ class ExportService {
 		];
 
 		// Custom Fields als verfügbare Spalten hinzufügen (Pro-Feature).
-		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
 			$custom_field_headers = $this->getCustomFieldHeaders();
 
 			foreach ( $custom_field_headers as $key => $label ) {

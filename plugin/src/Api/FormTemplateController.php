@@ -523,7 +523,7 @@ class FormTemplateController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	private function check_feature_gate(): bool|WP_Error {
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'custom_fields' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'custom_fields' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'Custom Fields requires a Pro license.', 'recruiting-playbook' ),

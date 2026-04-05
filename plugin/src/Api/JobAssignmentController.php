@@ -346,7 +346,7 @@ class JobAssignmentController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	private function check_feature_gate(): bool|WP_Error {
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'user_roles' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'user_roles' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'This feature requires a Pro license.', 'recruiting-playbook' ),

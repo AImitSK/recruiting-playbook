@@ -56,7 +56,7 @@ class IntegrationManager {
 	 */
 	public function register(): void {
 		// Feature Check: Integrationen sind Pro-Feature.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'integrations' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'integrations' ) ) {
 			return;
 		}
 

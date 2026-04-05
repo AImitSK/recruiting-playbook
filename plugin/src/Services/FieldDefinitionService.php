@@ -116,7 +116,7 @@ class FieldDefinitionService {
 	 */
 	private function applyJobCustomFieldsConfig( int $job_id, array $fields ): array {
 		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
 			return $fields;
 		}
 

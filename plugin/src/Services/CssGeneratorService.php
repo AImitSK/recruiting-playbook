@@ -153,7 +153,7 @@ class CssGeneratorService {
 
 		// In Free-Version: Vernünftige Defaults für Cards (dezenter hellgrauer Rahmen).
 		// In Pro-Version: Custom-Einstellungen verwenden.
-		$can_customize_cards = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$can_customize_cards = function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
 
 		// Border-Radius.
 		if ( isset( $settings['card_border_radius'] ) ) {
@@ -242,7 +242,7 @@ class CssGeneratorService {
 
 		// In Free-Version: Ignoriere button_bg_color und verwende immer Primärfarbe.
 		// In Pro-Version: Verwende Custom-Farben wenn gesetzt.
-		$can_customize_buttons = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$can_customize_buttons = function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
 
 		if ( $can_customize_buttons ) {
 			// Pro: Verwende Custom-Farben aus Settings, Fallback auf Primärfarbe.

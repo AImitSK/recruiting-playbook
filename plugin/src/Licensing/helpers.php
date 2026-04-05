@@ -6,18 +6,14 @@
  * Zwei Pläne: Free und Pro. Die FeatureFlags-Klasse dient
  * als Feature-Referenz für detaillierte Werte.
  *
- * WORDPRESS.ORG NOTE:
- * These functions use 'rp_' prefix for backwards compatibility.
- * The main plugin namespace 'RecruitingPlaybook' (14 chars) provides
- * uniqueness. All business logic lives in namespaced classes.
- * These are thin wrapper functions for template convenience.
+ * WORDPRESS.ORG COMPLIANCE:
+ * All functions use 'recpl_' prefix (5 characters) to meet
+ * WordPress.org requirement of 4+ character prefixes.
  *
  * @package RecruitingPlaybook
  */
 
 declare(strict_types=1);
-
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Legacy prefix, namespace provides uniqueness
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,7 +26,7 @@ use RecruitingPlaybook\Licensing\FeatureFlags;
  *
  * @return array<string, array{source: string, plans: array<string>}> Feature => Config-Array
  */
-function rp_get_feature_plan_mapping(): array {
+function recpl_get_feature_plan_mapping(): array {
 	return [
 		// Pro Features (inkl. KI).
 		'kanban_board'                  => [
@@ -125,10 +121,10 @@ function rp_get_feature_plan_mapping(): array {
  * @return mixed Feature-Wert (bool, string, int) oder false.
  *
  * @example
- * if ( rp_can( 'kanban_board' ) ) { ... }
- * if ( rp_can( 'ai_cv_matching' ) ) { ... }
+ * if ( recpl_can( 'kanban_board' ) ) { ... }
+ * if ( recpl_can( 'ai_cv_matching' ) ) { ... }
  */
-function rp_can( string $feature ): mixed {
+function recpl_can( string $feature ): mixed {
 	// Development Mode: Alle Features aktiviert.
 	// Setze RP_DEV_MODE in wp-config.php: define( 'RP_DEV_MODE', true );
 	if ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true ) {
@@ -139,7 +135,7 @@ function rp_can( string $feature ): mixed {
 		return $value !== false ? $value : true;
 	}
 
-	$mapping = rp_get_feature_plan_mapping();
+	$mapping = recpl_get_feature_plan_mapping();
 
 	// Feature in Mapping definiert.
 	if ( isset( $mapping[ $feature ] ) ) {
@@ -171,7 +167,7 @@ function rp_can( string $feature ): mixed {
 	}
 
 	// Fallback: FeatureFlags-Klasse für detaillierte Werte (z.B. max_jobs, reporting level).
-	$tier  = rp_tier();
+	$tier  = recpl_tier();
 	$flags = new FeatureFlags( $tier );
 	return $flags->get( $feature );
 }
@@ -184,7 +180,7 @@ function rp_can( string $feature ): mixed {
  *
  * @return string Tier-Name (FREE, PRO).
  */
-function rp_tier(): string {
+function recpl_tier(): string {
 	if ( function_exists( 'recpl_fs' ) && ( recpl_fs()->is_paying() || recpl_fs()->is_trial() ) ) {
 		if ( recpl_fs()->is_plan( 'pro' ) ) {
 			return 'PRO';
@@ -199,7 +195,7 @@ function rp_tier(): string {
  *
  * @return bool True wenn Pro-Plan auf dem Parent-Plugin aktiv.
  */
-function rp_is_pro(): bool {
+function recpl_is_pro(): bool {
 	if ( ! function_exists( 'recpl_fs' ) ) {
 		return false;
 	}
@@ -213,8 +209,8 @@ function rp_is_pro(): bool {
  *
  * @return bool True wenn Pro-Plan aktiv.
  */
-function rp_has_ai(): bool {
-	return rp_is_pro();
+function recpl_has_ai(): bool {
+	return recpl_is_pro();
 }
 
 /**
@@ -225,9 +221,9 @@ function rp_has_ai(): bool {
  *
  * @return bool True wenn Pro-Plan aktiv UND KI-Features nicht deaktiviert.
  */
-function rp_has_cv_matching(): bool {
+function recpl_has_cv_matching(): bool {
 	// Lizenz-Check.
-	if ( rp_can( 'ai_cv_matching' ) !== true ) {
+	if ( recpl_can( 'ai_cv_matching' ) !== true ) {
 		return false;
 	}
 
@@ -246,7 +242,7 @@ function rp_has_cv_matching(): bool {
  * @param string|null $tier Optional: Spezifischer Tier für Deep-Link.
  * @return string Upgrade-URL.
  */
-function rp_upgrade_url( ?string $tier = null ): string {
+function recpl_upgrade_url( ?string $tier = null ): string {
 	if ( ! function_exists( 'recpl_fs' ) ) {
 		return 'https://recruiting-playbook.com/pricing/';
 	}
@@ -258,8 +254,8 @@ function rp_upgrade_url( ?string $tier = null ): string {
  *
  * @return bool True wenn Lizenz gültig (oder FREE).
  */
-function rp_license_is_valid(): bool {
-	$tier = rp_tier();
+function recpl_license_is_valid(): bool {
+	$tier = recpl_tier();
 
 	if ( 'FREE' === $tier ) {
 		return true;
@@ -278,8 +274,8 @@ function rp_license_is_valid(): bool {
  *
  * @return array<string, mixed> Status-Array.
  */
-function rp_license_status(): array {
-	$tier = rp_tier();
+function recpl_license_status(): array {
+	$tier = recpl_tier();
 
 	$tier_labels = [
 		'FREE' => 'Free',
@@ -289,11 +285,11 @@ function rp_license_status(): array {
 	if ( ! function_exists( 'recpl_fs' ) || 'FREE' === $tier ) {
 		return [
 			'tier'        => 'FREE',
-			'has_ai'      => rp_has_ai(),
+			'has_ai'      => recpl_has_ai(),
 			'is_active'   => false,
 			'is_valid'    => true,
 			'message'     => __( 'Free version', 'recruiting-playbook' ),
-			'upgrade_url' => rp_upgrade_url(),
+			'upgrade_url' => recpl_upgrade_url(),
 		];
 	}
 
@@ -301,7 +297,7 @@ function rp_license_status(): array {
 
 	return [
 		'tier'        => $tier,
-		'has_ai'      => rp_has_ai(),
+		'has_ai'      => recpl_has_ai(),
 		'is_active'   => $is_paying,
 		'is_valid'    => $is_paying,
 		'message'     => $is_paying
@@ -311,7 +307,7 @@ function rp_license_status(): array {
 				$tier_labels[ $tier ] ?? $tier
 			)
 			: __( 'License invalid or expired.', 'recruiting-playbook' ),
-		'upgrade_url' => rp_upgrade_url(),
+		'upgrade_url' => recpl_upgrade_url(),
 	];
 }
 
@@ -320,8 +316,8 @@ function rp_license_status(): array {
  *
  * @return array<string, mixed> Feature-Array.
  */
-function rp_features(): array {
-	$tier  = rp_tier();
+function recpl_features(): array {
+	$tier  = recpl_tier();
 	$flags = new FeatureFlags( $tier );
 	return $flags->all();
 }
@@ -332,23 +328,23 @@ function rp_features(): array {
  * Kombiniert WordPress-Capability-Check mit Feature-Flag-Prüfung.
  * Die Reihenfolge ist wichtig: Zuerst Capability (Security), dann Feature-Flag (Business-Logic).
  *
- * @param string $feature    Feature-Name für rp_can() (z.B. 'email_templates').
+ * @param string $feature    Feature-Name für recpl_can() (z.B. 'email_templates').
  * @param string $capability WordPress Capability (z.B. 'rp_manage_email_templates').
  * @return bool True wenn User Capability hat UND Feature verfügbar ist.
  *
  * @example
- * if ( ! rp_user_can_use_feature( 'email_templates', 'rp_manage_email_templates' ) ) {
+ * if ( ! recpl_user_can_use_feature( 'email_templates', 'rp_manage_email_templates' ) ) {
  *     return new WP_Error( 'forbidden', 'Keine Berechtigung', [ 'status' => 403 ] );
  * }
  */
-function rp_user_can_use_feature( string $feature, string $capability ): bool {
+function recpl_user_can_use_feature( string $feature, string $capability ): bool {
 	// 1. Capability-Check (WordPress-Core-Security).
 	if ( ! current_user_can( $capability ) ) {
 		return false;
 	}
 
 	// 2. Feature-Flag-Check (Business-Logic).
-	if ( ! rp_can( $feature ) ) {
+	if ( ! recpl_can( $feature ) ) {
 		return false;
 	}
 
@@ -361,13 +357,13 @@ function rp_user_can_use_feature( string $feature, string $capability ): bool {
  * Convenience-Funktion für REST API Permission Callbacks.
  * Gibt true zurück bei Erfolg, WP_Error bei fehlender Berechtigung.
  *
- * @param string $feature       Feature-Name für rp_can().
+ * @param string $feature       Feature-Name für recpl_can().
  * @param string $capability    WordPress Capability.
  * @param string $error_code    WP_Error Code.
  * @param string $error_message Fehlermeldung.
  * @return bool|\WP_Error True bei Erfolg, WP_Error bei Fehler.
  */
-function rp_check_feature_permission( string $feature, string $capability, string $error_code, string $error_message ) {
+function recpl_check_feature_permission( string $feature, string $capability, string $error_code, string $error_message ) {
 	// 1. Capability-Check (WordPress-Core-Security).
 	if ( ! current_user_can( $capability ) ) {
 		return new \WP_Error(
@@ -378,13 +374,13 @@ function rp_check_feature_permission( string $feature, string $capability, strin
 	}
 
 	// 2. Feature-Flag-Check (Business-Logic).
-	if ( ! rp_can( $feature ) ) {
+	if ( ! recpl_can( $feature ) ) {
 		return new \WP_Error(
 			$error_code,
 			__( 'This feature requires Pro.', 'recruiting-playbook' ),
 			[
 				'status'      => 403,
-				'upgrade_url' => rp_upgrade_url( 'PRO' ),
+				'upgrade_url' => recpl_upgrade_url( 'PRO' ),
 			]
 		);
 	}
@@ -408,7 +404,7 @@ function rp_check_feature_permission( string $feature, string $capability, strin
  * @example Feature-Check mit Upgrade-Hinweis
  * ```php
  * // Am Anfang einer Feature-spezifischen Admin-Seite
- * if ( ! rp_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' ) ) {
+ * if ( ! recpl_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' ) ) {
  *     return; // Upgrade-Hinweis wurde angezeigt, Funktion beenden
  * }
  *
@@ -419,19 +415,19 @@ function rp_check_feature_permission( string $feature, string $capability, strin
  * @example Inline-Feature-Check
  * ```php
  * <div class="feature-section">
- *     <?php if ( rp_require_feature( 'api_access', 'REST API', 'PRO' ) ) : ?>
+ *     <?php if ( recpl_require_feature( 'api_access', 'REST API', 'PRO' ) ) : ?>
  *         <!-- API-Einstellungen hier -->
  *     <?php endif; ?>
  * </div>
  * ```
  */
-function rp_require_feature( string $feature, string $feature_name, string $required_tier = 'PRO' ): bool {
-	if ( rp_can( $feature ) ) {
+function recpl_require_feature( string $feature, string $feature_name, string $required_tier = 'PRO' ): bool {
+	if ( recpl_can( $feature ) ) {
 		return true;
 	}
 
 	// Upgrade-Hinweis anzeigen — einheitliches Design für alle Admin-Seiten.
-	$upgrade_url = esc_url( rp_upgrade_url( $required_tier ) );
+	$upgrade_url = esc_url( recpl_upgrade_url( $required_tier ) );
 	$title       = esc_html(
 		sprintf(
 			/* translators: %s: feature name */
@@ -464,7 +460,7 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
  *
  * @return object|null Key-DB-Objekt oder null wenn kein API-Key-Auth.
  */
-function rp_get_api_key_data(): ?object {
+function recpl_get_api_key_data(): ?object {
 	return $GLOBALS['recpl_authenticated_api_key'] ?? null;
 }
 
@@ -477,8 +473,8 @@ function rp_get_api_key_data(): ?object {
  * @param string $permission Permission-String (z.B. 'jobs_read').
  * @return bool
  */
-function rp_api_key_can( string $permission ): bool {
-	$key_data = rp_get_api_key_data();
+function recpl_api_key_can( string $permission ): bool {
+	$key_data = recpl_get_api_key_data();
 	if ( ! $key_data ) {
 		return true; // WordPress-Auth = alles erlaubt.
 	}

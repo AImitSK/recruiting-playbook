@@ -77,7 +77,7 @@ class AutoEmailService {
 	 */
 	public function registerHooks(): void {
 		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return;
 		}
 
@@ -288,7 +288,7 @@ class AutoEmailService {
 	 */
 	public function getNewApplicationSettings(): ?array {
 		// Pro-Feature Check.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return null;
 		}
 

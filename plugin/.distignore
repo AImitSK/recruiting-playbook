@@ -21,6 +21,11 @@ package-lock.json
 webpack.config.js
 tailwind.config.js
 postcss.config.js
+playwright.config.js
+playwright.config.ts
+jest.config.js
+babel.config.js
+tsconfig.json
 
 # Development directories
 /tests/

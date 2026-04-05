@@ -70,7 +70,7 @@ class ApplicationService {
 	 */
 	private function getAutoEmailService(): ?AutoEmailService {
 		// Nur in Pro-Version verfügbar.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'email_templates' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
 			return null;
 		}
 
@@ -152,7 +152,7 @@ class ApplicationService {
 		}
 
 		// 3b. Custom Fields verarbeiten (Pro-Feature).
-		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) && ! empty( $data['custom_fields'] ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) && ! empty( $data['custom_fields'] ) ) {
 			$custom_fields_result = $this->processCustomFields(
 				(int) $data['job_id'],
 				$application_id,
@@ -237,13 +237,13 @@ class ApplicationService {
 
 		// Custom Fields laden (Pro-Feature).
 		$application['custom_fields'] = [];
-		if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
 			$application['custom_fields'] = $this->getCustomFields( $id, (int) $application['job_id'] );
 		}
 
 		// Talent-Pool Status laden (Pro-Feature).
 		$application['in_talent_pool'] = false;
-		if ( function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' ) ) {
 			$talent_pool_service           = new TalentPoolService();
 			$application['in_talent_pool'] = $talent_pool_service->isInPool( (int) $application['candidate_id'] );
 		}

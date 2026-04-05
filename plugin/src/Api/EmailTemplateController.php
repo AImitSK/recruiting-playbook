@@ -529,7 +529,7 @@ class EmailTemplateController extends WP_REST_Controller {
 	public function get_items_permissions_check( $request ) {
 		// Verwende Helper-Funktion für konsistente Prüfung.
 		if ( function_exists( 'rp_check_feature_permission' ) ) {
-			return rp_check_feature_permission(
+			return recpl_check_feature_permission(
 				'email_templates',
 				'rp_read_email_templates',
 				'rest_email_templates_required',
@@ -548,13 +548,13 @@ class EmailTemplateController extends WP_REST_Controller {
 		}
 
 		// 2. Feature-Flag-Check (Business-Logic).
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
 				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}
@@ -573,7 +573,7 @@ class EmailTemplateController extends WP_REST_Controller {
 	public function create_item_permissions_check( $request ) {
 		// Verwende Helper-Funktion für konsistente Prüfung.
 		if ( function_exists( 'rp_check_feature_permission' ) ) {
-			return rp_check_feature_permission(
+			return recpl_check_feature_permission(
 				'email_templates',
 				'rp_create_email_templates',
 				'rest_email_templates_required',
@@ -590,13 +590,13 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
 				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}
@@ -615,7 +615,7 @@ class EmailTemplateController extends WP_REST_Controller {
 	public function update_item_permissions_check( $request ) {
 		// Verwende Helper-Funktion für konsistente Prüfung.
 		if ( function_exists( 'rp_check_feature_permission' ) ) {
-			return rp_check_feature_permission(
+			return recpl_check_feature_permission(
 				'email_templates',
 				'rp_edit_email_templates',
 				'rest_email_templates_required',
@@ -632,13 +632,13 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
 				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}
@@ -657,7 +657,7 @@ class EmailTemplateController extends WP_REST_Controller {
 	public function delete_item_permissions_check( $request ) {
 		// Verwende Helper-Funktion für konsistente Prüfung.
 		if ( function_exists( 'rp_check_feature_permission' ) ) {
-			return rp_check_feature_permission(
+			return recpl_check_feature_permission(
 				'email_templates',
 				'rp_delete_email_templates',
 				'rest_email_templates_required',
@@ -674,13 +674,13 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 			return new WP_Error(
 				'rest_email_templates_required',
 				__( 'Email templates require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}

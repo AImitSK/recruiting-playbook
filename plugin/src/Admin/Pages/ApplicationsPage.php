@@ -69,7 +69,7 @@ class ApplicationsPage {
 			'activeJobId'  => $job_id,
 			'searchTerm'   => $search,
 			'hasApiAccess' => $this->has_api_access(),
-			'canExport'    => function_exists( 'rp_can' ) && rp_can( 'csv_export' ),
+			'canExport'    => function_exists( 'recpl_can' ) && recpl_can( 'csv_export' ),
 			'logoUrl'      => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 			'adminUrl'     => admin_url(),
 			'nonce'        => wp_create_nonce( 'rp_set_status' ),
@@ -82,7 +82,7 @@ class ApplicationsPage {
 	 * @return bool
 	 */
 	private function has_api_access(): bool {
-		return function_exists( 'rp_can' ) && rp_can( 'api_access' );
+		return function_exists( 'recpl_can' ) && recpl_can( 'api_access' );
 	}
 
 	/**

@@ -106,7 +106,7 @@ class Shortcodes {
 	 */
 	public function maybePreloadMatchModalAssets(): void {
 		// Nur wenn KI-Feature aktiv.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return;
 		}
 
@@ -154,7 +154,7 @@ class Shortcodes {
 	private function shouldUseFormBuilder(): bool {
 		if ( recpl_fs()->is__premium_only() ) {
 			// Pro-Feature Check.
-			if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+			if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
 				return false;
 			}
 
@@ -759,7 +759,7 @@ class Shortcodes {
 	 */
 	public function renderAiJobMatch( $atts ): string {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Match', 'recruiting-playbook' ),
@@ -929,7 +929,7 @@ class Shortcodes {
 	 */
 	public function renderAiJobFinder( $atts ): string {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Finder', 'recruiting-playbook' ),
@@ -1167,7 +1167,7 @@ class Shortcodes {
 					esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
 					'<strong>' . esc_html( $label ) . '</strong>'
 				) . '</p>
-				<a href="' . esc_url( function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
+				<a href="' . esc_url( function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
 				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
 			</div>
 		</div>';

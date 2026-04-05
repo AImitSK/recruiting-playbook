@@ -3,7 +3,17 @@
 # WordPress.org Compliance Test Script
 #
 # Testet ein Free-Plugin ZIP gegen alle WordPress.org Review Issues
-# Basierend auf: [WordPress Plugin Directory] Review vom 26. März 2026
+# Basierend auf: [WordPress Plugin Directory] Reviews vom März/April 2026
+#
+# Tests:
+#   1. Trialware / Locked Features (Guideline 5)
+#   2. REST API Permission Callbacks
+#   3. Freemius SDK Version
+#   4. External Services Documentation
+#   5. Prefixing (4+ characters required by WordPress.org)
+#   6. Plugin Header Checks (Update URI, ABSPATH order)
+#   7. Hidden & Application Files (should not be in release)
+#   8. Additional Checks (debug statements, unsafe queries, nonces)
 #
 # Usage:
 #   ./wordpress-org-compliance-test.sh path/to/recruiting-playbook-free.zip
@@ -315,61 +325,209 @@ if [ ! -z "$EXTERNAL_URLS" ]; then
 fi
 
 ################################################################################
-# TEST 5: Prefixing (4+ characters)
+# TEST 5: Prefixing (4+ characters required by WordPress.org)
 ################################################################################
-print_header "TEST 5: Prefixing (4+ characters)"
+print_header "TEST 5: Prefixing (4+ characters required)"
 
-print_test "Checking function prefixes"
+print_test "Checking for short prefixes (rp_ is too short, need 4+ chars)"
 
-# Get all function names
-FUNCTIONS=$(grep -rh "function [a-z_]" "$PLUGIN_DIR/src" --include="*.php" 2>/dev/null | \
-    grep -oP 'function \K[a-z_]+' | \
-    grep -v "^__" | \
-    sort -u)
+# WordPress.org requires at least 4 characters BEFORE the underscore
+# rp_ = 2 chars = TOO SHORT
+# recpl_ = 5 chars = OK
 
-BAD_PREFIXES=0
-if [ ! -z "$FUNCTIONS" ]; then
-    echo "$FUNCTIONS" | while read func; do
-        # Check if function starts with rp_ or recpl_ or is in namespace
-        if [[ ! "$func" =~ ^rp_ ]] && [[ ! "$func" =~ ^recpl_ ]]; then
-            # Check if it's a class method (has namespace)
-            if ! grep -q "namespace RecruitingPlaybook" $(grep -l "function $func" "$PLUGIN_DIR/src"/*.php 2>/dev/null) 2>/dev/null; then
-                print_warning "Function '$func' may lack proper prefix"
-                ((BAD_PREFIXES++))
-            fi
-        fi
-    done
+# Check for rp_ function definitions (too short)
+SHORT_FUNCTIONS=$(grep -rh "function rp_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | wc -l)
+if [ "$SHORT_FUNCTIONS" -gt 0 ]; then
+    print_fail "Found $SHORT_FUNCTIONS functions with 'rp_' prefix (too short, need 4+ chars)"
+    grep -rhn "function rp_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | head -5
+else
+    print_pass "No functions with short 'rp_' prefix found"
 fi
 
-if [ $BAD_PREFIXES -eq 0 ]; then
-    print_pass "All functions have proper prefixes or are namespaced"
+# Check for $rp_ global variables (too short)
+SHORT_GLOBALS=$(grep -rh '\$rp_' "$PLUGIN_DIR" --include="*.php" 2>/dev/null | grep -v "phpcs:ignore" | wc -l)
+if [ "$SHORT_GLOBALS" -gt 0 ]; then
+    print_warning "Found $SHORT_GLOBALS usages of '\$rp_' variables (may be too short)"
 fi
 
 print_test "Checking constant prefixes"
 
-# Check for defines without proper prefix
-CONSTANTS=$(grep -rh "define(" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | \
-    grep -oP "define\(\s*'?\K[A-Z_]+" | \
-    sort -u)
+# Check for defines with short RP_ prefix (only 2 chars before _)
+# Note: RP_ constants are OK if they are backward-compatibility aliases with phpcs:ignore
+RP_CONSTANTS=$(grep -rh "define.*'RP_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | grep -v "phpcs:ignore" | wc -l)
+if [ "$RP_CONSTANTS" -gt 0 ]; then
+    print_fail "Found $RP_CONSTANTS RP_ constants without phpcs:ignore (need RECPL_ or phpcs:ignore)"
+else
+    print_pass "All short RP_ constants have phpcs:ignore or use RECPL_ prefix"
+fi
 
-BAD_CONSTANTS=0
-if [ ! -z "$CONSTANTS" ]; then
-    echo "$CONSTANTS" | while read const; do
-        if [[ ! "$const" =~ ^RP_ ]] && [[ ! "$const" =~ ^RECPL_ ]] && [[ ! "$const" =~ ^WP_ ]] && [[ ! "$const" =~ ^ABSPATH ]]; then
-            print_warning "Constant '$const' may lack proper prefix"
-            ((BAD_CONSTANTS++))
+# Check for proper RECPL_ constants
+RECPL_CONSTANTS=$(grep -rh "define.*'RECPL_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | wc -l)
+if [ "$RECPL_CONSTANTS" -gt 0 ]; then
+    print_pass "Found $RECPL_CONSTANTS RECPL_ constants (proper 5-char prefix)"
+fi
+
+print_test "Checking for recpl_ functions (proper prefix)"
+
+RECPL_FUNCTIONS=$(grep -rh "function recpl_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | wc -l)
+if [ "$RECPL_FUNCTIONS" -gt 0 ]; then
+    print_pass "Found $RECPL_FUNCTIONS functions with 'recpl_' prefix (proper 5-char prefix)"
+else
+    print_warning "No recpl_ functions found - ensure all global functions use namespaces or recpl_ prefix"
+fi
+
+################################################################################
+# TEST 6: Plugin Header Checks
+################################################################################
+print_header "TEST 6: Plugin Header Checks"
+
+MAIN_PLUGIN_FILE="$PLUGIN_DIR/recruiting-playbook.php"
+
+if [ -f "$MAIN_PLUGIN_FILE" ]; then
+    # 6.1 Check for Update URI header (NOT allowed on WordPress.org)
+    print_test "Checking for Update URI header (should NOT exist)"
+
+    if grep -q "Update URI:" "$MAIN_PLUGIN_FILE"; then
+        print_fail "Update URI header found - NOT allowed on WordPress.org"
+        grep "Update URI:" "$MAIN_PLUGIN_FILE"
+    else
+        print_pass "No Update URI header found"
+    fi
+
+    # 6.2 Check Plugin Header order (must be BEFORE ABSPATH check)
+    print_test "Checking Plugin Header order (must be before ABSPATH check)"
+
+    PLUGIN_NAME_LINE=$(grep -n "Plugin Name:" "$MAIN_PLUGIN_FILE" | head -1 | cut -d: -f1)
+    ABSPATH_LINE=$(grep -n "defined.*ABSPATH" "$MAIN_PLUGIN_FILE" | head -1 | cut -d: -f1)
+
+    if [ ! -z "$PLUGIN_NAME_LINE" ] && [ ! -z "$ABSPATH_LINE" ]; then
+        if [ "$PLUGIN_NAME_LINE" -lt "$ABSPATH_LINE" ]; then
+            print_pass "Plugin Header (line $PLUGIN_NAME_LINE) comes before ABSPATH check (line $ABSPATH_LINE)"
+        else
+            print_fail "ABSPATH check (line $ABSPATH_LINE) comes BEFORE Plugin Header (line $PLUGIN_NAME_LINE)"
+        fi
+    else
+        print_warning "Could not determine header order"
+    fi
+
+    # 6.3 Check for required headers
+    print_test "Checking for required plugin headers"
+
+    REQUIRED_HEADERS=("Plugin Name:" "Version:" "License:" "Text Domain:")
+    for header in "${REQUIRED_HEADERS[@]}"; do
+        if grep -q "$header" "$MAIN_PLUGIN_FILE"; then
+            print_pass "Header found: $header"
+        else
+            print_fail "Header MISSING: $header"
         fi
     done
-fi
-
-if [ $BAD_CONSTANTS -eq 0 ]; then
-    print_pass "All constants have proper prefixes"
+else
+    print_fail "Main plugin file not found: recruiting-playbook.php"
 fi
 
 ################################################################################
-# TEST 6: Additional Checks
+# TEST 7: Hidden & Application Files (should NOT be in release)
 ################################################################################
-print_header "TEST 6: Additional Checks"
+print_header "TEST 7: Hidden & Application Files"
+
+print_test "Checking for hidden files (should not be in release)"
+
+HIDDEN_FILES=(
+    ".prettierrc.js"
+    ".eslintrc.js"
+    ".editorconfig"
+    ".gitignore"
+    ".gitkeep"
+    ".env"
+    ".env.example"
+)
+
+HIDDEN_FOUND=0
+for file in "${HIDDEN_FILES[@]}"; do
+    if [ -f "$PLUGIN_DIR/$file" ]; then
+        print_fail "Hidden file found: $file"
+        ((HIDDEN_FOUND++))
+    fi
+done
+
+# Also check for any dotfiles
+DOTFILES=$(find "$PLUGIN_DIR" -name ".*" -type f 2>/dev/null | wc -l)
+if [ "$DOTFILES" -gt 0 ]; then
+    print_warning "Found $DOTFILES dotfiles in plugin directory"
+    find "$PLUGIN_DIR" -name ".*" -type f 2>/dev/null | head -10
+fi
+
+if [ $HIDDEN_FOUND -eq 0 ] && [ "$DOTFILES" -eq 0 ]; then
+    print_pass "No hidden files found in release"
+fi
+
+print_test "Checking for application/config files (should not be in release)"
+
+APP_FILES=(
+    "phpcs.xml.dist"
+    "phpstan.neon"
+    "composer.json"
+    "composer.lock"
+    "package.json"
+    "package-lock.json"
+    "webpack.config.js"
+    "tailwind.config.js"
+    "postcss.config.js"
+    "playwright.config.js"
+    "jest.config.js"
+)
+
+APP_FOUND=0
+for file in "${APP_FILES[@]}"; do
+    if [ -f "$PLUGIN_DIR/$file" ]; then
+        print_fail "Application file found: $file"
+        ((APP_FOUND++))
+    fi
+done
+
+if [ $APP_FOUND -eq 0 ]; then
+    print_pass "No application/config files found in release"
+fi
+
+print_test "Checking for development directories (should not be in release)"
+
+DEV_DIRS=(
+    "node_modules"
+    "tests"
+    "tools"
+    ".git"
+    ".github"
+    ".idea"
+    ".vscode"
+)
+
+DEV_FOUND=0
+for dir in "${DEV_DIRS[@]}"; do
+    if [ -d "$PLUGIN_DIR/$dir" ]; then
+        print_fail "Development directory found: $dir/"
+        ((DEV_FOUND++))
+    fi
+done
+
+if [ $DEV_FOUND -eq 0 ]; then
+    print_pass "No development directories found in release"
+fi
+
+print_test "Checking for source files (should only have dist/)"
+
+if [ -d "$PLUGIN_DIR/assets/src" ]; then
+    SRC_FILES=$(find "$PLUGIN_DIR/assets/src" -type f 2>/dev/null | wc -l)
+    if [ "$SRC_FILES" -gt 0 ]; then
+        print_fail "Source directory assets/src/ found with $SRC_FILES files (should be excluded)"
+    fi
+else
+    print_pass "No assets/src/ directory in release (correctly excluded)"
+fi
+
+################################################################################
+# TEST 8: Additional Checks
+################################################################################
+print_header "TEST 8: Additional Checks"
 
 # Check for WP_DEBUG compatibility
 print_test "Checking for common WP_DEBUG issues"

@@ -175,13 +175,13 @@ class WebhookController extends WP_REST_Controller {
 	 */
 	public function admin_permissions_check( $request ) {
 		// Pro-Feature Gate.
-		if ( function_exists( 'rp_can' ) && ! rp_can( 'webhooks' ) ) {
+		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'webhooks' ) ) {
 			return new WP_Error(
 				'rest_webhooks_pro_required',
 				__( 'Webhooks require Pro.', 'recruiting-playbook' ),
 				[
 					'status'      => 403,
-					'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				]
 			);
 		}

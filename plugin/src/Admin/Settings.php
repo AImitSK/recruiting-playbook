@@ -254,7 +254,7 @@ class Settings {
 		);
 
 		// Sektion: Pro-Features (nur wenn Pro-Lizenz vorhanden).
-		if ( function_exists( 'rp_can' ) && rp_can( 'custom_branding' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' ) ) {
 			add_settings_section(
 				'rp_pro_section',
 				__( 'Pro Settings', 'recruiting-playbook' ),
@@ -393,7 +393,7 @@ class Settings {
 	 */
 	private function enqueueAssets(): void {
 		// Pro-Status prüfen.
-		$is_pro = function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$is_pro = function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
 
 		// Konfiguration für React.
 		// Import-Ergebnis aus Transient lesen (falls vorhanden).
@@ -411,7 +411,7 @@ class Settings {
 			'importResult' => $import_result ?: null,
 			'pages'        => $this->getPages(),
 			'isPro'        => $is_pro,
-			'upgradeUrl'   => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
+			'upgradeUrl'   => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 			'i18n'         => $this->getI18nStrings(),
 		];
 

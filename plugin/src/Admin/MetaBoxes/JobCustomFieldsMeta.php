@@ -45,7 +45,7 @@ class JobCustomFieldsMeta {
 	 */
 	public function register(): void {
 		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
 			return;
 		}
 
@@ -230,7 +230,7 @@ class JobCustomFieldsMeta {
 	 */
 	public function save( int $post_id, WP_Post $post ): void {
 		// Pro-Feature Check.
-		if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
+		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
 			return;
 		}
 

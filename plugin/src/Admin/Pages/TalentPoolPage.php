@@ -22,7 +22,7 @@ class TalentPoolPage {
 	 * @return bool
 	 */
 	private function hasProFeatures(): bool {
-		return function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' );
+		return function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' );
 	}
 
 	/**
@@ -129,8 +129,8 @@ class TalentPoolPage {
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'Talent Pool', 'recruiting-playbook' ) . '</h1>';
 
-		if ( function_exists( 'rp_require_feature' ) ) {
-			rp_require_feature( 'advanced_applicant_management', 'Talent-Pool', 'PRO' );
+		if ( function_exists( 'recpl_require_feature' ) ) {
+			recpl_require_feature( 'advanced_applicant_management', 'Talent-Pool', 'PRO' );
 		}
 
 		echo '</div>';

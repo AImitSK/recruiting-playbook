@@ -35,7 +35,7 @@ class ApplicationDetail {
 	 * @return bool
 	 */
 	private function hasProFeatures(): bool {
-		return function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' );
+		return function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' );
 	}
 
 	/**
@@ -83,7 +83,7 @@ class ApplicationDetail {
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
 						'listUrl'       => admin_url( 'admin.php?page=recruiting-playbook' ),
 						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-						'canSendEmails' => function_exists( 'rp_can' ) && rp_can( 'email_templates' ),
+						'canSendEmails' => function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ),
 						'i18n'          => [
 							'loadingApplication'      => __( 'Loading application...', 'recruiting-playbook' ),
 							'errorLoadingApplication' => __( 'Error loading application', 'recruiting-playbook' ),
@@ -127,7 +127,7 @@ class ApplicationDetail {
 		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			$this->processEmailSend( $id );
 		}
 
@@ -143,7 +143,7 @@ class ApplicationDetail {
 		$activity_log    = $this->getActivityLog( $id );
 		$email_history   = [];
 		$email_templates = [];
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			$email_history   = $this->getEmailHistory( $id );
 			$email_templates = $this->getEmailTemplates();
 		}
@@ -285,7 +285,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+					if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 						$this->renderEmailHistory( $email_history );
 					}
 					?>
@@ -321,7 +321,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+					if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 						$this->renderEmailComposer( $id, $candidate, $email_templates );
 					}
 					?>
@@ -596,9 +596,9 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailHistory( int $application_id ): array {
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
-			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 				return [];
 			}
 
@@ -638,9 +638,9 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailTemplates(): array {
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
-			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 				return [];
 			}
 
@@ -675,11 +675,11 @@ class ApplicationDetail {
 	 * @param array $templates      Verfügbare Templates.
 	 */
 	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			// Pro-Feature Check.
-			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
-				if ( function_exists( 'rp_require_feature' ) ) {
-					rp_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
+			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
+				if ( function_exists( 'recpl_require_feature' ) ) {
+					recpl_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
 				}
 				return;
 			}
@@ -802,9 +802,9 @@ class ApplicationDetail {
 	 * @param array $emails E-Mail-Einträge.
 	 */
 	private function renderEmailHistory( array $emails ): void {
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
-			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 				return;
 			}
 
@@ -892,7 +892,7 @@ class ApplicationDetail {
 	 * @param int $application_id Application ID.
 	 */
 	private function processEmailSend( int $application_id ): void {
-		if ( function_exists( 'rp_can' ) && rp_can( 'email_templates' ) ) {
+		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
 			if ( ! isset( $_POST['send_email'] ) ) {
 				return;
 			}
@@ -900,7 +900,7 @@ class ApplicationDetail {
 			check_admin_referer( 'rp_send_email_' . $application_id );
 
 			// Pro-Feature Check.
-			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
+			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
 				add_action(
 					'admin_notices',
 					function () {

@@ -250,7 +250,7 @@ class SystemStatusService {
 	 */
 	private function checkLicense(): array {
 		// Prüfen ob Freemius-Helper verfügbar ist.
-		if ( ! function_exists( 'rp_tier' ) ) {
+		if ( ! function_exists( 'recpl_tier' ) ) {
 			return [
 				'status'  => 'ok',
 				'message' => __( 'Free version active', 'recruiting-playbook' ),
@@ -260,7 +260,7 @@ class SystemStatusService {
 			];
 		}
 
-		$tier = rp_tier();
+		$tier = recpl_tier();
 
 		if ( $tier === 'FREE' ) {
 			return [
