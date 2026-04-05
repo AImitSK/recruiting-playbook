@@ -178,10 +178,10 @@ export function GettingStartedTab() {
 						</div>
 						<div className="rp-p-3 rp-border rp-border-gray-200 rp-rounded-md">
 							<h5 className="rp-font-medium rp-text-gray-900 rp-mb-1">
-								{__('Application Form Block', 'recruiting-playbook')}
+								{__('Latest Jobs Block', 'recruiting-playbook')}
 							</h5>
 							<p className="rp-text-xs rp-text-gray-600">
-								{__('Standalone application form', 'recruiting-playbook')}
+								{__('Show the most recent job openings', 'recruiting-playbook')}
 							</p>
 						</div>
 						<div className="rp-p-3 rp-border rp-border-gray-200 rp-rounded-md">
