@@ -121,7 +121,7 @@ export function GettingStartedTab() {
 						<p className="rp-text-sm rp-text-gray-600 rp-mb-2">
 							{__('Copy this shortcode and paste it into any page:', 'recruiting-playbook')}
 						</p>
-						<CodeSnippet code="[rp_job_list]" />
+						<CodeSnippet code="[rp_jobs]" />
 					</div>
 
 					<div className="rp-border-t rp-border-gray-200 rp-pt-4">

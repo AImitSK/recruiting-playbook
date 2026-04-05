@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.7 - 2026-04-05 =
+* Fix: Corrected shortcode in Getting Started documentation (rp_job_list → rp_jobs)
 
 = 1.7.6 - 2026-04-05 =
 * Fix: Fixed function_exists checks for recpl_has_cv_matching (was checking for rp_has_cv_matching)
