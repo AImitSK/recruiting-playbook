@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,12 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.8 - 2026-04-05 =
+* Fix: Application form now works correctly in Free version (Alpine.js attributes preserved)
+* Fix: FormRenderService now falls back to standard form when Pro services unavailable
+* Fix: Removed debug console.log statements from admin settings
+* Fix: Corrected block documentation (Application Form Block → Latest Jobs Block)
 
 = 1.7.7 - 2026-04-05 =
 * Fix: Corrected shortcode in Getting Started documentation (rp_job_list → rp_jobs)
