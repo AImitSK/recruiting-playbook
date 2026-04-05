@@ -13,8 +13,8 @@ namespace RecruitingPlaybook;
 defined( 'ABSPATH' ) || exit;
 
 // Freemius SDK: Premium/Free Version Handling
-if ( function_exists( '\rp_fs' ) ) {
-	\rp_fs()->set_basename( true, RECPL_PLUGIN_FILE );
+if ( function_exists( '\recpl_fs' ) ) {
+	\recpl_fs()->set_basename( true, RECPL_PLUGIN_FILE );
 } else {
 	// Autoloader
 	if ( file_exists( RECPL_PLUGIN_DIR . 'vendor/autoload.php' ) ) {

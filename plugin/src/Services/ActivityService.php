@@ -266,67 +266,67 @@ class ActivityService {
 	 */
 	private function getTypeConfig( string $type ): array {
 		$configs = [
-			'application_received'  => [
+			'application_received' => [
 				'icon'     => 'dashicons-plus-alt',
 				'color'    => '#00a32a',
 				'category' => 'application',
 			],
-			'status_changed'        => [
+			'status_changed'       => [
 				'icon'     => 'dashicons-update',
 				'color'    => '#dba617',
 				'category' => 'status',
 			],
-			'note_added'            => [
+			'note_added'           => [
 				'icon'     => 'dashicons-edit',
 				'color'    => '#2271b1',
 				'category' => 'note',
 			],
-			'note_updated'          => [
+			'note_updated'         => [
 				'icon'     => 'dashicons-edit',
 				'color'    => '#2271b1',
 				'category' => 'note',
 			],
-			'note_deleted'          => [
+			'note_deleted'         => [
 				'icon'     => 'dashicons-trash',
 				'color'    => '#d63638',
 				'category' => 'note',
 			],
-			'rating_added'          => [
+			'rating_added'         => [
 				'icon'     => 'dashicons-star-filled',
 				'color'    => '#f0b849',
 				'category' => 'rating',
 			],
-			'rating_updated'        => [
+			'rating_updated'       => [
 				'icon'     => 'dashicons-star-half',
 				'color'    => '#f0b849',
 				'category' => 'rating',
 			],
-			'email_sent'            => [
+			'email_sent'           => [
 				'icon'     => 'dashicons-email-alt',
 				'color'    => '#9b59b6',
 				'category' => 'email',
 			],
-			'document_viewed'       => [
+			'document_viewed'      => [
 				'icon'     => 'dashicons-visibility',
 				'color'    => '#787c82',
 				'category' => 'document',
 			],
-			'document_downloaded'   => [
+			'document_downloaded'  => [
 				'icon'     => 'dashicons-download',
 				'color'    => '#787c82',
 				'category' => 'document',
 			],
-			'talent_pool_added'     => [
+			'talent_pool_added'    => [
 				'icon'     => 'dashicons-groups',
 				'color'    => '#1e8cbe',
 				'category' => 'talent_pool',
 			],
-			'talent_pool_removed'   => [
+			'talent_pool_removed'  => [
 				'icon'     => 'dashicons-dismiss',
 				'color'    => '#d63638',
 				'category' => 'talent_pool',
 			],
-			'file_upload_failed'    => [
+			'file_upload_failed'   => [
 				'icon'     => 'dashicons-warning',
 				'color'    => '#d63638',
 				'category' => 'error',
@@ -339,5 +339,4 @@ class ActivityService {
 			'category' => 'other',
 		];
 	}
-
 }

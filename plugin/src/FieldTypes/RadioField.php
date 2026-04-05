@@ -53,10 +53,13 @@ class RadioField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'layout'      => 'vertical', // vertical, horizontal, inline.
-			'allow_other' => false,
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'layout'      => 'vertical', // vertical, horizontal, inline.
+				'allow_other' => false,
+			]
+		);
 	}
 
 	/**
@@ -201,11 +204,11 @@ class RadioField extends AbstractFieldType {
 				esc_attr( $field_key ),
 				esc_attr( $field_key )
 			);
-			$html .= sprintf(
+			$html    .= sprintf(
 				'<span class="rp-form__radio-text">%s</span>',
 				esc_html__( 'Other', 'recruiting-playbook' )
 			);
-			$html .= '</label>';
+			$html    .= '</label>';
 		}
 
 		$html .= '</div>'; // .rp-form__radio-group

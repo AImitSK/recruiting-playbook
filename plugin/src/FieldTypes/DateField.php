@@ -53,9 +53,12 @@ class DateField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'date_format' => 'd.m.Y',
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'date_format' => 'd.m.Y',
+			]
+		);
 	}
 
 	/**

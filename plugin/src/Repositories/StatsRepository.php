@@ -39,7 +39,7 @@ class StatsRepository {
 	/**
 	 * Bewerbungen nach Status zählen
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array<string, int>
 	 */
@@ -48,17 +48,17 @@ class StatsRepository {
 
 		$table = $this->tables['applications'];
 
-		$where = 'deleted_at IS NULL';
+		$where  = 'deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $job_id ) {
-			$where .= ' AND job_id = %d';
+			$where   .= ' AND job_id = %d';
 			$params[] = $job_id;
 		}
 
@@ -84,7 +84,7 @@ class StatsRepository {
 	/**
 	 * Gesamtzahl Bewerbungen
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return int
 	 */
@@ -93,17 +93,17 @@ class StatsRepository {
 
 		$table = $this->tables['applications'];
 
-		$where = 'deleted_at IS NULL';
+		$where  = 'deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $job_id ) {
-			$where .= ' AND job_id = %d';
+			$where   .= ' AND job_id = %d';
 			$params[] = $job_id;
 		}
 
@@ -118,23 +118,23 @@ class StatsRepository {
 	/**
 	 * Top-Stellen nach Bewerbungen
 	 *
-	 * @param int $limit Anzahl Ergebnisse.
+	 * @param int   $limit Anzahl Ergebnisse.
 	 * @param array $date_range Array mit 'from' und 'to' Datum.
 	 * @return array
 	 */
 	public function getTopJobsByApplications( int $limit, array $date_range ): array {
 		global $wpdb;
 
-		$apps_table = $this->tables['applications'];
+		$apps_table  = $this->tables['applications'];
 		$posts_table = $wpdb->posts;
 
 		$where_apps = 'a.deleted_at IS NULL';
-		$params = [];
+		$params     = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
 			$where_apps .= ' AND a.created_at BETWEEN %s AND %s';
-			$params[] = $date_range['from'];
-			$params[] = $date_range['to'];
+			$params[]    = $date_range['from'];
+			$params[]    = $date_range['to'];
 		}
 
 		$params[] = $limit;
@@ -176,7 +176,7 @@ class StatsRepository {
 	/**
 	 * Eingestellte Bewerbungen (für Time-to-Hire)
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
@@ -185,17 +185,17 @@ class StatsRepository {
 
 		$table = $this->tables['applications'];
 
-		$where = "status = 'hired' AND deleted_at IS NULL";
+		$where  = "status = 'hired' AND deleted_at IS NULL";
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND updated_at BETWEEN %s AND %s';
+			$where   .= ' AND updated_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $job_id ) {
-			$where .= ' AND job_id = %d';
+			$where   .= ' AND job_id = %d';
 			$params[] = $job_id;
 		}
 
@@ -232,7 +232,7 @@ class StatsRepository {
 	/**
 	 * Job-Views zählen (aus Activity Log)
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return int
 	 */
@@ -241,17 +241,17 @@ class StatsRepository {
 
 		$table = $this->tables['activity_log'];
 
-		$where = "action = 'job_viewed' AND object_type = 'job'";
+		$where  = "action = 'job_viewed' AND object_type = 'job'";
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $job_id ) {
-			$where .= ' AND object_id = %d';
+			$where   .= ' AND object_id = %d';
 			$params[] = $job_id;
 		}
 
@@ -266,8 +266,8 @@ class StatsRepository {
 	/**
 	 * Events zählen (aus Activity Log)
 	 *
-	 * @param string $action Event-Typ.
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param string   $action Event-Typ.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
 	 * @param int|null $object_id Optional: Filter nach Objekt-ID.
 	 * @return int
 	 */
@@ -276,17 +276,17 @@ class StatsRepository {
 
 		$table = $this->tables['activity_log'];
 
-		$where = 'action = %s';
+		$where  = 'action = %s';
 		$params = [ $action ];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $object_id ) {
-			$where .= ' AND object_id = %d';
+			$where   .= ' AND object_id = %d';
 			$params[] = $object_id;
 		}
 
@@ -299,8 +299,8 @@ class StatsRepository {
 	/**
 	 * Bewerbungen nach Zeitraum gruppiert
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
-	 * @param string $group_by Gruppierung: 'day', 'week', 'month'.
+	 * @param array    $date_range Array mit 'from' und 'to' Datum.
+	 * @param string   $group_by Gruppierung: 'day', 'week', 'month'.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
@@ -316,17 +316,17 @@ class StatsRepository {
 			default => '%%Y-%%m-%%d',
 		};
 
-		$where = 'deleted_at IS NULL';
+		$where  = 'deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
 
 		if ( $job_id ) {
-			$where .= ' AND job_id = %d';
+			$where   .= ' AND job_id = %d';
 			$params[] = $job_id;
 		}
 
@@ -365,11 +365,11 @@ class StatsRepository {
 	/**
 	 * Statistiken pro Stelle
 	 *
-	 * @param array $date_range Array mit 'from' und 'to' Datum.
+	 * @param array  $date_range Array mit 'from' und 'to' Datum.
 	 * @param string $sort_by Sortierung: 'applications', 'title', 'created'.
 	 * @param string $sort_order Reihenfolge: 'asc', 'desc'.
-	 * @param int $limit Limit.
-	 * @param int $offset Offset.
+	 * @param int    $limit Limit.
+	 * @param int    $offset Offset.
 	 * @return array
 	 */
 	public function getJobStats(
@@ -381,23 +381,23 @@ class StatsRepository {
 	): array {
 		global $wpdb;
 
-		$apps_table = $this->tables['applications'];
+		$apps_table    = $this->tables['applications'];
 		$ratings_table = $this->tables['ratings'];
-		$posts_table = $wpdb->posts;
+		$posts_table   = $wpdb->posts;
 
 		$where_apps = 'a.deleted_at IS NULL';
-		$params = [];
+		$params     = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
 			$where_apps .= ' AND a.created_at BETWEEN %s AND %s';
-			$params[] = $date_range['from'];
-			$params[] = $date_range['to'];
+			$params[]    = $date_range['from'];
+			$params[]    = $date_range['to'];
 		}
 
 		// Sortierung validieren.
 		$valid_sorts = [ 'applications', 'title', 'created', 'hired', 'avg_rating' ];
-		$sort_by = in_array( $sort_by, $valid_sorts, true ) ? $sort_by : 'applications';
-		$sort_order = strtoupper( $sort_order ) === 'ASC' ? 'ASC' : 'DESC';
+		$sort_by     = in_array( $sort_by, $valid_sorts, true ) ? $sort_by : 'applications';
+		$sort_order  = strtoupper( $sort_order ) === 'ASC' ? 'ASC' : 'DESC';
 
 		$order_by = match ( $sort_by ) {
 			'title'      => 'p.post_title',
@@ -440,11 +440,11 @@ class StatsRepository {
 		return array_map(
 			function ( $job ) {
 				return [
-					'id'                 => (int) $job['id'],
-					'title'              => $job['title'],
-					'status'             => $job['status'],
-					'created_at'         => $job['created_at'],
-					'stats'              => [
+					'id'         => (int) $job['id'],
+					'title'      => $job['title'],
+					'status'     => $job['status'],
+					'created_at' => $job['created_at'],
+					'stats'      => [
 						'applications_total' => (int) $job['applications_total'],
 						'new'                => (int) $job['new_count'],
 						'in_progress'        => (int) $job['in_progress'],
@@ -508,11 +508,11 @@ class StatsRepository {
 
 		$table = $this->tables['applications'];
 
-		$where = 'deleted_at IS NULL';
+		$where  = 'deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $date_range['from'] ) && ! empty( $date_range['to'] ) ) {
-			$where .= ' AND created_at BETWEEN %s AND %s';
+			$where   .= ' AND created_at BETWEEN %s AND %s';
 			$params[] = $date_range['from'];
 			$params[] = $date_range['to'];
 		}
@@ -584,38 +584,38 @@ class StatsRepository {
 	 * Bewerbungen für Export laden
 	 *
 	 * @param array $args Filter-Argumente.
-	 * @param int $limit Limit.
-	 * @param int $offset Offset.
+	 * @param int   $limit Limit.
+	 * @param int   $offset Offset.
 	 * @return array
 	 */
 	public function getApplicationsForExport( array $args, int $limit, int $offset ): array {
 		global $wpdb;
 
-		$apps_table = $this->tables['applications'];
+		$apps_table       = $this->tables['applications'];
 		$candidates_table = $this->tables['candidates'];
-		$posts_table = $wpdb->posts;
+		$posts_table      = $wpdb->posts;
 
-		$where = 'a.deleted_at IS NULL';
+		$where  = 'a.deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $args['date_from'] ) ) {
-			$where .= ' AND a.created_at >= %s';
+			$where   .= ' AND a.created_at >= %s';
 			$params[] = $args['date_from'] . ' 00:00:00';
 		}
 
 		if ( ! empty( $args['date_to'] ) ) {
-			$where .= ' AND a.created_at <= %s';
+			$where   .= ' AND a.created_at <= %s';
 			$params[] = $args['date_to'] . ' 23:59:59';
 		}
 
 		if ( ! empty( $args['status'] ) && is_array( $args['status'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['status'] ), '%s' ) );
-			$where .= " AND a.status IN ({$placeholders})";
-			$params = array_merge( $params, $args['status'] );
+			$where       .= " AND a.status IN ({$placeholders})";
+			$params       = array_merge( $params, $args['status'] );
 		}
 
 		if ( ! empty( $args['job_id'] ) ) {
-			$where .= ' AND a.job_id = %d';
+			$where   .= ' AND a.job_id = %d';
 			$params[] = $args['job_id'];
 		}
 
@@ -663,27 +663,27 @@ class StatsRepository {
 
 		$apps_table = $this->tables['applications'];
 
-		$where = 'deleted_at IS NULL';
+		$where  = 'deleted_at IS NULL';
 		$params = [];
 
 		if ( ! empty( $args['date_from'] ) ) {
-			$where .= ' AND created_at >= %s';
+			$where   .= ' AND created_at >= %s';
 			$params[] = $args['date_from'] . ' 00:00:00';
 		}
 
 		if ( ! empty( $args['date_to'] ) ) {
-			$where .= ' AND created_at <= %s';
+			$where   .= ' AND created_at <= %s';
 			$params[] = $args['date_to'] . ' 23:59:59';
 		}
 
 		if ( ! empty( $args['status'] ) && is_array( $args['status'] ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['status'] ), '%s' ) );
-			$where .= " AND status IN ({$placeholders})";
-			$params = array_merge( $params, $args['status'] );
+			$where       .= " AND status IN ({$placeholders})";
+			$params       = array_merge( $params, $args['status'] );
 		}
 
 		if ( ! empty( $args['job_id'] ) ) {
-			$where .= ' AND job_id = %d';
+			$where   .= ' AND job_id = %d';
 			$params[] = $args['job_id'];
 		}
 

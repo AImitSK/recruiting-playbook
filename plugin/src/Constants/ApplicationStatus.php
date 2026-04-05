@@ -100,7 +100,7 @@ class ApplicationStatus {
 	 */
 	public static function getAllowedTransitions(): array {
 		return [
-			self::NEW => [
+			self::NEW       => [
 				self::SCREENING,
 				self::REJECTED,
 				self::WITHDRAWN,
@@ -115,7 +115,7 @@ class ApplicationStatus {
 				self::REJECTED,
 				self::WITHDRAWN,
 			],
-			self::OFFER => [
+			self::OFFER     => [
 				self::HIRED,
 				self::REJECTED,
 				self::WITHDRAWN,

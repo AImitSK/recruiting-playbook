@@ -74,21 +74,23 @@ class EmailQueueService {
 	 */
 	public function enqueue( array $email_data ): int|false {
 		// Log-Eintrag erstellen.
-		$log_id = $this->logRepository->create( [
-			'application_id'  => $email_data['application_id'] ?? null,
-			'candidate_id'    => $email_data['candidate_id'] ?? null,
-			'template_id'     => $email_data['template_id'] ?? null,
-			'recipient_email' => $email_data['recipient_email'],
-			'recipient_name'  => $email_data['recipient_name'] ?? '',
-			'sender_email'    => $email_data['sender_email'],
-			'sender_name'     => $email_data['sender_name'] ?? '',
-			'subject'         => $email_data['subject'],
-			'body_html'       => $email_data['body_html'],
-			'body_text'       => $email_data['body_text'] ?? '',
-			'status'          => 'pending',
-			'scheduled_at'    => $email_data['scheduled_at'] ?? null,
-			'metadata'        => $email_data['metadata'] ?? [],
-		] );
+		$log_id = $this->logRepository->create(
+			[
+				'application_id'  => $email_data['application_id'] ?? null,
+				'candidate_id'    => $email_data['candidate_id'] ?? null,
+				'template_id'     => $email_data['template_id'] ?? null,
+				'recipient_email' => $email_data['recipient_email'],
+				'recipient_name'  => $email_data['recipient_name'] ?? '',
+				'sender_email'    => $email_data['sender_email'],
+				'sender_name'     => $email_data['sender_name'] ?? '',
+				'subject'         => $email_data['subject'],
+				'body_html'       => $email_data['body_html'],
+				'body_text'       => $email_data['body_text'] ?? '',
+				'status'          => 'pending',
+				'scheduled_at'    => $email_data['scheduled_at'] ?? null,
+				'metadata'        => $email_data['metadata'] ?? [],
+			]
+		);
 
 		if ( false === $log_id ) {
 			return false;
@@ -146,22 +148,24 @@ class EmailQueueService {
 		}
 
 		// Neue E-Mail mit gleichen Daten erstellen.
-		return $this->enqueue( [
-			'application_id'  => $log['application_id'],
-			'candidate_id'    => $log['candidate_id'],
-			'template_id'     => $log['template_id'],
-			'recipient_email' => $log['recipient_email'],
-			'recipient_name'  => $log['recipient_name'],
-			'sender_email'    => $log['sender_email'],
-			'sender_name'     => $log['sender_name'],
-			'subject'         => $log['subject'],
-			'body_html'       => $log['body_html'],
-			'body_text'       => $log['body_text'],
-			'metadata'        => array_merge(
-				$log['metadata'] ?? [],
-				[ 'resent_from' => $log_id ]
-			),
-		] );
+		return $this->enqueue(
+			[
+				'application_id'  => $log['application_id'],
+				'candidate_id'    => $log['candidate_id'],
+				'template_id'     => $log['template_id'],
+				'recipient_email' => $log['recipient_email'],
+				'recipient_name'  => $log['recipient_name'],
+				'sender_email'    => $log['sender_email'],
+				'sender_name'     => $log['sender_name'],
+				'subject'         => $log['subject'],
+				'body_html'       => $log['body_html'],
+				'body_text'       => $log['body_text'],
+				'metadata'        => array_merge(
+					$log['metadata'] ?? [],
+					[ 'resent_from' => $log_id ]
+				),
+			]
+		);
 	}
 
 	/**
@@ -198,13 +202,16 @@ class EmailQueueService {
 			if ( $retry_count < self::MAX_RETRIES ) {
 				// Erneut planen mit Verzögerung.
 				$delay = pow( 2, $retry_count ) * 60; // Exponential backoff: 1, 2, 4 Minuten.
-				$this->logRepository->update( $log_id, [
-					'status'   => 'pending',
-					'metadata' => array_merge(
-						$log['metadata'] ?? [],
-						[ 'retry_count' => $retry_count + 1 ]
-					),
-				] );
+				$this->logRepository->update(
+					$log_id,
+					[
+						'status'   => 'pending',
+						'metadata' => array_merge(
+							$log['metadata'] ?? [],
+							[ 'retry_count' => $retry_count + 1 ]
+						),
+					]
+				);
 				$this->scheduleEmail( $log_id, gmdate( 'Y-m-d H:i:s', time() + $delay ) );
 			} else {
 				// Maximale Versuche erreicht.
@@ -358,21 +365,23 @@ class EmailQueueService {
 		}
 
 		$activity_service = new ActivityService();
-		$activity_service->log( [
-			'object_type' => 'application',
-			'object_id'   => $log['application_id'],
-			'action'      => 'email_sent',
-			'message'     => sprintf(
-				/* translators: %s: Email subject */
-				__( 'Email sent: %s', 'recruiting-playbook' ),
-				$log['subject']
-			),
-			'meta'        => [
-				'email_log_id' => $log['id'],
-				'recipient'    => $log['recipient_email'],
-				'template_id'  => $log['template_id'],
-			],
-		] );
+		$activity_service->log(
+			[
+				'object_type' => 'application',
+				'object_id'   => $log['application_id'],
+				'action'      => 'email_sent',
+				'message'     => sprintf(
+					/* translators: %s: Email subject */
+					__( 'Email sent: %s', 'recruiting-playbook' ),
+					$log['subject']
+				),
+				'meta'        => [
+					'email_log_id' => $log['id'],
+					'recipient'    => $log['recipient_email'],
+					'template_id'  => $log['template_id'],
+				],
+			]
+		);
 	}
 
 	/**

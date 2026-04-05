@@ -28,8 +28,11 @@ $shortcode = new \RecruitingPlaybook\Frontend\Shortcodes\JobCountShortcode();
 $output    = $shortcode->render( $shortcode_atts );
 
 // Block-Wrapper mit Gutenberg-Klassen.
-$wrapper_attributes = get_block_wrapper_attributes( [
-	'class' => 'rp-block-job-count',
-] );
+$wrapper_attributes = get_block_wrapper_attributes(
+	[
+		'class' => 'rp-block-job-count',
+	]
+);
 
-echo wp_kses_post( sprintf( '<span %s>%s</span>', $wrapper_attributes, $output ) );
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes is safe from get_block_wrapper_attributes()
+printf( '<span %s>%s</span>', $wrapper_attributes, wp_kses_post( $output ) );

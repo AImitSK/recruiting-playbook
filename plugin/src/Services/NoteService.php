@@ -59,13 +59,15 @@ class NoteService {
 			);
 		}
 
-		$note_id = $this->repository->create( [
-			'application_id' => $application_id,
-			'candidate_id'   => (int) $application['candidate_id'],
-			'user_id'        => get_current_user_id(),
-			'content'        => wp_kses_post( $content ),
-			'is_private'     => $is_private ? 1 : 0,
-		] );
+		$note_id = $this->repository->create(
+			[
+				'application_id' => $application_id,
+				'candidate_id'   => (int) $application['candidate_id'],
+				'user_id'        => get_current_user_id(),
+				'content'        => wp_kses_post( $content ),
+				'is_private'     => $is_private ? 1 : 0,
+			]
+		);
 
 		if ( ! $note_id ) {
 			return new WP_Error(
@@ -101,12 +103,17 @@ class NoteService {
 		$notes = $this->repository->findByApplication( $application_id );
 
 		// Private Notizen filtern (nur eigene anzeigen).
-		return array_values( array_filter( $notes, function ( $note ) use ( $current_user_id ) {
-			if ( $note['is_private'] && $note['user_id'] !== $current_user_id ) {
-				return false;
-			}
-			return true;
-		} ) );
+		return array_values(
+			array_filter(
+				$notes,
+				function ( $note ) use ( $current_user_id ) {
+					if ( $note['is_private'] && $note['user_id'] !== $current_user_id ) {
+						return false;
+					}
+					return true;
+				}
+			)
+		);
 	}
 
 	/**
@@ -121,12 +128,17 @@ class NoteService {
 		$notes = $this->repository->findByCandidate( $candidate_id );
 
 		// Private Notizen filtern.
-		return array_values( array_filter( $notes, function ( $note ) use ( $current_user_id ) {
-			if ( $note['is_private'] && $note['user_id'] !== $current_user_id ) {
-				return false;
-			}
-			return true;
-		} ) );
+		return array_values(
+			array_filter(
+				$notes,
+				function ( $note ) use ( $current_user_id ) {
+					if ( $note['is_private'] && $note['user_id'] !== $current_user_id ) {
+						return false;
+					}
+					return true;
+				}
+			)
+		);
 	}
 
 	/**
@@ -185,9 +197,12 @@ class NoteService {
 			);
 		}
 
-		$this->repository->update( $note_id, [
-			'content' => wp_kses_post( $content ),
-		] );
+		$this->repository->update(
+			$note_id,
+			[
+				'content' => wp_kses_post( $content ),
+			]
+		);
 
 		// Activity Log.
 		if ( $note['application_id'] ) {
@@ -284,5 +299,4 @@ class NoteService {
 			[ '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s' ]
 		);
 	}
-
 }

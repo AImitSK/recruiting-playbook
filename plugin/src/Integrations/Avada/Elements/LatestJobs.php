@@ -30,7 +30,7 @@ class LatestJobs extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'range',
 					'heading'     => esc_attr__( 'Limit', 'recruiting-playbook' ),

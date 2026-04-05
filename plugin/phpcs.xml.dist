@@ -79,9 +79,28 @@
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="rp_"/>
+                <element value="recpl_"/>
+                <element value="RECPL_"/>
                 <element value="recruiting_playbook"/>
                 <element value="RecruitingPlaybook"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Custom Capabilities bekannt machen -->
+    <rule ref="WordPress.WP.Capabilities">
+        <properties>
+            <property name="custom_capabilities" type="array">
+                <element value="rp_view_applications"/>
+                <element value="rp_manage_applications"/>
+                <element value="rp_delete_applications"/>
+                <element value="rp_manage_jobs"/>
+                <element value="rp_manage_settings"/>
+                <element value="rp_manage_email_templates"/>
+                <element value="rp_view_reports"/>
+                <element value="rp_export_data"/>
+                <element value="rp_manage_api_keys"/>
+                <element value="rp_manage_webhooks"/>
             </property>
         </properties>
     </rule>

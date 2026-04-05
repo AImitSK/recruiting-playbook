@@ -301,34 +301,34 @@ class SignatureController extends WP_REST_Controller {
 			fn( $v ) => null !== $v
 		);
 
-		if ( empty( $data ) ) {
-			return new WP_Error(
-				'rest_signature_no_data',
-				__( 'No data to update.', 'recruiting-playbook' ),
-				[ 'status' => 400 ]
+			if ( empty( $data ) ) {
+				return new WP_Error(
+					'rest_signature_no_data',
+					__( 'No data to update.', 'recruiting-playbook' ),
+					[ 'status' => 400 ]
+				);
+			}
+
+			$result = $this->service->update( $id, $data );
+
+			if ( ! $result ) {
+				return new WP_Error(
+					'rest_signature_update_failed',
+					__( 'Signature could not be updated.', 'recruiting-playbook' ),
+					[ 'status' => 500 ]
+				);
+			}
+
+			$signature = $this->repository->find( $id );
+
+			return new WP_REST_Response(
+				[
+					'success'   => true,
+					'message'   => __( 'Signature updated.', 'recruiting-playbook' ),
+					'signature' => $signature,
+				],
+				200
 			);
-		}
-
-		$result = $this->service->update( $id, $data );
-
-		if ( ! $result ) {
-			return new WP_Error(
-				'rest_signature_update_failed',
-				__( 'Signature could not be updated.', 'recruiting-playbook' ),
-				[ 'status' => 500 ]
-			);
-		}
-
-		$signature = $this->repository->find( $id );
-
-		return new WP_REST_Response(
-			[
-				'success'   => true,
-				'message'   => __( 'Signature updated.', 'recruiting-playbook' ),
-				'signature' => $signature,
-			],
-			200
-		);
 	}
 
 	/**

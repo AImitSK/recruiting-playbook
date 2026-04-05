@@ -139,9 +139,9 @@ class RoleController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( $request ): WP_REST_Response {
-		$config    = get_option( 'rp_role_capabilities', RoleManager::getDefaults() );
-		$roles     = [];
-		$all_caps  = RoleManager::getAllCapabilities();
+		$config   = get_option( 'rp_role_capabilities', RoleManager::getDefaults() );
+		$roles    = [];
+		$all_caps = RoleManager::getAllCapabilities();
 
 		foreach ( $config as $role_slug => $capabilities ) {
 			$wp_role = get_role( $role_slug );
@@ -151,10 +151,12 @@ class RoleController extends WP_REST_Controller {
 
 			// User-Count für diese Rolle.
 			$user_count = count(
-				get_users( [
-					'role'   => $role_slug,
-					'fields' => 'ID',
-				] )
+				get_users(
+					[
+						'role'   => $role_slug,
+						'fields' => 'ID',
+					]
+				)
 			);
 
 			// Nur rp_* Capabilities zurückgeben.
@@ -234,8 +236,8 @@ class RoleController extends WP_REST_Controller {
 		}
 
 		// Nur bekannte rp_* Capabilities akzeptieren.
-		$all_caps    = RoleManager::getAllCapabilities();
-		$valid_caps  = [];
+		$all_caps   = RoleManager::getAllCapabilities();
+		$valid_caps = [];
 		foreach ( $capabilities as $cap => $granted ) {
 			if ( in_array( $cap, $all_caps, true ) ) {
 				$valid_caps[ $cap ] = (bool) $granted;

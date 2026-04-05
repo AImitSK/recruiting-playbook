@@ -366,7 +366,13 @@ class FormTemplateController extends WP_REST_Controller {
 			return $result;
 		}
 
-		return new WP_REST_Response( [ 'deleted' => true, 'id' => $id ], 200 );
+		return new WP_REST_Response(
+			[
+				'deleted' => true,
+				'id'      => $id,
+			],
+			200
+		);
 	}
 
 	/**

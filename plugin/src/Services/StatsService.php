@@ -52,22 +52,22 @@ class StatsService {
 	 */
 	public function getOverview( string $period = '30days' ): array {
 		$cache_key = "overview_{$period}";
-		$cached = $this->getCache( $cache_key );
+		$cached    = $this->getCache( $cache_key );
 
 		if ( false !== $cached ) {
 			return $cached;
 		}
 
-		$date_range = $this->getDateRange( $period );
+		$date_range     = $this->getDateRange( $period );
 		$previous_range = $this->getPreviousPeriod( $date_range, $period );
 
 		$top_jobs = $this->repository->getTopJobsByApplications( 5, $date_range );
 
 		// Conversion-Rate zu Jobs hinzufügen.
 		$total_apps = array_sum( array_column( $top_jobs, 'applications' ) );
-		$top_jobs = array_map(
+		$top_jobs   = array_map(
 			function ( $job ) use ( $total_apps ) {
-				$job['views'] = null; // Kein View-Tracking implementiert.
+				$job['views']           = null; // Kein View-Tracking implementiert.
 				$job['conversion_rate'] = $total_apps > 0
 					? round( ( $job['applications'] / $total_apps ) * 100, 1 )
 					: 0;
@@ -100,10 +100,10 @@ class StatsService {
 	 * @return array
 	 */
 	private function getApplicationSummary( array $date_range, array $previous_range ): array {
-		$current = $this->repository->countApplicationsByStatus( $date_range );
+		$current  = $this->repository->countApplicationsByStatus( $date_range );
 		$previous = $this->repository->countApplicationsByStatus( $previous_range );
 
-		$total_current = array_sum( $current );
+		$total_current  = array_sum( $current );
 		$total_previous = array_sum( $previous );
 
 		$in_progress = ( $current['screening'] ?? 0 )
@@ -145,7 +145,7 @@ class StatsService {
 	 */
 	private function getQuickStats(): array {
 		$today = $this->getDateRange( 'today' );
-		$week = $this->getDateRange( '7days' );
+		$week  = $this->getDateRange( '7days' );
 		$month = $this->getDateRange( '30days' );
 
 		return [
@@ -190,7 +190,7 @@ class StatsService {
 	 * @return array
 	 */
 	private function getConversionSummary( array $date_range ): array {
-		$views = $this->repository->countJobViews( $date_range );
+		$views        = $this->repository->countJobViews( $date_range );
 		$applications = $this->repository->countApplications( $date_range );
 
 		$rate = $views > 0
@@ -218,7 +218,7 @@ class StatsService {
 		];
 
 		$group_by = $args['group_by'] ?? 'day';
-		$job_id = $args['job_id'] ?? null;
+		$job_id   = $args['job_id'] ?? null;
 
 		return [
 			'summary'         => [
@@ -248,13 +248,13 @@ class StatsService {
 			'to'   => $args['date_to'] ?? null,
 		];
 
-		$sort_by = $args['sort_by'] ?? 'applications';
+		$sort_by    = $args['sort_by'] ?? 'applications';
 		$sort_order = $args['sort_order'] ?? 'desc';
-		$per_page = min( (int) ( $args['per_page'] ?? 20 ), 100 );
-		$page = max( (int) ( $args['page'] ?? 1 ), 1 );
-		$offset = ( $page - 1 ) * $per_page;
+		$per_page   = min( (int) ( $args['per_page'] ?? 20 ), 100 );
+		$page       = max( (int) ( $args['page'] ?? 1 ), 1 );
+		$offset     = ( $page - 1 ) * $per_page;
 
-		$jobs = $this->repository->getJobStats( $date_range, $sort_by, $sort_order, $per_page, $offset );
+		$jobs  = $this->repository->getJobStats( $date_range, $sort_by, $sort_order, $per_page, $offset );
 		$total = $this->repository->countJobs();
 
 		return [
@@ -272,23 +272,23 @@ class StatsService {
 	 * @return array
 	 */
 	private function getAggregatedJobStats( array $date_range ): array {
-		$total_apps = $this->repository->countApplications( $date_range );
+		$total_apps  = $this->repository->countApplications( $date_range );
 		$total_views = $this->repository->countJobViews( $date_range );
-		$hired = $this->repository->getHiredApplications( $date_range );
+		$hired       = $this->repository->getHiredApplications( $date_range );
 
 		$avg_time_to_hire = null;
 		if ( ! empty( $hired ) ) {
-			$days = array_map( fn( $h ) => (int) $h['days_to_hire'], $hired );
+			$days             = array_map( fn( $h ) => (int) $h['days_to_hire'], $hired );
 			$avg_time_to_hire = (int) round( array_sum( $days ) / count( $days ) );
 		}
 
 		return [
-			'total_applications' => $total_apps,
-			'total_views'        => $total_views,
+			'total_applications'  => $total_apps,
+			'total_views'         => $total_views,
 			'avg_conversion_rate' => $total_views > 0
 				? round( ( $total_apps / $total_views ) * 100, 2 )
 				: 0,
-			'avg_time_to_hire'   => $avg_time_to_hire,
+			'avg_time_to_hire'    => $avg_time_to_hire,
 		];
 	}
 
@@ -305,7 +305,7 @@ class StatsService {
 		];
 
 		$granularity = $args['granularity'] ?? 'day';
-		$metrics = $args['metrics'] ?? [ 'applications', 'hires' ];
+		$metrics     = $args['metrics'] ?? [ 'applications', 'hires' ];
 
 		$timeline = $this->repository->getApplicationsTimeline( $date_range, $granularity );
 
@@ -316,7 +316,7 @@ class StatsService {
 
 				if ( in_array( 'applications', $metrics, true ) ) {
 					$item['total'] = (int) $row['total'];
-					$item['new'] = (int) ( $row['new_count'] ?? 0 );
+					$item['new']   = (int) ( $row['new_count'] ?? 0 );
 				}
 				if ( in_array( 'hires', $metrics, true ) ) {
 					$item['hires'] = (int) $row['hired'];
@@ -348,17 +348,17 @@ class StatsService {
 	 */
 	private function calculateTrendSummary( array $timeline, array $metrics ): array {
 		$summary = [];
-		$days = count( $timeline );
+		$days    = count( $timeline );
 
 		if ( in_array( 'applications', $metrics, true ) ) {
 			$totals = array_map( fn( $r ) => (int) $r['total'], $timeline );
-			$total = array_sum( $totals );
-			$avg = $days > 0 ? round( $total / $days, 1 ) : 0;
+			$total  = array_sum( $totals );
+			$avg    = $days > 0 ? round( $total / $days, 1 ) : 0;
 
 			// Trend berechnen (erste vs. zweite Hälfte).
-			$mid = (int) floor( $days / 2 );
-			$first_half = array_sum( array_slice( $totals, 0, $mid ) );
-			$second_half = array_sum( array_slice( $totals, $mid ) );
+			$mid           = (int) floor( $days / 2 );
+			$first_half    = array_sum( array_slice( $totals, 0, $mid ) );
+			$second_half   = array_sum( array_slice( $totals, $mid ) );
 			$trend_percent = $this->calculatePercentageChange( $first_half, $second_half );
 
 			$summary['applications'] = [
@@ -371,7 +371,7 @@ class StatsService {
 
 		if ( in_array( 'hires', $metrics, true ) ) {
 			$totals = array_map( fn( $r ) => (int) $r['hired'], $timeline );
-			$total = array_sum( $totals );
+			$total  = array_sum( $totals );
 
 			$summary['hires'] = [
 				'total'       => $total,
@@ -405,7 +405,7 @@ class StatsService {
 	 */
 	private function calculateMedian( array $values ): int {
 		sort( $values );
-		$count = count( $values );
+		$count  = count( $values );
 		$middle = (int) floor( $count / 2 );
 
 		if ( $count % 2 === 0 ) {
@@ -455,17 +455,20 @@ class StatsService {
 	/**
 	 * Vorherigen Zeitraum berechnen
 	 *
-	 * @param array $current_range Aktueller Zeitraum.
+	 * @param array  $current_range Aktueller Zeitraum.
 	 * @param string $period Period-String.
 	 * @return array
 	 */
 	private function getPreviousPeriod( array $current_range, string $period ): array {
 		if ( empty( $current_range['from'] ) || empty( $current_range['to'] ) ) {
-			return [ 'from' => null, 'to' => null ];
+			return [
+				'from' => null,
+				'to'   => null,
+			];
 		}
 
-		$from = strtotime( $current_range['from'] );
-		$to = strtotime( $current_range['to'] );
+		$from     = strtotime( $current_range['from'] );
+		$to       = strtotime( $current_range['to'] );
 		$duration = $to - $from;
 
 		return [
@@ -488,7 +491,7 @@ class StatsService {
 	 * Cache-Wert setzen
 	 *
 	 * @param string $key Cache-Key.
-	 * @param mixed $value Wert.
+	 * @param mixed  $value Wert.
 	 * @return bool
 	 */
 	private function setCache( string $key, mixed $value ): bool {

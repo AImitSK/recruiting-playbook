@@ -218,7 +218,7 @@ class RoleManager {
 	 */
 	public static function getDefaults(): array {
 		return [
-			'rp_recruiter'       => [
+			'rp_recruiter'      => [
 				'rp_view_applications'      => true,
 				'rp_edit_applications'      => true,
 				'rp_delete_applications'    => false,
@@ -245,7 +245,7 @@ class RoleManager {
 				'rp_run_cleanup'            => false,
 				'rp_manage_forms'           => false,
 			],
-			'rp_hiring_manager'  => [
+			'rp_hiring_manager' => [
 				'rp_view_applications'      => true,
 				'rp_edit_applications'      => false,
 				'rp_delete_applications'    => false,
@@ -293,11 +293,11 @@ class RoleManager {
 			'notes'        => [
 				'label'        => __( 'Notes', 'recruiting-playbook' ),
 				'capabilities' => [
-					'rp_view_notes'         => __( 'View notes', 'recruiting-playbook' ),
-					'rp_create_notes'       => __( 'Create notes', 'recruiting-playbook' ),
-					'rp_edit_own_notes'     => __( 'Edit own notes', 'recruiting-playbook' ),
-					'rp_edit_others_notes'  => __( 'Edit others notes', 'recruiting-playbook' ),
-					'rp_delete_notes'       => __( 'Delete notes', 'recruiting-playbook' ),
+					'rp_view_notes'        => __( 'View notes', 'recruiting-playbook' ),
+					'rp_create_notes'      => __( 'Create notes', 'recruiting-playbook' ),
+					'rp_edit_own_notes'    => __( 'Edit own notes', 'recruiting-playbook' ),
+					'rp_edit_others_notes' => __( 'Edit others notes', 'recruiting-playbook' ),
+					'rp_delete_notes'      => __( 'Delete notes', 'recruiting-playbook' ),
 				],
 			],
 			'evaluation'   => [

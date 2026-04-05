@@ -152,16 +152,16 @@ function rp_can( string $feature ): mixed {
 
 		// Parent Features → Plan prüfen.
 		if ( 'parent' === $config['source'] ) {
-			if ( ! function_exists( 'rp_fs' ) ) {
+			if ( ! function_exists( 'recpl_fs' ) ) {
 				return false;
 			}
 
-			if ( ! rp_fs()->is_paying() && ! rp_fs()->is_trial() ) {
+			if ( ! recpl_fs()->is_paying() && ! recpl_fs()->is_trial() ) {
 				return false;
 			}
 
 			foreach ( $config['plans'] as $plan ) {
-				if ( rp_fs()->is_plan( $plan ) ) {
+				if ( recpl_fs()->is_plan( $plan ) ) {
 					return true;
 				}
 			}
@@ -185,8 +185,8 @@ function rp_can( string $feature ): mixed {
  * @return string Tier-Name (FREE, PRO).
  */
 function rp_tier(): string {
-	if ( function_exists( 'rp_fs' ) && ( rp_fs()->is_paying() || rp_fs()->is_trial() ) ) {
-		if ( rp_fs()->is_plan( 'pro' ) ) {
+	if ( function_exists( 'recpl_fs' ) && ( recpl_fs()->is_paying() || recpl_fs()->is_trial() ) ) {
+		if ( recpl_fs()->is_plan( 'pro' ) ) {
 			return 'PRO';
 		}
 	}
@@ -200,10 +200,10 @@ function rp_tier(): string {
  * @return bool True wenn Pro-Plan auf dem Parent-Plugin aktiv.
  */
 function rp_is_pro(): bool {
-	if ( ! function_exists( 'rp_fs' ) ) {
+	if ( ! function_exists( 'recpl_fs' ) ) {
 		return false;
 	}
-	return ( rp_fs()->is_paying() || rp_fs()->is_trial() ) && rp_fs()->is_plan( 'pro' );
+	return ( recpl_fs()->is_paying() || recpl_fs()->is_trial() ) && recpl_fs()->is_plan( 'pro' );
 }
 
 /**
@@ -247,10 +247,10 @@ function rp_has_cv_matching(): bool {
  * @return string Upgrade-URL.
  */
 function rp_upgrade_url( ?string $tier = null ): string {
-	if ( ! function_exists( 'rp_fs' ) ) {
+	if ( ! function_exists( 'recpl_fs' ) ) {
 		return 'https://recruiting-playbook.com/pricing/';
 	}
-	return rp_fs()->get_upgrade_url();
+	return recpl_fs()->get_upgrade_url();
 }
 
 /**
@@ -265,12 +265,12 @@ function rp_license_is_valid(): bool {
 		return true;
 	}
 
-	if ( ! function_exists( 'rp_fs' ) ) {
+	if ( ! function_exists( 'recpl_fs' ) ) {
 		return false;
 	}
 
 	// Freemius prüft automatisch die Lizenzgültigkeit.
-	return rp_fs()->is_paying();
+	return recpl_fs()->is_paying();
 }
 
 /**
@@ -286,7 +286,7 @@ function rp_license_status(): array {
 		'PRO'  => 'Pro',
 	];
 
-	if ( ! function_exists( 'rp_fs' ) || 'FREE' === $tier ) {
+	if ( ! function_exists( 'recpl_fs' ) || 'FREE' === $tier ) {
 		return [
 			'tier'        => 'FREE',
 			'has_ai'      => rp_has_ai(),
@@ -297,7 +297,7 @@ function rp_license_status(): array {
 		];
 	}
 
-	$is_paying = rp_fs()->is_paying();
+	$is_paying = recpl_fs()->is_paying();
 
 	return [
 		'tier'        => $tier,
@@ -465,7 +465,7 @@ function rp_require_feature( string $feature, string $feature_name, string $requ
  * @return object|null Key-DB-Objekt oder null wenn kein API-Key-Auth.
  */
 function rp_get_api_key_data(): ?object {
-	return $GLOBALS['rp_authenticated_api_key'] ?? null;
+	return $GLOBALS['recpl_authenticated_api_key'] ?? null;
 }
 
 /**

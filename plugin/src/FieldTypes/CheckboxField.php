@@ -53,10 +53,13 @@ class CheckboxField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'layout' => 'vertical', // vertical, horizontal, inline.
-			'mode'   => 'single',   // single (boolean), multi (array).
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'layout' => 'vertical', // vertical, horizontal, inline.
+				'mode'   => 'single',   // single (boolean), multi (array).
+			]
+		);
 	}
 
 	/**

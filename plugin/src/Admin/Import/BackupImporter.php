@@ -91,11 +91,11 @@ class BackupImporter {
 		$this->options = wp_parse_args(
 			$options,
 			[
-				'settings_mode'       => 'skip',       // skip, merge, overwrite
+				'settings_mode'        => 'skip',       // skip, merge, overwrite
 				'duplicate_candidates' => 'skip',      // skip, update
-				'duplicate_jobs'      => 'skip',       // skip, update
-				'import_activity_log' => false,
-				'import_email_log'    => false,
+				'duplicate_jobs'       => 'skip',       // skip, update
+				'import_activity_log'  => false,
+				'import_email_log'     => false,
 			]
 		);
 

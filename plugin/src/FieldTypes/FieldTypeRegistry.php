@@ -169,14 +169,14 @@ class FieldTypeRegistry {
 		$result = [];
 		foreach ( $this->types as $key => $type ) {
 			$result[ $key ] = [
-				'type'             => $type->getType(),
-				'label'            => $type->getLabel(),
-				'icon'             => $type->getIcon(),
-				'group'            => $type->getGroup(),
-				'supportsOptions'  => $type->supportsOptions(),
-				'isFileUpload'     => $type->isFileUpload(),
-				'defaultSettings'  => $type->getDefaultSettings(),
-				'validationRules'  => $type->getAvailableValidationRules(),
+				'type'            => $type->getType(),
+				'label'           => $type->getLabel(),
+				'icon'            => $type->getIcon(),
+				'group'           => $type->getGroup(),
+				'supportsOptions' => $type->supportsOptions(),
+				'isFileUpload'    => $type->isFileUpload(),
+				'defaultSettings' => $type->getDefaultSettings(),
+				'validationRules' => $type->getAvailableValidationRules(),
 			];
 		}
 

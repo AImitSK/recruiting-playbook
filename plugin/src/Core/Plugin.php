@@ -97,7 +97,7 @@ final class Plugin {
 		add_action( 'init', [ $this, 'maybeFlushRewriteRules' ], 99 );
 
 		// Pro-Services initialisieren.
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$this->initEmailQueueService();
 			$this->initAutoEmailService();
 			$this->registerWebhookHooks();
@@ -121,7 +121,7 @@ final class Plugin {
 		}
 
 		// Gutenberg Blocks (Pro-Feature).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$this->initBlocks();
 		}
 
@@ -129,7 +129,7 @@ final class Plugin {
 		// (auf after_setup_theme, Priority 5, VOR FusionBuilder).
 
 		// Elementor Integration (Pro-Feature).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$this->initElementorIntegration();
 		}
 
@@ -198,7 +198,7 @@ final class Plugin {
 		}
 
 		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( function_exists( 'rp_can' ) && rp_can( 'custom_fields' ) ) {
 				if ( CustomFieldsMigration::needsMigration() ) {
 					add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
@@ -392,10 +392,8 @@ final class Plugin {
 		add_filter(
 			'rest_post_dispatch',
 			function ( $response ) {
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Set by checkApiKeyRateLimit(); intentional rp_ prefix for API rate limit headers.
-				if ( ! empty( $GLOBALS['rp_rate_limit_headers'] ) && $response instanceof \WP_REST_Response ) {
-					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-					foreach ( $GLOBALS['rp_rate_limit_headers'] as $header => $value ) {
+				if ( ! empty( $GLOBALS['recpl_rate_limit_headers'] ) && $response instanceof \WP_REST_Response ) {
+					foreach ( $GLOBALS['recpl_rate_limit_headers'] as $header => $value ) {
 						$response->header( $header, (string) $value );
 					}
 				}
@@ -441,7 +439,7 @@ final class Plugin {
 		}
 
 		// Key-Daten für spätere Permission-Prüfungen speichern.
-		$GLOBALS['rp_authenticated_api_key'] = $key_data; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		$GLOBALS['recpl_authenticated_api_key'] = $key_data;
 
 		// created_by als authentifizierten User zurückgeben.
 		return (int) $key_data->created_by;
@@ -457,7 +455,7 @@ final class Plugin {
 	 */
 	public function checkApiKeyRateLimit( $result, $server, $request ) {
 		// Nur wenn API-Key-Auth aktiv.
-		if ( empty( $GLOBALS['rp_authenticated_api_key'] ) ) {
+		if ( empty( $GLOBALS['recpl_authenticated_api_key'] ) ) {
 			return $result;
 		}
 
@@ -468,11 +466,11 @@ final class Plugin {
 		}
 
 		$service    = new ApiKeyService();
-		$key_data   = $GLOBALS['rp_authenticated_api_key'];
+		$key_data   = $GLOBALS['recpl_authenticated_api_key'];
 		$rate_check = $service->checkRateLimit( $key_data );
 
 		// Rate-Limit-Headers für Response speichern.
-		$GLOBALS['rp_rate_limit_headers'] = [ // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		$GLOBALS['recpl_rate_limit_headers'] = [
 			'X-RateLimit-Limit'     => $rate_check['limit'],
 			'X-RateLimit-Remaining' => $rate_check['remaining'],
 			'X-RateLimit-Reset'     => $rate_check['reset'],
@@ -645,7 +643,7 @@ final class Plugin {
 		$menu = new Menu();
 
 		// Pro Admin-Komponenten (E-Mail-Templates, Custom Fields Meta Box).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$email_page = new EmailSettingsPage();
 			$menu->setEmailSettingsPage( $email_page );
 
@@ -787,7 +785,7 @@ final class Plugin {
 		$integration_controller->register_routes();
 
 		// Pro-Feature Controller.
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( class_exists( 'RecruitingPlaybook\\Api\\NoteController' ) ) {
 				( new NoteController() )->register_routes();
 			}
@@ -993,7 +991,7 @@ final class Plugin {
 		}
 
 		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
 				// CSS.
 				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
@@ -1141,7 +1139,7 @@ final class Plugin {
 		}
 
 		// E-Mail Admin App Script (für Templates & Signaturen Seite - Pro-Feature).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$this->enqueueEmailAdminAssets( $hook );
 		}
 	}

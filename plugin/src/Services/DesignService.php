@@ -265,130 +265,130 @@ class DesignService {
 			// ============================================
 
 			// Card: Farben.
-			'use_theme_colors'         => true,
-			'primary_color'            => '#2563eb',
+			'use_theme_colors'          => true,
+			'primary_color'             => '#2563eb',
 
 			// Card: Logo.
-			'use_theme_logo'           => true,
-			'custom_logo_id'           => null,
-			'logo_in_signature'        => false,
-			'signature_logo_position'  => 'top', // top|bottom|left
+			'use_theme_logo'            => true,
+			'custom_logo_id'            => null,
+			'logo_in_signature'         => false,
+			'signature_logo_position'   => 'top', // top|bottom|left
 			'signature_logo_max_height' => 60,    // 30-120px
 
 			// Card: White-Label.
-			'hide_branding'            => false,
-			'hide_email_branding'      => false,
+			'hide_branding'             => false,
+			'hide_email_branding'       => false,
 
 			// ============================================
 			// Tab: Typografie (Abschnitt 3.2)
 			// ============================================
 
 			// Card: Schriftgrößen (rem).
-			'font_size_h1'             => 2.25,   // 1.5-4 rem
-			'font_size_h2'             => 1.875,  // 1.25-3 rem
-			'font_size_h3'             => 1.5,    // 1-2.5 rem
-			'font_size_body'           => 1.0,    // 0.875-1.25 rem
-			'font_size_small'          => 0.875,  // 0.625-1 rem
+			'font_size_h1'              => 2.25,   // 1.5-4 rem
+			'font_size_h2'              => 1.875,  // 1.25-3 rem
+			'font_size_h3'              => 1.5,    // 1-2.5 rem
+			'font_size_body'            => 1.0,    // 0.875-1.25 rem
+			'font_size_small'           => 0.875,  // 0.625-1 rem
 
 			// Card: Zeilenabstand.
-			'line_height_heading'      => 1.2,    // 1.0-1.5
-			'line_height_body'         => 1.6,    // 1.3-2.0
+			'line_height_heading'       => 1.2,    // 1.0-1.5
+			'line_height_body'          => 1.6,    // 1.3-2.0
 
 			// Card: Abstände (em).
-			'heading_margin_top'       => 1.5,    // 0.5-3 em
-			'heading_margin_bottom'    => 0.5,    // 0.25-1.5 em
-			'paragraph_spacing'        => 1.0,    // 0.5-2 em
+			'heading_margin_top'        => 1.5,    // 0.5-3 em
+			'heading_margin_bottom'     => 0.5,    // 0.25-1.5 em
+			'paragraph_spacing'         => 1.0,    // 0.5-2 em
 
 			// Card: Links.
-			'link_use_primary'         => true,
-			'link_color'               => '#2563eb',
-			'link_decoration'          => 'underline', // none|underline|hover
+			'link_use_primary'          => true,
+			'link_color'                => '#2563eb',
+			'link_decoration'           => 'underline', // none|underline|hover
 
 			// ============================================
 			// Tab: Cards (Abschnitt 3.3)
 			// ============================================
 
 			// Card 1: Layout-Preset.
-			'card_layout_preset'       => 'standard', // compact|standard|spacious
+			'card_layout_preset'        => 'standard', // compact|standard|spacious
 
 			// Card 2: Erscheinungsbild.
-			'card_border_radius'       => 8,      // 0-24 px
-			'card_shadow'              => 'light', // none|light|medium|strong
-			'card_border_show'         => true,
-			'card_border_color'        => '#e5e7eb',
-			'card_border_width'        => 1,        // 1-5 px
-			'card_background'          => '#ffffff',
-			'card_hover_effect'        => 'lift', // none|lift|glow|border
+			'card_border_radius'        => 8,      // 0-24 px
+			'card_shadow'               => 'light', // none|light|medium|strong
+			'card_border_show'          => true,
+			'card_border_color'         => '#e5e7eb',
+			'card_border_width'         => 1,        // 1-5 px
+			'card_background'           => '#ffffff',
+			'card_hover_effect'         => 'lift', // none|lift|glow|border
 
 			// ============================================
 			// Tab: Buttons (Abschnitt 3.4)
 			// ============================================
 
 			// Design-Modus: false = Theme-Design, true = Custom.
-			'button_use_custom_design' => false,
+			'button_use_custom_design'  => false,
 
 			// Card 1: Farben (nur bei Custom).
-			'override_button_colors'   => false, // Legacy, wird durch button_use_custom_design ersetzt.
-			'button_bg_color'          => '#2563eb',
-			'button_bg_color_hover'    => '#1d4ed8',
-			'button_text_color'        => '#ffffff',
-			'button_text_color_hover'  => '#ffffff',
+			'override_button_colors'    => false, // Legacy, wird durch button_use_custom_design ersetzt.
+			'button_bg_color'           => '#2563eb',
+			'button_bg_color_hover'     => '#1d4ed8',
+			'button_text_color'         => '#ffffff',
+			'button_text_color_hover'   => '#ffffff',
 
 			// Card 2: Form & Effekte.
-			'button_size'              => 'medium', // small|medium|large
-			'button_border_radius'     => 6,        // 0-50 px
-			'button_border_show'       => false,
-			'button_border_color'      => '#2563eb',
-			'button_border_width'      => 1,        // 1-5 px
-			'button_shadow'            => 'none',   // none|light|medium|strong
-			'button_shadow_hover'      => 'light',
+			'button_size'               => 'medium', // small|medium|large
+			'button_border_radius'      => 6,        // 0-50 px
+			'button_border_show'        => false,
+			'button_border_color'       => '#2563eb',
+			'button_border_width'       => 1,        // 1-5 px
+			'button_shadow'             => 'none',   // none|light|medium|strong
+			'button_shadow_hover'       => 'light',
 
 			// ============================================
 			// Tab: Job-Liste (Abschnitt 3.5)
 			// ============================================
 
 			// Card 1: Layout & Anzeige.
-			'job_list_layout'          => 'grid',  // grid|list
-			'job_list_columns'         => 3,       // 2|3|4
-			'show_badges'              => true,
-			'show_salary'              => true,
-			'show_location'            => true,
-			'show_employment_type'     => true,
-			'show_deadline'            => false,
+			'job_list_layout'           => 'grid',  // grid|list
+			'job_list_columns'          => 3,       // 2|3|4
+			'show_badges'               => true,
+			'show_salary'               => true,
+			'show_location'             => true,
+			'show_employment_type'      => true,
+			'show_deadline'             => false,
 
 			// Card 2: Badge-Farben.
-			'badge_style'              => 'light', // light|solid
-			'badge_color_new'          => '#22c55e',
-			'badge_color_remote'       => '#8b5cf6',
-			'badge_color_category'     => '#6b7280',
-			'badge_color_salary'       => '#2563eb',
+			'badge_style'               => 'light', // light|solid
+			'badge_color_new'           => '#22c55e',
+			'badge_color_remote'        => '#8b5cf6',
+			'badge_color_category'      => '#6b7280',
+			'badge_color_salary'        => '#2563eb',
 
 			// ============================================
 			// Tab: KI-Buttons (Abschnitt 3.6)
 			// ============================================
 
 			// Card: Globaler KI-Button Stil.
-			'ai_button_style'          => 'preset', // theme|preset|manual
+			'ai_button_style'           => 'preset', // theme|preset|manual
 
 			// Card: Preset-Auswahl.
-			'ai_button_preset'         => 'gradient', // gradient|outline|minimal|glow|soft
+			'ai_button_preset'          => 'gradient', // gradient|outline|minimal|glow|soft
 
 			// Card: Manuelle Farben.
-			'ai_button_use_gradient'   => true,
-			'ai_button_color_1'        => '#8b5cf6',
-			'ai_button_color_2'        => '#ec4899',
-			'ai_button_text_color'     => '#ffffff',
-			'ai_button_radius'         => 8,        // 0-24 px
+			'ai_button_use_gradient'    => true,
+			'ai_button_color_1'         => '#8b5cf6',
+			'ai_button_color_2'         => '#ec4899',
+			'ai_button_text_color'      => '#ffffff',
+			'ai_button_radius'          => 8,        // 0-24 px
 
 			// Card: Button-Texte (KI-Matching).
-			'ai_match_button_text'     => 'KI-Matching starten',
-			'ai_match_button_icon'     => 'sparkles', // sparkles|checkmark|star|lightning|target|user
+			'ai_match_button_text'      => 'KI-Matching starten',
+			'ai_match_button_icon'      => 'sparkles', // sparkles|checkmark|star|lightning|target|user
 
 			// Zukünftige KI-Buttons (reserviert).
-			'ai_button_2_text'         => '',
-			'ai_button_2_icon'         => 'sparkles',
-			'ai_button_3_text'         => '',
-			'ai_button_3_icon'         => 'sparkles',
+			'ai_button_2_text'          => '',
+			'ai_button_2_icon'          => 'sparkles',
+			'ai_button_3_text'          => '',
+			'ai_button_3_icon'          => 'sparkles',
 		];
 	}
 
@@ -400,102 +400,236 @@ class DesignService {
 	public function get_schema(): array {
 		return [
 			// Branding - Farben.
-			'use_theme_colors'         => [ 'type' => 'boolean' ],
-			'primary_color'            => [ 'type' => 'color' ],
+			'use_theme_colors'          => [ 'type' => 'boolean' ],
+			'primary_color'             => [ 'type' => 'color' ],
 
 			// Branding - Logo.
-			'use_theme_logo'           => [ 'type' => 'boolean' ],
-			'custom_logo_id'           => [ 'type' => 'integer', 'nullable' => true ],
-			'logo_in_signature'        => [ 'type' => 'boolean' ],
-			'signature_logo_position'  => [ 'type' => 'select', 'options' => [ 'top', 'bottom', 'left' ] ],
-			'signature_logo_max_height' => [ 'type' => 'slider', 'min' => 30, 'max' => 120 ],
+			'use_theme_logo'            => [ 'type' => 'boolean' ],
+			'custom_logo_id'            => [
+				'type'     => 'integer',
+				'nullable' => true,
+			],
+			'logo_in_signature'         => [ 'type' => 'boolean' ],
+			'signature_logo_position'   => [
+				'type'    => 'select',
+				'options' => [ 'top', 'bottom', 'left' ],
+			],
+			'signature_logo_max_height' => [
+				'type' => 'slider',
+				'min'  => 30,
+				'max'  => 120,
+			],
 
 			// Branding - White-Label.
-			'hide_branding'            => [ 'type' => 'boolean' ],
-			'hide_email_branding'      => [ 'type' => 'boolean' ],
+			'hide_branding'             => [ 'type' => 'boolean' ],
+			'hide_email_branding'       => [ 'type' => 'boolean' ],
 
 			// Typografie - Schriftgrößen.
-			'font_size_h1'             => [ 'type' => 'slider', 'min' => 1.5, 'max' => 4, 'step' => 0.125 ],
-			'font_size_h2'             => [ 'type' => 'slider', 'min' => 1.25, 'max' => 3, 'step' => 0.125 ],
-			'font_size_h3'             => [ 'type' => 'slider', 'min' => 1, 'max' => 2.5, 'step' => 0.125 ],
-			'font_size_body'           => [ 'type' => 'slider', 'min' => 0.875, 'max' => 1.25, 'step' => 0.0625 ],
-			'font_size_small'          => [ 'type' => 'slider', 'min' => 0.625, 'max' => 1, 'step' => 0.0625 ],
+			'font_size_h1'              => [
+				'type' => 'slider',
+				'min'  => 1.5,
+				'max'  => 4,
+				'step' => 0.125,
+			],
+			'font_size_h2'              => [
+				'type' => 'slider',
+				'min'  => 1.25,
+				'max'  => 3,
+				'step' => 0.125,
+			],
+			'font_size_h3'              => [
+				'type' => 'slider',
+				'min'  => 1,
+				'max'  => 2.5,
+				'step' => 0.125,
+			],
+			'font_size_body'            => [
+				'type' => 'slider',
+				'min'  => 0.875,
+				'max'  => 1.25,
+				'step' => 0.0625,
+			],
+			'font_size_small'           => [
+				'type' => 'slider',
+				'min'  => 0.625,
+				'max'  => 1,
+				'step' => 0.0625,
+			],
 
 			// Typografie - Zeilenabstand.
-			'line_height_heading'      => [ 'type' => 'slider', 'min' => 1.0, 'max' => 1.5, 'step' => 0.1 ],
-			'line_height_body'         => [ 'type' => 'slider', 'min' => 1.3, 'max' => 2.0, 'step' => 0.1 ],
+			'line_height_heading'       => [
+				'type' => 'slider',
+				'min'  => 1.0,
+				'max'  => 1.5,
+				'step' => 0.1,
+			],
+			'line_height_body'          => [
+				'type' => 'slider',
+				'min'  => 1.3,
+				'max'  => 2.0,
+				'step' => 0.1,
+			],
 
 			// Typografie - Abstände.
-			'heading_margin_top'       => [ 'type' => 'slider', 'min' => 0.5, 'max' => 3, 'step' => 0.25 ],
-			'heading_margin_bottom'    => [ 'type' => 'slider', 'min' => 0.25, 'max' => 1.5, 'step' => 0.25 ],
-			'paragraph_spacing'        => [ 'type' => 'slider', 'min' => 0.5, 'max' => 2, 'step' => 0.25 ],
+			'heading_margin_top'        => [
+				'type' => 'slider',
+				'min'  => 0.5,
+				'max'  => 3,
+				'step' => 0.25,
+			],
+			'heading_margin_bottom'     => [
+				'type' => 'slider',
+				'min'  => 0.25,
+				'max'  => 1.5,
+				'step' => 0.25,
+			],
+			'paragraph_spacing'         => [
+				'type' => 'slider',
+				'min'  => 0.5,
+				'max'  => 2,
+				'step' => 0.25,
+			],
 
 			// Typografie - Links.
-			'link_use_primary'         => [ 'type' => 'boolean' ],
-			'link_color'               => [ 'type' => 'color' ],
-			'link_decoration'          => [ 'type' => 'select', 'options' => [ 'none', 'underline', 'hover' ] ],
+			'link_use_primary'          => [ 'type' => 'boolean' ],
+			'link_color'                => [ 'type' => 'color' ],
+			'link_decoration'           => [
+				'type'    => 'select',
+				'options' => [ 'none', 'underline', 'hover' ],
+			],
 
 			// Cards - Layout.
-			'card_layout_preset'       => [ 'type' => 'select', 'options' => [ 'compact', 'standard', 'spacious' ] ],
+			'card_layout_preset'        => [
+				'type'    => 'select',
+				'options' => [ 'compact', 'standard', 'spacious' ],
+			],
 
 			// Cards - Erscheinungsbild.
-			'card_border_radius'       => [ 'type' => 'slider', 'min' => 0, 'max' => 24 ],
-			'card_shadow'              => [ 'type' => 'select', 'options' => [ 'none', 'light', 'medium', 'strong' ] ],
-			'card_border_show'         => [ 'type' => 'boolean' ],
-			'card_border_color'        => [ 'type' => 'color' ],
-			'card_border_width'        => [ 'type' => 'slider', 'min' => 1, 'max' => 5 ],
-			'card_background'          => [ 'type' => 'color' ],
-			'card_hover_effect'        => [ 'type' => 'select', 'options' => [ 'none', 'lift', 'glow', 'border' ] ],
+			'card_border_radius'        => [
+				'type' => 'slider',
+				'min'  => 0,
+				'max'  => 24,
+			],
+			'card_shadow'               => [
+				'type'    => 'select',
+				'options' => [ 'none', 'light', 'medium', 'strong' ],
+			],
+			'card_border_show'          => [ 'type' => 'boolean' ],
+			'card_border_color'         => [ 'type' => 'color' ],
+			'card_border_width'         => [
+				'type' => 'slider',
+				'min'  => 1,
+				'max'  => 5,
+			],
+			'card_background'           => [ 'type' => 'color' ],
+			'card_hover_effect'         => [
+				'type'    => 'select',
+				'options' => [ 'none', 'lift', 'glow', 'border' ],
+			],
 
 			// Buttons - Design-Modus.
-			'button_use_custom_design' => [ 'type' => 'boolean' ],
-			'override_button_colors'   => [ 'type' => 'boolean' ], // Legacy.
-			'button_bg_color'          => [ 'type' => 'color' ],
-			'button_bg_color_hover'    => [ 'type' => 'color' ],
-			'button_text_color'        => [ 'type' => 'color' ],
-			'button_text_color_hover'  => [ 'type' => 'color' ],
+			'button_use_custom_design'  => [ 'type' => 'boolean' ],
+			'override_button_colors'    => [ 'type' => 'boolean' ], // Legacy.
+			'button_bg_color'           => [ 'type' => 'color' ],
+			'button_bg_color_hover'     => [ 'type' => 'color' ],
+			'button_text_color'         => [ 'type' => 'color' ],
+			'button_text_color_hover'   => [ 'type' => 'color' ],
 
 			// Buttons - Form.
-			'button_size'              => [ 'type' => 'select', 'options' => [ 'small', 'medium', 'large' ] ],
-			'button_border_radius'     => [ 'type' => 'slider', 'min' => 0, 'max' => 50 ],
-			'button_border_show'       => [ 'type' => 'boolean' ],
-			'button_border_color'      => [ 'type' => 'color' ],
-			'button_border_width'      => [ 'type' => 'slider', 'min' => 1, 'max' => 5 ],
-			'button_shadow'            => [ 'type' => 'select', 'options' => [ 'none', 'light', 'medium', 'strong' ] ],
-			'button_shadow_hover'      => [ 'type' => 'select', 'options' => [ 'none', 'light', 'medium', 'strong' ] ],
+			'button_size'               => [
+				'type'    => 'select',
+				'options' => [ 'small', 'medium', 'large' ],
+			],
+			'button_border_radius'      => [
+				'type' => 'slider',
+				'min'  => 0,
+				'max'  => 50,
+			],
+			'button_border_show'        => [ 'type' => 'boolean' ],
+			'button_border_color'       => [ 'type' => 'color' ],
+			'button_border_width'       => [
+				'type' => 'slider',
+				'min'  => 1,
+				'max'  => 5,
+			],
+			'button_shadow'             => [
+				'type'    => 'select',
+				'options' => [ 'none', 'light', 'medium', 'strong' ],
+			],
+			'button_shadow_hover'       => [
+				'type'    => 'select',
+				'options' => [ 'none', 'light', 'medium', 'strong' ],
+			],
 
 			// Job-Liste.
-			'job_list_layout'          => [ 'type' => 'select', 'options' => [ 'grid', 'list' ] ],
-			'job_list_columns'         => [ 'type' => 'select', 'options' => [ 2, 3, 4 ] ],
-			'show_badges'              => [ 'type' => 'boolean' ],
-			'show_salary'              => [ 'type' => 'boolean' ],
-			'show_location'            => [ 'type' => 'boolean' ],
-			'show_employment_type'     => [ 'type' => 'boolean' ],
-			'show_deadline'            => [ 'type' => 'boolean' ],
+			'job_list_layout'           => [
+				'type'    => 'select',
+				'options' => [ 'grid', 'list' ],
+			],
+			'job_list_columns'          => [
+				'type'    => 'select',
+				'options' => [ 2, 3, 4 ],
+			],
+			'show_badges'               => [ 'type' => 'boolean' ],
+			'show_salary'               => [ 'type' => 'boolean' ],
+			'show_location'             => [ 'type' => 'boolean' ],
+			'show_employment_type'      => [ 'type' => 'boolean' ],
+			'show_deadline'             => [ 'type' => 'boolean' ],
 
 			// Badge-Farben.
-			'badge_style'              => [ 'type' => 'select', 'options' => [ 'light', 'solid' ] ],
-			'badge_color_new'          => [ 'type' => 'color' ],
-			'badge_color_remote'       => [ 'type' => 'color' ],
-			'badge_color_category'     => [ 'type' => 'color' ],
-			'badge_color_salary'       => [ 'type' => 'color' ],
+			'badge_style'               => [
+				'type'    => 'select',
+				'options' => [ 'light', 'solid' ],
+			],
+			'badge_color_new'           => [ 'type' => 'color' ],
+			'badge_color_remote'        => [ 'type' => 'color' ],
+			'badge_color_category'      => [ 'type' => 'color' ],
+			'badge_color_salary'        => [ 'type' => 'color' ],
 
 			// KI-Buttons.
-			'ai_button_style'          => [ 'type' => 'select', 'options' => [ 'theme', 'preset', 'manual' ] ],
-			'ai_button_preset'         => [ 'type' => 'select', 'options' => [ 'gradient', 'outline', 'minimal', 'glow', 'soft' ] ],
-			'ai_button_use_gradient'   => [ 'type' => 'boolean' ],
-			'ai_button_color_1'        => [ 'type' => 'color' ],
-			'ai_button_color_2'        => [ 'type' => 'color' ],
-			'ai_button_text_color'     => [ 'type' => 'color' ],
-			'ai_button_radius'         => [ 'type' => 'slider', 'min' => 0, 'max' => 24 ],
+			'ai_button_style'           => [
+				'type'    => 'select',
+				'options' => [ 'theme', 'preset', 'manual' ],
+			],
+			'ai_button_preset'          => [
+				'type'    => 'select',
+				'options' => [ 'gradient', 'outline', 'minimal', 'glow', 'soft' ],
+			],
+			'ai_button_use_gradient'    => [ 'type' => 'boolean' ],
+			'ai_button_color_1'         => [ 'type' => 'color' ],
+			'ai_button_color_2'         => [ 'type' => 'color' ],
+			'ai_button_text_color'      => [ 'type' => 'color' ],
+			'ai_button_radius'          => [
+				'type' => 'slider',
+				'min'  => 0,
+				'max'  => 24,
+			],
 
 			// KI-Button Texte.
-			'ai_match_button_text'     => [ 'type' => 'string', 'max' => 50 ],
-			'ai_match_button_icon'     => [ 'type' => 'select', 'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ] ],
-			'ai_button_2_text'         => [ 'type' => 'string', 'max' => 50 ],
-			'ai_button_2_icon'         => [ 'type' => 'select', 'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ] ],
-			'ai_button_3_text'         => [ 'type' => 'string', 'max' => 50 ],
-			'ai_button_3_icon'         => [ 'type' => 'select', 'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ] ],
+			'ai_match_button_text'      => [
+				'type' => 'string',
+				'max'  => 50,
+			],
+			'ai_match_button_icon'      => [
+				'type'    => 'select',
+				'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ],
+			],
+			'ai_button_2_text'          => [
+				'type' => 'string',
+				'max'  => 50,
+			],
+			'ai_button_2_icon'          => [
+				'type'    => 'select',
+				'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ],
+			],
+			'ai_button_3_text'          => [
+				'type' => 'string',
+				'max'  => 50,
+			],
+			'ai_button_3_icon'          => [
+				'type'    => 'select',
+				'options' => [ 'sparkles', 'checkmark', 'star', 'lightning', 'target', 'user' ],
+			],
 		];
 	}
 

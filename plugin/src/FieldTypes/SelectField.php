@@ -53,9 +53,12 @@ class SelectField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'allow_other' => false,
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'allow_other' => false,
+			]
+		);
 	}
 
 	/**

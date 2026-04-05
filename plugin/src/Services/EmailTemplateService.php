@@ -60,10 +60,12 @@ class EmailTemplateService {
 		}
 
 		// Platzhalter aus Inhalt extrahieren.
-		$variables = array_unique( array_merge(
-			$this->placeholderService->findPlaceholders( $data['subject'] ?? '' ),
-			$this->placeholderService->findPlaceholders( $data['body_html'] ?? '' )
-		) );
+		$variables = array_unique(
+			array_merge(
+				$this->placeholderService->findPlaceholders( $data['subject'] ?? '' ),
+				$this->placeholderService->findPlaceholders( $data['body_html'] ?? '' )
+			)
+		);
 
 		$data['variables'] = $variables;
 
@@ -113,10 +115,12 @@ class EmailTemplateService {
 			$subject   = $data['subject'] ?? $template['subject'];
 			$body_html = $data['body_html'] ?? $template['body_html'];
 
-			$data['variables'] = array_unique( array_merge(
-				$this->placeholderService->findPlaceholders( $subject ),
-				$this->placeholderService->findPlaceholders( $body_html )
-			) );
+			$data['variables'] = array_unique(
+				array_merge(
+					$this->placeholderService->findPlaceholders( $subject ),
+					$this->placeholderService->findPlaceholders( $body_html )
+				)
+			);
 		}
 
 		// Plain-Text aktualisieren.
@@ -421,8 +425,8 @@ class EmailTemplateService {
 		$company_name = $settings['company_name'] ?? get_bloginfo( 'name' );
 
 		// Pro-Feature: Branding ausblenden.
-		$hide_branding   = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
-		$recruiting_url  = 'https://recruiting-playbook.de';
+		$hide_branding  = ! empty( $settings['hide_email_branding'] ) && function_exists( 'rp_can' ) && rp_can( 'custom_branding' );
+		$recruiting_url = 'https://recruiting-playbook.de';
 
 		$styles = '
 			body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }

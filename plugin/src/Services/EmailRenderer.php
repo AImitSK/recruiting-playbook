@@ -45,11 +45,11 @@ class EmailRenderer {
 	 * Verfügbare System-Templates
 	 */
 	private const SYSTEM_TEMPLATES = [
-		'application-received'  => 'application-received.php',
-		'interview-invitation'  => 'interview-invitation.php',
-		'rejection'             => 'rejection.php',
-		'offer-letter'          => 'offer-letter.php',
-		'hr-new-application'    => 'hr-new-application.php',
+		'application-received' => 'application-received.php',
+		'interview-invitation' => 'interview-invitation.php',
+		'rejection'            => 'rejection.php',
+		'offer-letter'         => 'offer-letter.php',
+		'hr-new-application'   => 'hr-new-application.php',
 	];
 
 	/**
@@ -191,7 +191,7 @@ class EmailRenderer {
 		// Line breaks einfügen.
 		$text = preg_replace( '/<br\s*\/?>/i', "\n", $text );
 		$text = preg_replace( '/<\/(p|div|h[1-6]|li|tr)>/i', "\n\n", $text );
-		$text = preg_replace( '/<li[^>]*>/i', "• ", $text );
+		$text = preg_replace( '/<li[^>]*>/i', '• ', $text );
 
 		// HTML-Tags entfernen.
 		$text = wp_strip_all_tags( $text );
@@ -232,11 +232,11 @@ class EmailRenderer {
 	 */
 	private function getTemplateName( string $slug ): string {
 		$names = [
-			'application-received'  => __( 'Application Confirmation', 'recruiting-playbook' ),
-			'interview-invitation'  => __( 'Interview Invitation', 'recruiting-playbook' ),
-			'rejection'             => __( 'Rejection', 'recruiting-playbook' ),
-			'offer-letter'          => __( 'Job Offer', 'recruiting-playbook' ),
-			'hr-new-application'    => __( 'HR: New Application', 'recruiting-playbook' ),
+			'application-received' => __( 'Application Confirmation', 'recruiting-playbook' ),
+			'interview-invitation' => __( 'Interview Invitation', 'recruiting-playbook' ),
+			'rejection'            => __( 'Rejection', 'recruiting-playbook' ),
+			'offer-letter'         => __( 'Job Offer', 'recruiting-playbook' ),
+			'hr-new-application'   => __( 'HR: New Application', 'recruiting-playbook' ),
 		];
 
 		return $names[ $slug ] ?? $slug;

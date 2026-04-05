@@ -148,10 +148,10 @@ class FormTemplateRepository {
 		$now = current_time( 'mysql' );
 
 		$defaults = [
-			'is_default'  => 0,
-			'created_by'  => get_current_user_id(),
-			'created_at'  => $now,
-			'updated_at'  => $now,
+			'is_default' => 0,
+			'created_by' => get_current_user_id(),
+			'created_at' => $now,
+			'updated_at' => $now,
 		];
 
 		$data = wp_parse_args( $data, $defaults );

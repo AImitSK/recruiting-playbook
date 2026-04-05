@@ -26,15 +26,15 @@ class EmploymentType {
 	 */
 	public function register(): void {
 		$labels = [
-			'name'              => __( 'Employment Types', 'recruiting-playbook' ),
-			'singular_name'     => __( 'Employment Type', 'recruiting-playbook' ),
-			'search_items'      => __( 'Search Employment Types', 'recruiting-playbook' ),
-			'all_items'         => __( 'All Employment Types', 'recruiting-playbook' ),
-			'edit_item'         => __( 'Edit Employment Type', 'recruiting-playbook' ),
-			'update_item'       => __( 'Update Employment Type', 'recruiting-playbook' ),
-			'add_new_item'      => __( 'New Employment Type', 'recruiting-playbook' ),
-			'new_item_name'     => __( 'New Name', 'recruiting-playbook' ),
-			'menu_name'         => __( 'Employment Types', 'recruiting-playbook' ),
+			'name'          => __( 'Employment Types', 'recruiting-playbook' ),
+			'singular_name' => __( 'Employment Type', 'recruiting-playbook' ),
+			'search_items'  => __( 'Search Employment Types', 'recruiting-playbook' ),
+			'all_items'     => __( 'All Employment Types', 'recruiting-playbook' ),
+			'edit_item'     => __( 'Edit Employment Type', 'recruiting-playbook' ),
+			'update_item'   => __( 'Update Employment Type', 'recruiting-playbook' ),
+			'add_new_item'  => __( 'New Employment Type', 'recruiting-playbook' ),
+			'new_item_name' => __( 'New Name', 'recruiting-playbook' ),
+			'menu_name'     => __( 'Employment Types', 'recruiting-playbook' ),
 		];
 
 		$args = [

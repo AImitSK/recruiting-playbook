@@ -211,5 +211,4 @@ class RatingService {
 			[ '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s' ]
 		);
 	}
-
 }

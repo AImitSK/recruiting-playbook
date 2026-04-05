@@ -89,7 +89,7 @@ class Shortcodes {
 		add_shortcode( 'rp_custom_application_form', [ $this, 'renderCustomApplicationForm' ] );
 
 		// KI-Shortcodes (Pro Feature).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			add_shortcode( 'rp_ai_job_match', [ $this, 'renderAiJobMatch' ] );
 			add_shortcode( 'rp_ai_job_finder', [ $this, 'renderAiJobFinder' ] );
 
@@ -152,7 +152,7 @@ class Shortcodes {
 	 * @return bool True wenn Form Builder verwendet werden soll.
 	 */
 	private function shouldUseFormBuilder(): bool {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			// Pro-Feature Check.
 			if ( ! function_exists( 'rp_can' ) || ! rp_can( 'custom_fields' ) ) {
 				return false;

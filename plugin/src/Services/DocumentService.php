@@ -30,11 +30,11 @@ class DocumentService {
 	 * @var array
 	 */
 	private const ALLOWED_MIMES = [
-		'application/pdf'                                                         => 'pdf',
-		'application/msword'                                                      => 'doc',
+		'application/pdf'    => 'pdf',
+		'application/msword' => 'doc',
 		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
-		'image/jpeg'                                                              => 'jpg',
-		'image/png'                                                               => 'png',
+		'image/jpeg'         => 'jpg',
+		'image/png'          => 'png',
 	];
 
 	/**
@@ -62,7 +62,7 @@ class DocumentService {
 	 * Upload-Verzeichnis initialisieren
 	 */
 	private function initUploadDir(): void {
-		$wp_upload = wp_upload_dir();
+		$wp_upload        = wp_upload_dir();
 		$this->upload_dir = $wp_upload['basedir'] . '/recruiting-playbook/applications';
 	}
 
@@ -78,7 +78,7 @@ class DocumentService {
 		// Robuste .htaccess für Apache (mehrere Syntaxvarianten für Kompatibilität)
 		$htaccess = $this->upload_dir . '/.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
-			$htaccess_content = "# Recruiting Playbook - Dokumentenschutz\n";
+			$htaccess_content  = "# Recruiting Playbook - Dokumentenschutz\n";
 			$htaccess_content .= "# Blockiert direkten Zugriff auf alle Dateien in diesem Verzeichnis\n\n";
 			$htaccess_content .= "# Apache 2.4+\n";
 			$htaccess_content .= "<IfModule mod_authz_core.c>\n";
@@ -115,7 +115,7 @@ class DocumentService {
 		// Nginx-Hinweis erstellen
 		$nginx_readme = $this->upload_dir . '/NGINX_SECURITY.txt';
 		if ( ! file_exists( $nginx_readme ) ) {
-			$nginx_content = "# WICHTIG für Nginx-Server:\n";
+			$nginx_content  = "# WICHTIG für Nginx-Server:\n";
 			$nginx_content .= "# Die .htaccess wird von Nginx ignoriert!\n";
 			$nginx_content .= "#\n";
 			$nginx_content .= "# Fügen Sie folgende Regel in Ihre Nginx-Konfiguration ein:\n";
@@ -141,7 +141,7 @@ class DocumentService {
 	 * @return array Status und Nachricht
 	 */
 	public static function checkProtection(): array {
-		$wp_upload = wp_upload_dir();
+		$wp_upload  = wp_upload_dir();
 		$upload_dir = $wp_upload['basedir'] . '/recruiting-playbook/applications';
 		$upload_url = $wp_upload['baseurl'] . '/recruiting-playbook/applications';
 
@@ -179,7 +179,7 @@ class DocumentService {
 		// Warnung für Nginx-Server
 		if ( 'nginx' === $result['server_type'] && ! $result['nginx_note'] ) {
 			$result['protected'] = false;
-			$result['message'] = __( 'Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt).', 'recruiting-playbook' );
+			$result['message']   = __( 'Nginx server detected: Please configure document protection manually (see NGINX_SECURITY.txt).', 'recruiting-playbook' );
 		} elseif ( 'nginx' === $result['server_type'] ) {
 			$result['message'] = __( 'Nginx server detected: Please ensure that the Nginx configuration includes document protection.', 'recruiting-playbook' );
 		} elseif ( 'apache' === $result['server_type'] && $result['htaccess'] ) {
@@ -203,7 +203,7 @@ class DocumentService {
 		$this->ensureUploadDir();
 
 		$document_ids = [];
-		$errors = [];
+		$errors       = [];
 
 		// Verschiedene Datei-Felder verarbeiten
 		$file_fields = [
@@ -327,7 +327,7 @@ class DocumentService {
 		add_filter( 'upload_dir', [ $this, 'filterUploadDir' ] );
 
 		// Dateiname mit Hash für Eindeutigkeit.
-		$extension = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
+		$extension     = self::ALLOWED_MIMES[ $mime_type ] ?? 'dat';
 		$safe_filename = $this->generateSafeFilename( $file['name'], $extension );
 
 		// Unique filename filter für unseren sicheren Dateinamen.
@@ -344,9 +344,9 @@ class DocumentService {
 		}
 
 		$upload_overrides = [
-			'test_form'   => false,
-			'test_type'   => false, // Wir validieren MIME-Type selbst.
-			'mimes'       => self::ALLOWED_MIMES,
+			'test_form'                => false,
+			'test_type'                => false, // Wir validieren MIME-Type selbst.
+			'mimes'                    => self::ALLOWED_MIMES,
 			'unique_filename_callback' => function ( $dir, $name, $ext ) use ( $safe_filename ) {
 				return $safe_filename;
 			},
@@ -373,14 +373,17 @@ class DocumentService {
 		@chmod( $destination, 0640 );
 
 		// In Datenbank speichern.
-		return $this->saveDocument( $application_id, [
-			'filename'      => basename( $destination ),
-			'original_name' => sanitize_file_name( $file['name'] ),
-			'mime_type'     => $uploaded['type'],
-			'size'          => $file['size'],
-			'type'          => $type,
-			'path'          => $destination,
-		] );
+		return $this->saveDocument(
+			$application_id,
+			[
+				'filename'      => basename( $destination ),
+				'original_name' => sanitize_file_name( $file['name'] ),
+				'mime_type'     => $uploaded['type'],
+				'size'          => $file['size'],
+				'type'          => $type,
+				'path'          => $destination,
+			]
+		);
 	}
 
 	/**
@@ -470,7 +473,7 @@ class DocumentService {
 		$basename = sanitize_file_name( $basename );
 
 		// Path Traversal Zeichen explizit entfernen (zusätzliche Sicherheit).
-		$basename = str_replace( array( '..', '/', '\\' ), '', $basename );
+		$basename = str_replace( [ '..', '/', '\\' ], '', $basename );
 		$basename = substr( $basename, 0, 50 ); // Max 50 Zeichen
 
 		return sprintf( '%s_%s.%s', $basename, $hash, $extension );
@@ -554,8 +557,8 @@ class DocumentService {
 
 		// Download- und View-URLs für jedes Dokument hinzufügen.
 		foreach ( $results as &$doc ) {
-			$doc_id = (int) $doc['id'];
-			$download_url = DocumentDownloadService::generateDownloadUrl( $doc_id );
+			$doc_id              = (int) $doc['id'];
+			$download_url        = DocumentDownloadService::generateDownloadUrl( $doc_id );
 			$doc['download_url'] = $download_url;
 
 			// View-URL ist die gleiche wie Download-URL (Browser zeigt PDFs/Bilder an).

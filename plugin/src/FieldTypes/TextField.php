@@ -53,9 +53,12 @@ class TextField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'autocomplete' => 'on',
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'autocomplete' => 'on',
+			]
+		);
 	}
 
 	/**

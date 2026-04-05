@@ -26,15 +26,15 @@ class JobLocation {
 	 */
 	public function register(): void {
 		$labels = [
-			'name'              => __( 'Locations', 'recruiting-playbook' ),
-			'singular_name'     => __( 'Location', 'recruiting-playbook' ),
-			'search_items'      => __( 'Search Locations', 'recruiting-playbook' ),
-			'all_items'         => __( 'All Locations', 'recruiting-playbook' ),
-			'edit_item'         => __( 'Edit Location', 'recruiting-playbook' ),
-			'update_item'       => __( 'Update Location', 'recruiting-playbook' ),
-			'add_new_item'      => __( 'New Location', 'recruiting-playbook' ),
-			'new_item_name'     => __( 'New Location Name', 'recruiting-playbook' ),
-			'menu_name'         => __( 'Locations', 'recruiting-playbook' ),
+			'name'          => __( 'Locations', 'recruiting-playbook' ),
+			'singular_name' => __( 'Location', 'recruiting-playbook' ),
+			'search_items'  => __( 'Search Locations', 'recruiting-playbook' ),
+			'all_items'     => __( 'All Locations', 'recruiting-playbook' ),
+			'edit_item'     => __( 'Edit Location', 'recruiting-playbook' ),
+			'update_item'   => __( 'Update Location', 'recruiting-playbook' ),
+			'add_new_item'  => __( 'New Location', 'recruiting-playbook' ),
+			'new_item_name' => __( 'New Location Name', 'recruiting-playbook' ),
+			'menu_name'     => __( 'Locations', 'recruiting-playbook' ),
 		];
 
 		$args = [

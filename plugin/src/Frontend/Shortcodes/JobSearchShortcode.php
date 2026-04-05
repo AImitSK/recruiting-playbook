@@ -70,12 +70,12 @@ class JobSearchShortcode {
 		$card_class  = 'rp-card rp-card--' . esc_attr( $card_preset );
 
 		// Job-Liste Settings.
-		$job_list_layout  = $design_settings['job_list_layout'] ?? 'grid';
-		$show_badges      = $design_settings['show_badges'] ?? true;
-		$show_location_badge    = $design_settings['show_location'] ?? true;
-		$show_employment_type   = $design_settings['show_employment_type'] ?? true;
-		$show_salary      = $design_settings['show_salary'] ?? true;
-		$show_deadline    = $design_settings['show_deadline'] ?? false;
+		$job_list_layout      = $design_settings['job_list_layout'] ?? 'grid';
+		$show_badges          = $design_settings['show_badges'] ?? true;
+		$show_location_badge  = $design_settings['show_location'] ?? true;
+		$show_employment_type = $design_settings['show_employment_type'] ?? true;
+		$show_salary          = $design_settings['show_salary'] ?? true;
+		$show_deadline        = $design_settings['show_deadline'] ?? false;
 
 		// Filter-Werte aus GET-Parametern.
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only search form

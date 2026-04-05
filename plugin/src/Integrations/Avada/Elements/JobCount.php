@@ -30,7 +30,7 @@ class JobCount extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'select',
 					'heading'     => esc_attr__( 'Category', 'recruiting-playbook' ),

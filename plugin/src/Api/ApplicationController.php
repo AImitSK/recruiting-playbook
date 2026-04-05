@@ -282,33 +282,33 @@ class ApplicationController extends WP_REST_Controller {
 	 */
 	private function get_create_item_args(): array {
 		return [
-			'job_id'           => [
+			'job_id'          => [
 				'description'       => __( 'Job ID', 'recruiting-playbook' ),
 				'type'              => 'integer',
 				'required'          => true,
 				'validate_callback' => [ $this, 'validate_job_id' ],
 			],
-			'salutation'       => [
+			'salutation'      => [
 				'description' => __( 'Salutation', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 				'enum'        => [ 'Herr', 'Frau', 'Divers', '' ],
 			],
-			'first_name'       => [
+			'first_name'      => [
 				'description'       => __( 'First name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => [ $this, 'validate_name' ],
 			],
-			'last_name'        => [
+			'last_name'       => [
 				'description'       => __( 'Last name', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => [ $this, 'validate_name' ],
 			],
-			'email'            => [
+			'email'           => [
 				'description'       => __( 'Email address', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'format'            => 'email',
@@ -316,25 +316,25 @@ class ApplicationController extends WP_REST_Controller {
 				'sanitize_callback' => 'sanitize_email',
 				'validate_callback' => [ $this, 'validate_email' ],
 			],
-			'phone'            => [
+			'phone'           => [
 				'description'       => __( 'Phone number', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'sanitize_text_field',
 			],
-			'cover_letter'     => [
+			'cover_letter'    => [
 				'description'       => __( 'Cover letter', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
-			'message'          => [
+			'message'         => [
 				'description'       => __( 'Cover letter (alias)', 'recruiting-playbook' ),
 				'type'              => 'string',
 				'required'          => false,
 				'sanitize_callback' => 'wp_kses_post',
 			],
-			'privacy_consent'  => [
+			'privacy_consent' => [
 				'description'       => __( 'Privacy consent', 'recruiting-playbook' ),
 				'type'              => 'boolean',
 				'required'          => true,
@@ -342,18 +342,18 @@ class ApplicationController extends WP_REST_Controller {
 				'validate_callback' => [ $this, 'validate_privacy_consent' ],
 			],
 			// Spam-Schutz Felder
-			'_hp_field'        => [
+			'_hp_field'       => [
 				'description' => __( 'Honeypot field', 'recruiting-playbook' ),
 				'type'        => 'string',
 				'required'    => false,
 			],
-			'_form_timestamp'  => [
+			'_form_timestamp' => [
 				'description' => __( 'Form timestamp', 'recruiting-playbook' ),
 				'type'        => 'integer',
 				'required'    => false,
 			],
 			// Custom Fields (Pro) - akzeptiert JSON-String oder Objekt
-			'custom_fields'    => [
+			'custom_fields'   => [
 				'description'       => __( 'Custom field values (Pro feature)', 'recruiting-playbook' ),
 				'required'          => false,
 				'default'           => [],
@@ -404,26 +404,28 @@ class ApplicationController extends WP_REST_Controller {
 		// Custom Fields: JSON-String dekodieren falls nötig (FormData sendet Strings).
 		$custom_fields = $request->get_param( 'custom_fields' ) ?: [];
 		if ( is_string( $custom_fields ) ) {
-			$decoded = json_decode( $custom_fields, true );
+			$decoded       = json_decode( $custom_fields, true );
 			$custom_fields = is_array( $decoded ) ? $decoded : [];
 		}
 
 		// Bewerbung erstellen
-		$result = $this->application_service->create( [
-			'job_id'          => $request->get_param( 'job_id' ),
-			'salutation'      => $request->get_param( 'salutation' ) ?: '',
-			'first_name'      => $request->get_param( 'first_name' ),
-			'last_name'       => $request->get_param( 'last_name' ),
-			'email'           => $request->get_param( 'email' ),
-			'phone'           => $request->get_param( 'phone' ) ?: '',
-			'cover_letter'    => $request->get_param( 'cover_letter' ) ?: $request->get_param( 'message' ) ?: '',
-			'privacy_consent' => $request->get_param( 'privacy_consent' ),
-			'ip_address'      => $this->get_client_ip(),
-			'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
-			'files'           => $files,
-			'custom_fields'   => $custom_fields,
-			'custom_files'    => $custom_files,
-		] );
+		$result = $this->application_service->create(
+			[
+				'job_id'          => $request->get_param( 'job_id' ),
+				'salutation'      => $request->get_param( 'salutation' ) ?: '',
+				'first_name'      => $request->get_param( 'first_name' ),
+				'last_name'       => $request->get_param( 'last_name' ),
+				'email'           => $request->get_param( 'email' ),
+				'phone'           => $request->get_param( 'phone' ) ?: '',
+				'cover_letter'    => $request->get_param( 'cover_letter' ) ?: $request->get_param( 'message' ) ?: '',
+				'privacy_consent' => $request->get_param( 'privacy_consent' ),
+				'ip_address'      => $this->get_client_ip(),
+				'user_agent'      => $request->get_header( 'user-agent' ) ?: '',
+				'files'           => $files,
+				'custom_fields'   => $custom_fields,
+				'custom_files'    => $custom_files,
+			]
+		);
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -466,8 +468,8 @@ class ApplicationController extends WP_REST_Controller {
 
 		// Rollen-basierter Filter: Nicht-Admins sehen nur zugewiesene Stellen.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			$capability_service        = new CapabilityService();
-			$args['assigned_job_ids']  = $capability_service->getAssignedJobIds( get_current_user_id() );
+			$capability_service       = new CapabilityService();
+			$args['assigned_job_ids'] = $capability_service->getAssignedJobIds( get_current_user_id() );
 		}
 
 		// Kanban-Kontext: Spezielle Methode mit Dokumentenanzahl.

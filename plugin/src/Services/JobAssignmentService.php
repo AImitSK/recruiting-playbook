@@ -74,11 +74,13 @@ class JobAssignmentService {
 			);
 		}
 
-		$id = $this->repository->create( [
-			'user_id'     => $user_id,
-			'job_id'      => $job_id,
-			'assigned_by' => $assigned_by,
-		] );
+		$id = $this->repository->create(
+			[
+				'user_id'     => $user_id,
+				'job_id'      => $job_id,
+				'assigned_by' => $assigned_by,
+			]
+		);
 
 		if ( ! $id ) {
 			return new WP_Error(
@@ -152,22 +154,27 @@ class JobAssignmentService {
 	public function getAssignedUsers( int $job_id ): array {
 		$assignments = $this->repository->findByJob( $job_id );
 
-		return array_filter( array_map( function ( array $assignment ): ?array {
-			$user = get_userdata( $assignment['user_id'] );
-			if ( ! $user ) {
-				return null;
-			}
+		return array_filter(
+			array_map(
+				function ( array $assignment ): ?array {
+					$user = get_userdata( $assignment['user_id'] );
+					if ( ! $user ) {
+							return null;
+					}
 
-			return [
-				'id'          => $user->ID,
-				'name'        => $user->display_name,
-				'email'       => $user->user_email,
-				'role'        => $this->getUserRoleLabel( $user->ID ),
-				'avatar'      => get_avatar_url( $user->ID, [ 'size' => 32 ] ),
-				'assigned_at' => $assignment['assigned_at'],
-				'assigned_by' => $assignment['assigned_by'],
-			];
-		}, $assignments ) );
+					return [
+						'id'          => $user->ID,
+						'name'        => $user->display_name,
+						'email'       => $user->user_email,
+						'role'        => $this->getUserRoleLabel( $user->ID ),
+						'avatar'      => get_avatar_url( $user->ID, [ 'size' => 32 ] ),
+						'assigned_at' => $assignment['assigned_at'],
+						'assigned_by' => $assignment['assigned_by'],
+					];
+				},
+				$assignments
+			)
+		);
 	}
 
 	/**
@@ -179,19 +186,24 @@ class JobAssignmentService {
 	public function getAssignedJobs( int $user_id ): array {
 		$assignments = $this->repository->findByUser( $user_id );
 
-		return array_filter( array_map( function ( array $assignment ): ?array {
-			$job = get_post( $assignment['job_id'] );
-			if ( ! $job ) {
-				return null;
-			}
+		return array_filter(
+			array_map(
+				function ( array $assignment ): ?array {
+					$job = get_post( $assignment['job_id'] );
+					if ( ! $job ) {
+							return null;
+					}
 
-			return [
-				'id'          => $job->ID,
-				'title'       => $job->post_title,
-				'status'      => $job->post_status,
-				'assigned_at' => $assignment['assigned_at'],
-			];
-		}, $assignments ) );
+					return [
+						'id'          => $job->ID,
+						'title'       => $job->post_title,
+						'status'      => $job->post_status,
+						'assigned_at' => $assignment['assigned_at'],
+					];
+				},
+				$assignments
+			)
+		);
 	}
 
 	/**
@@ -265,7 +277,7 @@ class JobAssignmentService {
 
 		$table        = $wpdb->prefix . 'rp_activity_log';
 		$current_user = wp_get_current_user();
-		$target        = get_userdata( $target_user );
+		$target       = get_userdata( $target_user );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$wpdb->insert(
@@ -284,10 +296,12 @@ class JobAssignmentService {
 						: __( '%s removed from job', 'recruiting-playbook' ),
 					$target ? $target->display_name : __( 'Unknown', 'recruiting-playbook' )
 				),
-				'meta'        => wp_json_encode( [
-					'target_user_id' => $target_user,
-					'job_id'         => $job_id,
-				] ),
+				'meta'        => wp_json_encode(
+					[
+						'target_user_id' => $target_user,
+						'job_id'         => $job_id,
+					]
+				),
 				'ip_address'  => $this->getAnonymizedClientIp(),
 				'created_at'  => current_time( 'mysql' ),
 			],

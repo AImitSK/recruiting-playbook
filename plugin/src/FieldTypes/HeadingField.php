@@ -102,12 +102,12 @@ class HeadingField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function render( FieldDefinition $field, $value = null ): string {
-		$settings     = $field->getSettings() ?? [];
-		$level        = $settings['level'] ?? 'h3';
-		$style        = $settings['style'] ?? 'default';
-		$label        = $field->getLabel();
-		$description  = $field->getDescription();
-		$conditional  = $field->getConditional();
+		$settings    = $field->getSettings() ?? [];
+		$level       = $settings['level'] ?? 'h3';
+		$style       = $settings['style'] ?? 'default';
+		$label       = $field->getLabel();
+		$description = $field->getDescription();
+		$conditional = $field->getConditional();
 
 		// Allowed heading levels.
 		$allowed_levels = [ 'h2', 'h3', 'h4', 'h5', 'h6' ];
@@ -124,7 +124,7 @@ class HeadingField extends AbstractFieldType {
 			$wrapper_attrs .= sprintf( ' x-show="%s" x-cloak', esc_attr( $condition_expr ) );
 		}
 
-		$html = sprintf( '<div %s>', $wrapper_attrs );
+		$html  = sprintf( '<div %s>', $wrapper_attrs );
 		$html .= sprintf(
 			'<%1$s class="rp-form__heading-text">%2$s</%1$s>',
 			$level,
@@ -171,21 +171,21 @@ class HeadingField extends AbstractFieldType {
 				return sprintf( "(%s || '').includes('%s')", $field_ref, addslashes( $value ) );
 
 			case 'not_empty':
-				return sprintf( "!!%s", $field_ref );
+				return sprintf( '!!%s', $field_ref );
 
 			case 'empty':
-				return sprintf( "!%s", $field_ref );
+				return sprintf( '!%s', $field_ref );
 
 			case 'greater_than':
-				return sprintf( "parseFloat(%s || 0) > %s", $field_ref, floatval( $value ) );
+				return sprintf( 'parseFloat(%s || 0) > %s', $field_ref, floatval( $value ) );
 
 			case 'less_than':
-				return sprintf( "parseFloat(%s || 0) < %s", $field_ref, floatval( $value ) );
+				return sprintf( 'parseFloat(%s || 0) < %s', $field_ref, floatval( $value ) );
 
 			case 'in':
 				$values = array_map( 'trim', explode( ',', $value ) );
 				$json   = wp_json_encode( $values );
-				return sprintf( "%s.includes(%s)", $json, $field_ref );
+				return sprintf( '%s.includes(%s)', $json, $field_ref );
 
 			default:
 				return 'true';

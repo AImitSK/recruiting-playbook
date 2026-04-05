@@ -103,15 +103,18 @@ class SystemStatusController extends WP_REST_Controller {
 	public function cleanup_documents( WP_REST_Request $request ): WP_REST_Response {
 		$deleted = $this->service->cleanupOrphanedDocuments();
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'deleted' => $deleted,
-			'message' => sprintf(
-				/* translators: %d: Number of deleted documents */
-				__( '%d orphaned documents deleted', 'recruiting-playbook' ),
-				$deleted
-			),
-		], 200 );
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'deleted' => $deleted,
+				'message' => sprintf(
+					/* translators: %d: Number of deleted documents */
+					__( '%d orphaned documents deleted', 'recruiting-playbook' ),
+					$deleted
+				),
+			],
+			200
+		);
 	}
 
 	/**
@@ -123,15 +126,18 @@ class SystemStatusController extends WP_REST_Controller {
 	public function cleanup_applications( WP_REST_Request $request ): WP_REST_Response {
 		$deleted = $this->service->cleanupOrphanedApplications();
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'deleted' => $deleted,
-			'message' => sprintf(
-				/* translators: %d: Number of deleted applications */
-				__( '%d orphaned applications deleted', 'recruiting-playbook' ),
-				$deleted
-			),
-		], 200 );
+		return new WP_REST_Response(
+			[
+				'success' => true,
+				'deleted' => $deleted,
+				'message' => sprintf(
+					/* translators: %d: Number of deleted applications */
+					__( '%d orphaned applications deleted', 'recruiting-playbook' ),
+					$deleted
+				),
+			],
+			200
+		);
 	}
 
 	/**

@@ -178,7 +178,7 @@ class JobCustomFieldsMeta {
 
 				<?php foreach ( $custom_fields as $field ) : ?>
 					<?php
-					$field_key = $field->getFieldKey();
+					$field_key  = $field->getFieldKey();
 					$is_enabled = isset( $config[ $field_key ] ) ? (bool) $config[ $field_key ] : $field->isActive();
 					?>
 					<p>
@@ -259,7 +259,7 @@ class JobCustomFieldsMeta {
 		if ( $override && isset( $_POST['rp_field_config'] ) && is_array( $_POST['rp_field_config'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$raw_config = wp_unslash( $_POST['rp_field_config'] );
-			$config = [];
+			$config     = [];
 
 			foreach ( $raw_config as $key => $value ) {
 				$config[ sanitize_key( $key ) ] = (bool) $value;

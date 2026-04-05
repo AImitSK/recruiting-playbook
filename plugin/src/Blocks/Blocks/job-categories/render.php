@@ -32,8 +32,11 @@ if ( empty( trim( $output ) ) ) {
 }
 
 // Block wrapper with Gutenberg classes.
-$wrapper_attributes = get_block_wrapper_attributes( [
-	'class' => 'rp-block-job-categories',
-] );
+$wrapper_attributes = get_block_wrapper_attributes(
+	[
+		'class' => 'rp-block-job-categories',
+	]
+);
 
-echo wp_kses_post( sprintf( '<div %s>%s</div>', $wrapper_attributes, $output ) );
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes is safe from get_block_wrapper_attributes()
+printf( '<div %s>%s</div>', $wrapper_attributes, wp_kses_post( $output ) );

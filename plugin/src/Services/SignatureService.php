@@ -152,7 +152,7 @@ class SignatureService {
 		}
 
 		// Adresszeile zusammenbauen: Firmenname · Straße · PLZ Ort
-		$parts = [];
+		$parts   = [];
 		$parts[] = $company['name'];
 
 		if ( ! empty( $company['street'] ) ) {
@@ -166,7 +166,7 @@ class SignatureService {
 
 		$address_line = implode( ' · ', array_map( 'esc_html', $parts ) );
 
-		$html = '<div class="rp-signature-footer" style="margin-top: 30px; font-size: 12px; color: #6b7280;">';
+		$html  = '<div class="rp-signature-footer" style="margin-top: 30px; font-size: 12px; color: #6b7280;">';
 		$html .= '<p style="margin: 0; border-top: 1px solid #ccc; padding-top: 15px;">' . $address_line . '</p>';
 		$html .= '</div>';
 

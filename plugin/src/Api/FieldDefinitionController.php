@@ -203,7 +203,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 					'callback'            => [ $this, 'save_job_fields' ],
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
-						'job_id'   => [
+						'job_id'    => [
 							'description' => __( 'Job ID', 'recruiting-playbook' ),
 							'type'        => 'integer',
 							'required'    => true,
@@ -307,9 +307,9 @@ class FieldDefinitionController extends WP_REST_Controller {
 
 		return new WP_REST_Response(
 			[
-				'types'        => $registry->toArray(),
-				'groups'       => $registry->getGroupLabels(),
-				'type_keys'    => $registry->getTypeKeys(),
+				'types'     => $registry->toArray(),
+				'groups'    => $registry->getGroupLabels(),
+				'type_keys' => $registry->getTypeKeys(),
 			],
 			200
 		);
@@ -448,7 +448,13 @@ class FieldDefinitionController extends WP_REST_Controller {
 			return $result;
 		}
 
-		return new WP_REST_Response( [ 'deleted' => true, 'id' => $id ], 200 );
+		return new WP_REST_Response(
+			[
+				'deleted' => true,
+				'id'      => $id,
+			],
+			200
+		);
 	}
 
 	/**
@@ -494,7 +500,13 @@ class FieldDefinitionController extends WP_REST_Controller {
 		$fields = $this->service->getFieldsForJob( $job_id );
 		$data   = array_map( [ $this, 'prepare_item_for_response_array' ], $fields );
 
-		return new WP_REST_Response( [ 'fields' => $data, 'job_id' => $job_id ], 200 );
+		return new WP_REST_Response(
+			[
+				'fields' => $data,
+				'job_id' => $job_id,
+			],
+			200
+		);
 	}
 
 	/**
@@ -522,7 +534,13 @@ class FieldDefinitionController extends WP_REST_Controller {
 		$fields = $this->service->getFieldsForJob( $job_id );
 		$data   = array_map( [ $this, 'prepare_item_for_response_array' ], $fields );
 
-		return new WP_REST_Response( [ 'fields' => $data, 'job_id' => $job_id ], 200 );
+		return new WP_REST_Response(
+			[
+				'fields' => $data,
+				'job_id' => $job_id,
+			],
+			200
+		);
 	}
 
 	/**

@@ -154,7 +154,7 @@ class EmailService {
 		}
 
 		$settings = get_option( 'rp_settings', [] );
-		$to = $settings['notification_email'] ?? get_option( 'admin_email' );
+		$to       = $settings['notification_email'] ?? get_option( 'admin_email' );
 
 		$subject = sprintf(
 			/* translators: 1: Applicant name, 2: Job title */
@@ -163,11 +163,14 @@ class EmailService {
 			$application['job_title']
 		);
 
-		$message = $this->renderTemplate( 'email-application-received', [
-			'application'    => $application,
-			'admin_url'      => admin_url( 'admin.php?page=recruiting-playbook&id=' . $application_id ),
-			'company_name'   => $this->from_name,
-		] );
+		$message = $this->renderTemplate(
+			'email-application-received',
+			[
+				'application'  => $application,
+				'admin_url'    => admin_url( 'admin.php?page=recruiting-playbook&id=' . $application_id ),
+				'company_name' => $this->from_name,
+			]
+		);
 
 		return $this->send( $to, $subject, $message );
 	}
@@ -192,11 +195,14 @@ class EmailService {
 			$application['job_title']
 		);
 
-		$message = $this->renderTemplate( 'email-applicant-confirmation', [
-			'application'  => $application,
-			'company_name' => $this->from_name,
-			'job_url'      => get_permalink( $application['job_id'] ),
-		] );
+		$message = $this->renderTemplate(
+			'email-applicant-confirmation',
+			[
+				'application'  => $application,
+				'company_name' => $this->from_name,
+				'job_url'      => get_permalink( $application['job_id'] ),
+			]
+		);
 
 		// AUSNAHME: Eingangsbestätigung nutzt IMMER die Firmen-Signatur aus Einstellungen.
 		// Ignoriert benutzerdefinierte Signaturen - es gibt keinen User-Kontext.
@@ -228,10 +234,13 @@ class EmailService {
 			$application['job_title']
 		);
 
-		$message = $this->renderTemplate( 'email-rejection', [
-			'application'  => $application,
-			'company_name' => $this->from_name,
-		] );
+		$message = $this->renderTemplate(
+			'email-rejection',
+			[
+				'application'  => $application,
+				'company_name' => $this->from_name,
+			]
+		);
 
 		// Signatur mit Fallback-Kette: User-Default → Firmen-Default → Minimal.
 		$message = $this->appendSignature( $message );
@@ -327,7 +336,7 @@ class EmailService {
 
 		// In Log speichern.
 		if ( $sent ) {
-			$email_data['status'] = 'sent';
+			$email_data['status']  = 'sent';
 			$email_data['sent_at'] = current_time( 'mysql' );
 		} else {
 			$email_data['status'] = 'failed';
@@ -443,18 +452,21 @@ class EmailService {
 			return false;
 		}
 
-		return $this->getQueueService()->schedule( [
-			'application_id'  => $application_id,
-			'candidate_id'    => (int) $application['candidate_id'],
-			'template_id'     => $template_id,
-			'recipient_email' => $application['email'],
-			'recipient_name'  => $application['candidate_name'],
-			'sender_email'    => $this->from_email,
-			'sender_name'     => $this->from_name,
-			'subject'         => $rendered['subject'],
-			'body_html'       => $rendered['body_html'],
-			'body_text'       => $rendered['body_text'],
-		], $scheduled_at );
+		return $this->getQueueService()->schedule(
+			[
+				'application_id'  => $application_id,
+				'candidate_id'    => (int) $application['candidate_id'],
+				'template_id'     => $template_id,
+				'recipient_email' => $application['email'],
+				'recipient_name'  => $application['candidate_name'],
+				'sender_email'    => $this->from_email,
+				'sender_name'     => $this->from_name,
+				'subject'         => $rendered['subject'],
+				'body_html'       => $rendered['body_html'],
+				'body_text'       => $rendered['body_text'],
+			],
+			$scheduled_at
+		);
 	}
 
 	/**
@@ -503,11 +515,11 @@ class EmailService {
 		return [
 			'application' => $application,
 			'candidate'   => [
-				'salutation'  => $application['salutation'] ?? '',
-				'first_name'  => $application['first_name'] ?? '',
-				'last_name'   => $application['last_name'] ?? '',
-				'email'       => $application['email'] ?? '',
-				'phone'       => $application['phone'] ?? '',
+				'salutation' => $application['salutation'] ?? '',
+				'first_name' => $application['first_name'] ?? '',
+				'last_name'  => $application['last_name'] ?? '',
+				'email'      => $application['email'] ?? '',
+				'phone'      => $application['phone'] ?? '',
 			],
 			'job'         => $job ?? [],
 			'custom'      => $custom_data,
@@ -523,7 +535,7 @@ class EmailService {
 	private function getApplicationData( int $application_id ): ?array {
 		global $wpdb;
 
-		$app_table = $wpdb->prefix . 'rp_applications';
+		$app_table  = $wpdb->prefix . 'rp_applications';
 		$cand_table = $wpdb->prefix . 'rp_candidates';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -593,7 +605,7 @@ class EmailService {
 	 * @return string
 	 */
 	private function getFallbackTemplate( string $template, array $data ): string {
-		$app = $data['application'] ?? [];
+		$app     = $data['application'] ?? [];
 		$company = $data['company_name'] ?? '';
 
 		$styles = '
@@ -892,7 +904,7 @@ class EmailService {
 		foreach ( $smtp_plugins as $plugin ) {
 			if ( is_plugin_active( $plugin ) ) {
 				$result['configured'] = true;
-				$result['message'] = __( 'SMTP plugin detected. Emails should be delivered reliably.', 'recruiting-playbook' );
+				$result['message']    = __( 'SMTP plugin detected. Emails should be delivered reliably.', 'recruiting-playbook' );
 				return $result;
 			}
 		}
@@ -900,7 +912,7 @@ class EmailService {
 		// Check if wp_mail was overridden
 		if ( has_filter( 'wp_mail' ) || has_filter( 'phpmailer_init' ) ) {
 			$result['configured'] = true;
-			$result['message'] = __( 'Email configuration detected.', 'recruiting-playbook' );
+			$result['message']    = __( 'Email configuration detected.', 'recruiting-playbook' );
 			return $result;
 		}
 

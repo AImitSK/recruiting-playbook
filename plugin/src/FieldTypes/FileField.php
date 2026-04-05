@@ -78,11 +78,14 @@ class FileField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'multiple'      => false,
-			'max_files'     => 5,
-			'accepted_mime' => [ 'pdf', 'doc', 'docx' ],
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'multiple'      => false,
+				'max_files'     => 5,
+				'accepted_mime' => [ 'pdf', 'doc', 'docx' ],
+			]
+		);
 	}
 
 	/**

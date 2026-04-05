@@ -82,8 +82,8 @@ class DashboardWidget {
 	 * Widget-Inhalt rendern.
 	 */
 	public function render(): void {
-		$stats        = $this->getStats();
-		$applications = $this->getRecentApplications();
+		$stats         = $this->getStats();
+		$applications  = $this->getRecentApplications();
 		$status_labels = ApplicationStatus::getAll();
 
 		// Styles werden über enqueueWidgetStyles() hinzugefügt (WordPress.org Guidelines).

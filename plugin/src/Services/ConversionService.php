@@ -37,12 +37,12 @@ class ConversionService {
 	/**
 	 * Conversion-Rate berechnen
 	 *
-	 * @param array $date_range Zeitraum mit 'from' und 'to'.
+	 * @param array    $date_range Zeitraum mit 'from' und 'to'.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
 	public function calculate( array $date_range, ?int $job_id = null ): array {
-		$views = $this->repository->countJobViews( $date_range, $job_id );
+		$views        = $this->repository->countJobViews( $date_range, $job_id );
 		$applications = $this->repository->countApplications( $date_range, $job_id );
 
 		$conversion_rate = $views > 0
@@ -50,14 +50,14 @@ class ConversionService {
 			: 0;
 
 		return [
-			'overall'   => [
+			'overall'             => [
 				'views'           => $views,
 				'applications'    => $applications,
 				'conversion_rate' => $conversion_rate,
 			],
-			'funnel'    => $this->calculateFunnel( $date_range, $job_id ),
-			'by_source' => $this->getConversionBySource( $date_range, $job_id ),
-			'trend'     => $this->calculateTrend( $date_range, $job_id ),
+			'funnel'              => $this->calculateFunnel( $date_range, $job_id ),
+			'by_source'           => $this->getConversionBySource( $date_range, $job_id ),
+			'trend'               => $this->calculateTrend( $date_range, $job_id ),
 			'top_converting_jobs' => $this->getTopConvertingJobs( $date_range, 5 ),
 		];
 	}
@@ -65,23 +65,23 @@ class ConversionService {
 	/**
 	 * Conversion Funnel berechnen
 	 *
-	 * @param array $date_range Zeitraum.
+	 * @param array    $date_range Zeitraum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
 	private function calculateFunnel( array $date_range, ?int $job_id ): array {
 		// Event-basierte Metriken aus Activity Log.
-		$job_list_views = $this->repository->countEvents( 'job_list_viewed', $date_range );
+		$job_list_views   = $this->repository->countEvents( 'job_list_viewed', $date_range );
 		$job_detail_views = $this->repository->countJobViews( $date_range, $job_id );
-		$form_starts = $this->repository->countEvents( 'application_form_started', $date_range, $job_id );
+		$form_starts      = $this->repository->countEvents( 'application_form_started', $date_range, $job_id );
 		$form_completions = $this->repository->countApplications( $date_range, $job_id );
 
 		return [
-			'job_list_views'    => $job_list_views,
-			'job_detail_views'  => $job_detail_views,
-			'form_starts'       => $form_starts,
-			'form_completions'  => $form_completions,
-			'rates'             => [
+			'job_list_views'   => $job_list_views,
+			'job_detail_views' => $job_detail_views,
+			'form_starts'      => $form_starts,
+			'form_completions' => $form_completions,
+			'rates'            => [
 				'list_to_detail'         => $this->safePercentage( $job_list_views, $job_detail_views ),
 				'detail_to_form_start'   => $this->safePercentage( $job_detail_views, $form_starts ),
 				'form_start_to_complete' => $this->safePercentage( $form_starts, $form_completions ),
@@ -93,7 +93,7 @@ class ConversionService {
 	/**
 	 * Conversion nach Quelle
 	 *
-	 * @param array $date_range Zeitraum.
+	 * @param array    $date_range Zeitraum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
@@ -105,7 +105,7 @@ class ConversionService {
 			// Views pro Quelle aus Activity Log (falls verfügbar).
 			// Fallback: Views anteilig basierend auf Bewerbungen.
 			$total_views = $this->repository->countJobViews( $date_range, $job_id );
-			$total_apps = array_sum( $by_source );
+			$total_apps  = array_sum( $by_source );
 
 			$estimated_views = $total_apps > 0
 				? (int) round( ( $applications / $total_apps ) * $total_views )
@@ -128,7 +128,7 @@ class ConversionService {
 	/**
 	 * Conversion-Trend berechnen
 	 *
-	 * @param array $date_range Zeitraum.
+	 * @param array    $date_range Zeitraum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
@@ -138,11 +138,11 @@ class ConversionService {
 		$result = [];
 		foreach ( $timeline as $row ) {
 			// Views pro Tag (falls verfügbar).
-			$day_range = [
+			$day_range    = [
 				'from' => $row['date'] . ' 00:00:00',
 				'to'   => $row['date'] . ' 23:59:59',
 			];
-			$views = $this->repository->countJobViews( $day_range, $job_id );
+			$views        = $this->repository->countJobViews( $day_range, $job_id );
 			$applications = (int) $row['total'];
 
 			$result[] = [
@@ -160,7 +160,7 @@ class ConversionService {
 	 * Top-konvertierende Jobs
 	 *
 	 * @param array $date_range Zeitraum.
-	 * @param int $limit Anzahl Ergebnisse.
+	 * @param int   $limit Anzahl Ergebnisse.
 	 * @return array
 	 */
 	private function getTopConvertingJobs( array $date_range, int $limit ): array {
@@ -168,7 +168,7 @@ class ConversionService {
 
 		$result = [];
 		foreach ( $jobs as $job ) {
-			$views = $this->repository->countJobViews( $date_range, (int) $job['id'] );
+			$views        = $this->repository->countJobViews( $date_range, (int) $job['id'] );
 			$applications = (int) $job['applications'];
 
 			if ( $views > 10 ) { // Mindestens 10 Views für aussagekräftige Rate.
@@ -202,14 +202,14 @@ class ConversionService {
 	/**
 	 * Vergleich mit Vorperiode
 	 *
-	 * @param array $date_range Aktueller Zeitraum.
+	 * @param array    $date_range Aktueller Zeitraum.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
 	public function getComparison( array $date_range, ?int $job_id = null ): array {
 		// Vorherige Periode berechnen.
-		$from = strtotime( $date_range['from'] ?? '-30 days' );
-		$to = strtotime( $date_range['to'] ?? 'now' );
+		$from     = strtotime( $date_range['from'] ?? '-30 days' );
+		$to       = strtotime( $date_range['to'] ?? 'now' );
 		$duration = $to - $from;
 
 		$previous_range = [
@@ -217,10 +217,10 @@ class ConversionService {
 			'to'   => gmdate( 'Y-m-d H:i:s', $from - 1 ),
 		];
 
-		$current = $this->calculate( $date_range, $job_id );
+		$current  = $this->calculate( $date_range, $job_id );
 		$previous = $this->calculate( $previous_range, $job_id );
 
-		$current_rate = $current['overall']['conversion_rate'];
+		$current_rate  = $current['overall']['conversion_rate'];
 		$previous_rate = $previous['overall']['conversion_rate'];
 
 		$change_percent = $previous_rate > 0

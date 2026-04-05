@@ -273,8 +273,8 @@ class TalentPoolRepository {
 			'expires_at' => 'tp.expires_at',
 			'name'       => 'c.last_name',
 		];
-		$orderby = $allowed_orderby[ $args['orderby'] ] ?? 'tp.created_at';
-		$order   = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
+		$orderby         = $allowed_orderby[ $args['orderby'] ] ?? 'tp.created_at';
+		$order           = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 
 		// Pagination.
 		$per_page = min( max( (int) $args['per_page'], 1 ), 100 );
@@ -458,7 +458,7 @@ class TalentPoolRepository {
 
 		$all_tags = [];
 		foreach ( $tags_raw as $tags_string ) {
-			$tags = array_map( 'trim', explode( ',', $tags_string ) );
+			$tags     = array_map( 'trim', explode( ',', $tags_string ) );
 			$all_tags = array_merge( $all_tags, $tags );
 		}
 
@@ -489,7 +489,7 @@ class TalentPoolRepository {
 		// Application-ID laden (neueste Bewerbung des Kandidaten).
 		$applications_table = Schema::getTables()['applications'];
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$application_id = $wpdb->get_var(
+		$application_id          = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT id FROM {$applications_table}
 				WHERE candidate_id = %d AND deleted_at IS NULL
@@ -506,11 +506,11 @@ class TalentPoolRepository {
 			: [];
 
 		// Ablauf-Status berechnen.
-		$expires_at      = strtotime( $entry['expires_at'] );
-		$now             = time();
-		$days_until      = (int) ceil( ( $expires_at - $now ) / DAY_IN_SECONDS );
-		$entry['is_expired'] = $days_until < 0;
-		$entry['is_expiring_soon'] = $days_until >= 0 && $days_until <= 30;
+		$expires_at                 = strtotime( $entry['expires_at'] );
+		$now                        = time();
+		$days_until                 = (int) ceil( ( $expires_at - $now ) / DAY_IN_SECONDS );
+		$entry['is_expired']        = $days_until < 0;
+		$entry['is_expiring_soon']  = $days_until >= 0 && $days_until <= 30;
 		$entry['days_until_expiry'] = max( 0, $days_until );
 
 		// Typen konvertieren.

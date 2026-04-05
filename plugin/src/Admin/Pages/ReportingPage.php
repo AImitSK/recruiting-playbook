@@ -21,10 +21,10 @@ class ReportingPage {
 	 */
 	public function render(): void {
 		// Pro-Feature Check.
-		$is_pro = function_exists( 'rp_is_pro' ) && rp_is_pro();
-		$can_view_stats = current_user_can( 'rp_view_stats' );
+		$is_pro            = function_exists( 'rp_is_pro' ) && rp_is_pro();
+		$can_view_stats    = current_user_can( 'rp_view_stats' );
 		$can_view_advanced = current_user_can( 'rp_view_advanced_stats' );
-		$can_export = current_user_can( 'rp_export_data' );
+		$can_export        = current_user_can( 'rp_export_data' );
 
 		// Localize data for React component.
 		wp_localize_script(

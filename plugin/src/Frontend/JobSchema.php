@@ -81,17 +81,17 @@ class JobSchema {
 		$integrations = get_option( 'rp_integrations', [] );
 
 		// Veröffentlichungsdatum ermitteln (Fallback auf aktuelles Datum für Entwürfe).
-		$post_time = get_post_time( 'U', true, $post );
+		$post_time   = get_post_time( 'U', true, $post );
 		$date_posted = $post_time ? gmdate( 'c', $post_time ) : gmdate( 'c' );
 
 		// Pflichtfelder.
 		$schema = [
-			'@context'      => 'https://schema.org/',
-			'@type'         => 'JobPosting',
-			'title'         => get_the_title( $post ),
-			'description'   => $this->getDescription( $post ),
-			'datePosted'    => $date_posted,
-			'identifier'    => [
+			'@context'           => 'https://schema.org/',
+			'@type'              => 'JobPosting',
+			'title'              => get_the_title( $post ),
+			'description'        => $this->getDescription( $post ),
+			'datePosted'         => $date_posted,
+			'identifier'         => [
 				'@type' => 'PropertyValue',
 				'name'  => $settings['company_name'] ?? get_bloginfo( 'name' ),
 				'value' => 'job-' . $post->ID,
@@ -168,8 +168,8 @@ class JobSchema {
 	 */
 	private function getOrganization( array $settings ): array {
 		$org = [
-			'@type' => 'Organization',
-			'name'  => $settings['company_name'] ?? get_bloginfo( 'name' ),
+			'@type'  => 'Organization',
+			'name'   => $settings['company_name'] ?? get_bloginfo( 'name' ),
 			'sameAs' => home_url(),
 		];
 
@@ -366,13 +366,13 @@ class JobSchema {
 
 		$results = [];
 		foreach ( $jobs as $job_id ) {
-			$validation = $this->validateSchema( $job_id );
+			$validation         = $this->validateSchema( $job_id );
 			$results[ $job_id ] = [
-				'title'      => get_the_title( $job_id ),
-				'valid'      => $validation['valid'],
-				'errors'     => $validation['errors'],
-				'warnings'   => $validation['warnings'],
-				'edit_link'  => get_edit_post_link( $job_id, 'raw' ),
+				'title'     => get_the_title( $job_id ),
+				'valid'     => $validation['valid'],
+				'errors'    => $validation['errors'],
+				'warnings'  => $validation['warnings'],
+				'edit_link' => get_edit_post_link( $job_id, 'raw' ),
 			];
 		}
 

@@ -62,21 +62,21 @@ class ExportController extends WP_REST_Controller {
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'   => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'status' => [
+					'status'    => [
 						'description' => __( 'Status filter', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
 					],
-					'job_id' => [
+					'job_id'    => [
 						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
-					'columns' => [
+					'columns'   => [
 						'description' => __( 'Export columns', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
@@ -171,9 +171,12 @@ class ExportController extends WP_REST_Controller {
 	public function get_columns( WP_REST_Request $request ): WP_REST_Response {
 		$columns = $this->service->getAvailableColumns();
 
-		return new WP_REST_Response( [
-			'columns' => $columns,
-		], 200 );
+		return new WP_REST_Response(
+			[
+				'columns' => $columns,
+			],
+			200
+		);
 	}
 
 	/**

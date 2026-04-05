@@ -276,7 +276,6 @@ class Settings {
 				]
 			);
 		}
-
 	}
 
 	/**
@@ -287,30 +286,30 @@ class Settings {
 	private function getDefaults(): array {
 		return [
 			// Allgemein.
-			'notification_email'   => get_option( 'admin_email' ),
-			'privacy_url'          => get_privacy_policy_url(),
+			'notification_email'  => get_option( 'admin_email' ),
+			'privacy_url'         => get_privacy_policy_url(),
 
 			// Firmendaten.
-			'company_name'         => get_bloginfo( 'name' ),
-			'company_street'       => '',
-			'company_zip'          => '',
-			'company_city'         => '',
-			'company_phone'        => '',
-			'company_website'      => home_url(),
-			'company_email'        => get_option( 'admin_email' ),
+			'company_name'        => get_bloginfo( 'name' ),
+			'company_street'      => '',
+			'company_zip'         => '',
+			'company_city'        => '',
+			'company_phone'       => '',
+			'company_website'     => home_url(),
+			'company_email'       => get_option( 'admin_email' ),
 
 			// Standard-Absender.
-			'sender_name'          => __( 'HR Department', 'recruiting-playbook' ),
-			'sender_email'         => get_option( 'admin_email' ),
+			'sender_name'         => __( 'HR Department', 'recruiting-playbook' ),
+			'sender_email'        => get_option( 'admin_email' ),
 
 			// Stellenanzeigen.
-			'jobs_per_page'        => 10,
-			'jobs_slug'            => 'jobs',
-			'enable_schema'        => true,
+			'jobs_per_page'       => 10,
+			'jobs_slug'           => 'jobs',
+			'enable_schema'       => true,
 
 			// Pro-Features.
-			'hide_email_branding'  => false,
-			'disable_ai_features'  => false,
+			'hide_email_branding' => false,
+			'disable_ai_features' => false,
 		];
 	}
 
@@ -435,11 +434,13 @@ class Settings {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function getPages(): array {
-		$posts = get_pages( [
-			'post_status' => 'publish',
-			'sort_column' => 'post_title',
-			'sort_order'  => 'ASC',
-		] );
+		$posts = get_pages(
+			[
+				'post_status' => 'publish',
+				'sort_column' => 'post_title',
+				'sort_order'  => 'ASC',
+			]
+		);
 
 		$pages = [];
 		foreach ( $posts as $page ) {
@@ -459,117 +460,117 @@ class Settings {
 	 */
 	private function getI18nStrings(): array {
 		return [
-			'pageTitle'             => __( 'Settings', 'recruiting-playbook' ),
-			'tabGeneral'            => __( 'General', 'recruiting-playbook' ),
-			'tabCompany'            => __( 'Company Data', 'recruiting-playbook' ),
-			'tabExport'             => __( 'Export & Import', 'recruiting-playbook' ),
+			'pageTitle'              => __( 'Settings', 'recruiting-playbook' ),
+			'tabGeneral'             => __( 'General', 'recruiting-playbook' ),
+			'tabCompany'             => __( 'Company Data', 'recruiting-playbook' ),
+			'tabExport'              => __( 'Export & Import', 'recruiting-playbook' ),
 
 			// General Settings.
-			'notifications'         => __( 'Notifications', 'recruiting-playbook' ),
-			'notificationsDesc'     => __( 'Email notifications for new applications', 'recruiting-playbook' ),
-			'notificationEmail'     => __( 'Notification Email', 'recruiting-playbook' ),
-			'notificationEmailDesc' => __( 'Email address for new applications.', 'recruiting-playbook' ),
-			'privacyPage'           => __( 'Privacy Page', 'recruiting-playbook' ),
-			'privacyPageDesc'       => __( 'Page with privacy policy for the application form.', 'recruiting-playbook' ),
-			'selectPage'            => __( '— Select Page —', 'recruiting-playbook' ),
-			'jobListings'           => __( 'Job Listings', 'recruiting-playbook' ),
-			'jobListingsDesc'       => __( 'Settings for job listings and careers page', 'recruiting-playbook' ),
-			'jobsPerPage'           => __( 'Jobs Per Page', 'recruiting-playbook' ),
-			'urlSlug'               => __( 'URL Slug', 'recruiting-playbook' ),
-			'urlSlugDesc'           => __( 'URL path for the jobs overview.', 'recruiting-playbook' ),
-			'googleForJobs'         => __( 'Google for Jobs Schema', 'recruiting-playbook' ),
-			'googleForJobsDesc'     => __( 'JSON-LD schema for better visibility in Google', 'recruiting-playbook' ),
+			'notifications'          => __( 'Notifications', 'recruiting-playbook' ),
+			'notificationsDesc'      => __( 'Email notifications for new applications', 'recruiting-playbook' ),
+			'notificationEmail'      => __( 'Notification Email', 'recruiting-playbook' ),
+			'notificationEmailDesc'  => __( 'Email address for new applications.', 'recruiting-playbook' ),
+			'privacyPage'            => __( 'Privacy Page', 'recruiting-playbook' ),
+			'privacyPageDesc'        => __( 'Page with privacy policy for the application form.', 'recruiting-playbook' ),
+			'selectPage'             => __( '— Select Page —', 'recruiting-playbook' ),
+			'jobListings'            => __( 'Job Listings', 'recruiting-playbook' ),
+			'jobListingsDesc'        => __( 'Settings for job listings and careers page', 'recruiting-playbook' ),
+			'jobsPerPage'            => __( 'Jobs Per Page', 'recruiting-playbook' ),
+			'urlSlug'                => __( 'URL Slug', 'recruiting-playbook' ),
+			'urlSlugDesc'            => __( 'URL path for the jobs overview.', 'recruiting-playbook' ),
+			'googleForJobs'          => __( 'Google for Jobs Schema', 'recruiting-playbook' ),
+			'googleForJobsDesc'      => __( 'JSON-LD schema for better visibility in Google', 'recruiting-playbook' ),
 
 			// Company Settings.
-			'companyData'           => __( 'Company Data', 'recruiting-playbook' ),
-			'companyDataDesc'       => __( 'This data is used in email signatures and the Google for Jobs schema.', 'recruiting-playbook' ),
-			'companyName'           => __( 'Company Name', 'recruiting-playbook' ),
-			'companyNameDesc'       => __( 'Displayed in schema, emails, and on the careers page.', 'recruiting-playbook' ),
-			'street'                => __( 'Street & Number', 'recruiting-playbook' ),
-			'zip'                   => __( 'Postal Code', 'recruiting-playbook' ),
-			'city'                  => __( 'City', 'recruiting-playbook' ),
-			'phone'                 => __( 'Phone', 'recruiting-playbook' ),
-			'website'               => __( 'Website', 'recruiting-playbook' ),
-			'contactEmail'          => __( 'Contact Email', 'recruiting-playbook' ),
-			'contactEmailDesc'      => __( 'General contact email of the company (for email signatures).', 'recruiting-playbook' ),
-			'defaultSender'         => __( 'Default Sender', 'recruiting-playbook' ),
-			'defaultSenderDesc'     => __( 'Default sender data for automatic and manual emails.', 'recruiting-playbook' ),
-			'senderName'            => __( 'Sender Name', 'recruiting-playbook' ),
-			'senderNameDesc'        => __( 'Name displayed as sender in emails.', 'recruiting-playbook' ),
-			'senderEmail'           => __( 'Sender Email', 'recruiting-playbook' ),
-			'senderEmailDesc'       => __( 'Email address from which emails are sent.', 'recruiting-playbook' ),
-			'hrDepartment'          => __( 'HR Department', 'recruiting-playbook' ),
+			'companyData'            => __( 'Company Data', 'recruiting-playbook' ),
+			'companyDataDesc'        => __( 'This data is used in email signatures and the Google for Jobs schema.', 'recruiting-playbook' ),
+			'companyName'            => __( 'Company Name', 'recruiting-playbook' ),
+			'companyNameDesc'        => __( 'Displayed in schema, emails, and on the careers page.', 'recruiting-playbook' ),
+			'street'                 => __( 'Street & Number', 'recruiting-playbook' ),
+			'zip'                    => __( 'Postal Code', 'recruiting-playbook' ),
+			'city'                   => __( 'City', 'recruiting-playbook' ),
+			'phone'                  => __( 'Phone', 'recruiting-playbook' ),
+			'website'                => __( 'Website', 'recruiting-playbook' ),
+			'contactEmail'           => __( 'Contact Email', 'recruiting-playbook' ),
+			'contactEmailDesc'       => __( 'General contact email of the company (for email signatures).', 'recruiting-playbook' ),
+			'defaultSender'          => __( 'Default Sender', 'recruiting-playbook' ),
+			'defaultSenderDesc'      => __( 'Default sender data for automatic and manual emails.', 'recruiting-playbook' ),
+			'senderName'             => __( 'Sender Name', 'recruiting-playbook' ),
+			'senderNameDesc'         => __( 'Name displayed as sender in emails.', 'recruiting-playbook' ),
+			'senderEmail'            => __( 'Sender Email', 'recruiting-playbook' ),
+			'senderEmailDesc'        => __( 'Email address from which emails are sent.', 'recruiting-playbook' ),
+			'hrDepartment'           => __( 'HR Department', 'recruiting-playbook' ),
 
 			// Export Settings.
-			'fullBackup'            => __( 'Full Backup', 'recruiting-playbook' ),
-			'fullBackupDesc'        => __( 'Exports all plugin data as JSON file', 'recruiting-playbook' ),
-			'exportIncludes'        => __( 'The export includes:', 'recruiting-playbook' ),
-			'settingsExport'        => __( 'Settings', 'recruiting-playbook' ),
-			'jobsExport'            => __( 'Jobs (incl. metadata)', 'recruiting-playbook' ),
-			'taxonomiesExport'      => __( 'Taxonomies (categories, locations, etc.)', 'recruiting-playbook' ),
-			'candidatesExport'      => __( 'Candidates', 'recruiting-playbook' ),
-			'applicationsExport'    => __( 'Applications', 'recruiting-playbook' ),
-			'documentsExport'       => __( 'Document metadata', 'recruiting-playbook' ),
-			'activityLogExport'     => __( 'Activity log (last 1000 entries)', 'recruiting-playbook' ),
-			'notesExport'           => __( 'Notes', 'recruiting-playbook' ),
-			'ratingsExport'         => __( 'Ratings', 'recruiting-playbook' ),
-			'talentPoolExport'      => __( 'Talent Pool', 'recruiting-playbook' ),
-			'emailTemplatesExport'  => __( 'Email templates', 'recruiting-playbook' ),
-			'signaturesExport'      => __( 'Email signatures', 'recruiting-playbook' ),
+			'fullBackup'             => __( 'Full Backup', 'recruiting-playbook' ),
+			'fullBackupDesc'         => __( 'Exports all plugin data as JSON file', 'recruiting-playbook' ),
+			'exportIncludes'         => __( 'The export includes:', 'recruiting-playbook' ),
+			'settingsExport'         => __( 'Settings', 'recruiting-playbook' ),
+			'jobsExport'             => __( 'Jobs (incl. metadata)', 'recruiting-playbook' ),
+			'taxonomiesExport'       => __( 'Taxonomies (categories, locations, etc.)', 'recruiting-playbook' ),
+			'candidatesExport'       => __( 'Candidates', 'recruiting-playbook' ),
+			'applicationsExport'     => __( 'Applications', 'recruiting-playbook' ),
+			'documentsExport'        => __( 'Document metadata', 'recruiting-playbook' ),
+			'activityLogExport'      => __( 'Activity log (last 1000 entries)', 'recruiting-playbook' ),
+			'notesExport'            => __( 'Notes', 'recruiting-playbook' ),
+			'ratingsExport'          => __( 'Ratings', 'recruiting-playbook' ),
+			'talentPoolExport'       => __( 'Talent Pool', 'recruiting-playbook' ),
+			'emailTemplatesExport'   => __( 'Email templates', 'recruiting-playbook' ),
+			'signaturesExport'       => __( 'Email signatures', 'recruiting-playbook' ),
 			'fieldDefinitionsExport' => __( 'Field definitions', 'recruiting-playbook' ),
-			'formTemplatesExport'   => __( 'Form templates', 'recruiting-playbook' ),
-			'formConfigExport'      => __( 'Form configuration', 'recruiting-playbook' ),
-			'webhooksExport'        => __( 'Webhooks', 'recruiting-playbook' ),
-			'jobAssignmentsExport'  => __( 'Job assignments', 'recruiting-playbook' ),
-			'emailLogExport'        => __( 'Email log (last 5000 entries)', 'recruiting-playbook' ),
-			'aiAnalysesExport'      => __( 'AI analyses', 'recruiting-playbook' ),
-			'note'                  => __( 'Note:', 'recruiting-playbook' ),
-			'documentsNotIncluded'  => __( 'Uploaded documents (PDFs etc.) are not exported for privacy reasons.', 'recruiting-playbook' ),
-			'downloadBackup'        => __( 'Download Backup', 'recruiting-playbook' ),
-			'downloadStarted'       => __( 'Download has been started.', 'recruiting-playbook' ),
-			'preparing'             => __( 'Preparing...', 'recruiting-playbook' ),
+			'formTemplatesExport'    => __( 'Form templates', 'recruiting-playbook' ),
+			'formConfigExport'       => __( 'Form configuration', 'recruiting-playbook' ),
+			'webhooksExport'         => __( 'Webhooks', 'recruiting-playbook' ),
+			'jobAssignmentsExport'   => __( 'Job assignments', 'recruiting-playbook' ),
+			'emailLogExport'         => __( 'Email log (last 5000 entries)', 'recruiting-playbook' ),
+			'aiAnalysesExport'       => __( 'AI analyses', 'recruiting-playbook' ),
+			'note'                   => __( 'Note:', 'recruiting-playbook' ),
+			'documentsNotIncluded'   => __( 'Uploaded documents (PDFs etc.) are not exported for privacy reasons.', 'recruiting-playbook' ),
+			'downloadBackup'         => __( 'Download Backup', 'recruiting-playbook' ),
+			'downloadStarted'        => __( 'Download has been started.', 'recruiting-playbook' ),
+			'preparing'              => __( 'Preparing...', 'recruiting-playbook' ),
 
 			// Import Settings.
-			'importBackup'          => __( 'Import Backup', 'recruiting-playbook' ),
-			'importBackupDesc'      => __( 'Restore plugin data from a JSON backup file', 'recruiting-playbook' ),
-			'selectFile'            => __( 'Select backup file', 'recruiting-playbook' ),
-			'settingsMode'          => __( 'Settings', 'recruiting-playbook' ),
-			'settingsModeSkip'      => __( 'Skip (keep current)', 'recruiting-playbook' ),
-			'settingsModeMerge'     => __( 'Merge (add missing)', 'recruiting-playbook' ),
-			'settingsModeOverwrite' => __( 'Overwrite', 'recruiting-playbook' ),
-			'duplicateCandidates'   => __( 'Duplicate candidates (same email)', 'recruiting-playbook' ),
-			'duplicateJobs'         => __( 'Duplicate jobs (same title)', 'recruiting-playbook' ),
-			'duplicateSkip'         => __( 'Skip', 'recruiting-playbook' ),
-			'duplicateUpdate'       => __( 'Update existing', 'recruiting-playbook' ),
-			'importActivityLog'     => __( 'Import activity log', 'recruiting-playbook' ),
-			'importEmailLog'        => __( 'Import email log', 'recruiting-playbook' ),
-			'importWarning'         => __( 'It is recommended to create a backup before importing.', 'recruiting-playbook' ),
-			'startImport'           => __( 'Start Import', 'recruiting-playbook' ),
-			'importing'             => __( 'Importing...', 'recruiting-playbook' ),
-			'importResult'          => __( 'Import Result', 'recruiting-playbook' ),
-			'importType'            => __( 'Type', 'recruiting-playbook' ),
-			'importCreated'         => __( 'Created', 'recruiting-playbook' ),
-			'importSkipped'         => __( 'Skipped', 'recruiting-playbook' ),
-			'importUpdated'         => __( 'Updated', 'recruiting-playbook' ),
-			'importWarnings'        => __( 'Warnings', 'recruiting-playbook' ),
-			'importErrors'          => __( 'Errors', 'recruiting-playbook' ),
-			'importSuccess'         => __( 'Import completed successfully.', 'recruiting-playbook' ),
-			'noFileSelected'        => __( 'Please select a file.', 'recruiting-playbook' ),
+			'importBackup'           => __( 'Import Backup', 'recruiting-playbook' ),
+			'importBackupDesc'       => __( 'Restore plugin data from a JSON backup file', 'recruiting-playbook' ),
+			'selectFile'             => __( 'Select backup file', 'recruiting-playbook' ),
+			'settingsMode'           => __( 'Settings', 'recruiting-playbook' ),
+			'settingsModeSkip'       => __( 'Skip (keep current)', 'recruiting-playbook' ),
+			'settingsModeMerge'      => __( 'Merge (add missing)', 'recruiting-playbook' ),
+			'settingsModeOverwrite'  => __( 'Overwrite', 'recruiting-playbook' ),
+			'duplicateCandidates'    => __( 'Duplicate candidates (same email)', 'recruiting-playbook' ),
+			'duplicateJobs'          => __( 'Duplicate jobs (same title)', 'recruiting-playbook' ),
+			'duplicateSkip'          => __( 'Skip', 'recruiting-playbook' ),
+			'duplicateUpdate'        => __( 'Update existing', 'recruiting-playbook' ),
+			'importActivityLog'      => __( 'Import activity log', 'recruiting-playbook' ),
+			'importEmailLog'         => __( 'Import email log', 'recruiting-playbook' ),
+			'importWarning'          => __( 'It is recommended to create a backup before importing.', 'recruiting-playbook' ),
+			'startImport'            => __( 'Start Import', 'recruiting-playbook' ),
+			'importing'              => __( 'Importing...', 'recruiting-playbook' ),
+			'importResult'           => __( 'Import Result', 'recruiting-playbook' ),
+			'importType'             => __( 'Type', 'recruiting-playbook' ),
+			'importCreated'          => __( 'Created', 'recruiting-playbook' ),
+			'importSkipped'          => __( 'Skipped', 'recruiting-playbook' ),
+			'importUpdated'          => __( 'Updated', 'recruiting-playbook' ),
+			'importWarnings'         => __( 'Warnings', 'recruiting-playbook' ),
+			'importErrors'           => __( 'Errors', 'recruiting-playbook' ),
+			'importSuccess'          => __( 'Import completed successfully.', 'recruiting-playbook' ),
+			'noFileSelected'         => __( 'Please select a file.', 'recruiting-playbook' ),
 
 			// Pro Settings.
-			'proSettings'           => __( 'Pro Settings', 'recruiting-playbook' ),
-			'proSettingsDesc'       => __( 'Advanced settings for Pro users.', 'recruiting-playbook' ),
-			'whiteLabel'            => __( 'White-Label Emails', 'recruiting-playbook' ),
-			'whiteLabelDesc'        => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
-			'disableAiFeatures'     => __( 'Disable AI Features', 'recruiting-playbook' ),
-			'disableAiFeaturesDesc' => __( 'Hide AI matching buttons in job listings and cards', 'recruiting-playbook' ),
+			'proSettings'            => __( 'Pro Settings', 'recruiting-playbook' ),
+			'proSettingsDesc'        => __( 'Advanced settings for Pro users.', 'recruiting-playbook' ),
+			'whiteLabel'             => __( 'White-Label Emails', 'recruiting-playbook' ),
+			'whiteLabelDesc'         => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
+			'disableAiFeatures'      => __( 'Disable AI Features', 'recruiting-playbook' ),
+			'disableAiFeaturesDesc'  => __( 'Hide AI matching buttons in job listings and cards', 'recruiting-playbook' ),
 
 			// Common.
-			'saveSettings'          => __( 'Save Settings', 'recruiting-playbook' ),
-			'saving'                => __( 'Saving...', 'recruiting-playbook' ),
-			'settingsSaved'         => __( 'Settings have been saved.', 'recruiting-playbook' ),
-			'errorLoading'          => __( 'Error loading settings', 'recruiting-playbook' ),
-			'errorSaving'           => __( 'Error saving', 'recruiting-playbook' ),
+			'saveSettings'           => __( 'Save Settings', 'recruiting-playbook' ),
+			'saving'                 => __( 'Saving...', 'recruiting-playbook' ),
+			'settingsSaved'          => __( 'Settings have been saved.', 'recruiting-playbook' ),
+			'errorLoading'           => __( 'Error loading settings', 'recruiting-playbook' ),
+			'errorSaving'            => __( 'Error saving', 'recruiting-playbook' ),
 		];
 	}
 
@@ -763,8 +764,8 @@ class Settings {
 	 */
 	public function renderNumberField( array $args ): void {
 		$settings = get_option( self::OPTION_NAME, $this->getDefaults() );
-		$id = $args['label_for'];
-		$value = $settings[ $id ] ?? 10;
+		$id       = $args['label_for'];
+		$value    = $settings[ $id ] ?? 10;
 		?>
 		<input
 			type="number"
@@ -785,8 +786,8 @@ class Settings {
 	 */
 	public function renderSlugField( array $args ): void {
 		$settings = get_option( self::OPTION_NAME, $this->getDefaults() );
-		$id = $args['label_for'];
-		$value = $settings[ $id ] ?? 'jobs';
+		$id       = $args['label_for'];
+		$value    = $settings[ $id ] ?? 'jobs';
 		?>
 		<code><?php echo esc_html( home_url( '/' ) ); ?></code>
 		<input
@@ -811,8 +812,8 @@ class Settings {
 	 */
 	public function renderCheckboxField( array $args ): void {
 		$settings = get_option( self::OPTION_NAME, $this->getDefaults() );
-		$id = $args['label_for'];
-		$checked = ! empty( $settings[ $id ] );
+		$id       = $args['label_for'];
+		$checked  = ! empty( $settings[ $id ] );
 		?>
 		<label>
 			<input
@@ -837,15 +838,17 @@ class Settings {
 	 */
 	public function renderPageSelectField( array $args ): void {
 		$settings = get_option( self::OPTION_NAME, $this->getDefaults() );
-		$id = $args['label_for'];
-		$value = $settings[ $id ] ?? '';
+		$id       = $args['label_for'];
+		$value    = $settings[ $id ] ?? '';
 
-		wp_dropdown_pages( [
-			'name'             => esc_attr( self::OPTION_NAME . '[' . $id . ']' ),
-			'id'               => esc_attr( $id ),
-			'selected'         => absint( url_to_postid( $value ) ),
-			'show_option_none' => esc_html__( '— Select Page —', 'recruiting-playbook' ),
-		] );
+		wp_dropdown_pages(
+			[
+				'name'             => esc_attr( self::OPTION_NAME . '[' . $id . ']' ),
+				'id'               => esc_attr( $id ),
+				'selected'         => absint( url_to_postid( $value ) ),
+				'show_option_none' => esc_html__( '— Select Page —', 'recruiting-playbook' ),
+			]
+		);
 
 		if ( ! empty( $args['description'] ) ) :
 			?>
@@ -860,7 +863,7 @@ class Settings {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function getRecruitingUsers(): array {
-		$users = RoleManager::getRecruitingUsers();
+		$users  = RoleManager::getRecruitingUsers();
 		$result = [];
 
 		foreach ( $users as $user ) {
@@ -887,13 +890,15 @@ class Settings {
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function getJobListings(): array {
-		$posts = get_posts( [
-			'post_type'      => 'job_listing',
-			'posts_per_page' => -1,
-			'post_status'    => [ 'publish', 'draft' ],
-			'orderby'        => 'title',
-			'order'          => 'ASC',
-		] );
+		$posts = get_posts(
+			[
+				'post_type'      => 'job_listing',
+				'posts_per_page' => -1,
+				'post_status'    => [ 'publish', 'draft' ],
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			]
+		);
 
 		$jobs = [];
 		foreach ( $posts as $post ) {

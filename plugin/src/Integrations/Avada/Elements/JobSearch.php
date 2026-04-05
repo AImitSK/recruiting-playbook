@@ -30,7 +30,7 @@ class JobSearch extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'radio_button_set',
 					'heading'     => esc_attr__( 'Show search field', 'recruiting-playbook' ),

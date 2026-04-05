@@ -85,18 +85,18 @@ class StatsController extends WP_REST_Controller {
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'   => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'group_by' => [
+					'group_by'  => [
 						'description' => __( 'Grouping', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'day',
 						'enum'        => [ 'day', 'week', 'month' ],
 					],
-					'job_id' => [
+					'job_id'    => [
 						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
@@ -113,17 +113,17 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_job_stats' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
-					'date_from' => [
+					'date_from'  => [
 						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'    => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'sort_by' => [
+					'sort_by'    => [
 						'description' => __( 'Sort by', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => 'applications',
@@ -135,13 +135,13 @@ class StatsController extends WP_REST_Controller {
 						'default'     => 'desc',
 						'enum'        => [ 'asc', 'desc' ],
 					],
-					'per_page' => [
+					'per_page'   => [
 						'description' => __( 'Entries per page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 20,
 						'maximum'     => 100,
 					],
-					'page' => [
+					'page'       => [
 						'description' => __( 'Page', 'recruiting-playbook' ),
 						'type'        => 'integer',
 						'default'     => 1,
@@ -159,24 +159,24 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_trends' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
-					'period' => [
+					'period'      => [
 						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
 						'enum'        => [ 'today', '7days', '30days', '90days', 'year', 'all' ],
 					],
-					'metrics' => [
+					'metrics'     => [
 						'description' => __( 'Metrics for trend', 'recruiting-playbook' ),
 						'type'        => 'array',
 						'items'       => [ 'type' => 'string' ],
 						'default'     => [ 'applications', 'hires' ],
 					],
-					'date_from' => [
+					'date_from'   => [
 						'description' => __( 'Start date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'     => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
@@ -200,7 +200,7 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_time_to_hire' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
-					'period' => [
+					'period'    => [
 						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '90days',
@@ -211,12 +211,12 @@ class StatsController extends WP_REST_Controller {
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'   => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'job_id' => [
+					'job_id'    => [
 						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
@@ -233,7 +233,7 @@ class StatsController extends WP_REST_Controller {
 				'callback'            => [ $this, 'get_conversion' ],
 				'permission_callback' => [ $this, 'advanced_stats_permissions_check' ],
 				'args'                => [
-					'period' => [
+					'period'    => [
 						'description' => __( 'Period', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'default'     => '30days',
@@ -244,12 +244,12 @@ class StatsController extends WP_REST_Controller {
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'date_to' => [
+					'date_to'   => [
 						'description' => __( 'End date (Y-m-d)', 'recruiting-playbook' ),
 						'type'        => 'string',
 						'format'      => 'date',
 					],
-					'job_id' => [
+					'job_id'    => [
 						'description' => __( 'Filter by job', 'recruiting-playbook' ),
 						'type'        => 'integer',
 					],
@@ -266,7 +266,7 @@ class StatsController extends WP_REST_Controller {
 	 */
 	public function get_overview( WP_REST_Request $request ): WP_REST_Response {
 		$period = $request->get_param( 'period' );
-		$data = $this->service->getOverview( $period );
+		$data   = $this->service->getOverview( $period );
 
 		return new WP_REST_Response( $data, 200 );
 	}
@@ -319,7 +319,7 @@ class StatsController extends WP_REST_Controller {
 	 */
 	public function get_trends( WP_REST_Request $request ): WP_REST_Response {
 		// Period zu date_from/date_to konvertieren.
-		$period = $request->get_param( 'period' );
+		$period     = $request->get_param( 'period' );
 		$date_range = $period ? $this->service->getDateRange( $period ) : [];
 
 		$args = [
@@ -346,7 +346,7 @@ class StatsController extends WP_REST_Controller {
 			return $this->requireProFeature( 'time_to_hire', __( 'Time-to-Hire Statistics', 'recruiting-playbook' ) );
 		}
 
-		$period = $request->get_param( 'period' ) ?? '90days';
+		$period   = $request->get_param( 'period' ) ?? '90days';
 		$overview = $this->service->getOverview( $period );
 		$avg_days = $overview['time_to_hire']['average_days'] ?? 10;
 
@@ -356,16 +356,19 @@ class StatsController extends WP_REST_Controller {
 			$date = gmdate( 'Y-m-d', strtotime( "-{$i} weeks" ) );
 			// Simulierte Variation um den Durchschnitt.
 			$variation = $avg_days > 0 ? wp_rand( -3, 3 ) : 0;
-			$trend[] = [
+			$trend[]   = [
 				'date'         => $date,
 				'average_days' => max( 1, $avg_days + $variation ),
 			];
 		}
 
-		return new WP_REST_Response( [
-			'overall' => $overview['time_to_hire'],
-			'trend'   => $trend,
-		], 200 );
+		return new WP_REST_Response(
+			[
+				'overall' => $overview['time_to_hire'],
+				'trend'   => $trend,
+			],
+			200
+		);
 	}
 
 	/**
@@ -380,19 +383,19 @@ class StatsController extends WP_REST_Controller {
 			return $this->requireProFeature( 'conversion_stats', __( 'Conversion Statistics', 'recruiting-playbook' ) );
 		}
 
-		$period = $request->get_param( 'period' ) ?? '30days';
-		$overview = $this->service->getOverview( $period );
+		$period       = $request->get_param( 'period' ) ?? '30days';
+		$overview     = $this->service->getOverview( $period );
 		$applications = $overview['applications'];
 
 		// Funnel basierend auf Bewerbungs-Status (Pipeline-Sicht).
-		$total = $applications['total'] ?? 0;
+		$total       = $applications['total'] ?? 0;
 		$in_progress = $applications['in_progress'] ?? 0;
-		$hired = $applications['hired'] ?? 0;
+		$hired       = $applications['hired'] ?? 0;
 
 		// Berechne Pipeline-Stufen.
-		$screening = $total; // Alle eingegangenen Bewerbungen.
-		$interview = $in_progress + $hired; // In Bearbeitung + Eingestellt.
-		$offer = $hired > 0 ? (int) ceil( $hired * 1.5 ) : 0; // Schätzung.
+		$screening   = $total; // Alle eingegangenen Bewerbungen.
+		$interview   = $in_progress + $hired; // In Bearbeitung + Eingestellt.
+		$offer       = $hired > 0 ? (int) ceil( $hired * 1.5 ) : 0; // Schätzung.
 		$hired_count = $hired;
 
 		// Conversion-Raten berechnen.
@@ -411,7 +414,7 @@ class StatsController extends WP_REST_Controller {
 		}
 
 		// Top-konvertierende Jobs (nach Einstellungsquote).
-		$top_jobs = $overview['top_jobs'] ?? [];
+		$top_jobs       = $overview['top_jobs'] ?? [];
 		$top_converting = array_filter(
 			$top_jobs,
 			fn( $job ) => ( (int) $job['applications'] ) > 0
@@ -422,9 +425,9 @@ class StatsController extends WP_REST_Controller {
 			function ( $job ) use ( $hired_count, $total ) {
 				$apps = (int) $job['applications'];
 				// Simulierte Conversion basierend auf Anteil.
-				$job['applications'] = $apps; // Als Integer.
+				$job['applications']    = $apps; // Als Integer.
 				$job['conversion_rate'] = $total > 0 ? round( ( $apps / $total ) * 100, 1 ) : 0;
-				$job['status'] = $job['status'] ?? 'publish';
+				$job['status']          = $job['status'] ?? 'publish';
 				return $job;
 			},
 			$top_converting
@@ -433,17 +436,20 @@ class StatsController extends WP_REST_Controller {
 		// Sortieren nach Conversion.
 		usort( $top_converting, fn( $a, $b ) => $b['conversion_rate'] <=> $a['conversion_rate'] );
 
-		return new WP_REST_Response( [
-			'overall' => $overview['conversion_rate'],
-			'funnel'  => [
-				'job_list_views'   => $screening,
-				'job_detail_views' => $screening,
-				'form_starts'      => $interview,
-				'form_completions' => $total,
-				'rates'            => $rates,
+		return new WP_REST_Response(
+			[
+				'overall'             => $overview['conversion_rate'],
+				'funnel'              => [
+					'job_list_views'   => $screening,
+					'job_detail_views' => $screening,
+					'form_starts'      => $interview,
+					'form_completions' => $total,
+					'rates'            => $rates,
+				],
+				'top_converting_jobs' => array_slice( $top_converting, 0, 5 ),
 			],
-			'top_converting_jobs' => array_slice( $top_converting, 0, 5 ),
-		], 200 );
+			200
+		);
 	}
 
 	/**
@@ -536,8 +542,8 @@ class StatsController extends WP_REST_Controller {
 				$feature_name
 			),
 			[
-				'status'  => 403,
-				'feature' => $feature,
+				'status'      => 403,
+				'feature'     => $feature,
 				'upgrade_url' => function_exists( 'rp_upgrade_url' ) ? rp_upgrade_url( 'PRO' ) : '',
 			]
 		);

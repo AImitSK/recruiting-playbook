@@ -37,7 +37,7 @@ class TimeToHireService {
 	/**
 	 * Time-to-Hire berechnen
 	 *
-	 * @param array $date_range Zeitraum mit 'from' und 'to'.
+	 * @param array    $date_range Zeitraum mit 'from' und 'to'.
 	 * @param int|null $job_id Optional: Filter nach Stelle.
 	 * @return array
 	 */
@@ -48,7 +48,7 @@ class TimeToHireService {
 			return $this->emptyResult();
 		}
 
-		$days = [];
+		$days     = [];
 		$by_stage = [
 			'new_to_screening'       => [],
 			'screening_to_interview' => [],
@@ -59,7 +59,7 @@ class TimeToHireService {
 		foreach ( $hired_applications as $app ) {
 			// Gesamtzeit.
 			$total_days = (int) $app['days_to_hire'];
-			$days[] = $total_days;
+			$days[]     = $total_days;
 
 			// Zeit pro Stage (aus Activity Log).
 			$stages = $this->getStageTransitions( (int) $app['id'] );
@@ -91,7 +91,7 @@ class TimeToHireService {
 	 */
 	private function emptyResult(): array {
 		return [
-			'overall' => [
+			'overall'  => [
 				'average_days' => null,
 				'median_days'  => null,
 				'min_days'     => null,
@@ -99,10 +99,22 @@ class TimeToHireService {
 				'total_hires'  => 0,
 			],
 			'by_stage' => [
-				'new_to_screening'       => [ 'average_days' => null, 'median_days' => null ],
-				'screening_to_interview' => [ 'average_days' => null, 'median_days' => null ],
-				'interview_to_offer'     => [ 'average_days' => null, 'median_days' => null ],
-				'offer_to_hired'         => [ 'average_days' => null, 'median_days' => null ],
+				'new_to_screening'       => [
+					'average_days' => null,
+					'median_days'  => null,
+				],
+				'screening_to_interview' => [
+					'average_days' => null,
+					'median_days'  => null,
+				],
+				'interview_to_offer'     => [
+					'average_days' => null,
+					'median_days'  => null,
+				],
+				'offer_to_hired'         => [
+					'average_days' => null,
+					'median_days'  => null,
+				],
 			],
 			'trend'    => [],
 			'by_job'   => [],
@@ -132,21 +144,21 @@ class TimeToHireService {
 			'offer_hired'         => 'offer_to_hired',
 		];
 
-		$prev_date = null;
+		$prev_date   = null;
 		$prev_status = null;
 
 		foreach ( $transitions as $transition ) {
 			$from = $transition['old_value'] ?? '';
-			$to = $transition['new_value'] ?? '';
+			$to   = $transition['new_value'] ?? '';
 			$date = $transition['created_at'];
 
 			$key = "{$from}_{$to}";
 			if ( isset( $stage_mapping[ $key ] ) && $prev_date ) {
-				$days = $this->calculateDaysBetween( $prev_date, $date );
+				$days                             = $this->calculateDaysBetween( $prev_date, $date );
 				$result[ $stage_mapping[ $key ] ] = $days;
 			}
 
-			$prev_date = $date;
+			$prev_date   = $date;
 			$prev_status = $to;
 		}
 
@@ -197,7 +209,7 @@ class TimeToHireService {
 				];
 			}
 			$by_month[ $month ]['days'][] = (int) $app['days_to_hire'];
-			$by_month[ $month ]['hires']++;
+			++$by_month[ $month ]['hires'];
 		}
 
 		$result = [];
@@ -233,12 +245,12 @@ class TimeToHireService {
 				];
 			}
 			$by_job[ $job_id ]['days'][] = (int) $app['days_to_hire'];
-			$by_job[ $job_id ]['hires']++;
+			++$by_job[ $job_id ]['hires'];
 		}
 
 		$result = [];
 		foreach ( $by_job as $job_id => $data ) {
-			$job = get_post( $job_id );
+			$job      = get_post( $job_id );
 			$result[] = [
 				'job_id'       => $job_id,
 				'job_title'    => $job ? $job->post_title : __( 'Unknown', 'recruiting-playbook' ),
@@ -265,7 +277,7 @@ class TimeToHireService {
 		}
 
 		sort( $values );
-		$count = count( $values );
+		$count  = count( $values );
 		$middle = (int) floor( $count / 2 );
 
 		if ( $count % 2 === 0 ) {
@@ -284,7 +296,7 @@ class TimeToHireService {
 	 */
 	private function calculateDaysBetween( string $from, string $to ): int {
 		$from_date = new \DateTime( $from );
-		$to_date = new \DateTime( $to );
+		$to_date   = new \DateTime( $to );
 
 		return (int) $from_date->diff( $to_date )->days;
 	}

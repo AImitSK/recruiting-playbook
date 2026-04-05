@@ -34,7 +34,7 @@ class AiJobMatch extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'select',
 					'heading'     => esc_attr__( 'Job', 'recruiting-playbook' ),

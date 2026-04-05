@@ -33,7 +33,7 @@ class AiJobFinder extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'textfield',
 					'heading'     => esc_attr__( 'Heading', 'recruiting-playbook' ),

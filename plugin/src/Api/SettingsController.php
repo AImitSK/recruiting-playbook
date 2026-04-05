@@ -143,31 +143,33 @@ class SettingsController extends WP_REST_Controller {
 			$privacy_page_id = url_to_postid( $settings['privacy_url'] );
 		}
 
-		return rest_ensure_response( [
-			// Allgemeine Einstellungen.
-			'notification_email'  => $settings['notification_email'] ?? '',
-			'privacy_page_id'     => $privacy_page_id,
-			'jobs_per_page'       => (int) ( $settings['jobs_per_page'] ?? 10 ),
-			'jobs_slug'           => $settings['jobs_slug'] ?? 'jobs',
-			'enable_schema'       => (bool) ( $settings['enable_schema'] ?? true ),
+		return rest_ensure_response(
+			[
+				// Allgemeine Einstellungen.
+				'notification_email'  => $settings['notification_email'] ?? '',
+				'privacy_page_id'     => $privacy_page_id,
+				'jobs_per_page'       => (int) ( $settings['jobs_per_page'] ?? 10 ),
+				'jobs_slug'           => $settings['jobs_slug'] ?? 'jobs',
+				'enable_schema'       => (bool) ( $settings['enable_schema'] ?? true ),
 
-			// Firmendaten.
-			'company_name'        => $settings['company_name'] ?? '',
-			'company_street'      => $settings['company_street'] ?? '',
-			'company_zip'         => $settings['company_zip'] ?? '',
-			'company_city'        => $settings['company_city'] ?? '',
-			'company_phone'       => $settings['company_phone'] ?? '',
-			'company_website'     => $settings['company_website'] ?? '',
-			'company_email'       => $settings['company_email'] ?? '',
+				// Firmendaten.
+				'company_name'        => $settings['company_name'] ?? '',
+				'company_street'      => $settings['company_street'] ?? '',
+				'company_zip'         => $settings['company_zip'] ?? '',
+				'company_city'        => $settings['company_city'] ?? '',
+				'company_phone'       => $settings['company_phone'] ?? '',
+				'company_website'     => $settings['company_website'] ?? '',
+				'company_email'       => $settings['company_email'] ?? '',
 
-			// Absender.
-			'sender_name'         => $settings['sender_name'] ?? '',
-			'sender_email'        => $settings['sender_email'] ?? '',
+				// Absender.
+				'sender_name'         => $settings['sender_name'] ?? '',
+				'sender_email'        => $settings['sender_email'] ?? '',
 
-			// Pro-Features.
-			'hide_email_branding' => (bool) ( $settings['hide_email_branding'] ?? false ),
-			'disable_ai_features' => (bool) ( $settings['disable_ai_features'] ?? false ),
-		] );
+				// Pro-Features.
+				'hide_email_branding' => (bool) ( $settings['hide_email_branding'] ?? false ),
+				'disable_ai_features' => (bool) ( $settings['disable_ai_features'] ?? false ),
+			]
+		);
 	}
 
 	/**
@@ -280,10 +282,12 @@ class SettingsController extends WP_REST_Controller {
 			set_transient( 'rp_flush_rewrite_rules', true, 60 );
 		}
 
-		return rest_ensure_response( [
-			'success' => true,
-			'message' => __( 'Settings saved.', 'recruiting-playbook' ),
-		] );
+		return rest_ensure_response(
+			[
+				'success' => true,
+				'message' => __( 'Settings saved.', 'recruiting-playbook' ),
+			]
+		);
 	}
 
 	/**
@@ -293,22 +297,22 @@ class SettingsController extends WP_REST_Controller {
 	 */
 	private function get_defaults(): array {
 		return [
-			'notification_email'   => get_option( 'admin_email' ),
-			'privacy_url'          => get_privacy_policy_url(),
-			'company_name'         => get_bloginfo( 'name' ),
-			'company_street'       => '',
-			'company_zip'          => '',
-			'company_city'         => '',
-			'company_phone'        => '',
-			'company_website'      => home_url(),
-			'company_email'        => get_option( 'admin_email' ),
-			'sender_name'          => __( 'HR Department', 'recruiting-playbook' ),
-			'sender_email'         => get_option( 'admin_email' ),
-			'jobs_per_page'        => 10,
-			'jobs_slug'            => 'jobs',
-			'enable_schema'        => true,
-			'hide_email_branding'  => false,
-			'disable_ai_features'  => false,
+			'notification_email'  => get_option( 'admin_email' ),
+			'privacy_url'         => get_privacy_policy_url(),
+			'company_name'        => get_bloginfo( 'name' ),
+			'company_street'      => '',
+			'company_zip'         => '',
+			'company_city'        => '',
+			'company_phone'       => '',
+			'company_website'     => home_url(),
+			'company_email'       => get_option( 'admin_email' ),
+			'sender_name'         => __( 'HR Department', 'recruiting-playbook' ),
+			'sender_email'        => get_option( 'admin_email' ),
+			'jobs_per_page'       => 10,
+			'jobs_slug'           => 'jobs',
+			'enable_schema'       => true,
+			'hide_email_branding' => false,
+			'disable_ai_features' => false,
 		];
 	}
 
@@ -461,7 +465,7 @@ class SettingsController extends WP_REST_Controller {
 		}
 
 		// Sanitize each status setting.
-		$sanitized = [];
+		$sanitized        = [];
 		$allowed_statuses = [ 'new', 'rejected', 'interview', 'offer', 'hired' ];
 
 		foreach ( $allowed_statuses as $status ) {
@@ -476,10 +480,12 @@ class SettingsController extends WP_REST_Controller {
 
 		update_option( 'rp_auto_email_settings', $sanitized );
 
-		return rest_ensure_response( [
-			'settings' => $sanitized,
-			'message'  => __( 'Settings saved.', 'recruiting-playbook' ),
-		] );
+		return rest_ensure_response(
+			[
+				'settings' => $sanitized,
+				'message'  => __( 'Settings saved.', 'recruiting-playbook' ),
+			]
+		);
 	}
 
 	/**
@@ -625,12 +631,14 @@ class SettingsController extends WP_REST_Controller {
 			'theme_has_logo'         => (bool) get_theme_mod( 'custom_logo', 0 ),
 		];
 
-		return rest_ensure_response( [
-			'settings' => $settings,
-			'schema'   => $schema,
-			'defaults' => $defaults,
-			'meta'     => $meta,
-		] );
+		return rest_ensure_response(
+			[
+				'settings' => $settings,
+				'schema'   => $schema,
+				'defaults' => $defaults,
+				'meta'     => $meta,
+			]
+		);
 	}
 
 	/**
@@ -661,11 +669,13 @@ class SettingsController extends WP_REST_Controller {
 			);
 		}
 
-		return rest_ensure_response( [
-			'success'  => true,
-			'message'  => __( 'Design settings saved.', 'recruiting-playbook' ),
-			'settings' => $design_service->get_design_settings(),
-		] );
+		return rest_ensure_response(
+			[
+				'success'  => true,
+				'message'  => __( 'Design settings saved.', 'recruiting-playbook' ),
+				'settings' => $design_service->get_design_settings(),
+			]
+		);
 	}
 
 	/**
@@ -678,10 +688,12 @@ class SettingsController extends WP_REST_Controller {
 		$design_service = new DesignService();
 		$design_service->reset_to_defaults();
 
-		return rest_ensure_response( [
-			'success'  => true,
-			'message'  => __( 'Design settings reset.', 'recruiting-playbook' ),
-			'settings' => $design_service->get_design_settings(),
-		] );
+		return rest_ensure_response(
+			[
+				'success'  => true,
+				'message'  => __( 'Design settings reset.', 'recruiting-playbook' ),
+				'settings' => $design_service->get_design_settings(),
+			]
+		);
 	}
 }

@@ -575,9 +575,9 @@ class FormConfigService {
 							'field_key' => 'summary',
 							'type'      => 'summary',
 							'settings'  => [
-								'title'           => __( 'Your Information Overview', 'recruiting-playbook' ),
-								'layout'          => 'two-column',
-								'additional_text' => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
+								'title'            => __( 'Your Information Overview', 'recruiting-playbook' ),
+								'layout'           => 'two-column',
+								'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
 								'show_only_filled' => false,
 							],
 						],

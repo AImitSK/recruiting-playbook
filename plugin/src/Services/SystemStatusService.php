@@ -73,7 +73,7 @@ class SystemStatusService {
 			'stats_cache',
 		];
 
-		$tables = Schema::getTables();
+		$tables  = Schema::getTables();
 		$missing = [];
 
 		foreach ( $required_tables as $table_key ) {
@@ -125,7 +125,7 @@ class SystemStatusService {
 	 */
 	private function checkUploads(): array {
 		$upload_dir = wp_upload_dir();
-		$rp_dir = $upload_dir['basedir'] . '/recruiting-playbook/';
+		$rp_dir     = $upload_dir['basedir'] . '/recruiting-playbook/';
 
 		if ( ! file_exists( $rp_dir ) ) {
 			// Versuchen zu erstellen.
@@ -133,9 +133,9 @@ class SystemStatusService {
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Checking system status
-		$writable = is_writable( $rp_dir );
+		$writable    = is_writable( $rp_dir );
 		$files_count = 0;
-		$total_size = 0;
+		$total_size  = 0;
 
 		if ( is_dir( $rp_dir ) ) {
 			$iterator = new \RecursiveIteratorIterator(
@@ -144,7 +144,7 @@ class SystemStatusService {
 
 			foreach ( $iterator as $file ) {
 				if ( $file->isFile() ) {
-					$files_count++;
+					++$files_count;
 					$total_size += $file->getSize();
 				}
 			}
@@ -171,7 +171,7 @@ class SystemStatusService {
 	 */
 	private function checkCron(): array {
 		$next_cleanup = wp_next_scheduled( 'rp_daily_cleanup' );
-		$last_run = get_option( 'rp_last_cleanup_run', 0 );
+		$last_run     = get_option( 'rp_last_cleanup_run', 0 );
 
 		$cron_working = $next_cleanup > 0 || defined( 'DISABLE_WP_CRON' );
 
@@ -181,8 +181,8 @@ class SystemStatusService {
 				? __( 'Cron jobs active', 'recruiting-playbook' )
 				: __( 'Cron jobs not scheduled', 'recruiting-playbook' ),
 			'details' => [
-				'next_cleanup' => $next_cleanup ? gmdate( 'c', $next_cleanup ) : null,
-				'last_run'     => $last_run ? gmdate( 'c', $last_run ) : null,
+				'next_cleanup'     => $next_cleanup ? gmdate( 'c', $next_cleanup ) : null,
+				'last_run'         => $last_run ? gmdate( 'c', $last_run ) : null,
 				'wp_cron_disabled' => defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON,
 			],
 		];
@@ -273,7 +273,7 @@ class SystemStatusService {
 		}
 
 		// Freemius bietet automatisch Lizenz-Infos.
-		$is_paying = function_exists( 'rp_fs' ) ? rp_fs()->is_paying() : false;
+		$is_paying = function_exists( 'recpl_fs' ) ? recpl_fs()->is_paying() : false;
 
 		return [
 			'status'  => $is_paying ? 'ok' : 'warning',
@@ -341,13 +341,13 @@ class SystemStatusService {
 
 		$pending_count = is_array( $pending ) ? count( $pending ) : 0;
 		$running_count = is_array( $running ) ? count( $running ) : 0;
-		$failed_count = is_array( $failed ) ? count( $failed ) : 0;
+		$failed_count  = is_array( $failed ) ? count( $failed ) : 0;
 
-		$status = 'ok';
+		$status  = 'ok';
 		$message = __( 'Action Scheduler running', 'recruiting-playbook' );
 
 		if ( $failed_count > 0 ) {
-			$status = 'warning';
+			$status  = 'warning';
 			$message = sprintf(
 				/* translators: %d: Number of failed actions */
 				__( '%d failed actions', 'recruiting-playbook' ),
@@ -374,7 +374,7 @@ class SystemStatusService {
 	 * @return string
 	 */
 	private function determineOverallStatus( array $checks ): string {
-		$has_error = false;
+		$has_error   = false;
 		$has_warning = false;
 
 		foreach ( $checks as $check ) {
@@ -499,7 +499,7 @@ class SystemStatusService {
 				[ 'id' => $doc['id'] ],
 				[ '%d' ]
 			);
-			$deleted++;
+			++$deleted;
 		}
 
 		return $deleted;

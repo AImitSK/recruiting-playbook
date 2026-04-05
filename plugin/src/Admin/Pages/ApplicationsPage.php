@@ -50,7 +50,7 @@ class ApplicationsPage {
 	 * @return array<string, mixed>
 	 */
 	private function get_page_data(): array {
-		$per_page     = 20;
+		$per_page = 20;
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Admin list filtering via $_GET.
 		$current_page = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		$status       = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
@@ -59,20 +59,20 @@ class ApplicationsPage {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return [
-			'applications'  => $this->get_applications( $current_page, $per_page, $status, $job_id, $search ),
-			'statusCounts'  => $this->get_status_counts(),
-			'jobs'          => $this->get_jobs(),
-			'total'         => $this->get_total_count( $status, $job_id, $search ),
-			'currentPage'   => $current_page,
-			'perPage'       => $per_page,
-			'activeStatus'  => $status,
-			'activeJobId'   => $job_id,
-			'searchTerm'    => $search,
-			'hasApiAccess'  => $this->has_api_access(),
-			'canExport'     => function_exists( 'rp_can' ) && rp_can( 'csv_export' ),
-			'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-			'adminUrl'      => admin_url(),
-			'nonce'         => wp_create_nonce( 'rp_set_status' ),
+			'applications' => $this->get_applications( $current_page, $per_page, $status, $job_id, $search ),
+			'statusCounts' => $this->get_status_counts(),
+			'jobs'         => $this->get_jobs(),
+			'total'        => $this->get_total_count( $status, $job_id, $search ),
+			'currentPage'  => $current_page,
+			'perPage'      => $per_page,
+			'activeStatus' => $status,
+			'activeJobId'  => $job_id,
+			'searchTerm'   => $search,
+			'hasApiAccess' => $this->has_api_access(),
+			'canExport'    => function_exists( 'rp_can' ) && rp_can( 'csv_export' ),
+			'logoUrl'      => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			'adminUrl'     => admin_url(),
+			'nonce'        => wp_create_nonce( 'rp_set_status' ),
 		];
 	}
 
@@ -209,8 +209,8 @@ class ApplicationsPage {
 		}
 
 		// Fetch document counts.
-		$app_ids          = array_column( $results, 'id' );
-		$document_counts  = [];
+		$app_ids         = array_column( $results, 'id' );
+		$document_counts = [];
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$docs_table_exists = $wpdb->get_var(
 			$wpdb->prepare( 'SHOW TABLES LIKE %s', $documents_table )

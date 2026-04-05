@@ -53,9 +53,12 @@ class EmailField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'autocomplete' => 'email',
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'autocomplete' => 'email',
+			]
+		);
 	}
 
 	/**

@@ -30,7 +30,7 @@ class JobCategories extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => [
+			'params'          => [
 				[
 					'type'        => 'radio_button_set',
 					'heading'     => esc_attr__( 'Layout', 'recruiting-playbook' ),

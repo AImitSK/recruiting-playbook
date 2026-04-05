@@ -53,9 +53,12 @@ class PhoneField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'autocomplete' => 'tel',
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'autocomplete' => 'tel',
+			]
+		);
 	}
 
 	/**

@@ -107,7 +107,12 @@ abstract class AbstractWidget extends Widget_Base {
 	 * @return array<string, string> Optionen als slug => name.
 	 */
 	protected function getTaxonomyOptions( string $taxonomy ): array {
-		$terms   = get_terms( [ 'taxonomy' => $taxonomy, 'hide_empty' => false ] );
+		$terms   = get_terms(
+			[
+				'taxonomy'   => $taxonomy,
+				'hide_empty' => false,
+			]
+		);
 		$options = [ '' => esc_html__( '— All —', 'recruiting-playbook' ) ];
 
 		if ( ! is_wp_error( $terms ) && is_array( $terms ) ) {
@@ -125,13 +130,15 @@ abstract class AbstractWidget extends Widget_Base {
 	 * @return array<string, string> Optionen als ID => Titel.
 	 */
 	protected function getJobOptions(): array {
-		$jobs = get_posts( [
-			'post_type'      => 'job_listing',
-			'post_status'    => 'publish',
-			'posts_per_page' => 100,
-			'orderby'        => 'title',
-			'order'          => 'ASC',
-		] );
+		$jobs = get_posts(
+			[
+				'post_type'      => 'job_listing',
+				'post_status'    => 'publish',
+				'posts_per_page' => 100,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			]
+		);
 
 		$options = [ '' => esc_html__( '— Automatic —', 'recruiting-playbook' ) ];
 

@@ -112,20 +112,20 @@ class ApplicationService {
 		$has_consent = ! empty( $data['privacy_consent'] );
 
 		$application_data = [
-			'job_id'                   => (int) $data['job_id'],
-			'candidate_id'             => $candidate_id,
-			'status'                   => ApplicationStatus::NEW,
-			'cover_letter'             => $data['cover_letter'] ?? '',
-			'source'                   => 'website',
-			'consent_privacy'          => $has_consent ? 1 : 0,
-			'consent_privacy_at'       => $has_consent ? current_time( 'mysql' ) : null,
-			'consent_privacy_version'  => $has_consent ? get_option( 'rp_privacy_policy_version', '1.0' ) : '',
-			'consent_ip'               => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
-			'created_at'               => current_time( 'mysql' ),
-			'updated_at'               => current_time( 'mysql' ),
+			'job_id'                  => (int) $data['job_id'],
+			'candidate_id'            => $candidate_id,
+			'status'                  => ApplicationStatus::NEW,
+			'cover_letter'            => $data['cover_letter'] ?? '',
+			'source'                  => 'website',
+			'consent_privacy'         => $has_consent ? 1 : 0,
+			'consent_privacy_at'      => $has_consent ? current_time( 'mysql' ) : null,
+			'consent_privacy_version' => $has_consent ? get_option( 'rp_privacy_policy_version', '1.0' ) : '',
+			'consent_ip'              => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
+			'created_at'              => current_time( 'mysql' ),
+			'updated_at'              => current_time( 'mysql' ),
 		];
 
-		$table = $wpdb->prefix . 'rp_applications';
+		$table    = $wpdb->prefix . 'rp_applications';
 		$inserted = $wpdb->insert( $table, $application_data );
 
 		if ( false === $inserted ) {
@@ -244,7 +244,7 @@ class ApplicationService {
 		// Talent-Pool Status laden (Pro-Feature).
 		$application['in_talent_pool'] = false;
 		if ( function_exists( 'rp_can' ) && rp_can( 'advanced_applicant_management' ) ) {
-			$talent_pool_service = new TalentPoolService();
+			$talent_pool_service           = new TalentPoolService();
 			$application['in_talent_pool'] = $talent_pool_service->isInPool( (int) $application['candidate_id'] );
 		}
 
@@ -260,10 +260,10 @@ class ApplicationService {
 	public function list( array $args = [] ): array {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'rp_applications';
+		$table            = $wpdb->prefix . 'rp_applications';
 		$candidates_table = $wpdb->prefix . 'rp_candidates';
 
-		$where = [ '1=1' ];
+		$where  = [ '1=1' ];
 		$values = [];
 
 		// Filter: Zugewiesene Stellen (Rollen-basiert).
@@ -275,20 +275,20 @@ class ApplicationService {
 
 		// Filter: Job ID
 		if ( ! empty( $args['job_id'] ) ) {
-			$where[] = 'a.job_id = %d';
+			$where[]  = 'a.job_id = %d';
 			$values[] = (int) $args['job_id'];
 		}
 
 		// Filter: Status
 		if ( ! empty( $args['status'] ) ) {
-			$where[] = 'a.status = %s';
+			$where[]  = 'a.status = %s';
 			$values[] = $args['status'];
 		}
 
 		// Filter: Suche
 		if ( ! empty( $args['search'] ) ) {
-			$search = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[] = '(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)';
+			$search   = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$where[]  = '(c.first_name LIKE %s OR c.last_name LIKE %s OR c.email LIKE %s)';
 			$values[] = $search;
 			$values[] = $search;
 			$values[] = $search;
@@ -302,16 +302,16 @@ class ApplicationService {
 			'name'   => 'c.last_name',
 			'status' => 'a.status',
 		];
-		$orderby_key = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
-		$orderby     = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
+		$orderby_key     = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
+		$orderby         = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
 
 		// Order direction - nur ASC oder DESC erlaubt.
 		$order = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 
 		// Pagination
 		$per_page = min( max( (int) ( $args['per_page'] ?? 20 ), 1 ), 100 );
-		$page = max( (int) ( $args['page'] ?? 1 ), 1 );
-		$offset = ( $page - 1 ) * $per_page;
+		$page     = max( (int) ( $args['page'] ?? 1 ), 1 );
+		$offset   = ( $page - 1 ) * $per_page;
 
 		// Gesamtzahl ermitteln
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table names are hardcoded (plugin prefix + constant suffix), $where_clause uses prepared placeholders
@@ -433,9 +433,9 @@ class ApplicationService {
 			'status'          => 'a.status',
 			'kanban_position' => 'a.kanban_position',
 		];
-		$orderby_key = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
-		$orderby     = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
-		$order       = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
+		$orderby_key     = isset( $args['orderby'] ) ? sanitize_key( $args['orderby'] ) : 'date';
+		$orderby         = $allowed_orderby[ $orderby_key ] ?? 'a.created_at';
+		$order           = isset( $args['order'] ) && 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 
 		// Pagination - Kanban kann mehr anzeigen.
 		$per_page = min( max( (int) ( $args['per_page'] ?? 200 ), 1 ), 500 );
@@ -567,7 +567,7 @@ class ApplicationService {
 		// Status aktualisieren
 		$table = $wpdb->prefix . 'rp_applications';
 
-		$update_data = [
+		$update_data   = [
 			'status'     => $status,
 			'updated_at' => current_time( 'mysql' ),
 		];
@@ -630,8 +630,8 @@ class ApplicationService {
 	private function getOrCreateCandidate( array $data ): int|WP_Error {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'rp_candidates';
-		$email = strtolower( trim( $data['email'] ) );
+		$table      = $wpdb->prefix . 'rp_candidates';
+		$email      = strtolower( trim( $data['email'] ) );
 		$email_hash = hash( 'sha256', $email );
 
 		// Prüfen ob Kandidat bereits existiert
@@ -649,12 +649,12 @@ class ApplicationService {
 			$wpdb->update(
 				$table,
 				[
-					'email_hash'  => $email_hash,
-					'salutation'  => $data['salutation'] ?? '',
-					'first_name'  => $data['first_name'],
-					'last_name'   => $data['last_name'],
-					'phone'       => $data['phone'] ?? '',
-					'updated_at'  => current_time( 'mysql' ),
+					'email_hash' => $email_hash,
+					'salutation' => $data['salutation'] ?? '',
+					'first_name' => $data['first_name'],
+					'last_name'  => $data['last_name'],
+					'phone'      => $data['phone'] ?? '',
+					'updated_at' => current_time( 'mysql' ),
 				],
 				[ 'id' => $existing ],
 				[ '%s', '%s', '%s', '%s', '%s', '%s' ],
@@ -872,7 +872,7 @@ class ApplicationService {
 
 	/**
 	 * Send basic confirmation email using WordPress native wp_mail()
-	 * 
+	 *
 	 * Fallback für Free-Version wenn EmailService nicht verfügbar ist.
 	 *
 	 * @param int   $application_id Application ID.
@@ -902,14 +902,17 @@ class ApplicationService {
 
 		$message = sprintf(
 			/* translators: 1: candidate name, 2: job title, 3: site name */
-			__( 'Hello %1$s,
+			__(
+				'Hello %1$s,
 
 Thank you for your application for the position "%2$s".
 
 We have received your application and will review it shortly.
 
 Best regards,
-%3$s', 'recruiting-playbook' ),
+%3$s',
+				'recruiting-playbook'
+			),
 			$candidate_name,
 			$job->post_title,
 			get_bloginfo( 'name' )
@@ -923,7 +926,7 @@ Best regards,
 		wp_mail( $candidate_email, $subject, $message, $headers );
 
 		// Admin notification email.
-		$admin_email = get_option( 'admin_email' );
+		$admin_email   = get_option( 'admin_email' );
 		$admin_subject = sprintf(
 			/* translators: 1: candidate name, 2: job title */
 			__( 'New application: %1$s for %2$s', 'recruiting-playbook' ),
@@ -933,12 +936,15 @@ Best regards,
 
 		$admin_message = sprintf(
 			/* translators: 1: candidate name, 2: candidate email, 3: job title, 4: admin URL */
-			__( 'A new application was received:
+			__(
+				'A new application was received:
 
 Applicant: %1$s (%2$s)
 Position: %3$s
 
-View application: %4$s', 'recruiting-playbook' ),
+View application: %4$s',
+				'recruiting-playbook'
+			),
 			$candidate_name,
 			$candidate_email,
 			$job->post_title,

@@ -340,32 +340,32 @@ class EmailTemplateController extends WP_REST_Controller {
 			fn( $v ) => null !== $v
 		);
 
-		if ( empty( $data ) ) {
-			return new WP_Error(
-				'rest_template_no_data',
-				__( 'No data to update.', 'recruiting-playbook' ),
-				[ 'status' => 400 ]
+			if ( empty( $data ) ) {
+				return new WP_Error(
+					'rest_template_no_data',
+					__( 'No data to update.', 'recruiting-playbook' ),
+					[ 'status' => 400 ]
+				);
+			}
+
+			$result = $this->template_service->update( $id, $data );
+
+			if ( false === $result ) {
+				return new WP_Error(
+					'rest_template_update_failed',
+					__( 'Template could not be updated.', 'recruiting-playbook' ),
+					[ 'status' => 500 ]
+				);
+			}
+
+			return new WP_REST_Response(
+				[
+					'success'  => true,
+					'message'  => __( 'Template has been updated.', 'recruiting-playbook' ),
+					'template' => $result,
+				],
+				200
 			);
-		}
-
-		$result = $this->template_service->update( $id, $data );
-
-		if ( false === $result ) {
-			return new WP_Error(
-				'rest_template_update_failed',
-				__( 'Template could not be updated.', 'recruiting-playbook' ),
-				[ 'status' => 500 ]
-			);
-		}
-
-		return new WP_REST_Response(
-			[
-				'success'  => true,
-				'message'  => __( 'Template has been updated.', 'recruiting-playbook' ),
-				'template' => $result,
-			],
-			200
-		);
 	}
 
 	/**

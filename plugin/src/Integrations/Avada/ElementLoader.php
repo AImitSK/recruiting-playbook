@@ -28,7 +28,7 @@ class ElementLoader {
 		$this->registerElement( 'JobCategories' );
 
 		// Pro Elements (AI-Features).
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) {
 				$this->registerElement( 'AiJobFinder' );
 				$this->registerElement( 'AiJobMatch' );

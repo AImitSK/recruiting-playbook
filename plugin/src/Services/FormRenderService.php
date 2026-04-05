@@ -176,8 +176,8 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderStep( array $step, int $index, array $field_definitions, array $config ): string {
-		$step_num   = $index + 1;
-		$is_finale  = ! empty( $step['is_finale'] );
+		$step_num  = $index + 1;
+		$is_finale = ! empty( $step['is_finale'] );
 
 		$output = sprintf(
 			'<div x-show="step === %d" x-transition>',
@@ -1034,16 +1034,16 @@ class FormRenderService {
 
 						// Feld zur Liste hinzufügen.
 						$field_data = [
-							'field_key'    => $field_key,
-							'type'         => $field_def['field_type'],
-							'label'        => $field_def['label'],
-							'placeholder'  => $field_def['placeholder'] ?? '',
-							'description'  => $field_def['description'] ?? '',
-							'is_required'  => $field_config['is_required'] ?? $field_def['is_required'] ?? false,
-							'validation'   => $field_def['validation'] ?? [],
-							'settings'     => $field_def['settings'] ?? [],
-							'options'      => $field_def['options'] ?? [],
-							'step_id'      => $step['id'] ?? $step_index,
+							'field_key'   => $field_key,
+							'type'        => $field_def['field_type'],
+							'label'       => $field_def['label'],
+							'placeholder' => $field_def['placeholder'] ?? '',
+							'description' => $field_def['description'] ?? '',
+							'is_required' => $field_config['is_required'] ?? $field_def['is_required'] ?? false,
+							'validation'  => $field_def['validation'] ?? [],
+							'settings'    => $field_def['settings'] ?? [],
+							'options'     => $field_def['options'] ?? [],
+							'step_id'     => $step['id'] ?? $step_index,
 						];
 
 						$fields[]      = $field_data;

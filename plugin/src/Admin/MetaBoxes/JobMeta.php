@@ -24,28 +24,28 @@ class JobMeta {
 	 * Meta-Felder Definitionen
 	 */
 	private const FIELDS = [
-		'_rp_featured'            => [
+		'_rp_featured'             => [
 			'type'     => 'checkbox',
 			'label'    => 'Hervorgehobene Stelle (Top-Job)',
 			'sanitize' => 'boolval',
 		],
-		'_rp_salary_min'          => [
+		'_rp_salary_min'           => [
 			'type'     => 'number',
 			'label'    => 'Gehalt (Min)',
 			'sanitize' => 'absint',
 		],
-		'_rp_salary_max'          => [
+		'_rp_salary_max'           => [
 			'type'     => 'number',
 			'label'    => 'Gehalt (Max)',
 			'sanitize' => 'absint',
 		],
-		'_rp_salary_currency'     => [
+		'_rp_salary_currency'      => [
 			'type'    => 'select',
 			'label'   => 'Währung',
 			'options' => [ 'EUR', 'CHF', 'USD' ],
 			'default' => 'EUR',
 		],
-		'_rp_salary_period'       => [
+		'_rp_salary_period'        => [
 			'type'    => 'select',
 			'label'   => 'Gehaltszeitraum',
 			'options' => [
@@ -55,7 +55,7 @@ class JobMeta {
 			],
 			'default' => 'month',
 		],
-		'_rp_hide_salary'         => [
+		'_rp_hide_salary'          => [
 			'type'     => 'checkbox',
 			'label'    => 'Gehalt nicht anzeigen',
 			'sanitize' => 'boolval',
@@ -65,22 +65,22 @@ class JobMeta {
 			'label'    => 'Bewerbungsfrist',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_contact_person'      => [
+		'_rp_contact_person'       => [
 			'type'     => 'text',
 			'label'    => 'Ansprechpartner',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_contact_email'       => [
+		'_rp_contact_email'        => [
 			'type'     => 'email',
 			'label'    => 'Kontakt E-Mail',
 			'sanitize' => 'sanitize_email',
 		],
-		'_rp_contact_phone'       => [
+		'_rp_contact_phone'        => [
 			'type'     => 'tel',
 			'label'    => 'Kontakt Telefon',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_remote_option'       => [
+		'_rp_remote_option'        => [
 			'type'    => 'select',
 			'label'   => 'Remote-Arbeit',
 			'options' => [
@@ -90,7 +90,7 @@ class JobMeta {
 				'full'   => '100% Remote möglich',
 			],
 		],
-		'_rp_start_date'          => [
+		'_rp_start_date'           => [
 			'type'        => 'text',
 			'label'       => 'Startdatum',
 			'placeholder' => 'z.B. "Ab sofort" oder "01.04.2025"',

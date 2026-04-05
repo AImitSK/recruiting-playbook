@@ -53,9 +53,12 @@ class TextareaField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'rows' => 5,
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'rows' => 5,
+			]
+		);
 	}
 
 	/**

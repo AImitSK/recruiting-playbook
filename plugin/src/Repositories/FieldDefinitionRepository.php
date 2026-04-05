@@ -244,7 +244,7 @@ class FieldDefinitionRepository {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$where = [ 'deleted_at IS NULL' ];
+		$where  = [ 'deleted_at IS NULL' ];
 		$params = [];
 
 		if ( $args['template_id'] !== null ) {

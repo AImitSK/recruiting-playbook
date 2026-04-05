@@ -113,7 +113,7 @@ class XmlJobFeed {
 			]
 		);
 
-		$dom = new \DOMDocument( '1.0', 'UTF-8' );
+		$dom               = new \DOMDocument( '1.0', 'UTF-8' );
 		$dom->formatOutput = true;
 
 		$root = $dom->createElement( 'jobs' );
@@ -298,7 +298,7 @@ class XmlJobFeed {
 			'month' => 'Monat',
 			'year'  => 'Jahr',
 		];
-		$period_label = $period_labels[ $period ] ?? 'Monat';
+		$period_label  = $period_labels[ $period ] ?? 'Monat';
 
 		if ( $min && $max ) {
 			$salary_text = sprintf(

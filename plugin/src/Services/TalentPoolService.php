@@ -103,13 +103,15 @@ class TalentPoolService {
 				]
 			);
 		} else {
-			$entry_id = $this->repository->create( [
-				'candidate_id' => $candidate_id,
-				'added_by'     => get_current_user_id(),
-				'reason'       => sanitize_textarea_field( $reason ),
-				'tags'         => $normalized_tags,
-				'expires_at'   => $expires_at,
-			] );
+			$entry_id = $this->repository->create(
+				[
+					'candidate_id' => $candidate_id,
+					'added_by'     => get_current_user_id(),
+					'reason'       => sanitize_textarea_field( $reason ),
+					'tags'         => $normalized_tags,
+					'expires_at'   => $expires_at,
+				]
+			);
 		}
 
 		if ( ! $entry_id ) {
@@ -371,5 +373,4 @@ class TalentPoolService {
 			);
 		}
 	}
-
 }

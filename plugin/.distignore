@@ -1,0 +1,43 @@
+# Distribution ignore file for WordPress.org releases
+# These files/folders will be excluded from the release ZIP
+
+# Development files
+.distignore
+.gitignore
+.gitkeep
+.prettierrc.js
+.eslintrc.js
+.editorconfig
+.env
+.env.example
+
+# Config files
+phpcs.xml.dist
+phpstan.neon
+composer.json
+composer.lock
+package.json
+package-lock.json
+webpack.config.js
+tailwind.config.js
+postcss.config.js
+
+# Development directories
+/tests/
+/tools/
+/node_modules/
+/.git/
+/.github/
+
+# Source files (compiled assets are in dist/)
+/assets/src/
+
+# Documentation
+/docs/
+*.md
+!readme.txt
+
+# IDE
+/.idea/
+/.vscode/
+*.code-workspace

@@ -261,7 +261,7 @@ class EmailLogRepository {
 		$orderby = in_array( $args['orderby'], [ 'created_at', 'sent_at', 'status', 'recipient_email' ], true )
 			? $args['orderby']
 			: 'created_at';
-		$order = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
+		$order   = 'ASC' === strtoupper( $args['order'] ) ? 'ASC' : 'DESC';
 
 		// Total Count.
 		$count_sql = "SELECT COUNT(*) FROM {$this->table} WHERE {$where_clause}";
@@ -566,7 +566,7 @@ class EmailLogRepository {
 
 		// Sender laden.
 		if ( $log['sent_by'] ) {
-			$user             = get_userdata( (int) $log['sent_by'] );
+			$user                = get_userdata( (int) $log['sent_by'] );
 			$log['sent_by_user'] = $user ? [
 				'id'   => $user->ID,
 				'name' => $user->display_name,
@@ -588,9 +588,9 @@ class EmailLogRepository {
 		$log['sent_by']        = $log['sent_by'] ? (int) $log['sent_by'] : null;
 
 		// Berechtigungen.
-		$is_admin           = current_user_can( 'manage_options' );
-		$log['can_cancel']  = $is_admin && 'pending' === $log['status'];
-		$log['can_resend']  = $is_admin && in_array( $log['status'], [ 'sent', 'failed' ], true );
+		$is_admin          = current_user_can( 'manage_options' );
+		$log['can_cancel'] = $is_admin && 'pending' === $log['status'];
+		$log['can_resend'] = $is_admin && in_array( $log['status'], [ 'sent', 'failed' ], true );
 
 		return $log;
 	}

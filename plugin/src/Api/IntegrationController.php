@@ -189,8 +189,8 @@ class IntegrationController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_settings( WP_REST_Request $request ): WP_REST_Response {
-		$data     = $request->get_json_params();
-		$current  = get_option( self::OPTION_NAME, [] );
+		$data      = $request->get_json_params();
+		$current   = get_option( self::OPTION_NAME, [] );
 		$sanitized = [];
 
 		// Boolean-Felder.
@@ -241,7 +241,7 @@ class IntegrationController extends WP_REST_Controller {
 			$sanitized['google_ads_conversion_label'] = sanitize_text_field( $data['google_ads_conversion_label'] );
 		}
 		if ( isset( $data['google_ads_conversion_value'] ) ) {
-			$value = $data['google_ads_conversion_value'];
+			$value                                    = $data['google_ads_conversion_value'];
 			$sanitized['google_ads_conversion_value'] = '' === $value ? '' : (string) max( 0, (float) $value );
 		}
 
@@ -489,4 +489,3 @@ class IntegrationController extends WP_REST_Controller {
 		return $masked;
 	}
 }
-

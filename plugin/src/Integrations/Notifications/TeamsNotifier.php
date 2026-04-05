@@ -420,10 +420,24 @@ class TeamsNotifier extends NotificationService {
 		if ( 429 === $code || 500 === $code || 502 === $code ) {
 			// Retry für Rate Limit oder Server Error.
 			$this->addToRetryQueue( $payload );
-			$this->log( $event, false, [ 'http_code' => $code, 'retry' => true ] );
+			$this->log(
+				$event,
+				false,
+				[
+					'http_code' => $code,
+					'retry'     => true,
+				]
+			);
 		} else {
 			// Permanenter Fehler (400, 401, 404, etc.) - kein Retry.
-			$this->log( $event, false, [ 'http_code' => $code, 'retry' => false ] );
+			$this->log(
+				$event,
+				false,
+				[
+					'http_code' => $code,
+					'retry'     => false,
+				]
+			);
 		}
 
 		return false;

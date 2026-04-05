@@ -94,7 +94,7 @@ class ExportService {
 		$columns = $this->getExportColumns( $args['columns'] ?? [] );
 
 		// Custom Fields Header ermitteln (Pro-Feature).
-		$custom_field_headers = [];
+		$custom_field_headers  = [];
 		$include_custom_fields = function_exists( 'rp_can' ) && rp_can( 'custom_fields' );
 		if ( $include_custom_fields ) {
 			$custom_field_headers = $this->getCustomFieldHeaders( $args['job_id'] ?? null );
@@ -126,7 +126,7 @@ class ExportService {
 						(int) ( $app['job_id'] ?? 0 ),
 						array_keys( $custom_field_headers )
 					);
-					$row = array_merge( $row, $custom_values );
+					$row           = array_merge( $row, $custom_values );
 				}
 
 				fputcsv( $output, $row, ';' );
@@ -138,7 +138,6 @@ class ExportService {
 			if ( function_exists( 'wp_cache_flush' ) ) {
 				wp_cache_flush();
 			}
-
 		} while ( count( $applications ) === self::BATCH_SIZE );
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Closing php://output stream
@@ -174,7 +173,7 @@ class ExportService {
 		fwrite( $output, chr( 0xEF ) . chr( 0xBB ) . chr( 0xBF ) );
 
 		$stats_service = new StatsService( $this->repository );
-		$period = $args['period'] ?? '30days';
+		$period        = $args['period'] ?? '30days';
 
 		// Übersicht exportieren.
 		$overview = $stats_service->getOverview( $period );
@@ -183,10 +182,14 @@ class ExportService {
 		fputcsv( $output, [ __( 'SUMMARY', 'recruiting-playbook' ) ], ';' );
 		fputcsv( $output, [ '' ], ';' );
 
-		fputcsv( $output, [
-			__( 'Metric', 'recruiting-playbook' ),
-			__( 'Value', 'recruiting-playbook' ),
-		], ';' );
+		fputcsv(
+			$output,
+			[
+				__( 'Metric', 'recruiting-playbook' ),
+				__( 'Value', 'recruiting-playbook' ),
+			],
+			';'
+		);
 
 		fputcsv( $output, [ __( 'Applications (total)', 'recruiting-playbook' ), $overview['applications']['total'] ], ';' );
 		fputcsv( $output, [ __( 'New applications', 'recruiting-playbook' ), $overview['applications']['new'] ], ';' );
@@ -210,16 +213,24 @@ class ExportService {
 		fputcsv( $output, [ __( 'TOP JOBS BY APPLICATIONS', 'recruiting-playbook' ) ], ';' );
 		fputcsv( $output, [ '' ], ';' );
 
-		fputcsv( $output, [
-			__( 'Job', 'recruiting-playbook' ),
-			__( 'Applications', 'recruiting-playbook' ),
-		], ';' );
+		fputcsv(
+			$output,
+			[
+				__( 'Job', 'recruiting-playbook' ),
+				__( 'Applications', 'recruiting-playbook' ),
+			],
+			';'
+		);
 
 		foreach ( $overview['top_jobs'] as $job ) {
-			fputcsv( $output, [
-				$job['title'],
-				$job['applications'],
-			], ';' );
+			fputcsv(
+				$output,
+				[
+					$job['title'],
+					$job['applications'],
+				],
+				';'
+			);
 		}
 
 		fputcsv( $output, [ '' ], ';' );
@@ -339,12 +350,12 @@ class ExportService {
 	 */
 	private function getSourceLabel( string $source ): string {
 		$labels = [
-			'website'  => __( 'Website', 'recruiting-playbook' ),
-			'direct'   => __( 'Direct', 'recruiting-playbook' ),
-			'indeed'   => 'Indeed',
-			'linkedin' => 'LinkedIn',
+			'website'   => __( 'Website', 'recruiting-playbook' ),
+			'direct'    => __( 'Direct', 'recruiting-playbook' ),
+			'indeed'    => 'Indeed',
+			'linkedin'  => 'LinkedIn',
 			'stepstone' => 'StepStone',
-			'xing'     => 'XING',
+			'xing'      => 'XING',
 		];
 
 		return $labels[ $source ] ?? ucfirst( $source );
@@ -436,70 +447,70 @@ class ExportService {
 	public function getAvailableColumns(): array {
 		$standard_columns = [
 			[
-				'key'      => 'id',
-				'label'    => __( 'ID', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'id',
+				'label'   => __( 'ID', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'candidate_name',
-				'label'    => __( 'Name', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'candidate_name',
+				'label'   => __( 'Name', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'email',
-				'label'    => __( 'Email', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'email',
+				'label'   => __( 'Email', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'phone',
-				'label'    => __( 'Phone', 'recruiting-playbook' ),
-				'default'  => false,
-				'group'    => 'standard',
+				'key'     => 'phone',
+				'label'   => __( 'Phone', 'recruiting-playbook' ),
+				'default' => false,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'job_title',
-				'label'    => __( 'Job', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'job_title',
+				'label'   => __( 'Job', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'status',
-				'label'    => __( 'Status', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'status',
+				'label'   => __( 'Status', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'source',
-				'label'    => __( 'Source', 'recruiting-playbook' ),
-				'default'  => false,
-				'group'    => 'standard',
+				'key'     => 'source',
+				'label'   => __( 'Source', 'recruiting-playbook' ),
+				'default' => false,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'created_at',
-				'label'    => __( 'Application date', 'recruiting-playbook' ),
-				'default'  => true,
-				'group'    => 'standard',
+				'key'     => 'created_at',
+				'label'   => __( 'Application date', 'recruiting-playbook' ),
+				'default' => true,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'updated_at',
-				'label'    => __( 'Last modified', 'recruiting-playbook' ),
-				'default'  => false,
-				'group'    => 'standard',
+				'key'     => 'updated_at',
+				'label'   => __( 'Last modified', 'recruiting-playbook' ),
+				'default' => false,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'hired_at',
-				'label'    => __( 'Hired date', 'recruiting-playbook' ),
-				'default'  => false,
-				'group'    => 'standard',
+				'key'     => 'hired_at',
+				'label'   => __( 'Hired date', 'recruiting-playbook' ),
+				'default' => false,
+				'group'   => 'standard',
 			],
 			[
-				'key'      => 'time_in_process',
-				'label'    => __( 'Days in process', 'recruiting-playbook' ),
-				'default'  => false,
-				'group'    => 'standard',
+				'key'     => 'time_in_process',
+				'label'   => __( 'Days in process', 'recruiting-playbook' ),
+				'default' => false,
+				'group'   => 'standard',
 			],
 		];
 

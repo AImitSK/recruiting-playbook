@@ -110,7 +110,7 @@ class FieldDefinitionService {
 	/**
 	 * Job-spezifische Custom Fields Konfiguration anwenden
 	 *
-	 * @param int                  $job_id Job ID.
+	 * @param int                    $job_id Job ID.
 	 * @param array<FieldDefinition> $fields Felder.
 	 * @return array<FieldDefinition>
 	 */
@@ -192,12 +192,14 @@ class FieldDefinitionService {
 	 * @return array<FieldDefinition>
 	 */
 	public function getAllFields( bool $active_only = false ): array {
-		return $this->repository->findAll( [
-			'template_id'    => null,
-			'job_id'         => null,
-			'include_system' => true,
-			'active_only'    => $active_only,
-		] );
+		return $this->repository->findAll(
+			[
+				'template_id'    => null,
+				'job_id'         => null,
+				'include_system' => true,
+				'active_only'    => $active_only,
+			]
+		);
 	}
 
 	/**
@@ -444,8 +446,8 @@ class FieldDefinitionService {
 			if ( ! empty( $config['steps'] ) && is_array( $config['steps'] ) ) {
 				foreach ( $config['steps'] as &$step ) {
 					if ( ! empty( $step['fields'] ) && is_array( $step['fields'] ) ) {
-						$original_count  = count( $step['fields'] );
-						$step['fields']  = array_values(
+						$original_count = count( $step['fields'] );
+						$step['fields'] = array_values(
 							array_filter(
 								$step['fields'],
 								fn( $f ) => ( $f['field_key'] ?? '' ) !== $field_key

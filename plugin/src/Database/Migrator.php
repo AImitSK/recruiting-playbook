@@ -356,12 +356,12 @@ class Migrator {
 								'is_required'   => true,
 							],
 						];
-						$migrated = true;
+						$migrated                = true;
 					}
 
 					// resume aus fields entfernen.
 					if ( ! empty( $step['fields'] ) ) {
-						$original_count      = count( $step['fields'] );
+						$original_count = count( $step['fields'] );
 						$step['fields'] = array_values(
 							array_filter(
 								$step['fields'],
@@ -394,16 +394,19 @@ class Migrator {
 
 					if ( ! $has_summary ) {
 						// summary am Anfang einfügen.
-						array_unshift( $step['system_fields'], [
-							'field_key' => 'summary',
-							'type'      => 'summary',
-							'settings'  => [
-								'title'            => __( 'Your Information at a Glance', 'recruiting-playbook' ),
-								'layout'           => 'two-column',
-								'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
-								'show_only_filled' => false,
-							],
-						] );
+						array_unshift(
+							$step['system_fields'],
+							[
+								'field_key' => 'summary',
+								'type'      => 'summary',
+								'settings'  => [
+									'title'            => __( 'Your Information at a Glance', 'recruiting-playbook' ),
+									'layout'           => 'two-column',
+									'additional_text'  => __( 'Please review your information before submitting.', 'recruiting-playbook' ),
+									'show_only_filled' => false,
+								],
+							]
+						);
 						$migrated = true;
 					}
 
@@ -426,12 +429,12 @@ class Migrator {
 								'link_text'     => __( 'Privacy Policy', 'recruiting-playbook' ),
 							],
 						];
-						$migrated = true;
+						$migrated                = true;
 					}
 
 					// privacy_consent aus fields entfernen.
 					if ( ! empty( $step['fields'] ) ) {
-						$original_count      = count( $step['fields'] );
+						$original_count = count( $step['fields'] );
 						$step['fields'] = array_values(
 							array_filter(
 								$step['fields'],
@@ -635,8 +638,18 @@ class Migrator {
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 1,
-				'validation'  => wp_json_encode( [ 'min_length' => 2, 'max_length' => 100 ] ),
-				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'given-name' ] ),
+				'validation'  => wp_json_encode(
+					[
+						'min_length' => 2,
+						'max_length' => 100,
+					]
+				),
+				'settings'    => wp_json_encode(
+					[
+						'width'        => 'half',
+						'autocomplete' => 'given-name',
+					]
+				),
 			],
 			[
 				'field_key'   => 'last_name',
@@ -646,8 +659,18 @@ class Migrator {
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 2,
-				'validation'  => wp_json_encode( [ 'min_length' => 2, 'max_length' => 100 ] ),
-				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'family-name' ] ),
+				'validation'  => wp_json_encode(
+					[
+						'min_length' => 2,
+						'max_length' => 100,
+					]
+				),
+				'settings'    => wp_json_encode(
+					[
+						'width'        => 'half',
+						'autocomplete' => 'family-name',
+					]
+				),
 			],
 			[
 				'field_key'   => 'email',
@@ -657,7 +680,12 @@ class Migrator {
 				'is_required' => 1,
 				'is_system'   => 1,
 				'position'    => 3,
-				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'email' ] ),
+				'settings'    => wp_json_encode(
+					[
+						'width'        => 'half',
+						'autocomplete' => 'email',
+					]
+				),
 			],
 			[
 				'field_key'   => 'phone',
@@ -667,7 +695,12 @@ class Migrator {
 				'is_required' => 0,
 				'is_system'   => 0, // Custom Field (pre-installed, editierbar)
 				'position'    => 4,
-				'settings'    => wp_json_encode( [ 'width' => 'half', 'autocomplete' => 'tel' ] ),
+				'settings'    => wp_json_encode(
+					[
+						'width'        => 'half',
+						'autocomplete' => 'tel',
+					]
+				),
 			],
 			[
 				'field_key'   => 'message',
@@ -757,11 +790,11 @@ class Migrator {
 			],
 			'steps'    => [
 				[
-					'id'        => 'step_personal',
-					'title'     => __( 'Personal Information', 'recruiting-playbook' ),
-					'position'  => 1,
-					'deletable' => false,
-					'fields'    => [
+					'id'            => 'step_personal',
+					'title'         => __( 'Personal Information', 'recruiting-playbook' ),
+					'position'      => 1,
+					'deletable'     => false,
+					'fields'        => [
 						[
 							'field_key'    => 'first_name',
 							'is_visible'   => true,
@@ -789,11 +822,11 @@ class Migrator {
 					'system_fields' => [],
 				],
 				[
-					'id'        => 'step_documents',
-					'title'     => __( 'Documents', 'recruiting-playbook' ),
-					'position'  => 2,
-					'deletable' => false,
-					'fields'    => [
+					'id'            => 'step_documents',
+					'title'         => __( 'Documents', 'recruiting-playbook' ),
+					'position'      => 2,
+					'deletable'     => false,
+					'fields'        => [
 						[
 							'field_key'   => 'message',
 							'is_visible'  => true,

@@ -141,7 +141,7 @@ class SpamProtection {
 		}
 
 		$transient_key = 'rp_rate_limit_' . md5( $ip );
-		$attempts = (int) get_transient( $transient_key );
+		$attempts      = (int) get_transient( $transient_key );
 
 		if ( $attempts >= self::MAX_APPLICATIONS_PER_HOUR ) {
 			return new WP_Error(
@@ -194,7 +194,7 @@ class SpamProtection {
 	 * @param WP_REST_Request $request Request-Objekt.
 	 */
 	private function logSpamAttempt( string $type, WP_REST_Request $request ): void {
-		$ip = $this->getClientIp( $request );
+		$ip         = $this->getClientIp( $request );
 		$user_agent = $request->get_header( 'user-agent' ) ?: '';
 
 		// In Error-Log schreiben

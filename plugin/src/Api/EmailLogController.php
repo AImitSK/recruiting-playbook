@@ -526,7 +526,7 @@ class EmailLogController extends WP_REST_Controller {
 			);
 
 			if ( $app_data ) {
-				$job_post = get_post( $app_data['job_id'] );
+				$job_post                                  = get_post( $app_data['job_id'] );
 				$enriched['application']['job_title']      = $job_post ? $job_post->post_title : '';
 				$enriched['application']['candidate_name'] = trim( $app_data['first_name'] . ' ' . $app_data['last_name'] );
 			}
@@ -551,7 +551,7 @@ class EmailLogController extends WP_REST_Controller {
 
 		// Absender-Info (User).
 		if ( ! empty( $log['sent_by'] ) ) {
-			$user = get_userdata( $log['sent_by'] );
+			$user                = get_userdata( $log['sent_by'] );
 			$enriched['sent_by'] = [
 				'id'   => (int) $log['sent_by'],
 				'name' => $user ? $user->display_name : '',

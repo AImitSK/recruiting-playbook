@@ -544,5 +544,4 @@ class ApplicationList extends \WP_List_Table {
 		// Bulk-Actions werden in Menu::handleBulkActions() verarbeitet.
 		// Diese Methode muss existieren, wird aber nicht mehr verwendet.
 	}
-
 }

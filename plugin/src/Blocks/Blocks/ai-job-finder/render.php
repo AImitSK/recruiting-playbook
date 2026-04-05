@@ -25,8 +25,11 @@ $shortcodes = new \RecruitingPlaybook\Frontend\Shortcodes();
 $output     = $shortcodes->renderAiJobFinder( $shortcode_atts );
 
 // Block-Wrapper mit Gutenberg-Klassen.
-$wrapper_attributes = get_block_wrapper_attributes( [
-	'class' => 'rp-block-ai-job-finder',
-] );
+$wrapper_attributes = get_block_wrapper_attributes(
+	[
+		'class' => 'rp-block-ai-job-finder',
+	]
+);
 
-echo wp_kses_post( sprintf( '<div %s>%s</div>', $wrapper_attributes, $output ) );
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $wrapper_attributes is safe from get_block_wrapper_attributes()
+printf( '<div %s>%s</div>', $wrapper_attributes, wp_kses_post( $output ) );

@@ -615,7 +615,7 @@ class Menu {
 	 * Kanban-Board rendern
 	 */
 	public function renderKanban(): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$kanban_page = new KanbanBoard();
 			$kanban_page->render();
 			return;
@@ -724,7 +724,7 @@ class Menu {
 	 * Reporting-Seite rendern
 	 */
 	public function renderReporting(): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$reporting_page = new ReportingPage();
 			$reporting_page->render();
 			return;
@@ -739,7 +739,7 @@ class Menu {
 	 * Form Builder-Seite rendern
 	 */
 	public function renderFormBuilder(): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$form_builder_page = new FormBuilderPage();
 			$form_builder_page->enqueue_assets();
 			$form_builder_page->render();
@@ -755,7 +755,7 @@ class Menu {
 	 * Talent-Pool-Seite rendern
 	 */
 	public function renderTalentPool(): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$talent_pool_page = new Pages\TalentPoolPage();
 			$talent_pool_page->render();
 			return;
@@ -770,7 +770,7 @@ class Menu {
 	 * Bulk-E-Mail-Seite rendern
 	 */
 	public function renderBulkEmail(): void {
-		if ( rp_fs()->is__premium_only() ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			// Pro-Feature Check.
 			if ( function_exists( 'rp_can' ) && ! rp_can( 'email_templates' ) ) {
 				wp_die(

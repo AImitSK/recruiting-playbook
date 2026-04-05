@@ -53,9 +53,12 @@ class UrlField extends AbstractFieldType {
 	 * {@inheritDoc}
 	 */
 	public function getDefaultSettings(): array {
-		return array_merge( parent::getDefaultSettings(), [
-			'autocomplete' => 'url',
-		] );
+		return array_merge(
+			parent::getDefaultSettings(),
+			[
+				'autocomplete' => 'url',
+			]
+		);
 	}
 
 	/**

@@ -127,7 +127,7 @@ class BlockLoader {
 	/**
 	 * Register block category
 	 *
-	 * @param array                   $categories Existing categories.
+	 * @param array                    $categories Existing categories.
 	 * @param \WP_Block_Editor_Context $context    Block editor context.
 	 * @return array Extended categories.
 	 */
@@ -176,11 +176,11 @@ class BlockLoader {
 			'rp-blocks-editor',
 			'rpBlocksConfig',
 			[
-				'isPro'       => $this->hasPro(),
-				'restUrl'     => rest_url( 'recruiting/v1/' ),
-				'nonce'       => wp_create_nonce( 'wp_rest' ),
-				'taxonomies'  => $this->getTaxonomiesData(),
-				'pluginUrl'   => RP_PLUGIN_URL,
+				'isPro'      => $this->hasPro(),
+				'restUrl'    => rest_url( 'recruiting/v1/' ),
+				'nonce'      => wp_create_nonce( 'wp_rest' ),
+				'taxonomies' => $this->getTaxonomiesData(),
+				'pluginUrl'  => RP_PLUGIN_URL,
 			]
 		);
 

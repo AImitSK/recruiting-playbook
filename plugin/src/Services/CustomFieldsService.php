@@ -82,9 +82,12 @@ class CustomFieldsService {
 		}
 
 		// Nur aktivierte, nicht-System-Felder (System-Felder werden direkt verarbeitet).
-		$custom_fields = array_filter( $fields, function ( FieldDefinition $field ) {
-			return $field->isActive() && ! $field->isSystem();
-		} );
+		$custom_fields = array_filter(
+			$fields,
+			function ( FieldDefinition $field ) {
+				return $field->isActive() && ! $field->isSystem();
+			}
+		);
 
 		if ( empty( $custom_fields ) ) {
 			return [];
@@ -116,7 +119,7 @@ class CustomFieldsService {
 		}
 
 		// Werte sanitieren und zusammenstellen.
-		$result = [];
+		$result   = [];
 		$registry = FieldTypeRegistry::getInstance();
 
 		// Build a lookup map of field definitions by key.
@@ -182,7 +185,7 @@ class CustomFieldsService {
 	 * @return true|WP_Error True bei Erfolg.
 	 */
 	private function validateCustomFields( array $fields, array $data ): true|WP_Error {
-		$errors = [];
+		$errors   = [];
 		$registry = FieldTypeRegistry::getInstance();
 
 		// Build lookup of submitted field keys.
@@ -197,7 +200,7 @@ class CustomFieldsService {
 				continue;
 			}
 
-			$value = $data[ $field_key ] ?? null;
+			$value      = $data[ $field_key ] ?? null;
 			$field_type = $registry->get( $field->getFieldType() );
 
 			// Datei-Felder werden separat validiert.
@@ -341,8 +344,8 @@ class CustomFieldsService {
 	/**
 	 * Custom Fields für Anzeige formatieren
 	 *
-	 * @param int   $application_id Bewerbungs-ID.
-	 * @param int   $job_id         Job-ID.
+	 * @param int $application_id Bewerbungs-ID.
+	 * @param int $job_id         Job-ID.
 	 * @return array Array von ['key' => '', 'label' => '', 'value' => '', 'type' => ''].
 	 */
 	public function getFormattedCustomFields( int $application_id, int $job_id ): array {

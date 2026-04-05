@@ -210,7 +210,7 @@ class EmailTemplateRepository {
 		$orderby = in_array( $args['orderby'], [ 'name', 'category', 'created_at', 'updated_at' ], true )
 			? $args['orderby']
 			: 'name';
-		$order = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
+		$order   = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
 
 		// Query.
 		$sql = "SELECT * FROM {$this->table} WHERE {$where_clause} ORDER BY {$orderby} {$order}";
@@ -233,7 +233,12 @@ class EmailTemplateRepository {
 	 * @return array
 	 */
 	public function findByCategory( string $category ): array {
-		return $this->getList( [ 'category' => $category, 'is_active' => true ] );
+		return $this->getList(
+			[
+				'category'  => $category,
+				'is_active' => true,
+			]
+		);
 	}
 
 	/**
@@ -319,18 +324,20 @@ class EmailTemplateRepository {
 			$new_name = $template['name'] . ' ' . __( '(Copy)', 'recruiting-playbook' );
 		}
 
-		return $this->create( [
-			'name'      => $new_name,
-			'subject'   => $template['subject'],
-			'body_html' => $template['body_html'],
-			'body_text' => $template['body_text'],
-			'category'  => $template['category'],
-			'is_active' => 1,
-			'is_default' => 0,
-			'is_system' => 0,
-			'variables' => $template['variables'],
-			'settings'  => $template['settings'],
-		] );
+		return $this->create(
+			[
+				'name'       => $new_name,
+				'subject'    => $template['subject'],
+				'body_html'  => $template['body_html'],
+				'body_text'  => $template['body_text'],
+				'category'   => $template['category'],
+				'is_active'  => 1,
+				'is_default' => 0,
+				'is_system'  => 0,
+				'variables'  => $template['variables'],
+				'settings'   => $template['settings'],
+			]
+		);
 	}
 
 	/**
@@ -396,7 +403,7 @@ class EmailTemplateRepository {
 
 		// Ersteller laden.
 		if ( $template['created_by'] ) {
-			$user = get_userdata( (int) $template['created_by'] );
+			$user                        = get_userdata( (int) $template['created_by'] );
 			$template['created_by_user'] = $user ? [
 				'id'   => $user->ID,
 				'name' => $user->display_name,
@@ -406,7 +413,7 @@ class EmailTemplateRepository {
 		}
 
 		// Berechtigungen.
-		$is_admin = current_user_can( 'manage_options' );
+		$is_admin               = current_user_can( 'manage_options' );
 		$template['can_edit']   = $is_admin;
 		$template['can_delete'] = $is_admin && ! $template['is_system'];
 

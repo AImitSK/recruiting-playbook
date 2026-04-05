@@ -217,7 +217,10 @@ class FormTemplateService {
 					__( 'Template cannot be deleted. It is used by %d job(s).', 'recruiting-playbook' ),
 					$usage_count
 				),
-				[ 'status' => 409, 'usage_count' => $usage_count ]
+				[
+					'status'      => 409,
+					'usage_count' => $usage_count,
+				]
 			);
 		}
 

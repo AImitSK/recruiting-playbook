@@ -120,12 +120,14 @@ class CapabilityService {
 	public function getAssignedJobIds( int $user_id ): array {
 		// Admin sieht alle Jobs.
 		if ( user_can( $user_id, 'manage_options' ) ) {
-			$jobs = get_posts( [
-				'post_type'      => 'job_listing',
-				'posts_per_page' => -1,
-				'post_status'    => 'any',
-				'fields'         => 'ids',
-			] );
+			$jobs = get_posts(
+				[
+					'post_type'      => 'job_listing',
+					'posts_per_page' => -1,
+					'post_status'    => 'any',
+					'fields'         => 'ids',
+				]
+			);
 
 			return array_map( 'intval', $jobs );
 		}

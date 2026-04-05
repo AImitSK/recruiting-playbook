@@ -30,7 +30,7 @@ class JobGrid extends AbstractElement {
 			'inline_editor'   => false,
 			'allow_generator' => true,
 
-			'params' => array_merge(
+			'params'          => array_merge(
 				$this->getGeneralParams(),
 				$this->getFilterParams(),
 				$this->getSortingParams()
@@ -54,7 +54,7 @@ class JobGrid extends AbstractElement {
 				'min'         => '1',
 				'max'         => '50',
 				'step'        => '1',
-				],
+			],
 			[
 				'type'        => 'radio_button_set',
 				'heading'     => esc_attr__( 'Columns', 'recruiting-playbook' ),
@@ -124,22 +124,22 @@ class JobGrid extends AbstractElement {
 	private function getSortingParams(): array {
 		return [
 			[
-				'type'        => 'select',
-				'heading'     => esc_attr__( 'Sort By', 'recruiting-playbook' ),
-				'param_name'  => 'orderby',
-				'default'     => 'date',
-				'value'       => [
+				'type'       => 'select',
+				'heading'    => esc_attr__( 'Sort By', 'recruiting-playbook' ),
+				'param_name' => 'orderby',
+				'default'    => 'date',
+				'value'      => [
 					'date'  => esc_attr__( 'Date', 'recruiting-playbook' ),
 					'title' => esc_attr__( 'Title', 'recruiting-playbook' ),
 					'rand'  => esc_attr__( 'Random', 'recruiting-playbook' ),
 				],
 			],
 			[
-				'type'        => 'radio_button_set',
-				'heading'     => esc_attr__( 'Order', 'recruiting-playbook' ),
-				'param_name'  => 'order',
-				'default'     => 'DESC',
-				'value'       => [
+				'type'       => 'radio_button_set',
+				'heading'    => esc_attr__( 'Order', 'recruiting-playbook' ),
+				'param_name' => 'order',
+				'default'    => 'DESC',
+				'value'      => [
 					'DESC' => esc_attr__( 'Descending', 'recruiting-playbook' ),
 					'ASC'  => esc_attr__( 'Ascending', 'recruiting-playbook' ),
 				],

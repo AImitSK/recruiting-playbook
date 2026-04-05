@@ -234,15 +234,17 @@ class MatchController extends WP_REST_Controller {
 		}
 
 		// Analyse in lokaler DB loggen.
-		$this->log_analysis( [
-			'external_job_id' => $response_body['job_id'] ?? $response_body['jobId'] ?? '',
-			'analysis_type'   => 'job_match',
-			'job_id'          => $job_id,
-			'job_title'       => $job->post_title,
-			'file_type'       => $file['type'] ?? '',
-			'file_size'       => $file['size'] ?? 0,
-			'status'          => 'pending',
-		] );
+		$this->log_analysis(
+			[
+				'external_job_id' => $response_body['job_id'] ?? $response_body['jobId'] ?? '',
+				'analysis_type'   => 'job_match',
+				'job_id'          => $job_id,
+				'job_title'       => $job->post_title,
+				'file_type'       => $file['type'] ?? '',
+				'file_size'       => $file['size'] ?? 0,
+				'status'          => 'pending',
+			]
+		);
 
 		return new WP_REST_Response( $response_body, 202 );
 	}
@@ -372,15 +374,17 @@ class MatchController extends WP_REST_Controller {
 		}
 
 		// Analyse in lokaler DB loggen.
-		$this->log_analysis( [
-			'external_job_id' => $result['job_id'] ?? $result['jobId'] ?? '',
-			'analysis_type'   => 'job_finder',
-			'job_id'          => null,
-			'job_title'       => sprintf( 'Job-Finder (%d Stellen)', count( $jobs ) ),
-			'file_type'       => $file['type'] ?? '',
-			'file_size'       => $file['size'] ?? 0,
-			'status'          => 'pending',
-		] );
+		$this->log_analysis(
+			[
+				'external_job_id' => $result['job_id'] ?? $result['jobId'] ?? '',
+				'analysis_type'   => 'job_finder',
+				'job_id'          => null,
+				'job_title'       => sprintf( 'Job-Finder (%d Stellen)', count( $jobs ) ),
+				'file_type'       => $file['type'] ?? '',
+				'file_size'       => $file['size'] ?? 0,
+				'status'          => 'pending',
+			]
+		);
 
 		return rest_ensure_response( $result );
 	}
@@ -593,7 +597,7 @@ class MatchController extends WP_REST_Controller {
 			);
 		}
 
-		$fs = rp_fs();
+		$fs = recpl_fs();
 
 		// Installation ID und Secret Key holen.
 		$site = $fs->get_site();
@@ -695,8 +699,13 @@ class MatchController extends WP_REST_Controller {
 			'Requirements',
 		];
 
-		$escaped  = array_map( static function ( $h ) { return preg_quote( $h, '#' ); }, $headings );
-		$pattern  = '<h[2-4][^>]*>\s*(?:' . implode( '|', $escaped ) . ')\s*</h[2-4]>';
+		$escaped = array_map(
+			static function ( $h ) {
+				return preg_quote( $h, '#' );
+			},
+			$headings
+		);
+		$pattern = '<h[2-4][^>]*>\s*(?:' . implode( '|', $escaped ) . ')\s*</h[2-4]>';
 
 		// Abschnitt nach der passenden Überschrift bis zur nächsten Überschrift finden.
 		if ( ! preg_match( '#' . $pattern . '\s*(.*?)(?=<h[2-4]|$)#is', $content, $match ) ) {
@@ -764,7 +773,7 @@ class MatchController extends WP_REST_Controller {
 		// Score/Category können auf Top-Level oder in 'result' verschachtelt sein.
 		$result_data = $response['result'] ?? [];
 
-		$update_data = [
+		$update_data   = [
 			'status'       => $response['status'] ?? 'completed',
 			'completed_at' => current_time( 'mysql' ),
 		];

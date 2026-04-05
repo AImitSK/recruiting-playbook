@@ -38,17 +38,17 @@ class SetupWizard {
 	 */
 	public function __construct() {
 		$this->steps = [
-			'welcome' => [
+			'welcome'   => [
 				'name'    => __( 'Welcome', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderWelcome' ],
 				'save'    => null,
 			],
-			'company' => [
+			'company'   => [
 				'name'    => __( 'Company Details', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderCompany' ],
 				'save'    => [ $this, 'saveCompany' ],
 			],
-			'email' => [
+			'email'     => [
 				'name'    => __( 'Email', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderEmail' ],
 				'save'    => [ $this, 'saveEmail' ],
@@ -58,7 +58,7 @@ class SetupWizard {
 				'handler' => [ $this, 'renderFirstJob' ],
 				'save'    => [ $this, 'saveFirstJob' ],
 			],
-			'complete' => [
+			'complete'  => [
 				'name'    => __( 'Complete', 'recruiting-playbook' ),
 				'handler' => [ $this, 'renderComplete' ],
 				'save'    => null,
@@ -312,11 +312,11 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="company_name"
-								   name="company_name"
-								   value="<?php echo esc_attr( $settings['company_name'] ?? get_bloginfo( 'name' ) ); ?>"
-								   class="regular-text"
-								   required>
+									id="company_name"
+									name="company_name"
+									value="<?php echo esc_attr( $settings['company_name'] ?? get_bloginfo( 'name' ) ); ?>"
+									class="regular-text"
+									required>
 						</td>
 					</tr>
 					<tr>
@@ -325,10 +325,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="url"
-								   id="company_logo"
-								   name="company_logo"
-								   value="<?php echo esc_url( $settings['company_logo'] ?? '' ); ?>"
-								   class="regular-text">
+									id="company_logo"
+									name="company_logo"
+									value="<?php echo esc_url( $settings['company_logo'] ?? '' ); ?>"
+									class="regular-text">
 							<p class="description">
 								<?php esc_html_e( 'URL to your company logo (recommended for Google for Jobs).', 'recruiting-playbook' ); ?>
 							</p>
@@ -340,10 +340,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="company_street"
-								   name="company_street"
-								   value="<?php echo esc_attr( $settings['company_street'] ?? '' ); ?>"
-								   class="regular-text">
+									id="company_street"
+									name="company_street"
+									value="<?php echo esc_attr( $settings['company_street'] ?? '' ); ?>"
+									class="regular-text">
 						</td>
 					</tr>
 					<tr>
@@ -352,10 +352,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="company_zip"
-								   name="company_zip"
-								   value="<?php echo esc_attr( $settings['company_zip'] ?? '' ); ?>"
-								   class="small-text">
+									id="company_zip"
+									name="company_zip"
+									value="<?php echo esc_attr( $settings['company_zip'] ?? '' ); ?>"
+									class="small-text">
 						</td>
 					</tr>
 					<tr>
@@ -364,10 +364,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="company_city"
-								   name="company_city"
-								   value="<?php echo esc_attr( $settings['company_city'] ?? '' ); ?>"
-								   class="regular-text">
+									id="company_city"
+									name="company_city"
+									value="<?php echo esc_attr( $settings['company_city'] ?? '' ); ?>"
+									class="regular-text">
 						</td>
 					</tr>
 					<tr>
@@ -388,11 +388,11 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="url"
-								   id="privacy_policy_url"
-								   name="privacy_policy_url"
-								   value="<?php echo esc_url( $settings['privacy_policy_url'] ?? get_privacy_policy_url() ); ?>"
-								   class="regular-text"
-								   required>
+									id="privacy_policy_url"
+									name="privacy_policy_url"
+									value="<?php echo esc_url( $settings['privacy_policy_url'] ?? get_privacy_policy_url() ); ?>"
+									class="regular-text"
+									required>
 							<p class="description">
 								<?php esc_html_e( 'Link to the privacy policy for the application form.', 'recruiting-playbook' ); ?>
 							</p>
@@ -468,8 +468,8 @@ class SetupWizard {
 						<strong><?php esc_html_e( 'No SMTP configured', 'recruiting-playbook' ); ?></strong>
 						<p><?php echo esc_html( $smtp_status['message'] ); ?></p>
 						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=smtp&tab=search&type=term' ) ); ?>"
-						   target="_blank"
-						   class="button button-secondary">
+							target="_blank"
+							class="button button-secondary">
 							<?php esc_html_e( 'Install SMTP plugin', 'recruiting-playbook' ); ?>
 						</a>
 					<?php endif; ?>
@@ -484,11 +484,11 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="email"
-								   id="notification_email"
-								   name="notification_email"
-								   value="<?php echo esc_attr( $settings['notification_email'] ?? get_option( 'admin_email' ) ); ?>"
-								   class="regular-text"
-								   required>
+									id="notification_email"
+									name="notification_email"
+									value="<?php echo esc_attr( $settings['notification_email'] ?? get_option( 'admin_email' ) ); ?>"
+									class="regular-text"
+									required>
 							<p class="description">
 								<?php esc_html_e( 'Notifications about new applications will be sent to this address.', 'recruiting-playbook' ); ?>
 							</p>
@@ -500,10 +500,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="sender_name"
-								   name="sender_name"
-								   value="<?php echo esc_attr( $settings['sender_name'] ?? $settings['company_name'] ?? '' ); ?>"
-								   class="regular-text">
+									id="sender_name"
+									name="sender_name"
+									value="<?php echo esc_attr( $settings['sender_name'] ?? $settings['company_name'] ?? '' ); ?>"
+									class="regular-text">
 						</td>
 					</tr>
 				</table>
@@ -513,10 +513,10 @@ class SetupWizard {
 					<h3><?php esc_html_e( 'Send test email', 'recruiting-playbook' ); ?></h3>
 					<p>
 						<input type="email"
-							   id="test_email_address"
-							   placeholder="<?php esc_attr_e( 'Email address', 'recruiting-playbook' ); ?>"
-							   value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"
-							   class="regular-text">
+								id="test_email_address"
+								placeholder="<?php esc_attr_e( 'Email address', 'recruiting-playbook' ); ?>"
+								value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"
+								class="regular-text">
 						<button type="button" id="rp-send-test-email" class="button">
 							<?php esc_html_e( 'Send test', 'recruiting-playbook' ); ?>
 						</button>
@@ -576,10 +576,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="job_title"
-								   name="job_title"
-								   placeholder="<?php esc_attr_e( 'e.g. Senior Developer (m/f/d)', 'recruiting-playbook' ); ?>"
-								   class="regular-text">
+									id="job_title"
+									name="job_title"
+									placeholder="<?php esc_attr_e( 'e.g. Senior Developer (m/f/d)', 'recruiting-playbook' ); ?>"
+									class="regular-text">
 						</td>
 					</tr>
 					<tr>
@@ -588,10 +588,10 @@ class SetupWizard {
 						</th>
 						<td>
 							<input type="text"
-								   id="job_location"
-								   name="job_location"
-								   placeholder="<?php esc_attr_e( 'e.g. Berlin', 'recruiting-playbook' ); ?>"
-								   class="regular-text">
+									id="job_location"
+									name="job_location"
+									placeholder="<?php esc_attr_e( 'e.g. Berlin', 'recruiting-playbook' ); ?>"
+									class="regular-text">
 						</td>
 					</tr>
 					<tr>
@@ -647,12 +647,14 @@ class SetupWizard {
 		}
 
 		// Stelle erstellen.
-		$post_id = wp_insert_post( [
-			'post_type'    => 'job_listing',
-			'post_title'   => sanitize_text_field( $data['job_title'] ),
-			'post_status'  => 'draft',
-			'post_content' => '',
-		] );
+		$post_id = wp_insert_post(
+			[
+				'post_type'    => 'job_listing',
+				'post_title'   => sanitize_text_field( $data['job_title'] ),
+				'post_status'  => 'draft',
+				'post_content' => '',
+			]
+		);
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -666,10 +668,10 @@ class SetupWizard {
 		// Beschaeftigungsart als Taxonomie.
 		if ( ! empty( $data['job_type'] ) ) {
 			$type_mapping = [
-				'FULL_TIME'  => 'Vollzeit',
-				'PART_TIME'  => 'Teilzeit',
-				'TEMPORARY'  => 'Befristet',
-				'INTERN'     => 'Praktikum',
+				'FULL_TIME' => 'Vollzeit',
+				'PART_TIME' => 'Teilzeit',
+				'TEMPORARY' => 'Befristet',
+				'INTERN'    => 'Praktikum',
 			];
 			$type_name    = $type_mapping[ $data['job_type'] ] ?? 'Vollzeit';
 			wp_set_object_terms( $post_id, $type_name, 'employment_type' );
@@ -803,9 +805,11 @@ class SetupWizard {
 		$current_index = array_search( $step, $step_keys, true );
 		$next_step     = $step_keys[ $current_index + 1 ] ?? 'complete';
 
-		wp_send_json_success( [
-			'next_url' => $this->getStepUrl( $next_step ),
-		] );
+		wp_send_json_success(
+			[
+				'next_url' => $this->getStepUrl( $next_step ),
+			]
+		);
 	}
 
 	/**
@@ -820,9 +824,11 @@ class SetupWizard {
 
 		update_option( 'rp_wizard_completed', true );
 
-		wp_send_json_success( [
-			'redirect_url' => admin_url( 'admin.php?page=recruiting-playbook' ),
-		] );
+		wp_send_json_success(
+			[
+				'redirect_url' => admin_url( 'admin.php?page=recruiting-playbook' ),
+			]
+		);
 	}
 
 	/**

@@ -365,7 +365,7 @@ class EmailSettingsPage {
 		foreach ( $placeholders as $key => $info ) {
 			$code = '<code style="cursor: pointer; background: #f0f0f0; padding: 2px 5px;" onclick="navigator.clipboard.writeText(\'{' . esc_attr( $key ) . '}\').then(() => alert(\'Copied!\'))" title="' . esc_attr__( 'Click to copy', 'recruiting-playbook' ) . '">{' . esc_html( $key ) . '}</code>';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $code is built with esc_attr() and esc_html() above
-		echo '<div>' . $code . ' <small style="color: #666;">' . esc_html( $info['label'] ?? $key ) . '</small></div>';
+			echo '<div>' . $code . ' <small style="color: #666;">' . esc_html( $info['label'] ?? $key ) . '</small></div>';
 		}
 
 		echo '</div>';
@@ -427,9 +427,9 @@ class EmailSettingsPage {
 							<tr>
 								<td>
 									<input type="checkbox"
-									       name="auto_email[<?php echo esc_attr( $status_key ); ?>][enabled]"
-									       value="1"
-									       <?php checked( $is_enabled ); ?>>
+											name="auto_email[<?php echo esc_attr( $status_key ); ?>][enabled]"
+											value="1"
+											<?php checked( $is_enabled ); ?>>
 								</td>
 								<td>
 									<strong><?php echo esc_html( $status_label ); ?></strong>

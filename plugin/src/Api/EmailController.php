@@ -442,10 +442,10 @@ class EmailController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function send_bulk_email( $request ) {
-		$application_ids   = $request->get_param( 'application_ids' );
-		$template_id       = (int) $request->get_param( 'template_id' );
-		$custom_variables  = $request->get_param( 'custom_variables' ) ?: [];
-		$send_immediately  = (bool) $request->get_param( 'send_immediately' );
+		$application_ids  = $request->get_param( 'application_ids' );
+		$template_id      = (int) $request->get_param( 'template_id' );
+		$custom_variables = $request->get_param( 'custom_variables' ) ?: [];
+		$send_immediately = (bool) $request->get_param( 'send_immediately' );
 
 		if ( empty( $application_ids ) || ! is_array( $application_ids ) ) {
 			return new WP_Error(
@@ -466,10 +466,10 @@ class EmailController extends WP_REST_Controller {
 		}
 
 		$results = [
-			'total'       => count( $application_ids ),
-			'queued'      => 0,
-			'failed'      => 0,
-			'errors'      => [],
+			'total'         => count( $application_ids ),
+			'queued'        => 0,
+			'failed'        => 0,
+			'errors'        => [],
 			'email_log_ids' => [],
 		];
 
@@ -482,7 +482,7 @@ class EmailController extends WP_REST_Controller {
 			$application = $this->application_service->get( (int) $application_id );
 
 			if ( ! $application ) {
-				$results['failed']++;
+				++$results['failed'];
 				$results['errors'][] = [
 					'application_id' => $application_id,
 					'error'          => __( 'Application not found', 'recruiting-playbook' ),
@@ -499,13 +499,13 @@ class EmailController extends WP_REST_Controller {
 			);
 
 			if ( false === $result ) {
-				$results['failed']++;
+				++$results['failed'];
 				$results['errors'][] = [
 					'application_id' => $application_id,
 					'error'          => __( 'Email could not be sent', 'recruiting-playbook' ),
 				];
 			} else {
-				$results['queued']++;
+				++$results['queued'];
 				if ( is_int( $result ) ) {
 					$results['email_log_ids'][] = $result;
 				}

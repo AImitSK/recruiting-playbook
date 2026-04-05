@@ -334,7 +334,7 @@ class SignatureRepository {
 	private function enrichSignature( array $signature ): array {
 		// User-Daten laden wenn User-Signatur.
 		if ( $signature['user_id'] ) {
-			$user = get_userdata( (int) $signature['user_id'] );
+			$user              = get_userdata( (int) $signature['user_id'] );
 			$signature['user'] = $user ? [
 				'id'   => $user->ID,
 				'name' => $user->display_name,

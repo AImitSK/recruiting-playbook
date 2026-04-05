@@ -310,8 +310,8 @@ class CustomFieldFileService {
 	/**
 	 * Prüfen ob Datei erlaubt ist
 	 *
-	 * @param array                  $file          Datei-Array.
-	 * @param array<string, string>  $allowed_types Erlaubte Typen.
+	 * @param array                 $file          Datei-Array.
+	 * @param array<string, string> $allowed_types Erlaubte Typen.
 	 * @return bool
 	 */
 	private function isAllowedFile( array $file, array $allowed_types ): bool {
@@ -428,7 +428,7 @@ class CustomFieldFileService {
 		$table = $wpdb->prefix . 'rp_documents';
 
 		// Candidate ID aus Application holen.
-		$app_table    = $wpdb->prefix . 'rp_applications';
+		$app_table = $wpdb->prefix . 'rp_applications';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$candidate_id = $wpdb->get_var(
 			$wpdb->prepare(
@@ -449,10 +449,12 @@ class CustomFieldFileService {
 				'file_size'      => $file['size'],
 				'file_hash'      => md5_file( $destination ) ?: '',
 				'document_type'  => 'custom_field',
-				'metadata'       => wp_json_encode( [
-					'field_key'   => $field->getFieldKey(),
-					'field_label' => $field->getLabel(),
-				] ),
+				'metadata'       => wp_json_encode(
+					[
+						'field_key'   => $field->getFieldKey(),
+						'field_label' => $field->getLabel(),
+					]
+				),
 				'created_at'     => current_time( 'mysql' ),
 			],
 			[ '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s' ]
@@ -502,7 +504,7 @@ class CustomFieldFileService {
 		// .htaccess erstellen.
 		$htaccess = $this->upload_base . '/.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
-			$content = "# Recruiting Playbook - Custom Fields Dokumentenschutz\n\n";
+			$content  = "# Recruiting Playbook - Custom Fields Dokumentenschutz\n\n";
 			$content .= "<IfModule mod_authz_core.c>\n";
 			$content .= "    Require all denied\n";
 			$content .= "</IfModule>\n\n";

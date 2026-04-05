@@ -73,11 +73,11 @@ class CssGeneratorService {
 		$settings = $this->design_service->get_design_settings();
 		$defaults = $this->design_service->get_defaults();
 
-		$css_vars   = [];
-		$css_rules  = [];
+		$css_vars  = [];
+		$css_rules = [];
 
 		// Primärfarbe (Theme oder Custom).
-		$primary = $this->design_service->get_primary_color();
+		$primary                        = $this->design_service->get_primary_color();
 		$css_vars['--rp-color-primary'] = $primary;
 
 		// Primärfarbe-Varianten.
@@ -85,7 +85,7 @@ class CssGeneratorService {
 		$css_vars['--rp-color-primary-light'] = $this->design_service->hex_to_rgba( $primary, 0.15 );
 
 		// HSL für Tailwind-Kompatibilität.
-		$hsl = $this->design_service->hex_to_hsl( $primary );
+		$hsl                   = $this->design_service->hex_to_hsl( $primary );
 		$css_vars['--primary'] = "{$hsl['h']} {$hsl['s']}% {$hsl['l']}%";
 
 		// Card-Variablen.
@@ -177,10 +177,10 @@ class CssGeneratorService {
 					$border_color = '#e5e7eb';
 					$border_width = '1px';
 				}
-				$vars['--rp-card-border'] = $border_width . ' solid ' . $border_color;
+				$vars['--rp-card-border']       = $border_width . ' solid ' . $border_color;
 				$vars['--rp-card-border-color'] = $border_color;
 			} else {
-				$vars['--rp-card-border'] = 'none';
+				$vars['--rp-card-border']       = 'none';
 				$vars['--rp-card-border-color'] = 'transparent';
 			}
 		}
@@ -273,7 +273,7 @@ class CssGeneratorService {
 		}
 
 		// Größe (Padding).
-		$size_values = [
+		$size_values              = [
 			'small'  => '0.5rem 1rem',
 			'medium' => '0.75rem 1.5rem',
 			'large'  => '1rem 2rem',
@@ -281,7 +281,7 @@ class CssGeneratorService {
 		$vars['--rp-btn-padding'] = $size_values[ $settings['button_size'] ] ?? $size_values['medium'];
 
 		// Schatten.
-		$shadow_values = [
+		$shadow_values                 = [
 			'none'   => 'none',
 			'light'  => '0 1px 3px rgba(0,0,0,0.1)',
 			'medium' => '0 4px 6px rgba(0,0,0,0.1)',
@@ -357,7 +357,7 @@ class CssGeneratorService {
 		$vars['--rp-link-color'] = $settings['link_use_primary'] ? $primary : ( $settings['link_color'] ?: $primary );
 
 		// Decoration.
-		$decoration_values = [
+		$decoration_values            = [
 			'none'      => 'none',
 			'underline' => 'underline',
 			'hover'     => 'none',
@@ -374,7 +374,7 @@ class CssGeneratorService {
 	 * @return array CSS-Variablen.
 	 */
 	private function generate_badge_variables( array $settings ): array {
-		$vars    = [];
+		$vars     = [];
 		$is_solid = 'solid' === $settings['badge_style'];
 
 		// Badge: New.
@@ -689,7 +689,7 @@ class CssGeneratorService {
 
 			case 'glow':
 				$css .= ".rp-plugin .rp-card:hover {\n";
-				$css .= "  box-shadow: 0 0 20px " . $this->design_service->hex_to_rgba( $this->design_service->get_primary_color(), 0.3 ) . ";\n";
+				$css .= '  box-shadow: 0 0 20px ' . $this->design_service->hex_to_rgba( $this->design_service->get_primary_color(), 0.3 ) . ";\n";
 				$css .= "}\n";
 				break;
 
@@ -730,7 +730,7 @@ class CssGeneratorService {
 		// Basis-Button-Styles: Primärfarbe auch ohne Custom Button Design.
 		// Gilt nur wenn button_use_custom_design NICHT aktiv ist (Custom Design überschreibt).
 		if ( empty( $settings['button_use_custom_design'] ) ) {
-			$primary = $this->design_service->get_primary_color();
+			$primary       = $this->design_service->get_primary_color();
 			$primary_hover = $this->design_service->adjust_color_brightness( $primary, -15 );
 
 			$css .= ".rp-plugin .wp-element-button,\n";

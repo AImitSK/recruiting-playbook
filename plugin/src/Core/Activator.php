@@ -75,5 +75,4 @@ class Activator {
 			add_option( 'rp_privacy_policy_version', '1.0' );
 		}
 	}
-
 }

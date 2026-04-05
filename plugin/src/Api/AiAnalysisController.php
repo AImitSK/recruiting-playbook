@@ -198,18 +198,20 @@ class AiAnalysisController extends WP_REST_Controller {
 
 		$percentage = $limit > 0 ? min( 100, (int) round( ( $current_month / $limit ) * 100 ) ) : 0;
 
-		return new WP_REST_Response( [
-			'license' => [
-				'active' => $license_active,
-				'plan'   => $license_active ? 'Pro' : '',
-			],
-			'usage'   => [
-				'current_month' => $current_month,
-				'limit'         => $limit,
-				'reset_date'    => $reset_date,
-				'percentage'    => $percentage,
-			],
-		] );
+		return new WP_REST_Response(
+			[
+				'license' => [
+					'active' => $license_active,
+					'plan'   => $license_active ? 'Pro' : '',
+				],
+				'usage'   => [
+					'current_month' => $current_month,
+					'limit'         => $limit,
+					'reset_date'    => $reset_date,
+					'percentage'    => $percentage,
+				],
+			]
+		);
 	}
 
 	/**
@@ -229,8 +231,8 @@ class AiAnalysisController extends WP_REST_Controller {
 		$offset   = ( $page - 1 ) * $per_page;
 
 		// WHERE-Bedingungen aufbauen.
-		$where   = [];
-		$values  = [];
+		$where  = [];
+		$values = [];
 
 		if ( ! empty( $type ) ) {
 			$where[]  = 'analysis_type = %s';
@@ -254,7 +256,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		);
 
 		// Daten laden.
-		$query_values   = array_merge( $values, [ $per_page, $offset ] );
+		$query_values = array_merge( $values, [ $per_page, $offset ] );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$items = $wpdb->get_results(
 			$wpdb->prepare(
@@ -269,13 +271,15 @@ class AiAnalysisController extends WP_REST_Controller {
 
 		$pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 1;
 
-		return new WP_REST_Response( [
-			'items'    => $items ?: [],
-			'total'    => $total,
-			'pages'    => $pages,
-			'page'     => $page,
-			'per_page' => $per_page,
-		] );
+		return new WP_REST_Response(
+			[
+				'items'    => $items ?: [],
+				'total'    => $total,
+				'pages'    => $pages,
+				'page'     => $page,
+				'per_page' => $per_page,
+			]
+		);
 	}
 
 	/**
@@ -328,21 +332,25 @@ class AiAnalysisController extends WP_REST_Controller {
 		$response_time = (int) round( ( microtime( true ) - $start_time ) * 1000 );
 
 		if ( is_wp_error( $response ) ) {
-			return new WP_REST_Response( [
-				'reachable'        => false,
-				'response_time_ms' => $response_time,
-				'checked_at'       => gmdate( 'c' ),
-				'error'            => $response->get_error_message(),
-			] );
+			return new WP_REST_Response(
+				[
+					'reachable'        => false,
+					'response_time_ms' => $response_time,
+					'checked_at'       => gmdate( 'c' ),
+					'error'            => $response->get_error_message(),
+				]
+			);
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 
-		return new WP_REST_Response( [
-			'reachable'        => $status_code >= 200 && $status_code < 300,
-			'response_time_ms' => $response_time,
-			'checked_at'       => gmdate( 'c' ),
-		] );
+		return new WP_REST_Response(
+			[
+				'reachable'        => $status_code >= 200 && $status_code < 300,
+				'response_time_ms' => $response_time,
+				'checked_at'       => gmdate( 'c' ),
+			]
+		);
 	}
 
 	/**
@@ -392,7 +400,7 @@ class AiAnalysisController extends WP_REST_Controller {
 			);
 		}
 
-		$fs   = rp_fs();
+		$fs   = recpl_fs();
 		$site = $fs->get_site();
 
 		if ( ! $site || empty( $site->id ) || empty( $site->secret_key ) ) {

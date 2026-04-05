@@ -71,7 +71,7 @@ class FormConfigController extends WP_REST_Controller {
 					'callback'            => [ $this, 'save_config' ],
 					'permission_callback' => [ $this, 'edit_config_permissions_check' ],
 					'args'                => [
-						'steps' => [
+						'steps'    => [
 							'description' => __( 'Step configuration', 'recruiting-playbook' ),
 							'type'        => 'array',
 							'required'    => true,

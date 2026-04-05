@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.6.1
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,14 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.0 - 2026-04-04 =
+* WordPress.org: Changed function prefix from rp_fs to recpl_fs (4+ character requirement)
+* WordPress.org: Changed global variables prefix from rp_ to recpl_ (rp_authenticated_api_key, rp_rate_limit_headers)
+* WordPress.org: Fixed Block render.php escaping (8 files) - proper phpcs:ignore with printf()
+* WordPress.org: Plugin header now before ABSPATH check (Plugin Checker compatibility)
+* Technical: All Freemius SDK wrapper functions now use recpl_ prefix
+* Technical: Backwards compatible - existing rp_can(), rp_tier() helper functions unchanged
 
 = 1.6.1 - 2026-03-29 =
 * Feature: Design & Branding tab now accessible in Free version with color customization

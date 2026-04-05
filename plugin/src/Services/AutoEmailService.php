@@ -31,12 +31,12 @@ class AutoEmailService {
 	 * @var array<string, array>
 	 */
 	private const DEFAULT_SETTINGS = [
-		'new' => [
+		'new'       => [
 			'enabled'     => false,
 			'template_id' => 0,
 			'delay'       => 0, // Minuten
 		],
-		'rejected' => [
+		'rejected'  => [
 			'enabled'     => false,
 			'template_id' => 0,
 			'delay'       => 0, // Minuten
@@ -46,12 +46,12 @@ class AutoEmailService {
 			'template_id' => 0,
 			'delay'       => 0,
 		],
-		'offer' => [
+		'offer'     => [
 			'enabled'     => false,
 			'template_id' => 0,
 			'delay'       => 0,
 		],
-		'hired' => [
+		'hired'     => [
 			'enabled'     => false,
 			'template_id' => 0,
 			'delay'       => 0,
@@ -251,7 +251,7 @@ class AutoEmailService {
 
 		foreach ( self::DEFAULT_SETTINGS as $status => $defaults ) {
 			if ( isset( $settings[ $status ] ) ) {
-				$template_id = absint( $settings[ $status ]['template_id'] ?? 0 );
+				$template_id          = absint( $settings[ $status ]['template_id'] ?? 0 );
 				$sanitized[ $status ] = [
 					// Automatisch aktiviert wenn Template ausgewählt (bessere UX).
 					'enabled'     => ! empty( $settings[ $status ]['enabled'] ) || $template_id > 0,

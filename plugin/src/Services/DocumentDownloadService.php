@@ -93,10 +93,14 @@ class DocumentDownloadService {
 		$decoded = base64_decode( $token );
 
 		if ( ! $decoded || substr_count( $decoded, ':' ) !== 3 ) {
-			self::logDebug( $document_id, 'token_decode_failed', [
-				'decoded_empty'  => empty( $decoded ),
-				'colon_count'    => $decoded ? substr_count( $decoded, ':' ) : 0,
-			] );
+			self::logDebug(
+				$document_id,
+				'token_decode_failed',
+				[
+					'decoded_empty' => empty( $decoded ),
+					'colon_count'   => $decoded ? substr_count( $decoded, ':' ) : 0,
+				]
+			);
 			return false;
 		}
 
@@ -104,29 +108,41 @@ class DocumentDownloadService {
 
 		// Dokument-ID prüfen.
 		if ( (int) $token_doc_id !== $document_id ) {
-			self::logDebug( $document_id, 'doc_id_mismatch', [
-				'token_doc_id'    => (int) $token_doc_id,
-				'expected_doc_id' => $document_id,
-			] );
+			self::logDebug(
+				$document_id,
+				'doc_id_mismatch',
+				[
+					'token_doc_id'    => (int) $token_doc_id,
+					'expected_doc_id' => $document_id,
+				]
+			);
 			return false;
 		}
 
 		// Ablauf prüfen.
 		if ( (int) $expiry < time() ) {
-			self::logDebug( $document_id, 'token_expired', [
-				'expiry_time'  => (int) $expiry,
-				'current_time' => time(),
-				'expired_ago'  => time() - (int) $expiry,
-			] );
+			self::logDebug(
+				$document_id,
+				'token_expired',
+				[
+					'expiry_time'  => (int) $expiry,
+					'current_time' => time(),
+					'expired_ago'  => time() - (int) $expiry,
+				]
+			);
 			return false;
 		}
 
 		// User prüfen.
 		if ( (int) $token_user_id !== get_current_user_id() ) {
-			self::logDebug( $document_id, 'user_id_mismatch', [
-				'token_user_id'   => (int) $token_user_id,
-				'current_user_id' => get_current_user_id(),
-			] );
+			self::logDebug(
+				$document_id,
+				'user_id_mismatch',
+				[
+					'token_user_id'   => (int) $token_user_id,
+					'current_user_id' => get_current_user_id(),
+				]
+			);
 			return false;
 		}
 
@@ -135,10 +151,14 @@ class DocumentDownloadService {
 		$expected_hash = hash_hmac( 'sha256', $data, wp_salt( 'auth' ) );
 
 		if ( ! hash_equals( $expected_hash, $hash ) ) {
-			self::logDebug( $document_id, 'hash_mismatch', [
-				'token_hash_length'    => strlen( $hash ),
-				'expected_hash_length' => strlen( $expected_hash ),
-			] );
+			self::logDebug(
+				$document_id,
+				'hash_mismatch',
+				[
+					'token_hash_length'    => strlen( $hash ),
+					'expected_hash_length' => strlen( $expected_hash ),
+				]
+			);
 			return false;
 		}
 
@@ -170,19 +190,23 @@ class DocumentDownloadService {
 		$wp_upload   = wp_upload_dir();
 		$allowed_dir = $wp_upload['basedir'] . '/recruiting-playbook/applications';
 
-		$real_file       = realpath( $file_path );
-		$real_allowed    = realpath( $allowed_dir );
+		$real_file    = realpath( $file_path );
+		$real_allowed = realpath( $allowed_dir );
 
 		if ( ! $real_file || ! $real_allowed || strpos( $real_file, $real_allowed ) !== 0 ) {
-			self::logDebug( $document_id, 'path_validation_failed', [
-				'file_path'       => $file_path,
-				'allowed_dir'     => $allowed_dir,
-				'real_file'       => $real_file ?: 'FALSE',
-				'real_allowed'    => $real_allowed ?: 'FALSE',
-				'upload_basedir'  => $wp_upload['basedir'],
-				'file_exists'     => file_exists( $file_path ),
-				'dir_exists'      => is_dir( $allowed_dir ),
-			] );
+			self::logDebug(
+				$document_id,
+				'path_validation_failed',
+				[
+					'file_path'      => $file_path,
+					'allowed_dir'    => $allowed_dir,
+					'real_file'      => $real_file ?: 'FALSE',
+					'real_allowed'   => $real_allowed ?: 'FALSE',
+					'upload_basedir' => $wp_upload['basedir'],
+					'file_exists'    => file_exists( $file_path ),
+					'dir_exists'     => is_dir( $allowed_dir ),
+				]
+			);
 			self::logFailedAccess( $document_id, 'path_traversal_attempt' );
 			wp_die( esc_html__( 'Invalid file path.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
@@ -206,11 +230,15 @@ class DocumentDownloadService {
 
 		// MIME-Type Whitelist Validierung (Header Injection Schutz).
 		if ( ! in_array( $file_type, self::ALLOWED_MIME_TYPES, true ) ) {
-			self::logDebug( $document_id, 'invalid_mime_type', [
-				'file_type'          => $file_type,
-				'original_name'      => $document['original_name'] ?? '',
-				'allowed_mime_types' => self::ALLOWED_MIME_TYPES,
-			] );
+			self::logDebug(
+				$document_id,
+				'invalid_mime_type',
+				[
+					'file_type'          => $file_type,
+					'original_name'      => $document['original_name'] ?? '',
+					'allowed_mime_types' => self::ALLOWED_MIME_TYPES,
+				]
+			);
 			self::logFailedAccess( $document_id, 'invalid_mime_type' );
 			wp_die( esc_html__( 'Invalid file type.', 'recruiting-playbook' ), '', [ 'response' => 403 ] );
 		}
@@ -228,7 +256,7 @@ class DocumentDownloadService {
 		self::logDownload( $document_id, (int) $document['application_id'] );
 
 		// Filename für Header sanitizen (Header Injection Protection).
-		$safe_filename = str_replace( array( "\r", "\n", '"', '/' , '\\' ), '', $document['original_name'] );
+		$safe_filename = str_replace( [ "\r", "\n", '"', '/', '\\' ], '', $document['original_name'] );
 		$safe_filename = sanitize_file_name( $safe_filename );
 
 		// Headers setzen (file_type bereits gegen Whitelist validiert).
