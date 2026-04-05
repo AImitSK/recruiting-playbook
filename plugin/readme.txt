@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.3 - 2026-04-05 =
+* Build: GitHub Action now excludes composer.json, .distignore and other dev files from ZIP
+* Build: Added verification step that fails if forbidden files are in release ZIP
+* WordPress.org: Release ZIP now fully compliant (no development/config files)
 
 = 1.7.2 - 2026-04-05 =
 * WordPress.org: Renamed last remaining rp_check_requirements() to recpl_check_requirements()
