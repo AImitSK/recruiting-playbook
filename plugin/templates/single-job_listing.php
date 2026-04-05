@@ -173,7 +173,7 @@ while ( have_posts() ) :
 					</div>
 
 					<!-- KI-Job-Match Button (automatisch, wenn Feature aktiv) -->
-					<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+					<?php if ( function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) : ?>
 						<div class="rp-mt-4">
 							<?php echo do_shortcode( '[rp_ai_job_match style="outline" class="rp-w-full"]' ); ?>
 						</div>

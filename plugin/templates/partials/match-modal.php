@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Nur anzeigen wenn Feature verfügbar.
-if ( ! function_exists( 'rp_has_cv_matching' ) || ! rp_has_cv_matching() ) {
+if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 	return;
 }
 ?>

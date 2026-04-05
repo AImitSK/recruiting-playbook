@@ -106,7 +106,7 @@ class Shortcodes {
 	 */
 	public function maybePreloadMatchModalAssets(): void {
 		// Nur wenn KI-Feature aktiv.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return;
 		}
 
@@ -759,7 +759,7 @@ class Shortcodes {
 	 */
 	public function renderAiJobMatch( $atts ): string {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Match', 'recruiting-playbook' ),
@@ -929,7 +929,7 @@ class Shortcodes {
 	 */
 	public function renderAiJobFinder( $atts ): string {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return $this->renderUpgradePrompt(
 				'ai_cv_matching',
 				__( 'AI Job Finder', 'recruiting-playbook' ),

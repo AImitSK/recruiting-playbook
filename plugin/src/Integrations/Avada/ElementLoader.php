@@ -29,7 +29,7 @@ class ElementLoader {
 
 		// Pro Elements (AI-Features).
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( function_exists( 'rp_has_cv_matching' ) && recpl_has_cv_matching() ) {
+			if ( function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) {
 				$this->registerElement( 'AiJobFinder' );
 				$this->registerElement( 'AiJobMatch' );
 			}

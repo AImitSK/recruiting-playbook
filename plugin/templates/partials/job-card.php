@@ -172,7 +172,7 @@ defined( 'ABSPATH' ) || exit;
 			<?php esc_html_e( 'Mehr erfahren', 'recruiting-playbook' ); ?>
 		</a>
 
-		<?php if ( function_exists( 'rp_has_cv_matching' ) && rp_has_cv_matching() ) : ?>
+		<?php if ( function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) : ?>
 			<div class="rp-relative rp-z-20" x-on:click.stop onclick="event.stopPropagation(); event.preventDefault();">
 				<?php
 				echo do_shortcode(

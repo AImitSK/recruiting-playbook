@@ -992,7 +992,7 @@ final class Plugin {
 
 		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'rp_has_cv_matching' ) && recpl_has_cv_matching() ) {
+			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) {
 				// CSS.
 				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 				if ( file_exists( $match_css_file ) ) {

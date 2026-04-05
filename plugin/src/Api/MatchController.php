@@ -142,7 +142,7 @@ class MatchController extends WP_REST_Controller {
 	 */
 	public function analyze( WP_REST_Request $request ) {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return new WP_Error(
 				'feature_not_available',
 				__( 'CV matching requires Pro.', 'recruiting-playbook' ),
@@ -327,7 +327,7 @@ class MatchController extends WP_REST_Controller {
 	 */
 	public function analyze_job_finder( WP_REST_Request $request ) {
 		// Feature-Check.
-		if ( ! function_exists( 'rp_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
 			return new WP_Error(
 				'feature_not_available',
 				__( 'AI matching is not available.', 'recruiting-playbook' ),

@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.6 - 2026-04-05 =
+* Fix: Fixed function_exists checks for recpl_has_cv_matching (was checking for rp_has_cv_matching)
+* Fix: Updated 8 files with correct function reference: Shortcodes.php, MatchController.php, Plugin.php, WidgetLoader.php, ElementLoader.php, single-job_listing.php, job-card.php, match-modal.php
+* Technical: Completes prefix migration from rp_ to recpl_ for all function references
 
 = 1.7.5 - 2026-04-05 =
 * Build: Added wildcard patterns */composer.json to catch files in subdirectories
