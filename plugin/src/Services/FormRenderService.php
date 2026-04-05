@@ -23,18 +23,18 @@ use RecruitingPlaybook\Services\SpamProtection;
 class FormRenderService {
 
 	/**
-	 * FormConfigService
+	 * FormConfigService (Pro only - null in Free version)
 	 *
-	 * @var FormConfigService
+	 * @var FormConfigService|null
 	 */
-	private FormConfigService $config_service;
+	private ?FormConfigService $config_service = null;
 
 	/**
-	 * FieldDefinitionRepository
+	 * FieldDefinitionRepository (Pro only - null in Free version)
 	 *
-	 * @var FieldDefinitionRepository
+	 * @var FieldDefinitionRepository|null
 	 */
-	private FieldDefinitionRepository $field_repository;
+	private ?FieldDefinitionRepository $field_repository = null;
 
 	/**
 	 * Konstruktor
@@ -46,8 +46,21 @@ class FormRenderService {
 		?FormConfigService $config_service = null,
 		?FieldDefinitionRepository $field_repository = null
 	) {
-		$this->config_service   = $config_service ?? new FormConfigService();
-		$this->field_repository = $field_repository ?? new FieldDefinitionRepository();
+		// Pro-only classes - check if files exist before instantiating (Freemius removes them in Free version).
+		$config_file = RECPL_PLUGIN_DIR . 'src/Services/FormConfigService.php';
+		$field_file  = RECPL_PLUGIN_DIR . 'src/Repositories/FieldDefinitionRepository.php';
+
+		if ( null !== $config_service ) {
+			$this->config_service = $config_service;
+		} elseif ( file_exists( $config_file ) && class_exists( FormConfigService::class ) ) {
+			$this->config_service = new FormConfigService();
+		}
+
+		if ( null !== $field_repository ) {
+			$this->field_repository = $field_repository;
+		} elseif ( file_exists( $field_file ) && class_exists( FieldDefinitionRepository::class ) ) {
+			$this->field_repository = new FieldDefinitionRepository();
+		}
 	}
 
 	/**
@@ -60,6 +73,11 @@ class FormRenderService {
 	 * @return string HTML des Formulars.
 	 */
 	public function render( int $job_id, bool $include_wrapper = true ): string {
+		// Free version: config_service is null, use fallback form.
+		if ( null === $this->config_service ) {
+			return $this->renderFallbackForm( $job_id );
+		}
+
 		$config = $this->config_service->getPublished();
 
 		if ( empty( $config['steps'] ) ) {
@@ -994,9 +1012,15 @@ class FormRenderService {
 	 * @return string HTML.
 	 */
 	private function renderFallbackForm( int $job_id ): string {
-		return sprintf(
-			'<div class="rp-form-error">%s</div>',
-			esc_html__( 'Form could not be loaded. Please contact the administrator.', 'recruiting-playbook' )
+		// Use the standard shortcode form (Free version).
+		$shortcodes = new \RecruitingPlaybook\Frontend\Shortcodes();
+		return $shortcodes->renderApplicationForm(
+			[
+				'job_id'        => $job_id,
+				'title'         => '',
+				'show_job_title' => 'false',
+				'show_progress' => 'true',
+			]
 		);
 	}
 

@@ -268,7 +268,10 @@ class Shortcodes {
 					</p>
 				<?php endif; ?>
 
-				<?php echo wp_kses_post( $this->getFormHtml( $job_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Alpine.js Attribute (x-data, x-show) werden von wp_kses entfernt
+				echo $this->getFormHtml( $job_id );
+				?>
 			</div>
 		</div>
 		<?php

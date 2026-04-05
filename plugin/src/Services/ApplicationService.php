@@ -57,8 +57,9 @@ class ApplicationService {
 	 */
 	public function __construct() {
 		$this->document_service = new DocumentService();
-		// EmailService nur in Premium-Version verfügbar.
-		if ( class_exists( 'RecruitingPlaybook\\Services\\EmailService' ) ) {
+		// EmailService nur in Premium-Version verfügbar (Freemius entfernt Datei in Free).
+		$email_service_file = RECPL_PLUGIN_DIR . 'src/Services/EmailService.php';
+		if ( file_exists( $email_service_file ) && class_exists( 'RecruitingPlaybook\\Services\\EmailService' ) ) {
 			$this->email_service = new EmailService();
 		}
 	}

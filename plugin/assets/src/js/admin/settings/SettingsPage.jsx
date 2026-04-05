@@ -33,11 +33,6 @@ export function SettingsPage() {
 	const logoUrl = config.logoUrl || '';
 	const pages = config.pages || [];
 
-	// Debug logging
-	console.log('[SettingsPage] config:', config);
-	console.log('[SettingsPage] isPro:', config.isPro);
-	console.log('[SettingsPage] activeTab:', activeTab);
-
 	const {
 		settings,
 		loading,

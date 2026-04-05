@@ -36,10 +36,6 @@ export function DesignTab() {
 	const config = window.rpSettingsData || {};
 	const isPro = config.isPro || false;
 
-	// Debug logging
-	console.log('[DesignTab] isPro:', isPro);
-	console.log('[DesignTab] config:', config);
-
 	const {
 		settings,
 		schema,
@@ -120,14 +116,8 @@ export function DesignTab() {
 		}
 	}, [ isDirty, discardChanges ] );
 
-	// Debug logging
-	console.log('[DesignTab] loading:', loading);
-	console.log('[DesignTab] settings:', settings);
-	console.log('[DesignTab] error:', error);
-
 	// Loading state
 	if ( loading ) {
-		console.log('[DesignTab] Rendering LOADING state');
 		return (
 			<div className="rp-flex rp-items-center rp-justify-center rp-py-12">
 				<div className="rp-animate-spin rp-rounded-full rp-h-8 rp-w-8 rp-border-b-2 rp-border-blue-600" />
@@ -137,7 +127,6 @@ export function DesignTab() {
 
 	// No settings
 	if ( ! settings ) {
-		console.log('[DesignTab] Rendering NO SETTINGS state');
 		return (
 			<Alert variant="destructive">
 				<AlertCircle className="rp-h-4 rp-w-4" />
@@ -147,8 +136,6 @@ export function DesignTab() {
 			</Alert>
 		);
 	}
-
-	console.log('[DesignTab] Rendering CONTENT (isPro=' + isPro + ')');
 
 	return (
 		<div className="rp-flex rp-gap-6">
