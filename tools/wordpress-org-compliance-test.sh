@@ -353,12 +353,23 @@ fi
 print_test "Checking constant prefixes"
 
 # Check for defines with short RP_ prefix (only 2 chars before _)
-# Note: RP_ constants are OK if they are backward-compatibility aliases with phpcs:ignore
-RP_CONSTANTS=$(grep -rh "define.*'RP_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | grep -v "phpcs:ignore" | wc -l)
-if [ "$RP_CONSTANTS" -gt 0 ]; then
-    print_fail "Found $RP_CONSTANTS RP_ constants without phpcs:ignore (need RECPL_ or phpcs:ignore)"
+# Note: RP_ constants are OK if they are backward-compatibility aliases marked with phpcs:disable block
+# We check if the file has phpcs:disable for PrefixAllGlobals near the RP_ constants
+
+# First, check if there are RP_ constants
+RP_CONSTANTS_TOTAL=$(grep -rh "define.*'RP_" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | wc -l)
+
+if [ "$RP_CONSTANTS_TOTAL" -gt 0 ]; then
+    # Check if they're in a phpcs:disable block (search for the disable comment in the same file)
+    RP_FILES_WITH_DISABLE=$(grep -rl "phpcs:disable.*PrefixAllGlobals" "$PLUGIN_DIR" --include="*.php" 2>/dev/null | xargs -I {} grep -l "define.*'RP_" {} 2>/dev/null | wc -l)
+
+    if [ "$RP_FILES_WITH_DISABLE" -gt 0 ]; then
+        print_pass "Found $RP_CONSTANTS_TOTAL RP_ constants (backward-compat aliases with phpcs:disable)"
+    else
+        print_fail "Found $RP_CONSTANTS_TOTAL RP_ constants without phpcs:disable (need RECPL_ or phpcs:disable)"
+    fi
 else
-    print_pass "All short RP_ constants have phpcs:ignore or use RECPL_ prefix"
+    print_pass "No short RP_ constants found"
 fi
 
 # Check for proper RECPL_ constants

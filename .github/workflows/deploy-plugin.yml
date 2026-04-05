@@ -116,6 +116,20 @@ jobs:
           ls -la recruiting-playbook.zip
 
           echo ""
+          echo "=== Force-remove development files from ZIP ==="
+          # Some files might slip through -x patterns, so force-remove them
+          zip -d recruiting-playbook.zip \
+            "composer.json" \
+            "package-lock.json" \
+            "package.json" \
+            ".distignore" \
+            ".gitignore" \
+            ".editorconfig" \
+            "phpcs.xml.dist" \
+            "phpstan.neon" \
+            2>/dev/null || echo "Some files were already excluded"
+
+          echo ""
           echo "=== Verify no uninstall.php in ZIP ==="
           if unzip -l recruiting-playbook.zip | grep -qi "uninstall\.php"; then
             echo "ERROR: uninstall.php found in ZIP! Removing it..."
