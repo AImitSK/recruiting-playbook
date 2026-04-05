@@ -116,18 +116,34 @@ jobs:
           ls -la recruiting-playbook.zip
 
           echo ""
+          echo "=== Debug: List all composer.json in ZIP ==="
+          unzip -l recruiting-playbook.zip | grep -i "composer.json" || echo "None found initially"
+
+          echo ""
           echo "=== Force-remove development files from ZIP ==="
-          # Some files might slip through -x patterns, so force-remove them
+          # Remove from root and any subdirectories
           zip -d recruiting-playbook.zip \
             "composer.json" \
+            "*/composer.json" \
             "package-lock.json" \
+            "*/package-lock.json" \
             "package.json" \
+            "*/package.json" \
             ".distignore" \
             ".gitignore" \
             ".editorconfig" \
             "phpcs.xml.dist" \
             "phpstan.neon" \
-            2>/dev/null || echo "Some files were already excluded"
+            2>/dev/null || echo "Some files were already excluded or not found"
+
+          echo ""
+          echo "=== Verify composer.json removed ==="
+          if unzip -l recruiting-playbook.zip | grep -qi "composer.json"; then
+            echo "WARNING: composer.json still found:"
+            unzip -l recruiting-playbook.zip | grep -i "composer.json"
+          else
+            echo "OK: No composer.json in ZIP"
+          fi
 
           echo ""
           echo "=== Verify no uninstall.php in ZIP ==="

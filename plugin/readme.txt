@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.5 - 2026-04-05 =
+* Build: Added wildcard patterns */composer.json to catch files in subdirectories
+* Build: Added debug output to trace composer.json location in ZIP
 
 = 1.7.4 - 2026-04-05 =
 * Build: Fixed ZIP exclusion - now uses zip -d to force-remove dev files after creation
