@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.9
+Stable tag: 1.7.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.10 - 2026-04-20 =
+* WordPress.org: Renamed action hook `rp_application_created` to `recpl_application_created` (4+ character prefix requirement). Legacy hook name still fires via do_action_deprecated() for backward compatibility.
 
 = 1.7.9 - 2026-04-20 =
 * WordPress.org: Trialware compliance — replaced runtime feature gates with Freemius `is__premium_only()` build-time wrappers (Guideline 5)

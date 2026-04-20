@@ -78,7 +78,7 @@ class IntegrationManager {
 
 		// Event Hooks registrieren.
 		if ( ! empty( $this->settings['slack_event_new_application'] ) ) {
-			add_action( 'rp_application_created', [ $this->slack_notifier, 'onNewApplication' ], 10, 1 );
+			add_action( 'recpl_application_created', [ $this->slack_notifier, 'onNewApplication' ], 10, 1 );
 		}
 
 		if ( ! empty( $this->settings['slack_event_status_changed'] ) ) {
@@ -103,7 +103,7 @@ class IntegrationManager {
 
 		// Event Hooks registrieren.
 		if ( ! empty( $this->settings['teams_event_new_application'] ) ) {
-			add_action( 'rp_application_created', [ $this->teams_notifier, 'onNewApplication' ], 10, 1 );
+			add_action( 'recpl_application_created', [ $this->teams_notifier, 'onNewApplication' ], 10, 1 );
 		}
 
 		if ( ! empty( $this->settings['teams_event_status_changed'] ) ) {

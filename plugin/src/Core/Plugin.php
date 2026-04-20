@@ -317,7 +317,7 @@ final class Plugin {
 		$service = new WebhookService();
 
 		// Application Events.
-		add_action( 'rp_application_created', [ $service, 'onApplicationCreated' ], 10, 2 );
+		add_action( 'recpl_application_created', [ $service, 'onApplicationCreated' ], 10, 2 );
 		add_action( 'recruiting_playbook_application_status_changed', [ $service, 'onApplicationStatusChanged' ], 10, 3 );
 
 		// Job Events (über WP-Hooks).

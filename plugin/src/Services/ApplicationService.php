@@ -196,8 +196,9 @@ class ApplicationService {
 			$this->sendBasicConfirmationEmail( $application_id, $data );
 		}
 
-		// 6. Hook für Erweiterungen
-		do_action( 'rp_application_created', $application_id, $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		// 6. Hook für Erweiterungen (mit Backward-Compat alias).
+		do_action( 'recpl_application_created', $application_id, $data );
+		do_action_deprecated( 'rp_application_created', [ $application_id, $data ], '1.7.10', 'recpl_application_created' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $application_id;
 	}
