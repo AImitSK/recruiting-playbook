@@ -115,11 +115,6 @@ class FieldDefinitionService {
 	 * @return array<FieldDefinition>
 	 */
 	private function applyJobCustomFieldsConfig( int $job_id, array $fields ): array {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
-			return $fields;
-		}
-
 		// Meta-Box Konfiguration prüfen.
 		$override = get_post_meta( $job_id, '_rp_custom_fields_override', true );
 

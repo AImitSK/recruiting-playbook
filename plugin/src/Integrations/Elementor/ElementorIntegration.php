@@ -20,11 +20,6 @@ class ElementorIntegration {
 	 * Initialize integration
 	 */
 	public function register(): void {
-		// Pro feature check.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'elementor_integration' ) ) {
-			return;
-		}
-
 		// Elementor check.
 		if ( ! did_action( 'elementor/loaded' ) ) {
 			return;

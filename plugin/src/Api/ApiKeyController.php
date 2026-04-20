@@ -110,18 +110,6 @@ class ApiKeyController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function admin_permissions_check( $request ) {
-		// Pro-Feature Gate.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_keys_pro_required',
-				__( 'API Keys require Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',

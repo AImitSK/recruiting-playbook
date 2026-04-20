@@ -538,18 +538,6 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		// Prüfe rp_view_applications ODER manage_options (Admin-Fallback).
 		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
@@ -578,18 +566,6 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		// Prüfe edit_applications ODER manage_options (Admin-Fallback).
 		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
@@ -828,18 +804,6 @@ class ApplicationController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API access requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		// Prüfe delete_applications ODER manage_options (Admin-Fallback).
 		if ( ! current_user_can( 'delete_applications' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(

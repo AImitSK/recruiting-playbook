@@ -14,7 +14,6 @@
 # Config files
 phpcs.xml.dist
 phpstan.neon
-composer.json
 composer.lock
 package.json
 package-lock.json

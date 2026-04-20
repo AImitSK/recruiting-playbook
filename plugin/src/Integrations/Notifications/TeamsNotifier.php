@@ -198,7 +198,7 @@ class TeamsNotifier extends NotificationService {
 	private function buildNewApplicationCard( array $data ): array {
 		return [
 			'type'    => 'AdaptiveCard',
-			'$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+			'$schema' => 'https://adaptivecards.io/schemas/adaptive-card.json',
 			'version' => '1.4',
 			'body'    => [
 				[
@@ -249,7 +249,7 @@ class TeamsNotifier extends NotificationService {
 	private function buildStatusChangedCard( array $data ): array {
 		return [
 			'type'    => 'AdaptiveCard',
-			'$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+			'$schema' => 'https://adaptivecards.io/schemas/adaptive-card.json',
 			'version' => '1.4',
 			'body'    => [
 				[
@@ -328,7 +328,7 @@ class TeamsNotifier extends NotificationService {
 
 		return [
 			'type'    => 'AdaptiveCard',
-			'$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+			'$schema' => 'https://adaptivecards.io/schemas/adaptive-card.json',
 			'version' => '1.4',
 			'body'    => [
 				[
@@ -367,7 +367,7 @@ class TeamsNotifier extends NotificationService {
 	private function buildTestCard( array $data ): array {
 		return [
 			'type'    => 'AdaptiveCard',
-			'$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+			'$schema' => 'https://adaptivecards.io/schemas/adaptive-card.json',
 			'version' => '1.4',
 			'body'    => [
 				[

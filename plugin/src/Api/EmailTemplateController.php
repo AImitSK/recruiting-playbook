@@ -548,17 +548,6 @@ class EmailTemplateController extends WP_REST_Controller {
 		}
 
 		// 2. Feature-Flag-Check (Business-Logic).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_templates_required',
-				__( 'Email templates require Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		return true;
 	}
 
@@ -587,17 +576,6 @@ class EmailTemplateController extends WP_REST_Controller {
 				'rest_forbidden',
 				__( 'You do not have permission to create email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
-			);
-		}
-
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_templates_required',
-				__( 'Email templates require Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
 			);
 		}
 
@@ -632,17 +610,6 @@ class EmailTemplateController extends WP_REST_Controller {
 			);
 		}
 
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_templates_required',
-				__( 'Email templates require Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		return true;
 	}
 
@@ -671,17 +638,6 @@ class EmailTemplateController extends WP_REST_Controller {
 				'rest_forbidden',
 				__( 'You do not have permission to delete email templates.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
-			);
-		}
-
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_templates_required',
-				__( 'Email templates require Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
 			);
 		}
 

@@ -35,7 +35,7 @@ class ApplicationDetail {
 	 * @return bool
 	 */
 	private function hasProFeatures(): bool {
-		return function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' );
+		return function_exists( 'recpl_fs' ) && recpl_fs()->is__premium_only();
 	}
 
 	/**
@@ -83,7 +83,7 @@ class ApplicationDetail {
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
 						'listUrl'       => admin_url( 'admin.php?page=recruiting-playbook' ),
 						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
-						'canSendEmails' => function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ),
+						'canSendEmails' => function_exists( 'recpl_fs' ) && recpl_fs()->is__premium_only(),
 						'i18n'          => [
 							'loadingApplication'      => __( 'Loading application...', 'recruiting-playbook' ),
 							'errorLoadingApplication' => __( 'Error loading application', 'recruiting-playbook' ),
@@ -127,7 +127,7 @@ class ApplicationDetail {
 		// Free-Version: PHP-basierte Detailseite.
 		// WICHTIG: Zuerst Status-Update verarbeiten, DANN Daten laden!
 		$this->processStatusUpdate( $id );
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$this->processEmailSend( $id );
 		}
 
@@ -143,7 +143,7 @@ class ApplicationDetail {
 		$activity_log    = $this->getActivityLog( $id );
 		$email_history   = [];
 		$email_templates = [];
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			$email_history   = $this->getEmailHistory( $id );
 			$email_templates = $this->getEmailTemplates();
 		}
@@ -285,7 +285,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+					if ( recpl_fs()->is__premium_only() ) {
 						$this->renderEmailHistory( $email_history );
 					}
 					?>
@@ -321,7 +321,7 @@ class ApplicationDetail {
 					</div>
 
 					<?php
-					if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+					if ( recpl_fs()->is__premium_only() ) {
 						$this->renderEmailComposer( $id, $candidate, $email_templates );
 					}
 					?>
@@ -596,12 +596,7 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailHistory( int $application_id ): array {
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
-			// Pro-Feature Check.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				return [];
-			}
-
+		if ( recpl_fs()->is__premium_only() ) {
 			global $wpdb;
 
 			$table = $wpdb->prefix . 'rp_email_log';
@@ -638,12 +633,7 @@ class ApplicationDetail {
 	 * @return array
 	 */
 	private function getEmailTemplates(): array {
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
-			// Pro-Feature Check.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				return [];
-			}
-
+		if ( recpl_fs()->is__premium_only() ) {
 			global $wpdb;
 
 			$table = $wpdb->prefix . 'rp_email_templates';
@@ -675,15 +665,7 @@ class ApplicationDetail {
 	 * @param array $templates      Verfügbare Templates.
 	 */
 	private function renderEmailComposer( int $application_id, array $candidate, array $templates ): void {
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
-			// Pro-Feature Check.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				if ( function_exists( 'recpl_require_feature' ) ) {
-					recpl_require_feature( 'email_templates', __( 'E-Mail-Versand', 'recruiting-playbook' ), 'PRO' );
-				}
-				return;
-			}
-
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( empty( $templates ) ) {
 				?>
 			<div class="postbox">
@@ -802,12 +784,7 @@ class ApplicationDetail {
 	 * @param array $emails E-Mail-Einträge.
 	 */
 	private function renderEmailHistory( array $emails ): void {
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
-			// Pro-Feature Check - keine Box anzeigen wenn nicht Pro.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				return;
-			}
-
+		if ( recpl_fs()->is__premium_only() ) {
 			?>
 		<div class="postbox">
 			<h2 class="hndle">
@@ -892,25 +869,12 @@ class ApplicationDetail {
 	 * @param int $application_id Application ID.
 	 */
 	private function processEmailSend( int $application_id ): void {
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+		if ( recpl_fs()->is__premium_only() ) {
 			if ( ! isset( $_POST['send_email'] ) ) {
 				return;
 			}
 
 			check_admin_referer( 'rp_send_email_' . $application_id );
-
-			// Pro-Feature Check.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				add_action(
-					'admin_notices',
-					function () {
-						echo '<div class="notice notice-error is-dismissible"><p>';
-						esc_html_e( 'Email sending requires Pro.', 'recruiting-playbook' );
-						echo '</p></div>';
-					}
-				);
-				return;
-			}
 
 			$template_id  = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
 			$signature_id = isset( $_POST['signature_id'] ) && '' !== $_POST['signature_id'] ? absint( $_POST['signature_id'] ) : null;

@@ -153,14 +153,6 @@ class AiAnalysisController extends WP_REST_Controller {
 			);
 		}
 
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'ai_cv_matching' ) ) {
-			return new WP_Error(
-				'feature_not_available',
-				__( 'AI features require Pro.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		return true;
 	}
 
@@ -190,8 +182,7 @@ class AiAnalysisController extends WP_REST_Controller {
 		$settings = $this->get_ai_settings();
 		$limit    = (int) ( $settings['budget_limit'] ?? 100 );
 
-		// Lizenz-Info.
-		$license_active = function_exists( 'recpl_has_ai' ) && recpl_has_ai();
+		$license_active = true;
 
 		// Nächster Reset: 1. des nächsten Monats.
 		$reset_date = gmdate( 'Y-m-01', strtotime( '+1 month' ) );

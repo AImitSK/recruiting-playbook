@@ -70,8 +70,7 @@ class ApplicationService {
 	 * @return AutoEmailService|null
 	 */
 	private function getAutoEmailService(): ?AutoEmailService {
-		// Nur in Pro-Version verfügbar.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\AutoEmailService' ) ) {
 			return null;
 		}
 
@@ -82,11 +81,14 @@ class ApplicationService {
 	}
 
 	/**
-	 * Custom Fields Service lazy-loading
+	 * Custom Fields Service lazy-loading (premium-only)
 	 *
-	 * @return CustomFieldsService
+	 * @return CustomFieldsService|null
 	 */
-	private function getCustomFieldsService(): CustomFieldsService {
+	private function getCustomFieldsService(): ?CustomFieldsService {
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\CustomFieldsService' ) ) {
+			return null;
+		}
 		if ( null === $this->custom_fields_service ) {
 			$this->custom_fields_service = new CustomFieldsService();
 		}
@@ -152,8 +154,8 @@ class ApplicationService {
 			}
 		}
 
-		// 3b. Custom Fields verarbeiten (Pro-Feature).
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) && ! empty( $data['custom_fields'] ) ) {
+		// 3b. Custom Fields verarbeiten (premium-only).
+		if ( recpl_fs()->is__premium_only() && ! empty( $data['custom_fields'] ) ) {
 			$custom_fields_result = $this->processCustomFields(
 				(int) $data['job_id'],
 				$application_id,
@@ -236,15 +238,11 @@ class ApplicationService {
 		// Dokumente laden
 		$application['documents'] = $this->document_service->getByApplication( $id );
 
-		// Custom Fields laden (Pro-Feature).
-		$application['custom_fields'] = [];
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
-			$application['custom_fields'] = $this->getCustomFields( $id, (int) $application['job_id'] );
-		}
-
-		// Talent-Pool Status laden (Pro-Feature).
+		// Custom Fields und Talent-Pool Status (premium-only).
+		$application['custom_fields']  = [];
 		$application['in_talent_pool'] = false;
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' ) ) {
+		if ( recpl_fs()->is__premium_only() ) {
+			$application['custom_fields']  = $this->getCustomFields( $id, (int) $application['job_id'] );
 			$talent_pool_service           = new TalentPoolService();
 			$application['in_talent_pool'] = $talent_pool_service->isInPool( (int) $application['candidate_id'] );
 		}
@@ -755,6 +753,9 @@ class ApplicationService {
 	 */
 	private function processCustomFields( int $job_id, int $application_id, array $data, array $files = [] ): array|WP_Error {
 		$service = $this->getCustomFieldsService();
+		if ( null === $service ) {
+			return [];
+		}
 
 		// Verarbeiten.
 		$result = $service->processCustomFields( $job_id, $application_id, $data, $files );
@@ -784,7 +785,8 @@ class ApplicationService {
 	 * @return array
 	 */
 	public function getCustomFields( int $application_id, int $job_id ): array {
-		return $this->getCustomFieldsService()->getFormattedCustomFields( $application_id, $job_id );
+		$service = $this->getCustomFieldsService();
+		return $service ? $service->getFormattedCustomFields( $application_id, $job_id ) : [];
 	}
 
 	/**

@@ -95,13 +95,8 @@ class EmailRenderer {
 	 * @return bool True wenn erlaubt.
 	 */
 	private function isTemplateAllowed( string $template_slug ): bool {
-		// Pro-Feature Check: Alle Templates erlaubt.
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
-			return true;
-		}
-
-		// Free-Tier: Nur Basis-Templates.
-		return in_array( $template_slug, self::FREE_TEMPLATES, true );
+		// EmailRenderer exists only in premium builds — all templates allowed.
+		return true;
 	}
 
 	/**

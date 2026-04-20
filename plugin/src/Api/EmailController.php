@@ -560,18 +560,6 @@ class EmailController extends WP_REST_Controller {
 			);
 		}
 
-		// 2. Feature-Flag-Check (Business-Logic).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_send_required',
-				__( 'Email sending requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		return true;
 	}
 

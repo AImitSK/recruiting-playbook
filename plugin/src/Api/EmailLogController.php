@@ -326,18 +326,6 @@ class EmailLogController extends WP_REST_Controller {
 			);
 		}
 
-		// 2. Feature-Flag-Check (Business-Logic).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_log_required',
-				__( 'Email history requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		return true;
 	}
 
@@ -367,18 +355,6 @@ class EmailLogController extends WP_REST_Controller {
 				'rest_forbidden',
 				__( 'You do not have permission to resend emails.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
-			);
-		}
-
-		// 2. Feature-Flag-Check (Business-Logic).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return new WP_Error(
-				'rest_email_resend_required',
-				__( 'Resending emails requires Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
 			);
 		}
 

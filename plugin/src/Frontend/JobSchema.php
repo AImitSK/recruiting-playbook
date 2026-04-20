@@ -13,6 +13,7 @@ namespace RecruitingPlaybook\Frontend;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\PostTypes\JobListing;
+use RecruitingPlaybook\Taxonomies\JobLocation;
 
 /**
  * Generiert JSON-LD Schema für Google for Jobs
@@ -249,15 +250,31 @@ class JobSchema {
 
 		$location = $terms[0];
 
-		// Basis-Location mit Ortsname.
-		// Hinweis: Für vollständige Adressen müssten zusätzliche Term-Meta gespeichert werden.
+		$address = [
+			'@type'           => 'PostalAddress',
+			'addressLocality' => $location->name,
+			'addressCountry'  => 'DE',
+		];
+
+		// Optional: Term-Meta für streetAddress, postalCode, addressRegion.
+		$street = get_term_meta( $location->term_id, JobLocation::META_STREET, true );
+		if ( is_string( $street ) && '' !== $street ) {
+			$address['streetAddress'] = $street;
+		}
+
+		$postal_code = get_term_meta( $location->term_id, JobLocation::META_POSTAL_CODE, true );
+		if ( is_string( $postal_code ) && '' !== $postal_code ) {
+			$address['postalCode'] = $postal_code;
+		}
+
+		$region = get_term_meta( $location->term_id, JobLocation::META_REGION, true );
+		if ( is_string( $region ) && '' !== $region ) {
+			$address['addressRegion'] = $region;
+		}
+
 		return [
 			'@type'   => 'Place',
-			'address' => [
-				'@type'           => 'PostalAddress',
-				'addressLocality' => $location->name,
-				'addressCountry'  => 'DE',
-			],
+			'address' => $address,
 		];
 	}
 

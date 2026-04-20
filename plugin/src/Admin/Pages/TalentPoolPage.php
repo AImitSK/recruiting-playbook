@@ -17,15 +17,6 @@ defined( 'ABSPATH' ) || exit;
 class TalentPoolPage {
 
 	/**
-	 * Prüft ob Pro-Features verfügbar sind
-	 *
-	 * @return bool
-	 */
-	private function hasProFeatures(): bool {
-		return function_exists( 'recpl_can' ) && recpl_can( 'advanced_applicant_management' );
-	}
-
-	/**
 	 * Assets laden
 	 */
 	public function enqueue_assets(): void {
@@ -99,12 +90,6 @@ class TalentPoolPage {
 	 * Seite rendern
 	 */
 	public function render(): void {
-		// Feature-Gate prüfen.
-		if ( ! $this->hasProFeatures() ) {
-			$this->renderUpgradeNotice();
-			return;
-		}
-
 		// Assets laden.
 		$this->enqueue_assets();
 
@@ -122,17 +107,4 @@ class TalentPoolPage {
 		<?php
 	}
 
-	/**
-	 * Upgrade-Hinweis für Free-User rendern
-	 */
-	private function renderUpgradeNotice(): void {
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Talent Pool', 'recruiting-playbook' ) . '</h1>';
-
-		if ( function_exists( 'recpl_require_feature' ) ) {
-			recpl_require_feature( 'advanced_applicant_management', 'Talent-Pool', 'PRO' );
-		}
-
-		echo '</div>';
-	}
 }

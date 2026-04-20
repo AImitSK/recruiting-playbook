@@ -85,8 +85,8 @@ class ApplicationList extends \WP_List_Table {
 			'bulk_delete'    => __( 'Delete', 'recruiting-playbook' ),
 		];
 
-		// Pro-Feature: Bulk-E-Mail.
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'email_templates' ) ) {
+		// Bulk-E-Mail (premium-only).
+		if ( recpl_fs()->is__premium_only() ) {
 			$actions['bulk_email'] = __( '✉️ Send Email', 'recruiting-playbook' );
 		}
 

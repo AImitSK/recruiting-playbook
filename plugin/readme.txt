@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,17 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.7.9 - 2026-04-20 =
+* WordPress.org: Trialware compliance — replaced runtime feature gates with Freemius `is__premium_only()` build-time wrappers (Guideline 5)
+* WordPress.org: Fixed Terms/Privacy/Imprint URLs (now under /legal/*)
+* WordPress.org: Replaced dead documentation domain with recruiting-playbook.com/docs/*
+* WordPress.org: Teams Adaptive Cards schema URL upgraded HTTP → HTTPS
+* WordPress.org: composer.json now included in release ZIP (reviewer requirement)
+* Feature: Location taxonomy now supports street address, postal code and region term meta (Google for Jobs: streetAddress, postalCode, addressRegion)
+* Dependency: AlpineJS 3.15.4 → 3.15.11
+* Cleanup: Removed dead getXxxMenuLabel/renderUpgradeNotice/renderUpgradePrompt helpers no longer reachable in Free
+* Technical: All Pro feature-gated code blocks in Plugin.php, Menu.php, ApplicationDetail.php, EmailService etc. now use Freemius preprocessor pattern
 
 = 1.7.8 - 2026-04-05 =
 * Fix: Application form now works correctly in Free version (Alpine.js attributes preserved)
@@ -305,8 +316,9 @@ The AI Resume Matching feature sends uploaded CVs and job descriptions to our AI
 * Only for published job listings
 
 **Service provider:** Recruiting Playbook GmbH
-* [Terms of Service](https://recruiting-playbook.com/terms/)
-* [Privacy Policy](https://recruiting-playbook.com/privacy/)
+* [Terms of Service](https://recruiting-playbook.com/legal/terms)
+* [Privacy Policy](https://recruiting-playbook.com/legal/privacy)
+* [Imprint](https://recruiting-playbook.com/legal/imprint)
 
 The service anonymizes all personal data before AI analysis and does not store CVs longer than necessary for processing.
 
@@ -329,11 +341,12 @@ This plugin uses Freemius for licensing, updates, and analytics.
 
 = Developer Documentation =
 
-The plugin documentation website provides guides and API references.
+The plugin documentation is hosted on the plugin website.
 
-**Service:** developer.recruiting-playbook.de
-* Used for in-app help links
-* No user data is transmitted
+**Service:** recruiting-playbook.com
+* Used for in-app help links (Gutenberg block docs, Avada integration docs)
+* No user data is transmitted — only the user's browser navigates to the docs URL when a help link is clicked
+* [Privacy Policy](https://recruiting-playbook.com/legal/privacy)
 
 = Microsoft Teams Integration (Pro Feature) =
 
@@ -354,6 +367,8 @@ The Microsoft Teams notification feature sends job and application updates to Mi
 * [Microsoft Teams Terms](https://www.microsoft.com/licensing/terms/)
 
 The plugin validates Adaptive Card JSON against the official schema (adaptivecards.io) to ensure proper formatting. Webhook URLs remain on your Microsoft Teams account and are not transmitted to third parties.
+
+**Note:** adaptivecards.io is referenced only as a JSON schema identifier for card validation. The plugin does NOT send data to adaptivecards.io — the schema URL is an identifier, not a network endpoint.
 
 == Source Code ==
 

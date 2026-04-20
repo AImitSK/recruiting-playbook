@@ -141,15 +141,6 @@ class MatchController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function analyze( WP_REST_Request $request ) {
-		// Feature-Check.
-		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
-			return new WP_Error(
-				'feature_not_available',
-				__( 'CV matching requires Pro.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		// File prüfen.
 		$files = $request->get_file_params();
 		if ( empty( $files['file'] ) ) {
@@ -326,15 +317,6 @@ class MatchController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function analyze_job_finder( WP_REST_Request $request ) {
-		// Feature-Check.
-		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
-			return new WP_Error(
-				'feature_not_available',
-				__( 'AI matching is not available.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		// File prüfen.
 		$files = $request->get_file_params();
 		if ( empty( $files['file'] ) ) {

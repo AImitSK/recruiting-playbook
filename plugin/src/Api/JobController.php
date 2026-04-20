@@ -120,18 +120,6 @@ class JobController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function get_items_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -150,18 +138,6 @@ class JobController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function create_item_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -180,18 +156,6 @@ class JobController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
@@ -210,18 +174,6 @@ class JobController extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		// Pro-Feature: API-Zugang prüfen.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
-			return new WP_Error(
-				'rest_api_access_required',
-				__( 'REST API Zugang erfordert Pro.', 'recruiting-playbook' ),
-				[
-					'status'      => 403,
-					'upgrade_url' => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
-				]
-			);
-		}
-
 		if ( ! current_user_can( 'delete_posts' ) && ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',

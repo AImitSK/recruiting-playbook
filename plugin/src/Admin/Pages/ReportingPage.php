@@ -20,8 +20,6 @@ class ReportingPage {
 	 * Render the reporting page
 	 */
 	public function render(): void {
-		// Pro-Feature Check.
-		$is_pro            = function_exists( 'recpl_is_pro' ) && recpl_is_pro();
 		$can_view_stats    = current_user_can( 'rp_view_stats' );
 		$can_view_advanced = current_user_can( 'rp_view_advanced_stats' );
 		$can_export        = current_user_can( 'rp_export_data' );
@@ -31,11 +29,10 @@ class ReportingPage {
 			'rp-admin',
 			'rpReportingData',
 			[
-				'isPro'           => $is_pro,
+				'isPro'           => true,
 				'canViewStats'    => $can_view_stats,
 				'canViewAdvanced' => $can_view_advanced,
 				'canExport'       => $can_export,
-				'upgradeUrl'      => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]

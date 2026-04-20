@@ -76,11 +76,6 @@ class AutoEmailService {
 	 * Hooks registrieren
 	 */
 	public function registerHooks(): void {
-		// Pro-Feature Check.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return;
-		}
-
 		// Hook für Status-Änderungen.
 		add_action( 'recruiting_playbook_application_status_changed', [ $this, 'handleStatusChange' ], 10, 3 );
 
@@ -287,11 +282,6 @@ class AutoEmailService {
 	 * @return array{enabled: bool, template_id: int}|null Null wenn nicht Pro oder nicht konfiguriert
 	 */
 	public function getNewApplicationSettings(): ?array {
-		// Pro-Feature Check.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return null;
-		}
-
 		$settings = $this->getSettings();
 
 		if ( ! isset( $settings['new'] ) ) {

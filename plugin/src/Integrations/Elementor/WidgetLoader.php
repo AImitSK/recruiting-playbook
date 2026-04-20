@@ -56,13 +56,6 @@ class WidgetLoader {
 	 * @param string $widget Widget-Klassenname.
 	 */
 	private function registerWidget( string $widget ): void {
-		// AI-Widgets nur wenn Pro aktiv.
-		if ( str_starts_with( $widget, 'Ai' ) ) {
-			if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
-				return;
-			}
-		}
-
 		$class = __NAMESPACE__ . '\\Widgets\\' . $widget;
 
 		if ( class_exists( $class ) ) {

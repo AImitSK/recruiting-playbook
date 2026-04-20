@@ -55,11 +55,6 @@ class IntegrationManager {
 	 * Hook into WordPress actions and initialize enabled integrations.
 	 */
 	public function register(): void {
-		// Feature Check: Integrationen sind Pro-Feature.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'integrations' ) ) {
-			return;
-		}
-
 		// Slack Integration registrieren.
 		$this->registerSlack();
 

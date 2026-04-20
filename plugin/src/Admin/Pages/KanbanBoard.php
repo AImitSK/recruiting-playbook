@@ -32,12 +32,6 @@ class KanbanBoard {
 			);
 		}
 
-		// Feature-Check (Pro-Lizenz).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'kanban_board' ) ) {
-			$this->render_upgrade_notice();
-			return;
-		}
-
 		// Assets laden.
 		$this->enqueue_assets();
 
@@ -53,25 +47,6 @@ class KanbanBoard {
 		echo esc_html__( 'Loading Kanban board...', 'recruiting-playbook' );
 		echo '</div>';
 		echo '</div>';
-		echo '</div>';
-	}
-
-	/**
-	 * Upgrade-Hinweis für Free-User
-	 */
-	private function render_upgrade_notice(): void {
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
-
-		if ( function_exists( 'recpl_require_feature' ) ) {
-			recpl_require_feature( 'kanban_board', 'Kanban-Board', 'PRO' );
-		} else {
-			// Fallback wenn Helper nicht geladen.
-			echo '<div class="notice notice-warning">';
-			echo '<p>' . esc_html__( 'The Kanban board is a Pro feature.', 'recruiting-playbook' ) . '</p>';
-			echo '</div>';
-		}
-
 		echo '</div>';
 	}
 

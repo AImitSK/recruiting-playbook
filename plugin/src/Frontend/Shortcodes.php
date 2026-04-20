@@ -105,20 +105,13 @@ class Shortcodes {
 	 * bevor Shortcodes im Loop ausgeführt werden.
 	 */
 	public function maybePreloadMatchModalAssets(): void {
-		// Nur wenn KI-Feature aktiv.
-		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+		if ( ! recpl_fs()->is__premium_only() ) {
 			return;
 		}
-
-		// Nur im Frontend, nicht im Admin.
 		if ( is_admin() ) {
 			return;
 		}
-
-		// Assets laden.
 		$this->enqueueMatchModalAssets();
-
-		// Modal im Footer registrieren.
 		$this->registerMatchModal();
 	}
 
@@ -153,10 +146,6 @@ class Shortcodes {
 	 */
 	private function shouldUseFormBuilder(): bool {
 		if ( recpl_fs()->is__premium_only() ) {
-			// Pro-Feature Check.
-			if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
-				return false;
-			}
 
 			// Prüfen ob eine veröffentlichte Konfiguration existiert.
 			$repository = $this->getFormConfigRepository();
@@ -761,13 +750,8 @@ class Shortcodes {
 	 * @return string HTML-Ausgabe.
 	 */
 	public function renderAiJobMatch( $atts ): string {
-		// Feature-Check.
-		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
-			return $this->renderUpgradePrompt(
-				'ai_cv_matching',
-				__( 'AI Job Match', 'recruiting-playbook' ),
-				'PRO'
-			);
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return '';
 		}
 
 		$atts = shortcode_atts(
@@ -931,13 +915,8 @@ class Shortcodes {
 	 * @return string HTML-Ausgabe.
 	 */
 	public function renderAiJobFinder( $atts ): string {
-		// Feature-Check.
-		if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
-			return $this->renderUpgradePrompt(
-				'ai_cv_matching',
-				__( 'AI Job Finder', 'recruiting-playbook' ),
-				'PRO'
-			);
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return '';
 		}
 
 		$atts = shortcode_atts(
@@ -1149,33 +1128,6 @@ class Shortcodes {
 	 * @param string $required_tier Benötigter Tier.
 	 * @return string HTML.
 	 */
-	private function renderUpgradePrompt( string $feature, string $feature_name, string $required_tier ): string {
-		$tier_labels = [
-			'PRO' => 'Pro',
-			'KI'  => 'Pro',
-		];
-
-		$label = $tier_labels[ $required_tier ] ?? $required_tier;
-
-		return '<div class="rp-plugin">
-			<div class="rp-bg-gray-50 rp-rounded-lg rp-p-6 rp-text-center">
-				<svg class="rp-w-12 rp-h-12 rp-mx-auto rp-text-gray-400 rp-mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-				</svg>
-				<h3 class="rp-font-semibold rp-text-gray-900 rp-mb-2">' .
-				esc_html( $feature_name ) . '</h3>
-				<p class="rp-text-gray-600 rp-mb-4">' .
-				sprintf(
-					/* translators: %s: Required tier name */
-					esc_html__( 'This feature is part of %s.', 'recruiting-playbook' ),
-					'<strong>' . esc_html( $label ) . '</strong>'
-				) . '</p>
-				<a href="' . esc_url( function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url() : admin_url( 'admin.php?page=recruiting-playbook-pricing' ) ) . '" class="rp-inline-block rp-px-4 rp-py-2 rp-bg-primary rp-text-white rp-rounded-lg hover:rp-bg-primary-dark rp-transition-colors">' .
-				esc_html__( 'Upgrade Info', 'recruiting-playbook' ) . '</a>
-			</div>
-		</div>';
-	}
-
 	/**
 	 * Basis-Assets laden (CSS)
 	 */

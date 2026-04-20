@@ -153,8 +153,8 @@ class IntegrationController extends WP_REST_Controller {
 		// Webhook-URLs für sichere Anzeige maskieren.
 		$masked = $this->maskWebhookUrls( $merged );
 
-		// Premium-Integration-Schlüssel in Free-Version entfernen (WordPress.org Guideline 5).
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'integrations' ) ) {
+		// Premium-Integrations-Keys nur in Premium-Build sichtbar (Freemius Preprocessor entfernt diesen Block in Free).
+		if ( ! recpl_fs()->is__premium_only() ) {
 			$premium_keys = [
 				'slack_enabled',
 				'slack_webhook_url',

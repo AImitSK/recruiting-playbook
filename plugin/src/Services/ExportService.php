@@ -66,15 +66,6 @@ class ExportService {
 	 * @return WP_Error|null WP_Error bei Fehler, bei Erfolg wird exit aufgerufen.
 	 */
 	public function exportApplications( array $args ) {
-		// Pro-Feature Check.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'csv_export' ) ) {
-			return new WP_Error(
-				'feature_not_available',
-				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		$filename = sprintf(
 			'bewerbungen_%s.csv',
 			gmdate( 'Y-m-d_His' )
@@ -93,12 +84,9 @@ class ExportService {
 		// Header-Zeile (Standard-Spalten).
 		$columns = $this->getExportColumns( $args['columns'] ?? [] );
 
-		// Custom Fields Header ermitteln (Pro-Feature).
-		$custom_field_headers  = [];
-		$include_custom_fields = function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' );
-		if ( $include_custom_fields ) {
-			$custom_field_headers = $this->getCustomFieldHeaders( $args['job_id'] ?? null );
-		}
+		// Custom Fields Header (premium-only builds).
+		$custom_field_headers  = $this->getCustomFieldHeaders( $args['job_id'] ?? null );
+		$include_custom_fields = ! empty( $custom_field_headers );
 
 		// Header-Zeile schreiben.
 		$header_row = array_values( $columns );
@@ -152,15 +140,6 @@ class ExportService {
 	 * @return WP_Error|null WP_Error bei Fehler, bei Erfolg wird exit aufgerufen.
 	 */
 	public function exportStats( array $args ) {
-		// Pro-Feature Check.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'csv_export' ) ) {
-			return new WP_Error(
-				'feature_not_available',
-				__( 'CSV export requires the Pro version.', 'recruiting-playbook' ),
-				[ 'status' => 403 ]
-			);
-		}
-
 		$filename = sprintf(
 			'statistik-report_%s.csv',
 			gmdate( 'Y-m-d_His' )
@@ -514,18 +493,15 @@ class ExportService {
 			],
 		];
 
-		// Custom Fields als verfügbare Spalten hinzufügen (Pro-Feature).
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
-			$custom_field_headers = $this->getCustomFieldHeaders();
+		$custom_field_headers = $this->getCustomFieldHeaders();
 
-			foreach ( $custom_field_headers as $key => $label ) {
-				$standard_columns[] = [
-					'key'     => 'custom_' . $key,
-					'label'   => $label,
-					'default' => false,
-					'group'   => 'custom',
-				];
-			}
+		foreach ( $custom_field_headers as $key => $label ) {
+			$standard_columns[] = [
+				'key'     => 'custom_' . $key,
+				'label'   => $label,
+				'default' => false,
+				'group'   => 'custom',
+			];
 		}
 
 		return $standard_columns;

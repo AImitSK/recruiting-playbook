@@ -289,11 +289,6 @@ class EmailService {
 	 * @return int|bool Log-ID bei Queue, true bei direktem Versand, false bei Fehler.
 	 */
 	public function sendWithTemplate( int $template_id, int $application_id, array $custom_data = [], bool $use_queue = true, ?int $signature_id = null ): int|bool {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
-			return false;
-		}
-
 		$application = $this->getApplicationData( $application_id );
 		if ( ! $application ) {
 			return false;
@@ -433,11 +428,6 @@ class EmailService {
 	 * @return int|false Log-ID oder false bei Fehler.
 	 */
 	public function scheduleEmail( int $template_id, int $application_id, string $scheduled_at, array $custom_data = [] ): int|false {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
-			return false;
-		}
-
 		$application = $this->getApplicationData( $application_id );
 		if ( ! $application ) {
 			return false;
@@ -709,7 +699,7 @@ class EmailService {
 
 		// Branding-Hinweis (Pro-User können es abschalten).
 		$settings      = get_option( 'rp_settings', [] );
-		$hide_branding = ! empty( $settings['hide_email_branding'] ) && function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
+		$hide_branding = ! empty( $settings['hide_email_branding'] );
 		$footer_html   = '';
 
 		if ( ! $hide_branding ) {

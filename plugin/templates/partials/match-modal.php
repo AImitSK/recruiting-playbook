@@ -10,8 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// Nur anzeigen wenn Feature verfügbar.
-if ( ! function_exists( 'recpl_has_cv_matching' ) || ! recpl_has_cv_matching() ) {
+// Premium-only Template.
+if ( ! function_exists( 'recpl_fs' ) || ! recpl_fs()->is__premium_only() ) {
 	return;
 }
 ?>

@@ -253,8 +253,8 @@ class Settings {
 			]
 		);
 
-		// Sektion: Pro-Features (nur wenn Pro-Lizenz vorhanden).
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' ) ) {
+		// Pro-Einstellungen (premium-only).
+		if ( recpl_fs()->is__premium_only() ) {
 			add_settings_section(
 				'rp_pro_section',
 				__( 'Pro Settings', 'recruiting-playbook' ),
@@ -392,8 +392,7 @@ class Settings {
 	 * Assets laden
 	 */
 	private function enqueueAssets(): void {
-		// Pro-Status prüfen.
-		$is_pro = function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
+		$is_pro = recpl_fs()->is__premium_only();
 
 		// Konfiguration für React.
 		// Import-Ergebnis aus Transient lesen (falls vorhanden).

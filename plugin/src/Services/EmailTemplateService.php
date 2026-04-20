@@ -424,8 +424,7 @@ class EmailTemplateService {
 		$settings     = get_option( 'rp_settings', [] );
 		$company_name = $settings['company_name'] ?? get_bloginfo( 'name' );
 
-		// Pro-Feature: Branding ausblenden.
-		$hide_branding  = ! empty( $settings['hide_email_branding'] ) && function_exists( 'recpl_can' ) && recpl_can( 'custom_branding' );
+		$hide_branding  = ! empty( $settings['hide_email_branding'] );
 		$recruiting_url = 'https://recruiting-playbook.de';
 
 		$styles = '

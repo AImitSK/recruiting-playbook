@@ -99,8 +99,8 @@ class Menu {
 			[ $this, 'renderApplications' ]
 		);
 
-		// Kanban-Board (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'kanban_board' ) ) {
+		// Pro-Feature Submenues (werden durch Freemius Preprocessor aus Free entfernt).
+		if ( recpl_fs()->is__premium_only() ) {
 			add_submenu_page(
 				'recruiting-playbook',
 				__( 'Kanban Board', 'recruiting-playbook' ),
@@ -109,10 +109,7 @@ class Menu {
 				'rp-kanban',
 				[ $this, 'renderKanban' ]
 			);
-		}
 
-		// Talent-Pool (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'advanced_applicant_management' ) ) {
 			add_submenu_page(
 				'recruiting-playbook',
 				__( 'Talent Pool', 'recruiting-playbook' ),
@@ -121,10 +118,7 @@ class Menu {
 				'rp-talent-pool',
 				[ $this, 'renderTalentPool' ]
 			);
-		}
 
-		// Reporting & Dashboard (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'advanced_reporting' ) ) {
 			add_submenu_page(
 				'recruiting-playbook',
 				__( 'Reports', 'recruiting-playbook' ),
@@ -133,10 +127,7 @@ class Menu {
 				'rp-reporting',
 				[ $this, 'renderReporting' ]
 			);
-		}
 
-		// Formular-Builder (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'custom_fields' ) ) {
 			add_submenu_page(
 				'recruiting-playbook',
 				__( 'Form Builder', 'recruiting-playbook' ),
@@ -145,10 +136,7 @@ class Menu {
 				'rp-form-builder',
 				[ $this, 'renderFormBuilder' ]
 			);
-		}
 
-		// E-Mail-Vorlagen (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'email_templates' ) ) {
 			$email_callback = $this->email_settings_page
 				? [ $this->email_settings_page, 'render' ]
 				: [ $this, 'renderEmailTemplatesPlaceholder' ];
@@ -183,8 +171,8 @@ class Menu {
 			[ $this, 'renderApplicationDetail' ]
 		);
 
-		// Bulk-E-Mail-Seite (Pro-Feature) - nur in Pro anzeigen.
-		if ( recpl_can( 'email_templates' ) ) {
+		// Bulk-E-Mail-Seite (premium-only).
+		if ( recpl_fs()->is__premium_only() ) {
 			add_submenu_page(
 				'recruiting-playbook',
 				__( 'Bulk Email', 'recruiting-playbook' ),
@@ -419,12 +407,6 @@ class Menu {
 				break;
 
 			case 'bulk_email':
-				// Pro-Feature Check.
-				if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-					wp_safe_redirect( admin_url( 'admin.php?page=recruiting-playbook&error=pro_required' ) );
-					exit;
-				}
-
 				// IDs in Transient speichern für Bulk-Email-Seite.
 				set_transient( 'rp_bulk_email_ids_' . $current_user->ID, $ids, 300 ); // 5 Minuten gültig.
 				wp_safe_redirect( admin_url( 'admin.php?page=rp-bulk-email' ) );
@@ -612,189 +594,71 @@ class Menu {
 	}
 
 	/**
-	 * Kanban-Board rendern
+	 * Kanban-Board rendern (premium-only)
 	 */
 	public function renderKanban(): void {
 		if ( recpl_fs()->is__premium_only() ) {
 			$kanban_page = new KanbanBoard();
 			$kanban_page->render();
-			return;
 		}
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Kanban Board', 'recruiting-playbook' ) . '</h1>';
-		recpl_require_feature( 'kanban_board', __( 'Kanban Board', 'recruiting-playbook' ), 'PRO' );
-		echo '</div>';
 	}
 
 	/**
-	 * Kanban-Menü-Label mit Lock-Icon für Free-User
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getKanbanMenuLabel(): string {
-		$label = __( 'Kanban Board', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'kanban_board' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * Talent-Pool-Menü-Label mit Lock-Icon für Free-User
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getTalentPoolMenuLabel(): string {
-		$label = __( 'Talent Pool', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'advanced_applicant_management' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * Reporting-Menü-Label mit Lock-Icon für Free-User (Pro-Features)
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getReportingMenuLabel(): string {
-		$label = __( 'Reports', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User (erweiterte Features).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'advanced_reporting' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * Form Builder Menü-Label mit Lock-Icon für Free-User
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getFormBuilderMenuLabel(): string {
-		$label = __( 'Form Builder', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User (Custom Fields sind Pro-Feature).
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'custom_fields' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * E-Mail-Vorlagen Menü-Label mit Lock-Icon für Free-User
-	 *
-	 * @return string Menü-Label.
-	 */
-	private function getEmailTemplatesMenuLabel(): string {
-		$label = __( 'Email Templates', 'recruiting-playbook' );
-
-		// Lock-Icon für Free-User.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'email_templates' ) ) {
-			$label .= ' <span class="dashicons dashicons-lock" style="font-size: 12px; width: 12px; height: 12px; vertical-align: middle; opacity: 0.7;"></span>';
-		}
-
-		return $label;
-	}
-
-	/**
-	 * E-Mail-Vorlagen Platzhalter-Renderer (wird von EmailSettingsPage überschrieben)
+	 * E-Mail-Vorlagen Platzhalter-Renderer (premium-only)
 	 */
 	public function renderEmailTemplatesPlaceholder(): void {
-		// EmailSettingsPage überschreibt diesen Callback via admin_menu Hook.
-		// Falls nicht geladen (Free-Version), zeige Upgrade-Hinweis.
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1>';
-		if ( function_exists( 'recpl_require_feature' ) ) {
-			recpl_require_feature( 'email_templates', __( 'Email Templates', 'recruiting-playbook' ), 'PRO' );
+		if ( recpl_fs()->is__premium_only() ) {
+			echo '<div class="wrap"><h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1></div>';
 		}
-		echo '</div>';
 	}
 
 	/**
-	 * Reporting-Seite rendern
+	 * Reporting-Seite rendern (premium-only)
 	 */
 	public function renderReporting(): void {
 		if ( recpl_fs()->is__premium_only() ) {
 			$reporting_page = new ReportingPage();
 			$reporting_page->render();
-			return;
 		}
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Reports', 'recruiting-playbook' ) . '</h1>';
-		recpl_require_feature( 'advanced_reporting', __( 'Reports', 'recruiting-playbook' ), 'PRO' );
-		echo '</div>';
 	}
 
 	/**
-	 * Form Builder-Seite rendern
+	 * Form Builder-Seite rendern (premium-only)
 	 */
 	public function renderFormBuilder(): void {
 		if ( recpl_fs()->is__premium_only() ) {
 			$form_builder_page = new FormBuilderPage();
 			$form_builder_page->enqueue_assets();
 			$form_builder_page->render();
-			return;
 		}
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Form Builder', 'recruiting-playbook' ) . '</h1>';
-		recpl_require_feature( 'custom_fields', __( 'Form Builder', 'recruiting-playbook' ), 'PRO' );
-		echo '</div>';
 	}
 
 	/**
-	 * Talent-Pool-Seite rendern
+	 * Talent-Pool-Seite rendern (premium-only)
 	 */
 	public function renderTalentPool(): void {
 		if ( recpl_fs()->is__premium_only() ) {
 			$talent_pool_page = new Pages\TalentPoolPage();
 			$talent_pool_page->render();
-			return;
 		}
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Talent Pool', 'recruiting-playbook' ) . '</h1>';
-		recpl_require_feature( 'advanced_applicant_management', __( 'Talent Pool', 'recruiting-playbook' ), 'PRO' );
-		echo '</div>';
 	}
 
 	/**
-	 * Bulk-E-Mail-Seite rendern
+	 * Bulk-E-Mail-Seite rendern (premium-only)
 	 */
 	public function renderBulkEmail(): void {
 		if ( recpl_fs()->is__premium_only() ) {
-			// Pro-Feature Check.
-			if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-				wp_die(
-					esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
-					esc_html__( 'Pro feature required', 'recruiting-playbook' ),
-					[ 'response' => 403 ]
-				);
-			}
-
 			$this->renderBulkEmailPro();
-			return;
 		}
-		// Free-Version: Nie direkt erreichbar, aber als Safety-Net.
-		wp_die(
-			esc_html__( 'Bulk email requires Pro.', 'recruiting-playbook' ),
-			esc_html__( 'Pro feature required', 'recruiting-playbook' ),
-			[ 'response' => 403 ]
-		);
 	}
 
 	/**
-	 * Bulk-E-Mail Pro-Version rendern
+	 * Bulk-E-Mail Pro-Version rendern (premium-only)
 	 */
 	private function renderBulkEmailPro(): void {
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return;
+		}
 		$current_user    = wp_get_current_user();
 		$transient_key   = 'rp_bulk_email_ids_' . $current_user->ID;
 		$application_ids = get_transient( $transient_key );
@@ -851,8 +715,6 @@ class Menu {
 
 			if ( ! $template_id ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Please select a template.', 'recruiting-playbook' ) . '</p></div>';
-			} elseif ( ! recpl_can( 'email_templates' ) ) {
-				echo '<div class="notice notice-error"><p>' . esc_html__( 'Email service not available.', 'recruiting-playbook' ) . '</p></div>';
 			} else {
 				$email_service = new EmailService();
 				$success_count = 0;

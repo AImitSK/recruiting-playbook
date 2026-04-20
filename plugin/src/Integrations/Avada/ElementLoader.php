@@ -27,12 +27,10 @@ class ElementLoader {
 		$this->registerElement( 'LatestJobs' );
 		$this->registerElement( 'JobCategories' );
 
-		// Pro Elements (AI-Features).
+		// Pro Elements (AI-Features, premium-only).
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) {
-				$this->registerElement( 'AiJobFinder' );
-				$this->registerElement( 'AiJobMatch' );
-			}
+			$this->registerElement( 'AiJobFinder' );
+			$this->registerElement( 'AiJobMatch' );
 		}
 	}
 

@@ -44,11 +44,6 @@ class JobCustomFieldsMeta {
 	 * Meta Box registrieren
 	 */
 	public function register(): void {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
-			return;
-		}
-
 		add_meta_box(
 			'rp_job_custom_fields',
 			__( 'Application Form', 'recruiting-playbook' ),
@@ -229,11 +224,6 @@ class JobCustomFieldsMeta {
 	 * @param WP_Post $post    Post object.
 	 */
 	public function save( int $post_id, WP_Post $post ): void {
-		// Pro-Feature Check.
-		if ( ! function_exists( 'recpl_can' ) || ! recpl_can( 'custom_fields' ) ) {
-			return;
-		}
-
 		// Nonce prüfen.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( ! isset( $_POST['rp_job_custom_fields_nonce'] ) ||

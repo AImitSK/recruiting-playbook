@@ -197,12 +197,11 @@ final class Plugin {
 			update_option( 'rp_version', RP_VERSION );
 		}
 
-		// Custom Fields Migration prüfen und ausführen (Pro-Feature).
+		// Custom Fields Migration prüfen und ausführen (premium-only).
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( function_exists( 'recpl_can' ) && recpl_can( 'custom_fields' ) ) {
-				if ( CustomFieldsMigration::needsMigration() ) {
-					add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
-				}
+			if ( class_exists( 'RecruitingPlaybook\\Database\\Migrations\\CustomFieldsMigration' )
+				&& CustomFieldsMigration::needsMigration() ) {
+				add_action( 'admin_init', [ CustomFieldsMigration::class, 'run' ], 99 );
 			}
 		}
 	}
@@ -271,26 +270,15 @@ final class Plugin {
 	}
 
 	/**
-	 * E-Mail Queue Service initialisieren
-	 *
-	 * Registriert Hooks für den Queue-basierten E-Mail-Versand.
-	 * Pro-Feature: Nur aktiv wenn E-Mail-Templates Feature verfügbar ist.
+	 * E-Mail Queue Service initialisieren (premium-only)
 	 */
 	private function initEmailQueueService(): void {
-		// Prüfen ob Feature verfügbar ist.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return;
-		}
-
-		// Prüfen ob Service-Klasse verfügbar ist.
 		if ( ! class_exists( 'RecruitingPlaybook\\Services\\EmailQueueService' ) ) {
 			return;
 		}
 
 		$email_queue_service = new EmailQueueService();
 		$email_queue_service->registerHooks();
-
-		// Queue-Verarbeitung bei Aktivierung starten.
 		add_action( 'init', [ $email_queue_service, 'scheduleQueueProcessing' ] );
 	}
 
@@ -307,18 +295,9 @@ final class Plugin {
 	}
 
 	/**
-	 * Auto-E-Mail Service initialisieren
-	 *
-	 * Registriert Hooks für automatischen E-Mail-Versand bei Status-Änderungen.
-	 * Pro-Feature: Nur aktiv wenn E-Mail-Templates Feature verfügbar ist.
+	 * Auto-E-Mail Service initialisieren (premium-only)
 	 */
 	private function initAutoEmailService(): void {
-		// Prüfen ob Feature verfügbar ist.
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'email_templates' ) ) {
-			return;
-		}
-
-		// Prüfen ob Service-Klasse verfügbar ist.
 		if ( ! class_exists( 'RecruitingPlaybook\\Services\\AutoEmailService' ) ) {
 			return;
 		}
@@ -328,18 +307,9 @@ final class Plugin {
 	}
 
 	/**
-	 * Webhook Event-Hooks registrieren
-	 *
-	 * Verbindet Application- und Job-Events mit dem WebhookService
-	 * für asynchrone Benachrichtigung externer Systeme.
-	 * Pro-Feature: Nur aktiv wenn Webhooks Feature verfügbar ist.
+	 * Webhook Event-Hooks registrieren (premium-only)
 	 */
 	private function registerWebhookHooks(): void {
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'webhooks' ) ) {
-			return;
-		}
-
-		// Prüfen ob Service-Klasse verfügbar ist.
 		if ( ! class_exists( 'RecruitingPlaybook\\Services\\WebhookService' ) ) {
 			return;
 		}
@@ -360,13 +330,10 @@ final class Plugin {
 	}
 
 	/**
-	 * Integrationen registrieren (Slack, Teams, etc.)
-	 *
-	 * Registriert Event-Hooks für externe Benachrichtigungen und Cron-Jobs.
-	 * Pro-Feature: Nur aktiv wenn Integrations Feature verfügbar ist.
+	 * Integrationen registrieren (Slack, Teams, etc. — premium-only)
 	 */
 	private function registerIntegrations(): void {
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'integrations' ) ) {
+		if ( ! class_exists( 'RecruitingPlaybook\\Integrations\\IntegrationManager' ) ) {
 			return;
 		}
 
@@ -375,13 +342,10 @@ final class Plugin {
 	}
 
 	/**
-	 * API-Key Authentifizierung registrieren
-	 *
-	 * Ermöglicht Authentifizierung über X-Recruiting-API-Key Header
-	 * oder api_key Query-Parameter. Pro-Feature.
+	 * API-Key Authentifizierung registrieren (premium-only)
 	 */
 	private function registerApiKeyAuth(): void {
-		if ( function_exists( 'recpl_can' ) && ! recpl_can( 'api_access' ) ) {
+		if ( ! class_exists( 'RecruitingPlaybook\\Services\\ApiKeyService' ) ) {
 			return;
 		}
 
@@ -990,9 +954,9 @@ final class Plugin {
 			}
 		}
 
-		// Match-Modal JS & CSS (Pro Feature) - auf Archiv und Einzelseiten.
+		// Match-Modal JS & CSS (premium-only) - auf Archiv und Einzelseiten.
 		if ( recpl_fs()->is__premium_only() ) {
-			if ( ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) && function_exists( 'recpl_has_cv_matching' ) && recpl_has_cv_matching() ) {
+			if ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) {
 				// CSS.
 				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 				if ( file_exists( $match_css_file ) ) {

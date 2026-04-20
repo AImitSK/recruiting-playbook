@@ -513,17 +513,7 @@ class StatsController extends WP_REST_Controller {
 			return true;
 		}
 
-		// Capability Check.
-		if ( current_user_can( 'rp_view_advanced_stats' ) ) {
-			return true;
-		}
-
-		// Feature-Flag Check (Pro-Lizenz).
-		if ( function_exists( 'recpl_can' ) && recpl_can( 'advanced_reporting' ) ) {
-			return true;
-		}
-
-		return false;
+		return current_user_can( 'rp_view_advanced_stats' );
 	}
 
 	/**

@@ -113,14 +113,6 @@ class EmailSettingsPage {
 	 * Seite rendern
 	 */
 	public function render(): void {
-		// Pro-Feature-Check.
-		$is_pro = function_exists( 'recpl_can' ) && recpl_can( 'email_templates' );
-
-		if ( ! $is_pro ) {
-			$this->renderUpgradeNotice();
-			return;
-		}
-
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -366,20 +358,6 @@ class EmailSettingsPage {
 			$code = '<code style="cursor: pointer; background: #f0f0f0; padding: 2px 5px;" onclick="navigator.clipboard.writeText(\'{' . esc_attr( $key ) . '}\').then(() => alert(\'Copied!\'))" title="' . esc_attr__( 'Click to copy', 'recruiting-playbook' ) . '">{' . esc_html( $key ) . '}</code>';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $code is built with esc_attr() and esc_html() above
 			echo '<div>' . $code . ' <small style="color: #666;">' . esc_html( $info['label'] ?? $key ) . '</small></div>';
-		}
-
-		echo '</div>';
-	}
-
-	/**
-	 * Upgrade-Hinweis für Free-Version
-	 */
-	private function renderUpgradeNotice(): void {
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Email Templates', 'recruiting-playbook' ) . '</h1>';
-
-		if ( function_exists( 'recpl_require_feature' ) ) {
-			recpl_require_feature( 'email_templates', __( 'E-Mail-Vorlagen', 'recruiting-playbook' ), 'PRO' );
 		}
 
 		echo '</div>';

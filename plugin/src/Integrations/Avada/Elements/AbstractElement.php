@@ -115,6 +115,6 @@ abstract class AbstractElement {
 	 * @return string URL zur Dokumentation.
 	 */
 	protected function getHelpUrl( string $shortcode ): string {
-		return 'https://developer.recruiting-playbook.dev/docs/shortcodes#' . $shortcode;
+		return 'https://recruiting-playbook.com/docs/avada-integration';
 	}
 }
