@@ -228,11 +228,14 @@ class Menu {
 	 * Aktionen früh verarbeiten (vor jeglichem Output)
 	 */
 	public function handleEarlyActions(): void {
-		// Backup-Download (muss vor jeglichem Output passieren).
-		$this->handleBackupDownload();
+		// Backup-Download/Import sind Premium-Features — Aufruf nur in Pro-Build.
+		if ( recpl_fs()->is__premium_only() ) {
+			// Backup-Download (muss vor jeglichem Output passieren).
+			$this->handleBackupDownload();
 
-		// Backup-Import (muss vor jeglichem Output passieren).
-		$this->handleBackupImport();
+			// Backup-Import (muss vor jeglichem Output passieren).
+			$this->handleBackupImport();
+		}
 
 		// Nur auf Bewerbungen-Seite.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten für jede Aktion geprüft.
@@ -465,8 +468,8 @@ class Menu {
 	 * Backup-Download verarbeiten (vor Output) — Premium-Feature
 	 */
 	private function handleBackupDownload(): void {
-		// Premium-Feature: BackupExporter-Klasse existiert nur in Pro-Version.
-		if ( ! recpl_fs()->is__premium_only() ) {
+		// Sicherheitsnetz: Klasse existiert nur in Pro-Version.
+		if ( ! class_exists( 'RecruitingPlaybook\\Admin\\Export\\BackupExporter' ) ) {
 			return;
 		}
 
@@ -500,8 +503,8 @@ class Menu {
 	 * Backup-Import verarbeiten (vor Output) — Premium-Feature
 	 */
 	private function handleBackupImport(): void {
-		// Premium-Feature: BackupImporter-Klasse existiert nur in Pro-Version.
-		if ( ! recpl_fs()->is__premium_only() ) {
+		// Sicherheitsnetz: Klasse existiert nur in Pro-Version.
+		if ( ! class_exists( 'RecruitingPlaybook\\Admin\\Import\\BackupImporter' ) ) {
 			return;
 		}
 

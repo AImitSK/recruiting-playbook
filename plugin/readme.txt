@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.8.0
+Stable tag: 1.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.8.1 - 2026-04-28 =
+* Hotfix: Free build pre-processor pattern — Backup handlers in Menu.php now use the canonical `if (recpl_fs()->is__premium_only()) { ... }` wrapper around the call site (Plugin.php convention) plus a `class_exists()` guard inside the methods, so `BackupExporter`/`BackupImporter` references cannot trigger a class-not-found fatal in Free
+* Hotfix: Corrected `@fs_premium_only` paths for `match-modal.js` and `job-finder.js` (`/assets/src/js/components/*` → `/assets/dist/js/*`) so the compiled bundles are removed from the Free build
 
 = 1.8.0 - 2026-04-28 =
 * WordPress.org: Trialware compliance — `BackupExporter` and `BackupImporter` now removed from Free build via Freemius `@fs_premium_only` directive and wrapped with `is__premium_only()` guards in Menu handlers (Guideline 5)
