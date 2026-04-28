@@ -11,6 +11,7 @@ namespace RecruitingPlaybook\Api;
 
 defined( 'ABSPATH' ) || exit;
 
+use RecruitingPlaybook\Services\CapabilityService;
 use RecruitingPlaybook\Services\NoteService;
 use WP_Error;
 use WP_REST_Controller;
@@ -264,7 +265,7 @@ class NoteController extends WP_REST_Controller {
 			);
 		}
 
-		return true;
+		return $this->check_application_access( $request );
 	}
 
 	/**
@@ -287,7 +288,7 @@ class NoteController extends WP_REST_Controller {
 			);
 		}
 
-		return true;
+		return $this->check_application_access( $request );
 	}
 
 	/**
@@ -320,7 +321,7 @@ class NoteController extends WP_REST_Controller {
 		}
 
 		// Service prüft ob User die spezifische Notiz bearbeiten darf.
-		return true;
+		return $this->check_application_access( $request );
 	}
 
 	/**
@@ -353,6 +354,30 @@ class NoteController extends WP_REST_Controller {
 		}
 
 		// Service prüft ob User die spezifische Notiz löschen darf.
+		return $this->check_application_access( $request );
+	}
+
+	/**
+	 * Prüft ob aktueller User auf die Bewerbung der Route zugreifen darf.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	private function check_application_access( $request ): bool|WP_Error {
+		$application_id = (int) $request->get_param( 'application_id' );
+		if ( ! $application_id ) {
+			return true;
+		}
+
+		$capability_service = new CapabilityService();
+		if ( ! $capability_service->canAccessApplication( get_current_user_id(), $application_id ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission for this application.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
 		return true;
 	}
 }

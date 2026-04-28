@@ -12,6 +12,7 @@ namespace RecruitingPlaybook\Api;
 defined( 'ABSPATH' ) || exit;
 
 use RecruitingPlaybook\Services\ActivityService;
+use RecruitingPlaybook\Services\CapabilityService;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -202,6 +203,18 @@ class ActivityController extends WP_REST_Controller {
 				__( 'No permission to view the timeline.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
+		}
+
+		$application_id = (int) $request->get_param( 'application_id' );
+		if ( $application_id ) {
+			$capability_service = new CapabilityService();
+			if ( ! $capability_service->canAccessApplication( get_current_user_id(), $application_id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You do not have permission for this application.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
 		}
 
 		return true;

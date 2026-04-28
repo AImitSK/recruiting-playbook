@@ -141,7 +141,7 @@ class CapabilityService {
 	 * @param int $application_id Bewerbungs-ID.
 	 * @return int|null Job-ID oder null.
 	 */
-	private function getJobIdForApplication( int $application_id ): ?int {
+	public function getJobIdForApplication( int $application_id ): ?int {
 		global $wpdb;
 
 		$table = Schema::getTables()['applications'];

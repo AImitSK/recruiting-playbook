@@ -462,9 +462,14 @@ class Menu {
 	}
 
 	/**
-	 * Backup-Download verarbeiten (vor Output)
+	 * Backup-Download verarbeiten (vor Output) — Premium-Feature
 	 */
 	private function handleBackupDownload(): void {
+		// Premium-Feature: BackupExporter-Klasse existiert nur in Pro-Version.
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten geprüft.
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
@@ -492,9 +497,14 @@ class Menu {
 		// exit wird in download() aufgerufen.
 	}
 	/**
-	 * Backup-Import verarbeiten (vor Output)
+	 * Backup-Import verarbeiten (vor Output) — Premium-Feature
 	 */
 	private function handleBackupImport(): void {
+		// Premium-Feature: BackupImporter-Klasse existiert nur in Pro-Version.
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce wird unten geprüft.
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 

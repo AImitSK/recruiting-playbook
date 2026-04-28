@@ -552,15 +552,46 @@ class ApplicationController extends WP_REST_Controller {
 	/**
 	 * Berechtigung für Einzelabfrage prüfen
 	 *
+	 * Prüft Basis-Capability UND Zugriff auf die spezifische Bewerbung
+	 * (Job-Zuweisung für Recruiter, immer für Admins).
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function get_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to view applications.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		$id = (int) $request->get_param( 'id' );
+		if ( ! $id ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'Invalid application ID.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		$capability_service = new CapabilityService();
+		if ( ! $capability_service->canAccessApplication( get_current_user_id(), $id ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to view this application.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
 	}
 
 	/**
 	 * Berechtigung für Aktualisierung prüfen
+	 *
+	 * Prüft Basis-Capability UND Job-Zuweisung für die konkrete Bewerbung.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
@@ -574,6 +605,19 @@ class ApplicationController extends WP_REST_Controller {
 				[ 'status' => 403 ]
 			);
 		}
+
+		$id = (int) $request->get_param( 'id' );
+		if ( $id ) {
+			$capability_service = new CapabilityService();
+			if ( ! $capability_service->canAccessApplication( get_current_user_id(), $id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You do not have permission to edit this application.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
+		}
+
 		return true;
 	}
 
@@ -812,6 +856,19 @@ class ApplicationController extends WP_REST_Controller {
 				[ 'status' => 403 ]
 			);
 		}
+
+		$id = (int) $request->get_param( 'id' );
+		if ( $id ) {
+			$capability_service = new CapabilityService();
+			if ( ! $capability_service->canAccessApplication( get_current_user_id(), $id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You do not have permission to delete this application.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
+		}
+
 		return true;
 	}
 

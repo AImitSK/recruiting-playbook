@@ -11,6 +11,7 @@ namespace RecruitingPlaybook\Api;
 
 defined( 'ABSPATH' ) || exit;
 
+use RecruitingPlaybook\Services\CapabilityService;
 use RecruitingPlaybook\Services\RatingService;
 use WP_Error;
 use WP_REST_Controller;
@@ -233,7 +234,7 @@ class RatingController extends WP_REST_Controller {
 			);
 		}
 
-		return true;
+		return $this->check_application_access( $request );
 	}
 
 	/**
@@ -256,7 +257,7 @@ class RatingController extends WP_REST_Controller {
 			);
 		}
 
-		return true;
+		return $this->check_application_access( $request );
 	}
 
 	/**
@@ -284,6 +285,30 @@ class RatingController extends WP_REST_Controller {
 			return new WP_Error(
 				'rest_forbidden',
 				__( 'No permission to delete ratings.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return $this->check_application_access( $request );
+	}
+
+	/**
+	 * Prüft ob aktueller User auf die Bewerbung der Route zugreifen darf.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	private function check_application_access( WP_REST_Request $request ): bool|WP_Error {
+		$application_id = (int) $request->get_param( 'application_id' );
+		if ( ! $application_id ) {
+			return true;
+		}
+
+		$capability_service = new CapabilityService();
+		if ( ! $capability_service->canAccessApplication( get_current_user_id(), $application_id ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission for this application.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
 		}

@@ -152,16 +152,33 @@ class JobController extends WP_REST_Controller {
 	/**
 	 * Berechtigung für Aktualisieren prüfen
 	 *
+	 * Prüft per-Post-Capability via map_meta_cap (edit_post → edit_others_job_listings etc.)
+	 * UND Job-Zuweisung für Recruiter ohne manage_options.
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function update_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'manage_options' ) ) {
+		$id = (int) $request->get_param( 'id' );
+
+		if ( ! $id || ! current_user_can( 'edit_post', $id ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to edit jobs.', 'recruiting-playbook' ),
+				__( 'You do not have permission to edit this job.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
+		}
+
+		// Recruiter (non-admin): Job muss explizit zugewiesen sein.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$capability_service = new CapabilityService();
+			if ( ! $capability_service->isAssignedToJob( get_current_user_id(), $id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You are not assigned to this job.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
 		}
 
 		return true;
@@ -170,16 +187,32 @@ class JobController extends WP_REST_Controller {
 	/**
 	 * Berechtigung für Löschen prüfen
 	 *
+	 * Prüft per-Post-Capability via map_meta_cap UND Job-Zuweisung.
+	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		if ( ! current_user_can( 'delete_posts' ) && ! current_user_can( 'manage_options' ) ) {
+		$id = (int) $request->get_param( 'id' );
+
+		if ( ! $id || ! current_user_can( 'delete_post', $id ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to delete jobs.', 'recruiting-playbook' ),
+				__( 'You do not have permission to delete this job.', 'recruiting-playbook' ),
 				[ 'status' => 403 ]
 			);
+		}
+
+		// Recruiter (non-admin): Job muss explizit zugewiesen sein.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$capability_service = new CapabilityService();
+			if ( ! $capability_service->isAssignedToJob( get_current_user_id(), $id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You are not assigned to this job.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
 		}
 
 		return true;
