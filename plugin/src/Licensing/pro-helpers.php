@@ -61,9 +61,7 @@ function recpl_get_feature_plan_mapping(): array {
  * @return mixed Feature-Wert oder false.
  */
 function recpl_can( string $feature ): mixed {
-	$dev_mode = ( defined( 'RECPL_DEV_MODE' ) && RECPL_DEV_MODE === true )
-		|| ( defined( 'RP_DEV_MODE' ) && RP_DEV_MODE === true );
-	if ( $dev_mode ) {
+	if ( defined( 'RECPL_DEV_MODE' ) && RECPL_DEV_MODE === true ) {
 		$flags = new FeatureFlags( 'PRO' );
 		$value = $flags->get( $feature );
 		return $value !== false ? $value : true;
