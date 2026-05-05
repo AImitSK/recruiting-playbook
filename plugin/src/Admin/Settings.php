@@ -40,7 +40,7 @@ class Settings {
 	public function registerSettings(): void {
 		// Settings registrieren.
 		register_setting(
-			'rp_settings_group',
+			'recpl_settings_group',
 			self::OPTION_NAME,
 			[
 				'sanitize_callback' => [ $this, 'sanitizeSettings' ],

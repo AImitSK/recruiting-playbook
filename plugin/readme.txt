@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.9.1 - 2026-05-05 =
+* Hotfix: register_setting() group renamed from `rp_settings_group` to `recpl_settings_group` (4+ char prefix). The legacy group name was the last remaining short-prefix identifier in admin settings registration.
 
 = 1.9.0 - 2026-05-05 =
 * WordPress.org: Trialware compliance — Pro feature-gating helpers (`recpl_can()`, `recpl_require_feature()`, `recpl_check_feature_permission()`, `recpl_is_pro()`, `recpl_has_ai()`, `recpl_has_cv_matching()`, `recpl_features()`, `recpl_user_can_use_feature()`, plus the feature plan mapping) moved to a separate `pro-helpers.php` file that is physically removed from the Free build via Freemius `@fs_premium_only`. The Free build no longer contains any code that locks or describes Pro features.
