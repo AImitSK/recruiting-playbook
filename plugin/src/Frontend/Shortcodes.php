@@ -799,7 +799,7 @@ class Shortcodes {
 		$this->registerMatchModal();
 
 		// Design-Settings für KI-Button laden.
-		$design_settings = get_option( 'rp_design_settings', [] );
+		$design_settings = get_option( 'recpl_design_settings', [] );
 		$ai_button_style = $design_settings['ai_button_style'] ?? 'preset';
 
 		// Button-Text: Shortcode-Attribut hat Priorität, dann Design-Setting, dann Default.
@@ -891,7 +891,7 @@ class Shortcodes {
 		add_action(
 			'wp_footer',
 			function () {
-				$template = RP_PLUGIN_DIR . 'templates/partials/match-modal.php';
+				$template = RECPL_PLUGIN_DIR . 'templates/partials/match-modal.php';
 				if ( file_exists( $template ) ) {
 					include $template;
 				}
@@ -951,7 +951,7 @@ class Shortcodes {
 		ob_start();
 
 		// Template direkt einbinden mit Variablen.
-		$template = RP_PLUGIN_DIR . 'templates/partials/job-finder.php';
+		$template = RECPL_PLUGIN_DIR . 'templates/partials/job-finder.php';
 		if ( file_exists( $template ) ) {
 			include $template;
 		}
@@ -969,24 +969,24 @@ class Shortcodes {
 		$this->enqueueAssets();
 
 		// Job-Finder CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/job-finder.css';
 		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-job-finder', 'enqueued' ) ) {
 			wp_enqueue_style(
 				'rp-job-finder',
-				RP_PLUGIN_URL . 'assets/dist/css/job-finder.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/job-finder.css',
 				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
+				RECPL_VERSION . '-' . filemtime( $css_file )
 			);
 		}
 
 		// Job-Finder JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/job-finder.js';
+		$js_file = RECPL_PLUGIN_DIR . 'assets/dist/js/job-finder.js';
 		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-job-finder', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-job-finder',
-				RP_PLUGIN_URL . 'assets/dist/js/job-finder.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/job-finder.js',
 				[],
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 
@@ -1037,24 +1037,24 @@ class Shortcodes {
 		$this->enqueueAssets();
 
 		// Match-Modal CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-match-modal', 'enqueued' ) ) {
 			wp_enqueue_style(
 				'rp-match-modal',
-				RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/match-modal.css',
 				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
+				RECPL_VERSION . '-' . filemtime( $css_file )
 			);
 		}
 
 		// Match-Modal JS - muss VOR Alpine.js geladen werden.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
+		$js_file = RECPL_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
 		if ( file_exists( $js_file ) && ! wp_script_is( 'rp-match-modal', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-match-modal',
-				RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/match-modal.js',
 				[],
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 
@@ -1094,12 +1094,12 @@ class Shortcodes {
 	 * @param array $additional_deps Zusätzliche Script-Abhängigkeiten.
 	 */
 	private function enqueueAlpine( array $additional_deps = [] ): void {
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		$alpine_file = RECPL_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
 
 		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
 				$additional_deps,
 				'3.14.3',
 				true
@@ -1134,13 +1134,13 @@ class Shortcodes {
 	private function enqueueAssets(): void {
 		// Frontend CSS laden (falls noch nicht geladen).
 		if ( ! wp_style_is( 'rp-frontend', 'enqueued' ) ) {
-			$css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
+			$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/frontend.css';
 			if ( file_exists( $css_file ) ) {
 				wp_enqueue_style(
 					'rp-frontend',
-					RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
+					RECPL_PLUGIN_URL . 'assets/dist/css/frontend.css',
 					[],
-					RP_VERSION . '-' . filemtime( $css_file )
+					RECPL_VERSION . '-' . filemtime( $css_file )
 				);
 			}
 		}
@@ -1159,25 +1159,25 @@ class Shortcodes {
 		$this->enqueueAssets();
 
 		// Custom Fields CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/custom-fields.css';
 		if ( file_exists( $css_file ) && ! wp_style_is( 'rp-custom-fields', 'enqueued' ) ) {
 			wp_enqueue_style(
 				'rp-custom-fields',
-				RP_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/custom-fields.css',
 				[ 'rp-frontend' ],
-				RP_VERSION . '-' . filemtime( $css_file )
+				RECPL_VERSION . '-' . filemtime( $css_file )
 			);
 		}
 
 		// Tracking JS.
-		$tracking_file   = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		$tracking_file   = RECPL_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		$tracking_loaded = false;
 		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-tracking',
-				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				RECPL_PLUGIN_URL . 'assets/src/js/tracking.js',
 				[],
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 			$tracking_loaded = true;
@@ -1186,14 +1186,14 @@ class Shortcodes {
 		}
 
 		// Custom Fields Form JS.
-		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
+		$form_file = RECPL_PLUGIN_DIR . 'assets/dist/js/custom-fields-form.js';
 		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-custom-fields-form', 'enqueued' ) ) {
 			$form_deps = $tracking_loaded ? [ 'rp-tracking' ] : [];
 			wp_enqueue_script(
 				'rp-custom-fields-form',
-				RP_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/custom-fields-form.js',
 				$form_deps,
-				RP_VERSION . '-' . filemtime( $form_file ),
+				RECPL_VERSION . '-' . filemtime( $form_file ),
 				true
 			);
 
@@ -1239,11 +1239,11 @@ class Shortcodes {
 			$alpine_deps[] = 'rp-custom-fields-form';
 		}
 
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		$alpine_file = RECPL_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
 		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
 				$alpine_deps,
 				'3.14.3',
 				true
@@ -1271,13 +1271,13 @@ class Shortcodes {
 		$alpine_deps = [];
 
 		// Tracking JS.
-		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		$tracking_file = RECPL_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		if ( file_exists( $tracking_file ) && ! wp_script_is( 'rp-tracking', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-tracking',
-				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				RECPL_PLUGIN_URL . 'assets/src/js/tracking.js',
 				[],
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 			$alpine_deps[] = 'rp-tracking';
@@ -1286,13 +1286,13 @@ class Shortcodes {
 		}
 
 		// Application Form JS - muss VOR Alpine.js geladen werden.
-		$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';
+		$form_file = RECPL_PLUGIN_DIR . 'assets/dist/js/application-form.js';
 		if ( file_exists( $form_file ) && ! wp_script_is( 'rp-application-form', 'enqueued' ) ) {
 			wp_enqueue_script(
 				'rp-application-form',
-				RP_PLUGIN_URL . 'assets/dist/js/application-form.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/application-form.js',
 				[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 
@@ -1317,11 +1317,11 @@ class Shortcodes {
 		}
 
 		// Alpine.js (lokal gebundelt) - muss NACH application-form.js geladen werden.
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		$alpine_file = RECPL_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
 		if ( ! wp_script_is( 'rp-alpine', 'enqueued' ) && file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
 				$alpine_deps,
 				'3.14.3',
 				true

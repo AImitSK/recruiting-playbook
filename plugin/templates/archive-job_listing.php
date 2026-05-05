@@ -66,7 +66,7 @@ if ( wp_is_block_theme() ) {
 						esc_html( $term->name )
 					);
 				} else {
-					$settings = get_option( 'rp_settings', [] );
+					$settings = get_option( 'recpl_settings', [] );
 					$company  = $settings['company_name'] ?? get_bloginfo( 'name' );
 					printf(
 						/* translators: %s: Company name */
@@ -104,7 +104,7 @@ if ( wp_is_block_theme() ) {
 				update_object_term_cache( $job_ids, 'job_listing' );
 
 				// Design-Einstellungen laden.
-				$design_settings = get_option( 'rp_design_settings', [] );
+				$design_settings = get_option( 'recpl_design_settings', [] );
 
 				// Card-Preset.
 				$card_preset = $design_settings['card_layout_preset'] ?? 'standard';
@@ -146,7 +146,7 @@ if ( wp_is_block_theme() ) {
 						the_post();
 
 						// Job-Card Partial einbinden.
-						include RP_PLUGIN_DIR . 'templates/partials/job-card.php';
+						include RECPL_PLUGIN_DIR . 'templates/partials/job-card.php';
 
 					endwhile;
 					?>

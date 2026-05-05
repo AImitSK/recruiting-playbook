@@ -87,7 +87,7 @@ class FieldDefinitionService {
 		$global_custom_fields = $this->repository->findGlobalCustomFields();
 
 		// Template-ID für diesen Job ermitteln.
-		$template_id = get_post_meta( $job_id, '_rp_form_template_id', true );
+		$template_id = get_post_meta( $job_id, '_recpl_form_template_id', true );
 
 		// Template-Felder laden falls vorhanden.
 		$template_fields = [];
@@ -116,13 +116,13 @@ class FieldDefinitionService {
 	 */
 	private function applyJobCustomFieldsConfig( int $job_id, array $fields ): array {
 		// Meta-Box Konfiguration prüfen.
-		$override = get_post_meta( $job_id, '_rp_custom_fields_override', true );
+		$override = get_post_meta( $job_id, '_recpl_custom_fields_override', true );
 
 		if ( ! $override ) {
 			return $fields; // Standard-Konfiguration verwenden.
 		}
 
-		$config = get_post_meta( $job_id, '_rp_custom_fields_config', true );
+		$config = get_post_meta( $job_id, '_recpl_custom_fields_config', true );
 
 		if ( ! $config ) {
 			return $fields;

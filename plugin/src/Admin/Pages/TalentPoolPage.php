@@ -21,13 +21,13 @@ class TalentPoolPage {
 	 */
 	public function enqueue_assets(): void {
 		// CSS für Talent-Pool.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-talent-pool.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/admin-talent-pool.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-talent-pool',
-				RP_PLUGIN_URL . 'assets/dist/css/admin-talent-pool.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/admin-talent-pool.css',
 				[ 'rp-admin' ],
-				RP_VERSION
+				RECPL_VERSION
 			);
 		}
 
@@ -38,7 +38,7 @@ class TalentPoolPage {
 			[
 				'apiUrl'          => rest_url( 'recruiting/v1/' ),
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'logoUrl'         => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'applicationsUrl' => admin_url( 'admin.php?page=recruiting-playbook' ),
 				'applicationUrl'  => admin_url( 'admin.php?page=rp-application-detail&id=' ),
 				'i18n'            => [

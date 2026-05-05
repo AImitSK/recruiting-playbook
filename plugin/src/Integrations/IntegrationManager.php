@@ -120,18 +120,18 @@ class IntegrationManager {
 	 */
 	private function registerCronJobs(): void {
 		// Slack Retry Cron.
-		if ( ! wp_next_scheduled( 'rp_slack_retry_cron' ) ) {
-			wp_schedule_event( time(), 'hourly', 'rp_slack_retry_cron' );
+		if ( ! wp_next_scheduled( 'recpl_slack_retry_cron' ) ) {
+			wp_schedule_event( time(), 'hourly', 'recpl_slack_retry_cron' );
 		}
 
-		add_action( 'rp_slack_retry_cron', [ $this, 'processSlackRetryQueue' ] );
+		add_action( 'recpl_slack_retry_cron', [ $this, 'processSlackRetryQueue' ] );
 
 		// Teams Retry Cron.
-		if ( ! wp_next_scheduled( 'rp_teams_retry_cron' ) ) {
-			wp_schedule_event( time(), 'hourly', 'rp_teams_retry_cron' );
+		if ( ! wp_next_scheduled( 'recpl_teams_retry_cron' ) ) {
+			wp_schedule_event( time(), 'hourly', 'recpl_teams_retry_cron' );
 		}
 
-		add_action( 'rp_teams_retry_cron', [ $this, 'processTeamsRetryQueue' ] );
+		add_action( 'recpl_teams_retry_cron', [ $this, 'processTeamsRetryQueue' ] );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class IntegrationManager {
 			'google_ads_conversion_value'   => '',
 		];
 
-		$settings = get_option( 'rp_integrations', [] );
+		$settings = get_option( 'recpl_integrations', [] );
 
 		return array_merge( $defaults, $settings );
 	}

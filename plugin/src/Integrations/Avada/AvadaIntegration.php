@@ -97,9 +97,9 @@ class AvadaIntegration {
 		// Frontend CSS is loaded in Plugin::enqueueFrontendAssets() via ?builder / ?fb-edit.
 		wp_enqueue_style(
 			'rp-avada-editor',
-			RP_PLUGIN_URL . 'assets/css/avada-editor.css',
+			RECPL_PLUGIN_URL . 'assets/css/avada-editor.css',
 			[],
-			RP_VERSION
+			RECPL_VERSION
 		);
 
 		// Load preview templates in footer (Backend + Live Builder).
@@ -116,7 +116,7 @@ class AvadaIntegration {
 	 * @return void
 	 */
 	public function outputPreviewTemplates(): void {
-		$previews_dir = RP_PLUGIN_DIR . 'src/Integrations/Avada/previews/';
+		$previews_dir = RECPL_PLUGIN_DIR . 'src/Integrations/Avada/previews/';
 
 		if ( ! is_dir( $previews_dir ) ) {
 			return;

@@ -52,7 +52,7 @@ class TalentPoolRepository {
 
 		// Ablaufdatum berechnen falls nicht gesetzt.
 		if ( empty( $data['expires_at'] ) ) {
-			$retention_months   = (int) get_option( 'rp_talent_pool_retention', self::DEFAULT_RETENTION_MONTHS );
+			$retention_months   = (int) get_option( 'recpl_talent_pool_retention', self::DEFAULT_RETENTION_MONTHS );
 			$data['expires_at'] = gmdate( 'Y-m-d H:i:s', strtotime( "+{$retention_months} months" ) );
 		}
 
@@ -201,7 +201,7 @@ class TalentPoolRepository {
 
 		// Ablaufdatum berechnen falls nicht gesetzt.
 		if ( empty( $data['expires_at'] ) ) {
-			$retention_months   = (int) get_option( 'rp_talent_pool_retention', self::DEFAULT_RETENTION_MONTHS );
+			$retention_months   = (int) get_option( 'recpl_talent_pool_retention', self::DEFAULT_RETENTION_MONTHS );
 			$data['expires_at'] = gmdate( 'Y-m-d H:i:s', strtotime( "+{$retention_months} months" ) );
 		}
 

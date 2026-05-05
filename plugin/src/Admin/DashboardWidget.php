@@ -37,11 +37,11 @@ class DashboardWidget {
 			return;
 		}
 
-		$icon  = '<img src="' . esc_url( RP_PLUGIN_URL . 'assets/images/rp-icon.png' ) . '" alt="" style="height:20px;width:20px;vertical-align:text-bottom;margin-right:6px;">';
+		$icon  = '<img src="' . esc_url( RECPL_PLUGIN_URL . 'assets/images/rp-icon.png' ) . '" alt="" style="height:20px;width:20px;vertical-align:text-bottom;margin-right:6px;">';
 		$title = $icon . esc_html__( 'Recruiting Playbook', 'recruiting-playbook' );
 
 		wp_add_dashboard_widget(
-			'rp_dashboard_widget',
+			'recpl_dashboard_widget',
 			$title,
 			[ $this, 'render' ]
 		);

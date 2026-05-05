@@ -23,7 +23,7 @@ class AutoEmailService {
 	/**
 	 * Option-Name für Auto-E-Mail-Einstellungen
 	 */
-	private const OPTION_NAME = 'rp_auto_email_settings';
+	private const OPTION_NAME = 'recpl_auto_email_settings';
 
 	/**
 	 * Standard-Einstellungen
@@ -80,7 +80,7 @@ class AutoEmailService {
 		add_action( 'recruiting_playbook_application_status_changed', [ $this, 'handleStatusChange' ], 10, 3 );
 
 		// Hook für verzögerten E-Mail-Versand (Action Scheduler Callback).
-		add_action( 'rp_send_auto_email', [ $this, 'processScheduledEmail' ], 10, 3 );
+		add_action( 'recpl_send_auto_email', [ $this, 'processScheduledEmail' ], 10, 3 );
 	}
 
 	/**
@@ -158,7 +158,7 @@ class AutoEmailService {
 			// Verzögerter Versand via Action Scheduler.
 			as_schedule_single_action(
 				time() + ( $delay * 60 ),
-				'rp_send_auto_email',
+				'recpl_send_auto_email',
 				[
 					'template_id'    => $template_id,
 					'application_id' => $application_id,
@@ -335,7 +335,7 @@ class AutoEmailService {
 			// Verzögerter Versand via Action Scheduler.
 			as_schedule_single_action(
 				time() + ( $delay * 60 ),
-				'rp_send_auto_email',
+				'recpl_send_auto_email',
 				[
 					'template_id'    => $template_id,
 					'application_id' => $application_id,

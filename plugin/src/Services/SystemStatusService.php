@@ -43,7 +43,7 @@ class SystemStatusService {
 			'status'          => $overall_status,
 			'checks'          => $checks,
 			'recommendations' => $this->getRecommendations( $checks ),
-			'plugin_version'  => defined( 'RP_VERSION' ) ? RP_VERSION : '1.0.0',
+			'plugin_version'  => defined( 'RECPL_VERSION' ) ? RECPL_VERSION : '1.0.0',
 			'php_version'     => PHP_VERSION,
 			'wp_version'      => get_bloginfo( 'version' ),
 			'checked_at'      => current_time( 'c' ),
@@ -171,7 +171,7 @@ class SystemStatusService {
 	 */
 	private function checkCron(): array {
 		$next_cleanup = wp_next_scheduled( 'rp_daily_cleanup' );
-		$last_run     = get_option( 'rp_last_cleanup_run', 0 );
+		$last_run     = get_option( 'recpl_last_cleanup_run', 0 );
 
 		$cron_working = $next_cleanup > 0 || defined( 'DISABLE_WP_CRON' );
 

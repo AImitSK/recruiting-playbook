@@ -529,7 +529,7 @@ class FieldDefinitionController extends WP_REST_Controller {
 		}
 
 		// Feld-IDs als Post-Meta speichern.
-		update_post_meta( $job_id, '_rp_custom_field_ids', array_map( 'intval', $field_ids ) );
+		update_post_meta( $job_id, '_recpl_custom_field_ids', array_map( 'intval', $field_ids ) );
 
 		$fields = $this->service->getFieldsForJob( $job_id );
 		$data   = array_map( [ $this, 'prepare_item_for_response_array' ], $fields );

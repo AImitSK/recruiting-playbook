@@ -41,17 +41,17 @@ while ( have_posts() ) :
 	the_post();
 
 	// Meta-Daten laden.
-	$salary_min      = get_post_meta( get_the_ID(), '_rp_salary_min', true );
-	$salary_max      = get_post_meta( get_the_ID(), '_rp_salary_max', true );
-	$salary_currency = get_post_meta( get_the_ID(), '_rp_salary_currency', true ) ?: 'EUR';
-	$salary_period   = get_post_meta( get_the_ID(), '_rp_salary_period', true ) ?: 'month';
-	$hide_salary     = get_post_meta( get_the_ID(), '_rp_hide_salary', true );
-	$deadline        = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
-	$contact_person  = get_post_meta( get_the_ID(), '_rp_contact_person', true );
-	$contact_email   = get_post_meta( get_the_ID(), '_rp_contact_email', true );
-	$contact_phone   = get_post_meta( get_the_ID(), '_rp_contact_phone', true );
-	$remote_option   = get_post_meta( get_the_ID(), '_rp_remote_option', true );
-	$start_date      = get_post_meta( get_the_ID(), '_rp_start_date', true );
+	$salary_min      = get_post_meta( get_the_ID(), '_recpl_salary_min', true );
+	$salary_max      = get_post_meta( get_the_ID(), '_recpl_salary_max', true );
+	$salary_currency = get_post_meta( get_the_ID(), '_recpl_salary_currency', true ) ?: 'EUR';
+	$salary_period   = get_post_meta( get_the_ID(), '_recpl_salary_period', true ) ?: 'month';
+	$hide_salary     = get_post_meta( get_the_ID(), '_recpl_hide_salary', true );
+	$deadline        = get_post_meta( get_the_ID(), '_recpl_application_deadline', true );
+	$contact_person  = get_post_meta( get_the_ID(), '_recpl_contact_person', true );
+	$contact_email   = get_post_meta( get_the_ID(), '_recpl_contact_email', true );
+	$contact_phone   = get_post_meta( get_the_ID(), '_recpl_contact_phone', true );
+	$remote_option   = get_post_meta( get_the_ID(), '_recpl_remote_option', true );
+	$start_date      = get_post_meta( get_the_ID(), '_recpl_start_date', true );
 
 	// Taxonomien.
 	$locations  = get_the_terms( get_the_ID(), 'job_location' );

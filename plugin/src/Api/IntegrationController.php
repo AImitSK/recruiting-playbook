@@ -37,7 +37,7 @@ class IntegrationController extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	private const OPTION_NAME = 'rp_integrations';
+	private const OPTION_NAME = 'recpl_integrations';
 
 	/**
 	 * Default-Werte

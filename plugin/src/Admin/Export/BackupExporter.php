@@ -59,7 +59,7 @@ class BackupExporter {
 	private function getMetaData(): array {
 		return [
 			'backup_format_version' => '2.0',
-			'plugin_version'        => RP_VERSION,
+			'plugin_version'        => RECPL_VERSION,
 			'wp_version'            => get_bloginfo( 'version' ),
 			'php_version'           => PHP_VERSION,
 			'site_url'              => get_site_url(),
@@ -75,9 +75,9 @@ class BackupExporter {
 	 */
 	private function getSettings(): array {
 		return [
-			'rp_settings'                   => get_option( 'rp_settings', [] ),
-			'rp_db_version'                 => get_option( 'rp_db_version', '' ),
-			'rp_employment_types_installed' => get_option( 'rp_employment_types_installed', false ),
+			'recpl_settings'                   => get_option( 'recpl_settings', [] ),
+			'recpl_db_version'                 => get_option( 'recpl_db_version', '' ),
+			'recpl_employment_types_installed' => get_option( 'recpl_employment_types_installed', false ),
 		];
 	}
 
@@ -100,10 +100,10 @@ class BackupExporter {
 		foreach ( $jobs as $job ) {
 			$meta = get_post_meta( $job->ID );
 
-			// Nur rp_ Meta-Felder.
+			// Nur Plugin-eigene Meta-Felder (recpl_ Prefix; legacy _rp_ wird auch akzeptiert).
 			$rp_meta = [];
 			foreach ( $meta as $key => $value ) {
-				if ( strpos( $key, '_rp_' ) === 0 ) {
+				if ( strpos( $key, '_recpl_' ) === 0 || strpos( $key, '_rp_' ) === 0 ) {
 					$rp_meta[ $key ] = maybe_unserialize( $value[0] );
 				}
 			}

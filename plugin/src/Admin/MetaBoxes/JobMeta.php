@@ -24,28 +24,28 @@ class JobMeta {
 	 * Meta-Felder Definitionen
 	 */
 	private const FIELDS = [
-		'_rp_featured'             => [
+		'_recpl_featured'             => [
 			'type'     => 'checkbox',
 			'label'    => 'Hervorgehobene Stelle (Top-Job)',
 			'sanitize' => 'boolval',
 		],
-		'_rp_salary_min'           => [
+		'_recpl_salary_min'           => [
 			'type'     => 'number',
 			'label'    => 'Gehalt (Min)',
 			'sanitize' => 'absint',
 		],
-		'_rp_salary_max'           => [
+		'_recpl_salary_max'           => [
 			'type'     => 'number',
 			'label'    => 'Gehalt (Max)',
 			'sanitize' => 'absint',
 		],
-		'_rp_salary_currency'      => [
+		'_recpl_salary_currency'      => [
 			'type'    => 'select',
 			'label'   => 'Währung',
 			'options' => [ 'EUR', 'CHF', 'USD' ],
 			'default' => 'EUR',
 		],
-		'_rp_salary_period'        => [
+		'_recpl_salary_period'        => [
 			'type'    => 'select',
 			'label'   => 'Gehaltszeitraum',
 			'options' => [
@@ -55,32 +55,32 @@ class JobMeta {
 			],
 			'default' => 'month',
 		],
-		'_rp_hide_salary'          => [
+		'_recpl_hide_salary'          => [
 			'type'     => 'checkbox',
 			'label'    => 'Gehalt nicht anzeigen',
 			'sanitize' => 'boolval',
 		],
-		'_rp_application_deadline' => [
+		'_recpl_application_deadline' => [
 			'type'     => 'date',
 			'label'    => 'Bewerbungsfrist',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_contact_person'       => [
+		'_recpl_contact_person'       => [
 			'type'     => 'text',
 			'label'    => 'Ansprechpartner',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_contact_email'        => [
+		'_recpl_contact_email'        => [
 			'type'     => 'email',
 			'label'    => 'Kontakt E-Mail',
 			'sanitize' => 'sanitize_email',
 		],
-		'_rp_contact_phone'        => [
+		'_recpl_contact_phone'        => [
 			'type'     => 'tel',
 			'label'    => 'Kontakt Telefon',
 			'sanitize' => 'sanitize_text_field',
 		],
-		'_rp_remote_option'        => [
+		'_recpl_remote_option'        => [
 			'type'    => 'select',
 			'label'   => 'Remote-Arbeit',
 			'options' => [
@@ -90,7 +90,7 @@ class JobMeta {
 				'full'   => '100% Remote möglich',
 			],
 		],
-		'_rp_start_date'           => [
+		'_recpl_start_date'           => [
 			'type'        => 'text',
 			'label'       => 'Startdatum',
 			'placeholder' => 'z.B. "Ab sofort" oder "01.04.2025"',
@@ -173,18 +173,18 @@ class JobMeta {
 
 		// Featured / Hervorgehobene Stelle.
 		echo '<div class="rp-featured-toggle">';
-		$this->renderField( '_rp_featured', $post );
+		$this->renderField( '_recpl_featured', $post );
 		echo '</div>';
 
 		// Gehalt.
 		echo '<fieldset class="rp-fieldset">';
 		echo '<legend>' . esc_html__( 'Salary', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
-		$this->renderField( '_rp_salary_min', $post );
-		$this->renderField( '_rp_salary_max', $post );
-		$this->renderField( '_rp_salary_currency', $post );
-		$this->renderField( '_rp_salary_period', $post );
-		$this->renderField( '_rp_hide_salary', $post );
+		$this->renderField( '_recpl_salary_min', $post );
+		$this->renderField( '_recpl_salary_max', $post );
+		$this->renderField( '_recpl_salary_currency', $post );
+		$this->renderField( '_recpl_salary_period', $post );
+		$this->renderField( '_recpl_hide_salary', $post );
 		echo '</div>';
 		echo '</fieldset>';
 
@@ -192,9 +192,9 @@ class JobMeta {
 		echo '<fieldset class="rp-fieldset">';
 		echo '<legend>' . esc_html__( 'Contact Person', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
-		$this->renderField( '_rp_contact_person', $post );
-		$this->renderField( '_rp_contact_email', $post );
-		$this->renderField( '_rp_contact_phone', $post );
+		$this->renderField( '_recpl_contact_person', $post );
+		$this->renderField( '_recpl_contact_email', $post );
+		$this->renderField( '_recpl_contact_phone', $post );
 		echo '</div>';
 		echo '</fieldset>';
 
@@ -202,9 +202,9 @@ class JobMeta {
 		echo '<fieldset class="rp-fieldset">';
 		echo '<legend>' . esc_html__( 'Additional Details', 'recruiting-playbook' ) . '</legend>';
 		echo '<div class="rp-field-group">';
-		$this->renderField( '_rp_application_deadline', $post );
-		$this->renderField( '_rp_start_date', $post );
-		$this->renderField( '_rp_remote_option', $post );
+		$this->renderField( '_recpl_application_deadline', $post );
+		$this->renderField( '_recpl_start_date', $post );
+		$this->renderField( '_recpl_remote_option', $post );
 		echo '</div>';
 		echo '</fieldset>';
 
@@ -221,7 +221,7 @@ class JobMeta {
 	private function renderField( string $key, WP_Post $post ): void {
 		$field = self::FIELDS[ $key ];
 		$value = get_post_meta( $post->ID, $key, true );
-		$id    = 'rp_' . ltrim( $key, '_rp_' );
+		$id    = 'recpl_' . ltrim( $key, '_recpl_' );
 
 		echo '<div class="rp-field' . ( 'checkbox' === $field['type'] ? ' rp-field-checkbox' : '' ) . '">';
 

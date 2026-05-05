@@ -24,7 +24,7 @@ $unsubscribe_url = $unsubscribe_url ?? '';
 $primary_color   = $primary_color ?? '#0073aa';
 
 // Firmen-Einstellungen laden.
-$settings     = get_option( 'rp_settings', [] );
+$settings     = get_option( 'recpl_settings', [] );
 $contact_info = [];
 
 if ( ! empty( $settings['company_address'] ) ) {
@@ -39,7 +39,7 @@ if ( ! empty( $settings['company_email'] ) ) {
 ?>
 <!-- Footer -->
 <?php
-$settings            = get_option( 'rp_settings', [] );
+$settings            = get_option( 'recpl_settings', [] );
 $hide_branding       = ! empty( $settings['hide_email_branding'] );
 $recruiting_url      = 'https://recruiting-playbook.de';
 ?>

@@ -982,7 +982,7 @@ class FormRenderService {
 			return $theme_template;
 		}
 
-		return RP_PLUGIN_DIR . 'templates/fields/field-' . $field_type . '.php';
+		return RECPL_PLUGIN_DIR . 'templates/fields/field-' . $field_type . '.php';
 	}
 
 	/**

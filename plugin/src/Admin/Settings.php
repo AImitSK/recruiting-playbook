@@ -25,7 +25,7 @@ class Settings {
 	 *
 	 * @var string
 	 */
-	private const OPTION_NAME = 'rp_settings';
+	private const OPTION_NAME = 'recpl_settings';
 
 	/**
 	 * Registrieren
@@ -253,11 +253,11 @@ class Settings {
 			]
 		);
 
-		// Pro-Einstellungen (premium-only).
+		// Erweiterte Einstellungen (premium-only — Block wird im Free-Build vom Pre-Processor gestrippt).
 		if ( recpl_fs()->is__premium_only() ) {
 			add_settings_section(
 				'rp_pro_section',
-				__( 'Pro Settings', 'recruiting-playbook' ),
+				__( 'Advanced Settings', 'recruiting-playbook' ),
 				[ $this, 'renderProSection' ],
 				'rp-settings'
 			);
@@ -306,10 +306,6 @@ class Settings {
 			'jobs_per_page'       => 10,
 			'jobs_slug'           => 'jobs',
 			'enable_schema'       => true,
-
-			// Pro-Features.
-			'hide_email_branding' => false,
-			'disable_ai_features' => false,
 		];
 	}
 
@@ -347,14 +343,16 @@ class Settings {
 		$output['jobs_slug']     = sanitize_title( $input['jobs_slug'] ?? 'jobs' );
 		$output['enable_schema'] = ! empty( $input['enable_schema'] );
 
-		// Pro-Features.
-		$output['hide_email_branding'] = ! empty( $input['hide_email_branding'] );
-		$output['disable_ai_features'] = ! empty( $input['disable_ai_features'] );
+		if ( recpl_fs()->is__premium_only() ) {
+			// Pro-Settings — werden via Freemius Pre-Processor im Free-Build gestrippt.
+			$output['hide_email_branding'] = ! empty( $input['hide_email_branding'] );
+			$output['disable_ai_features'] = ! empty( $input['disable_ai_features'] );
+		}
 
 		// Slug-Änderung erfordert Rewrite-Flush.
 		$old_settings = get_option( self::OPTION_NAME, [] );
 		if ( ( $old_settings['jobs_slug'] ?? 'jobs' ) !== $output['jobs_slug'] ) {
-			set_transient( 'rp_flush_rewrite_rules', true, 60 );
+			set_transient( 'recpl_flush_rewrite_rules', true, 60 );
 		}
 
 		return $output;
@@ -365,9 +363,9 @@ class Settings {
 	 */
 	public function renderPage(): void {
 		// Rewrite Rules flushen falls nötig.
-		if ( get_transient( 'rp_flush_rewrite_rules' ) ) {
+		if ( get_transient( 'recpl_flush_rewrite_rules' ) ) {
 			flush_rewrite_rules();
-			delete_transient( 'rp_flush_rewrite_rules' );
+			delete_transient( 'recpl_flush_rewrite_rules' );
 		}
 
 		// Assets laden.
@@ -392,30 +390,28 @@ class Settings {
 	 * Assets laden
 	 */
 	private function enqueueAssets(): void {
-		$is_pro = recpl_fs()->is__premium_only();
-
 		// Konfiguration für React.
 		// Import-Ergebnis aus Transient lesen (falls vorhanden).
-		$import_result = get_transient( 'rp_import_result' );
+		$import_result = get_transient( 'recpl_import_result' );
 		if ( false !== $import_result ) {
-			delete_transient( 'rp_import_result' );
+			delete_transient( 'recpl_import_result' );
 		}
 
 		$data = [
-			'logoUrl'      => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+			'logoUrl'      => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 			'homeUrl'      => home_url(),
 			'exportUrl'    => admin_url( 'admin.php?page=rp-settings' ),
 			'nonce'        => wp_create_nonce( 'rp_download_backup' ),
 			'importNonce'  => wp_create_nonce( 'rp_upload_backup' ),
 			'importResult' => $import_result ?: null,
 			'pages'        => $this->getPages(),
-			'isPro'        => $is_pro,
-			'upgradeUrl'   => function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '',
 			'i18n'         => $this->getI18nStrings(),
 		];
 
-		// Pro-Feature: Benutzerrollen-Daten für React-UI.
-		if ( $is_pro ) {
+		if ( recpl_fs()->is__premium_only() ) {
+			// Pro-Settings, Pro-Branding & Pro-Daten — werden im Free-Build gestrippt.
+			$data['isPro']           = true;
+			$data['upgradeUrl']      = function_exists( 'recpl_upgrade_url' ) ? recpl_upgrade_url( 'PRO' ) : '';
 			$data['recruitingUsers'] = $this->getRecruitingUsers();
 			$data['jobListings']     = $this->getJobListings();
 		}
@@ -458,7 +454,7 @@ class Settings {
 	 * @return array<string, string>
 	 */
 	private function getI18nStrings(): array {
-		return [
+		$strings = [
 			'pageTitle'              => __( 'Settings', 'recruiting-playbook' ),
 			'tabGeneral'             => __( 'General', 'recruiting-playbook' ),
 			'tabCompany'             => __( 'Company Data', 'recruiting-playbook' ),
@@ -556,14 +552,6 @@ class Settings {
 			'importSuccess'          => __( 'Import completed successfully.', 'recruiting-playbook' ),
 			'noFileSelected'         => __( 'Please select a file.', 'recruiting-playbook' ),
 
-			// Pro Settings.
-			'proSettings'            => __( 'Pro Settings', 'recruiting-playbook' ),
-			'proSettingsDesc'        => __( 'Advanced settings for Pro users.', 'recruiting-playbook' ),
-			'whiteLabel'             => __( 'White-Label Emails', 'recruiting-playbook' ),
-			'whiteLabelDesc'         => __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' ),
-			'disableAiFeatures'      => __( 'Disable AI Features', 'recruiting-playbook' ),
-			'disableAiFeaturesDesc'  => __( 'Hide AI matching buttons in job listings and cards', 'recruiting-playbook' ),
-
 			// Common.
 			'saveSettings'           => __( 'Save Settings', 'recruiting-playbook' ),
 			'saving'                 => __( 'Saving...', 'recruiting-playbook' ),
@@ -571,6 +559,18 @@ class Settings {
 			'errorLoading'           => __( 'Error loading settings', 'recruiting-playbook' ),
 			'errorSaving'            => __( 'Error saving', 'recruiting-playbook' ),
 		];
+
+		if ( recpl_fs()->is__premium_only() ) {
+			// Pro-spezifische Strings — werden via Freemius Pre-Processor im Free-Build gestrippt.
+			$strings['proSettings']           = __( 'Advanced Settings', 'recruiting-playbook' );
+			$strings['proSettingsDesc']       = __( 'Additional settings.', 'recruiting-playbook' );
+			$strings['whiteLabel']            = __( 'White-Label Emails', 'recruiting-playbook' );
+			$strings['whiteLabelDesc']        = __( 'Hide "Sent via Recruiting Playbook" notice in emails', 'recruiting-playbook' );
+			$strings['disableAiFeatures']     = __( 'Disable AI Features', 'recruiting-playbook' );
+			$strings['disableAiFeaturesDesc'] = __( 'Hide AI matching buttons in job listings and cards', 'recruiting-playbook' );
+		}
+
+		return $strings;
 	}
 
 	/**
@@ -630,10 +630,13 @@ class Settings {
 	}
 
 	/**
-	 * Pro-Features Sektion
+	 * Erweiterte Einstellungen Sektion (premium-only Section-Header).
 	 */
 	public function renderProSection(): void {
-		echo '<p>' . esc_html__( 'Advanced settings for Pro users.', 'recruiting-playbook' ) . '</p>';
+		if ( ! recpl_fs()->is__premium_only() ) {
+			return;
+		}
+		echo '<p>' . esc_html__( 'Additional settings.', 'recruiting-playbook' ) . '</p>';
 	}
 
 	/**

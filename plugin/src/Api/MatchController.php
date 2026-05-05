@@ -397,7 +397,7 @@ class MatchController extends WP_REST_Controller {
 		$jobs = [];
 		foreach ( $posts as $post ) {
 			$requirements = $this->get_job_requirements( $post );
-			$nice_to_have = get_post_meta( $post->ID, '_rp_nice_to_have', true ) ?: [];
+			$nice_to_have = get_post_meta( $post->ID, '_recpl_nice_to_have', true ) ?: [];
 
 			$jobs[] = [
 				'id'           => $post->ID,
@@ -615,7 +615,7 @@ class MatchController extends WP_REST_Controller {
 	 */
 	private function get_job_data( \WP_Post $job ): array {
 		$requirements = $this->get_job_requirements( $job );
-		$nice_to_have = get_post_meta( $job->ID, '_rp_nice_to_have', true ) ?: [];
+		$nice_to_have = get_post_meta( $job->ID, '_recpl_nice_to_have', true ) ?: [];
 
 		return [
 			'title'        => $job->post_title,
@@ -636,7 +636,7 @@ class MatchController extends WP_REST_Controller {
 	 * @return array Liste der Anforderungen.
 	 */
 	private function get_job_requirements( \WP_Post $job ): array {
-		$requirements = get_post_meta( $job->ID, '_rp_requirements', true );
+		$requirements = get_post_meta( $job->ID, '_recpl_requirements', true );
 
 		if ( ! empty( $requirements ) ) {
 			return is_array( $requirements ) ? $requirements : [ $requirements ];

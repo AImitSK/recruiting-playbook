@@ -68,7 +68,7 @@ class WebhookService {
 			$delivery_id = $this->createDelivery( (int) $webhook->id, $event, $payload );
 
 			if ( $delivery_id && function_exists( 'as_schedule_single_action' ) ) {
-				as_schedule_single_action( time(), 'rp_deliver_webhook', [ $delivery_id ], 'recruiting-playbook' );
+				as_schedule_single_action( time(), 'recpl_deliver_webhook', [ $delivery_id ], 'recruiting-playbook' );
 			}
 		}
 	}
@@ -324,7 +324,7 @@ class WebhookService {
 		// phpcs:enable
 
 		if ( function_exists( 'as_schedule_single_action' ) ) {
-			as_schedule_single_action( $next_time, 'rp_deliver_webhook', [ $delivery_id ], 'recruiting-playbook' );
+			as_schedule_single_action( $next_time, 'recpl_deliver_webhook', [ $delivery_id ], 'recruiting-playbook' );
 		}
 	}
 

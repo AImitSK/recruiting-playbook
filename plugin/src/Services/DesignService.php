@@ -23,7 +23,7 @@ class DesignService {
 	/**
 	 * Option-Name in der Datenbank
 	 */
-	private const OPTION_NAME = 'rp_design_settings';
+	private const OPTION_NAME = 'recpl_design_settings';
 
 	/**
 	 * Gecachte Settings für Performance

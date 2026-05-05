@@ -79,7 +79,7 @@ class PlaceholderService {
 		$candidate   = $context['candidate'] ?? [];
 		$job         = $context['job'] ?? [];
 		$custom      = $context['custom'] ?? [];
-		$settings    = get_option( 'rp_settings', [] );
+		$settings    = get_option( 'recpl_settings', [] );
 
 		// Kandidaten-Platzhalter.
 		$values['vorname']       = $candidate['first_name'] ?? '';
@@ -168,7 +168,7 @@ class PlaceholderService {
 	 * @return array<string, string>
 	 */
 	public function getPreviewValues(): array {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 		$company  = $settings['company'] ?? [];
 
 		return [

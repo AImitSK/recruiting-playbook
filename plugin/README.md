@@ -119,24 +119,26 @@ Templates können im Theme überschrieben werden:
 
 ```php
 // Nach Erstellung einer Bewerbung
-do_action( 'rp_application_created', $application_id, $data );
+do_action( 'recpl_application_created', $application_id, $data );
 
 // Nach Status-Änderung
-do_action( 'rp_application_status_changed', $id, $new_status, $old_status );
+do_action( 'recruiting_playbook_application_status_changed', $id, $new_status, $old_status );
 
 // Spam blockiert
-do_action( 'rp_spam_blocked', $type, $ip, $request );
+do_action( 'recpl_spam_blocked', $type, $ip, $request );
 ```
 
 ### Filter
 
 ```php
 // E-Mail-Empfänger für Bewerbungsbenachrichtigung
-$recipients = apply_filters( 'rp_notification_recipients', $recipients, $application_id );
+$recipients = apply_filters( 'recpl_notification_recipients', $recipients, $application_id );
 
 // Erlaubte Dateitypen
-$types = apply_filters( 'rp_allowed_file_types', $default_types );
+$types = apply_filters( 'recpl_allowed_file_types', $default_types );
 ```
+
+> **Hinweis (v1.9.0):** Hooks mit kurzem `rp_` Prefix wurden zu `recpl_` migriert. Alte Hooks funktionieren weiterhin via `do_action_deprecated()` / `apply_filters_deprecated()`, geben aber eine Deprecation-Warnung in `WP_DEBUG=true`.
 
 ## DSGVO
 

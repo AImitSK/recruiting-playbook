@@ -68,7 +68,7 @@ class FormBuilderPage {
 				'defaultTemplate' => $default_template ? $default_template->toArray() : null,
 				'restNamespace'   => 'recruiting/v1',
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
-				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'logoUrl'         => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]
 		);
@@ -86,20 +86,20 @@ class FormBuilderPage {
 	 * Enqueue scripts and styles
 	 */
 	public function enqueue_assets(): void {
-		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin-form-builder.asset.php';
+		$asset_file = RECPL_PLUGIN_DIR . 'assets/dist/js/admin-form-builder.asset.php';
 
 		if ( file_exists( $asset_file ) ) {
 			$asset = require $asset_file;
 		} else {
 			$asset = [
 				'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
-				'version'      => RP_VERSION,
+				'version'      => RECPL_VERSION,
 			];
 		}
 
 		wp_enqueue_script(
 			'rp-admin-form-builder',
-			RP_PLUGIN_URL . 'assets/dist/js/admin-form-builder.js',
+			RECPL_PLUGIN_URL . 'assets/dist/js/admin-form-builder.js',
 			$asset['dependencies'],
 			$asset['version'],
 			true
@@ -108,14 +108,14 @@ class FormBuilderPage {
 		// Load admin.css first for Tailwind utilities and CSS variables.
 		wp_enqueue_style(
 			'rp-admin',
-			RP_PLUGIN_URL . 'assets/dist/css/admin.css',
+			RECPL_PLUGIN_URL . 'assets/dist/css/admin.css',
 			[ 'wp-components' ],
 			$asset['version']
 		);
 
 		wp_enqueue_style(
 			'rp-admin-form-builder',
-			RP_PLUGIN_URL . 'assets/dist/css/admin-form-builder.css',
+			RECPL_PLUGIN_URL . 'assets/dist/css/admin-form-builder.css',
 			[ 'rp-admin' ],
 			$asset['version']
 		);

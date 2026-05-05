@@ -76,7 +76,7 @@ class RoleManager {
 	 * Capabilities basierend auf Konfiguration zuweisen
 	 */
 	public static function assignCapabilities(): void {
-		$config = get_option( 'rp_role_capabilities', self::getDefaults() );
+		$config = get_option( 'recpl_role_capabilities', self::getDefaults() );
 
 		// Capabilities für Custom Rollen zuweisen.
 		foreach ( $config as $role_slug => $capabilities ) {

@@ -102,7 +102,7 @@ class FormTemplateRepository {
 				"SELECT t.*,
 					(SELECT COUNT(DISTINCT pm.post_id)
 					 FROM {$wpdb->postmeta} pm
-					 WHERE pm.meta_key = '_rp_form_template_id'
+					 WHERE pm.meta_key = '_recpl_form_template_id'
 					 AND pm.meta_value = t.id) as usage_count
 				FROM {$this->table} t
 				WHERE t.deleted_at IS NULL
@@ -384,7 +384,7 @@ class FormTemplateRepository {
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(DISTINCT post_id) FROM {$wpdb->postmeta}
-				WHERE meta_key = '_rp_form_template_id' AND meta_value = %s",
+				WHERE meta_key = '_recpl_form_template_id' AND meta_value = %s",
 				(string) $id
 			)
 		);

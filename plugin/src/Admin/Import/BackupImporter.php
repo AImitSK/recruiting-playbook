@@ -146,20 +146,21 @@ class BackupImporter {
 			return;
 		}
 
-		$rp_settings = $settings['rp_settings'] ?? [];
+		// Akzeptiere sowohl neue (recpl_*) als auch alte (rp_*) Backup-Keys (Backwards Compatibility).
+		$plugin_settings = $settings['recpl_settings'] ?? $settings['rp_settings'] ?? [];
 
-		if ( empty( $rp_settings ) ) {
+		if ( empty( $plugin_settings ) ) {
 			$this->result->addSkipped( 'settings' );
 			return;
 		}
 
 		if ( 'overwrite' === $mode ) {
-			update_option( 'rp_settings', $rp_settings );
+			update_option( 'recpl_settings', $plugin_settings );
 			$this->result->addUpdated( 'settings' );
 		} elseif ( 'merge' === $mode ) {
-			$current = get_option( 'rp_settings', [] );
-			$merged  = array_merge( $current, $rp_settings );
-			update_option( 'rp_settings', $merged );
+			$current = get_option( 'recpl_settings', [] );
+			$merged  = array_merge( $current, $plugin_settings );
+			update_option( 'recpl_settings', $merged );
 			$this->result->addUpdated( 'settings' );
 		}
 	}

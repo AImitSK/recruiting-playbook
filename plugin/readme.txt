@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.8.1
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,15 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.9.0 - 2026-05-05 =
+* WordPress.org: Trialware compliance — Pro feature-gating helpers (`recpl_can()`, `recpl_require_feature()`, `recpl_check_feature_permission()`, `recpl_is_pro()`, `recpl_has_ai()`, `recpl_has_cv_matching()`, `recpl_features()`, `recpl_user_can_use_feature()`, plus the feature plan mapping) moved to a separate `pro-helpers.php` file that is physically removed from the Free build via Freemius `@fs_premium_only`. The Free build no longer contains any code that locks or describes Pro features.
+* WordPress.org: Free build no longer renders a "Pro Settings" admin section, no `isPro` flag is leaked to the React UI, and the Pro-specific i18n strings (`proSettings`, `whiteLabel`, `disableAiFeatures`, …) are stripped at build time.
+* WordPress.org: Prefix migration — `RP_*` constants removed (no BC alias). All option keys (`rp_settings` → `recpl_settings`, `rp_integrations`, `rp_design_settings`, `rp_role_capabilities`, `rp_auto_email_settings`, `rp_version`, `rp_db_version`, `rp_wizard_completed`, `rp_employment_types_installed`, `rp_privacy_policy_version`, `rp_keep_data_on_uninstall`, `rp_talent_pool_retention`, `rp_last_cleanup_run`, `rp_activation_redirect`), all post meta (`_rp_*` → `_recpl_*`), the `rp_default_signature_id` user meta, all transients (`rp_flush_rewrite_rules`, `rp_import_result`, `rp_wizard_created_job`, `rp_rewrite_version`, `rp_bulk_email_ids_*`) and the development-mode constant (`RP_DEV_MODE` → `RECPL_DEV_MODE`) renamed to use the `recpl_` prefix (4+ characters per WordPress.org guidelines).
+* WordPress.org: Hooks renamed to `recpl_*` prefix with `do_action_deprecated()` / `apply_filters_deprecated()` bridges for backward compatibility — `rp_email_primary_color`, `rp_email_text_color`, `rp_email_content`, `rp_email_headers`, `rp_email_sent`, `rp_application_migrated`, `rp_spam_blocked`, `rp_new_job_days`. Internal scheduler hooks (`rp_send_auto_email`, `rp_deliver_webhook`, `rp_slack_retry_cron`, `rp_teams_retry_cron`) are renamed without bridge — the `Activator::migrateLegacyPrefixes()` routine unschedules the old cron events on update.
+* WordPress.org: `Activator::migrateLegacyPrefixes()` automatically migrates options, post meta and user meta on plugin update from any pre-1.9.0 version, idempotently. Old keys are deleted after the copy succeeds. Backup imports continue to accept legacy `rp_settings` keys.
+* Security: REST API per-resource permission callbacks for `/applications/stats`, `/applications/reorder`, `/candidates/{id}/export`, `/documents/{id}/download-url`. Stats now require `rp_view_stats` (or `manage_options`); reorder iterates over each `positions[].id` and calls `CapabilityService::canAccessApplication()`; the candidate export resolves all the candidate's applications and verifies access to every single one (so a recruiter who is assigned to only one of the candidate's jobs cannot export the full DSGVO record); the document download URL endpoint resolves the document's `application_id` and verifies access.
+* WordPress.org: `External Services` section in readme.txt now distinguishes the proxy (Recruiting Playbook GmbH) from the actual LLM processor (Anthropic, PBC) and links directly to Anthropic's Terms of Service, Privacy Policy and API Usage Policy as required by Guideline 6.
 
 = 1.8.1 - 2026-04-28 =
 * Hotfix: Free build pre-processor pattern — Backup handlers in Menu.php now use the canonical `if (recpl_fs()->is__premium_only()) { ... }` wrapper around the call site (Plugin.php convention) plus a `class_exists()` guard inside the methods, so `BackupExporter`/`BackupImporter` references cannot trigger a class-not-found fatal in Free
@@ -318,23 +327,37 @@ This plugin connects to external services for specific functionality. By using t
 
 = AI Resume Matching (Pro Feature) =
 
-The AI Resume Matching feature sends uploaded CVs and job descriptions to our AI analysis service for anonymous evaluation.
+The AI Resume Matching feature is implemented via two layers:
+
+1. The plugin sends data to a Recruiting Playbook GmbH proxy endpoint.
+2. The proxy forwards the prompt to Anthropic's Claude API for the actual AI processing.
+
+This means the data is processed by Anthropic, PBC (USA) on behalf of Recruiting Playbook GmbH.
 
 **What data is sent:**
-* Uploaded CV/resume files (PDF, DOCX, images)
+* Uploaded CV/resume text (extracted from PDF, DOCX, images — only the text content, not the original file)
 * Job title and description text
 * Job requirements (extracted from job content)
+* No applicant names, addresses or phone numbers are forwarded to Anthropic.
 
 **When data is sent:**
-* Only when a user explicitly submits a CV for AI analysis
+* Only when an authenticated admin user explicitly triggers an AI matching analysis
 * Only for published job listings
+* Only if the Pro plan is active and AI features are not disabled in plugin settings
 
-**Service provider:** Recruiting Playbook GmbH
+**Service providers and legal documents:**
+
+Recruiting Playbook GmbH (proxy / API gateway):
 * [Terms of Service](https://recruiting-playbook.com/legal/terms)
 * [Privacy Policy](https://recruiting-playbook.com/legal/privacy)
 * [Imprint](https://recruiting-playbook.com/legal/imprint)
 
-The service anonymizes all personal data before AI analysis and does not store CVs longer than necessary for processing.
+Anthropic, PBC (LLM processing — receives the proxied data):
+* [Anthropic Terms of Service](https://www.anthropic.com/legal/consumer-terms)
+* [Anthropic Privacy Policy](https://www.anthropic.com/legal/privacy)
+* [Anthropic API Usage Policy](https://www.anthropic.com/legal/aup)
+
+The proxy strips identifying personal data (names, contact details) before forwarding to Anthropic. Anthropic does not retain inputs by default (per their commercial API terms). The CV/job text is not stored long-term on either service.
 
 = Freemius SDK =
 

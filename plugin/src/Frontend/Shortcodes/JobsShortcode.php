@@ -64,7 +64,7 @@ class JobsShortcode {
 		if ( filter_var( $atts['featured'], FILTER_VALIDATE_BOOLEAN ) ) {
 			$args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				[
-					'key'     => '_rp_featured',
+					'key'     => '_recpl_featured',
 					'value'   => '1',
 					'compare' => '=',
 				],
@@ -109,7 +109,7 @@ class JobsShortcode {
 		}
 
 		// Design-Einstellungen laden (identisch mit archive-job_listing.php).
-		$design_settings = get_option( 'rp_design_settings', [] );
+		$design_settings = get_option( 'recpl_design_settings', [] );
 
 		// Card-Preset.
 		$card_preset = $design_settings['card_layout_preset'] ?? 'standard';
@@ -162,7 +162,7 @@ class JobsShortcode {
 					$query->the_post();
 
 					// Variablen für das Partial setzen.
-					include RP_PLUGIN_DIR . 'templates/partials/job-card.php';
+					include RECPL_PLUGIN_DIR . 'templates/partials/job-card.php';
 
 				endwhile;
 				?>

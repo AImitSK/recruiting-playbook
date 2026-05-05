@@ -46,14 +46,14 @@ class JobSchema {
 		}
 
 		// Prüfen ob Schema aktiviert ist (Integrations-Settings > Legacy-Fallback).
-		$integrations = get_option( 'rp_integrations', [] );
+		$integrations = get_option( 'recpl_integrations', [] );
 		if ( isset( $integrations['google_jobs_enabled'] ) ) {
 			if ( ! $integrations['google_jobs_enabled'] ) {
 				return;
 			}
 		} else {
 			// Legacy-Fallback: rp_settings.enable_schema.
-			$settings = get_option( 'rp_settings', [] );
+			$settings = get_option( 'recpl_settings', [] );
 			if ( isset( $settings['enable_schema'] ) && ! $settings['enable_schema'] ) {
 				return;
 			}
@@ -78,8 +78,8 @@ class JobSchema {
 	 * @return array Schema data.
 	 */
 	public function buildSchema( \WP_Post $post ): array {
-		$settings     = get_option( 'rp_settings', [] );
-		$integrations = get_option( 'rp_integrations', [] );
+		$settings     = get_option( 'recpl_settings', [] );
+		$integrations = get_option( 'recpl_integrations', [] );
 
 		// Veröffentlichungsdatum ermitteln (Fallback auf aktuelles Datum für Entwürfe).
 		$post_time   = get_post_time( 'U', true, $post );
@@ -103,7 +103,7 @@ class JobSchema {
 		// Bewerbungsfrist (steuerbar über google_jobs_show_deadline).
 		$show_deadline = $integrations['google_jobs_show_deadline'] ?? true;
 		if ( $show_deadline ) {
-			$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
+			$deadline = get_post_meta( $post->ID, '_recpl_application_deadline', true );
 			if ( $deadline ) {
 				$deadline_timestamp = strtotime( $deadline . ' 23:59:59' );
 				if ( $deadline_timestamp ) {
@@ -127,7 +127,7 @@ class JobSchema {
 		// Remote-Option (steuerbar über google_jobs_show_remote).
 		$show_remote = $integrations['google_jobs_show_remote'] ?? true;
 		if ( $show_remote ) {
-			$remote = get_post_meta( $post->ID, '_rp_remote_option', true );
+			$remote = get_post_meta( $post->ID, '_recpl_remote_option', true );
 			if ( 'full' === $remote ) {
 				$schema['jobLocationType'] = 'TELECOMMUTE';
 			}
@@ -241,7 +241,7 @@ class JobSchema {
 
 		if ( ! $terms || is_wp_error( $terms ) ) {
 			// Remote-only Job ohne physischen Standort.
-			$remote = get_post_meta( $post_id, '_rp_remote_option', true );
+			$remote = get_post_meta( $post_id, '_recpl_remote_option', true );
 			if ( 'full' === $remote ) {
 				return null; // jobLocationType: TELECOMMUTE wird gesetzt.
 			}
@@ -301,7 +301,7 @@ class JobSchema {
 
 		$errors   = [];
 		$warnings = [];
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		// Pflichtfelder prüfen.
 		// 1. Titel.
@@ -326,7 +326,7 @@ class JobSchema {
 		// Empfohlene Felder prüfen.
 		// 5. Standort oder Remote.
 		$locations = get_the_terms( $post->ID, 'job_location' );
-		$remote    = get_post_meta( $post->ID, '_rp_remote_option', true );
+		$remote    = get_post_meta( $post->ID, '_recpl_remote_option', true );
 
 		if ( ( ! $locations || is_wp_error( $locations ) ) && 'full' !== $remote ) {
 			$warnings[] = __( 'Location is missing (recommended for better ranking)', 'recruiting-playbook' );
@@ -339,16 +339,16 @@ class JobSchema {
 		}
 
 		// 7. Gehalt.
-		$hide_salary = get_post_meta( $post->ID, '_rp_hide_salary', true );
-		$salary_min  = get_post_meta( $post->ID, '_rp_salary_min', true );
-		$salary_max  = get_post_meta( $post->ID, '_rp_salary_max', true );
+		$hide_salary = get_post_meta( $post->ID, '_recpl_hide_salary', true );
+		$salary_min  = get_post_meta( $post->ID, '_recpl_salary_min', true );
+		$salary_max  = get_post_meta( $post->ID, '_recpl_salary_max', true );
 
 		if ( ! $hide_salary && ! $salary_min && ! $salary_max ) {
 			$warnings[] = __( 'Salary is missing (important for Google for Jobs ranking)', 'recruiting-playbook' );
 		}
 
 		// 8. Bewerbungsfrist.
-		$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
+		$deadline = get_post_meta( $post->ID, '_recpl_application_deadline', true );
 		if ( ! $deadline ) {
 			$warnings[] = __( 'Application deadline is missing', 'recruiting-playbook' );
 		} else {
@@ -403,15 +403,15 @@ class JobSchema {
 	 * @return array|null Salary schema.
 	 */
 	private function getSalary( int $post_id ): ?array {
-		$hide_salary = get_post_meta( $post_id, '_rp_hide_salary', true );
+		$hide_salary = get_post_meta( $post_id, '_recpl_hide_salary', true );
 		if ( $hide_salary ) {
 			return null;
 		}
 
-		$min      = get_post_meta( $post_id, '_rp_salary_min', true );
-		$max      = get_post_meta( $post_id, '_rp_salary_max', true );
-		$currency = get_post_meta( $post_id, '_rp_salary_currency', true ) ?: 'EUR';
-		$period   = get_post_meta( $post_id, '_rp_salary_period', true ) ?: 'month';
+		$min      = get_post_meta( $post_id, '_recpl_salary_min', true );
+		$max      = get_post_meta( $post_id, '_recpl_salary_max', true );
+		$currency = get_post_meta( $post_id, '_recpl_salary_currency', true ) ?: 'EUR';
+		$period   = get_post_meta( $post_id, '_recpl_salary_period', true ) ?: 'month';
 
 		if ( ! $min && ! $max ) {
 			return null;

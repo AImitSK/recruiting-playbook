@@ -55,13 +55,13 @@ class KanbanBoard {
 	 */
 	private function enqueue_assets(): void {
 		// CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-kanban.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/admin-kanban.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-kanban',
-				RP_PLUGIN_URL . 'assets/dist/css/admin-kanban.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/admin-kanban.css',
 				[],
-				RP_VERSION
+				RECPL_VERSION
 			);
 		} else {
 			// Inline-Styles als Fallback bis CSS-Datei erstellt wird.
@@ -78,7 +78,7 @@ class KanbanBoard {
 				'nonce'     => wp_create_nonce( 'wp_rest' ),
 				'adminUrl'  => admin_url(),
 				'detailUrl' => admin_url( 'admin.php?page=rp-application-detail&id=' ),
-				'logoUrl'   => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'logoUrl'   => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'jobs'      => $this->get_jobs(),
 				'statuses'  => $this->get_statuses(),
 				'i18n'      => $this->get_i18n_strings(),

@@ -33,7 +33,7 @@ class ReportingPage {
 				'canViewStats'    => $can_view_stats,
 				'canViewAdvanced' => $can_view_advanced,
 				'canExport'       => $can_export,
-				'logoUrl'         => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+				'logoUrl'         => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 				'i18n'            => $this->get_translations(),
 			]
 		);

@@ -186,15 +186,25 @@ final class Plugin {
 	 * Datenbank-Schema prüfen und aktualisieren
 	 */
 	private function maybeUpgradeDatabase(): void {
+		// Legacy-Prefix-Migration bei Update von Versionen vor 1.9.0.
+		// Liest den alten Versions-Eintrag (4-Zeichen-Prefix war damals noch nicht etabliert)
+		// und übergibt die Migration an den Activator. Idempotent.
+		$stored_version_for_migration = get_option( 'recpl_version', null );
+		$legacy_version_key           = 'rp' . '_version';
+		$legacy_version               = get_option( $legacy_version_key, null );
+		if ( null === $stored_version_for_migration && null !== $legacy_version ) {
+			\RecruitingPlaybook\Core\Activator::migrateLegacyPrefixes();
+		}
+
 		$migrator = new Migrator();
 		$migrator->createTables();
 
 		// Capabilities bei Version-Updates aktualisieren.
-		$stored_version = get_option( 'rp_version', '0.0.0' );
-		if ( version_compare( $stored_version, RP_VERSION, '<' ) ) {
+		$stored_version = get_option( 'recpl_version', '0.0.0' );
+		if ( version_compare( $stored_version, RECPL_VERSION, '<' ) ) {
 			// Neue Capabilities zuweisen (z.B. rp_manage_forms).
 			RoleManager::assignCapabilities();
-			update_option( 'rp_version', RP_VERSION );
+			update_option( 'recpl_version', RECPL_VERSION );
 		}
 
 		// Custom Fields Migration prüfen und ausführen (premium-only).
@@ -213,7 +223,7 @@ final class Plugin {
 	 * Wird für E-Mail-Queue und andere Hintergrund-Jobs verwendet.
 	 */
 	private function loadActionScheduler(): void {
-		$action_scheduler_file = RP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+		$action_scheduler_file = RECPL_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
 
 		if ( ! file_exists( $action_scheduler_file ) ) {
 			// Admin-Notice für fehlende Dependency.
@@ -326,7 +336,7 @@ final class Plugin {
 		add_action( 'before_delete_post', [ $service, 'onJobDeleted' ], 10, 1 );
 
 		// Action Scheduler Hook für asynchrone Delivery.
-		add_action( 'rp_deliver_webhook', [ $service, 'deliver' ], 10, 1 );
+		add_action( 'recpl_deliver_webhook', [ $service, 'deliver' ], 10, 1 );
 	}
 
 	/**
@@ -456,11 +466,20 @@ final class Plugin {
 
 	/**
 	 * Lizenz-Helper-Funktionen laden
+	 *
+	 * helpers.php ist im Free- und Pro-Build vorhanden.
+	 * pro-helpers.php ist via @fs_premium_only nur im Pro-Build vorhanden
+	 * und wird defensiv mit file_exists() geladen.
 	 */
 	private function loadLicenseHelpers(): void {
-		$helpers_file = RP_PLUGIN_DIR . 'src/Licensing/helpers.php';
+		$helpers_file = RECPL_PLUGIN_DIR . 'src/Licensing/helpers.php';
 		if ( file_exists( $helpers_file ) ) {
 			require_once $helpers_file;
+		}
+
+		$pro_helpers_file = RECPL_PLUGIN_DIR . 'src/Licensing/pro-helpers.php';
+		if ( file_exists( $pro_helpers_file ) ) {
+			require_once $pro_helpers_file;
 		}
 	}
 
@@ -495,11 +514,11 @@ final class Plugin {
 	 * Plugin-Updates korrekt funktionieren und keine 404-Fehler auftreten.
 	 */
 	public function maybeFlushRewriteRules(): void {
-		$stored_version = get_transient( 'rp_rewrite_version' );
+		$stored_version = get_transient( 'recpl_rewrite_version' );
 
-		if ( $stored_version !== RP_VERSION ) {
+		if ( $stored_version !== RECPL_VERSION ) {
 			flush_rewrite_rules();
-			set_transient( 'rp_rewrite_version', RP_VERSION );
+			set_transient( 'recpl_rewrite_version', RECPL_VERSION );
 		}
 	}
 
@@ -547,7 +566,7 @@ final class Plugin {
 	 * den Jobbörsen automatisch einlesen können.
 	 */
 	private function initXmlJobFeed(): void {
-		$settings = get_option( 'rp_integrations', [] );
+		$settings = get_option( 'recpl_integrations', [] );
 
 		// Feed nur registrieren wenn aktiviert (Default: true).
 		if ( isset( $settings['xml_feed_enabled'] ) && ! $settings['xml_feed_enabled'] ) {
@@ -683,7 +702,7 @@ final class Plugin {
 			if ( $custom ) {
 				return $custom;
 			}
-			return RP_PLUGIN_DIR . 'templates/archive-job_listing.php';
+			return RECPL_PLUGIN_DIR . 'templates/archive-job_listing.php';
 		}
 
 		// Taxonomie-Archive (job_category, job_location, employment_type).
@@ -693,7 +712,7 @@ final class Plugin {
 			if ( $custom ) {
 				return $custom;
 			}
-			return RP_PLUGIN_DIR . 'templates/archive-job_listing.php';
+			return RECPL_PLUGIN_DIR . 'templates/archive-job_listing.php';
 		}
 
 		// Einzelseiten für job_listing (inkl. Vorschau von Entwürfen).
@@ -702,7 +721,7 @@ final class Plugin {
 			if ( $custom ) {
 				return $custom;
 			}
-			return RP_PLUGIN_DIR . 'templates/single-job_listing.php';
+			return RECPL_PLUGIN_DIR . 'templates/single-job_listing.php';
 		}
 
 		return $template;
@@ -817,8 +836,8 @@ final class Plugin {
 	 * Nach Aktivierung zur Setup-Wizard Seite weiterleiten
 	 */
 	public function activationRedirect(): void {
-		if ( get_option( 'rp_activation_redirect', false ) ) {
-			delete_option( 'rp_activation_redirect' );
+		if ( get_option( 'recpl_activation_redirect', false ) ) {
+			delete_option( 'recpl_activation_redirect' );
 
 			// Nicht bei Multi-Aktivierung oder wenn Wizard bereits abgeschlossen.
 			if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -826,7 +845,7 @@ final class Plugin {
 			}
 
 			// Zum Wizard weiterleiten, wenn noch nicht abgeschlossen.
-			if ( ! get_option( 'rp_wizard_completed', false ) ) {
+			if ( ! get_option( 'recpl_wizard_completed', false ) ) {
 				wp_safe_redirect( admin_url( 'admin.php?page=rp-setup-wizard' ) );
 				exit;
 			}
@@ -845,16 +864,16 @@ final class Plugin {
 	 */
 	public function enqueueFrontendAssets(): void {
 		// CSS registrieren (für Shortcodes auf beliebigen Seiten).
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/frontend.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/frontend.css';
 		if ( file_exists( $css_file ) ) {
 			wp_register_style(
 				'rp-frontend',
-				RP_PLUGIN_URL . 'assets/dist/css/frontend.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/frontend.css',
 				[],
-				RP_VERSION . '-' . filemtime( $css_file )
+				RECPL_VERSION . '-' . filemtime( $css_file )
 			);
 		} else {
-			wp_register_style( 'rp-frontend', false, [], RP_VERSION );
+			wp_register_style( 'rp-frontend', false, [], RECPL_VERSION );
 		}
 
 		// Design & Branding CSS-Variablen als Inline-Style anhängen.
@@ -888,13 +907,13 @@ final class Plugin {
 		$alpine_deps = [];
 
 		// Conversion Tracking (DataLayer Events für GTM).
-		$tracking_file = RP_PLUGIN_DIR . 'assets/src/js/tracking.js';
+		$tracking_file = RECPL_PLUGIN_DIR . 'assets/src/js/tracking.js';
 		if ( file_exists( $tracking_file ) ) {
 			wp_enqueue_script(
 				'rp-tracking',
-				RP_PLUGIN_URL . 'assets/src/js/tracking.js',
+				RECPL_PLUGIN_URL . 'assets/src/js/tracking.js',
 				[],
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 
@@ -904,7 +923,7 @@ final class Plugin {
 			}
 
 			// Google Ads Conversion Config (Pro).
-			$integrations = get_option( 'rp_integrations', [] );
+			$integrations = get_option( 'recpl_integrations', [] );
 			if ( ! empty( $integrations['google_ads_enabled'] ) && ! empty( $integrations['google_ads_conversion_id'] ) ) {
 				$ads_config = wp_json_encode(
 					[
@@ -923,13 +942,13 @@ final class Plugin {
 		// Application Form JS - nur auf Einzelseiten, muss VOR Alpine.js geladen werden!
 		// Registriert die Alpine-Komponente via 'alpine:init' Event.
 		if ( is_singular( 'job_listing' ) ) {
-			$form_file = RP_PLUGIN_DIR . 'assets/dist/js/application-form.js';
+			$form_file = RECPL_PLUGIN_DIR . 'assets/dist/js/application-form.js';
 			if ( file_exists( $form_file ) ) {
 				wp_enqueue_script(
 					'rp-application-form',
-					RP_PLUGIN_URL . 'assets/dist/js/application-form.js',
+					RECPL_PLUGIN_URL . 'assets/dist/js/application-form.js',
 					[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
-					RP_VERSION,
+					RECPL_VERSION,
 					true
 				);
 
@@ -958,24 +977,24 @@ final class Plugin {
 		if ( recpl_fs()->is__premium_only() ) {
 			if ( is_singular( 'job_listing' ) || is_post_type_archive( 'job_listing' ) ) {
 				// CSS.
-				$match_css_file = RP_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
+				$match_css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/match-modal.css';
 				if ( file_exists( $match_css_file ) ) {
 					wp_enqueue_style(
 						'rp-match-modal',
-						RP_PLUGIN_URL . 'assets/dist/css/match-modal.css',
+						RECPL_PLUGIN_URL . 'assets/dist/css/match-modal.css',
 						[ 'rp-frontend' ],
-						RP_VERSION . '-' . filemtime( $match_css_file )
+						RECPL_VERSION . '-' . filemtime( $match_css_file )
 					);
 				}
 
 				// JS (muss vor Alpine.js laden).
-				$match_js_file = RP_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
+				$match_js_file = RECPL_PLUGIN_DIR . 'assets/dist/js/match-modal.js';
 				if ( file_exists( $match_js_file ) ) {
 					wp_enqueue_script(
 						'rp-match-modal',
-						RP_PLUGIN_URL . 'assets/dist/js/match-modal.js',
+						RECPL_PLUGIN_URL . 'assets/dist/js/match-modal.js',
 						[], // Keine Abhängigkeit zu Alpine - muss vorher laden!
-						RP_VERSION,
+						RECPL_VERSION,
 						true
 					);
 
@@ -1012,13 +1031,13 @@ final class Plugin {
 
 		// Frontend JS - MUSS VOR Alpine.js geladen werden für alpine:init Event.
 		// Registriert rpFileUpload und andere Komponenten.
-		$js_file = RP_PLUGIN_DIR . 'assets/dist/js/frontend.js';
+		$js_file = RECPL_PLUGIN_DIR . 'assets/dist/js/frontend.js';
 		if ( file_exists( $js_file ) ) {
 			wp_enqueue_script(
 				'rp-frontend-js',
-				RP_PLUGIN_URL . 'assets/dist/js/frontend.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/frontend.js',
 				[], // Keine Abhängigkeit - muss VOR Alpine laden!
-				RP_VERSION,
+				RECPL_VERSION,
 				true
 			);
 			$alpine_deps[] = 'rp-frontend-js';
@@ -1028,11 +1047,11 @@ final class Plugin {
 		// WICHTIG: Kein defer! Komponenten müssen VOR Alpine.start() registriert sein.
 		// Alpine startet automatisch via queueMicrotask nach dem Script-Load.
 		// Siehe: https://github.com/alpinejs/alpine/discussions/3978
-		$alpine_file = RP_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
+		$alpine_file = RECPL_PLUGIN_DIR . 'assets/dist/js/alpine.min.js';
 		if ( file_exists( $alpine_file ) ) {
 			wp_enqueue_script(
 				'rp-alpine',
-				RP_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/alpine.min.js',
 				$alpine_deps, // Abhängigkeit: Komponenten-Scripts müssen zuerst laden
 				'3.14.3',
 				true // Im Footer laden - nach allen anderen Scripts
@@ -1057,19 +1076,19 @@ final class Plugin {
 		}
 
 		// Admin CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/admin.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-admin',
-				RP_PLUGIN_URL . 'assets/dist/css/admin.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/admin.css',
 				[],
-				RP_VERSION
+				RECPL_VERSION
 			);
 		}
 
 		// Admin JS.
-		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin.js';
-		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
+		$js_file    = RECPL_PLUGIN_DIR . 'assets/dist/js/admin.js';
+		$asset_file = RECPL_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
 
 		if ( file_exists( $js_file ) ) {
 			// Load dependencies from generated asset file.
@@ -1077,12 +1096,12 @@ final class Plugin {
 				? require $asset_file
 				: [
 					'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
-					'version'      => RP_VERSION,
+					'version'      => RECPL_VERSION,
 				];
 
 			wp_enqueue_script(
 				'rp-admin',
-				RP_PLUGIN_URL . 'assets/dist/js/admin.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/admin.js',
 				$asset['dependencies'],
 				$asset['version'],
 				true
@@ -1099,7 +1118,7 @@ final class Plugin {
 			);
 
 			// Set translations for JS.
-			wp_set_script_translations( 'rp-admin', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
+			wp_set_script_translations( 'rp-admin', 'recruiting-playbook', RECPL_PLUGIN_DIR . 'languages' );
 		}
 
 		// E-Mail Admin App Script (für Templates & Signaturen Seite - Pro-Feature).
@@ -1123,19 +1142,19 @@ final class Plugin {
 		}
 
 		// Admin Email CSS.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-email.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/admin-email.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-admin-email',
-				RP_PLUGIN_URL . 'assets/dist/css/admin-email.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/admin-email.css',
 				[ 'rp-admin' ],
-				RP_VERSION
+				RECPL_VERSION
 			);
 		}
 
 		// Admin Email JS.
-		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin-email.js';
-		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin-email.asset.php';
+		$js_file    = RECPL_PLUGIN_DIR . 'assets/dist/js/admin-email.js';
+		$asset_file = RECPL_PLUGIN_DIR . 'assets/dist/js/admin-email.asset.php';
 
 		if ( file_exists( $js_file ) ) {
 			// Load dependencies from generated asset file.
@@ -1143,12 +1162,12 @@ final class Plugin {
 				? require $asset_file
 				: [
 					'dependencies' => [ 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ],
-					'version'      => RP_VERSION,
+					'version'      => RECPL_VERSION,
 				];
 
 			wp_enqueue_script(
 				'rp-admin-email',
-				RP_PLUGIN_URL . 'assets/dist/js/admin-email.js',
+				RECPL_PLUGIN_URL . 'assets/dist/js/admin-email.js',
 				$asset['dependencies'],
 				$asset['version'],
 				true
@@ -1163,7 +1182,7 @@ final class Plugin {
 					'nonce'   => wp_create_nonce( 'wp_rest' ),
 					'isAdmin' => current_user_can( 'manage_options' ),
 					'userId'  => get_current_user_id(),
-					'logoUrl' => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+					'logoUrl' => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 					'i18n'    => [
 						// General.
 						'loading'                => __( 'Loading...', 'recruiting-playbook' ),
@@ -1239,7 +1258,7 @@ final class Plugin {
 			);
 
 			// Set translations for JS.
-			wp_set_script_translations( 'rp-admin-email', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
+			wp_set_script_translations( 'rp-admin-email', 'recruiting-playbook', RECPL_PLUGIN_DIR . 'languages' );
 		}
 	}
 }

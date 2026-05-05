@@ -64,7 +64,7 @@ class XmlJobFeed {
 	 * Feed rendern
 	 */
 	public function render(): void {
-		$settings = get_option( 'rp_integrations', [] );
+		$settings = get_option( 'recpl_integrations', [] );
 
 		// Feed deaktiviert → 404.
 		if ( isset( $settings['xml_feed_enabled'] ) && ! $settings['xml_feed_enabled'] ) {
@@ -100,7 +100,7 @@ class XmlJobFeed {
 		$show_salary      = (bool) ( $settings['xml_feed_show_salary'] ?? true );
 		$html_description = (bool) ( $settings['xml_feed_html_description'] ?? true );
 
-		$plugin_settings = get_option( 'rp_settings', [] );
+		$plugin_settings = get_option( 'recpl_settings', [] );
 		$company_name    = $plugin_settings['company_name'] ?? get_bloginfo( 'name' );
 
 		$jobs = get_posts(
@@ -172,7 +172,7 @@ class XmlJobFeed {
 		$this->addElement( $dom, $job, 'updated', get_the_modified_date( 'Y-m-d', $post ) );
 
 		// Bewerbungsfrist.
-		$deadline = get_post_meta( $post->ID, '_rp_application_deadline', true );
+		$deadline = get_post_meta( $post->ID, '_recpl_application_deadline', true );
 		if ( $deadline ) {
 			$this->addElement( $dom, $job, 'expire', $deadline );
 		}
@@ -185,7 +185,7 @@ class XmlJobFeed {
 
 		// Gehalt.
 		if ( $show_salary ) {
-			$hide_salary = get_post_meta( $post->ID, '_rp_hide_salary', true );
+			$hide_salary = get_post_meta( $post->ID, '_recpl_hide_salary', true );
 			if ( ! $hide_salary ) {
 				$this->addSalaryFields( $dom, $job, $post->ID );
 			}
@@ -201,13 +201,13 @@ class XmlJobFeed {
 		}
 
 		// Remote.
-		$remote = get_post_meta( $post->ID, '_rp_remote_option', true );
+		$remote = get_post_meta( $post->ID, '_recpl_remote_option', true );
 		if ( $remote ) {
 			$this->addElement( $dom, $job, 'remote', $remote );
 		}
 
 		// Kontakt-E-Mail.
-		$contact_email = get_post_meta( $post->ID, '_rp_contact_email', true );
+		$contact_email = get_post_meta( $post->ID, '_recpl_contact_email', true );
 		if ( $contact_email ) {
 			$this->addElement( $dom, $job, 'contact_email', $contact_email );
 		}
@@ -225,7 +225,7 @@ class XmlJobFeed {
 		$terms = get_the_terms( $post_id, 'job_location' );
 
 		if ( ! $terms || is_wp_error( $terms ) ) {
-			$remote = get_post_meta( $post_id, '_rp_remote_option', true );
+			$remote = get_post_meta( $post_id, '_recpl_remote_option', true );
 			if ( 'full' === $remote ) {
 				return 'Remote';
 			}
@@ -283,10 +283,10 @@ class XmlJobFeed {
 	 * @param int          $post_id Post ID.
 	 */
 	private function addSalaryFields( \DOMDocument $dom, \DOMElement $parent, int $post_id ): void {
-		$min      = get_post_meta( $post_id, '_rp_salary_min', true );
-		$max      = get_post_meta( $post_id, '_rp_salary_max', true );
-		$currency = get_post_meta( $post_id, '_rp_salary_currency', true ) ?: 'EUR';
-		$period   = get_post_meta( $post_id, '_rp_salary_period', true ) ?: 'month';
+		$min      = get_post_meta( $post_id, '_recpl_salary_min', true );
+		$max      = get_post_meta( $post_id, '_recpl_salary_max', true );
+		$currency = get_post_meta( $post_id, '_recpl_salary_currency', true ) ?: 'EUR';
+		$period   = get_post_meta( $post_id, '_recpl_salary_period', true ) ?: 'month';
 
 		if ( ! $min && ! $max ) {
 			return;

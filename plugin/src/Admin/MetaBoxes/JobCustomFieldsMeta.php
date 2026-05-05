@@ -26,12 +26,12 @@ class JobCustomFieldsMeta {
 	/**
 	 * Meta Key für Custom Fields Konfiguration
 	 */
-	public const META_KEY = '_rp_custom_fields_config';
+	public const META_KEY = '_recpl_custom_fields_config';
 
 	/**
 	 * Meta Key für Custom Fields Override
 	 */
-	public const OVERRIDE_META_KEY = '_rp_custom_fields_override';
+	public const OVERRIDE_META_KEY = '_recpl_custom_fields_override';
 
 	/**
 	 * Field Definition Service

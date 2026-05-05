@@ -421,7 +421,7 @@ class EmailTemplateService {
 	 * @return string
 	 */
 	private function wrapHtml( string $content ): string {
-		$settings     = get_option( 'rp_settings', [] );
+		$settings     = get_option( 'recpl_settings', [] );
 		$company_name = $settings['company_name'] ?? get_bloginfo( 'name' );
 
 		$hide_branding  = ! empty( $settings['hide_email_branding'] );

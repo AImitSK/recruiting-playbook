@@ -59,7 +59,7 @@ class EmploymentType {
 	 * Standard-Beschäftigungsarten einfügen
 	 */
 	public function insertDefaults(): void {
-		if ( get_option( 'rp_employment_types_installed' ) ) {
+		if ( get_option( 'recpl_employment_types_installed' ) ) {
 			return;
 		}
 
@@ -79,6 +79,6 @@ class EmploymentType {
 			}
 		}
 
-		update_option( 'rp_employment_types_installed', true );
+		update_option( 'recpl_employment_types_installed', true );
 	}
 }

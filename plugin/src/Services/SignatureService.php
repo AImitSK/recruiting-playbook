@@ -231,7 +231,7 @@ class SignatureService {
 	 */
 	public function getDefaultForUser( int $user_id ): ?array {
 		// Erst in User-Meta nachsehen.
-		$default_id = get_user_meta( $user_id, 'rp_default_signature_id', true );
+		$default_id = get_user_meta( $user_id, 'recpl_default_signature_id', true );
 
 		if ( $default_id ) {
 			$signature = $this->getRepository()->find( (int) $default_id );
@@ -304,7 +304,7 @@ class SignatureService {
 			// User-Meta aktualisieren wenn Default.
 			$user_id = $data['user_id'] ?? get_current_user_id();
 			if ( $user_id ) {
-				update_user_meta( $user_id, 'rp_default_signature_id', $id );
+				update_user_meta( $user_id, 'recpl_default_signature_id', $id );
 			}
 		}
 
@@ -327,7 +327,7 @@ class SignatureService {
 			// User-Meta aktualisieren wenn Default.
 			$signature = $this->getRepository()->find( $id );
 			if ( $signature && $signature['user_id'] ) {
-				update_user_meta( $signature['user_id'], 'rp_default_signature_id', $id );
+				update_user_meta( $signature['user_id'], 'recpl_default_signature_id', $id );
 			}
 		}
 
@@ -349,7 +349,7 @@ class SignatureService {
 
 		// User-Meta aufräumen wenn es die Default-Signatur war.
 		if ( $signature['user_id'] && $signature['is_default'] ) {
-			delete_user_meta( $signature['user_id'], 'rp_default_signature_id' );
+			delete_user_meta( $signature['user_id'], 'recpl_default_signature_id' );
 		}
 
 		return $this->getRepository()->delete( $id );
@@ -400,7 +400,7 @@ class SignatureService {
 	 * @return array Firmendaten (normalisiert zu name, street, zip, city, phone, website, email).
 	 */
 	private function getCompanyData(): array {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		// E-Mail: Priorität company_email > notification_email > admin_email.
 		$email = $settings['company_email']

@@ -105,7 +105,7 @@ class BlockLoader {
 	 * @param string $block Block name (without prefix).
 	 */
 	private function registerBlock( string $block ): void {
-		$block_dir = RP_PLUGIN_DIR . "src/Blocks/Blocks/{$block}";
+		$block_dir = RECPL_PLUGIN_DIR . "src/Blocks/Blocks/{$block}";
 
 		// Only register block if block.json exists.
 		if ( ! file_exists( $block_dir . '/block.json' ) ) {
@@ -147,7 +147,7 @@ class BlockLoader {
 	 * Load editor assets
 	 */
 	public function enqueueEditorAssets(): void {
-		$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/blocks.asset.php';
+		$asset_file = RECPL_PLUGIN_DIR . 'assets/dist/js/blocks.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -158,7 +158,7 @@ class BlockLoader {
 		// Block editor JavaScript.
 		wp_enqueue_script(
 			'rp-blocks-editor',
-			RP_PLUGIN_URL . 'assets/dist/js/blocks.js',
+			RECPL_PLUGIN_URL . 'assets/dist/js/blocks.js',
 			$asset['dependencies'],
 			$asset['version'],
 			true
@@ -168,7 +168,7 @@ class BlockLoader {
 		wp_set_script_translations(
 			'rp-blocks-editor',
 			'recruiting-playbook',
-			RP_PLUGIN_DIR . 'languages'
+			RECPL_PLUGIN_DIR . 'languages'
 		);
 
 		// Block configuration.
@@ -180,18 +180,18 @@ class BlockLoader {
 				'restUrl'    => rest_url( 'recruiting/v1/' ),
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'taxonomies' => $this->getTaxonomiesData(),
-				'pluginUrl'  => RP_PLUGIN_URL,
+				'pluginUrl'  => RECPL_PLUGIN_URL,
 			]
 		);
 
 		// Editor styles.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/blocks-editor.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/blocks-editor.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-blocks-editor',
-				RP_PLUGIN_URL . 'assets/dist/css/blocks-editor.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/blocks-editor.css',
 				[],
-				RP_VERSION . '-' . filemtime( $css_file )
+				RECPL_VERSION . '-' . filemtime( $css_file )
 			);
 		}
 

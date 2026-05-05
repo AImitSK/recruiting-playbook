@@ -25,8 +25,10 @@ $company         = $company ?? get_bloginfo( 'name' );
 $logo_url        = $logo_url ?? '';
 $footer_text     = $footer_text ?? '';
 $unsubscribe_url = $unsubscribe_url ?? '';
-$primary_color   = apply_filters( 'rp_email_primary_color', '#0073aa' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-$text_color      = apply_filters( 'rp_email_text_color', '#333333' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+$primary_color   = apply_filters( 'recpl_email_primary_color', '#0073aa' );
+$primary_color   = apply_filters_deprecated( 'rp_email_primary_color', [ $primary_color ], '1.9.0', 'recpl_email_primary_color' );
+$text_color      = apply_filters( 'recpl_email_text_color', '#333333' );
+$text_color      = apply_filters_deprecated( 'rp_email_text_color', [ $text_color ], '1.9.0', 'recpl_email_text_color' );
 ?>
 <!DOCTYPE html>
 <html lang="de">

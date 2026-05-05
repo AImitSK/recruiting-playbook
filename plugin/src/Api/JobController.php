@@ -555,17 +555,17 @@ class JobController extends WP_REST_Controller {
 		$post_id = $post->ID;
 
 		// Meta-Daten laden.
-		$salary_min      = get_post_meta( $post_id, '_rp_salary_min', true );
-		$salary_max      = get_post_meta( $post_id, '_rp_salary_max', true );
-		$salary_currency = get_post_meta( $post_id, '_rp_salary_currency', true ) ?: 'EUR';
-		$salary_period   = get_post_meta( $post_id, '_rp_salary_period', true ) ?: 'month';
-		$hide_salary     = get_post_meta( $post_id, '_rp_hide_salary', true );
-		$contact_person  = get_post_meta( $post_id, '_rp_contact_person', true );
-		$contact_email   = get_post_meta( $post_id, '_rp_contact_email', true );
-		$contact_phone   = get_post_meta( $post_id, '_rp_contact_phone', true );
-		$deadline        = get_post_meta( $post_id, '_rp_application_deadline', true );
-		$start_date      = get_post_meta( $post_id, '_rp_start_date', true );
-		$remote_option   = get_post_meta( $post_id, '_rp_remote_option', true );
+		$salary_min      = get_post_meta( $post_id, '_recpl_salary_min', true );
+		$salary_max      = get_post_meta( $post_id, '_recpl_salary_max', true );
+		$salary_currency = get_post_meta( $post_id, '_recpl_salary_currency', true ) ?: 'EUR';
+		$salary_period   = get_post_meta( $post_id, '_recpl_salary_period', true ) ?: 'month';
+		$hide_salary     = get_post_meta( $post_id, '_recpl_hide_salary', true );
+		$contact_person  = get_post_meta( $post_id, '_recpl_contact_person', true );
+		$contact_email   = get_post_meta( $post_id, '_recpl_contact_email', true );
+		$contact_phone   = get_post_meta( $post_id, '_recpl_contact_phone', true );
+		$deadline        = get_post_meta( $post_id, '_recpl_application_deadline', true );
+		$start_date      = get_post_meta( $post_id, '_recpl_start_date', true );
+		$remote_option   = get_post_meta( $post_id, '_recpl_remote_option', true );
 
 		// Taxonomien.
 		$locations        = get_the_terms( $post_id, 'job_location' );
@@ -678,62 +678,62 @@ class JobController extends WP_REST_Controller {
 		$salary = $request->get_param( 'salary' );
 		if ( is_array( $salary ) ) {
 			if ( isset( $salary['min'] ) ) {
-				update_post_meta( $post_id, '_rp_salary_min', sanitize_text_field( (string) $salary['min'] ) );
+				update_post_meta( $post_id, '_recpl_salary_min', sanitize_text_field( (string) $salary['min'] ) );
 			}
 			if ( isset( $salary['max'] ) ) {
-				update_post_meta( $post_id, '_rp_salary_max', sanitize_text_field( (string) $salary['max'] ) );
+				update_post_meta( $post_id, '_recpl_salary_max', sanitize_text_field( (string) $salary['max'] ) );
 			}
 			if ( isset( $salary['currency'] ) ) {
-				update_post_meta( $post_id, '_rp_salary_currency', sanitize_text_field( $salary['currency'] ) );
+				update_post_meta( $post_id, '_recpl_salary_currency', sanitize_text_field( $salary['currency'] ) );
 			}
 			if ( isset( $salary['period'] ) ) {
-				update_post_meta( $post_id, '_rp_salary_period', sanitize_text_field( $salary['period'] ) );
+				update_post_meta( $post_id, '_recpl_salary_period', sanitize_text_field( $salary['period'] ) );
 			}
 		}
 
 		// Hide Salary.
 		$hide_salary = $request->get_param( 'hide_salary' );
 		if ( null !== $hide_salary ) {
-			update_post_meta( $post_id, '_rp_hide_salary', $hide_salary ? '1' : '' );
+			update_post_meta( $post_id, '_recpl_hide_salary', $hide_salary ? '1' : '' );
 		}
 
 		// Contact-Objekt.
 		$contact = $request->get_param( 'contact' );
 		if ( is_array( $contact ) ) {
 			if ( isset( $contact['name'] ) ) {
-				update_post_meta( $post_id, '_rp_contact_person', sanitize_text_field( $contact['name'] ) );
+				update_post_meta( $post_id, '_recpl_contact_person', sanitize_text_field( $contact['name'] ) );
 			}
 			if ( isset( $contact['email'] ) ) {
-				update_post_meta( $post_id, '_rp_contact_email', sanitize_email( $contact['email'] ) );
+				update_post_meta( $post_id, '_recpl_contact_email', sanitize_email( $contact['email'] ) );
 			}
 			if ( isset( $contact['phone'] ) ) {
-				update_post_meta( $post_id, '_rp_contact_phone', sanitize_text_field( $contact['phone'] ) );
+				update_post_meta( $post_id, '_recpl_contact_phone', sanitize_text_field( $contact['phone'] ) );
 			}
 		}
 
 		// Datum-Felder.
 		$deadline = $request->get_param( 'application_deadline' );
 		if ( null !== $deadline ) {
-			update_post_meta( $post_id, '_rp_application_deadline', sanitize_text_field( $deadline ) );
+			update_post_meta( $post_id, '_recpl_application_deadline', sanitize_text_field( $deadline ) );
 		}
 
 		$start_date = $request->get_param( 'start_date' );
 		if ( null !== $start_date ) {
-			update_post_meta( $post_id, '_rp_start_date', sanitize_text_field( $start_date ) );
+			update_post_meta( $post_id, '_recpl_start_date', sanitize_text_field( $start_date ) );
 		}
 
 		// Remote-Option.
 		$remote = $request->get_param( 'remote' );
 		if ( null !== $remote ) {
 			$remote_value = $remote ? 'full' : 'no';
-			update_post_meta( $post_id, '_rp_remote_option', sanitize_text_field( $remote_value ) );
+			update_post_meta( $post_id, '_recpl_remote_option', sanitize_text_field( $remote_value ) );
 		}
 
 		// Location remote via location-Objekt (überschreibt standalone remote).
 		$location = $request->get_param( 'location' );
 		if ( is_array( $location ) && isset( $location['remote'] ) ) {
 			$remote_value = $location['remote'] ? 'full' : 'no';
-			update_post_meta( $post_id, '_rp_remote_option', sanitize_text_field( $remote_value ) );
+			update_post_meta( $post_id, '_recpl_remote_option', sanitize_text_field( $remote_value ) );
 		}
 	}
 

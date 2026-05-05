@@ -122,7 +122,7 @@ class ApplicationService {
 			'source'                  => 'website',
 			'consent_privacy'         => $has_consent ? 1 : 0,
 			'consent_privacy_at'      => $has_consent ? current_time( 'mysql' ) : null,
-			'consent_privacy_version' => $has_consent ? get_option( 'rp_privacy_policy_version', '1.0' ) : '',
+			'consent_privacy_version' => $has_consent ? get_option( 'recpl_privacy_policy_version', '1.0' ) : '',
 			'consent_ip'              => $has_consent ? ( $data['ip_address'] ?? '' ) : '',
 			'created_at'              => current_time( 'mysql' ),
 			'updated_at'              => current_time( 'mysql' ),

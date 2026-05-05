@@ -69,8 +69,8 @@ class FormRenderServiceTest extends TestCase {
 		Functions\when( 'get_privacy_policy_url' )->justReturn( 'https://example.com/privacy' );
 
 		// Konstanten definieren.
-		if ( ! defined( 'RP_PLUGIN_DIR' ) ) {
-			define( 'RP_PLUGIN_DIR', dirname( __DIR__, 3 ) . '/' );
+		if ( ! defined( 'RECPL_PLUGIN_DIR' ) ) {
+			define( 'RECPL_PLUGIN_DIR', dirname( __DIR__, 3 ) . '/' );
 		}
 	}
 

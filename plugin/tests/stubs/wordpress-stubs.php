@@ -206,16 +206,16 @@ if ( ! defined( 'OBJECT' ) ) {
 }
 
 // Plugin-Konstanten für Tests.
-if ( ! defined( 'RP_VERSION' ) ) {
-	define( 'RP_VERSION', '1.0.0' );
+if ( ! defined( 'RECPL_VERSION' ) ) {
+	define( 'RECPL_VERSION', '1.0.0' );
 }
 
-if ( ! defined( 'RP_PLUGIN_DIR' ) ) {
-	define( 'RP_PLUGIN_DIR', dirname( __DIR__, 2 ) . '/' );
+if ( ! defined( 'RECPL_PLUGIN_DIR' ) ) {
+	define( 'RECPL_PLUGIN_DIR', dirname( __DIR__, 2 ) . '/' );
 }
 
-if ( ! defined( 'RP_PLUGIN_URL' ) ) {
-	define( 'RP_PLUGIN_URL', 'http://example.com/wp-content/plugins/recruiting-playbook/' );
+if ( ! defined( 'RECPL_PLUGIN_URL' ) ) {
+	define( 'RECPL_PLUGIN_URL', 'http://example.com/wp-content/plugins/recruiting-playbook/' );
 }
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -90,12 +90,12 @@ class SetupWizard {
 	 */
 	public function maybeRedirect(): void {
 		// Prüfen ob Redirect gesetzt.
-		if ( ! get_option( 'rp_activation_redirect', false ) ) {
+		if ( ! get_option( 'recpl_activation_redirect', false ) ) {
 			return;
 		}
 
 		// Redirect-Flag löschen.
-		delete_option( 'rp_activation_redirect' );
+		delete_option( 'recpl_activation_redirect' );
 
 		// Nicht bei Multisite-Aktivierung.
 		if ( isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -103,7 +103,7 @@ class SetupWizard {
 		}
 
 		// Wizard bereits abgeschlossen.
-		if ( get_option( 'rp_wizard_completed', false ) ) {
+		if ( get_option( 'recpl_wizard_completed', false ) ) {
 			return;
 		}
 
@@ -119,7 +119,7 @@ class SetupWizard {
 	 */
 	public function shouldShowWizard(): bool {
 		// Wizard bereits abgeschlossen.
-		if ( get_option( 'rp_wizard_completed', false ) ) {
+		if ( get_option( 'recpl_wizard_completed', false ) ) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ class SetupWizard {
 		}
 
 		// Template laden (rendert innerhalb des WP-Admin-Wrappers).
-		include RP_PLUGIN_DIR . 'src/Admin/SetupWizard/views/wizard.php';
+		include RECPL_PLUGIN_DIR . 'src/Admin/SetupWizard/views/wizard.php';
 	}
 
 	/**
@@ -173,22 +173,22 @@ class SetupWizard {
 			return;
 		}
 
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/wizard.css';
-		$version  = file_exists( $css_file ) ? filemtime( $css_file ) : RP_VERSION;
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/wizard.css';
+		$version  = file_exists( $css_file ) ? filemtime( $css_file ) : RECPL_VERSION;
 
 		wp_enqueue_style(
 			'rp-wizard',
-			RP_PLUGIN_URL . 'assets/dist/css/wizard.css',
+			RECPL_PLUGIN_URL . 'assets/dist/css/wizard.css',
 			[],
 			$version
 		);
 
-		$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/wizard.js';
-		$js_version = file_exists( $js_file ) ? filemtime( $js_file ) : RP_VERSION;
+		$js_file    = RECPL_PLUGIN_DIR . 'assets/dist/js/wizard.js';
+		$js_version = file_exists( $js_file ) ? filemtime( $js_file ) : RECPL_VERSION;
 
 		wp_enqueue_script(
 			'rp-wizard',
-			RP_PLUGIN_URL . 'assets/dist/js/wizard.js',
+			RECPL_PLUGIN_URL . 'assets/dist/js/wizard.js',
 			[ 'jquery' ],
 			$js_version,
 			true
@@ -296,7 +296,7 @@ class SetupWizard {
 	 * Schritt 2: Firmendaten
 	 */
 	public function renderCompany(): void {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 		?>
 		<div class="rp-wizard-step">
 			<h2><?php esc_html_e( 'Company Details', 'recruiting-playbook' ); ?></h2>
@@ -423,7 +423,7 @@ class SetupWizard {
 	 * @return bool|\WP_Error
 	 */
 	public function saveCompany( array $data ): bool|\WP_Error {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		$settings['company_name']       = sanitize_text_field( $data['company_name'] ?? '' );
 		$settings['company_logo']       = esc_url_raw( $data['company_logo'] ?? '' );
@@ -433,7 +433,7 @@ class SetupWizard {
 		$settings['company_country']    = sanitize_text_field( $data['company_country'] ?? 'DE' );
 		$settings['privacy_policy_url'] = esc_url_raw( $data['privacy_policy_url'] ?? '' );
 
-		update_option( 'rp_settings', $settings );
+		update_option( 'recpl_settings', $settings );
 
 		return true;
 	}
@@ -442,7 +442,7 @@ class SetupWizard {
 	 * Schritt 3: E-Mail
 	 */
 	public function renderEmail(): void {
-		$settings    = get_option( 'rp_settings', [] );
+		$settings    = get_option( 'recpl_settings', [] );
 		$smtp_status = EmailService::checkSmtpConfig();
 		?>
 		<div class="rp-wizard-step">
@@ -547,12 +547,12 @@ class SetupWizard {
 	 * @return bool|\WP_Error
 	 */
 	public function saveEmail( array $data ): bool|\WP_Error {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		$settings['notification_email'] = sanitize_email( $data['notification_email'] ?? '' );
 		$settings['sender_name']        = sanitize_text_field( $data['sender_name'] ?? '' );
 
-		update_option( 'rp_settings', $settings );
+		update_option( 'recpl_settings', $settings );
 
 		return true;
 	}
@@ -678,7 +678,7 @@ class SetupWizard {
 		}
 
 		// Speichern fuer Redirect nach Wizard.
-		set_transient( 'rp_wizard_created_job', $post_id, 60 );
+		set_transient( 'recpl_wizard_created_job', $post_id, 60 );
 
 		return true;
 	}
@@ -688,10 +688,10 @@ class SetupWizard {
 	 */
 	public function renderComplete(): void {
 		// Wizard als abgeschlossen markieren.
-		update_option( 'rp_wizard_completed', true );
+		update_option( 'recpl_wizard_completed', true );
 
-		$created_job_id = get_transient( 'rp_wizard_created_job' );
-		delete_transient( 'rp_wizard_created_job' );
+		$created_job_id = get_transient( 'recpl_wizard_created_job' );
+		delete_transient( 'recpl_wizard_created_job' );
 		?>
 		<div class="rp-wizard-step rp-wizard-complete">
 			<span class="complete-icon">
@@ -822,7 +822,7 @@ class SetupWizard {
 			wp_send_json_error( [ 'message' => __( 'No permission.', 'recruiting-playbook' ) ] );
 		}
 
-		update_option( 'rp_wizard_completed', true );
+		update_option( 'recpl_wizard_completed', true );
 
 		wp_send_json_success(
 			[

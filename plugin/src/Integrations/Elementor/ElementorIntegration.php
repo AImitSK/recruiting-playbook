@@ -71,9 +71,9 @@ class ElementorIntegration {
 	public function enqueueEditorAssets(): void {
 		wp_enqueue_style(
 			'rp-elementor-editor',
-			RP_PLUGIN_URL . 'assets/css/elementor-editor.css',
+			RECPL_PLUGIN_URL . 'assets/css/elementor-editor.css',
 			[],
-			RP_VERSION
+			RECPL_VERSION
 		);
 	}
 }

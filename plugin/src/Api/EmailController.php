@@ -661,8 +661,8 @@ class EmailController extends WP_REST_Controller {
 			if ( $job_post ) {
 				$job = [
 					'title'           => $job_post->post_title,
-					'location'        => get_post_meta( $job_post->ID, '_rp_location', true ) ?: '',
-					'employment_type' => get_post_meta( $job_post->ID, '_rp_employment_type', true ) ?: '',
+					'location'        => get_post_meta( $job_post->ID, '_recpl_location', true ) ?: '',
+					'employment_type' => get_post_meta( $job_post->ID, '_recpl_employment_type', true ) ?: '',
 					'url'             => get_permalink( $job_post->ID ),
 				];
 			}

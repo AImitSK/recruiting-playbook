@@ -65,15 +65,17 @@ class EmailRenderer {
 		$content = $this->replacePlaceholders( $content, $placeholders );
 
 		// Template-Variablen vorbereiten.
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		$subject         = $options['subject'] ?? '';
 		$company         = $options['company'] ?? $settings['company_name'] ?? get_bloginfo( 'name' );
 		$logo_url        = $options['logo_url'] ?? $settings['company_logo'] ?? '';
 		$footer_text     = $options['footer_text'] ?? '';
 		$unsubscribe_url = $options['unsubscribe_url'] ?? '';
-		$primary_color   = $options['primary_color'] ?? apply_filters( 'rp_email_primary_color', '#0073aa' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$text_color      = $options['text_color'] ?? apply_filters( 'rp_email_text_color', '#333333' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$primary_color   = $options['primary_color'] ?? apply_filters( 'recpl_email_primary_color', '#0073aa' );
+		$primary_color   = apply_filters_deprecated( 'rp_email_primary_color', [ $primary_color ], '1.9.0', 'recpl_email_primary_color' );
+		$text_color      = $options['text_color'] ?? apply_filters( 'recpl_email_text_color', '#333333' );
+		$text_color      = apply_filters_deprecated( 'rp_email_text_color', [ $text_color ], '1.9.0', 'recpl_email_text_color' );
 
 		// Base-Layout rendern.
 		ob_start();
@@ -257,7 +259,7 @@ class EmailRenderer {
 		// Security: Whitelist-Check gegen erlaubte Templates.
 		if ( ! in_array( $template, self::ALLOWED_TEMPLATES, true ) ) {
 			// Fallback auf Base-Layout bei ungültigem Template.
-			return RP_PLUGIN_DIR . self::TEMPLATE_DIR . 'base-layout.php';
+			return RECPL_PLUGIN_DIR . self::TEMPLATE_DIR . 'base-layout.php';
 		}
 
 		// Theme-Override prüfen.
@@ -273,7 +275,7 @@ class EmailRenderer {
 		}
 
 		// Fallback: Plugin-Verzeichnis.
-		return RP_PLUGIN_DIR . self::TEMPLATE_DIR . $template;
+		return RECPL_PLUGIN_DIR . self::TEMPLATE_DIR . $template;
 	}
 
 	/**

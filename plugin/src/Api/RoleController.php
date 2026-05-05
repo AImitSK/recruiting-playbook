@@ -139,7 +139,7 @@ class RoleController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( $request ): WP_REST_Response {
-		$config   = get_option( 'rp_role_capabilities', RoleManager::getDefaults() );
+		$config   = get_option( 'recpl_role_capabilities', RoleManager::getDefaults() );
 		$roles    = [];
 		$all_caps = RoleManager::getAllCapabilities();
 
@@ -251,9 +251,9 @@ class RoleController extends WP_REST_Controller {
 		}
 
 		// Konfiguration speichern.
-		$config          = get_option( 'rp_role_capabilities', RoleManager::getDefaults() );
+		$config          = get_option( 'recpl_role_capabilities', RoleManager::getDefaults() );
 		$config[ $slug ] = $valid_caps;
-		update_option( 'rp_role_capabilities', $config );
+		update_option( 'recpl_role_capabilities', $config );
 
 		// WordPress-Rolle aktualisieren.
 		RoleManager::assignCapabilities();

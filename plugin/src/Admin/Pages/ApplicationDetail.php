@@ -45,33 +45,33 @@ class ApplicationDetail {
 	 */
 	public function enqueue_assets( int $application_id ): void {
 		// CSS für Bewerber-Detailseite.
-		$css_file = RP_PLUGIN_DIR . 'assets/dist/css/admin-applicant.css';
+		$css_file = RECPL_PLUGIN_DIR . 'assets/dist/css/admin-applicant.css';
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'rp-applicant',
-				RP_PLUGIN_URL . 'assets/dist/css/admin-applicant.css',
+				RECPL_PLUGIN_URL . 'assets/dist/css/admin-applicant.css',
 				[ 'rp-admin' ],
-				RP_VERSION
+				RECPL_VERSION
 			);
 		}
 
 		// Pro-Features: React-Komponenten.
 		if ( $this->hasProFeatures() ) {
-			$js_file    = RP_PLUGIN_DIR . 'assets/dist/js/admin.js';
-			$asset_file = RP_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
+			$js_file    = RECPL_PLUGIN_DIR . 'assets/dist/js/admin.js';
+			$asset_file = RECPL_PLUGIN_DIR . 'assets/dist/js/admin.asset.php';
 
 			if ( file_exists( $js_file ) && file_exists( $asset_file ) ) {
 				$assets = include $asset_file;
 
 				wp_enqueue_script(
 					'rp-applicant',
-					RP_PLUGIN_URL . 'assets/dist/js/admin.js',
+					RECPL_PLUGIN_URL . 'assets/dist/js/admin.js',
 					$assets['dependencies'] ?? [ 'wp-element', 'wp-api-fetch', 'wp-i18n' ],
-					$assets['version'] ?? RP_VERSION,
+					$assets['version'] ?? RECPL_VERSION,
 					true
 				);
 
-				wp_set_script_translations( 'rp-applicant', 'recruiting-playbook', RP_PLUGIN_DIR . 'languages' );
+				wp_set_script_translations( 'rp-applicant', 'recruiting-playbook', RECPL_PLUGIN_DIR . 'languages' );
 
 				// Konfiguration für React.
 				wp_localize_script(
@@ -82,7 +82,7 @@ class ApplicationDetail {
 						'apiUrl'        => rest_url( 'recruiting/v1/' ),
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
 						'listUrl'       => admin_url( 'admin.php?page=recruiting-playbook' ),
-						'logoUrl'       => RP_PLUGIN_URL . 'assets/images/rp-logo.png',
+						'logoUrl'       => RECPL_PLUGIN_URL . 'assets/images/rp-logo.png',
 						'canSendEmails' => function_exists( 'recpl_fs' ) && recpl_fs()->is__premium_only(),
 						'i18n'          => [
 							'loadingApplication'      => __( 'Loading application...', 'recruiting-playbook' ),

@@ -411,7 +411,7 @@ class Menu {
 
 			case 'bulk_email':
 				// IDs in Transient speichern für Bulk-Email-Seite.
-				set_transient( 'rp_bulk_email_ids_' . $current_user->ID, $ids, 300 ); // 5 Minuten gültig.
+				set_transient( 'recpl_bulk_email_ids_' . $current_user->ID, $ids, 300 ); // 5 Minuten gültig.
 				wp_safe_redirect( admin_url( 'admin.php?page=rp-bulk-email' ) );
 				exit;
 
@@ -531,7 +531,7 @@ class Menu {
 		// Datei-Validierung.
 		if ( empty( $_FILES['backup_file'] ) || empty( $_FILES['backup_file']['tmp_name'] ) ) {
 			set_transient(
-				'rp_import_result',
+				'recpl_import_result',
 				[ 'errors' => [ __( 'No file uploaded.', 'recruiting-playbook' ) ] ],
 				60
 			);
@@ -546,7 +546,7 @@ class Menu {
 		$max_size = 50 * 1024 * 1024;
 		if ( $file['size'] > $max_size ) {
 			set_transient(
-				'rp_import_result',
+				'recpl_import_result',
 				[ 'errors' => [ __( 'File exceeds 50 MB limit.', 'recruiting-playbook' ) ] ],
 				60
 			);
@@ -558,7 +558,7 @@ class Menu {
 		$ext = strtolower( pathinfo( $file['name'], PATHINFO_EXTENSION ) );
 		if ( 'json' !== $ext ) {
 			set_transient(
-				'rp_import_result',
+				'recpl_import_result',
 				[ 'errors' => [ __( 'Only .json files are allowed.', 'recruiting-playbook' ) ] ],
 				60
 			);
@@ -574,7 +574,7 @@ class Menu {
 
 		if ( is_wp_error( $data ) ) {
 			set_transient(
-				'rp_import_result',
+				'recpl_import_result',
 				[ 'errors' => [ $data->get_error_message() ] ],
 				60
 			);
@@ -594,7 +594,7 @@ class Menu {
 		// Import durchführen.
 		$result = $importer->import( $data, $options );
 
-		set_transient( 'rp_import_result', $result->toArray(), 60 );
+		set_transient( 'recpl_import_result', $result->toArray(), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=rp-settings&import_done=1' ) );
 		exit;
 	}
@@ -673,7 +673,7 @@ class Menu {
 			return;
 		}
 		$current_user    = wp_get_current_user();
-		$transient_key   = 'rp_bulk_email_ids_' . $current_user->ID;
+		$transient_key   = 'recpl_bulk_email_ids_' . $current_user->ID;
 		$application_ids = get_transient( $transient_key );
 
 		// Keine IDs vorhanden.

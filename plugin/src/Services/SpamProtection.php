@@ -209,7 +209,8 @@ class SpamProtection {
 		);
 
 		// Optional: In DB loggen für Statistiken
-		do_action( 'rp_spam_blocked', $type, $ip, $request ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recpl_spam_blocked', $type, $ip, $request );
+		do_action_deprecated( 'rp_spam_blocked', [ $type, $ip, $request ], '1.9.0', 'recpl_spam_blocked' );
 	}
 
 	/**

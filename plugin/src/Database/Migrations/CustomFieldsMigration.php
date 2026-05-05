@@ -155,7 +155,8 @@ class CustomFieldsMigration {
 		}
 
 		// Aktivitätslog.
-		do_action( 'rp_application_migrated', $application_id, $custom_fields ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recpl_application_migrated', $application_id, $custom_fields );
+		do_action_deprecated( 'rp_application_migrated', [ $application_id, $custom_fields ], '1.9.0', 'recpl_application_migrated' );
 
 		return true;
 	}

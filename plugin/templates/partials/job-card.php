@@ -31,7 +31,8 @@ defined( 'ABSPATH' ) || exit;
 	<div class="rp-flex rp-items-center rp-gap-4 rp-text-xs rp-flex-wrap">
 		<?php
 		// "Neu" Badge - Jobs die weniger als X Tage alt sind.
-		$new_days    = apply_filters( 'rp_new_job_days', 14 ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$new_days    = apply_filters( 'recpl_new_job_days', 14 );
+		$new_days    = apply_filters_deprecated( 'rp_new_job_days', [ $new_days ], '1.9.0', 'recpl_new_job_days' );
 		$post_date   = get_the_date( 'U' );
 		$days_ago    = floor( ( time() - $post_date ) / DAY_IN_SECONDS );
 		$is_new      = $days_ago <= $new_days;
@@ -45,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php
 		// "Featured" Badge.
-		$is_featured = get_post_meta( get_the_ID(), '_rp_featured', true );
+		$is_featured = get_post_meta( get_the_ID(), '_recpl_featured', true );
 		if ( $is_featured ) :
 			?>
 			<span class="rp-badge rp-badge-featured rp-relative rp-z-10">
@@ -119,7 +120,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php
 		// Remote
-		$remote = get_post_meta( get_the_ID(), '_rp_remote_option', true );
+		$remote = get_post_meta( get_the_ID(), '_recpl_remote_option', true );
 		if ( $remote && 'no' !== $remote ) :
 			$remote_labels = [
 				'hybrid' => __( 'Hybrid', 'recruiting-playbook' ),
@@ -137,7 +138,7 @@ defined( 'ABSPATH' ) || exit;
 		<?php
 		// Gehalt
 		if ( $show_salary ) :
-			$salary = get_post_meta( get_the_ID(), '_rp_salary_range', true );
+			$salary = get_post_meta( get_the_ID(), '_recpl_salary_range', true );
 			if ( $salary ) :
 				?>
 				<span class="rp-badge rp-badge-salary">
@@ -152,7 +153,7 @@ defined( 'ABSPATH' ) || exit;
 		<?php
 		// Bewerbungsfrist
 		if ( $show_deadline ) :
-			$deadline = get_post_meta( get_the_ID(), '_rp_application_deadline', true );
+			$deadline = get_post_meta( get_the_ID(), '_recpl_application_deadline', true );
 			if ( $deadline ) :
 				?>
 				<span class="rp-badge rp-badge-gray rp-badge-deadline">

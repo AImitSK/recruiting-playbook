@@ -89,7 +89,7 @@ class JobListing {
 	 * URL-Slug aus Einstellungen holen
 	 */
 	private function getSlug(): string {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 		return $settings['jobs_slug'] ?? 'jobs';
 	}
 }

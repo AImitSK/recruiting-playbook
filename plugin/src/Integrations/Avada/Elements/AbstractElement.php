@@ -40,7 +40,7 @@ abstract class AbstractElement {
 			// Preview-Template ID setzen (Templates werden via AvadaIntegration::outputPreviewTemplates() geladen).
 			$shortcode    = $config['shortcode'] ?? '';
 			$slug         = str_replace( '_', '-', $shortcode );
-			$preview_file = RP_PLUGIN_DIR . 'src/Integrations/Avada/previews/' . $slug . '-preview.php';
+			$preview_file = RECPL_PLUGIN_DIR . 'src/Integrations/Avada/previews/' . $slug . '-preview.php';
 
 			if ( $shortcode && file_exists( $preview_file ) ) {
 				$config['preview_id'] = 'fusion-builder-block-module-' . $slug . '-preview-template';

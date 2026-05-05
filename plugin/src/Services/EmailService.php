@@ -75,7 +75,7 @@ class EmailService {
 	 * Constructor
 	 */
 	public function __construct() {
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 
 		$this->from_email = $settings['notification_email'] ?? get_option( 'admin_email' );
 		$this->from_name  = $settings['company_name'] ?? get_bloginfo( 'name' );
@@ -153,7 +153,7 @@ class EmailService {
 			return false;
 		}
 
-		$settings = get_option( 'rp_settings', [] );
+		$settings = get_option( 'recpl_settings', [] );
 		$to       = $settings['notification_email'] ?? get_option( 'admin_email' );
 
 		$subject = sprintf(
@@ -267,7 +267,8 @@ class EmailService {
 		$headers = array_merge( $default_headers, $headers );
 
 		// Filter für Erweiterungen
-		$message = apply_filters( 'rp_email_content', $message, $to, $subject ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$message = apply_filters( 'recpl_email_content', $message, $to, $subject );
+		$message = apply_filters_deprecated( 'rp_email_content', [ $message, $to, $subject ], '1.9.0', 'recpl_email_content' );
 
 		// E-Mail versenden
 		$sent = wp_mail( $to, $subject, $message, $headers );
@@ -573,7 +574,7 @@ class EmailService {
 	 */
 	private function renderTemplate( string $template, array $data ): string {
 		// Template-Pfad
-		$template_file = RP_PLUGIN_DIR . 'templates/emails/' . $template . '.php';
+		$template_file = RECPL_PLUGIN_DIR . 'templates/emails/' . $template . '.php';
 
 		// Fallback auf einfaches Template wenn nicht vorhanden
 		if ( ! file_exists( $template_file ) ) {
@@ -698,7 +699,7 @@ class EmailService {
 		}
 
 		// Branding-Hinweis (Pro-User können es abschalten).
-		$settings      = get_option( 'rp_settings', [] );
+		$settings      = get_option( 'recpl_settings', [] );
 		$hide_branding = ! empty( $settings['hide_email_branding'] );
 		$footer_html   = '';
 
@@ -763,7 +764,8 @@ class EmailService {
 		}
 
 		// Hook für optionales DB-Logging (Pro-Feature)
-		do_action( 'rp_email_sent', $to, $subject, $sent ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recpl_email_sent', $to, $subject, $sent );
+		do_action_deprecated( 'rp_email_sent', [ $to, $subject, $sent ], '1.9.0', 'recpl_email_sent' );
 	}
 
 	/**

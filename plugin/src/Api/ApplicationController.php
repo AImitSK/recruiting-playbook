@@ -190,7 +190,7 @@ class ApplicationController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_download_url' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'permission_callback' => [ $this, 'document_download_permissions_check' ],
 					'args'                => [
 						'id' => [
 							'description' => __( 'Document ID', 'recruiting-playbook' ),
@@ -210,7 +210,7 @@ class ApplicationController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'export_candidate_data' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'permission_callback' => [ $this, 'export_candidate_permissions_check' ],
 					'args'                => [
 						'id' => [
 							'description' => __( 'Candidate ID', 'recruiting-playbook' ),
@@ -230,7 +230,7 @@ class ApplicationController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_stats' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'permission_callback' => [ $this, 'stats_permissions_check' ],
 				],
 			]
 		);
@@ -243,7 +243,7 @@ class ApplicationController extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'reorder_applications' ],
-					'permission_callback' => [ $this, 'update_item_permissions_check' ],
+					'permission_callback' => [ $this, 'reorder_permissions_check' ],
 					'args'                => [
 						'status'    => [
 							'description' => __( 'Status/column of applications to sort', 'recruiting-playbook' ),
@@ -616,6 +616,204 @@ class ApplicationController extends WP_REST_Controller {
 					[ 'status' => 403 ]
 				);
 			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission-Check für /stats Endpoint
+	 *
+	 * Stats sind aggregierte Site-weite Daten (z.B. „Hiring-Pipeline-Tiefe").
+	 * Erfordert eine spezifische Stats-Capability statt generischer View-Apps-Berechtigung.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function stats_permissions_check( $request ) {
+		if ( current_user_can( 'manage_options' ) || current_user_can( 'rp_view_stats' ) ) {
+			return true;
+		}
+		return new WP_Error(
+			'rest_forbidden',
+			__( 'You do not have permission to view statistics.', 'recruiting-playbook' ),
+			[ 'status' => 403 ]
+		);
+	}
+
+	/**
+	 * Permission-Check für /applications/reorder (Batch-Update)
+	 *
+	 * Iteriert über alle positions[].id und prüft Zugriff pro Application.
+	 * Verhindert Reorder von Applications, auf die der User keinen Zugriff hat.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function reorder_permissions_check( $request ) {
+		if ( ! current_user_can( 'edit_applications' ) && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit applications.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		$positions = $request->get_param( 'positions' );
+		if ( ! is_array( $positions ) ) {
+			return new WP_Error(
+				'rest_invalid_param',
+				__( 'Invalid positions parameter.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$capability_service = new CapabilityService();
+		$user_id            = get_current_user_id();
+
+		foreach ( $positions as $position ) {
+			$app_id = (int) ( $position['id'] ?? 0 );
+			if ( $app_id <= 0 || ! $capability_service->canAccessApplication( $user_id, $app_id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You do not have permission to reorder one or more of these applications.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission-Check für /candidates/{id}/export (DSGVO-Export)
+	 *
+	 * Liefert ALLE Bewerbungen, Dokumente, Aktivitätslogs eines Kandidaten.
+	 * Wenn Kandidat mehrere Applications hat, müssen ALLE für den User zugänglich sein
+	 * (sonst Teildatensatz-Risiko bei DSGVO-Auskunftsersuchen).
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function export_candidate_permissions_check( $request ) {
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to export candidate data.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		$candidate_id = (int) $request->get_param( 'id' );
+		if ( $candidate_id <= 0 ) {
+			return new WP_Error(
+				'rest_invalid_param',
+				__( 'Invalid candidate ID.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Admin-Bypass: keine Per-Application-Prüfung nötig.
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		// Alle Application-IDs für diesen Kandidaten ermitteln.
+		global $wpdb;
+		$apps_table = $wpdb->prefix . 'rp_applications';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
+		$app_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder
+				"SELECT id FROM {$apps_table} WHERE candidate_id = %d AND deleted_at IS NULL",
+				$candidate_id
+			)
+		);
+
+		if ( empty( $app_ids ) ) {
+			return new WP_Error(
+				'rest_not_found',
+				__( 'Candidate not found.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$capability_service = new CapabilityService();
+		$user_id            = get_current_user_id();
+
+		foreach ( $app_ids as $app_id ) {
+			if ( ! $capability_service->canAccessApplication( $user_id, (int) $app_id ) ) {
+				return new WP_Error(
+					'rest_forbidden',
+					__( 'You do not have permission to export all applications for this candidate.', 'recruiting-playbook' ),
+					[ 'status' => 403 ]
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission-Check für /documents/{id}/download-url
+	 *
+	 * Verifiziert, dass der User Zugriff auf die zum Dokument gehörige Application hat.
+	 * Verhindert, dass jeder Recruiter mit Generic-View-Berechtigung jedes Dokument
+	 * herunterladen kann.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool|WP_Error
+	 */
+	public function document_download_permissions_check( $request ) {
+		if ( ! current_user_can( 'rp_view_applications' ) && ! current_user_can( 'manage_options' ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to download documents.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		$document_id = (int) $request->get_param( 'id' );
+		if ( $document_id <= 0 ) {
+			return new WP_Error(
+				'rest_invalid_param',
+				__( 'Invalid document ID.', 'recruiting-playbook' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Admin-Bypass.
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		// Document → application_id.
+		global $wpdb;
+		$docs_table = $wpdb->prefix . 'rp_documents';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
+		$application_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder
+				"SELECT application_id FROM {$docs_table} WHERE id = %d",
+				$document_id
+			)
+		);
+
+		if ( $application_id <= 0 ) {
+			return new WP_Error(
+				'rest_not_found',
+				__( 'Document not found.', 'recruiting-playbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$capability_service = new CapabilityService();
+		if ( ! $capability_service->canAccessApplication( get_current_user_id(), $application_id ) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to download this document.', 'recruiting-playbook' ),
+				[ 'status' => 403 ]
+			);
 		}
 
 		return true;

@@ -341,14 +341,17 @@ class EmailQueueService {
 		}
 
 		// Filter für Erweiterungen.
-		$headers = apply_filters( 'rp_email_headers', $headers, $log ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$body    = apply_filters( 'rp_email_content', $log['body_html'], $log['recipient_email'], $log['subject'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$headers = apply_filters( 'recpl_email_headers', $headers, $log );
+		$headers = apply_filters_deprecated( 'rp_email_headers', [ $headers, $log ], '1.9.0', 'recpl_email_headers' );
+		$body    = apply_filters( 'recpl_email_content', $log['body_html'], $log['recipient_email'], $log['subject'] );
+		$body    = apply_filters_deprecated( 'rp_email_content', [ $body, $log['recipient_email'], $log['subject'] ], '1.9.0', 'recpl_email_content' );
 
 		// E-Mail versenden.
 		$sent = wp_mail( $log['recipient_email'], $log['subject'], $body, $headers );
 
 		// Hook für Erweiterungen.
-		do_action( 'rp_email_sent', $log['recipient_email'], $log['subject'], $sent, $log ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'recpl_email_sent', $log['recipient_email'], $log['subject'], $sent, $log );
+		do_action_deprecated( 'rp_email_sent', [ $log['recipient_email'], $log['subject'], $sent, $log ], '1.9.0', 'recpl_email_sent' );
 
 		return $sent;
 	}

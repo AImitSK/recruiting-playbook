@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 class Migrator {
 
 	private const SCHEMA_VERSION = '2.3.1';
-	private const SCHEMA_OPTION  = 'rp_db_version';
+	private const SCHEMA_OPTION  = 'recpl_db_version';
 
 	/**
 	 * Tabellen erstellen/aktualisieren
@@ -590,7 +590,7 @@ class Migrator {
 		}
 
 		// Firmenname aus Einstellungen oder Blog-Name.
-		$settings     = get_option( 'rp_settings', [] );
+		$settings     = get_option( 'recpl_settings', [] );
 		$company_name = $settings['company']['name'] ?? $settings['general']['company_name'] ?? get_bloginfo( 'name' );
 
 		// Default Firmen-Signatur erstellen.

@@ -63,7 +63,7 @@ class JobSearchShortcode {
 		$per_page      = absint( $atts['limit'] );
 
 		// Design-Einstellungen laden.
-		$design_settings = get_option( 'rp_design_settings', [] );
+		$design_settings = get_option( 'recpl_design_settings', [] );
 
 		// Card-Preset.
 		$card_preset = $design_settings['card_layout_preset'] ?? 'standard';
@@ -273,7 +273,7 @@ class JobSearchShortcode {
 						$query->the_post();
 
 						// Job-Card Partial einbinden.
-						include RP_PLUGIN_DIR . 'templates/partials/job-card.php';
+						include RECPL_PLUGIN_DIR . 'templates/partials/job-card.php';
 
 					endwhile;
 					?>

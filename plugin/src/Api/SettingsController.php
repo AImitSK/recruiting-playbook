@@ -42,7 +42,7 @@ class SettingsController extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	private const OPTION_NAME = 'rp_settings';
+	private const OPTION_NAME = 'recpl_settings';
 
 	/**
 	 * Routes registrieren
@@ -279,7 +279,7 @@ class SettingsController extends WP_REST_Controller {
 
 		// Slug-Änderung erfordert Rewrite-Flush.
 		if ( $old_slug !== $settings['jobs_slug'] ) {
-			set_transient( 'rp_flush_rewrite_rules', true, 60 );
+			set_transient( 'recpl_flush_rewrite_rules', true, 60 );
 		}
 
 		return rest_ensure_response(
@@ -447,7 +447,7 @@ class SettingsController extends WP_REST_Controller {
 	 * @return WP_REST_Response Response object.
 	 */
 	public function get_auto_email( WP_REST_Request $request ) {
-		$settings = get_option( 'rp_auto_email_settings', [] );
+		$settings = get_option( 'recpl_auto_email_settings', [] );
 		return rest_ensure_response( [ 'settings' => $settings ] );
 	}
 
@@ -478,7 +478,7 @@ class SettingsController extends WP_REST_Controller {
 			}
 		}
 
-		update_option( 'rp_auto_email_settings', $sanitized );
+		update_option( 'recpl_auto_email_settings', $sanitized );
 
 		return rest_ensure_response(
 			[
