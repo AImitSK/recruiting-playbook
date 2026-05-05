@@ -477,7 +477,7 @@ print_test "Checking for application/config files (should not be in release)"
 APP_FILES=(
     "phpcs.xml.dist"
     "phpstan.neon"
-    "composer.json"
+    # composer.json: KEEP (WordPress.org reviewer required this in v1.7.9 round)
     "composer.lock"
     "package.json"
     "package-lock.json"

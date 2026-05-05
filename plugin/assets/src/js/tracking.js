@@ -36,7 +36,7 @@
                 employment_type: container.dataset.rpEmploymentType || ''
             };
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in getJobData:', e);
             }
             return null;
@@ -62,11 +62,11 @@
             window.dataLayer.push(eventData);
 
             // Debug-Modus
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.log('[RP Tracking]', eventName, eventData);
             }
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in pushEvent:', e);
             }
         }
@@ -90,7 +90,7 @@
                 'rp_employment_type': jobData.employment_type
             });
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in trackJobViewed:', e);
             }
         }
@@ -129,7 +129,7 @@
             }
 
             if (typeof gtag !== 'function') {
-                if (window.RP_DEBUG_TRACKING) {
+                if (window.RECPL_DEBUG_TRACKING) {
                     console.warn('[RP Tracking] gtag() not found – Google Ads Conversion skipped');
                 }
                 return;
@@ -146,11 +146,11 @@
 
             gtag('event', 'conversion', conversionData);
 
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.log('[RP Tracking] Google Ads Conversion fired', conversionData);
             }
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in fireGoogleAdsConversion:', e);
             }
         }
@@ -217,7 +217,7 @@
             // Cleanup bei Page Unload (Memory Leak Prevention).
             window.addEventListener('beforeunload', cleanupObserver);
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in setupFormTracking:', e);
             }
         }
@@ -240,7 +240,7 @@
             // Google Ads Conversion (Pro).
             fireGoogleAdsConversion();
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in rpTrackApplicationSubmitted:', e);
             }
         }
@@ -257,7 +257,7 @@
             // Form-Tracking Setup
             setupFormTracking();
         } catch (e) {
-            if (window.RP_DEBUG_TRACKING) {
+            if (window.RECPL_DEBUG_TRACKING) {
                 console.error('[RP Tracking] Error in init:', e);
             }
         }

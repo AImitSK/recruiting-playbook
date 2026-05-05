@@ -917,9 +917,11 @@ final class Plugin {
 				true
 			);
 
-			// Debug-Modus für Tracking.
-			if ( defined( 'RP_DEBUG_TRACKING' ) && RP_DEBUG_TRACKING ) {
-				wp_add_inline_script( 'rp-tracking', 'window.RP_DEBUG_TRACKING = true;', 'before' );
+			// Debug-Modus für Tracking (RECPL_DEBUG_TRACKING in wp-config.php; RP_DEBUG_TRACKING legacy).
+			$tracking_debug = ( defined( 'RECPL_DEBUG_TRACKING' ) && RECPL_DEBUG_TRACKING )
+				|| ( defined( 'RP_DEBUG_TRACKING' ) && RP_DEBUG_TRACKING );
+			if ( $tracking_debug ) {
+				wp_add_inline_script( 'rp-tracking', 'window.RECPL_DEBUG_TRACKING = true;', 'before' );
 			}
 
 			// Google Ads Conversion Config (Pro).

@@ -4,7 +4,7 @@ Tags: recruiting, jobs, job-board, applicant-tracking, ats
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Unlimited! Both in Free and Pro versions.
 5. Design & Branding settings
 
 == Changelog ==
+
+= 1.9.2 - 2026-05-05 =
+* Hotfix: `RP_DEBUG_TRACKING` constant renamed to `RECPL_DEBUG_TRACKING` (4+ char prefix). Legacy name still recognized for backwards compatibility. Affects both PHP (`Plugin.php`) and the JavaScript window flag in `tracking.js`.
+* Tool: `wordpress-org-compliance-test.sh` no longer flags `composer.json` — it is intentionally kept in the release ZIP per WP.org reviewer requirement (v1.7.9 round).
 
 = 1.9.1 - 2026-05-05 =
 * Hotfix: register_setting() group renamed from `rp_settings_group` to `recpl_settings_group` (4+ char prefix). The legacy group name was the last remaining short-prefix identifier in admin settings registration.
